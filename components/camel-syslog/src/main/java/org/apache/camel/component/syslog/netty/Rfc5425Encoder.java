@@ -17,32 +17,33 @@
 package org.apache.camel.component.syslog.netty;
 
 import java.nio.charset.Charset;
+import java.util.List;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelHandler.Sharable;
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToMessageEncoder;
 
-import static org.jboss.netty.buffer.ChannelBuffers.wrappedBuffer;
 
 @Sharable
-public class Rfc5425Encoder extends OneToOneEncoder {
+public class Rfc5425Encoder extends MessageToMessageEncoder<ByteBuf> {
 
     @Override
-    protected Object encode(ChannelHandlerContext ctx, Channel channel, Object msg) throws Exception {
-        if (!(msg instanceof ChannelBuffer)) {
-            return msg;
+    protected void encode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> out) throws Exception {
+        if (byteBuf.isReadable()) {
+            int length = byteBuf.readableBytes();
+
+            String headerString = length + " ";
+
+            ByteBuf header = ByteBufAllocator.DEFAULT.buffer(headerString.getBytes(Charset.forName("UTF8")).length);
+            header.writeBytes(headerString.getBytes(Charset.forName("UTF8")));
+
+            Unpooled.buffer();
+
+            byteBuf.retain();
+            out.add(Unpooled.wrappedBuffer(header, byteBuf));
         }
-
-        ChannelBuffer src = (ChannelBuffer) msg;
-        int length = src.readableBytes();
-
-        String headerString = length + " ";
-
-        ChannelBuffer header = channel.getConfig().getBufferFactory().getBuffer(src.order(), headerString.getBytes(Charset.forName("UTF8")).length);
-        header.writeBytes(headerString.getBytes(Charset.forName("UTF8")));
-
-        return wrappedBuffer(header, src);
     }
 }

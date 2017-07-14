@@ -22,7 +22,13 @@ import java.util.Map;
 /**
  * A {@link List} of these objects can be used to batch a collection of bodies and
  * header pairs in one exchange.
+ * <p/>
+ * <b>Important:</b> This BatchMessage is only supported by <tt>InOnly</tt> messaging style
+ * (eg you cannot do request/reply with this BatchMessage)
+ *
+ * @deprecated do not use, its being removed in a future Camel release
  */
+@Deprecated
 public class BatchMessage<T> {
     private T payload;
     private Map<String, Object> headers;

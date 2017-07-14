@@ -28,6 +28,7 @@ import org.apache.camel.util.ObjectHelper;
  * Represents a {@link org.apache.camel.spi.Binding} which Marshals the message in the ProduceProcessor and
  * Unmarshals the message in the ConsumeProcessor
  */
+@Deprecated
 public class DataFormatBinding extends ServiceSupport implements Binding {
     private DataFormat producerDataFormat;
     private DataFormat consumerDataFormat;

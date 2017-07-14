@@ -21,14 +21,20 @@ import org.apache.camel.Consumer
 import org.apache.camel.Processor
 import org.apache.camel.Producer
 import org.apache.camel.impl.DefaultEndpoint
+import org.apache.camel.spi.Metadata
 import org.apache.camel.spi.UriEndpoint
+import org.apache.camel.spi.UriPath
 
 import static groovy.grape.Grape.grab
 import static org.apache.camel.component.grape.MavenCoordinates.parseMavenCoordinates
 
-@UriEndpoint(scheme = "grape", syntax = "grape:defaultCoordinates", title = "Grape", producerOnly = true, label = "management,deployment")
+/**
+ * The grape component allows you to fetch, load and manage additional jars when CamelContext is running.
+ */
+@UriEndpoint(firstVersion = "2.16.0", scheme = "grape", syntax = "grape:defaultCoordinates", title = "Grape", producerOnly = true, label = "management,deployment")
 class GrapeEndpoint extends DefaultEndpoint {
 
+    @UriPath @Metadata(required = "true")
     private final String defaultCoordinates
 
     GrapeEndpoint(String endpointUri, String defaultCoordinates, GrapeComponent component) {
@@ -42,7 +48,7 @@ class GrapeEndpoint extends DefaultEndpoint {
         patchesRepository.listPatches().each {
             def coordinates = parseMavenCoordinates(it)
             grab(classLoader: classLoader,
-                    group: coordinates.groupId, module: coordinates.artifactId, version: coordinates.version)
+                 group: coordinates.groupId, module: coordinates.artifactId, version: coordinates.version, classifier: coordinates.classifier)
         }
     }
 

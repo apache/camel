@@ -23,9 +23,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a parameter as being Map of attachments of an inbound {@link Message}
+ * Marks a parameter as being Map of attachments as
+ * {@link javax.activation.DataHandler} objects of an inbound {@link Message}
  * 
- * @version 
+ * @version
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

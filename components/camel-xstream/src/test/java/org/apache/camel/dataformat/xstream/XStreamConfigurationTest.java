@@ -28,7 +28,6 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
@@ -42,7 +41,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
 
     private static volatile boolean constructorInjected;
     private static volatile boolean methodInjected;
-
+    
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -105,7 +104,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         order.setAmount(1);
         order.setPrice(99.95);
         
-        String ordereString = "{\"purchase-order\":{\"@name\":\"Tiger\",\"@price\":\"99.95\",\"@amount\":\"1.0\"}}";
+        String ordereString = "{\"purchase-order\":{\"@name\":\"Tiger\",\"@price\":99.95,\"@amount\":1}}";
         mock.expectedBodiesReceived(new Object[] {ordereString, order});
 
         template.sendBody("direct:marshal-json", order);
@@ -140,6 +139,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
                 Map<String, String> aliases = new HashMap<String, String>();
                 aliases.put("purchase-order", PurchaseOrder.class.getName());
                 xstreamDefinition.setAliases(aliases);
+                xstreamDefinition.setPermissions(PurchaseOrder.class, PurchaseHistory.class);
 
                 List<String> converters = new ArrayList<String>();
                 converters.add(PurchaseOrderConverter.class.getName());
@@ -160,6 +160,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
                 aliases = new HashMap<String, String>();
                 aliases.put("purchase-order", PurchaseOrder.class.getName());
                 xstreamDefinition.setAliases(aliases);
+                xstreamDefinition.setPermissions(PurchaseOrder.class, PurchaseHistory.class);
 
                 converters = new ArrayList<String>();
                 converters.add(PurchaseOrderConverter.class.getName());
@@ -170,6 +171,8 @@ public class XStreamConfigurationTest extends CamelTestSupport {
                 org.apache.camel.dataformat.xstream.XStreamDataFormat xStreamDataFormat 
                     = new org.apache.camel.dataformat.xstream.XStreamDataFormat();
                 xStreamDataFormat.setXstreamDriver(new JsonHierarchicalStreamDriver());
+                xStreamDataFormat.setPermissions("+6org.apache.camel.dataformat.xstream.*");
+
                 from("direct:myDriver").marshal(xStreamDataFormat).to("mock:result");
             }
         };

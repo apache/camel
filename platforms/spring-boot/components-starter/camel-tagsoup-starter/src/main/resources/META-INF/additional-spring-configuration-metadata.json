@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.tidymarkup.enabled",
+      "description": "Enable tidymarkup dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

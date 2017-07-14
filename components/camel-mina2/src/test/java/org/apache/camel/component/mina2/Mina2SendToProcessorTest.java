@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mina2;
 
-import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -35,7 +34,7 @@ public class Mina2SendToProcessorTest extends BaseMina2Test {
         try {
             context.start();
             fail("Should have thrown an exception");
-        } catch (FailedToCreateProducerException e) {
+        } catch (Exception e) {
             // expected
         }
     }

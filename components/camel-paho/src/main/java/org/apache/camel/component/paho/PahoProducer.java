@@ -31,17 +31,21 @@ public class PahoProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         MqttClient client = getEndpoint().getClient();
         String topic = getEndpoint().getTopic();
-        int qos = getEndpoint().getQos();
+        
+        int qos = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_MSG_QOS, getEndpoint().getQos(), Integer.class);
+        boolean retained = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_MSG_RETAINED, getEndpoint().isRetained(), Boolean.class);
+        
         byte[] payload = exchange.getIn().getBody(byte[].class);
 
         MqttMessage message = new MqttMessage(payload);
         message.setQos(qos);
+        message.setRetained(retained);
         client.publish(topic, message);
     }
 
     @Override
     public PahoEndpoint getEndpoint() {
-        return (PahoEndpoint) super.getEndpoint();
+        return (PahoEndpoint)super.getEndpoint();
     }
 
 }

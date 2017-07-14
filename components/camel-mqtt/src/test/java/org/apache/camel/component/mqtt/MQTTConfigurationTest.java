@@ -24,7 +24,8 @@ public class MQTTConfigurationTest extends MQTTBaseTest {
 
     @Test
     public void testBasicConfiguration() throws Exception {
-        Endpoint endpoint = context.getEndpoint("mqtt:todo?byDefaultRetain=true&qualityOfService=exactlyOnce&publishTopicName=" + TEST_TOPIC + "&subscribeTopicName=" + TEST_TOPIC);
+        Endpoint endpoint = context.getEndpoint("mqtt:todo?byDefaultRetain=true&qualityOfService=exactlyOnce&publishTopicName=" + TEST_TOPIC + "&subscribeTopicName=" + TEST_TOPIC
+                + "&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
         assertTrue("Endpoint not a MQTTEndpoint: " + endpoint, endpoint instanceof MQTTEndpoint);
         MQTTEndpoint mqttEndpoint = (MQTTEndpoint) endpoint;
 
@@ -36,7 +37,8 @@ public class MQTTConfigurationTest extends MQTTBaseTest {
 
     @Test
     public void testMultipleSubscribeTopicsConfiguration() throws Exception {
-        Endpoint endpoint = context.getEndpoint("mqtt:todo?byDefaultRetain=true&qualityOfService=exactlyOnce&publishTopicName=" + TEST_TOPIC + "&subscribeTopicNames=" + TEST_TOPICS);
+        Endpoint endpoint = context.getEndpoint("mqtt:todo?byDefaultRetain=true&qualityOfService=exactlyOnce&publishTopicName=" + TEST_TOPIC + "&subscribeTopicNames=" + TEST_TOPICS
+                + "&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
         assertTrue("Endpoint not a MQTTEndpoint: " + endpoint, endpoint instanceof MQTTEndpoint);
         MQTTEndpoint mqttEndpoint = (MQTTEndpoint) endpoint;
 
@@ -48,7 +50,8 @@ public class MQTTConfigurationTest extends MQTTBaseTest {
 
     @Test
     public void testWildcardSubscribeTopicsConfiguration() throws Exception {
-        Endpoint endpoint = context.getEndpoint("mqtt:todo?byDefaultRetain=true&qualityOfService=exactlyOnce&publishTopicName=" + TEST_TOPIC + "&subscribeTopicNames=" + TEST_TOPICS_WITH_WILDCARDS);
+        Endpoint endpoint = context.getEndpoint("mqtt:todo?byDefaultRetain=true&qualityOfService=exactlyOnce&publishTopicName=" + TEST_TOPIC + "&subscribeTopicNames=" + TEST_TOPICS_WITH_WILDCARDS
+                + "&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
         assertTrue("Endpoint not a MQTTEndpoint: " + endpoint, endpoint instanceof MQTTEndpoint);
         MQTTEndpoint mqttEndpoint = (MQTTEndpoint) endpoint;
 

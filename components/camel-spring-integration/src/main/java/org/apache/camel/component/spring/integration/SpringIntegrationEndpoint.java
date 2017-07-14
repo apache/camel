@@ -26,14 +26,12 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.spring.SpringCamelContext;
-import org.springframework.integration.MessageChannel;
+import org.springframework.messaging.MessageChannel;
 
 /**
- * Defines the <a href="http://camel.apache.org/springIntergration.html">Spring Integration Endpoint</a>
- *
- * @version 
+ * Bridges Camel with Spring Integration.
  */
-@UriEndpoint(scheme = "spring-integration", title = "Spring Integration", syntax = "spring-integration:defaultChannel",
+@UriEndpoint(firstVersion = "1.4.0", scheme = "spring-integration", title = "Spring Integration", syntax = "spring-integration:defaultChannel",
         consumerClass = SpringIntegrationConsumer.class, label = "spring,eventbus")
 public class SpringIntegrationEndpoint extends DefaultEndpoint {
     private MessageChannel messageChannel;

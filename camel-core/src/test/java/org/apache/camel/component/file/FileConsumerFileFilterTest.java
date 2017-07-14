@@ -23,11 +23,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
- * Unit test for  the file filter option
+ * Unit test for the file filter option
  */
 public class FileConsumerFileFilterTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filefilter/?filter=#myFilter";
+    private String fileUrl = "file://target/filefilter/?initialDelay=0&delay=10&filter=#myFilter";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -49,13 +49,12 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",
             Exchange.FILE_NAME, "skipme.txt");
 
-        mock.setResultWaitTime(2000);
+        mock.setResultWaitTime(100);
         mock.assertIsSatisfied();
     }
 
     public void testFilterFilesWithARegularFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",

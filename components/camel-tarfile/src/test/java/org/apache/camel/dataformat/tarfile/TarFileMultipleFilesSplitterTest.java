@@ -31,8 +31,11 @@ public class TarFileMultipleFilesSplitterTest extends TarSplitterRouteTest {
     public void testSplitter() throws InterruptedException {
         MockEndpoint processTarEntry = getMockEndpoint("mock:processTarEntry");
         MockEndpoint splitResult = getMockEndpoint("mock:splitResult");
+
         processTarEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola", "hello", "greetings");
+
         splitResult.expectedBodiesReceivedInAnyOrder("chiau.txt", "hi.txt", "hola.txt", "another/hello.txt", "other/greetings.txt");
+
         assertMockEndpointsSatisfied();
     }
     

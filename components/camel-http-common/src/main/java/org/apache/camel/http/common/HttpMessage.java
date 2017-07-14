@@ -35,6 +35,8 @@ public class HttpMessage extends DefaultMessage {
 
     public HttpMessage(Exchange exchange, HttpServletRequest request, HttpServletResponse response) {
         setExchange(exchange);
+        setCamelContext(exchange.getContext());
+
         this.request = request;
         this.response = response;
         // Put the request and response into the message header
@@ -49,7 +51,14 @@ public class HttpMessage extends DefaultMessage {
 
         // use binding to read the request allowing end users to use their
         // implementation of the binding
-        getEndpoint().getBinding().readRequest(request, this);
+        getEndpoint().getHttpBinding().readRequest(request, this);
+    }
+
+    private HttpMessage(HttpServletRequest request, HttpServletResponse response, Exchange exchange) {
+        this.request = request;
+        this.response = response;
+        setExchange(getExchange());
+        setCamelContext(exchange.getContext());
     }
 
     public HttpServletRequest getRequest() {
@@ -63,12 +72,17 @@ public class HttpMessage extends DefaultMessage {
     @Override
     protected Object createBody() {
         try {
-            return getEndpoint().getBinding().parseBody(this);
+            return getEndpoint().getHttpBinding().parseBody(this);
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }
     }
-    
+
+    @Override
+    public HttpMessage newInstance() {
+        return new HttpMessage(request, response, getExchange());
+    }
+
     private HttpCommonEndpoint getEndpoint() {
         return (HttpCommonEndpoint) getExchange().getFromEndpoint();
     }

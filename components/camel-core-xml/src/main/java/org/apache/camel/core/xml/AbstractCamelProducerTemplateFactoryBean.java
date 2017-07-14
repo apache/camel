@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultProducerTemplate;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -37,9 +38,9 @@ import org.apache.camel.util.ServiceHelper;
 public abstract class AbstractCamelProducerTemplateFactoryBean extends AbstractCamelFactoryBean<ProducerTemplate> {
     @XmlTransient
     private ProducerTemplate template;
-    @XmlAttribute(required = false)
+    @XmlAttribute @Metadata(description = "Sets the default endpoint URI used by default for sending message exchanges")
     private String defaultEndpoint;
-    @XmlAttribute
+    @XmlAttribute @Metadata(description = "Sets a custom maximum cache size to use in the backing cache pools.")
     private Integer maximumCacheSize;
 
     public ProducerTemplate getObject() throws Exception {
@@ -91,6 +92,11 @@ public abstract class AbstractCamelProducerTemplateFactoryBean extends AbstractC
         return maximumCacheSize;
     }
 
+    /**
+     * Sets a custom maximum cache size to use in the backing cache pools.
+     *
+     * @param maximumCacheSize the custom maximum cache size
+     */
     public void setMaximumCacheSize(Integer maximumCacheSize) {
         this.maximumCacheSize = maximumCacheSize;
     }

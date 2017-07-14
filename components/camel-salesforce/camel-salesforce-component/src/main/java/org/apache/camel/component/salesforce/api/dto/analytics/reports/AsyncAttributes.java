@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.salesforce.api.dto.analytics.reports;
 
-import org.joda.time.DateTime;
+
+import java.time.ZonedDateTime;
 
 /**
  * Async report attributes DTO.
@@ -26,8 +27,8 @@ public class AsyncAttributes extends AbstractAttributesBase {
     private String id;
     private ReportStatusEnum status;
     private String ownerId;
-    private DateTime completionDate;
-    private DateTime requestDate;
+    private ZonedDateTime completionDate;
+    private ZonedDateTime requestDate;
 
     public String getId() {
         return id;
@@ -53,19 +54,19 @@ public class AsyncAttributes extends AbstractAttributesBase {
         this.ownerId = ownerId;
     }
 
-    public DateTime getCompletionDate() {
+    public ZonedDateTime getCompletionDate() {
         return completionDate;
     }
 
-    public void setCompletionDate(DateTime completionDate) {
+    public void setCompletionDate(ZonedDateTime completionDate) {
         this.completionDate = completionDate;
     }
 
-    public DateTime getRequestDate() {
+    public ZonedDateTime getRequestDate() {
         return requestDate;
     }
 
-    public void setRequestDate(DateTime requestDate) {
+    public void setRequestDate(ZonedDateTime requestDate) {
         this.requestDate = requestDate;
     }
 }

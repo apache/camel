@@ -95,7 +95,7 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
             });
             fail("Expected FailedToCreateRouteException");
         } catch (Exception e) {
-            assertTrue("Expected FailedToCreateRouteException, was " + e.getClass().getCanonicalName() , e instanceof FailedToCreateRouteException);
+            assertTrue("Expected FailedToCreateRouteException, was " + e.getClass().getCanonicalName(), e instanceof FailedToCreateRouteException);
             assertTrue("Message was [" + e.getMessage() + "]", e.getMessage().endsWith("conversion possible: chmod option [abc] is not valid"));
         }
     }

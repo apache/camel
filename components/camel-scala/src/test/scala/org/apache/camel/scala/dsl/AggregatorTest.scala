@@ -15,90 +15,127 @@
  * limitations under the License.
  */
 package org.apache.camel.scala.dsl
- 
-import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy
-import org.junit.Test
-import builder.RouteBuilder
+
 import org.apache.camel.Exchange
 import org.apache.camel.builder.ExchangeBuilder.anExchange
+import org.apache.camel.processor.BodyInAggregatingStrategy
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy
+import org.apache.camel.scala.dsl.builder.RouteBuilder
+import org.junit.Test
 
 /**
  * Test case for message aggregator
  */
 class AggregatorTest extends ScalaTestSupport {
-  
+
   val count = 100
-  
+
   @Test
   def testSimpleAggregator() {
-    "mock:a" expect { _.received("message " + count) } 
+    "mock:aggregated" expect {
+      _.received("message " + count)
+    }
     test {
       for (i <- 1 to count) {
-        "direct:a" ! ("message " + i)
+        "direct:completion-size" ! ("message " + i)
       }
     }
   }
 
- @Test
- def testBlockAggregator() {
-    "mock:b" expect { _.received("message " + count) } 
+  @Test
+  def testBlockAggregator() {
+    "mock:aggregated" expect {
+      _.received("message " + count)
+    }
     test {
       for (i <- 1 to count) {
-        "direct:b" ! ("message " + i)
+        "direct:completion-size-block" ! ("message " + i)
       }
     }
   }
 
   @Test
   def testWrappingFunctionalAggregator() {
-    "mock:c" expect {
+    "mock:aggregated" expect {
       _.received("foobar")
     }
     test {
-      "direct:c" ! "foo"
-      "direct:c" ! "bar"
+      "direct:functional-aggregator-wrapped" ! "foo"
+      "direct:functional-aggregator-wrapped" ! "bar"
     }
   }
 
   @Test
   def testFunctionalAggregator() {
-    "mock:d" expect {
+    "mock:aggregated" expect {
       _.received("foobar")
     }
     test {
-      "direct:d" ! "foo"
-      "direct:d" ! "bar"
+      "direct:functional-aggregator" ! "foo"
+      "direct:functional-aggregator" ! "bar"
+    }
+  }
+
+  @Test
+  def testAggregateSimplePredicate() {
+    "mock:aggregated" expect {
+      _.received("A+B+C")
+    }
+    test {
+      "direct:predicate" ! "A"
+      "direct:predicate" ! "B"
+      "direct:predicate" ! "C"
+    }
+  }
+
+  @Test
+  def testAggregatePredicateWithBlock() {
+    "mock:aggregated" expect {
+      _.received("A+B+C")
+    }
+    test {
+      "direct:predicate-block" ! "A"
+      "direct:predicate-block" ! "B"
+      "direct:predicate-block" ! "C"
     }
   }
 
   val builder =
     new RouteBuilder {
-       "direct:a" ==> {
-         aggregate (_.in[String].substring(0, 7), new UseLatestAggregationStrategy()) completionSize 100 to "mock:a" }
+      "direct:completion-size" ==> {
+        aggregate(_.in[String].substring(0, 7), new UseLatestAggregationStrategy()) completionSize count to "mock:aggregated"
+      }
 
-       //START SNIPPET: block
-       "direct:b" ==> {
-         aggregate(_.in[String].substring(0,7), new UseLatestAggregationStrategy()).completionSize(100) {
-           to ("mock:b")
-         }
-       }
-       //END SNIPPET: block
+      "direct:completion-size-block" ==> {
+        aggregate(_.in[String].substring(0, 7), new UseLatestAggregationStrategy()).completionSize(count) {
+          to("mock:aggregated")
+        }
+      }
 
-      "direct:c" ==> {
+      "direct:functional-aggregator-wrapped" ==> {
         val aggregator = (oldEx: Exchange, newEx: Exchange) => oldEx match {
           case null => newEx.in[String]
           case _ => oldEx.in[String] + newEx.in[String]
         }
-        aggregate ("constant", aggregator) completionSize 2 to "mock:c"
+        aggregate("constant", aggregator) completionSize 2 to "mock:aggregated"
       }
 
-      "direct:d" ==> {
+      "direct:functional-aggregator" ==> {
         val aggregator = (oldEx: Exchange, newEx: Exchange) => oldEx match {
           case null => newEx
           case _ => anExchange(newEx.getContext).withBody(oldEx.in[String] + newEx.in[String]).build
         }
-        aggregate ("constant", aggregator) completionSize 2 to "mock:d"
+        aggregate("constant", aggregator) completionSize 2 to "mock:aggregated"
+      }
+
+      "direct:predicate" ==> {
+        aggregate("constant", new BodyInAggregatingStrategy()) completionPredicate (_.in[String].contains("A+B+C")) to "mock:aggregated"
+      }
+
+      "direct:predicate-block" ==> {
+        aggregate("constant", new BodyInAggregatingStrategy()).completionPredicate(_.in[String].contains("A+B+C")) {
+          to("mock:aggregated")
+        }
       }
     }
-
 }

@@ -40,7 +40,6 @@ public class AtmosScheduledPollGetConsumer extends AtmosScheduledPollConsumer {
         AtmosResult result = AtmosAPIFacade.getInstance(configuration.getClient())
                 .get(configuration.getRemotePath());
         result.populateExchange(exchange);
-        LOG.info("consumer --> downloaded: " + result.toString());
 
         try {
             // send message to next processor in the route

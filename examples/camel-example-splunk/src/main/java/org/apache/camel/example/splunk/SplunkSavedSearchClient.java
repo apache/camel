@@ -17,11 +17,12 @@
 package org.apache.camel.example.splunk;
 
 import org.apache.camel.main.Main;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class SplunkSavedSearchClient {
 
-    private static final Logger LOG = Logger.getLogger(SplunkSavedSearchClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SplunkSavedSearchClient.class);
 
     private SplunkSavedSearchClient() {
     }
@@ -30,7 +31,6 @@ public final class SplunkSavedSearchClient {
         LOG.info("About to run splunk-camel integration...");
         Main main = new Main();
         main.addRouteBuilder(new SplunkSavedSearchRouteBuilder());
-        main.enableHangupSupport();
         main.run();
     }
 }

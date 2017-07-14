@@ -16,16 +16,34 @@
  */
 package org.apache.camel.component.twitter;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import twitter4j.Twitter;
 
 /**
  * consumes tweets
  */
 public class DirectMessagePollingTest extends CamelTwitterConsumerTestSupport {
     @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        /* Uncomment when you need a test direct message
+        TwitterConfiguration properties = new TwitterConfiguration();
+        properties.setConsumerKey(consumerKey);
+        properties.setConsumerSecret(consumerSecret);
+        properties.setAccessToken(accessToken);
+        properties.setAccessTokenSecret(accessTokenSecret);
+        Twitter twitter = properties.getTwitter();
+        twitter.sendDirectMessage(twitter.getScreenName(), "Test Direct Message: " + new Date().toString());
+        */
+    }
+
+    @Override
     protected String getUri() {
-        return "twitter://directmessage?type=polling&";
+        return "twitter-directmessage://foo?type=polling&";
     }
 
     @Override

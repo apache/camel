@@ -19,11 +19,10 @@ package org.apache.camel.component.ahc.ws;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.ning.http.client.ws.WebSocket;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
+import org.asynchttpclient.ws.WebSocket;
 
 /**
  *
@@ -46,8 +45,8 @@ public class WsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
         Object message = in.getBody();
-        log.debug("Sending out {}", message);
         if (message != null) {
+            log.debug("Sending out {}", message);
             if (message instanceof String) {
                 sendMessage(getWebSocket(), (String)message, getEndpoint().isUseStreaming());
             } else if (message instanceof byte[]) {

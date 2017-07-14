@@ -21,13 +21,15 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.sshd.common.KeyPairProvider;
 
 /**
  * Represents the component that manages {@link SshEndpoint}.
  */
 public class SshComponent extends UriEndpointComponent {
-    private SshConfiguration configuration;
+    @Metadata(label = "advanced")
+    private SshConfiguration configuration = new SshConfiguration();
 
     public SshComponent() {
         super(SshEndpoint.class);
@@ -35,13 +37,9 @@ public class SshComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SshConfiguration newConfig;
-
-        if (configuration == null) {
-            newConfig = new SshConfiguration(new URI(uri));
-        } else {
-            newConfig = configuration.copy();
-        }
+        URI u = new URI(uri);
+        SshConfiguration newConfig = configuration.copy();
+        newConfig.configure(u);
 
         SshEndpoint endpoint = new SshEndpoint(uri, this, newConfig);
         setProperties(endpoint.getConfiguration(), parameters);
@@ -49,9 +47,6 @@ public class SshComponent extends UriEndpointComponent {
     }
 
     public SshConfiguration getConfiguration() {
-        if (configuration == null) {
-            configuration = new SshConfiguration();
-        }
         return configuration;
     }
 
@@ -97,6 +92,7 @@ public class SshComponent extends UriEndpointComponent {
      *
      * @param username String representing login username.
      */
+    @Metadata(label = "security", secret = true)
     public void setUsername(String username) {
         getConfiguration().setUsername(username);
     }
@@ -111,6 +107,7 @@ public class SshComponent extends UriEndpointComponent {
      *
      * @param password String representing password for username at remote host.
      */
+    @Metadata(label = "security", secret = true)
     public void setPassword(String password) {
         getConfiguration().setPassword(password);
     }
@@ -142,6 +139,7 @@ public class SshComponent extends UriEndpointComponent {
      *
      * @see KeyPairProvider
      */
+    @Metadata(label = "security")
     public void setKeyPairProvider(KeyPairProvider keyPairProvider) {
         getConfiguration().setKeyPairProvider(keyPairProvider);
     }
@@ -158,6 +156,7 @@ public class SshComponent extends UriEndpointComponent {
      *
      * @see KeyPairProvider
      */
+    @Metadata(label = "security")
     public void setKeyType(String keyType) {
         getConfiguration().setKeyType(keyType);
     }
@@ -190,6 +189,7 @@ public class SshComponent extends UriEndpointComponent {
      * @deprecated As of version 2.11, replaced by {@link #setCertResource(String)}
      */
     @Deprecated
+    @Metadata(label = "security")
     public void setCertFilename(String certFilename) {
         getConfiguration().setCertFilename(certFilename);
     }
@@ -204,6 +204,7 @@ public class SshComponent extends UriEndpointComponent {
      *
      * @param certResource String file, classpath, or http url for the certificate
      */
+    @Metadata(label = "security")
     public void setCertResource(String certResource) {
         getConfiguration().setCertResource(certResource);
     }

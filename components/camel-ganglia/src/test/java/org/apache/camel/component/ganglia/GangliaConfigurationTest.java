@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.ganglia.GangliaConfiguration</code>

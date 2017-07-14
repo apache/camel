@@ -47,14 +47,14 @@ public class TimerAsyncTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("timer://foo?fixedRate=true&delay=0&period=200").id("timer")
+                from("timer://foo?fixedRate=true&delay=0&period=10").id("timer")
                         .threads(threads, threads).maxQueueSize(1).rejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns)
                         .to("log:task")
                         .to("mock:task")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // simulate long task
-                                TimeUnit.SECONDS.sleep(1);
+                                TimeUnit.MILLISECONDS.sleep(50);
                             }
                         });
             }

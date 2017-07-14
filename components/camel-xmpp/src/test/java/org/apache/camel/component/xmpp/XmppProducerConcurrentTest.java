@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -28,6 +29,15 @@ import org.junit.Test;
  * @version 
  */
 public class XmppProducerConcurrentTest extends CamelTestSupport {
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+
+        EmbeddedXmppTestServer.instance().bindSSLContextTo(registry);
+
+        return registry;
+    }
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
@@ -66,7 +76,7 @@ public class XmppProducerConcurrentTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .to("xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
-                            + "?user=camel_consumer&password=secret&serviceName=apache.camel")
+                            + "?connectionConfig=#customConnectionConfig&user=camel_consumer&password=secret&serviceName=apache.camel")
                     .to("mock:result");
             }
         };

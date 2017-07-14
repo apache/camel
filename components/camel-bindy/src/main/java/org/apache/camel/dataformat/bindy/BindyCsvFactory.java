@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import org.apache.camel.dataformat.bindy.annotation.BindyConverter;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
@@ -66,6 +67,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private String quote;
     private boolean quoting;
     private boolean autospanLine;
+    private boolean allowEmptyStream;
+    private boolean quotingEscaped;
 
     public BindyCsvFactory(Class<?> type) throws Exception {
         super(type);
@@ -155,6 +158,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         }
     }
 
+    @Override
     public void bind(List<String> tokens, Map<String, Object> model, int line) throws Exception {
 
         int pos = 1;
@@ -190,7 +194,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             }
 
             // Create format object to format the field
-            Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), dataField);
+            FormattingOptions formattingOptions = ConverterUtils.convert(dataField,
+                    field.getType(),
+                    field.getAnnotation(BindyConverter.class),
+                    getLocale());
+            Format<?> format = formatFactory.getFormat(formattingOptions);
 
             // field object to be set
             Object modelField = model.get(field.getDeclaringClass().getName());
@@ -200,7 +208,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
             if (!data.equals("")) {
                 try {
-                    value = format.parse(data);
+                    if (quoting && quote != null && (data.contains("\\" + quote) || data.contains(quote)) && quotingEscaped) {
+                        value = format.parse(data.replaceAll("\\\\" + quote,  "\\" + quote));
+                    } else {
+                        value = format.parse(data);
+                    }
                 } catch (FormatException ie) {
                     throw new IllegalArgumentException(ie.getMessage() + ", position: " + pos + ", line: " + line, ie);
                 } catch (Exception e) {
@@ -232,6 +244,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     }
 
+    @Override
     public String unbind(Map<String, Object> model) throws Exception {
 
         StringBuilder buffer = new StringBuilder();
@@ -303,7 +316,12 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                         if (quoting && quote != null) {
                             buffer.append(quote);
                         }
-                        buffer.append(res);
+                        // CAMEL-7519 - improvoment escape the token itself by prepending escape char
+                        if (quoting && quote != null && (res.contains("\\" + quote) || res.contains(quote))  && quotingEscaped) {
+                            buffer.append(res.replaceAll("\\" + quote, "\\\\" + quote));
+                        } else {
+                            buffer.append(res);
+                        }
                         if (quoting && quote != null) {
                             buffer.append(quote);
                         }
@@ -393,10 +411,19 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     Class<?> type = field.getType();
 
                     // Create format
-                    Format<?> format = FormatFactory.getFormat(type, getLocale(), datafield);
+                    FormattingOptions formattingOptions = ConverterUtils.convert(datafield,
+                            field.getType(),
+                            field.getAnnotation(BindyConverter.class),
+                            getLocale());
+                    Format<?> format = formatFactory.getFormat(formattingOptions);
 
                     // Get field value
                     Object value = field.get(obj);
+
+                    // If the field value is empty, populate it with the default value
+                    if (ObjectHelper.isNotEmpty(datafield.defaultValue()) && ObjectHelper.isEmpty(value)) {
+                        value = datafield.defaultValue();
+                    }
 
                     result = formatString(format, value);
 
@@ -504,7 +531,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             }
 
             if (it.hasNext()) {
-                builderHeader.append(separator);
+                builderHeader.append(ConverterUtils.getCharDelimiter(separator));
             }
 
         }
@@ -559,10 +586,18 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                     autospanLine = record.autospanLine();
                     LOG.debug("Autospan line in last record: {}", autospanLine);
+                    
+                    // Get allowEmptyStream parameter
+                    allowEmptyStream = record.allowEmptyStream();
+                    LOG.debug("Allow empty stream parameter of the CSV: {}" + allowEmptyStream);
+                    
+                    // Get quotingEscaped parameter
+                    quotingEscaped = record.quotingEscaped();
+                    LOG.debug("Escape quote character flag of the CSV: {}" + quotingEscaped);
                 }
 
                 if (section != null) {
-                    // Test if section number is not null
+                    // BigIntegerFormatFactory if section number is not null
                     ObjectHelper.notNull(section.number(), "No number has been defined for the section");
 
                     // Get section number and add it to the sections
@@ -586,7 +621,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             DataField dataField = dataFields.get(i);
             Object modelField = model.get(field.getDeclaringClass().getName());
             if (field.get(modelField) == null && !dataField.defaultValue().isEmpty()) {
-                Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), dataField);
+                FormattingOptions formattingOptions = ConverterUtils.convert(dataField,
+                        field.getType(),
+                        field.getAnnotation(BindyConverter.class),
+                        getLocale());
+                Format<?> format = formatFactory.getFormat(formattingOptions);
                 Object value = format.parse(dataField.defaultValue());
                 field.set(modelField, value);
             }
@@ -636,5 +675,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     public int getMaxpos() {
         return maxpos;
+    }
+
+    public boolean isAllowEmptyStream() {
+        return allowEmptyStream;
     }
 }

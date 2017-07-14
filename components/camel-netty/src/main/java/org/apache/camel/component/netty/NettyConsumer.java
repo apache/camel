@@ -18,12 +18,13 @@ package org.apache.camel.component.netty;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.Suspendable;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NettyConsumer extends DefaultConsumer {
+public class NettyConsumer extends DefaultConsumer implements Suspendable {
     private static final Logger LOG = LoggerFactory.getLogger(NettyConsumer.class);
     private CamelContext context;
     private NettyConfiguration configuration;
@@ -89,11 +90,13 @@ public class NettyConsumer extends DefaultConsumer {
     @Override
     protected void doSuspend() throws Exception {
         ServiceHelper.suspendService(nettyServerBootstrapFactory);
+        super.doSuspend();
     }
 
     @Override
     protected void doResume() throws Exception {
         ServiceHelper.resumeService(nettyServerBootstrapFactory);
+        super.doResume();
     }
 
     public CamelContext getContext() {

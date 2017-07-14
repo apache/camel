@@ -68,6 +68,11 @@ public class ManagedSedaEndpointTest extends ManagementTestSupport {
 
         String out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{0}, new String[]{"java.lang.Integer"});
         assertNotNull(out);
+        // message body is not dumped when browsing exchange
+        assertFalse(out.contains("Hi World"));
+
+        out = (String) mbeanServer.invoke(name, "browseMessageBody", new Object[]{0}, new String[]{"java.lang.Integer"});
+        assertNotNull(out);
         assertTrue(out.contains("Hi World"));
 
         mbeanServer.invoke(name, "purgeQueue", null, null);

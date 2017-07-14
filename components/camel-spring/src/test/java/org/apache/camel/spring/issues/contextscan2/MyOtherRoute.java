@@ -16,14 +16,14 @@
  */
 package org.apache.camel.spring.issues.contextscan2;
 
-import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
 /**
  * @version 
  */
 @Component("coolRoute")
-public class MyOtherRoute extends SpringRouteBuilder {
+public class MyOtherRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {

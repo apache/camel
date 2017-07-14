@@ -40,7 +40,8 @@ public abstract class CamelTwitterConsumerTestSupport extends CamelTwitterTestSu
         }
         
     }
-    
+
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

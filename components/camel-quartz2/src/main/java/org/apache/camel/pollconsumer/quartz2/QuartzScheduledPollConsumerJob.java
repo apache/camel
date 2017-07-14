@@ -20,11 +20,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Route;
 import org.apache.camel.component.quartz2.CamelJob;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@DisallowConcurrentExecution
 public class QuartzScheduledPollConsumerJob extends CamelJob {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuartzScheduledPollConsumerJob.class);

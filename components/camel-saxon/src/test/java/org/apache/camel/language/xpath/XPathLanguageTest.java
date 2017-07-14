@@ -21,6 +21,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -94,6 +95,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         assertEquals("Hello", body);
     }
 
+    @Ignore("See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory")
     @Test
     public void testSpringDSLXPathObjectModel() throws Exception {
         if (!jvmAdequate) {
@@ -139,6 +141,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Ignore("See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory")
     @Test
     public void testSpringDSLXPathObjectModelPredicate() throws Exception {
         if (!jvmAdequate) {

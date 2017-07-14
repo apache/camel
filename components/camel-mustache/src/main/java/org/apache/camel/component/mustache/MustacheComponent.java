@@ -22,6 +22,7 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.MustacheFactory;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Represents the component that manages {@link MustacheEndpoint}.
@@ -35,6 +36,7 @@ import org.apache.camel.impl.UriEndpointComponent;
  */
 public class MustacheComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
     private MustacheFactory mustacheFactory = new DefaultMustacheFactory();
 
     public MustacheComponent() {

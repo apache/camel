@@ -28,6 +28,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.processor.InterceptEndpointProcessor;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
@@ -149,7 +150,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
      * @param predicate  the predicate
      * @return the builder
      */
-    public InterceptSendToEndpointDefinition when(Predicate predicate) {
+    public InterceptSendToEndpointDefinition when(@AsPredicate Predicate predicate) {
         WhenDefinition when = new WhenDefinition(predicate);
         addOutput(when);
         return this;

@@ -27,11 +27,11 @@ public class YammerConfiguration {
     @UriPath(name = "function") @Metadata(required = "true")
     private YammerFunctionType functionType;
     private String function;
-    @UriParam  @Metadata(required = "true")
+    @UriParam(label = "security") @Metadata(required = "true", secret = true)
     private String consumerKey;
-    @UriParam  @Metadata(required = "true")
+    @UriParam(label = "security") @Metadata(required = "true", secret = true)
     private String consumerSecret;
-    @UriParam  @Metadata(required = "true")
+    @UriParam(label = "security") @Metadata(required = "true")
     private String accessToken;
     @UriParam
     private boolean useJson;

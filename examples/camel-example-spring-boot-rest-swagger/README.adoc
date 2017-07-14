@@ -1,0 +1,76 @@
+# Spring Boot Example with Camel REST DSL and Swagger
+
+### Introduction
+
+This example illustrates how to use https://projects.spring.io/spring-boot/[Spring Boot] with http://camel.apache.org[Camel]. It provides a simple REST service that is created with http://camel.apache.org/rest-dsl.html[Camel REST DSL] and documented with http://swagger.io[Swagger].
+
+The project uses the `camel-spring-boot-starter` dependency, a Spring Boot starter dependency for Camel that simplifies the Maven configuration. 
+
+The project also uses `camel-servlet` component as the HTTP transport component for Camel REST DSL.
+
+### Build
+
+You can build this example using:
+
+    $ mvn package
+
+### Run
+
+You can run this example using:
+
+    $ mvn spring-boot:run
+
+You should see the following output when the application is launched:
+
+----
+[...]
+[INFO] --- spring-boot-maven-plugin:1.5.1.RELEASE:run (default-cli) @ camel-example-spring-boot-rest-swagger ---
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v1.5.1.RELEASE)
+[...]
+2017-03-05 14:55:44.032  INFO 15312 --- [           main] o.a.camel.spring.SpringCamelContext      : Total 4 routes, of which 4 are started.
+2017-03-05 14:55:44.034  INFO 15312 --- [           main] o.a.camel.spring.SpringCamelContext      : Apache Camel 2.19.0-SNAPSHOT (CamelContext: camel-1) started in 0.614 seconds
+2017-03-05 14:55:44.131  INFO 15312 --- [           main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8080 (http)
+2017-03-05 14:55:44.140  INFO 15312 --- [           main] o.a.c.example.springboot.Application     : Started Application in 6.265 seconds (JVM running for 21.092)
+----
+
+After the Spring Boot application is started, you can open the following URL in your web browser to access the REST endpoint and retrieve a list of users: http://localhost:8080/camel/users
+
+You can also access the REST endpoint from the command line:
+
+    $ curl http://localhost:8080/camel/users
+
+
+The command will produce the following output:
+
+----
+[ {
+  "id" : 1,
+  "name" : "John Coltrane"
+}, {
+  "id" : 2,
+  "name" : "Miles Davis"
+}, {
+  "id" : 3,
+  "name" : "Sonny Rollins"
+} ]
+----
+
+The Swagger documentation is located at: http://localhost:8080/camel/api-doc and can be retrieved with the following command:
+
+    $ curl http://localhost:8080/camel/api-doc
+
+The Spring Boot application can be stopped pressing `[CTRL]`+`[C]` in the shell.
+
+### Help
+
+If you hit any problems please let us know on the http://camel.apache.org/discussion-forums.html[Camel Forums].
+
+Please help us make Apache Camel better - we appreciate any feedback you may have. Enjoy!
+
+The Camel riders!

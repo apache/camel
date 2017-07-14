@@ -22,15 +22,10 @@ import org.apache.commons.lang.Validate;
 public class TestRouteBuilder extends RouteBuilder {
 
     // Configured fields
-    @SuppressWarnings("unused")
     private Integer maximumRedeliveries;
-    @SuppressWarnings("unused")
     private Long redeliveryDelay;
-    @SuppressWarnings("unused")
     private Double backOffMultiplier;
-    @SuppressWarnings("unused")
     private Long maximumRedeliveryDelay;
-    @SuppressWarnings("unused")
     private String camelRouteId;
 
     @Override
@@ -49,7 +44,7 @@ public class TestRouteBuilder extends RouteBuilder {
                 .to("{{to}}");
     }
 
-    public void checkProperties() {
+    private void checkProperties() {
         Validate.notNull(maximumRedeliveries, "maximumRedeliveries property is not set");
         Validate.notNull(redeliveryDelay, "redeliveryDelay property is not set");
         Validate.notNull(backOffMultiplier, "backOffMultiplier property is not set");

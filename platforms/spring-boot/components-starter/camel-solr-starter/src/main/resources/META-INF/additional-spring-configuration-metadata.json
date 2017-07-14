@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.solr.enabled",
+      "description": "Enable solr component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

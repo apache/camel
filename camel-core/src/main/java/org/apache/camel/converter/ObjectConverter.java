@@ -38,6 +38,10 @@ public final class ObjectConverter {
     private ObjectConverter() {
     }
 
+    /**
+     * @deprecated not in use
+     */
+    @Deprecated
     public static boolean isCollection(Object value) {
         return value instanceof Collection || (value != null && value.getClass().isArray());
     }

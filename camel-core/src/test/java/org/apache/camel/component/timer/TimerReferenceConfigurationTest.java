@@ -94,8 +94,6 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
 
     /**
      * Test that the reference configuration params are correct
-     *
-     * @throws Exception
      */
     public void testReferenceConfiguration() throws Exception {
 
@@ -119,8 +117,6 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
 
     /**
      * Test that the 'value' configuration params are correct
-     *
-     * @throws Exception
      */
     public void testValueConfiguration() throws Exception {
         Endpoint e = context.getEndpoint(valueTimerUri);

@@ -18,11 +18,14 @@ package org.apache.camel.component.docker;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.DockerCmdExecFactory;
+import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
-import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.LocalDirectorySSLConfig;
 import com.github.dockerjava.core.SSLConfig;
-import com.github.dockerjava.jaxrs.DockerCmdExecFactoryImpl;
+import com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory;
+import com.github.dockerjava.netty.NettyDockerCmdExecFactory;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.component.docker.ssl.NoImplSslConfig;
@@ -40,11 +43,10 @@ public final class DockerClientFactory {
     /**
      * Produces a {@link DockerClient} to communicate with Docker
      */
+    @SuppressWarnings("resource")
     public static DockerClient getDockerClient(DockerComponent dockerComponent, DockerConfiguration dockerConfiguration, Message message) throws DockerException {
 
         ObjectHelper.notNull(dockerConfiguration, "dockerConfiguration");
-
-        DockerClientProfile clientProfile = new DockerClientProfile();
 
         Integer port = DockerHelper.getProperty(DockerConstants.DOCKER_PORT, dockerConfiguration, message, Integer.class, dockerConfiguration.getPort());
         String host = DockerHelper.getProperty(DockerConstants.DOCKER_HOST, dockerConfiguration, message, String.class, dockerConfiguration.getHost());
@@ -62,10 +64,13 @@ public final class DockerClientFactory {
         String serverAddress = DockerHelper.getProperty(DockerConstants.DOCKER_SERVER_ADDRESS, dockerConfiguration, message, String.class, dockerConfiguration.getServerAddress());
         String certPath = DockerHelper.getProperty(DockerConstants.DOCKER_CERT_PATH, dockerConfiguration, message, String.class, dockerConfiguration.getCertPath());
         Boolean secure = DockerHelper.getProperty(DockerConstants.DOCKER_SECURE, dockerConfiguration, message, Boolean.class, dockerConfiguration.isSecure());
-        Boolean loggingFilter = DockerHelper.getProperty(DockerConstants.DOCKER_LOGGING_FILTER, dockerConfiguration, message, Boolean.class, dockerConfiguration.isLoggingFilterEnabled());
-        Boolean followRedirectFilter = DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_REDIRECT_FILTER, dockerConfiguration, message, 
-                Boolean.class, dockerConfiguration.isFollowRedirectFilterEnabled());
-        
+        Boolean tlsVerify = DockerHelper.getProperty(DockerConstants.DOCKER_TLSVERIFY, dockerConfiguration, message, Boolean.class, dockerConfiguration.isTlsVerify());
+        Boolean socket = DockerHelper.getProperty(DockerConstants.DOCKER_SOCKET_ENABLED, dockerConfiguration, message, Boolean.class, dockerConfiguration.isSocket());
+
+        String cmdExecFactory = DockerHelper.getProperty(DockerConstants.DOCKER_CMD_EXEC_FACTORY,
+            dockerConfiguration, message, String.class, dockerConfiguration.getCmdExecFactory());
+
+        DockerClientProfile clientProfile = new DockerClientProfile();
         clientProfile.setHost(host);
         clientProfile.setPort(port);
         clientProfile.setEmail(email);
@@ -77,13 +82,14 @@ public final class DockerClientFactory {
         clientProfile.setMaxTotalConnections(maxTotalConnections);
         clientProfile.setMaxPerRouteConnections(maxPerRouteConnections);
         clientProfile.setSecure(secure);
-        clientProfile.setFollowRedirectFilter(followRedirectFilter);
-        clientProfile.setLoggingFilter(loggingFilter);
+        clientProfile.setTlsVerify(tlsVerify);
+        clientProfile.setSocket(socket);
+        clientProfile.setCmdExecFactory(cmdExecFactory);
 
-        DockerClient client = dockerComponent.getClient(clientProfile);
+        DockerClient dockerClient = dockerComponent.getClient(clientProfile);
 
-        if (client != null) {
-            return client;
+        if (dockerClient != null) {
+            return dockerClient;
         }
 
         SSLConfig sslConfig;
@@ -96,29 +102,49 @@ public final class DockerClientFactory {
             sslConfig = new NoImplSslConfig();
         }
 
-        DockerClientConfig.DockerClientConfigBuilder configBuilder = new DockerClientConfig.DockerClientConfigBuilder().withUsername(clientProfile.getUsername())
-            .withPassword(clientProfile.getPassword()).withEmail(clientProfile.getEmail()).withReadTimeout(clientProfile.getRequestTimeout()).withUri(clientProfile.toUrl())
-            .withMaxPerRouteConnections(clientProfile.getMaxPerRouteConnections()).withMaxTotalConnections(clientProfile.getMaxTotalConnections()).withSSLConfig(sslConfig)
-            .withServerAddress(clientProfile.getServerAddress());
+        DefaultDockerClientConfig.Builder configBuilder = DefaultDockerClientConfig.createDefaultConfigBuilder()
+            .withDockerHost(clientProfile.toUrl())
+            .withDockerTlsVerify(clientProfile.isTlsVerify())
+            .withRegistryUsername(clientProfile.getUsername())
+            .withRegistryPassword(clientProfile.getPassword())
+            .withRegistryEmail(clientProfile.getEmail())
+            .withRegistryUrl(clientProfile.getServerAddress())
+            .withCustomSslConfig(sslConfig);
 
         if (clientProfile.getCertPath() != null) {
             configBuilder.withDockerCertPath(clientProfile.getCertPath());
         }
-        
-        if (clientProfile.isFollowRedirectFilterEnabled() != null && clientProfile.isFollowRedirectFilterEnabled()) {
-            configBuilder.withFollowRedirectsFilter(clientProfile.isFollowRedirectFilterEnabled());
-        }
 
-        if (clientProfile.isLoggingFilterEnabled() != null && clientProfile.isLoggingFilterEnabled()) {
-            configBuilder.withLoggingFilter(clientProfile.isLoggingFilterEnabled());
-        }
-        
-        DockerClientConfig config = configBuilder.build();
-        DockerCmdExecFactory dockerClientFactory = new DockerCmdExecFactoryImpl();
-        client = DockerClientBuilder.getInstance(config).withDockerCmdExecFactory(dockerClientFactory).build();
-        dockerComponent.setClient(clientProfile, client);
+        CamelContext camelContext = dockerComponent.getCamelContext();
+        try {
+            DockerCmdExecFactory factory = null;
 
-        return client;
+            if (cmdExecFactory.equals(JerseyDockerCmdExecFactory.class.getName())) {
+                factory = new JerseyDockerCmdExecFactory();
+                ((JerseyDockerCmdExecFactory) factory)
+                    .withReadTimeout(clientProfile.getRequestTimeout())
+                    .withConnectTimeout(clientProfile.getRequestTimeout())
+                    .withMaxTotalConnections(clientProfile.getMaxTotalConnections())
+                    .withMaxPerRouteConnections(clientProfile.getMaxPerRouteConnections());
+            } else if (cmdExecFactory.equals(NettyDockerCmdExecFactory.class.getName())) {
+                factory = new NettyDockerCmdExecFactory();
+                ((NettyDockerCmdExecFactory) factory)
+                    .withConnectTimeout(clientProfile.getRequestTimeout());
+            } else {
+                Class<DockerCmdExecFactory> clazz = camelContext.getClassResolver().resolveMandatoryClass(cmdExecFactory, DockerCmdExecFactory.class);
+                factory = ObjectHelper.newInstance(clazz);
+            }
+
+            dockerClient = DockerClientBuilder.getInstance(configBuilder)
+                .withDockerCmdExecFactory(factory)
+                .build();
+
+            dockerComponent.setClient(clientProfile, dockerClient);
+
+            return dockerClient;
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Unable to resolve DockerCmdExecFactory class: " + cmdExecFactory, e);
+        }
     }
 
 }

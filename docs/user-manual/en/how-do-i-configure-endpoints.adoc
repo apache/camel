@@ -1,0 +1,330 @@
+[[HowdoIconfigureendpoints-HowdoIconfigureendpoints]]
+How do I configure endpoints?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are a few different approaches to configuring components and
+endpoints.
+
+[[HowdoIconfigureendpoints-UsingJavaCode]]
+Using Java Code
+^^^^^^^^^^^^^^^
+
+You can explicitly configure a link:component.html[Component] using Java
+code as shown in this link:walk-through-an-example.html[example]
+
+Or you can explicitly get hold of an link:endpoint.html[Endpoint] and
+configure it using Java code as shown in the link:mock.html[Mock
+endpoint examples].
+
+[source,java]
+----
+SomeEndpoint endpoint = camelContext.getEndpoint("someURI", SomeEndpoint.class);
+endpoint.setSomething("aValue");
+----
+
+[[HowdoIconfigureendpoints-UsingCDI]]
+Using CDI
+^^^^^^^^^
+
+You can use link:cdi.html[CDI] as dependency injection framework to configure
+your link:component.html[Component] or link:endpoint.html[Endpoint] instances.
+
+For example, to configure the SJMS component, you can declare a producer method
+in a CDI bean:
+
+[source,java]
+----
+class MyCdiComponent {
+
+  @PropertyInject("jms.maxConnections")
+  int maxConnections;
+
+  @Produces
+  @Named("sjms")
+  @ApplicationScoped
+    SjmsComponent sjms() {
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(new ActiveMQConnectionFactory("vm://broker?broker.persistent=false"));
+        component.setConnectionCount(maxConnections);
+        return component;
+    }
+}
+----
+
+Then, the component is lazily looked-up by Camel CDI whenever it is referenced,
+e.g. from the Camel Java DSL:
+
+[source,java]
+----
+class MyCdiRoute extends RouteBuilder {
+
+    @Override
+    public void configure() {
+        from("sjms:sample.queue")
+            .log("Received message [${body}]");
+    }
+}
+----
+
+Besides, endpoints of that component can be injected in any CDI beans, e.g.:
+
+[source,java]
+----
+class MyCdiBean {
+
+    @Inject
+    @Uri("sjms:sample.queue")
+    Endpoint endpoint;
+}
+----
+
+
+[[HowdoIconfigureendpoints-UsingGuice]]
+Using Guice
+^^^^^^^^^^^
+
+You can also use link:guice.html[Guice] as the dependency injection
+framework. For example see the link:guice-jms-example.html[Guice JMS
+Example].
+
+[[HowdoIconfigureendpoints-UsingSpringXML]]
+Using Spring XML
+^^^^^^^^^^^^^^^^
+
+You can configure your link:component.html[Component] or
+link:endpoint.html[Endpoint] instances in your link:spring.html[Spring]
+XML as follows:
+
+[source,xml]
+----
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="agent" disabled="true"/>
+</camelContext>
+
+<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+  <property name="connectionFactory">
+    <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+      <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+    </bean>
+  </property>
+</bean>
+----
+
+Which allows you to configure a component using some name (activemq in
+the above example), then you can refer to the component using
+`activemq:[queue:|topic:]destinationName`. This works by the
+`SpringCamelContext` lazily fetching components from the spring context
+for the scheme name you use for link:endpoint.html[Endpoint]
+link:uris.html[URIs]
+
+[[HowdoIconfigureendpoints-UsingEndpointURIs]]
+Using Endpoint URIs
+^^^^^^^^^^^^^^^^^^^
+
+Another approach is to use the URI syntax. The URI syntax supports the
+query notation. So for example with the link:mail.html[Mail] component
+you can configure the password property via the URI
+
+[source]
+----
+pop3://host:port?password=foo
+----
+
+[[HowdoIconfigureendpoints-ReferringbeansfromEndpointURIs]]
+Referring beans from Endpoint URIs
+++++++++++++++++++++++++++++++++++
+
+*Available as of Camel 2.0*
+
+When configuring endpoints using URI syntax you can now refer to beans
+in the link:registry.html[Registry] using the `#` notation.
+
+If the parameter value starts with a `#` sign then Camel will lookup in
+the link:registry.html[Registry] for a bean of the given type. For
+instance:
+
+[source]
+----
+file://inbox?sorter=#mySpecialFileSorter
+----
+
+Will lookup a bean with the id `mySpecialFileSorter` in the
+link:registry.html[Registry].
+
+[[HowdoIconfigureendpoints-Configuringparametervaluesusingrawvalues,egsuchaspasswords]]
+Configuring parameter values using raw values, eg such as passwords
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+*Available as of Camel 2.11*
+
+When configuring endpoint options using URI syntax, then the values is
+by default URI encoded. This can be a problem if you want to configure
+passwords and just use the value _as is_ without any encoding. For
+example you may have a plus sign in the password, which would be decimal
+encoded by default.
+
+So from Camel 2.11 onwards we made this easier as you can denote a
+parameter value to be *raw* using the following syntax `RAW(value)`, e.g.
+the value starts with `RAW(` and then ends with the parenthesis `)`.
+Here is a little example:
+
+[source,java]
+----
+.to("ftp:joe@myftpserver.com?password=RAW(se+re?t&23)&binary=true")
+----
+
+In the above example, we have declare the password value as raw, and the
+actual password would be as typed, eg `se+re?t&23`.
+
+[[HowdoIconfigureendpoints-Usingpropertyplaceholders]]
+Using property placeholders
++++++++++++++++++++++++++++
+
+Camel have extensive support for using property placeholders, which you
+can read more link:using-propertyplaceholder.html[about here]. For
+example in the ftp example above we can externalize the password to a
+`.properties` file.
+
+For example configuring the property placeholder when using a
+link:dsl.html[XML DSL], where we declare the location of the `.properties`
+file. Though we can also define this in Java code. See the
+link:using-propertyplaceholder.html[documentation] for more details.
+
+[source,xml]
+----
+<camelContext ...>
+   <propertyPlaceholder id="properties" location="myftp.properties"/>
+   ...
+</camelContext>
+----
+
+And the Camel route now refers to the placeholder using the `{{key}}`
+notation:
+
+[source,java]
+----
+.to("ftp:joe@myftpserver.com?password={{myFtpPassword}}&binary=true"
+----
+
+And have a `myftp.properties` file with password. Notice we still define
+the `RAW(value)` style to ensure the password is used _as is_:
+
+[source]
+----
+myFtpPassword=RAW(se+re?t&23)
+----
+
+We could still have used the `RAW(value)` in the Camel route instead:
+
+[source,java]
+----
+.to("ftp:joe@myftpserver.com?password=RAW({{myFtpPassword}})&binary=true")
+----
+
+And then we would need to remove the `RAW` from the properties file:
+
+[source]
+----
+myFtpPassword=se+re?t&23
+----
+
+To understand more about property placeholders, read the
+link:using-propertyplaceholder.html[documentation].
+
+[[HowdoIconfigureendpoints-Configuringurisusingendpointwithbeanpropertystyle]]
+Configuring URIs using endpoint with bean property style
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.15*
+
+Sometimes configuring endpoint URIs may have many options, and therefore
+the URI can become long. In Java DSL you can break the URIs into new
+lines as its just Java code, e.g. just concat the `String`. When using XML
+DSL then the URI is an attribute, e.g. `<from uri="bla bla"/>`. From Camel
+2.15 onwards you can configure the endpoint separately, and from the
+routes refer to the endpoints using their shorthand ids. 
+
+[source,xml]
+----
+<camelContext ...>
+ 
+  <endpoint id="foo" uri="ftp://foo@myserver">
+    <property key="password" value="secret"/>
+    <property key="recursive" value="true"/>
+    <property key="ftpClient.dataTimeout" value="30000"/>
+    <property key="ftpClient.serverLanguageCode" value="fr"/> 
+  </endpoint>
+ 
+  <route>
+    <from uri="ref:foo"/>
+    ...
+  </route>
+</camelContext>
+----
+
+ 
+
+In the example above, the endpoint with id `foo`, is defined using
+`<endpoint>` which under the covers assembles this as an URI, with all the
+options, as if you have defined all the options directly in the URI. You
+can still configure some options in the URI, and then use `<property>`
+style for additional options, or to override options from the URI, such
+as:
+
+[source]
+----
+<endpoint id="foo" uri="ftp://foo@myserver?recursive=true">
+  <property key="password" value="secret"/>
+  <property key="ftpClient.dataTimeout" value="30000"/>
+  <property key="ftpClient.serverLanguageCode" value="fr"/>
+</endpoint>
+----
+
+ 
+
+[[HowdoIconfigureendpoints-Configuringlongurisusingnewlines]]
+Configuring long URIs using new lines
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.15*
+
+Sometimes configuring endpoint URIs may have many options, and therefore
+the URI can become long. In Java DSL you can break the URIs into new
+lines as its just Java code, e.g. just concat the `String`. When using XML
+DSL then the URI is an attribute, e.g. `<from uri="bla bla"/>`. From Camel
+2.15 onwards you can break the URI attribute using new line, such as
+shown below:
+
+[source,xml]
+----
+<route>
+  <from uri="ftp://foo@myserver?password=secret&amp;
+           recursive=true&amp;
+           ftpClient.dataTimeout=30000&amp;
+           ftpClientConfig.serverLanguageCode=fr"/>
+  <to uri="bean:doSomething"/>
+</route>
+----
+
+Notice that it still requires to use escape `&` as `&ampl;` in XML. Also you
+can have multiple options in one line, eg this is the same:
+
+[source,xml]
+----
+<route>
+  <from uri="ftp://foo@myserver?password=secret&amp;
+           recursive=true&amp;ftpClient.dataTimeout=30000&amp;
+           ftpClientConfig.serverLanguageCode=fr"/>
+  <to uri="bean:doSomething"/>
+</route>
+----
+
+[[HowdoIconfigureendpoints-SeeAlso]]
+See Also
+~~~~~~~~
+
+* link:how-do-i-add-a-component.html[How do I add a component]
+* link:cdi.html[CDI]
+* link:spring.html[Spring]
+* link:uris.html[URIs]
+* link:using-propertyplaceholder.html[Using `PropertyPlaceholder`]

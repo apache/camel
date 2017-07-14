@@ -30,6 +30,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ElementType.FIELD})
+@Deprecated
 public @interface URIField {
     String component() default "";
     String parameter() default "";

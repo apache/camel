@@ -95,13 +95,13 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
 
     @Test
     public void removeSpecifiedValue() throws InterruptedException {
-        template.sendBody("direct:removevalue", "foo2");
+        template.sendBody("direct:removeValue", "foo2");
         verify(queue).remove("foo2");
     }
 
     @Test
     public void removeValue() {
-        template.sendBody("direct:removevalue", null);
+        template.sendBody("direct:removeValue", null);
         verify(queue).remove();
     }
 
@@ -124,7 +124,7 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
     @Test
     public void remainingCapacity() throws InterruptedException {
         when(queue.remainingCapacity()).thenReturn(10);
-        int answer = template.requestBody("direct:remainingCapacity", null, Integer.class);
+        int answer = template.requestBody("direct:REMAINING_CAPACITY", null, Integer.class);
         verify(queue).remainingCapacity();
         assertEquals(10, answer);
     }
@@ -145,32 +145,32 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:no-operation").to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
+                from("direct:no-operation").to(String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 
-                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
+                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 
-                from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
+                from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT)).to(String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 
-                from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.ADD_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
+                from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.ADD)).to(String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 
-                from("direct:offer").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.OFFER_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
+                from("direct:offer").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.OFFER)).to(String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 
-                from("direct:poll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.POLL_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
+                from("direct:poll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.POLL)).to(String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 
-                from("direct:peek").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PEEK_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
+                from("direct:peek").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PEEK)).to(String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 
-                from("direct:removevalue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMOVEVALUE_OPERATION)).to(
-                        String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
+                from("direct:removeValue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMOVE_VALUE)).to(
+                        String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 
-                from("direct:remainingCapacity").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMAINING_CAPACITY_OPERATION)).to(
-                        String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
+                from("direct:REMAINING_CAPACITY").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMAINING_CAPACITY)).to(
+                        String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
                 
-                from("direct:drainTo").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.DRAIN_TO_OPERATION)).to(
-                        String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
+                from("direct:drainTo").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DRAIN_TO)).to(
+                        String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
                 
-                from("direct:putWithOperationNumber").toF(String.format("hazelcast:%sbar?operation=%s", HazelcastConstants.QUEUE_PREFIX, HazelcastConstants.PUT_OPERATION));
+                from("direct:putWithOperationNumber").toF(String.format("hazelcast-%sbar?operation=%s", HazelcastConstants.QUEUE_PREFIX, HazelcastOperation.PUT));
 
-                from("direct:putWithOperationName").toF(String.format("hazelcast:%sbar?operation=put", HazelcastConstants.QUEUE_PREFIX));
+                from("direct:putWithOperationName").toF(String.format("hazelcast-%sbar?operation=PUT", HazelcastConstants.QUEUE_PREFIX));
             }
         };
     }

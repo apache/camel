@@ -28,6 +28,8 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
+import static org.hamcrest.core.Is.is;
+
 /**
  * This test validates that header and footer records are successfully
  * marshalled / unmarshalled in conjunction with the primary data records
@@ -37,11 +39,15 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
 
     public static final String URI_DIRECT_UNMARSHALL = "direct:unmarshall";
     public static final String URI_MOCK_UNMARSHALL_RESULT = "mock:unmarshall-result";
+    public static final String URI_DIRECT_MARSHALL = "direct:marshall";
+    public static final String URI_MOCK_MARSHALL_RESULT = "mock:marshall-result";
 
     private static final String TEST_RECORD = "AAABBBCCC\r\n";
 
     @EndpointInject(uri = URI_MOCK_UNMARSHALL_RESULT)
     private MockEndpoint unmarshallResult;
+    @EndpointInject(uri = URI_MOCK_MARSHALL_RESULT)
+    private MockEndpoint marshallResult;
 
     // *************************************************************************
     // TESTS
@@ -65,6 +71,28 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
         assertEquals("BBB", order.subRec.fieldB);
     }
 
+    @Test
+    public void testMarshallMessage() throws Exception {
+
+        marshallResult.expectedMessageCount(1);
+
+        Order order = new Order();
+        order.setFieldA("AAA");
+        order.setFieldC("CCC");
+        SubRec subRec = new SubRec();
+        subRec.setFieldB("BBB");
+        order.setSubRec(subRec);
+
+        template.sendBody(URI_DIRECT_MARSHALL, order);
+
+        marshallResult.assertIsSatisfied();
+
+        // check the model
+        Exchange exchange = marshallResult.getReceivedExchanges().get(0);
+        String asString = exchange.getIn().getBody(String.class);
+        assertThat(asString, is("AAABBBCCC\r\n"));
+    }
+
     // *************************************************************************
     // ROUTES
     // *************************************************************************
@@ -83,6 +111,10 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
                 from(URI_DIRECT_UNMARSHALL)
                         .unmarshal(bindy)
                         .to(URI_MOCK_UNMARSHALL_RESULT);
+
+                from(URI_DIRECT_MARSHALL)
+                        .marshal(bindy)
+                        .to(URI_MOCK_MARSHALL_RESULT);
             }
         };
 

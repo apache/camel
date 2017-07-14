@@ -139,15 +139,17 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
 
             // filter candidates based on endpoint and exchange properties
             final Set<String> argNames = properties.keySet();
-            final List<ApiMethod> filteredMethods = methodHelper.filterMethods(candidates,
-                    ApiMethodHelper.MatchType.SUPER_SET,
-                    argNames.toArray(new String[argNames.size()]));
+            final List<ApiMethod> filteredMethods = methodHelper.filterMethods(
+                candidates,
+                ApiMethodHelper.MatchType.SUPER_SET,
+                argNames);
 
             // get the method to call
             if (filteredMethods.isEmpty()) {
-                final Set<String> missing = methodHelper.getMissingProperties(endpoint.getMethodName(), argNames);
                 throw new RuntimeCamelException(String.format("Missing properties for %s, need one or more from %s",
-                        endpoint.getMethodName(), missing));
+                    endpoint.getMethodName(),
+                    methodHelper.getMissingProperties(endpoint.getMethodName(), argNames))
+                );
             } else if (filteredMethods.size() == 1) {
                 // found an exact match
                 method = filteredMethods.get(0);

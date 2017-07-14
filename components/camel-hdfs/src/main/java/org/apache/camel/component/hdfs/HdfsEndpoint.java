@@ -23,12 +23,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-@UriEndpoint(scheme = "hdfs", title = "HDFS", syntax = "hdfs:hostName:port/path", consumerClass = HdfsConsumer.class, label = "hadoop,file")
-public class HdfsEndpoint extends DefaultEndpoint {
+/**
+ * For reading/writing from/to an HDFS filesystem using Hadoop 1.x.
+ */
+@UriEndpoint(firstVersion = "2.8.0", scheme = "hdfs", title = "HDFS", syntax = "hdfs:hostName:port/path", consumerClass = HdfsConsumer.class, label = "hadoop,file")
+public class HdfsEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
     private final HdfsConfiguration config;

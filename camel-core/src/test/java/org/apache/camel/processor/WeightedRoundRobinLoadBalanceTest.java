@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -123,8 +124,9 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
             });
             context.start();
             fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Loadbalacing with 3 should match number of distributions 2", e.getMessage());
+        } catch (FailedToCreateRouteException e) {
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Loadbalacing with 3 should match number of distributions 2", iae.getMessage());
         }
     }
     

@@ -30,7 +30,7 @@ public class Mina2ReverseProtocolHandler extends IoHandlerAdapter {
     public void exceptionCaught(IoSession session, Throwable cause) {
         cause.printStackTrace();
         // Close connection when unexpected exception is caught.
-        session.close(true);
+        session.closeNow();
     }
 
     public void messageReceived(IoSession session, Object message) {
@@ -43,7 +43,7 @@ public class Mina2ReverseProtocolHandler extends IoHandlerAdapter {
 
         if (TestSupport.isPlatform("windows")) {
             // seems to be only required on windows to make it work!
-            buf.append(System.getProperty("line.separator"));
+            buf.append(System.lineSeparator());
         }
 
         // and write it back.

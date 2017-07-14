@@ -23,6 +23,7 @@ import java.lang.reflect.AccessibleObject;
  * which has access to its underlying annotations to be able to expose additional validation
  * and conversion metadata for the parameter via annotations
  */
+@Deprecated
 public class AnnotatedParameterConfiguration extends ParameterConfiguration {
     private final AccessibleObject accessibleObject;
 

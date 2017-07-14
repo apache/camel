@@ -50,13 +50,31 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
     public XStreamDataFormat(XStream xstream) {
         super(xstream);
     }
-    
+
+    @Override
+    public String getDataFormatName() {
+        return "xstream";
+    }
+
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
     
     public String getEncoding() {
         return encoding;
+    }
+
+    @Override
+    public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
+        super.marshal(exchange, body, stream);
+
+        if (isContentTypeHeader()) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            }
+        }
     }
 
     /**

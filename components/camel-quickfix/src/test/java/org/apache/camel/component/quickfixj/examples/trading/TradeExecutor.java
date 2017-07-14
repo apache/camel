@@ -420,7 +420,7 @@ public class TradeExecutor {
     private static class DefaultMarketQuoteProvider implements MarketQuoteProvider {
         private double defaultMarketPrice;
         
-        public DefaultMarketQuoteProvider(double defaultMarketPrice) {
+        DefaultMarketQuoteProvider(double defaultMarketPrice) {
             this.defaultMarketPrice = defaultMarketPrice;
         }
 

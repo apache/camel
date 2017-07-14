@@ -83,8 +83,8 @@ public class FileRouteOnDosWithNoVolTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://" + path + "/route/poller").to("file://" + path + "/route/out", "mock:result");    
-                from("file://" + path + "/from/poller").to("mock:result");    
+                from("file://" + path + "/route/poller?initialDelay=0&delay=10").to("file://" + path + "/route/out", "mock:result");
+                from("file://" + path + "/from/poller?initialDelay=0&delay=10").to("mock:result");
                 from("direct:report").to("file://" + path + "/to/out", "mock:result");    
             }
         };

@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
+import org.apache.camel.Suspendable;
 import org.apache.camel.support.ServiceSupport;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -42,7 +43,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link org.apache.camel.component.netty.NettyServerBootstrapFactory} which is used by a single consumer (not shared).
  */
-public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
+public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory, Suspendable {
 
     protected static final Logger LOG = LoggerFactory.getLogger(ClientModeTCPNettyServerBootstrapFactory.class);
     private CamelContext camelContext;

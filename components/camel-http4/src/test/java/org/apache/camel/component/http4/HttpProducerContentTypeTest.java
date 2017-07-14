@@ -36,7 +36,7 @@ import org.junit.Test;
 
 public class HttpProducerContentTypeTest extends BaseHttpTest {
 
-    private static final String CONTENT_TYPE = "multipart/form-data;boundary=---------------------------j2radvtrk";
+    private static final String CONTENT_TYPE = "multipart/form-data boundary=---------------------------j2radvtrk";
     
     private HttpServer localServer;
     

@@ -91,9 +91,11 @@ public class NettyConsumerClientModeTest extends BaseNettyTest {
     private static class MyServer {
         private int port;
         private ServerBootstrap bootstrap;
-        public MyServer(int port) {
+
+        MyServer(int port) {
             this.port = port;
         }
+
         public void start() {
             // Configure the server.
             bootstrap = new ServerBootstrap(

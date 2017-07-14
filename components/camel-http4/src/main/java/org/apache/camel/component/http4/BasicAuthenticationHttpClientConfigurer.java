@@ -30,8 +30,8 @@ public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfig
     private final String host;
 
     public BasicAuthenticationHttpClientConfigurer(String user, String pwd, String domain, String host) {
-        username = user;
-        password = pwd;
+        this.username = user;
+        this.password = pwd;
         this.domain = domain;
         this.host = host;
     }

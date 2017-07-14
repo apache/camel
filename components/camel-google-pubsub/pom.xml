@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>components</artifactId>
+        <version>2.20.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>camel-google-pubsub</artifactId>
+    <packaging>jar</packaging>
+    <name>Camel :: GooglePubsub</name>
+    <description>Camel Component for Google Cloud Platform Pubsub</description>
+
+    <properties>
+        <schemeName>google-pubsub</schemeName>
+        <componentName>GooglePubSub</componentName>
+        <componentPackage>org.apache.camel.component.google.pubsub</componentPackage>
+        <camel.osgi.export.pkg>org.apache.camel.component.google.pubsub</camel.osgi.export.pkg>
+        <camel.osgi.export.service>
+            org.apache.camel.spi.ComponentResolver;component=google-pubsub
+        </camel.osgi.export.service>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-pubsub</artifactId>
+            <version>${google-api-services-pubsub-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/unit/*Test.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-api-component-maven-plugin</artifactId>
+                    <version>${project.version}</version>
+                    <configuration>
+                        <scheme>${schemeName}</scheme>
+                        <componentName>${componentName}</componentName>
+                        <componentPackage>${componentPackage}</componentPackage>
+                        <outPackage>${outPackage}</outPackage>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-api-component-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <scheme>${schemeName}</scheme>
+                    <componentName>${componentName}</componentName>
+                    <componentPackage>${componentPackage}</componentPackage>
+                    <outPackage>${outPackage}</outPackage>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <profiles>
+        <profile>
+            <id>google-pubsub-test</id>
+            <build>
+                <plugins>
+
+                    <!--
+                        PUBSUB EMULATOR
+                        depends on Google SDK being installed and available in $PATH
+                        https://cloud.google.com/sdk/downloads
+                     -->
+                    <plugin>
+                        <groupId>com.bazaarvoice.maven.plugins</groupId>
+                        <artifactId>process-exec-maven-plugin</artifactId>
+                        <version>0.7</version>
+                        <executions>
+
+                            <!-- Start : compile, before tests -->
+                            <execution>
+                                <id>pubsub-emulator</id>
+                                <phase>test-compile</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <configuration>
+                                    <name>Google PubSub Emulator</name>
+                                    <waitForInterrupt>false</waitForInterrupt>
+                                    <healthcheckUrl>http://localhost:8383</healthcheckUrl>
+                                    <workingDir>/tmp</workingDir>
+                                    <arguments>
+                                            <argument>java</argument>
+                                            <argument>
+                                                -Djava.util.logging.config.file=${project.basedir}/src/test/resources/logging.properties
+                                            </argument>
+                                            <argument>-jar</argument>
+                                            <argument>
+                                                ${env.GCLOUD_SDK_PATH}/platform/pubsub-emulator/lib/cloud-pubsub-emulator-0.1-SNAPSHOT-all.jar
+                                            </argument>
+                                            <argument>--port=8383</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+
+                            <!-- Stop : package, after test -->
+                            <execution>
+                                <id>stop-all</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>stop-all</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <childDelegation>false</childDelegation>
+                            <useFile>true</useFile>
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

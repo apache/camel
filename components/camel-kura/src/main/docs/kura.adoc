@@ -1,0 +1,320 @@
+[[Kura-EclipseKuracomponent]]
+Eclipse Kura component
+~~~~~~~~~~~~~~~~~~~~~~
+
+*Available as of Camel 2.15*
+
+This documentation page covers the integration options of Camel with the
+https://eclipse.org/kura/[Eclipse Kura] M2M gateway. The common reason
+to deploy Camel routes into the Eclipse Kura is to provide enterprise
+integration patterns and Camel components to the messaging M2M gateway.
+For example you might want to install Kura on Raspberry PI, then read
+temperature from the sensor attached to that Raspberry PI using Kura
+services and finally forward the current temperature value to your data
+center service using Camel EIP and components.
+
+[[Kura-KuraRouteractivator]]
+KuraRouter activator
+^^^^^^^^^^^^^^^^^^^^
+
+Bundles deployed to the Eclipse Kura are usually
+http://eclipse.github.io/kura/doc/hello-example.html#create-java-class[developed
+as bundle activators]. So the easiest way to deploy Apache Camel routes
+into the Kura is to create an OSGi bundle containing the class extending
+`org.apache.camel.kura.KuraRouter` class:
+
+[source,java]
+-------------------------------------------------------
+public class MyKuraRouter extends KuraRouter {
+
+  @Override
+  public void configure() throws Exception {
+    from("timer:trigger").
+      to("netty-http:http://app.mydatacenter.com/api");
+  }
+
+}
+-------------------------------------------------------
+
+Keep in mind that `KuraRouter` implements
+the `org.osgi.framework.BundleActivator` interface, so you need to
+register its `start` and `stop` lifecycle methods
+while http://eclipse.github.io/kura/doc/hello-example.html#create-component-class[creating
+Kura bundle component class].
+
+Kura router starts its own OSGi-aware `CamelContext`. It means that for
+every class extending `KuraRouter`, there will be a dedicated
+`CamelContext` instance. Ideally we recommend to deploy one `KuraRouter`
+per OSGi bundle.
+
+[[Kura-DeployingKuraRouter]]
+Deploying KuraRouter
+^^^^^^^^^^^^^^^^^^^^
+
+Bundle containing your Kura router class should import the following
+packages in the OSGi manifest:
+
+[source,xml]
+--------------------------------------------------------------------------------------------------------------------
+Import-Package: org.osgi.framework;version="1.3.0",
+  org.slf4j;version="1.6.4",
+  org.apache.camel,org.apache.camel.impl,org.apache.camel.core.osgi,org.apache.camel.builder,org.apache.camel.model,
+  org.apache.camel.component.kura
+--------------------------------------------------------------------------------------------------------------------
+
+Keep in mind that you don't have to import every Camel component bundle
+you plan to use in your routes, as Camel components are resolved as the
+services on the runtime level.
+
+Before you deploy your router bundle, be sure that you have deployed
+(and started) the following Camel core bundles (using Kura GoGo
+shell)...
+
+[source,xml]
+-----------------------------------------------------------------------------------------------------------
+install file:///home/user/.m2/repository/org/apache/camel/camel-core/2.15.0/camel-core-2.15.0.jar
+start <camel-core-bundle-id>
+install file:///home/user/.m2/repository/org/apache/camel/camel-core-osgi/2.15.0/camel-core-osgi-2.15.0.jar
+start <camel-core-osgi-bundle-id>
+install file:///home/user/.m2/repository/org/apache/camel/camel-kura/2.15.0/camel-kura-2.15.0.jar 
+start <camel-kura-bundle-id>
+-----------------------------------------------------------------------------------------------------------
+
+...and all the components you plan to use in your routes:
+
+[source,xml]
+-----------------------------------------------------------------------------------------------------
+install file:///home/user/.m2/repository/org/apache/camel/camel-stream/2.15.0/camel-stream-2.15.0.jar
+start <camel-stream-bundle-id>
+-----------------------------------------------------------------------------------------------------
+
+Then finally deploy your router bundle:
+
+[source,xml]
+----------------------------------------------------------------------------------
+install file:///home/user/.m2/repository/com/example/myrouter/1.0/myrouter-1.0.jar
+start <your-bundle-id>
+----------------------------------------------------------------------------------
+
+[[Kura-KuraRouterutilities]]
+KuraRouter utilities 
+^^^^^^^^^^^^^^^^^^^^^
+
+ Kura router base class provides many useful utilities. This section
+explores each of them.
+
+[[Kura-SLF4Jlogger]]
+SLF4J logger
+++++++++++++
+
+Kura uses SLF4J facade for logging purposes. Protected member `log`
+returns SLF4J logger instance associated with the given Kura router.
+
+[source,java]
+----------------------------------------------
+public class MyKuraRouter extends KuraRouter {
+
+    @Override
+    public void configure() throws Exception {
+        log.info("Configuring Camel routes!");
+        ...
+    }
+
+}
+----------------------------------------------
+
+[[Kura-BundleContext]]
+BundleContext
++++++++++++++
+
+Protected member `bundleContext` returns bundle context associated with
+the given Kura router.
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------
+public class MyKuraRouter extends KuraRouter {
+
+    @Override
+    public void configure() throws Exception {
+        ServiceReference<MyService> serviceRef = bundleContext.getServiceReference(LogService.class.getName());
+        MyService myService = bundleContext.getService(serviceRef);
+        ...
+    }
+
+}
+---------------------------------------------------------------------------------------------------------------
+
+[[Kura-CamelContext]]
+CamelContext
+++++++++++++
+
+Protected member `camelContext` is the `CamelContext` associated with
+the given Kura router.
+
+[source,java]
+----------------------------------------------
+public class MyKuraRouter extends KuraRouter {
+
+    @Override
+    public void configure() throws Exception {
+        camelContext.getStatus();
+        ...
+    }
+
+}
+----------------------------------------------
+
+[[Kura-ProducerTemplate]]
+ProducerTemplate
+++++++++++++++++
+
+Protected member `producerTemplate` is the `ProducerTemplate` instance
+associated with the given Camel context.
+
+[source,java]
+-----------------------------------------------------------
+public class MyKuraRouter extends KuraRouter {
+
+    @Override
+    public void configure() throws Exception {
+        producerTemplate.sendBody("jms:temperature", 22.0);
+        ...
+    }
+
+}
+-----------------------------------------------------------
+
+[[Kura-ConsumerTemplate]]
+ConsumerTemplate
+++++++++++++++++
+
+Protected member `consumerTemplate` is the `ConsumerTemplate` instance
+associated with the given Camel context.
+
+[source,java]
+--------------------------------------------------------------------------------------------------
+public class MyKuraRouter extends KuraRouter {
+
+    @Override
+    public void configure() throws Exception {
+        double currentTemperature = producerTemplate.receiveBody("jms:temperature", Double.class);
+        ...
+    }
+
+}
+--------------------------------------------------------------------------------------------------
+
+[[Kura-OSGiserviceresolver]]
+OSGi service resolver
++++++++++++++++++++++
+
+OSGi service resolver (`service(Class<T> serviceType)`) can be used to
+easily retrieve service by type from the OSGi bundle context.
+
+[source,java]
+-------------------------------------------------------
+public class MyKuraRouter extends KuraRouter {
+
+    @Override
+    public void configure() throws Exception {
+        MyService myService = service(MyService.class);
+        ...
+    }
+
+}
+-------------------------------------------------------
+
+If service is not found, a `null` value is returned. If you want your
+application to fail if the service is not available, use
+`requiredService(Class)` method instead. The `requiredService` throws
+`IllegalStateException` if a service cannot be found.
+
+[source,java]
+---------------------------------------------------------------
+public class MyKuraRouter extends KuraRouter {
+
+    @Override
+    public void configure() throws Exception {
+        MyService myService = requiredService(MyService.class);
+        ...
+    }
+
+}
+---------------------------------------------------------------
+
+[[Kura-KuraRouteractivatorcallbacks]]
+KuraRouter activator callbacks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Kura router comes with the lifecycle callbacks that can be used to
+customize the way the Camel router works. For example to configure the
+`CamelContext` instance associated with the router just before the
+former is started, override `beforeStart` method of the `KuraRouter`
+class:
+
+[source,java]
+--------------------------------------------------------------------------
+public class MyKuraRouter extends KuraRouter {
+ 
+  ...
+
+  protected void beforeStart(CamelContext camelContext) {
+    OsgiDefaultCamelContext osgiContext = (OsgiCamelContext) camelContext;
+    osgiContext.setName("NameOfTheRouter");
+  }
+
+}
+--------------------------------------------------------------------------
+
+[[Kura-LoadingXMLroutesfromConfigurationAdmin]]
+Loading XML routes from ConfigurationAdmin
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sometimes it is desired to read the XML definition of the routes from
+the server configuration. This a common scenario for IoT gateways where
+over-the-air redeployment cost may be significant. To address this
+requirement each `KuraRouter` looks for the
+`kura.camel.BUNDLE-SYMBOLIC-NAME.route` property from the `kura.camel`
+PID using the OSGi ConfigurationAdmin. This approach allows you to
+define Camel XML routes file per deployed `KuraRouter`. In order to
+update a route, just edit an appropriate configuration property and
+restart a bundle associated with it. The content of
+the `kura.camel.BUNDLE-SYMBOLIC-NAME.route` property is expected to be
+Camel XML route file, for example:
+
+[source,java]
+------------------------------------------------------
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="loaded">
+        <from uri="direct:bar"/>
+        <to uri="mock:bar"/>
+    </route>
+</routes>
+------------------------------------------------------
+
+ 
+
+[[Kura-DeployingKurarouterasadeclarativeOSGiservice]]
+Deploying Kura router as a declarative OSGi service
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you would like to deploy your Kura router as a declarative OSGi
+service, you can use `activate` and `deactivate` methods provided by
+`KuraRouter`.
+
+[source,java]
+----------------------------------------------------------------------------------------------------------------------------------------------
+<scr:component name="org.eclipse.kura.example.camel.MyKuraRouter" activate="activate" deactivate="deactivate" enabled="true" immediate="true">
+  <implementation class="org.eclipse.kura.example.camel.MyKuraRouter"/>
+</scr:component>
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+[[Kura-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+

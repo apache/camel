@@ -27,10 +27,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.junit.Ignore;
 
 /**
  * @version 
  */
+@Ignore("Manual test")
 public class SplitterParallelBigFileTest extends ContextTestSupport {
 
     private int lines = 20000;
@@ -53,25 +55,20 @@ public class SplitterParallelBigFileTest extends ContextTestSupport {
         IOHelper.close(fos);
     }
 
-    public void testNoop() {
-        // noop
-    }
-
-    // disabled due manual test
-    public void xxxtestSplitParallelBigFile() throws Exception {
+    public void testSplitParallelBigFile() throws Exception {
         StopWatch watch = new StopWatch();
 
         NotifyBuilder builder = new NotifyBuilder(context).whenDone(lines + 1).create();
         boolean done = builder.matches(120, TimeUnit.SECONDS);
 
-        log.info("Took " + TimeUtils.printDuration(watch.stop()));
+        log.info("Took " + TimeUtils.printDuration(watch.taken()));
 
         if (!done) {
             throw new CamelException("Could not split file in 2 minutes");
         }
 
         // need a little sleep for capturing memory profiling
-        // Thread.sleep(60 * 1000);
+        Thread.sleep(60 * 1000);
     }
 
     @Override

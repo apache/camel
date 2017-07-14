@@ -1,0 +1,165 @@
+## Hazelcast Component
+
+*Available as of Camel version 2.7*
+
+The *hazelcast-* component allows you to work with the
+http://www.hazelcast.com[Hazelcast] distributed data grid / cache.
+Hazelcast is a in memory data grid, entirely written in Java (single
+jar). It offers a great palette of different data stores like map, multi
+map (same key, n values), queue, list and atomic number. The main reason
+to use Hazelcast is its simple cluster support. If you have enabled
+multicast on your network you can run a cluster with hundred nodes with
+no extra configuration. Hazelcast can simply configured to add
+additional features like n copies between nodes (default is 1), cache
+persistence, network configuration (if needed), near cache, enviction
+and so on. For more information consult the Hazelcast documentation on
+http://www.hazelcast.com/docs.jsp[http://www.hazelcast.com/docs.jsp].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-hazelcast</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+
+### Hazelcast components
+See followings for each component usage:
+* link:hazelcast-map-component.html[map]
+* link:hazelcast-multimap-component.html[multimap]
+* link:hazelcast-queue-component.html[queue]
+* link:hazelcast-topic-component.html[topic]
+* link:hazelcast-list-component.html[list]
+* link:hazelcast-seda-component.html[seda]
+* link:hazelcast-set-component.html[set]
+* link:hazelcast-atomicvalue-component.html[atomic number]
+* link:hazelcast-instance-component.html[cluster support (instance)]
+* link:hazelcast-replicatedmap-component.html[replicatedmap] 
+* link:hazelcast-ringbuffer-component.html[ringbuffer] 
+
+
+
+### Using hazelcast reference
+
+#### By its name
+
+[source,xml]
+--------------------------------------------------------------------------------------------------------
+<bean id="hazelcastLifecycle" class="com.hazelcast.core.LifecycleService"
+      factory-bean="hazelcastInstance" factory-method="getLifecycleService"
+      destroy-method="shutdown" />
+
+<bean id="config" class="com.hazelcast.config.Config">
+    <constructor-arg type="java.lang.String" value="HZ.INSTANCE" />
+</bean>
+
+<bean id="hazelcastInstance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
+    <constructor-arg type="com.hazelcast.config.Config" ref="config"/>
+</bean>
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route id="testHazelcastInstanceBeanRefPut">
+        <from uri="direct:testHazelcastInstanceBeanRefPut"/>
+        <setHeader headerName="CamelHazelcastOperationType">
+            <constant>put</constant>
+        </setHeader>
+        <to uri="hazelcast-map:testmap?hazelcastInstanceName=HZ.INSTANCE"/>
+    </route>
+
+    <route id="testHazelcastInstanceBeanRefGet">
+        <from uri="direct:testHazelcastInstanceBeanRefGet" />
+        <setHeader headerName="CamelHazelcastOperationType">
+            <constant>get</constant>
+        </setHeader>
+        <to uri="hazelcast-map:testmap?hazelcastInstanceName=HZ.INSTANCE"/>
+        <to uri="seda:out" />
+    </route>
+</camelContext>
+--------------------------------------------------------------------------------------------------------
+
+#### By instance
+
+[source,xml]
+------------------------------------------------------------------------------
+<bean id="hazelcastInstance" class="com.hazelcast.core.Hazelcast"
+      factory-method="newHazelcastInstance" />
+<bean id="hazelcastLifecycle" class="com.hazelcast.core.LifecycleService"
+      factory-bean="hazelcastInstance" factory-method="getLifecycleService"
+      destroy-method="shutdown" />
+
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route id="testHazelcastInstanceBeanRefPut">
+        <from uri="direct:testHazelcastInstanceBeanRefPut"/>
+        <setHeader headerName="CamelHazelcastOperationType">
+            <constant>put</constant>
+        </setHeader>
+        <to uri="hazelcast-map:testmap?hazelcastInstance=#hazelcastInstance"/>
+    </route>
+
+    <route id="testHazelcastInstanceBeanRefGet">
+        <from uri="direct:testHazelcastInstanceBeanRefGet" />
+        <setHeader headerName="CamelHazelcastOperationType">
+            <constant>get</constant>
+        </setHeader>
+        <to uri="hazelcast-map:testmap?hazelcastInstance=#hazelcastInstance"/>
+        <to uri="seda:out" />
+    </route>
+</camelContext>
+------------------------------------------------------------------------------
+
+### Publishing hazelcast instance as an OSGI service
+
+If operating in an OSGI container and you would want to use one instance
+of hazelcast across all bundles in the same container. You can publish
+the instance as an OSGI service and bundles using the cache al need is
+to reference the service in the hazelcast endpoint.
+
+#### Bundle A create an instance and publishes it as an OSGI service
+
+ 
+
+[source,xml]
+--------------------------------------------------------------------------------------------------------
+<bean id="config" class="com.hazelcast.config.FileSystemXmlConfig">
+    <argument type="java.lang.String" value="${hazelcast.config}"/>
+</bean>
+
+<bean id="hazelcastInstance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
+    <argument type="com.hazelcast.config.Config" ref="config"/>
+</bean>
+
+<!-- publishing the hazelcastInstance as a service -->
+<service ref="hazelcastInstance" interface="com.hazelcast.core.HazelcastInstance" />
+--------------------------------------------------------------------------------------------------------
+
+#### Bundle B uses the instance
+
+[source,xml]
+--------------------------------------------------------------------------------------
+<!-- referencing the hazelcastInstance as a service -->
+<reference ref="hazelcastInstance" interface="com.hazelcast.core.HazelcastInstance" />
+
+<camelContext xmlns="http://camel.apache.org/schema/blueprint">
+    <route id="testHazelcastInstanceBeanRefPut">
+        <from uri="direct:testHazelcastInstanceBeanRefPut"/>
+        <setHeader headerName="CamelHazelcastOperationType">
+            <constant>put</constant>
+        </setHeader>
+        <to uri="hazelcast-map:testmap?hazelcastInstance=#hazelcastInstance"/>
+    </route>
+
+    <route id="testHazelcastInstanceBeanRefGet">
+        <from uri="direct:testHazelcastInstanceBeanRefGet" />
+        <setHeader headerName="CamelHazelcastOperationType">
+            <constant>get</constant>
+        </setHeader>
+        <to uri="hazelcast-map:testmap?hazelcastInstance=#hazelcastInstance"/>
+        <to uri="seda:out" />
+    </route>
+</camelContext>
+--------------------------------------------------------------------------------------

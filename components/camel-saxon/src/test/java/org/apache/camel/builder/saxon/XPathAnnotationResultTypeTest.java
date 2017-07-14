@@ -19,11 +19,11 @@ package org.apache.camel.builder.saxon;
 import javax.naming.Context;
 import javax.xml.xpath.XPathFactory;
 
+import net.sf.saxon.lib.NamespaceConstant;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.XPath;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
-
 import org.junit.Test;
 
 /**
@@ -52,7 +52,7 @@ public class XPathAnnotationResultTypeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                System.setProperty(XPathFactory.DEFAULT_PROPERTY_NAME + ":" + "http://saxon.sf.net/jaxp/xpath/om", "net.sf.saxon.xpath.XPathFactoryImpl");
+                System.setProperty(XPathFactory.DEFAULT_PROPERTY_NAME + ":" + NamespaceConstant.OBJECT_MODEL_SAXON, "net.sf.saxon.xpath.XPathFactoryImpl");
                 from("direct:in1").bean("myBean", "readImplicit");
                 from("direct:in2").bean("myBean", "readExplicit");
             }

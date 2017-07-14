@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.seda;
 
-
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Implementation of {@link BlockingQueueFactory} producing {@link java.util.concurrent.LinkedBlockingQueue}
  */
 public class LinkedBlockingQueueFactory<E> implements BlockingQueueFactory<E> {
+
     @Override
     public LinkedBlockingQueue<E> create() {
         return new LinkedBlockingQueue<E>();

@@ -16,12 +16,43 @@
  */
 package org.apache.camel.component.vm;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.seda.SedaConsumer;
+import org.apache.camel.util.ExchangeHelper;
 
-public class VmConsumer extends SedaConsumer {
+public class VmConsumer extends SedaConsumer implements CamelContextAware {
+
+    private CamelContext camelContext;
 
     public VmConsumer(VmEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    /**
+     * Strategy to prepare exchange for being processed by this consumer
+     *
+     * @param exchange the exchange
+     * @return the exchange to process by this consumer.
+     */
+    protected Exchange prepareExchange(Exchange exchange) {
+        // send a new copied exchange with the camel context from this consumer
+        Exchange newExchange = ExchangeHelper.copyExchangeAndSetCamelContext(exchange, getCamelContext());
+        // set the from endpoint
+        newExchange.setFromEndpoint(getEndpoint());
+        return newExchange;
+    }
+
 }

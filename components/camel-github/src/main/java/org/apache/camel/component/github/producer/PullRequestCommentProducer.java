@@ -17,6 +17,7 @@
 package org.apache.camel.component.github.producer;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;
 import org.apache.camel.spi.Registry;
 import org.eclipse.egit.github.core.Comment;
@@ -44,7 +45,7 @@ public class PullRequestCommentProducer extends AbstractGitHubProducer {
         super(endpoint);
         
         Registry registry = endpoint.getCamelContext().getRegistry();
-        Object service = registry.lookupByName("githubPullRequestService");
+        Object service = registry.lookupByName(GitHubConstants.GITHUB_PULL_REQUEST_SERVICE);
         if (service != null) {
             LOG.debug("Using PullRequestService found in registry " + service.getClass().getCanonicalName());
             pullRequestService = (PullRequestService) service;
@@ -63,8 +64,8 @@ public class PullRequestCommentProducer extends AbstractGitHubProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        Integer pullRequestNumber = exchange.getIn().getHeader("GitHubPullRequest", Integer.class);
-        Integer inResponseTo = exchange.getIn().getHeader("GitHubInResponseTo", Integer.class);
+        Integer pullRequestNumber = exchange.getIn().getHeader(GitHubConstants.GITHUB_PULLREQUEST, Integer.class);
+        Integer inResponseTo = exchange.getIn().getHeader(GitHubConstants.GITHUB_INRESPONSETO, Integer.class);
         String text = exchange.getIn().getBody(String.class);
         
         Comment response;

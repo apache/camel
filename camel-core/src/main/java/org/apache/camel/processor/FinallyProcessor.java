@@ -41,37 +41,30 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        // clear exception so finally block can be executed
-        final Exception e = exchange.getException();
+        // clear exception and fault so finally block can be executed
+        final boolean fault;
+        if (exchange.hasOut()) {
+            fault = exchange.getOut().isFault();
+            exchange.getOut().setFault(false);
+        } else {
+            fault = exchange.getIn().isFault();
+            exchange.getIn().setFault(false);
+        }
+
+        final Exception exception = exchange.getException();
         exchange.setException(null);
         // but store the caught exception as a property
-        if (e != null) {
-            exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
+        if (exception != null) {
+            exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
         }
+
         // store the last to endpoint as the failure endpoint
         if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
             exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
         }
 
-        boolean sync = processor.process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (e == null) {
-                    exchange.removeProperty(Exchange.FAILURE_ENDPOINT);
-                } else {
-                    // set exception back on exchange
-                    exchange.setException(e);
-                    exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
-                }
-
-                if (!doneSync) {
-                    // signal callback to continue routing async
-                    ExchangeHelper.prepareOutToIn(exchange);
-                    LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
-                }
-                callback.done(doneSync);
-            }
-        });
-        return sync;
+        // continue processing
+        return processor.process(exchange, new FinallyAsyncCallback(exchange, callback, exception, fault));
     }
 
     @Override
@@ -90,4 +83,55 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
     public void setId(String id) {
         this.id = id;
     }
+
+    private static final class FinallyAsyncCallback implements AsyncCallback {
+
+        private final Exchange exchange;
+        private final AsyncCallback callback;
+        private final Exception exception;
+        private final boolean fault;
+
+        FinallyAsyncCallback(Exchange exchange, AsyncCallback callback, Exception exception, boolean fault) {
+            this.exchange = exchange;
+            this.callback = callback;
+            this.exception = exception;
+            this.fault = fault;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            try {
+                if (exception == null) {
+                    exchange.removeProperty(Exchange.FAILURE_ENDPOINT);
+                } else {
+                    // set exception back on exchange
+                    exchange.setException(exception);
+                    exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
+                }
+                // set fault flag back
+                if (fault) {
+                    if (exchange.hasOut()) {
+                        exchange.getOut().setFault(true);
+                    } else {
+                        exchange.getIn().setFault(true);
+                    }
+                }
+
+                if (!doneSync) {
+                    // signal callback to continue routing async
+                    ExchangeHelper.prepareOutToIn(exchange);
+                    LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                }
+            } finally {
+                // callback must always be called
+                callback.done(doneSync);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "FinallyAsyncCallback";
+        }
+    }
+
 }

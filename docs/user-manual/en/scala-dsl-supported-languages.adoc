@@ -1,0 +1,48 @@
+Scala DSL - Supported languages
+===============================
+
+Support for link:languages.html[other languages] inside the Scala DSL
+routes is delivered through traits. The
+`org.apache.camel.scala.dsl.languages` package currently offers traits
+to support XPath. To use any given language, you can mix-in the trait
+when creating your `RouteBuilder`.
+
+You can use any of the supported Camel link:languages.html[Languages] in
+the link:scala-dsl.html[Scala DSL]; see below for a couple of examples:
+
+[[ScalaDSL-Supportedlanguages-Using]]
+Using link:xpath.html[XPath]
+----------------------------
+
+With the XPath trait, you have an additional method available on an
+`Exchange` to do XPath queries against the message. Just look at this
+Splitter example, where the `xpath` method is used in a
+`Exchange ⇒ Any*` function literal
+
+[source,java]
+----------------------------------------------------------
+"direct:b" ==> {
+  as(classOf[Document])
+  split(xpath("/persons/person")) {
+    to("mock:b")
+    to("mock:c")
+  }
+}
+----------------------------------------------------------
+
+[[ScalaDSL-Supportedlanguages-Using.1]]
+Using link:jxpath.html[JXPath]
+------------------------------
+
+With the `org.apache.camel.scala.dsl.languages.JXPath` trait, you can an
+additional `jxpath` method on the `Exchange`. In the Recipient List
+example below, JXPath is used for getting the next endpoint's name out
+of the message body.
+
+[source,java]
+----------------------------------------------------------
+"direct:c" ==> {
+  to("mock:c")
+  recipients(jxpath("./in/body/destination"))
+}
+----------------------------------------------------------

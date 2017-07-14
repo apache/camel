@@ -119,7 +119,7 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
             // only stop it at first run
             if (counter++ == 0) {
                 try {
-                    super.stopConsumer(route.getConsumer());
+                    super.suspendOrStopConsumer(route.getConsumer());
                 } catch (Exception e) {
                     handleException(e);
                 }

@@ -55,9 +55,9 @@ public class JettyHttpsProducerSslContextInUriTest extends JettyProducerHttpsRou
     }
     
     protected void invokeHttpEndpoint() throws IOException {
-        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test?sslContextParametersRef=sslContextParameters", expectedBody, "Content-Type",
+        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test?sslContextParameters=#sslContextParameters", expectedBody, "Content-Type",
                                    "application/xml");
-        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test?sslContextParametersRef=sslContextParameters", expectedBody, "Content-Type",
+        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test?sslContextParameters=#sslContextParameters", expectedBody, "Content-Type",
                                    "application/xml");
     }
     
@@ -71,16 +71,16 @@ public class JettyHttpsProducerSslContextInUriTest extends JettyProducerHttpsRou
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
                 componentJetty.setKeystore(keyStoreUrl.toURI().getPath());
                 
-                from("jetty:https://localhost:" + port1 + "/test?sslContextParametersRef=sslContextParameters").to("mock:a");
+                from("jetty:https://localhost:" + port1 + "/test?sslContextParameters=#sslContextParameters").to("mock:a");
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody("<b>Hello World</b>");
                     }
                 };
-                from("jetty:https://localhost:" + port1 + "/hello?sslContextParametersRef=sslContextParameters").process(proc);
+                from("jetty:https://localhost:" + port1 + "/hello?sslContextParameters=#sslContextParameters").process(proc);
                 
-                from("jetty:https://localhost:" + port2 + "/test?sslContextParametersRef=sslContextParameters").to("mock:b");
+                from("jetty:https://localhost:" + port2 + "/test?sslContextParameters=#sslContextParameters").to("mock:b");
             }
         };
     }

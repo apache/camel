@@ -80,15 +80,15 @@ public class FileRecursiveDepthTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("file:target/depth?recursive=true&minDepth=2&maxDepth=2")
+                from("file:target/depth?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=2")
                     .convertBodyTo(String.class)
                     .to("mock:result");
 
-                from("file:target/depth2?recursive=true&minDepth=2&maxDepth=99")
+                from("file:target/depth2?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=99")
                     .convertBodyTo(String.class)
                     .to("mock:result");
 
-                from("file:target/depth3?recursive=true&minDepth=1&maxDepth=1")
+                from("file:target/depth3?initialDelay=0&delay=10&recursive=true&minDepth=1&maxDepth=1")
                     .convertBodyTo(String.class)
                     .to("mock:result");
             }

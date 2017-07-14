@@ -16,8 +16,6 @@
  */
 package org.apache.camel.rx;
 
-/**
- */
 public class Order {
     private final String id;
     private final double amount;

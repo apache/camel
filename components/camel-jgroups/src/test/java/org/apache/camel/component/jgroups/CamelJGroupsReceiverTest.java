@@ -46,9 +46,10 @@ public class CamelJGroupsReceiverTest {
     public void shouldHandleProcessingException() throws Exception {
         // Given
         willThrow(Exception.class).given(processor).process(any(Exchange.class));
-
+        Message message = new Message(null, "someMessage");
+        message.setSrc(null);
         // When
-        receiver.receive(new Message(null, null, "someMessage"));
+        receiver.receive(message);
     }
 
 }

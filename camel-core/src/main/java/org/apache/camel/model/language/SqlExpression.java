@@ -27,9 +27,10 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "language", title = "SQL")
+@Metadata(firstVersion = "1.0.0", label = "language", title = "SQL")
 @XmlRootElement(name = "sql")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class SqlExpression extends ExpressionDefinition {
 
     public SqlExpression() {

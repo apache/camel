@@ -67,7 +67,7 @@ public class RestServletGetWildcardsTest extends ServletCamelRouterTestSupport {
             @Override
             public void configure() throws Exception {
                 // configure to use servlet on localhost
-                restConfiguration().component("servlet").host("localhost").endpointProperty("httpBindingRef", "#myBinding");
+                restConfiguration().component("servlet").host("localhost").endpointProperty("httpBinding", "#myBinding");
                 
                 // use the rest DSL to define the rest services
                 rest("/users/")

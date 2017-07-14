@@ -24,6 +24,7 @@ import java.util.Scanner;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -77,7 +78,7 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
             in = exchange.getIn().getMandatoryBody(InputStream.class);
             // we may read from a file, and want to support custom charset defined on the exchange
             String charset = IOHelper.getCharsetName(exchange);
-            return createIterator(in, charset);
+            return createIterator(exchange, in, charset);
         } catch (InvalidPayloadException e) {
             exchange.setException(e);
             // must close input stream
@@ -93,12 +94,21 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     /**
      * Strategy to create the iterator
      *
+     * @param exchange the exchange
      * @param in input stream to iterate
      * @param charset charset
      * @return the iterator
      */
-    protected Iterator<?> createIterator(InputStream in, String charset) {
-        TokenPairIterator iterator = new TokenPairIterator(startToken, endToken, includeTokens, in, charset);
+    protected Iterator<?> createIterator(Exchange exchange, InputStream in, String charset) {
+        String start = startToken;
+        if (start != null && SimpleLanguage.hasSimpleFunction(start)) {
+            start = SimpleLanguage.expression(start).evaluate(exchange, String.class);
+        }
+        String end = endToken;
+        if (end != null && SimpleLanguage.hasSimpleFunction(end)) {
+            end = SimpleLanguage.expression(end).evaluate(exchange, String.class);
+        }
+        TokenPairIterator iterator = new TokenPairIterator(start, end, includeTokens, in, charset);
         iterator.init();
         return iterator;
     }

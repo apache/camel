@@ -1,0 +1,14 @@
+# Camel Example Java 8 RX
+
+This example uses the `camel-rx` component to define a simple processing step using RxJava.
+The example uses features of Java 8, such as lambda expressions and method references.
+
+## How to run
+
+You can run this example using
+
+    mvn camel:run
+
+## More information
+
+You can find more information about Apache Camel at the website: http://camel.apache.org/

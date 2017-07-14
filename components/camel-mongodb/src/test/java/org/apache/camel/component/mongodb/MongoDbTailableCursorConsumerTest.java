@@ -19,20 +19,18 @@ package org.apache.camel.component.mongodb;
 import java.util.Calendar;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.WriteConcern;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.CreateCollectionOptions;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
 import org.junit.Test;
 
 public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
     
-    private DBCollection cappedTestCollection;
+    private MongoCollection<BasicDBObject> cappedTestCollection;
     private String cappedTestCollectionName;
     
     @Test
@@ -50,10 +48,15 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         assertEquals(0, cappedTestCollection.count());
         MockEndpoint mock = getMockEndpoint("mock:test");
         mock.expectedMessageCount(0);
-       
+        //BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get()
         // create a capped collection with max = 1000
-        cappedTestCollection = db.createCollection(cappedTestCollectionName, 
-                BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get());
+        CreateCollectionOptions collectionOptions = new CreateCollectionOptions()
+                .capped(true)
+                .sizeInBytes(1000000000)
+                .maxDocuments(1000);
+        db.createCollection(cappedTestCollectionName,
+                collectionOptions);
+        cappedTestCollection = db.getCollection(cappedTestCollectionName, BasicDBObject.class);
         assertEquals(0, cappedTestCollection.count());
 
         addTestRoutes();
@@ -69,11 +72,15 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         assertEquals(0, cappedTestCollection.count());
         MockEndpoint mock = getMockEndpoint("mock:test");
         mock.expectedMessageCount(5000);
-       
+        //BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get()
         // create a capped collection with max = 1000
-        cappedTestCollection = db.createCollection(cappedTestCollectionName, 
-                BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get());
-        
+        CreateCollectionOptions createCollectionOptions = new CreateCollectionOptions()
+                .capped(true)
+                .sizeInBytes(1000000000)
+                .maxDocuments(1000);
+        db.createCollection(cappedTestCollectionName,
+                createCollectionOptions);
+        cappedTestCollection = db.getCollection(cappedTestCollectionName, BasicDBObject.class);
         addTestRoutes();
         context.startRoute("tailableCursorConsumer1");
         
@@ -89,7 +96,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
                             return;
                         }
                     }
-                    cappedTestCollection.insert(BasicDBObjectBuilder.start("increasing", i).add("string", "value" + i).get(), WriteConcern.SAFE);
+                    cappedTestCollection.insertOne(new BasicDBObject("increasing", i).append("string", "value" + i));
                 }
                 
             }
@@ -112,9 +119,13 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         mock.expectedMessageCount(1000);
        
         // create a capped collection with max = 1000
-        cappedTestCollection = db.createCollection(cappedTestCollectionName, 
-                BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get());
-        
+        //BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get())
+        db.createCollection(cappedTestCollectionName,
+                new CreateCollectionOptions()
+                        .capped(true)
+                        .sizeInBytes(1000000000)
+                        .maxDocuments(1000));
+        cappedTestCollection = db.getCollection(cappedTestCollectionName, BasicDBObject.class);
         addTestRoutes();
         context.startRoute("tailableCursorConsumer1");
         
@@ -123,7 +134,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
             @Override
             public void run() {
                 for (int i = 1; i <= 100000; i++) {
-                    cappedTestCollection.insert(BasicDBObjectBuilder.start("increasing", i).add("string", "value" + i).get(), WriteConcern.SAFE);
+                    cappedTestCollection.insertOne(new BasicDBObject("increasing", i).append("string", "value" + i));
                     
                     // incrementally assert, as the mock endpoint stores all messages and otherwise the test would be sluggish
                     if (i % 1000 == 0) {
@@ -154,10 +165,15 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         // drop the tracking collection
         db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION).drop();
         // create a capped collection with max = 1000
-        cappedTestCollection = db.createCollection(cappedTestCollectionName, 
-                BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get());
-        cappedTestCollection.createIndex("increasing");
-        
+        // BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get()
+        db.createCollection(cappedTestCollectionName,
+                new CreateCollectionOptions()
+                        .capped(true)
+                        .sizeInBytes(1000000000)
+                        .maxDocuments(1000));
+        cappedTestCollection = db.getCollection(cappedTestCollectionName, BasicDBObject.class);
+        cappedTestCollection.createIndex(new BasicDBObject("increasing", 1));
+
         addTestRoutes();
         context.startRoute("tailableCursorConsumer2");
         
@@ -167,7 +183,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
             @Override
             public void run() {
                 for (int i = 1; i <= 300; i++) {
-                    cappedTestCollection.insert(BasicDBObjectBuilder.start("increasing", i).add("string", "value" + i).get(), WriteConcern.SAFE);  
+                    cappedTestCollection.insertOne(new BasicDBObject("increasing", i).append("string", "value" + i));
                 }
             }
         });
@@ -189,7 +205,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
             @Override
             public void run() {
                 for (int i = 301; i <= 600; i++) {
-                    cappedTestCollection.insert(BasicDBObjectBuilder.start("increasing", i).add("string", "value" + i).get(), WriteConcern.SAFE);  
+                    cappedTestCollection.insertOne(new BasicDBObject("increasing", i).append("string", "value" + i));
                 }
             }
         });
@@ -205,11 +221,11 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         assertEquals(301, ((DBObject) firstBody).get("increasing"));
         
         // check that the lastVal is persisted at the right time: check before and after stopping the route
-        assertEquals(300, db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION).findOne(new BasicDBObject("persistentId", "darwin")).get("lastTrackingValue"));
+        assertEquals(300, db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION).find(new BasicDBObject("persistentId", "darwin")).first().get("lastTrackingValue"));
         // stop the route and verify the last value has been updated
         context.stopRoute("tailableCursorConsumer2");
         while (context.getRouteStatus("tailableCursorConsumer2") != ServiceStatus.Stopped) { }
-        assertEquals(600, db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION).findOne(new BasicDBObject("persistentId", "darwin")).get("lastTrackingValue"));
+        assertEquals(600, db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION).find(new BasicDBObject("persistentId", "darwin")).first().get("lastTrackingValue"));
 
     }
     
@@ -220,14 +236,18 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         final Calendar startTimestamp = Calendar.getInstance();
         
         // get default tracking collection
-        DBCollection trackingCol = db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION);
+        MongoCollection<BasicDBObject> trackingCol = db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION, BasicDBObject.class);
         trackingCol.drop();
-        trackingCol = db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION);
+        trackingCol = db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION, BasicDBObject.class);
         
         // create a capped collection with max = 1000
-        cappedTestCollection = db.createCollection(cappedTestCollectionName, 
-                BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get());
-        
+        //BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get()
+        db.createCollection(cappedTestCollectionName,
+                new CreateCollectionOptions()
+                        .capped(true)
+                        .sizeInBytes(1000000000)
+                        .maxDocuments(1000));
+        cappedTestCollection = db.getCollection(cappedTestCollectionName, BasicDBObject.class);
         addTestRoutes();
         context.startRoute("tailableCursorConsumer2");
         
@@ -239,7 +259,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
                 for (int i = 1; i <= 300; i++) {
                     Calendar c = (Calendar) (startTimestamp.clone());
                     c.add(Calendar.MINUTE, i);
-                    cappedTestCollection.insert(BasicDBObjectBuilder.start("increasing", c.getTime()).add("string", "value" + i).get(), WriteConcern.SAFE);
+                    cappedTestCollection.insertOne(new BasicDBObject("increasing", c.getTime()).append("string", "value" + i));
                 }
             }
         });
@@ -254,7 +274,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         Calendar cal300 = (Calendar) startTimestamp.clone();
         cal300.add(Calendar.MINUTE, 300);
         context.stopRoute("tailableCursorConsumer2");
-        assertEquals(cal300.getTime(), trackingCol.findOne(new BasicDBObject("persistentId", "darwin")).get(MongoDbTailTrackingConfig.DEFAULT_FIELD));
+        assertEquals(cal300.getTime(), trackingCol.find(new BasicDBObject("persistentId", "darwin")).first().get(MongoDbTailTrackingConfig.DEFAULT_FIELD));
         context.startRoute("tailableCursorConsumer2");
         
         // expect 300 messages and not 600
@@ -266,7 +286,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
                 for (int i = 301; i <= 600; i++) {
                     Calendar c = (Calendar) (startTimestamp.clone());
                     c.add(Calendar.MINUTE, i);
-                    cappedTestCollection.insert(BasicDBObjectBuilder.start("increasing", c.getTime()).add("string", "value" + i).get(), WriteConcern.SAFE);
+                    cappedTestCollection.insertOne(new BasicDBObject("increasing", c.getTime()).append("string", "value" + i));
                 }
             }
         });
@@ -284,7 +304,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         context.stopRoute("tailableCursorConsumer2");
         Calendar cal600 = (Calendar) startTimestamp.clone();
         cal600.add(Calendar.MINUTE, 600);
-        assertEquals(cal600.getTime(), trackingCol.findOne(new BasicDBObject("persistentId", "darwin")).get(MongoDbTailTrackingConfig.DEFAULT_FIELD));
+        assertEquals(cal600.getTime(), trackingCol.find(new BasicDBObject("persistentId", "darwin")).first().get(MongoDbTailTrackingConfig.DEFAULT_FIELD));
     }
     
     @Test
@@ -293,14 +313,18 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         final MockEndpoint mock = getMockEndpoint("mock:test");
         
         // get the custom tracking collection and drop it (tailTrackDb=einstein&tailTrackCollection=curie&tailTrackField=newton)
-        DBCollection trackingCol = mongo.getDB("einstein").getCollection("curie");
+        MongoCollection<BasicDBObject> trackingCol = mongo.getDatabase("einstein").getCollection("curie", BasicDBObject.class);
         trackingCol.drop();
-        trackingCol = mongo.getDB("einstein").getCollection("curie");
+        trackingCol = mongo.getDatabase("einstein").getCollection("curie", BasicDBObject.class);
         
         // create a capped collection with max = 1000
-        cappedTestCollection = db.createCollection(cappedTestCollectionName, 
-                BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get());
-        
+        //BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get()
+        db.createCollection(cappedTestCollectionName,
+                new CreateCollectionOptions()
+                        .capped(true)
+                        .sizeInBytes(1000000000)
+                        .maxDocuments(1000));
+        cappedTestCollection = db.getCollection(cappedTestCollectionName, BasicDBObject.class);
         addTestRoutes();
         context.startRoute("tailableCursorConsumer3");
         
@@ -310,7 +334,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
             @Override
             public void run() {
                 for (int i = 1; i <= 300; i++) {
-                    cappedTestCollection.insert(BasicDBObjectBuilder.start("increasing", i).add("string", "value" + i).get(), WriteConcern.SAFE);  
+                    cappedTestCollection.insertOne(new BasicDBObject("increasing", i).append("string", "value" + i));
                 }
             }
         });
@@ -325,7 +349,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         // stop the route to ensure that our lastVal is persisted, and check it
         context.stopRoute("tailableCursorConsumer3");
         // ensure that the persisted lastVal is 300, newton is the name of the trackingField we are using
-        assertEquals(300, trackingCol.findOne(new BasicDBObject("persistentId", "darwin")).get("newton"));
+        assertEquals(300, trackingCol.find(new BasicDBObject("persistentId", "darwin")).first().get("newton"));
         context.startRoute("tailableCursorConsumer3");
         
         // expect 300 messages and not 600
@@ -335,7 +359,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
             @Override
             public void run() {
                 for (int i = 301; i <= 600; i++) {
-                    cappedTestCollection.insert(BasicDBObjectBuilder.start("increasing", i).add("string", "value" + i).get(), WriteConcern.SAFE);  
+                    cappedTestCollection.insertOne(new BasicDBObject("increasing", i).append("string", "value" + i));
                 }
             }
         });
@@ -350,7 +374,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         assertEquals(301, ((DBObject) firstBody).get("increasing"));
         // check that the persisted lastVal after stopping the route is 600, newton is the name of the trackingField we are using
         context.stopRoute("tailableCursorConsumer3");
-        assertEquals(600, trackingCol.findOne(new BasicDBObject("persistentId", "darwin")).get("newton"));
+        assertEquals(600, trackingCol.find(new BasicDBObject("persistentId", "darwin")).first().get("newton"));
 
     }
     
@@ -365,11 +389,15 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         mock.expectedMessageCount(1000);
        
         // create a capped collection with max = 1000
-        cappedTestCollection = db.createCollection(cappedTestCollectionName, 
-                BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get());
-        
+        //BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000000).add("max", 1000).get()
+        db.createCollection(cappedTestCollectionName,
+                new CreateCollectionOptions()
+                        .capped(true)
+                        .sizeInBytes(1000000000)
+                        .maxDocuments(1000));
+        cappedTestCollection = db.getCollection(cappedTestCollectionName, BasicDBObject.class);
         for (int i = 0; i < 1000; i++) {
-            cappedTestCollection.insert(BasicDBObjectBuilder.start("increasing", i).add("string", "value" + i).get(), WriteConcern.SAFE);
+            cappedTestCollection.insertOne(new BasicDBObject("increasing", i).append("string", "value" + i));
         }
         assertEquals(1000, cappedTestCollection.count());
 
@@ -385,7 +413,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         super.doPostSetup();
         // drop the capped collection and let each test create what it needs
         cappedTestCollectionName = "camelTestCapped";
-        cappedTestCollection = db.getCollection(cappedTestCollectionName);
+        cappedTestCollection = db.getCollection(cappedTestCollectionName, BasicDBObject.class);
         cappedTestCollection.drop();
     }
 

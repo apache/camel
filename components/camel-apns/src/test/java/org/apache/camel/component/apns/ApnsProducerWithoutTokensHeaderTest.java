@@ -20,7 +20,6 @@ import com.notnoop.apns.APNS;
 import com.notnoop.apns.ApnsService;
 import com.notnoop.apns.EnhancedApnsNotification;
 import com.notnoop.apns.utils.ApnsServerStub;
-import com.notnoop.apns.utils.FixedCertificates;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;

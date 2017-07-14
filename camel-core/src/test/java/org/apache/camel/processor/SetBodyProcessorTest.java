@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -52,7 +53,7 @@ public class SetBodyProcessorTest extends ContextTestSupport {
 
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                MyMessage my = new MyMessage();
+                MyMessage my = new MyMessage(exchange.getContext());
                 my.setBody("World");
                 my.setHeader("foo", 123);
                 exchange.setIn(my);
@@ -89,9 +90,13 @@ public class SetBodyProcessorTest extends ContextTestSupport {
 
     private static class MyMessage extends DefaultMessage {
 
+        public MyMessage(CamelContext camelContext) {
+            super(camelContext);
+        }
+
         @Override
         public MyMessage newInstance() {
-            return new MyMessage();
+            return new MyMessage(getCamelContext());
         }
     }
 }

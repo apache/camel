@@ -1,0 +1,80 @@
+[[OpenTracing-OpenTracingComponent]]
+## OpenTracing Component
+
+*Available as of Camel 2.19*
+
+The camel-opentracing component is used for tracing and timing incoming and
+outgoing Camel messages using http://opentracing.io/[OpenTracing].
+
+Events (spans) are captured for incoming and outgoing messages being sent
+to/from Camel.
+
+See the http://opentracing.io/[OpenTracing] website for a list of supported tracers.
+
+
+### Configuration
+
+There are three ways in which an OpenTracing tracer can be configured to provide distributed tracing for a Camel application:
+
+#### Explicit
+
+Include the `camel-opentracing` component in your POM, along with any specific dependencies associated with the chosen OpenTracing compliant Tracer.
+
+To explicitly configure OpenTracing support, instantiate the `OpenTracingTracer` and initialize the camel
+context. You can optionally specify a `Tracer`, or alternatively it can be implicitly discovered using the
+`Registry` or `ServiceLoader`.
+
+[source,java]
+--------------------------------------------------------------------------------------------------
+OpenTracingTracer ottracer = new OpenTracingTracer();
+// By default it uses a Noop Tracer, but you can override it with a specific OpenTracing implementation.
+ottracer.setTracer(...);
+// And then initialize the context
+ottracer.init(camelContext);
+--------------------------------------------------------------------------------------------------
+
+To use OpenTracingTracer in XML, all you need to do is to define the
+OpenTracing tracer beans. Camel will automatically discover and use them.
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------
+  <bean id="tracer" class="..."/>
+  <bean id="ottracer" class="org.apache.camel.opentracing.OpenTracingTracer">
+    <property name="tracer" ref="tracer"/>
+  </bean>
+---------------------------------------------------------------------------------------------------------
+
+#### Spring Boot
+
+If you are using link:spring-boot.html[Spring Boot] then you can add
+the `camel-opentracing-starter` dependency, and turn on OpenTracing by annotating
+the main class with `@CamelOpenTracing`.
+
+The `Tracer` will be implicitly obtained from the camel context's `Registry`, or the `ServiceLoader`, unless
+a `Tracer` bean has been defined by the application.
+
+#### Java Agent
+
+The third approach is to use a Java Agent to automatically configure the OpenTracing support.
+
+Include the `camel-opentracing` component in your POM, along with any specific dependencies associated with the chosen OpenTracing compliant Tracer.
+
+The OpenTracing Java Agent is associated with the following dependency:
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------
+    <dependency>
+      <groupId>io.opentracing.contrib</groupId>
+      <artifactId>opentracing-agent</artifactId>
+    </dependency>
+---------------------------------------------------------------------------------------------------------
+
+The `Tracer` used will be implicitly loaded from the camel context `Registry` or using the `ServiceLoader`.
+
+How this agent is used will be specific to how you execute your application. _Service2_ in the https://github.com/apache/camel/tree/master/examples/camel-example-opentracing[camel-example-opentracing] downloads the agent into a local folder and then uses the `exec-maven-plugin` to launch the service with the `-javaagent` command line option. 
+
+### Example
+
+You can find an example demonstrating the three ways to configure OpenTracing here:
+https://github.com/apache/camel/tree/master/examples/camel-example-opentracing[camel-example-opentracing]
+

@@ -276,6 +276,52 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} < 123", false);
         assertPredicate("${in.header.bar} < '200'", true);
     }
+    
+    public void testAgainstNegativeValue() throws Exception {
+        assertPredicate("${in.header.bar} == 123", true);
+        assertPredicate("${in.header.bar} == -123", false);
+        assertPredicate("${in.header.bar} =~ 123", true);
+        assertPredicate("${in.header.bar} =~ -123", false);
+        assertPredicate("${in.header.bar} > -123", true);
+        assertPredicate("${in.header.bar} >= -123", true);
+        assertPredicate("${in.header.bar} > 123", false);
+        assertPredicate("${in.header.bar} >= 123", true);
+        assertPredicate("${in.header.bar} < -123", false);
+        assertPredicate("${in.header.bar} <= -123", false);
+        assertPredicate("${in.header.bar} < 123", false);
+        assertPredicate("${in.header.bar} <= 123", true);
+
+        exchange.getIn().setHeader("strNum", "123");
+        assertPredicate("${in.header.strNum} contains '123'", true);
+        assertPredicate("${in.header.strNum} not contains '123'", false);
+        assertPredicate("${in.header.strNum} contains '-123'", false);
+        assertPredicate("${in.header.strNum} not contains '-123'", true);
+        assertPredicate("${in.header.strNum} ~~ '123'", true);
+        assertPredicate("${in.header.strNum} ~~ '-123'", false);
+    
+        exchange.getIn().setHeader("num", -123);
+        assertPredicate("${in.header.num} == -123", true);
+        assertPredicate("${in.header.num} == 123", false);
+        assertPredicate("${in.header.num} =~ -123", true);
+        assertPredicate("${in.header.num} =~ 123", false);
+        assertPredicate("${in.header.num} > -123", false);
+        assertPredicate("${in.header.num} >= -123", true);
+        assertPredicate("${in.header.num} > 123", false);
+        assertPredicate("${in.header.num} >= 123", false);
+        assertPredicate("${in.header.num} < -123", false);
+        assertPredicate("${in.header.num} <= -123", true);
+        assertPredicate("${in.header.num} < 123", true);
+        assertPredicate("${in.header.num} <= 123", true);
+    
+        exchange.getIn().setHeader("strNumNegative", "-123");
+        assertPredicate("${in.header.strNumNegative} contains '123'", true);
+        assertPredicate("${in.header.strNumNegative} not contains '123'", false);
+        assertPredicate("${in.header.strNumNegative} contains '-123'", true);
+        assertPredicate("${in.header.strNumNegative} not contains '-123'", false);
+        assertPredicate("${in.header.strNumNegative} ~~ '123'", true);
+        assertPredicate("${in.header.strNumNegative} ~~ '-123'", true);
+
+    }
 
     public void testLessThanOrEqualOperator() throws Exception {
         // string to string comparison
@@ -321,12 +367,19 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} contains 'abc'", true);
         assertPredicate("${in.header.foo} contains 'def'", false);
     }
-
+  
     public void testNotContains() throws Exception {
         assertPredicate("${in.header.foo} not contains 'a'", false);
         assertPredicate("${in.header.foo} not contains 'ab'", false);
         assertPredicate("${in.header.foo} not contains 'abc'", false);
         assertPredicate("${in.header.foo} not contains 'def'", true);
+    }
+    
+    public void testContainsIgnoreCase() throws Exception {
+        assertPredicate("${in.header.foo} ~~ 'A'", true);
+        assertPredicate("${in.header.foo} ~~ 'Ab'", true);
+        assertPredicate("${in.header.foo} ~~ 'Abc'", true);
+        assertPredicate("${in.header.foo} ~~ 'defG'", false);
     }
 
     public void testRegex() throws Exception {
@@ -436,10 +489,10 @@ public class SimpleOperatorTest extends LanguageTestSupport {
             assertEquals(30, e.getIndex());
         }
 
-        assertPredicate("${in.header.bar} range '100..200' && ${in.header.foo} == 'abc'" , true);
-        assertPredicate("${in.header.bar} range '200..300' && ${in.header.foo} == 'abc'" , false);
-        assertPredicate("${in.header.bar} range '200..300' || ${in.header.foo} == 'abc'" , true);
-        assertPredicate("${in.header.bar} range '200..300' || ${in.header.foo} == 'def'" , false);
+        assertPredicate("${in.header.bar} range '100..200' && ${in.header.foo} == 'abc'", true);
+        assertPredicate("${in.header.bar} range '200..300' && ${in.header.foo} == 'abc'", false);
+        assertPredicate("${in.header.bar} range '200..300' || ${in.header.foo} == 'abc'", true);
+        assertPredicate("${in.header.bar} range '200..300' || ${in.header.foo} == 'def'", false);
     }
 
     public void testNotRange() throws Exception {
@@ -498,6 +551,26 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar}-- == 122", true);
         assertPredicate("${in.header.bar}-- == 123", false);
         assertPredicate("${in.header.bar}-- == 124", false);
+    }
+
+    public void testStartsWith() throws Exception {
+        exchange.getIn().setBody("Hello there");
+        assertPredicate("${in.body} starts with 'Hello'", true);
+        assertPredicate("${in.body} starts with 'H'", true);
+        assertPredicate("${in.body} starts with 'Hello there'", true);
+        assertPredicate("${in.body} starts with 'Hello ther'", true);
+        assertPredicate("${in.body} starts with 'ello there'", false);
+        assertPredicate("${in.body} starts with 'Hi'", false);
+    }
+    
+    public void testEndsWith() throws Exception {
+        exchange.getIn().setBody("Hello there");
+        assertPredicate("${in.body} ends with 'there'", true);
+        assertPredicate("${in.body} ends with 're'", true);
+        assertPredicate("${in.body} ends with ' there'", true);
+        assertPredicate("${in.body} ends with 'Hello there'", true);
+        assertPredicate("${in.body} ends with 'Hello ther'", false);
+        assertPredicate("${in.body} ends with 'Hi'", false);
     }
 
     protected String getLanguageName() {

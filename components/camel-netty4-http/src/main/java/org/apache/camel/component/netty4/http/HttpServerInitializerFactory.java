@@ -97,8 +97,6 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
             }
             pipeline.addLast("decoder-" + x, decoder);
         }
-        pipeline.addLast("aggregator", new HttpObjectAggregator(configuration.getChunkedMaxContentLength()));
-
         pipeline.addLast("encoder", new HttpResponseEncoder());
         List<ChannelHandler> encoders = consumer.getConfiguration().getEncoders();
         for (int x = 0; x < encoders.size(); x++) {
@@ -109,6 +107,7 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
             }
             pipeline.addLast("encoder-" + x, encoder);
         }
+        pipeline.addLast("aggregator", new HttpObjectAggregator(configuration.getChunkedMaxContentLength()));
         if (supportCompressed()) {
             pipeline.addLast("deflater", new HttpContentCompressor());
         }
@@ -133,7 +132,7 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
 
         // create ssl context once
         if (configuration.getSslContextParameters() != null) {
-            answer = configuration.getSslContextParameters().createSSLContext();
+            answer = configuration.getSslContextParameters().createSSLContext(camelContext);
         } else {
             if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
                 LOG.debug("keystorefile is null");

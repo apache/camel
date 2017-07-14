@@ -41,6 +41,7 @@ public class JsonPathAnnotationExpressionFactory extends DefaultAnnotationExpres
             JsonPath jsonPathAnnotation = (JsonPath) annotation;
 
             answer.setSuppressExceptions(jsonPathAnnotation.suppressExceptions());
+            answer.setAllowSimple(jsonPathAnnotation.allowSimple());
 
             Option[] options = jsonPathAnnotation.options();
             answer.setOptions(options);

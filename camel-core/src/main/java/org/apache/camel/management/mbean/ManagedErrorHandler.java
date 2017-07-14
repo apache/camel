@@ -367,6 +367,24 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         redelivery.getRedeliveryPolicy().setLogExhaustedMessageHistory(log);
     }
 
+    public Boolean getLogExhaustedMessageBody() {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().isLogExhaustedMessageBody();
+    }
+
+    public void setLogExhaustedMessageBody(Boolean log) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setLogExhaustedMessageBody(log);
+    }
+
     public Boolean getLogContinued() {
         if (!isSupportRedelivery()) {
             return null;

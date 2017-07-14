@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.time.ZonedDateTime;
+
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.component.salesforce.internal.dto.QueryRecordsPushTopic;
-import org.joda.time.DateTime;
 import org.junit.Test;
 
 public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
@@ -37,7 +38,7 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
 
         Merchandise__c merchandise = new Merchandise__c();
         merchandise.setName("TestNotification");
-        merchandise.setDescription__c("Merchandise for testing Streaming API updated on " + new DateTime().toString());
+        merchandise.setDescription__c("Merchandise for testing Streaming API updated on " + ZonedDateTime.now().toString());
         merchandise.setPrice__c(9.99);
         merchandise.setTotal_Inventory__c(1000.0);
         CreateSObjectResult result = template().requestBody(

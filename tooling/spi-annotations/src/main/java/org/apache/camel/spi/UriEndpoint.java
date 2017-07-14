@@ -33,6 +33,11 @@ import java.lang.annotation.Target;
 public @interface UriEndpoint {
 
     /**
+     * The first version this endpoint was added to Apache Camel.
+     */
+    String firstVersion() default "";
+
+    /**
      * Represents the URI scheme name of this endpoint.
      * <p/>
      * Multiple scheme names can be defined as a comma separated value.
@@ -74,6 +79,16 @@ public @interface UriEndpoint {
     String syntax();
 
     /**
+     * If the endpoint supports specifying username and/or password in the UserInfo part of the URI, then the
+     * alternative syntax can represent this such as:
+     * <ul>
+     *     <li>ftp:userName:password@host:port/directoryName</li>
+     *     <li>ssh:username:password@host:port</li>
+     * </ul>
+     */
+    String alternativeSyntax() default "";
+
+    /**
      * Represents the consumer class which is injected and created by consumers
      */
     Class<?> consumerClass() default Object.class;
@@ -113,5 +128,29 @@ public @interface UriEndpoint {
      * By default its assumed the endpoint can be used as both consumer and producer.
      */
     boolean consumerOnly() default false;
+
+    /**
+     * Should all properties be known or does the endpoint allow unknown options?
+     * <p/>
+     * <tt>lenient = false</tt> means that the endpoint should validate that all
+     * given options is known and configured properly.
+     * <tt>lenient = true</tt> means that the endpoint allows additional unknown options to
+     * be passed to it but does not throw a ResolveEndpointFailedException when creating
+     * the endpoint.
+     * <p/>
+     * This options is used by a few components for instance the HTTP based that can have
+     * dynamic URI options appended that is targeted for an external system.
+     * <p/>
+     * Most endpoints is configured to be <b>not</b> lenient.
+     */
+    boolean lenientProperties() default false;
+
+    /**
+     * To exclude one or more properties in this endpoint.
+     * <p/>
+     * This is used when a Camel component extend another component, and then may need to not use some of the properties from
+     * the parent component. Multiple properties can be separated by comma.
+     */
+    String excludeProperties() default "";
 
 }

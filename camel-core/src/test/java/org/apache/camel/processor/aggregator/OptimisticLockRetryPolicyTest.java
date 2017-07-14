@@ -27,7 +27,7 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(true);
         policy.setExponentialBackOff(false);
-        policy.setMaximumRetryDelay(500L);
+        policy.setMaximumRetryDelay(100L);
 
         for (int i = 0; i < 10; i++) {
             long elapsed = doDelay(policy, i);
@@ -41,12 +41,12 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
         policy.setRandomBackOff(false);
         policy.setExponentialBackOff(true);
         policy.setMaximumRetryDelay(0L);
-        policy.setRetryDelay(50L);
+        policy.setRetryDelay(10L);
 
         for (int i = 0; i < 6; i++) {
             long elapsed = doDelay(policy, i);
 
-            assertDelay(50L << i, elapsed);
+            assertDelay(10L << i, elapsed);
         }
     }
 
@@ -54,7 +54,7 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(false);
         policy.setExponentialBackOff(true);
-        policy.setMaximumRetryDelay(200L);
+        policy.setMaximumRetryDelay(100L);
         policy.setRetryDelay(50L);
 
         for (int i = 0; i < 10; i++) {
@@ -68,7 +68,7 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
                 assertDelay(100L, elapsed);
                 break;
             default:
-                assertDelay(200L, elapsed);
+                assertDelay(100L, elapsed);
                 break;
             }
         }

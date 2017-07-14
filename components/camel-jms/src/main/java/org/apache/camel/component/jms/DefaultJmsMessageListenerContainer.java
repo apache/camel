@@ -73,9 +73,7 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
             // otherwise we only run if the endpoint is running
             boolean answer = endpoint.isRunning();
             // log at trace level as otherwise this can be noisy during normal operation
-            if (logger.isTraceEnabled()) {
-                logger.trace("runningAllowed() -> " + answer);
-            }
+            logger.trace("runningAllowed() -> " + answer);
             return answer;
         }
     }

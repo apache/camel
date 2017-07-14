@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * is tested using the {@link #filter(org.apache.camel.model.OnExceptionDefinition, Class, Throwable)} method.
  * By default the filter uses <tt>instanceof</tt> test.</li>
  * <li>If the exception type has <b>exactly</b> the thrown exception then its selected as its an exact match</li>
- * <li>Otherwise the type that has an exception that is the closets super of the thrown exception is selected
+ * <li>Otherwise the type that has an exception that is the closest super of the thrown exception is selected
  * (recurring up the exception hierarchy)</li>
  * </ul>
  * <p/>

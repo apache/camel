@@ -32,10 +32,9 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * An <a href="http://camel.apache.org/ibatis.html>iBatis Endpoint</a>
- * for performing SQL operations using an XML mapping file to abstract away the SQL
+ * Performs a query, poll, insert, update or delete in a relational database using Apache iBATIS.
  */
-@UriEndpoint(scheme = "ibatis", title = "iBatis", syntax = "ibatis:statement", consumerClass = IBatisConsumer.class, label = "database,sql")
+@UriEndpoint(firstVersion = "1.2.0", scheme = "ibatis", title = "iBatis", syntax = "ibatis:statement", consumerClass = IBatisConsumer.class, label = "database,sql")
 public class IBatisEndpoint extends DefaultPollingEndpoint {
     @UriPath @Metadata(required = "true")
     private String statement;
@@ -50,6 +49,12 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
     @UriParam(defaultValue = "TRANSACTION_REPEATABLE_READ",
               enums = "TRANSACTION_NONE,TRANSACTION_READ_UNCOMMITTED,TRANSACTION_READ_COMMITTED,TRANSACTION_REPEATABLE_READ,TRANSACTION_SERIALIZABLE")
     private String isolation;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    private String onConsume;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.", defaultValue = "true")
+    private boolean useIterator = true;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    private boolean routeEmptyResultSet;
 
     public IBatisEndpoint() {
     }
@@ -78,6 +83,9 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
     public IBatisConsumer createConsumer(Processor processor) throws Exception {
         IBatisConsumer consumer = new IBatisConsumer(this, processor);
         consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
+        consumer.setOnConsume(getOnConsume());
+        consumer.setUseIterator(isUseIterator());
+        consumer.setRouteEmptyResultSet(isRouteEmptyResultSet());
         configureConsumer(consumer);
         return consumer;
     }
@@ -155,6 +163,39 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
      */
     public void setIsolation(String isolation) throws Exception {
         this.isolation = isolation;
+    }
+
+    public String getOnConsume() {
+        return onConsume;
+    }
+
+    /**
+     * Statement to run after data has been processed in the route
+     */
+    public void setOnConsume(String onConsume) {
+        this.onConsume = onConsume;
+    }
+
+    public boolean isUseIterator() {
+        return useIterator;
+    }
+
+    /**
+     * Process resultset individually or as a list
+     */
+    public void setUseIterator(boolean useIterator) {
+        this.useIterator = useIterator;
+    }
+
+    public boolean isRouteEmptyResultSet() {
+        return routeEmptyResultSet;
+    }
+
+    /**
+     * Whether allow empty resultset to be routed to the next hop
+     */
+    public void setRouteEmptyResultSet(boolean routeEmptyResultSet) {
+        this.routeEmptyResultSet = routeEmptyResultSet;
     }
 
     @Override

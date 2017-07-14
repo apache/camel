@@ -98,6 +98,7 @@ public final class GoogleDriveFilesConverter {
     }
     
     private static Drive getClient(Exchange exchange) {
-        return exchange.getContext().getComponent("google-drive", GoogleDriveComponent.class).getClient();
+        GoogleDriveComponent component = exchange.getContext().getComponent("google-drive", GoogleDriveComponent.class);
+        return component.getClient(component.getConfiguration());
     }
 }

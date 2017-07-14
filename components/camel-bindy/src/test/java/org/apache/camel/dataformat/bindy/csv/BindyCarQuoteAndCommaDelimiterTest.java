@@ -18,10 +18,14 @@ package org.apache.camel.dataformat.bindy.csv;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.bindy.format.factories.DefaultFactoryRegistry;
 import org.apache.camel.dataformat.bindy.model.car.Car;
 import org.apache.camel.dataformat.bindy.model.car.Car.Colour;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -39,6 +43,13 @@ public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
             + " Anti Theft, Brake Assist, Cruise Control, Central Locking Remote Control, Cloth Trim, Electronic Brake Force Distribution,"
             + " Engine Immobiliser, Limited Slip Differential, Power Mirrors, Power Steering, Power Windows, Radio CD with 6 Speakers"
             + " CV GOOD KLMS AUTO POWER OPTIONS GOOD KLMS   \";\"Used\";\"0.0\";\"EZR05I\"\n";
+
+    @Before
+    public void setup() {
+        PropertyPlaceholderDelegateRegistry registry = (PropertyPlaceholderDelegateRegistry)context.getRegistry();
+        JndiRegistry reg = (JndiRegistry)registry.getRegistry();
+        reg.bind("defaultFactoryRegistry", new DefaultFactoryRegistry());
+    }
 
     @Test
     public void testBindyUnmarshalQuoteAndCommaDelimiter() throws Exception {

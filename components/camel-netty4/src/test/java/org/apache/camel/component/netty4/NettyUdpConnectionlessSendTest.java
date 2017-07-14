@@ -33,7 +33,6 @@ import io.netty.util.CharsetUtil;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-
 public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
     private static final String SEND_STRING = "***<We all love camel>***";
     private static final int SEND_COUNT = 20;
@@ -110,7 +109,6 @@ public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
         @Override
         protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
             ++receivedCount;
-            assertEquals(SEND_STRING, s);
         }
     }
 }

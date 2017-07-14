@@ -85,6 +85,7 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class).handled(true)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(4).logStackTrace(false)
                     .setBody().constant("Error");
 

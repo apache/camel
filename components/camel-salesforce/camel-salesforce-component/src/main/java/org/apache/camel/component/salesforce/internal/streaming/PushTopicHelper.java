@@ -20,22 +20,24 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.CamelException;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.SyncResponseCallback;
 import org.apache.camel.component.salesforce.internal.dto.PushTopic;
 import org.apache.camel.component.salesforce.internal.dto.QueryRecordsPushTopic;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PushTopicHelper {
     private static final Logger LOG = LoggerFactory.getLogger(PushTopicHelper.class);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonUtils.createObjectMapper();
     private static final String PUSH_TOPIC_OBJECT_NAME = "PushTopic";
     private static final long API_TIMEOUT = 60; // Rest API call timeout
     private final SalesforceEndpointConfig config;
@@ -73,7 +75,9 @@ public class PushTopicHelper {
         try {
             // use SOQL to lookup Topic, since Name is not an external ID!!!
             restClient.query("SELECT Id, Name, Query, ApiVersion, IsActive, "
-                    + "NotifyForFields, NotifyForOperations, Description "
+                    + "NotifyForFields, NotifyForOperations, NotifyForOperationCreate, "
+                    + "NotifyForOperationDelete, NotifyForOperationUndelete, "
+                    + "NotifyForOperationUpdate, Description "
                     + "FROM PushTopic WHERE Name = '" + topicName + "'",
                     callback);
 

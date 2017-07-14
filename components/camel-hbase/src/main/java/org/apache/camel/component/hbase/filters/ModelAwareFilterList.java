@@ -89,4 +89,9 @@ public class ModelAwareFilterList implements ModelAwareFilter<FilterList> {
     public void addFilter(Filter filter) {
         getFilters().add(filter);
     }
+
+    @Override
+    public FilterList getFilteredList() {
+        return fl;
+    }
 }

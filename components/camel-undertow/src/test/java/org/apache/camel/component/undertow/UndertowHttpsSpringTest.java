@@ -59,7 +59,7 @@ public class UndertowHttpsSpringTest {
     public void testSSLConsumer() throws Exception {
         mockEndpoint.expectedBodiesReceived("Hello World");
 
-        String out = template.requestBody("https://localhost:" + port + "/spring", "Hello World", String.class);
+        String out = template.requestBody("undertow:https://localhost:" + port + "/spring?sslContextParameters=#sslClient", "Hello World", String.class);
         assertEquals("Bye World", out);
 
         mockEndpoint.assertIsSatisfied();

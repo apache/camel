@@ -40,11 +40,10 @@ import org.codehaus.jettison.mapped.MappedXMLOutputFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
- * ({@link DataFormat}) using XStream and Jettison to marshal to and from JSON
+ * ({@link org.apache.camel.spi.DataFormat}) using XStream and Jettison to marshal to and from JSON
  *
  * @version
  */
-
 public class JsonDataFormat extends AbstractXStreamWrapper {
     private final MappedXMLOutputFactory mof;
     private final MappedXMLInputFactory mif;
@@ -56,12 +55,30 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
         mif = new MappedXMLInputFactory(nstjsons);
     }
 
+    @Override
+    public String getDataFormatName() {
+        return "json-xstream";
+    }
+
     public boolean isPrettyPrint() {
         return prettyPrint;
     }
 
     public void setPrettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
+    }
+
+    @Override
+    public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
+        super.marshal(exchange, body, stream);
+
+        if (isContentTypeHeader()) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            }
+        }
     }
 
     @Override

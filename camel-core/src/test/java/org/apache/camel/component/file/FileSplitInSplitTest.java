@@ -85,7 +85,7 @@ public class FileSplitInSplitTest extends ContextTestSupport {
                 Tracer tracer = new Tracer();
                 getContext().addInterceptStrategy(tracer);
                 
-                from("file:target/split").routeId("foo").noAutoStartup()
+                from("file:target/split?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
                     .split(body().tokenize(comma))
                         .parallelProcessing()
                         .streaming()

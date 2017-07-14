@@ -43,6 +43,26 @@ public class AdviceWithWeaveLastCBRTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testWeaveByToUriAndAddLast() throws Exception {
+        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                weaveByToUri("mock:foo").replace().to("mock:foo2");
+                // insert at the end of the existing route, the given piece of route
+                weaveAddLast().to("mock:last");
+            }
+        });
+
+        getMockEndpoint("mock:foo").expectedMessageCount(0);
+        getMockEndpoint("mock:foo2").expectedMessageCount(1);
+        getMockEndpoint("mock:bar").expectedMessageCount(0);
+        getMockEndpoint("mock:last").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "yeah");
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

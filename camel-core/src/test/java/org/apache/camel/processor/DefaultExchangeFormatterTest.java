@@ -36,7 +36,7 @@ public class DefaultExchangeFormatterTest {
     @Before
     public void setUp() {
         camelContext = new DefaultCamelContext();
-        Message message = new DefaultMessage();
+        Message message = new DefaultMessage(camelContext);
         message.setBody("This is the message body");
         exchange = new DefaultExchange(camelContext);
         exchange.setIn(message);
@@ -68,11 +68,11 @@ public class DefaultExchangeFormatterTest {
      * one of the message
      */
     public void testFormatWithBodyMaxChars() {
-        camelContext.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "7");
+        camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "7");
         String formattedExchange = exchangeFormatter.format(exchange);
         assertFalse(formattedExchange.contains("This is "));
         assertTrue(formattedExchange.contains("This is"));
-        camelContext.getProperties().remove(Exchange.LOG_DEBUG_BODY_MAX_CHARS);
+        camelContext.getGlobalOptions().remove(Exchange.LOG_DEBUG_BODY_MAX_CHARS);
     }
 
     @Test
@@ -81,11 +81,11 @@ public class DefaultExchangeFormatterTest {
      * total message.
      */
     public void testFormatWithBoth() {
-        camelContext.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "7");
+        camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "7");
         exchangeFormatter.setMaxChars(60);
         String formattedExchange = exchangeFormatter.format(exchange);
         assertEquals(60 + "Exchange[...]".length() - ", ".length(), formattedExchange.length());
         assertFalse(formattedExchange.contains("This is "));
-        camelContext.getProperties().remove(Exchange.LOG_DEBUG_BODY_MAX_CHARS);
+        camelContext.getGlobalOptions().remove(Exchange.LOG_DEBUG_BODY_MAX_CHARS);
     }
 }

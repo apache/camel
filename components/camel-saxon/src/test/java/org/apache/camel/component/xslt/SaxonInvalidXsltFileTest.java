@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.xslt;
 
+import javax.xml.transform.TransformerException;
+
 import org.apache.camel.CamelContext;
-import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.TestSupport;
@@ -35,16 +35,16 @@ public class SaxonInvalidXsltFileTest extends TestSupport {
             context.start();
 
             fail("Should have thrown an exception due XSL compilation error");
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             // expected
-            assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
+            assertIsInstanceOf(TransformerException.class, e.getCause());
         }
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("seda:a").to("xslt:org/apache/camel/component/xslt/invalid.xsl?transformerFactoryClass=net.sf.saxon.TransformerFactoryImpl");
+                from("seda:a").to("xslt:org/apache/camel/component/xslt/notfound.xsl?transformerFactoryClass=net.sf.saxon.TransformerFactoryImpl");
             }
         };
     }

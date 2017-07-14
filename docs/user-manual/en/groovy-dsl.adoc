@@ -1,0 +1,402 @@
+[[GroovyDSL-AbouttheGroovyDSL]]
+About the Groovy DSL
+^^^^^^^^^^^^^^^^^^^^
+
+The Groovy DSL implementation is built on top of the existing Java-based
+link:dsl.html[DSL], but it additionally allows to use Groovy language
+features in your routes, particularly
+http://www.groovy-lang.org/closures.html[Closures] acting as
+link:processor.html[Processor], link:expression.html[Expression],
+link:predicate.html[Predicate], or link:aggregator.html[Aggregation
+Strategy]. +
+ With the Groovy DSL you write your RouteBuilder classes entirely in
+Groovy, while the link:scripting-languages.html[scripting component]
+allows to embed small scripts into Java routes. The Groovy DSL requires
+Groovy 2.0 or newer and is available as of *Camel 2.11*.
+
+[[GroovyDSL-Introduction]]
+Introduction
+^^^^^^^^^^^^
+
+Because Groovy is syntactically very similar to Java, you can write your
+Groovy routes just like Java routes. The same Java DSL classes are being
+used, with the exception that some of the DSL classes get extended with
+a bunch of new methods at runtime. This is achieved by turning
+camel-groovy into a Groovy
+http://docs.codehaus.org/display/GROOVY/Creating+an+extension+module[Extension
+Module] that defines extension methods on existing classes.
+
+The majority of the extension methods allow
+http://www.groovy-lang.org/closures.html[Closures] to be used as
+parameters e.g. for expressions, predicates, processors. The following
+example reverses a string in the message body and then prints the value
+to System.out:
+
+*MyRouteBuilder.groovy*
+
+[source,java]
+-----------------------------------------
+...
+   from('direct:test')
+      .transform { it.in.body.reverse() }
+      .process { println it.in.body }
+...
+-----------------------------------------
+
+The corresponding route in Java would look something like this:
+
+*MyRouteBuilder.java*
+
+[source,java]
+-----------------------------------------------------------------------------------------
+...
+   from("direct:test")
+      .transform(new Expression() {
+         @Override
+         public Object evaluate(Exchange e) {
+            return new StringBuffer(e.getIn().getBody().toString()).reverse().toString();
+         }
+      })
+      .process(new Processor() {
+         @Override
+         public void process(Exchange e) {
+           System.out.println(e.getIn().getBody());
+         }
+      });
+...
+-----------------------------------------------------------------------------------------
+
+[[GroovyDSL-DevelopingwiththeGroovyDSL]]
+Developing with the Groovy DSL
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To be able to use the Groovy DSL in your camel routes you need to add
+the a dependency on *camel-groovy* which implements the Groovy DSL.
+
+If you use Maven you can just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+---------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-groovy</artifactId>
+  <version>2.11.0</version>
+</dependency>
+---------------------------------------
+
+Additionally you need to make sure that the Groovy classes will be
+compiled. You can either use gmaven for this or, particularly with mixed
+projects containing Java and Groovy code, you might want to use the
+http://groovy.codehaus.org/Groovy-Eclipse+compiler+plugin+for+Maven[Groovy
+Eclipse compiler]:
+
+[source,xml]
+--------------------------------------------------------
+  <plugin>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+      <compilerId>groovy-eclipse-compiler</compilerId>
+    </configuration>
+    <dependencies>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-eclipse-compiler</artifactId>
+    <version>2.7.0-01</version>
+      </dependency>
+    </dependencies>
+  </plugin>
+--------------------------------------------------------
+
+As Eclipse user, you might want to configure the Maven Eclipse plugin in
+a way so that your project is set up correctly for using
+http://groovy.codehaus.org/Eclipse+Plugin[Eclipse Plugin for Groovy]
+when `mvn eclipse:eclipse` is executed:
+
+[source,xml]
+----------------------------------------------------------------------------------------
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-eclipse-plugin</artifactId>
+    <configuration>
+      <additionalProjectnatures>
+        <projectnature>org.eclipse.jdt.groovy.core.groovyNature</projectnature>
+      </additionalProjectnatures>
+      <classpathContainers>
+        <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
+        <classpathContainer>GROOVY_DSL_SUPPORT</classpathContainer>
+      </classpathContainers>              
+    </configuration>
+  </plugin>     
+----------------------------------------------------------------------------------------
+
+[[GroovyDSL-UsingClosuresinyourroutes]]
+Using Closures in your routes
++++++++++++++++++++++++++++++
+
+Groovy closures can be used to write concise implementations of Camel
+processors, expressions, predicates, and aggregation strategies. It is
+recommended to keep more complicated implementations of these objects in
+their own classes, e.g. to be able to test them more easily and not to
+clutter up your routes with business logic.
+
+[[GroovyDSL-ProcessorClosures]]
+Processor Closures
+
+All Java DSL parameters of type `org.apache.camel.Processor` can be
+replaced by a closure that accepts an object of type
+`org.apache.camel.Exchange` as only parameter. The return value of the
+closure is disregarded. All closures may also refer to variables not
+listed in their parameter list. Example:
+
+[source,java]
+------------------------------------------------------------------------------
+...
+   private String someValue
+...
+   from('direct:test')
+      .process { Exchange exchange -> println (exchange.in.body + someValue) }
+      .process { println (it.in.body + someValue) } // equivalent
+...
+------------------------------------------------------------------------------
+
+[[GroovyDSL-ExpressionClosures]]
+Expression Closures
+
+All Java DSL parameters of type `org.apache.camel.Expression` can be
+replaced by a closure that accepts an object of type
+`org.apache.camel.Exchange` as only parameter. The return value of the
+closure is the result of the expression. Example:
+
+[source,java]
+-----------------------------------------------------
+...
+   private String someValue
+...
+   from('direct:test')
+      .transform { it.in.body.reverse() + someValue }
+      .setHeader("myHeader") { someValue.reverse() }
+...
+-----------------------------------------------------
+
+[[GroovyDSL-PredicateClosures]]
+Predicate Closures
+
+All Java DSL parameters of type `org.apache.camel.Predicate` can be
+replaced by a closure that accepts an object of type
+`org.apache.camel.Exchange` as only parameter. The return value of the
+closure is translated into a boolean value representing the result of
+the predicate. Example:
+
+[source,java]
+------------------------------------------------------
+...
+   private String someValue
+
+   // This time, the closure is stored in a variable
+   def pred = { Exchange e -> e.in.body != someValue }
+...
+   from('direct:test')
+      .filter(pred)
+...
+------------------------------------------------------
+
+[[GroovyDSL-AggregationStrategyClosures]]
+Aggregation Strategy Closures
+
+Java DSL parameters of type
+`org.apache.camel.processor.aggregate.AggregationStrategy` can be
+replaced by a closure that accepts two objects of type
+`org.apache.camel.Exchange` representing the two Exchanges to be
+aggregated. The return value of the closure must be the aggregated
+Exchange. Example:
+
+[source,java]
+-------------------------------------------------------------------------
+...
+   private String separator
+...
+   from('direct:test1')
+      .enrich('direct:enrich') { Exchange original, Exchange resource -> 
+         original.in.body += resource.in.body + separator
+         original  // don't forget to return resulting exchange
+      }
+...
+-------------------------------------------------------------------------
+
+[[GroovyDSL-Genericclosurebridges]]
+Generic closure bridges
+
+In addition to the above-mentioned DSL extensions, you can use closures
+even if no DSL method signature with closure parameters is available.
+Assuming there's no `filter(Closure)` method, you could instead write:
+
+[source,java]
+---------------------------------------------------------
+...
+   private String someValue
+
+   // This time, the closure is stored in a variable
+   def pred = { Exchange e -> e.in.body != someValue }
+...
+   from('direct:test')
+      // predicate(Closure) -> org.apache.camel.Predicate
+      .filter(predicate(pred))
+...
+---------------------------------------------------------
+
+Similarly, `expression(Closure)` returns a Camel expression,
+`processor(Closure)` returns a Processor, and `aggregator(Closure)`
+returns an AggregationStrategy.
+
+[[GroovyDSL-UsingGroovyXMLprocessing]]
+Using Groovy XML processing
++++++++++++++++++++++++++++
+
+Groovy provides special http://groovy-lang.org/processing-xml.html[XML
+processing support] through its `XmlParser`, `XmlNodePrinter` and
+`XmlSlurper` classes. camel-groovy provides two
+link:data-format.html[data formats] to use these classes directly in
+your routes.
+
+*Unmarshal XML with XmlParser*
+
+[source,java]
+-----------------------------------------------------
+...
+   from('direct:test1')
+      .unmarshal().gnode() 
+      // message body is now of type groovy.util.Node
+...
+-----------------------------------------------------
+
+By default, XML processing is _namespace-aware_. You can change this by
+providing a boolean `false` parameter.
+
+*Unmarshal XML with XmlSlurper*
+
+[source,java]
+---------------------------------------------------------------------------
+...
+   from('direct:test1')
+      .unmarshal().gpath(false) // explicitly namespace-unaware
+      // message body is now of type groovy.util.slurpersupport.GPathResult
+...
+---------------------------------------------------------------------------
+
+Currently, marshalling is only supported for `groovy.util.Node` objects.
+
+*Marshal XML with XmlNodePrinter*
+
+[source,java]
+------------------------------------------------------
+...
+   from('direct:test1')
+      // message body must be of type groovy.util.Node
+      .marshal().gnode()
+...
+------------------------------------------------------
+
+[[GroovyDSL-UsingGroovyGStrings]]
+Using Groovy GStrings
++++++++++++++++++++++
+
+Groovy
+http://docs.groovy-lang.org/latest/html/documentation/index.html#all-strings[GStrings]
+are declared inside double-quotes and can contain arbitrary Groovy
+expressions like accessing properties or calling methods, e.g.
+
+[source,java]
+-----------------------------------------
+def x = "It is currently ${ new Date() }"
+-----------------------------------------
+
+Because GStrings aren't Strings, camel-groovy adds the necessary
+link:type-converter.html[TypeConverter] to automatically turn them into
+the required type.
+
+[[GroovyDSL-CustomDSLextensions]]
+Custom DSL extensions
++++++++++++++++++++++
+
+You can easily define your custom extensions - be it as a Java DSL
+extension for your Groovy routes or for any other class unrelated to
+Camel. All you have to do is to write your extension methods and provide
+a extension module descriptor - the details are described in the
+http://www.groovy-lang.org/metaprogramming.html#_extension_modules[Groovy
+documentation]. And as long as you don't require other extension
+methods, you can even use plain Java code to achieve this! +
+ As an example, let's write two DSL extensions to make commonly used DSL
+methods more concise:
+
+*MyExtension.java*
+
+[source,java]
+-------------------------------------------------------------------------------------------------------------------------------
+import org.apache.camel.Endpoint;
+import org.apache.camel.Predicate;
+
+public final class MyExtension {
+    private MyExtension() {
+        // Utility Class
+    }
+
+    // Set the id of a route to its consumer URI
+    public static RouteDefinition fromId(RouteDefinition delegate, String uri) {
+       return delegate.from(uri).routeId(uri);
+    }
+
+    public static RouteDefinition fromId(RouteDefinition delegate, Endpoint endpoint) {
+       return delegate.from(endpoint).routeId(endpoint.getEndpointUri());
+    }
+
+    // Make common choice pattern more concise
+
+    public static ProcessorDefinition<?> fork(ProcessorDefinition<?> delegate, String uri1, String uri2, Predicate predicate) {
+       return delegate.choice().when(predicate).to(uri1).otherwise().to(uri2);
+    }
+
+}
+-------------------------------------------------------------------------------------------------------------------------------
+
+Add a corresponding extension module descriptor to `META-INF/services`:
+
+*META-INF/services/org.codehaus.groovy.runtime.ExtensionModule*
+
+[source,java]
+----------------------------
+moduleName=my-extension
+moduleVersion=2.11
+extensionClasses=MyExtension
+staticExtensionClasses=
+----------------------------
+
+And now your Groovy route can look like this:
+
+*MyRoute.groovy*
+
+[source,java]
+------------------------------------------------------------
+...
+   fromId('direct:test1')
+      .fork('direct:null','direct:not-null',body().isNull())
+...
+------------------------------------------------------------
+
+Using the plain Java DSL, the route would look something like this:
+
+*MyRoute.java*
+
+[source,java]
+-----------------------------------
+...
+   from("direct:test1")
+      .routeId("direct:test1")
+      .choice()
+         .when(body().isNull())
+            .to("direct:null")
+         .otherwise()
+            .to("direct:not-null");
+...
+-----------------------------------

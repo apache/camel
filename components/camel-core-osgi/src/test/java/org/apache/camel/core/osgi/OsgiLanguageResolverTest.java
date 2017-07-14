@@ -19,7 +19,10 @@ package org.apache.camel.core.osgi;
 import java.io.IOException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spi.Language;
 import org.junit.Test;
 
@@ -32,4 +35,59 @@ public class OsgiLanguageResolverTest extends CamelOsgiTestSupport {
         Language language = resolver.resolveLanguage("simple", camelContext);
         assertNotNull("We should find simple language", language);
     }
+
+    @Test
+    public void testOsgiResolverFindLanguageFallbackTest() throws IOException {
+        SimpleRegistry registry = new SimpleRegistry();
+        registry.put("fuffy-language", new SampleLanguage(true));
+
+        CamelContext camelContext = new DefaultCamelContext(registry);
+
+        OsgiLanguageResolver resolver = new OsgiLanguageResolver(getBundleContext());
+        Language language = resolver.resolveLanguage("fuffy", camelContext);
+        assertNotNull("We should find fuffy language", language);
+        assertTrue("We should find the fallback language", ((SampleLanguage) language).isFallback());
+    }
+
+    @Test
+    public void testOsgiResolverFindLanguageDoubleFallbackTest() throws IOException {
+        SimpleRegistry registry = new SimpleRegistry();
+        registry.put("fuffy", new SampleLanguage(false));
+        registry.put("fuffy-language", new SampleLanguage(true));
+
+        CamelContext camelContext = new DefaultCamelContext(registry);
+
+        OsgiLanguageResolver resolver = new OsgiLanguageResolver(getBundleContext());
+        Language language = resolver.resolveLanguage("fuffy", camelContext);
+        assertNotNull("We should find fuffy language", language);
+        assertFalse("We should NOT find the fallback language", ((SampleLanguage) language).isFallback());
+    }
+
+    private static class SampleLanguage implements Language {
+
+        private boolean fallback;
+
+        SampleLanguage(boolean fallback) {
+            this.fallback = fallback;
+        }
+
+        @Override
+        public Predicate createPredicate(String expression) {
+            throw new UnsupportedOperationException("Should not be called");
+        }
+
+        @Override
+        public Expression createExpression(String expression) {
+            throw new UnsupportedOperationException("Should not be called");
+        }
+
+        public boolean isFallback() {
+            return fallback;
+        }
+
+        public void setFallback(boolean fallback) {
+            this.fallback = fallback;
+        }
+    }
+
 }

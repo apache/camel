@@ -19,6 +19,7 @@ package org.apache.camel.component.bean;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,13 +100,29 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         }
     }
 
-    public abstract Object doInvokeProxy(final Object proxy, final Method method, final Object[] args) throws Throwable;
+    public abstract Object doInvokeProxy(Object proxy, Method method, Object[] args) throws Throwable;
 
     @SuppressWarnings("unchecked")
     protected Object invokeProxy(final Method method, final ExchangePattern pattern, Object[] args, boolean binding) throws Throwable {
         final Exchange exchange = new DefaultExchange(endpoint, pattern);
 
-        if (binding) {
+        //Need to check if there are mutiple arguments and the parameters have no annotations for binding,
+        //then use the original bean invocation.
+        
+        boolean canUseBinding = method.getParameterCount() == 1;
+
+        if (!canUseBinding) {
+            for (Parameter parameter : method.getParameters()) {
+                if (parameter.isAnnotationPresent(Header.class)
+                        || parameter.isAnnotationPresent(Headers.class)
+                        || parameter.isAnnotationPresent(ExchangeProperty.class)
+                        || parameter.isAnnotationPresent(Body.class)) {
+                    canUseBinding = true;
+                }
+            }
+        }
+
+        if (binding && canUseBinding) {
             // in binding mode we bind the passed in arguments (args) to the created exchange
             // using the existing Camel @Body, @Header, @Headers, @ExchangeProperty annotations
             // if no annotation then its bound as the message body
@@ -284,7 +301,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
      * <p/>
      * It looks in the exception hierarchy from the caused exception and matches
      * this against the declared exceptions being thrown on the method.
-     * 
+     *
      * @param cause the caused exception
      * @param method the method
      * @return the exception to throw, or <tt>null</tt> if not possible to find

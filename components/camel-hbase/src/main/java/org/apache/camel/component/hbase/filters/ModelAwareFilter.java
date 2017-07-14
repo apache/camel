@@ -19,6 +19,7 @@ package org.apache.camel.component.hbase.filters;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.hbase.model.HBaseRow;
 import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.hbase.filter.FilterList;
 
 public interface ModelAwareFilter<T extends Filter> {
 
@@ -26,4 +27,6 @@ public interface ModelAwareFilter<T extends Filter> {
      * Applies the message to {@link Filter} to context.
      */
     void apply(CamelContext context, HBaseRow rowModel);
+
+    FilterList getFilteredList();
 }

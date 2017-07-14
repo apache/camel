@@ -31,6 +31,8 @@ public class SWFActivityConsumer extends DefaultConsumer {
     private SWFEndpoint endpoint;
     private final SWFConfiguration configuration;
     private GenericActivityWorker genericWorker;
+    
+    private transient String swfActivityConsumerToString;
 
     public SWFActivityConsumer(SWFEndpoint endpoint, Processor processor, SWFConfiguration configuration) {
         super(endpoint, processor);
@@ -67,6 +69,9 @@ public class SWFActivityConsumer extends DefaultConsumer {
 
     @Override
     public String toString() {
-        return "SWFActivityConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (swfActivityConsumerToString == null) {
+            swfActivityConsumerToString = "SWFActivityConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return swfActivityConsumerToString;
     }
 }

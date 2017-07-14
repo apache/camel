@@ -16,20 +16,16 @@
  */
 package org.apache.camel.component.dropbox.dto;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.component.dropbox.util.DropboxResultHeader;
+public class DropboxDelResult {
 
-public class DropboxDelResult extends DropboxResult {
-    
-    /**
-     * Object payload contained in Exchange
-     * Exchange Body is populated with the remote path deleted on dropbox.
-     * @param exchange
-     */
-    @Override
-    public void populateExchange(Exchange exchange) {
-        String remotePath = (String)resultEntries;
-        exchange.getIn().setHeader(DropboxResultHeader.DELETED_PATH.name(), remotePath);
-        exchange.getIn().setBody(remotePath);
+    private final String entry;
+
+    public DropboxDelResult(String entry) {
+        this.entry = entry;
     }
+
+    public String getEntry() {
+        return entry;
+    }
+
 }

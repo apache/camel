@@ -1,0 +1,14 @@
+   =========================================================================
+   ==  NOTICE file corresponding to the section 4 d of                    ==
+   ==  the Apache License, Version 2.0,                                   ==
+   ==  in this case for the Apache Camel distribution.                    ==
+   =========================================================================
+
+   This product includes software developed by
+   The Apache Software Foundation (http://www.apache.org/).
+
+   This product includes software developed by
+   The HAPI Project (http://hl7api.sourceforge.net/).
+
+   Please read the different LICENSE files present in the licenses directory of
+   this distribution.

@@ -1,0 +1,304 @@
+ifdef::env-github[]
+:icon-frown: :frowning:
+:icon-smile: :smiley:
+endif::[]
+ifndef::env-github[]
+:icons: font
+:icon-frown: icon:frown-o[fw,role=yellow]
+:icon-smile: icon:smile-o[fw,role=yellow]
+endif::[]
+
+[[Testing-Testing]]
+Testing
+~~~~~~~
+
+Testing is a crucial activity in any piece of software development or
+integration. Typically Camel Riders use various different
+link:components.html[technologies] wired together in a variety of
+link:enterprise-integration-patterns.adoc[patterns] with different
+link:languages.html[expression languages] together with different forms
+of link:bean-integration.adoc[Bean Integration] and
+link:dependency-injection.adoc[Dependency Injection] so its very easy
+for things to go wrong! {icon-frown}. Testing is the crucial weapon to ensure
+that things work as you would expect {icon-smile}.
+
+Camel is a Java library so you can easily wire up tests in whatever unit
+testing framework you use (JUnit 3.x (deprecated), 4.x, or TestNG).
+However the Camel project has tried to make the testing of Camel as easy
+and powerful as possible so we have introduced the following features.
+
+[[Testing-Testingmechanisms]]
+Testing mechanisms
+^^^^^^^^^^^^^^^^^^
+
+The following mechanisms are supported
+
+[width="100%",cols="1,1m,4",options="header",]
+|=======================================================================
+|Name |Component |Description
+|link:camel-test.html[Camel Test] |camel-test |Is a standalone Java
+library letting you easily create Camel test cases using a single Java
+class for all your configuration and routing without using link:cdi.html[CDI],
+link:spring.html[Spring] or link:guice.html[Guice] for
+link:dependency-injection.adoc[Dependency Injection] which does not
+require an in-depth knowledge of CDI, Spring + Spring Test or Guice.
+Supports JUnit 3.x (deprecated) and JUnit 4.x based tests.
+
+|link:cdi-testing.html[CDI Testing] |camel-test-cdi | Provides a JUnit 4
+runner that bootstraps a test environment using CDI so that you don't have
+to be familiar with any CDI testing frameworks and can concentrate on the
+testing logic of your Camel CDI applications. +
+Testing frameworks like http://arquillian.org[Arquillian]
+or https://ops4j1.jira.com/wiki/display/PAXEXAM4[PAX Exam], can be used
+for more advanced test cases, where you need to configure your system under
+test in a very fine-grained way or target specific CDI containers.
+
+|link:spring-testing.adoc[Spring Testing] |camel-test-spring |Supports
+JUnit 3.x (deprecated) or JUnit 4.x based tests that bootstrap a test
+environment using Spring without needing to be familiar with Spring
+Test. The  plain JUnit 3.x/4.x based tests work very similar to the
+test support classes in `camel-test`. Also supports Spring Test based
+tests that use the declarative style of test configuration and injection
+common in Spring Test. The Spring Test based tests provide feature
+parity with the plain JUnit 3.x/4.x based testing approach. Notice
+`camel-test-spring` is a new component in *Camel 2.10* onwards. For
+older Camel release use `camel-test` which has built-in
+link:spring-testing.adoc[Spring Testing].
+
+|link:test-blueprint.html[Blueprint Testing] |camel-test-blueprint
+|*Camel 2.10:* Provides the ability to do unit testing on blueprint
+configurations
+
+|link:guice.html[Guice] |camel-guice |Uses link:guice.html[Guice] to
+dependency inject your test classes
+
+|Camel TestNG |camel-testng |Supports plain TestNG based tests with or
+without link:cdi.html[CDI], link:spring.html[Spring] or link:guice.html[Guice]
+for link:dependency-injection.adoc[Dependency Injection] which does not
+require an in-depth knowledge of CDI, Spring + Spring Test or Guice.
+Also from *Camel 2.10* onwards, this component supports Spring Test based tests
+that use the declarative style of test configuration and injection common
+in Spring Test and described in more detail under
+link:spring-testing.adoc[Spring Testing].
+|=======================================================================
+
+In all approaches the test classes look pretty much the same in that
+they all reuse the link:bean-integration.adoc[Camel binding and
+injection annotations].
+
+[[Testing-CamelTestExample]]
+Camel Test Example
+++++++++++++++++++
+
+Here is the link:camel-test.html[Camel Test]
+link:../../../components/camel-test/src/test/java/org/apache/camel/test/patterns/FilterTest.java[example]:
+
+[source,java]
+----
+include::../../../components/camel-test/src/test/java/org/apache/camel/test/patterns/FilterTest.java[tags=example]
+----
+
+Notice how it derives from the Camel helper class `CamelTestSupport` but
+has no CDI, Spring or Guice dependency injection configuration but instead
+overrides the `createRouteBuilder()` method.
+
+[[Testing-CdiTestExample]]
+CDI Test Example
+++++++++++++++++
+
+Here is the link:cdi-testing.html[CDI Testing]
+link:../../../components/camel-test-cdi/src/test/java/org/apache/camel/test/cdi/FilterTest.java[example]:
+
+[source,java]
+----
+include::../../../components/camel-test-cdi/src/test/java/org/apache/camel/test/cdi/FilterTest.java[tags=example]
+----
+
+You can find more testing patterns illustrated in the `camel-example-cdi-test` example
+and the test classes that come with it.
+
+[[Testing-SpringTestwithXMLConfigExample]]
+Spring Test with XML Config Example
++++++++++++++++++++++++++++++++++++
+
+Here is the link:spring-testing.adoc[Spring Testing]
+link:../../../components/camel-spring/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[example
+using XML Config]:
+
+[source,java]
+----
+include::../../../components/camel-spring/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[tags=example]
+----
+
+Notice that we use @`DirtiesContext` on the test methods to force
+link:spring-testing.adoc[Spring Testing] to automatically reload the
+link:camelcontext.adoc[`CamelContext`] after each test method - this
+ensures that the tests don't clash with each other (e.g. one test method
+sending to an endpoint that is then reused in another test method).
+
+Also notice the use of `@ContextConfiguration` to indicate that by
+default we should look for the
+link:../../../components/camel-spring/src/test/resources/org/apache/camel/spring/patterns/FilterTest-context.xml[`FilterTest-context.xml`
+on the classpath] to configure the test case which looks like this:
+
+[source,xml]
+----
+include::../../../components/camel-spring/src/test/resources/org/apache/camel/spring/patterns/FilterTest-context.xml[tags=example]
+----
+
+[[Testing-SpringTestwithJavaConfigExample]]
+Spring Test with Java Config Example
+++++++++++++++++++++++++++++++++++++
+
+Here is the link:spring-testing.adoc[Spring Testing]
+link:../../../components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[example
+using Java Config]:
+
+[source,java]
+----
+include::../../../components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[tags=example]
+----
+
+For more information see link:spring-java-config.html[Spring Java
+Config].
+
+This is similar to the XML Config example above except that there is no
+XML file and instead the nested `ContextConfig` class does all of the
+configuration; so your entire test case is contained in a single Java
+class. We currently have to reference by class name this class in the
+`@ContextConfiguration` which is a bit ugly. Please vote for
+http://jira.springframework.org/browse/SJC-238[SJC-238] to address this
+and make Spring Test work more cleanly with Spring JavaConfig.
+
+It's totally optional but for the `ContextConfig` implementation we derive
+from `SingleRouteCamelConfiguration` which is a helper Spring Java
+Config class which will configure the CamelContext for us and then
+register the RouteBuilder we create.
+
+Since *Camel 2.11.0* you can use the `CamelSpringJUnit4ClassRunner` with
+`CamelSpringDelegatingTestContextLoader` like
+link:../../../components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/test/CamelSpringDelegatingTestContextLoaderTest.java[example
+using Java Config with `CamelSpringJUnit4ClassRunner`]:
+
+Since *Camel 2.18.0* `CamelSpringJUnit4ClassRunner` is deprecated. you can use the `CamelSpringRunner`
+
+[source,java]
+----
+include::../../../components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/test/CamelSpringDelegatingTestContextLoaderTest.java[tags=example]
+----
+
+[[Testing-SpringTestwithXMLConfigandDeclarativeConfigurationExample]]
+Spring Test with XML Config and Declarative Configuration Example
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Here is a Camel test support enhanced link:spring-testing.adoc[Spring
+Testing] link:../../../components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[example
+using XML Config and pure Spring Test based configuration of the Camel
+Context]:
+
+[source,java]
+----
+include::../../../components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[tags=example]
+----
+
+Notice how a custom test runner is used with the `@RunWith` annotation
+to support the features of `CamelTestSupport` through annotations on
+the test class.  See link:spring-testing.adoc[Spring Testing] for a list
+of annotations you can use in your tests.
+
+[[Testing-BlueprintTest]]
+Blueprint Test
+++++++++++++++
+
+Here is the link:blueprint-testing.html[Blueprint Testing]
+link:../../../components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/DebugBlueprintTest.java[example
+using XML Config]:
+
+[source,java]
+----
+include::../../../components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/DebugBlueprintTest.java[tags=example]
+----
+
+Also notice the use of `getBlueprintDescriptors` to indicate that by
+default we should look for the
+link:camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/camelContext.xml[`camelContext.xml`
+in the package] to configure the test case which looks like this:
+
+[source,xml]
+----
+include::../../../components/camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/camelContext.xml[tags=example]
+----
+
+[[Testing-Testingendpoints]]
+Testing endpoints
+^^^^^^^^^^^^^^^^^
+
+Camel provides a number of endpoints which can make testing easier.
+
+[width="100%",cols="1,3",options="header",]
+|=======================================================================
+|Name |Description
+|link:dataset.html[DataSet] |For load & soak testing this endpoint
+provides a way to create huge numbers of messages for sending to
+link:components.html[Components] and asserting that they are consumed
+correctly
+
+|link:mock.html[Mock] |For testing routes and mediation rules using
+mocks and allowing assertions to be added to an endpoint
+
+|link:test.html[Test] |Creates a link:mock.html[Mock] endpoint which
+expects to receive all the message bodies that could be polled from the
+given underlying endpoint
+|=======================================================================
+
+The main endpoint is the link:mock.html[Mock] endpoint which allows
+expectations to be added to different endpoints; you can then run your
+tests and assert that your expectations are met at the end.
+
+[[Testing-Stubbingoutphysicaltransporttechnologies]]
+Stubbing out physical transport technologies
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you wish to test out a route but want to avoid actually using a real
+physical transport (for example to unit test a transformation route
+rather than performing a full integration test) then the following
+endpoints can be useful:
+
+[width="100%",cols="1,3",options="header",]
+|=======================================================================
+|Name |Description
+|link:direct.html[Direct] |Direct invocation of the consumer from the
+producer so that single threaded (non-SEDA) in VM invocation is
+performed which can be useful to mock out physical transports
+
+|link:seda.html[SEDA] |Delivers messages asynchronously to consumers via
+a
+http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[`java.util.concurrent.BlockingQueue`]
+which is good for testing asynchronous transports
+
+|link:stub.html[Stub] |Works like link:seda.html[SEDA] but does not
+validate the endpoint URI, which makes stubbing much easier.
+|=======================================================================
+
+[[Testing-Testingexistingroutes]]
+Testing existing routes
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Camel provides some features to aid during testing of existing routes
+where you cannot or will not use link:mock.html[Mock] etc. For example
+you may have a production ready route which you want to test with some
+3rd party API which sends messages into this route.
+
+[width="100%",cols="1,3",options="header",]
+|=======================================================================
+|Name |Description
+|link:notifybuilder.html[NotifyBuilder] |Allows you to be notified when
+a certain condition has occurred. For example when the route has
+completed 5 messages. You can build complex expressions to match your
+criteria when to be notified.
+
+|link:advicewith.html[AdviceWith] |Allows you to *advice* or *enhance*
+an existing route using a link:routebuilder.html[`RouteBuilder`] style.
+For example you can add interceptors to intercept sending outgoing
+messages to assert those messages are as expected.
+|=======================================================================

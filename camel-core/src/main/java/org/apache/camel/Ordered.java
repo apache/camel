@@ -33,7 +33,6 @@ public interface Ordered {
      */
     int LOWEST = Integer.MAX_VALUE;
 
-
     /**
      * Gets the order.
      * <p/>

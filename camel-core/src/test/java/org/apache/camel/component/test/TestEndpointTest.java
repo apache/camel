@@ -50,7 +50,7 @@ public class TestEndpointTest extends ContextTestSupport {
                 context.addEndpoint("my:foo", my);
 
                 from("seda:foo")
-                    .to("test:my:foo");
+                    .to("test:my:foo?timeout=0");
             }
         };
     }

@@ -24,6 +24,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.netty4.NettyCamelState;
+import org.apache.camel.component.netty4.NettyConfiguration;
 import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyHelper;
 import org.apache.camel.component.netty4.NettyPayloadHelper;
@@ -47,12 +48,14 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) {
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Channel open: {}", ctx.channel());
         }
         // to keep track of open sockets
         producer.getAllChannels().add(ctx.channel());
+        
+        super.channelActive(ctx);
     }
 
     @Override
@@ -94,7 +97,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) {
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Channel closed: {}", ctx.channel());
         }
@@ -108,18 +111,30 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         // to keep track of open sockets
         producer.getAllChannels().remove(ctx.channel());
 
-        if (producer.getConfiguration().isSync() && !messageReceived && !exceptionHandled) {
+        // this channel is maybe closing graceful and the exchange is already done
+        // and if so we should not trigger an exception
+        boolean doneUoW = exchange.getUnitOfWork() == null;
+
+        NettyConfiguration configuration = producer.getConfiguration();
+        if (configuration.isSync() && !doneUoW && !messageReceived && !exceptionHandled) {
             // To avoid call the callback.done twice
             exceptionHandled = true;
             // session was closed but no message received. This could be because the remote server had an internal error
-            // and could not return a response. We should count down to stop waiting for a response
+            // and could not return a response. We should count down to stop waiting for a response            
+            String address = configuration != null ? configuration.getAddress() : "";
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Channel closed but no message received from address: {}", producer.getConfiguration().getAddress());
+                LOG.debug("Channel closed but no message received from address: {}", address);
             }
-            exchange.setException(new CamelExchangeException("No response received from remote server: " + producer.getConfiguration().getAddress(), exchange));
+            // don't fail the exchange if we actually specify to disconnect
+            if (!configuration.isDisconnect()) {
+                exchange.setException(new CamelExchangeException("No response received from remote server: " + address, exchange));
+            }
             // signal callback
             callback.done(false);
         }
+        
+        // make sure the event can be processed by other handlers
+        super.channelInactive(ctx);
     }
 
     @Override
@@ -178,7 +193,8 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             if (close != null) {
                 disconnect = close;
             }
-            if (disconnect) {
+            // we should not close if we are reusing the channel
+            if (!producer.getConfiguration().isReuseChannel() && disconnect) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Closing channel when complete at address: {}", producer.getConfiguration().getAddress());
                 }
@@ -188,6 +204,13 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             // signal callback
             callback.done(false);
         }
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        // reset flag after we have read the complete
+        messageReceived = false;
+        super.channelReadComplete(ctx);
     }
 
     /**
@@ -202,7 +225,6 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
      * @throws Exception is thrown if error getting the response message
      */
     protected Message getResponseMessage(Exchange exchange, ChannelHandlerContext ctx, Object message) throws Exception {
-
         Object body = message;
 
         if (LOG.isDebugEnabled()) {

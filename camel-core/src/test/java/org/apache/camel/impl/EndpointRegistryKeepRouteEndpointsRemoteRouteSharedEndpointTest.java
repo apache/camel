@@ -26,7 +26,7 @@ public class EndpointRegistryKeepRouteEndpointsRemoteRouteSharedEndpointTest ext
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getProperties().put(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE, "20");
+        context.getGlobalOptions().put(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE, "20");
         return context;
     }
 

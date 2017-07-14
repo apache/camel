@@ -72,6 +72,7 @@ public class RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest extends Conte
             public void configure() throws Exception {
                 from("direct:source")
                     .onException(FirstException.class)
+                        .redeliveryDelay(0)
                         .maximumRedeliveries(-1)
                         .handled(true)
                     .end()

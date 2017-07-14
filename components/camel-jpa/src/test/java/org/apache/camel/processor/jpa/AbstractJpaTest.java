@@ -80,10 +80,25 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
     }
 
     protected void assertEntityInDB(int size) throws Exception {
-        List<?> list = entityManager.createQuery(selectAllString()).getResultList();
-        assertEquals(size, list.size());
+        assertEntityInDB(size, SendEmail.class);
+    }
 
-        assertIsInstanceOf(SendEmail.class, list.get(0));
+    protected void assertEntityInDB(int size, Class entityType) {
+        List<?> results = entityManager.createQuery("select o from " + entityType.getName() + " o").getResultList();
+        assertEquals(size, results.size());
+
+        assertIsInstanceOf(entityType, results.get(0));
+    }
+
+    protected void saveEntityInDB(final Object entity) {
+        transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus status) {
+                entityManager.joinTransaction();
+                entityManager.persist(entity);
+                entityManager.flush();
+                return null;
+            }
+        });
     }
     
     protected abstract String routeXml();

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,13 +8,14 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 -->
 <!-- START SNIPPET: example -->
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -26,7 +28,8 @@
          http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
   <spring-security:http realm="User Restrict Realm">
-    <spring-security:intercept-url pattern="/camel/**" access="ROLE_USER"/>
+    <spring-security:intercept-url pattern="/camel/**"
+                                   access="hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')"/>
     <spring-security:http-basic/>
     <spring-security:remember-me/>
   </spring-security:http>
@@ -42,12 +45,10 @@
   </spring-security:user-service>
 
   <bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+    <constructor-arg>
+      <bean class="org.springframework.security.access.vote.RoleVoter"/>
+    </constructor-arg>
     <property name="allowIfAllAbstainDecisions" value="true"/>
-    <property name="decisionVoters">
-      <list>
-        <bean class="org.springframework.security.access.vote.RoleVoter"/>
-      </list>
-    </property>
   </bean>
 
   <!-- The Policy for checking the authentication role of ADMIN -->
@@ -73,7 +74,7 @@
     </onException>
 
     <route>
-      <from uri="servlet:///user"/>
+      <from uri="servlet:user"/>
       <!-- wrap the route in the policy which enforces security check -->
       <policy ref="user">
         <transform>
@@ -83,7 +84,7 @@
     </route>
 
     <route>
-      <from uri="servlet:///admin"/>
+      <from uri="servlet:admin"/>
       <!-- wrap the route in the policy which enforces security check -->
       <policy ref="admin">
         <transform>

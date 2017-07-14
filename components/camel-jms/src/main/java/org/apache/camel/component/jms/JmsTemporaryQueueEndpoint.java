@@ -34,22 +34,22 @@ public class JmsTemporaryQueueEndpoint extends JmsQueueEndpoint implements Desti
 
     public JmsTemporaryQueueEndpoint(String uri, JmsComponent component, String destination, JmsConfiguration configuration) {
         super(uri, component, destination, configuration);
-        setDestinationType("temp:queue");
+        setDestinationType("temp-queue");
     }
 
     public JmsTemporaryQueueEndpoint(String uri, JmsComponent component, String destination, JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
         super(uri, component, destination, configuration, queueBrowseStrategy);
-        setDestinationType("temp:queue");
+        setDestinationType("temp-queue");
     }
 
     public JmsTemporaryQueueEndpoint(String endpointUri, String destination) {
         super(endpointUri, destination);
-        setDestinationType("temp:queue");
+        setDestinationType("temp-queue");
     }
 
     public JmsTemporaryQueueEndpoint(TemporaryQueue jmsDestination) throws JMSException {
-        super("jms:temp:queue:" + jmsDestination.getQueueName(), null);
-        setDestinationType("temp:queue");
+        super("jms:temp-queue:" + jmsDestination.getQueueName(), null);
+        setDestinationType("temp-queue");
         this.jmsDestination = jmsDestination;
         setDestination(jmsDestination);
     }

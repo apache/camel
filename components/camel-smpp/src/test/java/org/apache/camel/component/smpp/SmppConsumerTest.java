@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.smpp;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.NumberingPlanIndicator;
@@ -28,7 +27,7 @@ import org.jsmpp.session.SessionStateListener;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertSame;
 
 /**
@@ -43,7 +42,6 @@ public class SmppConsumerTest {
     private SmppConfiguration configuration;
     private Processor processor;
     private SMPPSession session;
-    private CamelContext camelContext;
 
     @Before
     public void setUp() {

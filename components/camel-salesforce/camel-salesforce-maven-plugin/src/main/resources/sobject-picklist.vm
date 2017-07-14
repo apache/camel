@@ -21,13 +21,15 @@
  */
 package $packageName;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonValue;
+import javax.annotation.Generated;
 
-#set ( $enumName = $utility.enumTypeName($field.Name) )
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Salesforce Enumeration DTO for picklist $field.Name
  */
+@Generated("org.apache.camel.maven.CamelSalesforceMojo")
 public enum $enumName {
 #set ( $values = $utility.getUniqueValues($field) )
 
@@ -38,7 +40,7 @@ public enum $enumName {
 #foreach ( $entry in $values)
 #set ( $value = $entry.Value )
     // $value
-    $utility.getEnumConstant($value)("$value")#if ( $foreach.hasNext ),#else;#end
+    $utility.getEnumConstant($value)("$esc.escapeJava($value)")#if ( $foreach.hasNext ),#else;#end
 
 #end
 #end

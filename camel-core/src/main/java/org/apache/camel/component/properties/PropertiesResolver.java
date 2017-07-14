@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.properties;
 
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -34,10 +35,9 @@ public interface PropertiesResolver {
      *
      * @param context the camel context
      * @param ignoreMissingLocation ignore silently if the property file is missing
-     * @param uri uri(s) defining the source(s)
+     * @param locations location(s) defining the source(s)
      * @return the properties
      * @throws Exception is thrown if resolving the properties failed
      */
-    Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception;
-    
+    Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) throws Exception;
 }

@@ -37,6 +37,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -47,12 +48,12 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://jackson.codehaus.org/">Jackson</a> to marshal to and from JSON.
  */
-public class JacksonDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+public class JacksonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(JacksonDataFormat.class);
 
-    private final ObjectMapper objectMapper;
     private CamelContext camelContext;
+    private ObjectMapper objectMapper;
     private Class<? extends Collection> collectionType;
     private List<Module> modules;
     private String moduleClassNames;
@@ -67,12 +68,14 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
     private String enableFeatures;
     private String disableFeatures;
     private boolean enableJacksonTypeConverter;
+    private boolean allowUnmarshallType;
+    private boolean contentTypeHeader = true;
 
     /**
-     * Use the default Jackson {@link ObjectMapper} and {@link Map}
+     * Use the default Jackson {@link ObjectMapper} and {@link Object}
      */
     public JacksonDataFormat() {
-        this(HashMap.class);
+        this(Object.class);
     }
 
     /**
@@ -107,7 +110,6 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
      * @param enableJaxbAnnotationModule if it is true, will enable the JaxbAnnotationModule.
      */
     public JacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView, boolean enableJaxbAnnotationModule) {
-        this.objectMapper = new ObjectMapper();
         this.unmarshalType = unmarshalType;
         this.jsonView = jsonView;
         this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
@@ -137,6 +139,11 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
         this.jsonView = jsonView;
     }
 
+    @Override
+    public String getDataFormatName() {
+        return "json-jackson";
+    }
+
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -147,13 +154,24 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         this.objectMapper.writerWithView(jsonView).writeValue(stream, graph);
+
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            }
+        }
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
 
         // is there a header with the unmarshal type?
         Class<?> clazz = unmarshalType;
-        String type = exchange.getIn().getHeader(JacksonConstants.UNMARSHAL_TYPE, String.class);
+        String type = null;
+        if (allowUnmarshallType) {
+            type = exchange.getIn().getHeader(JacksonConstants.UNMARSHAL_TYPE, String.class);
+        }
         if (type == null && isAllowJmsType()) {
             type = exchange.getIn().getHeader("JMSType", String.class);
         }
@@ -170,6 +188,14 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
 
     // Properties
     // -------------------------------------------------------------------------
+
+    public ObjectMapper getObjectMapper() {
+        return this.objectMapper;
+    }
+
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     public Class<?> getUnmarshalType() {
         return this.unmarshalType;
@@ -193,10 +219,6 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
 
     public void setJsonView(Class<?> jsonView) {
         this.jsonView = jsonView;
-    }
-
-    public ObjectMapper getObjectMapper() {
-        return this.objectMapper;
     }
 
     public String getInclude() {
@@ -317,6 +339,30 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
     public void setEnableJacksonTypeConverter(boolean enableJacksonTypeConverter) {
         this.enableJacksonTypeConverter = enableJacksonTypeConverter;
     }
+    
+    public boolean isAllowUnmarshallType() {
+        return allowUnmarshallType;
+    }
+
+    /**
+     * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling.
+     * <p/>
+     * This should only be enabled when desired to be used.
+     */
+    public void setAllowUnmarshallType(boolean allowJacksonUnmarshallType) {
+        this.allowUnmarshallType = allowJacksonUnmarshallType;
+    }
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then Jackson will set the Content-Type header to <tt>application/json</tt> when marshalling.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
+    }
 
     public String getEnableFeatures() {
         return enableFeatures;
@@ -392,11 +438,14 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
 
     @Override
     protected void doStart() throws Exception {
+        if (objectMapper == null) {
+            objectMapper = new ObjectMapper();
+        }
         
         if (enableJaxbAnnotationModule) {
             // Enables JAXB processing
             JaxbAnnotationModule module = new JaxbAnnotationModule();
-            LOG.info("Registering module: {}", module);
+            LOG.debug("Registering JaxbAnnotationModule: {}", module);
             objectMapper.registerModule(module);
         }
 
@@ -460,7 +509,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
 
         if (modules != null) {
             for (Module module : modules) {
-                LOG.info("Registering module: {}", module);
+                LOG.debug("Registering module: {}", module);
                 objectMapper.registerModules(module);
             }
         }
@@ -470,7 +519,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
                 String name = o.toString();
                 Class<Module> clazz = camelContext.getClassResolver().resolveMandatoryClass(name, Module.class);
                 Module module = camelContext.getInjector().newInstance(clazz);
-                LOG.info("Registering module: {} -> {}", name, module);
+                LOG.debug("Registering module: {} -> {}", name, module);
                 objectMapper.registerModule(module);
             }
         }
@@ -482,7 +531,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
                     name = name.substring(1);
                 }
                 Module module = CamelContextHelper.mandatoryLookup(camelContext, name, Module.class);
-                LOG.info("Registering module: {} -> {}", name, module);
+                LOG.debug("Registering module: {} -> {}", name, module);
                 objectMapper.registerModule(module);
             }
         }

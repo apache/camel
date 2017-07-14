@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
@@ -34,6 +35,8 @@ import org.apache.commons.net.ftp.FTPFile;
 public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     protected String endpointPath;
+   
+    private transient String ftpConsumerToString;
 
     public FtpConsumer(RemoteFileEndpoint<FTPFile> endpoint, Processor processor, RemoteFileOperations<FTPFile> fileOperations) {
         super(endpoint, processor, fileOperations);
@@ -48,14 +51,14 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         try {
             super.doStart();
             if (endpoint.isAutoCreate()) {
-                log.debug("Auto creating \"" + endpoint.getConfiguration().getDirectory());
+                log.debug("Auto creating directory: {}", endpoint.getConfiguration().getDirectory());
                 try {
                     connectIfNecessary();
                     operations.buildDirectory(endpoint.getConfiguration().getDirectory(), true);
                 } catch (GenericFileOperationFailedException e) {
-                    if (getEndpoint().getConfiguration().isThrowExceptionOnConnectFailed()) {
-                        throw e;
-                    }
+                    // log a WARN as we want to start the consumer.
+                    log.warn("Error auto creating directory: " + endpoint.getConfiguration().getDirectory()
+                            + " due " + e.getMessage() + ". This exception is ignored.", e);
                 }
             }
         } finally {
@@ -251,6 +254,20 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         return answer;
     }
 
+    @Override
+    protected void updateFileHeaders(GenericFile<FTPFile> file, Message message) {
+        long length = file.getFile().getSize();
+        long modified = file.getFile().getTimestamp() != null ? file.getFile().getTimestamp().getTimeInMillis() : -1;
+        file.setFileLength(length);
+        file.setLastModified(modified);
+        if (length >= 0) {
+            message.setHeader(Exchange.FILE_LENGTH, length);
+        }
+        if (modified >= 0) {
+            message.setHeader(Exchange.FILE_LAST_MODIFIED, modified);
+        }
+    }
+
     private boolean isStepwise() {
         RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
         return config.isStepwise();
@@ -263,6 +280,9 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     @Override
     public String toString() {
-        return "FtpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (ftpConsumerToString == null) {
+            ftpConsumerToString = "FtpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return ftpConsumerToString;
     }
 }

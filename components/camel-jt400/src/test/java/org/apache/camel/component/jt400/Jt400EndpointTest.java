@@ -47,6 +47,6 @@ public class Jt400EndpointTest extends Jt400TestSupport {
 
     @Test
     public void testToString() {
-        assertEquals("Endpoint[jt400://user:xxxxxx@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&connectionPool=%23mockPool&format=binary&guiAvailable=true]", endpoint.toString());
+        assertEquals("jt400://user:xxxxxx@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&connectionPool=%23mockPool&format=binary&guiAvailable=true", endpoint.toString());
     }
 }

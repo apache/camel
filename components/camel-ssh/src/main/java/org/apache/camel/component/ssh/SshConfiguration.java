@@ -34,16 +34,17 @@ public class SshConfiguration implements Cloneable {
     private String host;
     @UriPath(defaultValue = "" + DEFAULT_SSH_PORT)
     private int port = DEFAULT_SSH_PORT;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String username;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam(label = "consumer")
     private String pollCommand;
+    @UriParam(label = "security")
     private KeyPairProvider keyPairProvider;
-    @UriParam(defaultValue = KeyPairProvider.SSH_RSA)
+    @UriParam(label = "security", defaultValue = KeyPairProvider.SSH_RSA)
     private String keyType = KeyPairProvider.SSH_RSA;
-    @UriParam
+    @UriParam(label = "security")
     private String certResource;
     @UriParam(defaultValue = "30000")
     private long timeout = 30000;
@@ -71,11 +72,13 @@ public class SshConfiguration implements Cloneable {
             setPassword(pw);
         }
 
-        setHost(uri.getHost());
+        if (getHost() == null && uri.getHost() != null) {
+            setHost(uri.getHost());
+        }
 
         // URI.getPort returns -1 if port not defined, else use default port
         int uriPort = uri.getPort();
-        if (uriPort != -1) {
+        if (getPort() == DEFAULT_SSH_PORT && uriPort != -1) {
             setPort(uriPort);
         }
     }

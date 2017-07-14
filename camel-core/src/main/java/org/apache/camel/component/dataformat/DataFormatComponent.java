@@ -38,7 +38,13 @@ public class DataFormatComponent extends UriEndpointComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String name = ObjectHelper.before(remaining, ":");
+
+        // try to lookup data format in the registry or create it from resource
         DataFormat df = getCamelContext().resolveDataFormat(name);
+        if (df == null) {
+            // if not, try to find a factory in the registry
+            df = getCamelContext().createDataFormat(name);
+        }
         if (df == null) {
             throw new IllegalArgumentException("Cannot find data format with name: " + name);
         }

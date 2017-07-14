@@ -30,6 +30,7 @@ import net.sf.json.JSONSerializer;
 import net.sf.json.xml.XMLSerializer;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
@@ -38,7 +39,7 @@ import org.apache.camel.util.IOHelper;
  * <a href="http://json-lib.sourceforge.net/">json-lib</a> to convert between XML
  * and JSON directly.
  */
-public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
+public class XmlJsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private XMLSerializer serializer;
 
@@ -55,8 +56,14 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
     private Boolean removeNamespacePrefixes;
     private List<String> expandableProperties;
     private TypeHintsEnum typeHints;
+    private boolean contentTypeHeader = true;
 
     public XmlJsonDataFormat() {
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "xmljson";
     }
 
     @Override
@@ -167,6 +174,13 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
         json.write(osw);
         osw.flush();
 
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            }
+        }
     }
 
     /**
@@ -185,7 +199,17 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
             toConvert = JSONSerializer.toJSON(jsonString);
         }
 
-        return convertToXMLUsingEncoding(toConvert);
+        Object answer = convertToXMLUsingEncoding(toConvert);
+
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            }
+        }
+
+        return answer;
     }
 
     private String convertToXMLUsingEncoding(JSON json) {
@@ -326,6 +350,19 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
 
     public String getArrayName() {
         return arrayName;
+    }
+
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then XmlJson will set the Content-Type header to <tt>application/json</tt> when marshalling,
+     * and <tt>application/xml</tt> when unmarshalling.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
     /**

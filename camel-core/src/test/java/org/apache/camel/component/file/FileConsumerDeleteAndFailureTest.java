@@ -50,8 +50,8 @@ public class FileConsumerDeleteAndFailureTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class).useOriginalMessage().to("file://target/failed/error");
-                from("file://target/failed?delete=true")
+                onException(IllegalArgumentException.class).handled(true).useOriginalMessage().to("file://target/failed/error");
+                from("file://target/failed?delete=true&initialDelay=0&delay=10")
                     .setBody(simple("${body} IS processed!"))
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

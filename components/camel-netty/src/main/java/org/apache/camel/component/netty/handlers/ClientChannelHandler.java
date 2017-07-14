@@ -114,7 +114,11 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         // to keep track of open sockets
         producer.getAllChannels().remove(ctx.getChannel());
 
-        if (producer.getConfiguration().isSync() && !messageReceived && !exceptionHandled) {
+        // this channel is maybe closing graceful and the exchange is already done
+        // and if so we should not trigger an exception
+        boolean doneUoW = exchange.getUnitOfWork() == null;
+
+        if (producer.getConfiguration().isSync() && !doneUoW && !messageReceived && !exceptionHandled) {
             // To avoid call the callback.done twice 
             exceptionHandled = true;
             // session was closed but no message received. This could be because the remote server had an internal error
@@ -126,6 +130,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
             // signal callback
             callback.done(false);
         }
+
         // make sure the event can be processed by other handlers
         super.channelClosed(ctx, e);
     }

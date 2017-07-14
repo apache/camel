@@ -27,9 +27,10 @@ import org.apache.camel.component.jetty.JettyHttpComponent;
 import org.apache.camel.component.jetty.JettyHttpEndpoint;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.eclipse.jetty.client.HttpClientTransport;
 import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.ConnectionFactory;
-import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -38,40 +39,19 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 public class JettyHttpComponent9 extends JettyHttpComponent {
 
-    protected CamelHttpClient createCamelHttpClient(SslContextFactory sslContextFactory) {
-        return new CamelHttpClient9(sslContextFactory);
+    protected CamelHttpClient createCamelHttpClient(HttpClientTransport transport, SslContextFactory sslContextFactory) {
+        return new CamelHttpClient9(transport, sslContextFactory);
     }
 
     protected JettyHttpEndpoint createEndpoint(URI endpointUri, URI httpUri) throws URISyntaxException {
         return new JettyHttpEndpoint9(this, endpointUri.toString(), httpUri);
     }
     
-    protected Connector getSslSocketConnector(Server server, JettyHttpEndpoint endpoint) {
-        Connector answer = null;
-        /*
-        if (sslSocketConnectors != null) {
-            SslContextFactory con = sslSocketConnectors.get(endpoint.getPort());
-            if (con != null) {
-                SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(con, null);
-                @SuppressWarnings("resource")
-                ServerConnector sc = new ServerConnector(server, sslConnectionFactory);
-                sc.setPort(endpoint.getPort());
-                sc.setHost(endpoint.getHttpUri().getHost());
-                answer = sc;
-            }
-        }
-        */
-        if (answer == null) {
-            answer = createConnector(server, endpoint);
-        }
-        return answer;
-    }
-    
     protected AbstractConnector createConnectorJettyInternal(Server server,
                                                       JettyHttpEndpoint endpoint,
                                                       SslContextFactory sslcf) {
         try {
-            String hosto = endpoint.getHttpUri().getHost();
+            String host = endpoint.getHttpUri().getHost();
             int porto = endpoint.getPort();
             org.eclipse.jetty.server.HttpConfiguration httpConfig = new org.eclipse.jetty.server.HttpConfiguration();
             httpConfig.setSendServerVersion(endpoint.isSendServerVersion());
@@ -91,7 +71,9 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
             if (responseHeaderSize != null) {
                 httpConfig.setResponseHeaderSize(responseHeaderSize);
             }
-            
+            if (useXForwardedForHeader) {
+                httpConfig.addCustomizer(new ForwardedRequestCustomizer());
+            }            
             HttpConnectionFactory httpFactory = new org.eclipse.jetty.server.HttpConnectionFactory(httpConfig); 
 
             ArrayList<ConnectionFactory> connectionFactories = new ArrayList<ConnectionFactory>();
@@ -100,26 +82,15 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
                 httpConfig.addCustomizer(new org.eclipse.jetty.server.SecureRequestCustomizer());
                 SslConnectionFactory scf = new org.eclipse.jetty.server.SslConnectionFactory(sslcf, "HTTP/1.1");
                 connectionFactories.add(scf);
-                result.setDefaultProtocol("SSL-HTTP/1.1");
+                // The protocol name can be "SSL" or "SSL-HTTP/1.1" depending on the version of Jetty
+                result.setDefaultProtocol(scf.getProtocol());
             }
             connectionFactories.add(httpFactory);
             result.setConnectionFactories(connectionFactories);
             result.setPort(porto);
-            if (hosto != null) {
-                result.setHost(hosto);
+            if (host != null) {
+                result.setHost(host);
             }
-            /*
-            if (getSocketConnectorProperties() != null && !"https".equals(endpoint.getProtocol())) {
-                // must copy the map otherwise it will be deleted
-                Map<String, Object> properties = new HashMap<String, Object>(getSocketConnectorProperties());
-                IntrospectionSupport.setProperties(httpConfig, properties);
-                if (properties.size() > 0) {
-                    throw new IllegalArgumentException("There are " + properties.size()
-                        + " parameters that couldn't be set on the SocketConnector."
-                        + " Check the uri if the parameters are spelt correctly and that they are properties of the SelectChannelConnector."
-                        + " Unknown parameters=[" + properties + "]");
-                }
-            } else*/
             if (getSslSocketConnectorProperties() != null && "https".equals(endpoint.getProtocol())) {
                 // must copy the map otherwise it will be deleted
                 Map<String, Object> properties = new HashMap<String, Object>(getSslSocketConnectorProperties());

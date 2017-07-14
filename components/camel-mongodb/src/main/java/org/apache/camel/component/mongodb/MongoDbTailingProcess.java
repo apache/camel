@@ -17,15 +17,16 @@
 
 package org.apache.camel.component.mongodb;
 
+import java.util.concurrent.CountDownLatch;
+
 import com.mongodb.BasicDBObject;
-import com.mongodb.Bytes;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
+import com.mongodb.CursorType;
 import com.mongodb.DBObject;
 import com.mongodb.MongoCursorNotFoundException;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 
 import org.apache.camel.Exchange;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,44 +37,46 @@ public class MongoDbTailingProcess implements Runnable {
 
     public volatile boolean keepRunning = true;
     public volatile boolean stopped; // = false
-    
-    private final DBCollection dbCol;
+    private volatile CountDownLatch stoppedLatch;
+
+    private final MongoCollection<BasicDBObject> dbCol;
     private final MongoDbEndpoint endpoint;
     private final MongoDbTailableCursorConsumer consumer;
-    
+
     // create local, final copies of these variables for increased performance
     private final long cursorRegenerationDelay;
     private final boolean cursorRegenerationDelayEnabled;
-    
-    private DBCursor cursor;
+
+    private MongoCursor<BasicDBObject> cursor;
     private MongoDbTailTrackingManager tailTracking;
-    
+
 
     public MongoDbTailingProcess(MongoDbEndpoint endpoint, MongoDbTailableCursorConsumer consumer, MongoDbTailTrackingManager tailTrack) {
         this.endpoint = endpoint;
         this.consumer = consumer;
-        this.dbCol = endpoint.getDbCollection();
+        this.dbCol = endpoint.getMongoCollection();
         this.tailTracking = tailTrack;
         this.cursorRegenerationDelay = endpoint.getCursorRegenerationDelay();
         this.cursorRegenerationDelayEnabled = !(this.cursorRegenerationDelay == 0);
     }
 
-    public DBCursor getCursor() {
+    public MongoCursor<BasicDBObject> getCursor() {
         return cursor;
     }
 
     /**
      * Initialise the tailing process, the cursor and if persistent tail tracking is enabled, recover the cursor from the persisted point.
      * As part of the initialisation process, the component will validate that the collection we are targeting is 'capped'.
+     *
      * @throws Exception
      */
     public void initializeProcess() throws Exception {
         if (LOG.isInfoEnabled()) {
-            LOG.info("Starting MongoDB Tailable Cursor consumer, binding to collection: {}", "db: " + dbCol.getDB() + ", col: " + dbCol.getName());
+            LOG.info("Starting MongoDB Tailable Cursor consumer, binding to collection: {}", "db: " + endpoint.getMongoDatabase() + ", col: " + endpoint.getCollection());
         }
 
-        if (dbCol.getStats().getInt(CAPPED_KEY) != 1) {
-            throw new CamelMongoDbException("Tailable cursors are only compatible with capped collections, and collection " + dbCol.getName()
+        if (!isCollectionCapped()) {
+            throw new CamelMongoDbException("Tailable cursors are only compatible with capped collections, and collection " + endpoint.getCollection()
                     + " is not capped");
         }
         try {
@@ -81,13 +84,21 @@ public class MongoDbTailingProcess implements Runnable {
             tailTracking.recoverFromStore();
             cursor = initializeCursor();
         } catch (Exception e) {
-            throw new CamelMongoDbException("Exception ocurred while initializing tailable cursor", e);
+            throw new CamelMongoDbException("Exception occurred while initializing tailable cursor", e);
         }
 
         if (cursor == null) {
             throw new CamelMongoDbException("Tailable cursor was not initialized, or cursor returned is dead on arrival");
         }
-        
+
+    }
+
+    private Boolean isCollectionCapped() {
+        return endpoint.getMongoDatabase().runCommand(createCollStatsCommand()).getBoolean(CAPPED_KEY);
+    }
+
+    private BasicDBObject createCollStatsCommand() {
+        return new BasicDBObject("collStats", endpoint.getCollection());
     }
 
     /**
@@ -95,6 +106,7 @@ public class MongoDbTailingProcess implements Runnable {
      */
     @Override
     public void run() {
+        stoppedLatch = new CountDownLatch(1);
         while (keepRunning) {
             doRun();
             // if the previous call didn't return because we have stopped running, then regenerate the cursor
@@ -103,35 +115,35 @@ public class MongoDbTailingProcess implements Runnable {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Regenerating cursor with lastVal: {}, waiting {}ms first", tailTracking.lastVal, cursorRegenerationDelay);
                 }
-                
+
                 if (cursorRegenerationDelayEnabled) {
                     try {
                         Thread.sleep(cursorRegenerationDelay);
                     } catch (InterruptedException e) {
-                        LOG.error("Thread was interrupted", e);
+                        // ignore
                     }
                 }
-                    
+
                 cursor = initializeCursor();
             }
         }
-        
+
         stopped = true;
+        stoppedLatch.countDown();
     }
 
     protected void stop() throws Exception {
         if (LOG.isInfoEnabled()) {
-            LOG.info("Stopping MongoDB Tailable Cursor consumer, bound to collection: {}", "db: " + dbCol.getDB() + ", col: " + dbCol.getName());
+            LOG.info("Stopping MongoDB Tailable Cursor consumer, bound to collection: {}", "db: " + endpoint.getDatabase() + ", col: " + endpoint.getCollection());
         }
         keepRunning = false;
         // close the cursor if it's open, so if it is blocked on hasNext() it will return immediately
         if (cursor != null) {
             cursor.close();
         }
-        // wait until the main loop acknowledges the stop
-        while (!stopped) { }
+        awaitStopped();
         if (LOG.isInfoEnabled()) {
-            LOG.info("Stopped MongoDB Tailable Cursor consumer, bound to collection: {}", "db: " + dbCol.getDB() + ", col: " + dbCol.getName());
+            LOG.info("Stopped MongoDB Tailable Cursor consumer, bound to collection: {}", "db: " + endpoint.getDatabase() + ", col: " + endpoint.getCollection());
         }
     }
 
@@ -139,9 +151,12 @@ public class MongoDbTailingProcess implements Runnable {
      * The heart of the tailing process.
      */
     private void doRun() {
+        int counter = 0;
+        int persistRecords = endpoint.getPersistRecords();
+        boolean persistRegularly = persistRecords > 0;
         // while the cursor has more values, keepRunning is true and the cursorId is not 0, which symbolizes that the cursor is dead
         try {
-            while (cursor.hasNext() && cursor.getCursorId() != 0  && keepRunning) {
+            while (cursor.hasNext() && keepRunning) { //cursor.getCursorId() != 0 &&
                 DBObject dbObj = cursor.next();
                 Exchange exchange = endpoint.createMongoDbExchange(dbObj);
                 try {
@@ -153,6 +168,9 @@ public class MongoDbTailingProcess implements Runnable {
                     // do nothing
                 }
                 tailTracking.setLastVal(dbObj);
+                if (persistRegularly && counter++ % persistRecords == 0) {
+                    tailTracking.persistToStore();
+                }
             }
         } catch (MongoCursorNotFoundException e) {
             // we only log the warning if we are not stopping, otherwise it is expected because the stop() method kills the cursor just in case it is blocked
@@ -168,16 +186,25 @@ public class MongoDbTailingProcess implements Runnable {
     }
 
     // no arguments, will ask DB what the last updated Id was (checking persistent storage)
-    private DBCursor initializeCursor() {
+    private MongoCursor<BasicDBObject> initializeCursor() {
         Object lastVal = tailTracking.lastVal;
         // lastVal can be null if we are initializing and there is no persistence enabled
-        DBCursor answer;
+        MongoCursor<BasicDBObject> answer;
         if (lastVal == null) {
-            answer = dbCol.find().addOption(Bytes.QUERYOPTION_TAILABLE).addOption(Bytes.QUERYOPTION_AWAITDATA);
+            answer = dbCol.find().cursorType(CursorType.TailableAwait).iterator();
         } else {
-            DBObject queryObj = new BasicDBObject(tailTracking.getIncreasingFieldName(), new BasicDBObject("$gt", lastVal));
-            answer = dbCol.find(queryObj).addOption(Bytes.QUERYOPTION_TAILABLE).addOption(Bytes.QUERYOPTION_AWAITDATA);
+            final String increasingFieldName = tailTracking.getIncreasingFieldName();
+            BasicDBObject queryObj = endpoint.getTailTrackingStrategy().createQuery(lastVal, increasingFieldName);
+            answer = dbCol.find(queryObj).cursorType(CursorType.TailableAwait).iterator();
         }
         return answer;
     }
+
+    private void awaitStopped() throws InterruptedException {
+        if (!stopped) {
+            LOG.info("Going to wait for stopping");
+            stoppedLatch.await();
+        }
+    }
+
 }

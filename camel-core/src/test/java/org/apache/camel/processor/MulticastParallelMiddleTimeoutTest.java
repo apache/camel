@@ -54,16 +54,16 @@ public class MulticastParallelMiddleTimeoutTest extends ContextTestSupport {
                                 return oldExchange;
                             }
                         })
-                        .parallelProcessing().timeout(2000).to("direct:a", "direct:b", "direct:c")
+                        .parallelProcessing().timeout(500).to("direct:a", "direct:b", "direct:c")
                     // use end to indicate end of multicast route
                     .end()
                     .to("mock:result");
 
                 from("direct:a").setBody(constant("A"));
 
-                from("direct:b").delay(4000).setBody(constant("B"));
+                from("direct:b").delay(1000).setBody(constant("B"));
 
-                from("direct:c").delay(500).setBody(constant("C"));
+                from("direct:c").delay(100).setBody(constant("C"));
             }
         };
     }

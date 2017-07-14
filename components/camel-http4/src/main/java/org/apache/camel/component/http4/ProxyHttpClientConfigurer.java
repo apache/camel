@@ -66,4 +66,6 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
             clientBuilder.setDefaultCredentialsProvider(credentialsProvider);
         }
     }
+
+
 }

@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.dropbox.core;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,43 +30,37 @@ import com.dropbox.core.DbxClient;
 import com.dropbox.core.DbxEntry;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxWriteMode;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.dto.DropboxDelResult;
 import org.apache.camel.component.dropbox.dto.DropboxFileDownloadResult;
 import org.apache.camel.component.dropbox.dto.DropboxFileUploadResult;
 import org.apache.camel.component.dropbox.dto.DropboxMoveResult;
-import org.apache.camel.component.dropbox.dto.DropboxResult;
 import org.apache.camel.component.dropbox.dto.DropboxSearchResult;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxResultCode;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
+import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-import static org.apache.camel.component.dropbox.util.DropboxConstants.DROPBOX_FILE_SEPARATOR;
-
 
 public final class DropboxAPIFacade {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxAPIFacade.class);
 
-    private static DropboxAPIFacade instance;
-    private static DbxClient client;
+    private final DbxClient client;
 
-    private DropboxAPIFacade() { }
+    private final Exchange exchange;
+
 
     /**
-     * Return a singleton instance of this class
      * @param client the DbxClient performing dropbox low level operations
-     * @return the singleton instance of this class
+     * @param exchange the current Exchange
      */
-    public static DropboxAPIFacade getInstance(DbxClient client) {
-        if (instance == null) {
-            instance = new DropboxAPIFacade();
-            DropboxAPIFacade.client = client;
-        }
-        return instance;
+    public DropboxAPIFacade(DbxClient client, Exchange exchange) {
+        this.client = client;
+        this.exchange = exchange;
     }
 
     /**
@@ -76,18 +71,16 @@ public final class DropboxAPIFacade {
      *             in case of "add" the new file will be renamed in case
      *             a file with the same name already exists on dropbox.
      *             in case of "force" the file already existing with the same name will be overridden.
-     * @return a DropboxResult object reporting for each remote path the result of the operation.
+     * @return a result object reporting for each remote path the result of the operation.
      * @throws DropboxException
      */
-    public DropboxResult put(String localPath, String remotePath, DropboxUploadMode mode) throws DropboxException {
-        DropboxResult result = new DropboxFileUploadResult();
-        //a map representing for each path the result of the put operation
-        Map<String, DropboxResultCode> resultEntries = null;
+    public DropboxFileUploadResult put(String localPath, String remotePath, DropboxUploadMode mode) throws DropboxException {
         //in case the remote path is not specified, the remotePath = localPath
         String dropboxPath = remotePath == null ? localPath : remotePath;
-        DbxEntry entry = null;
+
+        DbxEntry entry;
         try {
-            entry = DropboxAPIFacade.client.getMetadata(dropboxPath);
+            entry = client.getMetadata(dropboxPath);
         } catch (DbxException e) {
             throw new DropboxException(dropboxPath + " does not exist or can't obtain metadata");
         }
@@ -100,42 +93,41 @@ public final class DropboxAPIFacade {
             }
             //in case the entry not exists on dropbox check if the filename should be appended
             if (entry == null) {
-                if (dropboxPath.endsWith(DROPBOX_FILE_SEPARATOR)) {
+                if (dropboxPath.endsWith(DropboxConstants.DROPBOX_FILE_SEPARATOR)) {
                     dropboxPath = dropboxPath + fileLocalPath.getName();
                 }
             }
-            resultEntries = new HashMap<String, DropboxResultCode>(1);
+
+            DropboxFileUploadResult result;
             try {
                 DbxEntry.File uploadedFile = putSingleFile(fileLocalPath, dropboxPath, mode);
                 if (uploadedFile == null) {
-                    resultEntries.put(dropboxPath, DropboxResultCode.KO);
+                    result = new DropboxFileUploadResult(dropboxPath, DropboxResultCode.KO);
                 } else {
-                    resultEntries.put(dropboxPath, DropboxResultCode.OK);
+                    result = new DropboxFileUploadResult(dropboxPath, DropboxResultCode.OK);
                 }
-
             } catch (Exception ex) {
-                resultEntries.put(dropboxPath, DropboxResultCode.KO);
-            } finally {
-                result.setResultEntries(resultEntries);
+                result = new DropboxFileUploadResult(dropboxPath, DropboxResultCode.KO);
             }
             return result;
         } else {       //verify uploading of a list of files inside a dir
-            LOG.info("uploading a dir...");
+            LOG.debug("Uploading a dir...");
             //check if dropbox folder exists
             if (entry != null && !entry.isFolder()) {
                 throw new DropboxException(dropboxPath + " exists on dropbox and is not a folder!");
             }
-            if (!dropboxPath.endsWith(DROPBOX_FILE_SEPARATOR)) {
-                dropboxPath = dropboxPath + DROPBOX_FILE_SEPARATOR;
+            if (!dropboxPath.endsWith(DropboxConstants.DROPBOX_FILE_SEPARATOR)) {
+                dropboxPath = dropboxPath + DropboxConstants.DROPBOX_FILE_SEPARATOR;
             }
             //revert to old path
             String oldDropboxPath = dropboxPath;
             //list all files in a dir
             Collection<File> listFiles = FileUtils.listFiles(fileLocalPath, null, true);
-            if (listFiles == null || listFiles.isEmpty()) {
+            if (listFiles.isEmpty()) {
                 throw new DropboxException(localPath + " doesn't contain any files");
             }
-            resultEntries = new HashMap<String, DropboxResultCode>(listFiles.size());
+
+            HashMap<String, DropboxResultCode> resultMap = new HashMap<>(listFiles.size());
             for (File file : listFiles) {
                 String absPath = file.getAbsolutePath();
                 int indexRemainingPath = localPath.length();
@@ -145,36 +137,33 @@ public final class DropboxAPIFacade {
                 String remainingPath = absPath.substring(indexRemainingPath);
                 dropboxPath = dropboxPath + remainingPath;
                 try {
-                    LOG.info("uploading:" + fileLocalPath + "," + dropboxPath);
+                    LOG.debug("Uploading: {},{}", fileLocalPath, dropboxPath);
                     DbxEntry.File uploadedFile = putSingleFile(file, dropboxPath, mode);
                     if (uploadedFile == null) {
-                        resultEntries.put(dropboxPath, DropboxResultCode.KO);
+                        resultMap.put(dropboxPath, DropboxResultCode.KO);
                     } else {
-                        resultEntries.put(dropboxPath, DropboxResultCode.OK);
+                        resultMap.put(dropboxPath, DropboxResultCode.OK);
                     }
                 } catch (Exception ex) {
-                    resultEntries.put(dropboxPath, DropboxResultCode.KO);
+                    resultMap.put(dropboxPath, DropboxResultCode.KO);
                 }
                 dropboxPath = oldDropboxPath;
             }
-            result.setResultEntries(resultEntries);
-            return result;
+            return new DropboxFileUploadResult(resultMap);
         }
     }
 
     private DbxEntry.File putSingleFile(File inputFile, String dropboxPath, DropboxUploadMode mode) throws Exception {
         FileInputStream inputStream = new FileInputStream(inputFile);
-        DbxEntry.File uploadedFile = null;
+        DbxEntry.File uploadedFile;
         try {
-            DbxWriteMode uploadMode = null;
+            DbxWriteMode uploadMode;
             if (mode == DropboxUploadMode.force) {
                 uploadMode = DbxWriteMode.force();
             } else {
                 uploadMode = DbxWriteMode.add();
             }
-            uploadedFile =
-                DropboxAPIFacade.client.uploadFile(dropboxPath,
-                            uploadMode, inputFile.length(), inputStream);
+            uploadedFile = client.uploadFile(dropboxPath, uploadMode, inputFile.length(), inputStream);
             return uploadedFile;
         } finally {
             inputStream.close();
@@ -186,129 +175,127 @@ public final class DropboxAPIFacade {
      * The query param can be null.
      * @param remotePath  the remote path where starting the search from
      * @param query a space-separated list of substrings to search for. A file matches only if it contains all the substrings
-     * @return a DropboxResult object containing all the files found.
+     * @return a result object containing all the files found.
      * @throws DropboxException
      */
-    public DropboxResult search(String remotePath, String query) throws DropboxException {
-        DropboxResult result = new DropboxSearchResult();
-        DbxEntry.WithChildren listing = null;
+    public DropboxSearchResult search(String remotePath, String query) throws DropboxException {
+        DbxEntry.WithChildren listing;
         if (query == null) {
-            LOG.info("search no query");
+            LOG.debug("Search no query");
             try {
-                listing = DropboxAPIFacade.client.getMetadataWithChildren(remotePath);
+                listing = client.getMetadataWithChildren(remotePath);
+                return new DropboxSearchResult(listing.children);
             } catch (DbxException e) {
                 throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
             }
-            result.setResultEntries(listing.children);
         } else {
-            LOG.info("search by query:" + query);
-            List<DbxEntry> entries = null;
+            LOG.debug("Search by query: {}", query);
             try {
-                entries = DropboxAPIFacade.client.searchFileAndFolderNames(remotePath, query);
+                List<DbxEntry> entries = client.searchFileAndFolderNames(remotePath, query);
+                return new DropboxSearchResult(entries);
             } catch (DbxException e) {
                 throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
             }
-            result.setResultEntries(entries);
         }
-        return result;
     }
 
     /**
      * Delete every files and subdirectories inside the remote directory.
      * In case the remotePath is a file, delete the file.
      * @param remotePath  the remote location to delete
-     * @return a DropboxResult object with the result of the delete operation.
+     * @return a result object with the result of the delete operation.
      * @throws DropboxException
      */
-    public DropboxResult del(String remotePath) throws DropboxException {
-        DropboxResult result = null;
+    public DropboxDelResult del(String remotePath) throws DropboxException {
         try {
-            DropboxAPIFacade.client.delete(remotePath);
+            client.delete(remotePath);
         } catch (DbxException e) {
             throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
         }
-        result = new DropboxDelResult();
-        result.setResultEntries(remotePath);
-        return result;
+        return new DropboxDelResult(remotePath);
     }
 
     /**
      * Rename a remote path with the new path location.
      * @param remotePath the existing remote path to be renamed
      * @param newRemotePath the new remote path substituting the old one
-     * @return a DropboxResult object with the result of the move operation.
+     * @return a result object with the result of the move operation.
      * @throws DropboxException
      */
-    public DropboxResult move(String remotePath, String newRemotePath) throws DropboxException {
-        DropboxResult result = null;
+    public DropboxMoveResult move(String remotePath, String newRemotePath) throws DropboxException {
         try {
-            DropboxAPIFacade.client.move(remotePath, newRemotePath);
+            client.move(remotePath, newRemotePath);
+            return new DropboxMoveResult(remotePath, newRemotePath);
         } catch (DbxException e) {
             throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
         }
-        result = new DropboxMoveResult();
-        result.setResultEntries(remotePath + "-" + newRemotePath);
-        return result;
     }
 
     /**
      * Get the content of every file inside the remote path.
      * @param remotePath the remote path where to download from
-     * @return a DropboxResult object with the content (ByteArrayOutputStream) of every files inside the remote path.
+     * @return a result object with the content (ByteArrayOutputStream) of every files inside the remote path.
      * @throws DropboxException
      */
-    public DropboxResult get(String remotePath) throws DropboxException {
-        DropboxResult result = new DropboxFileDownloadResult();
-        //a map representing for each path the result of the baos
-        Map<String, ByteArrayOutputStream> resultEntries = new HashMap<String, ByteArrayOutputStream>();
-        //iterate from the remotePath
-        downloadFilesInFolder(remotePath, resultEntries);
-        //put the map of baos as result
-        result.setResultEntries(resultEntries);
-        return result;
+    public DropboxFileDownloadResult get(String remotePath) throws DropboxException {
+        return new DropboxFileDownloadResult(downloadFilesInFolder(remotePath));
     }
 
-    private void downloadFilesInFolder(String path, Map<String, ByteArrayOutputStream> resultEntries) throws DropboxException {
-        DbxEntry.WithChildren listing = null;
+
+    public boolean isDirectory(String path) throws DropboxException {
         try {
-            listing = DropboxAPIFacade.client.getMetadataWithChildren(path);
+            DbxEntry.WithChildren listing = client.getMetadataWithChildren(path);
+            return listing.children != null;
         } catch (DbxException e) {
             throw new DropboxException(path + " does not exist or can't obtain metadata");
         }
-        if (listing.children == null) {
-            LOG.info("downloading a single file...");
-            downloadSingleFile(path, resultEntries);
-            return;
-        }
-        for (DbxEntry entry : listing.children) {
-            if (entry.isFile()) {
-                try {
-                    //get the baos of the file
-                    downloadSingleFile(entry.path, resultEntries);
-                } catch (DropboxException e) {
-                    LOG.warn("can't download from " + entry.path);
-                }
-            } else {
-                //iterate on folder
-                downloadFilesInFolder(entry.path, resultEntries);
+    }
+
+
+    private Map<String, Object> downloadFilesInFolder(String path) throws DropboxException {
+        try {
+            DbxEntry.WithChildren listing = client.getMetadataWithChildren(path);
+            if (listing == null) {
+                return Collections.emptyMap();
+            } else if (listing.children == null) {
+                LOG.debug("downloading a single file...");
+                Map.Entry<String, Object> entry = downloadSingleFile(path);
+                return Collections.singletonMap(entry.getKey(), entry.getValue());
             }
+            Map<String, Object> result = new HashMap<>();
+            for (DbxEntry entry : listing.children) {
+                if (entry.isFile()) {
+                    try {
+                        Map.Entry<String, Object> singleFile = downloadSingleFile(entry.path);
+                        result.put(singleFile.getKey(), singleFile.getValue());
+                    } catch (DropboxException e) {
+                        LOG.warn("Cannot download from path={}, reason={}. This exception is ignored.", entry.path, e.getMessage());
+                    }
+                } else {
+                    Map<String, Object> filesInFolder = downloadFilesInFolder(entry.path);
+                    result.putAll(filesInFolder);
+                }
+            }
+            return result;
+        } catch (DbxException e) {
+            throw new DropboxException(e);
         }
     }
 
-    private void downloadSingleFile(String path, Map<String, ByteArrayOutputStream> resultEntries) throws DropboxException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DbxEntry.File downloadedFile;
+    private Map.Entry<String, Object> downloadSingleFile(String path) throws DropboxException {
         try {
-            downloadedFile = DropboxAPIFacade.client.getFile(path, null, baos);
+            OutputStreamBuilder target = OutputStreamBuilder.withExchange(exchange);
+            DbxEntry.File downloadedFile = client.getFile(path, null, target);
+            if (downloadedFile != null) {
+                LOG.debug("downloaded path={}", path);
+                return new AbstractMap.SimpleEntry<>(path, target.build());
+            } else {
+                return null;
+            }
         } catch (DbxException e) {
             throw new DropboxException(path + " does not exist or can't obtain metadata");
         } catch (IOException e) {
             throw new DropboxException(path + " can't obtain a stream");
         }
-        if (downloadedFile != null) {
-            resultEntries.put(path, baos);
-            LOG.info("downloaded path:" + path + " - baos size:" + baos.size());
-        }
-
     }
 }

@@ -22,6 +22,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 
+/**
+ * Allows SPI to plugin a {@link RestConsumerFactory} that creates the Camel {@link Consumer} responsible
+ * for handling incoming HTTP requests from clients that request to access REST services which has been created using
+ * the <a href="http://camel.apache.org/rest-dsl">rest-dsl</a>.
+ *
+ * @see RestApiConsumerFactory
+ * @see RestApiProcessorFactory
+ */
 public interface RestConsumerFactory {
 
     /**
@@ -29,17 +37,18 @@ public interface RestConsumerFactory {
      * href="http://camel.apache.org/event-driven-consumer.html">Event
      * Driven Consumer</a>, which consumes messages from the endpoint using the given processor
      *
-     * @param camelContext the camel context
-     * @param processor    the processor
-     * @param verb         HTTP verb such as GET, POST
-     * @param basePath     base path
-     * @param uriTemplate  uri template
-     * @param consumes     media-types for what this REST service consume as input (accept-type), is <tt>null</tt> or <tt>&#42;/&#42;</tt> for anything
-     * @param produces     media-types for what this REST service produces as output, can be <tt>null</tt>
-     * @param parameters   additional parameters
+     * @param camelContext  the camel context
+     * @param processor     the processor
+     * @param verb          HTTP verb such as GET, POST
+     * @param basePath      base path
+     * @param uriTemplate   uri template
+     * @param consumes      media-types for what this REST service consume as input (accept-type), is <tt>null</tt> or <tt>&#42;/&#42;</tt> for anything
+     * @param produces      media-types for what this REST service produces as output, can be <tt>null</tt>
+     * @param configuration REST configuration
+     * @param parameters    additional parameters
      * @return a newly created REST consumer
      * @throws Exception can be thrown
      */
     Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                            String consumes, String produces, Map<String, Object> parameters) throws Exception;
+                            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception;
 }

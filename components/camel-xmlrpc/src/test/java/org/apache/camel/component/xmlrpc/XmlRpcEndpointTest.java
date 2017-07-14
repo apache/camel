@@ -39,6 +39,8 @@ public class XmlRpcEndpointTest extends Assert {
     // create the endpoint with parameters
     @Test
     public void testEndpointSetting() throws Exception {
+        camelContext.start();
+
         XmlRpcEndpoint endpoint = (XmlRpcEndpoint)camelContext.getEndpoint("xmlrpc:http://www.example.com?userAgent=myAgent&gzipCompressing=true&connectionTimeout=30&defaultMethodName=echo");
         XmlRpcClientConfigImpl clientConfig = endpoint.getClientConfig();
         assertEquals("Get a wrong userAgent", "myAgent", clientConfig.getUserAgent());
@@ -50,6 +52,8 @@ public class XmlRpcEndpointTest extends Assert {
     
     @Test
     public void testClientConfigurer() throws Exception {
+        camelContext.start();
+
         XmlRpcEndpoint endpoint = (XmlRpcEndpoint)camelContext.getEndpoint("xmlrpc:http://www.example.com?clientConfigurer=#myClientConfigurer");
         XmlRpcClient client = endpoint.createClient();
         assertEquals("Get a worng maxThreads", 10, client.getMaxThreads());

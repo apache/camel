@@ -62,7 +62,7 @@ public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNett
     }
 
     private class CustomHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
-        public CustomHeaderFilterStrategy() {
+        CustomHeaderFilterStrategy() {
             // allow all outbound headers to pass through but only filter out below inbound header 
             getInFilter().add("sub-date");
         }   

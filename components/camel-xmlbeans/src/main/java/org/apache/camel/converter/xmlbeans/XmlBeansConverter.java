@@ -34,8 +34,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.impl.piccolo.xml.XMLStreamReader;
 
-
-
 /**
  * A <a href="http://camel.apache.org/type-coverter.html">Type Converter</a>
  * of XMLBeans objects
@@ -53,7 +51,6 @@ public final class XmlBeansConverter {
                 return XmlObject.Factory.parse(value);
             }
         }, exchange); 
-        
     }
 
     @Converter

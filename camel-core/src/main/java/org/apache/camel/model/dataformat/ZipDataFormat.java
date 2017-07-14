@@ -28,9 +28,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * zip data format (not for zip files)
+ * Zip compression data format (not for zip files)
  */
-@Metadata(label = "dataformat,transformation", title = "Zip Deflate Compression")
+@Metadata(firstVersion = "2.12.0", label = "dataformat,transformation", title = "Zip Deflate Compression")
 @XmlRootElement(name = "zip")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipDataFormat extends DataFormatDefinition {

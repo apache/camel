@@ -96,7 +96,7 @@ public class DefaultValidationErrorHandlerTest extends ContextTestSupport {
             assertTrue(e.getMessage().contains("errors: ["));
             assertTrue(e.getMessage().contains("org.xml.sax.SAXParseException: foo, Line : 3, Column : 5"));
             assertTrue(e.getMessage().contains("org.xml.sax.SAXParseException: bar, Line : 9, Column : 12"));
-            assertTrue(e.getMessage().contains("Exchange[null]"));
+            assertTrue(e.getMessage().contains("Exchange[]"));
         }
     }
 
@@ -123,7 +123,7 @@ public class DefaultValidationErrorHandlerTest extends ContextTestSupport {
             assertTrue(e.getMessage().contains("errors: ["));
             assertTrue(e.getMessage().contains("org.xml.sax.SAXParseException: foo, Line : 3, Column : 5"));
             assertTrue(e.getMessage().contains("org.xml.sax.SAXParseException: bar, Line : 9, Column : 12"));
-            assertTrue(e.getMessage().contains("Exchange[null]"));
+            assertTrue(e.getMessage().contains("Exchange[]"));
         }
     }
 

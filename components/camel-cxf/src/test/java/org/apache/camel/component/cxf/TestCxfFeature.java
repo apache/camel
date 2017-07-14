@@ -28,8 +28,7 @@ import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 
 public class TestCxfFeature extends AbstractFeature {
-    
-    
+
     @Override
     protected void initializeProvider(InterceptorProvider provider, Bus bus) {
             
@@ -43,7 +42,7 @@ public class TestCxfFeature extends AbstractFeature {
     
     class EndpointCheckInterceptor extends AbstractPhaseInterceptor<Message> {
 
-        public EndpointCheckInterceptor() {
+        EndpointCheckInterceptor() {
             super(Phase.PREPARE_SEND);
         }
 

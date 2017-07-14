@@ -38,8 +38,9 @@ public class ModelSanityCheckerTest extends TestCase {
 
     private static final Logger LOG = LoggerFactory.getLogger(ModelSanityCheckerTest.class);
 
-    private Set<Class<?>> discoverJaxbClasses() {
-        PackageScanClassResolver resolver = new DefaultPackageScanClassResolver();
+    private Set<Class<?>> discoverJaxbClasses() throws Exception {
+        DefaultPackageScanClassResolver resolver = new DefaultPackageScanClassResolver();
+        resolver.start();
         String[] packages = Constants.JAXB_CONTEXT_PACKAGES.split(":");
         return resolver.findAnnotated(XmlAccessorType.class, packages);
     }

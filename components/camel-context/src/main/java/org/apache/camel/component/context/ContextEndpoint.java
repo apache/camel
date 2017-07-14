@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.context;
 
+import java.util.Map;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateEndpoint;
@@ -27,7 +30,16 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "context", title = "Camel Context", syntax = "context:contextId:localEndpointUrl", label = "endpoint")
+/**
+ * The context component allows to send/receive messages between Camel routes in a black box way.
+ *
+ * The context component allows you to create new Camel Components from a CamelContext with a number of
+ * routes which is then treated as a black box, allowing you to refer to the local endpoints within the component
+ * from other CamelContexts.
+ * It is similar to the Routebox component in idea, though the Context component tries to be really simple for end users;
+ * just a simple convention over configuration approach to refer to local endpoints inside the CamelContext Component.
+ */
+@UriEndpoint(firstVersion = "2.7.0", scheme = "context", title = "Camel Context", syntax = "context:contextId:localEndpointUrl", label = "endpoint")
 public class ContextEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     @UriPath @Metadata(required = "true")
@@ -87,4 +99,25 @@ public class ContextEndpoint extends DefaultEndpoint implements DelegateEndpoint
     public boolean isSingleton() {
         return delegate.isSingleton();
     }
+
+    @Override
+    public void start() throws Exception {
+        // noop by purpose
+    }
+
+    @Override
+    public void stop() throws Exception {
+        // noop by purpose
+    }
+
+    @Override
+    public void configureProperties(Map<String, Object> options) {
+        // noop by purpose
+    }
+
+    @Override
+    public void setCamelContext(CamelContext context) {
+        // noop by purpose
+    }
+
 }

@@ -96,6 +96,13 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     private RouteDefinition route;
     @XmlTransient
     private RestDefinition rest;
+    @XmlAttribute
+    private String routeId;
+    @XmlAttribute
+    private Boolean apiDocs;
+
+    @XmlTransient
+    private Boolean usedForGeneratingNodeId = Boolean.FALSE;
 
     @Override
     public String getLabel() {
@@ -122,7 +129,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Sets swagger operation response messages
+     * Sets swagger operation response messages.
      */
     public void setResponseMsgs(List<RestOperationResponseMsgDefinition> params) {
         this.responseMsgs = responseMsgs;
@@ -133,7 +140,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * The HTTP verb such as GET or POST
+     * The HTTP verb such as GET, POST, DELETE, etc.
      */
     public void setMethod(String method) {
         this.method = method;
@@ -221,7 +228,10 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
 
     /**
      * Sets the class name to use for binding from input to POJO for the incoming data
-     * This option will override what may be configured on a parent level
+     * This option will override what may be configured on a parent level.
+     * <p/>
+     * The canonical name of the class of the input data. Append a [] to the end of the canonical name
+     * if you want the input to be an array type.
      */
     public void setType(String type) {
         this.type = type;
@@ -234,9 +244,36 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     /**
      * Sets the class name to use for binding from POJO to output for the outgoing data
      * This option will override what may be configured on a parent level
+     * <p/>
+     * The canonical name of the class of the input data. Append a [] to the end of the canonical name
+     * if you want the input to be an array type.
      */
     public void setOutType(String outType) {
         this.outType = outType;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    /**
+     * The route id this rest-dsl is using (read-only)
+     */
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
+    }
+
+    public Boolean getApiDocs() {
+        return apiDocs;
+    }
+
+    /**
+     * Whether to include or exclude the VerbDefinition in API documentation.
+     * <p/>
+     * The default value is true.
+     */
+    public void setApiDocs(Boolean apiDocs) {
+        this.apiDocs = apiDocs;
     }
 
     public RestDefinition getRest() {
@@ -358,22 +395,31 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
 
     public String asVerb() {
         // we do not want the jaxb model to repeat itself, by outputting <get method="get">
-        // so we defer the verb from the instance type
+        // so we infer the verb from the instance type
         if (this instanceof GetVerbDefinition) {
             return "get";
         } else if (this instanceof PostVerbDefinition) {
             return "post";
         } else if (this instanceof PutVerbDefinition) {
             return "put";
+        } else if (this instanceof PatchVerbDefinition) {
+            return "patch";
         } else if (this instanceof DeleteVerbDefinition) {
             return "delete";
         } else if (this instanceof HeadVerbDefinition) {
             return "head";
+        } else if (this instanceof OptionsVerbDefinition) {
+            return "options";
         } else {
             return method;
         }
     }
 
+    public Boolean getUsedForGeneratingNodeId() {
+        return usedForGeneratingNodeId;
+    }
 
-
+    public void setUsedForGeneratingNodeId(Boolean usedForGeneratingNodeId) {
+        this.usedForGeneratingNodeId = usedForGeneratingNodeId;
+    }
 }

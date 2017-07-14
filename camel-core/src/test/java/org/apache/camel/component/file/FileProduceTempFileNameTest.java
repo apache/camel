@@ -29,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class FileProduceTempFileNameTest extends ContextTestSupport {
 
     private String fileUrl = "file://target/tempandrename/?tempFileName=inprogress-${file:name.noext}.tmp";
+    private String parentFileUrl = "file://target/tempandrename/?tempFileName=../work/${file:name.noext}.tmp";
 
     @Override
     protected void setUp() throws Exception {
@@ -61,6 +62,16 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
 
         File file = new File("target/tempandrename/hello.txt");
         assertEquals("The generated file should exists: " + file, true, file.exists());
+    }
+
+    public void testCreateParentTempFileName() throws Exception {
+        Endpoint endpoint = context.getEndpoint(parentFileUrl);
+        GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
+
+        String tempFileName = producer.createTempFileName(exchange, "target/tempandrename/claus.txt");
+        assertDirectoryEquals("target/work/claus.tmp", tempFileName);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

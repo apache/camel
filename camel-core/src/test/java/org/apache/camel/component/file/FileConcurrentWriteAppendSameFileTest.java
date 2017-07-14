@@ -52,7 +52,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         mock.setResultWaitTime(30000);
 
         // we need to wait a bit for our slow CI server to make sure the entire file is written on disc
-        Thread.sleep(1000);
+        Thread.sleep(500);
         context.startRoute("foo");
 
         assertMockEndpointsSatisfied();
@@ -76,7 +76,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/concurrent").routeId("foo").noAutoStartup()
+                from("file:target/concurrent?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
                     .split(body().tokenize(LS)).parallelProcessing().streaming()
                         .setBody(body().append(":Status=OK").append(LS))
                         .to("file:target/concurrent/outbox?fileExist=Append&fileName=result.txt")

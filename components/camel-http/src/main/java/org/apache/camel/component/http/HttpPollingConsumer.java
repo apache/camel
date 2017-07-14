@@ -33,7 +33,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 /**
  * A polling HTTP consumer which by default performs a GET
  *
- * @version 
  */
 public class HttpPollingConsumer extends PollingConsumerSupport implements ServicePoolAware {
     private final HttpEndpoint endpoint;

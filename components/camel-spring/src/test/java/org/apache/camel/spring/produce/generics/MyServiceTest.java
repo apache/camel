@@ -16,11 +16,6 @@
  */
 package org.apache.camel.spring.produce.generics;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Produce;
 import org.apache.camel.spring.SpringRunWithTestSupport;
 
 import org.junit.Test;

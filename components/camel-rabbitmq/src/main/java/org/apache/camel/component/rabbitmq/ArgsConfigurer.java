@@ -18,6 +18,17 @@ package org.apache.camel.component.rabbitmq;
 
 import java.util.Map;
 
+/**
+ * @deprecated The endpoint uri properties
+ * <ul>
+ *     <li>{@link RabbitMQEndpoint#setExchangeArgs(Map)}</li>
+ *     <li>{@link RabbitMQEndpoint#setQueueArgs(Map)}</li>
+ *     <li>{@link RabbitMQEndpoint#setBindingArgs(Map)}</li>
+ * </ul>
+ *
+ * are favoured over their configurer counterparts.
+ */
+@Deprecated
 public interface ArgsConfigurer {
     
     /**

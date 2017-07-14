@@ -16,11 +16,18 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.interceptor.Fault;
+import org.apache.cxf.interceptor.OutFaultChainInitiatorObserver;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.apache.cxf.message.Message;
+import org.apache.cxf.phase.AbstractPhaseInterceptor;
+import org.apache.cxf.phase.Phase;
+import org.apache.cxf.transport.MessageObserver;
 
 /**
  * A Consumer of exchanges for a JAXRS service in CXF.  CxfRsConsumer acts a CXF
@@ -33,26 +40,78 @@ public class CxfRsConsumer extends DefaultConsumer {
 
     public CxfRsConsumer(CxfRsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+        server = createServer();
+    }
+
+    protected Server createServer() {
+        CxfRsEndpoint endpoint = (CxfRsEndpoint) getEndpoint();
         CxfRsInvoker cxfRsInvoker = new CxfRsInvoker(endpoint, this);
         JAXRSServerFactoryBean svrBean = endpoint.createJAXRSServerFactoryBean();
-        Bus bus = ((CxfRsEndpoint)getEndpoint()).getBus();
-        // We need to apply the bus setting from the CxfRsEndpoint which is not use the default bus
+        Bus bus = endpoint.getBus();
+
+        // We need to apply the bus setting from the CxfRsEndpoint which does not use the default bus
         if (bus != null) {
             svrBean.setBus(bus);
+
         }
+
         svrBean.setInvoker(cxfRsInvoker);
-        server = svrBean.create();
+
+        svrBean.getOutInterceptors().add(new UnitOfWorkCloserInterceptor());
+
+
+        Server server = svrBean.create();
+
+        final MessageObserver originalOutFaultObserver = server.getEndpoint().getOutFaultObserver();
+        //proxy OutFaultObserver so we can close org.apache.camel.spi.UnitOfWork in case of error
+        server.getEndpoint().setOutFaultObserver(message -> {
+            org.apache.cxf.message.Exchange cxfExchange = null;
+            if ((cxfExchange = message.getExchange()) != null) {
+                org.apache.camel.Exchange exchange = cxfExchange.get(org.apache.camel.Exchange.class);
+                if (exchange != null) {
+                    doneUoW(exchange);
+                }
+            }
+            originalOutFaultObserver.onMessage(message);
+        });
+
+        return server;
     }
-    
+
+    //closes UnitOfWork in good case
+    private class UnitOfWorkCloserInterceptor extends AbstractPhaseInterceptor<Message> {
+        public UnitOfWorkCloserInterceptor() {
+            super(Phase.POST_LOGICAL_ENDING);
+        }
+
+        @Override
+        public void handleMessage(Message message) throws Fault {
+            org.apache.cxf.message.Exchange cxfExchange = null;
+            if ((cxfExchange = message.getExchange()) != null) {
+                org.apache.camel.Exchange exchange = cxfExchange.get(org.apache.camel.Exchange.class);
+                if (exchange != null) {
+                    doneUoW(exchange);
+                }
+            }
+        }
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (server == null) {
+            server = createServer();
+        }
         server.start();
     }
 
     @Override
     protected void doStop() throws Exception {
-        server.stop();
+        if (server != null) {
+            server.stop();
+            server.destroy();
+            server = null;
+        }
         super.doStop();
     }
     

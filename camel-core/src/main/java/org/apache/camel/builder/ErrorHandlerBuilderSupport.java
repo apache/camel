@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.ErrorHandlerSupport;
+import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -67,6 +68,13 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
                 for (OnExceptionDefinition exception : list) {
                     handlerSupport.addExceptionPolicy(routeContext, exception);
                 }
+            }
+        }
+        if (handler instanceof RedeliveryErrorHandler) {
+            boolean original = ((RedeliveryErrorHandler) handler).isUseOriginalMessagePolicy();
+            if (original) {
+                // ensure allow original is turned on
+                routeContext.setAllowUseOriginalMessage(true);
             }
         }
     }

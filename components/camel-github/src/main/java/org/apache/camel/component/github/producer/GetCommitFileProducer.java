@@ -17,6 +17,7 @@
 package org.apache.camel.component.github.producer;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.commons.codec.binary.Base64;
@@ -41,7 +42,7 @@ public class GetCommitFileProducer extends AbstractGitHubProducer {
         super(endpoint);
 
         Registry registry = endpoint.getCamelContext().getRegistry();
-        Object service = registry.lookupByName("githubDataService");
+        Object service = registry.lookupByName(GitHubConstants.GITHUB_DATA_SERVICE);
         if (service != null) {
             LOG.debug("Using DataService found in registry " + service.getClass().getCanonicalName());
             dataService = (DataService) service;

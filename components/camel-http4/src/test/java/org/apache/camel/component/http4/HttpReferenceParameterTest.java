@@ -32,8 +32,8 @@ import org.junit.Test;
  */
 public class HttpReferenceParameterTest extends CamelTestSupport {
 
-    private static final String TEST_URI_1 = "http4://localhost:8080?httpBindingRef=#customBinding&httpClientConfigurerRef=#customConfigurer&httpContext=#customContext";
-    private static final String TEST_URI_2 = "http4://localhost:8081?httpBindingRef=customBinding&httpClientConfigurerRef=customConfigurer&httpContext=customContext";
+    private static final String TEST_URI_1 = "http4://localhost:8080?httpBinding=#customBinding&httpClientConfigurer=#customConfigurer&httpContext=#customContext";
+    private static final String TEST_URI_2 = "http4://localhost:8081?httpBinding=#customBinding&httpClientConfigurer=#customConfigurer&httpContext=#customContext";
 
     private HttpEndpoint endpoint1;
     private HttpEndpoint endpoint2;
@@ -53,19 +53,19 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
     }
 
     @Test
-    public void testHttpBindingRef() {
-        assertSame(testBinding, endpoint1.getBinding());
-        assertSame(testBinding, endpoint2.getBinding());
+    public void testHttpBinding() {
+        assertSame(testBinding, endpoint1.getHttpBinding());
+        assertSame(testBinding, endpoint2.getHttpBinding());
     }
 
     @Test
-    public void testHttpClientConfigurerRef() {
+    public void testHttpClientConfigurer() {
         assertSame(testConfigurer, endpoint1.getHttpClientConfigurer());
         assertSame(testConfigurer, endpoint2.getHttpClientConfigurer());
     }
 
     @Test
-    public void testHttpContextRef() {
+    public void testHttpContext() {
         assertSame(testHttpContext, endpoint1.getHttpContext());
         assertSame(testHttpContext, endpoint2.getHttpContext());
     }
@@ -89,7 +89,6 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
         };
     }
 
-    @SuppressWarnings("deprecation")
     private static class TestHttpBinding extends DefaultHttpBinding {
     }
 

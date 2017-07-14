@@ -30,7 +30,7 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
                 SSLContextParameters params = new SSLContextParameters();
                 
                 ProtocolSocketFactory factory = 
-                    new SSLContextParametersSecureProtocolSocketFactory(params);
+                    new SSLContextParametersSecureProtocolSocketFactory(params, context);
                 
                 Protocol.registerProtocol("https",
                         new Protocol(

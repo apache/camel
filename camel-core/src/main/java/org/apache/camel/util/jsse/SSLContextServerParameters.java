@@ -174,7 +174,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("SSLContextServerParameters [clientAuthentication=");
+        builder.append("SSLContextServerParameters[clientAuthentication=");
         builder.append(clientAuthentication);
         builder.append(", getCipherSuites()=");
         builder.append(getCipherSuites());
@@ -186,8 +186,6 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
         builder.append(getSecureSocketProtocolsFilter());
         builder.append(", getSessionTimeout()=");
         builder.append(getSessionTimeout());
-        builder.append(", getContext()=");
-        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }

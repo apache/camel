@@ -16,14 +16,16 @@
  */
 package org.apache.camel.component.websocket;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.ws.WebSocket;
-import com.ning.http.client.ws.WebSocketListener;
-import com.ning.http.client.ws.WebSocketUpgradeHandler;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.ws.WebSocket;
+import org.asynchttpclient.ws.WebSocketListener;
+import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +42,7 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
 
     @Test
     public void testWSHttpCall() throws Exception {
-        AsyncHttpClient c = new AsyncHttpClient();
+        AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/echo").execute(
             new WebSocketUpgradeHandler.Builder()
@@ -72,7 +74,7 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
 
     @Test
     public void testWSBytesHttpCall() throws Exception {
-        AsyncHttpClient c = new AsyncHttpClient();
+        AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/echo").execute(
             new WebSocketUpgradeHandler.Builder()
@@ -109,6 +111,8 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
             public void configure() {
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
                 websocketComponent.setPort(port);
+//                websocketComponent.setMaxThreads(20);
+//                websocketComponent.setMinThreads(1);
 
                 from("websocket://echo")
                     .log(">>> Message received from WebSocket Client : ${body}")

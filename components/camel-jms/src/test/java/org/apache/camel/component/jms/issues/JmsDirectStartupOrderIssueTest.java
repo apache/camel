@@ -20,7 +20,6 @@ import java.util.List;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -37,6 +36,14 @@ public class JmsDirectStartupOrderIssueTest extends CamelTestSupport {
 
     @Test
     public void testJmsDirectStartupOrderIssue() throws Exception {
+        // send messages to queue so there is messages on the queue before we start the route
+        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:foo", "Hello Camel");
+        template.sendBody("activemq:queue:foo", "Bye World");
+        template.sendBody("activemq:queue:foo", "Bye Camel");
+
+        context.startRoute("amq");
+
         getMockEndpoint("mock:result").expectedMessageCount(4);
 
         assertMockEndpointsSatisfied();
@@ -56,23 +63,13 @@ public class JmsDirectStartupOrderIssueTest extends CamelTestSupport {
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
-        ProducerTemplate producer = camelContext.createProducerTemplate();
-
-        // send messages to queue so there is messages on the queue when we start
-        producer.sendBody("activemq:queue:foo", "Hello World");
-        producer.sendBody("activemq:queue:foo", "Hello Camel");
-        producer.sendBody("activemq:queue:foo", "Bye World");
-        producer.sendBody("activemq:queue:foo", "Bye Camel");
-
-        producer.stop();
-
         return camelContext;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:queue:foo").routeId("amq").startupOrder(100)
+                from("activemq:queue:foo").routeId("amq").startupOrder(100).autoStartup(false)
                     .to("direct:foo");
 
                 from("direct:foo").routeId("direct").startupOrder(1)

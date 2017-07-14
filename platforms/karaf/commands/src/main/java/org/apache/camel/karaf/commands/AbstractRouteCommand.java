@@ -16,14 +16,21 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.felix.gogo.commands.Argument;
+import org.apache.camel.karaf.commands.completers.CamelContextCompleter;
+import org.apache.camel.karaf.commands.completers.RouteCompleter;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Completion;
 
-public abstract class AbstractRouteCommand extends CamelCommandSupport {
+public abstract class AbstractRouteCommand extends CamelControllerImpl implements Action {
 
     @Argument(index = 0, name = "route", description = "The Camel route ID or a wildcard expression", required = true, multiValued = false)
+    @Completion(RouteCompleter.class)
     String route;
 
     @Argument(index = 1, name = "context", description = "The Camel context name.", required = false, multiValued = false)
+    @Completion(CamelContextCompleter.class)
     String context;
 
 }

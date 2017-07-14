@@ -19,8 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedFilterMBean;
-import org.apache.camel.model.FilterDefinition;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.processor.FilterProcessor;
 
 /**
@@ -30,18 +29,18 @@ import org.apache.camel.processor.FilterProcessor;
 public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBean {
     private final FilterProcessor processor;
 
-    public ManagedFilter(CamelContext context, FilterProcessor processor, FilterDefinition definition) {
+    public ManagedFilter(CamelContext context, FilterProcessor processor, ExpressionNode definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
 
     @Override
-    public FilterDefinition getDefinition() {
-        return (FilterDefinition) super.getDefinition();
+    public ExpressionNode getDefinition() {
+        return (ExpressionNode) super.getDefinition();
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         processor.reset();
         super.reset();
     }

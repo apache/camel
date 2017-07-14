@@ -28,6 +28,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.exolab.castor.mapping.Mapping;
@@ -41,7 +42,7 @@ import org.exolab.castor.xml.XMLContext;
  * interface which leverage the Castor library for XML marshaling and
  * unmarshaling
  */
-public abstract class AbstractCastorDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+public abstract class AbstractCastorDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     /**
      * The default encoding used for stream access.
@@ -55,6 +56,7 @@ public abstract class AbstractCastorDataFormat extends ServiceSupport implements
     private String[] packages;
     private boolean validation;
     private volatile XMLContext xmlContext;
+    private boolean contentTypeHeader = true;
 
     public AbstractCastorDataFormat() {
     }
@@ -63,12 +65,25 @@ public abstract class AbstractCastorDataFormat extends ServiceSupport implements
         this.xmlContext = xmlContext;
     }
 
+    @Override
+    public String getDataFormatName() {
+        return "castor";
+    }
+
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         Writer writer = new OutputStreamWriter(outputStream, encoding);
 
         Marshaller marshaller = createMarshaller(exchange);
         marshaller.setWriter(writer);
         marshaller.marshal(body);
+
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            }
+        }
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
@@ -166,6 +181,18 @@ public abstract class AbstractCastorDataFormat extends ServiceSupport implements
 
     public void setValidation(boolean validation) {
         this.validation = validation;
+    }
+
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then Castor will set the Content-Type header to <tt>application/xml</tt> when marshalling.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
     @Override

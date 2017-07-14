@@ -25,9 +25,6 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 
-import org.apache.camel.component.linkedin.internal.CommentsResourceApiMethod;
-import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -39,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class CommentsResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CommentsResourceIntegrationTest.class);
-    private static final String PATH_PREFIX = LinkedInApiCollection.getCollection().getApiName(CommentsResourceApiMethod.class).getName();
+    private static final String PATH_PREFIX = "comments";
 
     // TODO provide parameter values for getComment
     @Ignore

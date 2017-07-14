@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.xmlrpc;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.xmlrpc.XmlRpcConstants;
 import org.apache.camel.component.xmlrpc.XmlRpcRequestImpl;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.xmlrpc.XmlRpcRequest;
@@ -35,9 +36,23 @@ public class XmlRpcDataFormatTest extends CamelTestSupport {
         assertEquals("Get a wrong request parameter size", 2, result.getParameterCount());
         assertEquals("Get a wrong request parameter", 2, result.getParameter(1));
         assertMockEndpointsSatisfied();
-        
     }
-    
+
+    @Test
+    public void testRequestMessageFromList() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:request");
+        mock.expectedMessageCount(1);
+
+        Object[] body = new Object[]{"you", 2};
+        XmlRpcRequest result = template.requestBodyAndHeader("direct:request", body, XmlRpcConstants.METHOD_NAME, "greet", XmlRpcRequest.class);
+        assertNotNull(result);
+
+        assertEquals("Get a wrong request operation name", "greet", result.getMethodName());
+        assertEquals("Get a wrong request parameter size", 2, result.getParameterCount());
+        assertEquals("Get a wrong request parameter", 2, result.getParameter(1));
+        assertMockEndpointsSatisfied();
+    }
+
     @Test
     public void testResponseMessage() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:response");

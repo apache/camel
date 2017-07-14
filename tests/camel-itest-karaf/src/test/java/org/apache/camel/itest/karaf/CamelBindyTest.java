@@ -16,33 +16,20 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelBindyTest extends AbstractFeatureTest {
+public class CamelBindyTest extends BaseKarafTest {
 
     public static final String COMPONENT = extractName(CamelBindyTest.class);
-    
-    protected DataFormatDefinition createDataformatDefinition(String format) {        
-        BindyDataFormat dataformate = new BindyDataFormat();
-        dataformate.setClassType(String.class);
-        return dataformate;
-    }
 
     @Test
     public void test() throws Exception {
-        testDataFormat(COMPONENT);
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
+        testDataFormat(COMPONENT, "bindy-csv");
+        testDataFormat(COMPONENT, "bindy-fixed");
+        testDataFormat(COMPONENT, "bindy-kvp");
     }
 
 }

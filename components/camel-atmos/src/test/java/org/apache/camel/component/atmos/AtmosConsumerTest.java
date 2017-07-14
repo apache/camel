@@ -17,14 +17,11 @@
 package org.apache.camel.component.atmos;
 
 import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atmos.integration.consumer.AtmosScheduledPollGetConsumer;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
-
-import static org.apache.camel.component.atmos.util.AtmosOperation.get;
 
 public class AtmosConsumerTest extends CamelTestSupport {
 
@@ -33,7 +30,7 @@ public class AtmosConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("atmos:foo/" + get + "?remotePath=/path").to("mock:test");
+                from("atmos:foo/get?remotePath=/path").to("mock:test");
             }
         };
     }
@@ -41,7 +38,7 @@ public class AtmosConsumerTest extends CamelTestSupport {
     @Test
     public void shouldCreateGetConsumer() throws Exception {
         // Given
-        AtmosEndpoint atmosEndpoint = context.getEndpoint("atmos:foo/" + get + "?remotePath=/path", AtmosEndpoint.class);
+        AtmosEndpoint atmosEndpoint = context.getEndpoint("atmos:foo/get?remotePath=/path", AtmosEndpoint.class);
 
         // When
         Consumer consumer = atmosEndpoint.createConsumer(null);

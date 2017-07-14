@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.mybatis.enabled",
+      "description": "Enable mybatis component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

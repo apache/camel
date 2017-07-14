@@ -32,10 +32,4 @@ public class SalesforceMultipleChoicesException extends SalesforceException {
         return choices;
     }
 
-    @Override
-    public void appendFields(StringBuilder builder) {
-        super.appendFields(builder);
-        builder.append(",choices=");
-        builder.append(choices.toString());
-    }
 }

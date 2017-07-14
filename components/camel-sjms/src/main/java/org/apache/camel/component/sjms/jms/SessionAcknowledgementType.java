@@ -29,7 +29,7 @@ public enum SessionAcknowledgementType {
 
     private int intValue = -1;
 
-    private SessionAcknowledgementType(int intValue) {
+    SessionAcknowledgementType(int intValue) {
         this.intValue = intValue;
     }
 

@@ -34,13 +34,15 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Freemarker endpoint
+ * Transforms the message using a FreeMarker template.
  */
-@UriEndpoint(scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri", producerOnly = true, label = "transformation")
 public class FreemarkerEndpoint extends ResourceEndpoint {
 
     @UriParam
     private String encoding;
+    @UriParam
+    private int templateUpdateDelay;
     @UriParam
     private Configuration configuration;
 
@@ -75,6 +77,17 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
 
     public String getEncoding() {
         return encoding;
+    }
+
+    public int getTemplateUpdateDelay() {
+        return templateUpdateDelay;
+    }
+
+    /**
+     * Number of seconds the loaded template resource will remain in the cache.
+     */
+    public void setTemplateUpdateDelay(int templateUpdateDelay) {
+        this.templateUpdateDelay = templateUpdateDelay;
     }
 
     public Configuration getConfiguration() {

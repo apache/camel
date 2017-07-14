@@ -17,6 +17,7 @@
 package org.apache.camel.component.github.producer;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.Registry;
@@ -37,7 +38,7 @@ public abstract class AbstractGitHubProducer extends DefaultProducer {
         this.endpoint = endpoint;
 
         Registry registry = endpoint.getCamelContext().getRegistry();
-        Object service = registry.lookupByName("githubRepositoryService");
+        Object service = registry.lookupByName(GitHubConstants.GITHUB_REPOSITORY_SERVICE);
         if (service != null) {
             repositoryService = (RepositoryService) service;
         } else {

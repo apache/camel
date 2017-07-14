@@ -46,8 +46,7 @@ public class FileToFtpTempFileNameTest extends FtpServerTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/in?recursive=true")
-                    .to("ftp://admin:admin@localhost:" + getPort()
-                        + "/out/?fileName=${file:name}&tempFileName=${file:onlyname}.part&stepwise=false");
+                    .to("ftp://admin:admin@localhost:" + getPort() + "/out/?fileName=${file:name}&tempFileName=${file:onlyname}.part&stepwise=false");
             }
         };
     }

@@ -17,11 +17,19 @@
 package org.apache.camel.commands.jolokia;
 
 import org.apache.camel.commands.CamelController;
+import org.jolokia.client.J4pClient;
 
 public interface JolokiaCamelController extends CamelController {
 
     /**
-     * Connects to the remote JVM using the given url to the remote jolokia agent
+     * To use the existing {@link org.jolokia.client.J4pClient} with this controller.
+     *
+     * @param client the client to use
+     */
+    void using(J4pClient client);
+
+    /**
+     * Connects to the remote JVM using the given url to the remote Jolokia agent
      *
      * @param url the url for the remote jolokia agent
      * @param username optional username

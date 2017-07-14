@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation", title = "iCal")
+@Metadata(firstVersion = "2.12.0", label = "dataformat,transformation", title = "iCal")
 @XmlRootElement(name = "ical")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IcalDataFormat extends DataFormatDefinition {

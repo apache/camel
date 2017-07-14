@@ -21,8 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.component.test.TestProxy;
+import org.apache.camel.util.CastUtils;
 import org.apache.velocity.VelocityContext;
+import org.junit.Assert;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
 
 /**
  * Tests {@link ApiComponentGeneratorMojo}
@@ -37,6 +42,15 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         // delete target files to begin
         collectionFile.delete();
 
+        final ApiComponentGeneratorMojo mojo = createGeneratorMojo();
+
+        mojo.execute();
+
+        // check target file was generated
+        assertExists(collectionFile);
+    }
+
+    protected ApiComponentGeneratorMojo createGeneratorMojo() {
         final ApiComponentGeneratorMojo mojo = new ApiComponentGeneratorMojo();
         configureSourceGeneratorMojo(mojo);
 
@@ -72,10 +86,8 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         fromJavadoc.setExcludePackages(JavadocApiMethodGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES);
         fromJavadoc.setExcludeMethods("clone|Current|internal|icache");
         mojo.apis[1].setFromJavadoc(fromJavadoc);
-
-        mojo.execute();
-
-        // check target file was generated
-        assertExists(collectionFile);
+        return mojo;
     }
+    
+
 }

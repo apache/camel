@@ -20,18 +20,21 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 @UriParams
 public class StompConfiguration implements Cloneable {
-
-    @UriParam(defaultValue = "tcp://localhost:61613") @Metadata(required = "true")
+    @UriParam(defaultValue = "tcp://localhost:61613")
+    @Metadata(required = "true")
     private String brokerURL = "tcp://localhost:61613";
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String login;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String passcode;
     @UriParam
     private String host;
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
 
     /**
      * Returns a copy of this configuration
@@ -87,6 +90,17 @@ public class StompConfiguration implements Cloneable {
      */
     public void setPasscode(String passcode) {
         this.passcode = passcode;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * To configure security using SSLContextParameters
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
 }

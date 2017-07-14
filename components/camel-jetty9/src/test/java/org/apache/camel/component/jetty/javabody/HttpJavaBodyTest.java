@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.jetty.javabody;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpConstants;
+import org.apache.camel.http.common.HttpOperationFailedException;
 import org.junit.Test;
 
 /**
@@ -35,6 +39,12 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
     @Test
     public void testHttpSendJavaBodyAndReceiveString() throws Exception {
+        HttpCommonComponent jetty = context.getComponent("jetty", HttpCommonComponent.class);
+        jetty.setAllowJavaSerializedObject(true);
+
+        HttpComponent http = context.getComponent("http", HttpComponent.class);
+        http.setAllowJavaSerializedObject(true);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -66,6 +76,12 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
     @Test
     public void testHttpSendJavaBodyAndReceiveJavaBody() throws Exception {
+        HttpCommonComponent jetty = context.getComponent("jetty", HttpCommonComponent.class);
+        jetty.setAllowJavaSerializedObject(true);
+
+        HttpComponent http = context.getComponent("http", HttpComponent.class);
+        http.setAllowJavaSerializedObject(true);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -98,6 +114,12 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
     @Test
     public void testHttpSendStringAndReceiveJavaBody() throws Exception {
+        HttpCommonComponent jetty = context.getComponent("jetty", HttpCommonComponent.class);
+        jetty.setAllowJavaSerializedObject(true);
+
+        HttpComponent http = context.getComponent("http", HttpComponent.class);
+        http.setAllowJavaSerializedObject(true);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -121,6 +143,82 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
         assertEquals(456, reply.getId());
         assertEquals("Camel rocks", reply.getName());
+    }
+
+    @Test
+    public void testNotAllowedReceive() throws Exception {
+        HttpCommonComponent jetty = context.getComponent("jetty", HttpCommonComponent.class);
+        jetty.setAllowJavaSerializedObject(false);
+
+        HttpComponent http = context.getComponent("http", HttpComponent.class);
+        http.setAllowJavaSerializedObject(true);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                onException(Exception.class).to("mock:error");
+
+                from("jetty:http://localhost:{{port}}/myapp/myservice")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String body = exchange.getIn().getBody(String.class);
+                                assertNotNull(body);
+                                assertEquals("Hello World", body);
+
+                                MyCoolBean reply = new MyCoolBean(456, "Camel rocks");
+                                exchange.getOut().setBody(reply);
+                                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+                            }
+                        });
+            }
+        });
+        context.start();
+
+        try {
+            template.requestBody("http://localhost:{{port}}/myapp/myservice", "Hello World", MyCoolBean.class);
+            fail("Should fail");
+        } catch (Exception e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testNotAllowed() throws Exception {
+        HttpCommonComponent jetty = context.getComponent("jetty", HttpCommonComponent.class);
+        jetty.setAllowJavaSerializedObject(false);
+
+        HttpComponent http = context.getComponent("http", HttpComponent.class);
+        http.setAllowJavaSerializedObject(true);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("jetty:http://localhost:{{port}}/myapp/myservice")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String body = exchange.getIn().getBody(String.class);
+                                assertNotNull(body);
+                                assertEquals("Hello World", body);
+
+                                MyCoolBean reply = new MyCoolBean(456, "Camel rocks");
+                                exchange.getOut().setBody(reply);
+                                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+                            }
+                        });
+            }
+        });
+        context.start();
+
+        MyCoolBean cool = new MyCoolBean(123, "Camel");
+
+        try {
+            template.requestBodyAndHeader("http://localhost:{{port}}/myapp/myservice", cool,
+                    Exchange.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, MyCoolBean.class);
+            fail("Should fail");
+        } catch (CamelExecutionException e) {
+            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+            assertEquals(415, cause.getStatusCode());
+        }
     }
 
 }

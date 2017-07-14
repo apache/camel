@@ -37,6 +37,14 @@ public class RestPropertyDefinition {
     @XmlAttribute(required = true)
     private String value;
 
+    public RestPropertyDefinition() {
+    }
+
+    public RestPropertyDefinition(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+
     /**
      * Property key
      */

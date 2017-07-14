@@ -31,6 +31,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -48,10 +49,12 @@ public class XmlJsonDataFormatTest extends AbstractJsonTestSupport {
 
         MockEndpoint mockJSON = getMockEndpoint("mock:json");
         mockJSON.expectedMessageCount(1);
+        mockJSON.expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/json");
         mockJSON.message(0).body().isInstanceOf(byte[].class);
 
         MockEndpoint mockXML = getMockEndpoint("mock:xml");
         mockXML.expectedMessageCount(1);
+        mockXML.expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/xml");
         mockXML.message(0).body().isInstanceOf(String.class);
 
         Object json = template.requestBody("direct:marshal", in);

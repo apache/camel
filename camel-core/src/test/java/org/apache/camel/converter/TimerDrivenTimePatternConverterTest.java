@@ -39,7 +39,7 @@ public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
 
         StopWatch watch = new StopWatch();
         assertMockEndpointsSatisfied();
-        long interval = watch.stop();
+        long interval = watch.taken();
         
         LOG.trace("Should take approx 2000 milliseconds, was: {}", interval);
         assertTrue("Should take approx 2000 milliseconds, was: " + interval, interval >= 1700);

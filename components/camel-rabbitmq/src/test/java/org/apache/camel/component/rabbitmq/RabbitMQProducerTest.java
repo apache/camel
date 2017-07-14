@@ -30,6 +30,7 @@ import com.rabbitmq.client.Connection;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class RabbitMQProducerTest {
 
     private RabbitMQEndpoint endpoint = Mockito.mock(RabbitMQEndpoint.class);
     private Exchange exchange = Mockito.mock(Exchange.class);
-    private Message message = new DefaultMessage();
+    private Message message = new DefaultMessage(new DefaultCamelContext());
     private Connection conn = Mockito.mock(Connection.class);
 
     @Before
@@ -152,11 +153,20 @@ public class RabbitMQProducerTest {
     }
 
     @Test
-    public void testPropertiesUsesTimestampHeader() throws IOException {
+    public void testPropertiesUsesTimestampHeaderAsLongValue() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
         message.setHeader(RabbitMQConstants.TIMESTAMP, "12345123");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals(12345123, props.getTimestamp().getTime());
+    }
+
+    @Test
+    public void testPropertiesUsesTimestampHeaderAsDateValue() throws IOException {
+        Date timestamp = new Date();
+        RabbitMQProducer producer = new RabbitMQProducer(endpoint);
+        message.setHeader(RabbitMQConstants.TIMESTAMP, timestamp);
+        AMQP.BasicProperties props = producer.buildProperties(exchange).build();
+        assertEquals(timestamp, props.getTimestamp());
     }
 
     @Test

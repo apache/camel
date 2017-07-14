@@ -21,7 +21,7 @@ import java.io.Serializable;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 
-@CsvRecord(separator = "," , skipFirstLine = false)
+@CsvRecord(separator = ",", skipFirstLine = false)
 public class MyCsvRecord implements Serializable {
 
     private static final long serialVersionUID = 1L;

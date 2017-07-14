@@ -30,11 +30,11 @@ import java.util.List;
  * <pre>
  * {@code
  *     public enum HelloWorldMethod implements ApiMethod {
- *         SAYHI(String.class, "sayHi", "name", String.class);
+ *         SAYHI(String.class, "sayHi", ApiMethodArg.from(String.class, "name");
  *
  *         private ApiMethodImpl apiMethod;
  *
- *         private HelloWorldMethods(Class<?> resultType, String name, Object... args) throws IllegalArgumentException {
+ *         private HelloWorldMethods(Class<?> resultType, String name, ApiMethodArg... args) throws IllegalArgumentException {
  *             this.apiMethod = new ApiMethod(HelloWorld.class, resultType, name, args);
  *         }
  *
@@ -57,25 +57,23 @@ public final class ApiMethodImpl implements ApiMethod {
     private final List<Class<?>> argTypes;
     private final Method method;
 
-    public ApiMethodImpl(Class<?> proxyType, Class<?> resultType, String name, Object... args) throws IllegalArgumentException {
+    public ApiMethodImpl(Class<?> proxyType, Class<?> resultType, String name, ApiMethodArg... args) throws IllegalArgumentException {
         this.name = name;
         this.resultType = resultType;
 
-        if (args.length % 2 != 0) {
-            throw new IllegalArgumentException("Invalid parameter list, "
-                + "must be of the form 'Class arg1, String arg1Name, Class arg2, String arg2Name...");
+        final List<String> tmpArgNames = new ArrayList<>(args.length);
+        final List<Class<?>> tmpArgTypes = new ArrayList<>(args.length);
+        for (ApiMethodArg arg : args) {
+            tmpArgTypes.add(arg.getType());
+            tmpArgNames.add(arg.getName());
         }
-        int nArgs = args.length / 2;
-        this.argNames = new ArrayList<String>(nArgs);
-        this.argTypes = new ArrayList<Class<?>>(nArgs);
-        for (int i = 0; i < nArgs; i++) {
-            this.argTypes.add((Class<?>) args[i * 2]);
-            this.argNames.add((String) args[i * 2 + 1]);
-        }
+
+        this.argNames = Collections.unmodifiableList(tmpArgNames);
+        this.argTypes = Collections.unmodifiableList(tmpArgTypes);
 
         // find method in Proxy type
         try {
-            this.method = proxyType.getMethod(name, argTypes.toArray(new Class[nArgs]));
+            this.method = proxyType.getMethod(name, argTypes.toArray(new Class[args.length]));
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException(
                 String.format("Missing method %s %s", name, argTypes.toString().replace('[', '(').replace(']', ')')),
@@ -95,12 +93,12 @@ public final class ApiMethodImpl implements ApiMethod {
 
     @Override
     public List<String> getArgNames() {
-        return Collections.unmodifiableList(argNames);
+        return argNames;
     }
 
     @Override
     public List<Class<?>> getArgTypes() {
-        return Collections.unmodifiableList(argTypes);
+        return argTypes;
     }
 
     @Override
@@ -117,6 +115,7 @@ public final class ApiMethodImpl implements ApiMethod {
             .append(", argNames=").append(argNames)
             .append(", argTypes=").append(argTypes)
             .append("}");
+
         return builder.toString();
     }
 }

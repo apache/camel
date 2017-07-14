@@ -131,7 +131,7 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
 
         // create ssl context once
         if (configuration.getSslContextParameters() != null) {
-            answer = configuration.getSslContextParameters().createSSLContext();
+            answer = configuration.getSslContextParameters().createSSLContext(camelContext);
         } else {
             if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
                 LOG.debug("keystorefile is null");
@@ -175,7 +175,7 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
             return consumer.getConfiguration().getSslHandler();
         } else if (sslContext != null) {
             SSLEngine engine = sslContext.createSSLEngine();
-            engine.setUseClientMode(false);
+            engine.setUseClientMode(consumer.getConfiguration().isClientMode());
             engine.setNeedClientAuth(consumer.getConfiguration().isNeedClientAuth());
             if (consumer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set

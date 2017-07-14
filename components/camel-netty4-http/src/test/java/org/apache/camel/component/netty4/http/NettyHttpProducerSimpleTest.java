@@ -51,12 +51,12 @@ public class NettyHttpProducerSimpleTest extends BaseNettyTest {
 
         NettyHttpMessage response = out.getOut(NettyHttpMessage.class);
         assertNotNull(response);
-        assertEquals(200, response.getHttpResponse().getStatus().code());
+        assertEquals(200, response.getHttpResponse().status().code());
 
         // we can also get the response as body
         HttpResponse body = out.getOut().getBody(HttpResponse.class);
         assertNotNull(body);
-        assertEquals(200, body.getStatus().code());
+        assertEquals(200, body.status().code());
 
         assertMockEndpointsSatisfied();
     }

@@ -98,7 +98,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
                     IOHelper.copy(ss.getInputStream(), output);
                     exchange.getOut().setBody(output.toByteArray());
                 } else if (ss.getReader() != null) {
-                    Reader reader = (Reader) ss.getReader();
+                    Reader reader = ss.getReader();
                     StringBuilder sb = new StringBuilder();
                     for (int i = reader.read(); i > -1; i = reader.read()) {
                         sb.append((char) i);

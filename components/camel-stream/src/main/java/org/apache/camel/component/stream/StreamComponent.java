@@ -33,6 +33,7 @@ public class StreamComponent extends UriEndpointComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         StreamEndpoint answer = new StreamEndpoint(uri, this);
+        answer.setKind(remaining);
         setProperties(answer, parameters);
         return answer;
     }

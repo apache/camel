@@ -47,7 +47,9 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +67,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     private CamelContext camelContext;
     private MBeanServer server;
+    private ManagementMBeanAssembler assembler;
+
     // need a name -> actual name mapping as some servers changes the names (such as WebSphere)
     private final ConcurrentMap<ObjectName, ObjectName> mbeansRegistered = new ConcurrentHashMap<ObjectName, ObjectName>();
     private JMXConnectorServer cs;
@@ -79,7 +83,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private Boolean createConnector = false;
     private Boolean onlyRegisterProcessorWithCustomId = false;
     private Boolean loadStatisticsEnabled = false;
-    private Boolean endpointRuntimeStatisticsEnabled = true;
+    private Boolean endpointRuntimeStatisticsEnabled;
     private Boolean registerAlways = false;
     private Boolean registerNewRoutes = true;
     private Boolean mask = true;
@@ -338,7 +342,6 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             registerMBeanWithServer(obj, name, forceRegistration);
         } catch (NotCompliantMBeanException e) {
             // If this is not a "normal" MBean, then try to deploy it using JMX annotations
-            ManagementMBeanAssembler assembler = camelContext.getManagementMBeanAssembler();
             ObjectHelper.notNull(assembler, "ManagementMBeanAssembler", camelContext);
             Object mbean = assembler.assemble(server, obj, name);
             if (mbean != null) {
@@ -384,6 +387,10 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             finalizeSettings();
             createMBeanServer();
         }
+
+        // ensure assembler is started
+        assembler = camelContext.getManagementMBeanAssembler();
+        ServiceHelper.startService(assembler);
 
         LOG.debug("Starting JMX agent on server: {}", getMBeanServer());
     }
@@ -431,6 +438,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
                      + " exceptions caught while unregistering MBeans during stop operation."
                      + " See INFO log for details.");
         }
+
+        ServiceHelper.stopService(assembler);
     }
 
     private void registerMBeanWithServer(Object obj, ObjectName name, boolean forceRegistration)
@@ -481,7 +490,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
                 if (useHostIPAddress) {
                     hostName = InetAddress.getLocalHost().getHostAddress();
                 } else {
-                    hostName = InetAddress.getLocalHost().getHostName();
+                    hostName = InetAddressUtil.getLocalHostName();
                 }
             } catch (UnknownHostException uhe) {
                 LOG.info("Cannot determine localhost name or address. Using default: " + DEFAULT_REGISTRY_PORT, uhe);

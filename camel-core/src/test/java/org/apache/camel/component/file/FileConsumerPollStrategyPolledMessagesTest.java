@@ -36,7 +36,7 @@ public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSuppo
     private static int maxPolls;
     private final CountDownLatch latch = new CountDownLatch(1);
 
-    private String fileUrl = "file://target/pollstrategy/?consumer.pollStrategy=#myPoll";
+    private String fileUrl = "file://target/pollstrategy/?consumer.pollStrategy=#myPoll&initialDelay=0&delay=10";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

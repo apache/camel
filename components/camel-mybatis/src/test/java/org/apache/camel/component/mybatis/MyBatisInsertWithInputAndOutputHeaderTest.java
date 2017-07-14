@@ -30,8 +30,8 @@ public class MyBatisInsertWithInputAndOutputHeaderTest extends MyBatisTestSuppor
     public void testInsert() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).body().equals(RETAINED_BODY);
-        mock.message(0).header(TEST_CASE_OUTPUT_HEADER_NAME).equals(1);
+        mock.message(0).body().isEqualTo(RETAINED_BODY);
+        mock.message(0).header(TEST_CASE_OUTPUT_HEADER_NAME).isEqualTo(1);
 
         Account account = new Account();
         account.setId(444);

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.zookeeper.enabled",
+      "description": "Enable zookeeper component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

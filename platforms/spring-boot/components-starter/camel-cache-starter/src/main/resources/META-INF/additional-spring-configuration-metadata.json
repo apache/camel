@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.cache.enabled",
+      "description": "Enable cache component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

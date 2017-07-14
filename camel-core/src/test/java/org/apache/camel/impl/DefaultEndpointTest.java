@@ -45,9 +45,8 @@ public class DefaultEndpointTest extends ContextTestSupport {
     public void testToString() {
         final String epstr = "myep:///test";
         MyEndpoint ep = new MyEndpoint();
-        assertNotNull(ep.toString());
         ep.setEndpointUri(epstr);
-        assertTrue(ep.toString().indexOf(epstr) > 0);
+        assertTrue(ep.toString().contains(epstr));
     }
 
     /**

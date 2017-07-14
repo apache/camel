@@ -17,14 +17,21 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.EipExplainCommand;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
-import org.apache.felix.gogo.commands.Option;
+import org.apache.camel.karaf.commands.completers.CamelContextCompleter;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "camel", name = "eip-explain", description = "Explain the EIP in the CamelContext")
-public class EipExplain extends CamelCommandSupport {
+@Service
+public class EipExplain extends CamelControllerImpl implements Action {
 
     @Argument(index = 0, name = "name", description = "The name of the Camel context", required = true, multiValued = false)
+    @Completion(CamelContextCompleter.class)
     String name;
 
     @Argument(index = 1, name = "nameOrId", description = "The name of the EIP or a node id to refer to a specific node from the routes", required = true, multiValued = false)
@@ -34,9 +41,9 @@ public class EipExplain extends CamelCommandSupport {
             required = false, multiValued = false, valueToShowInHelp = "false")
     boolean verbose;
 
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         EipExplainCommand command = new EipExplainCommand(name, nameOrId, verbose);
-        return command.execute(camelController, System.out, System.err);
+        return command.execute(this, System.out, System.err);
     }
 
 }

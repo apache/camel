@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.jetty.enabled",
+      "description": "Enable jetty component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

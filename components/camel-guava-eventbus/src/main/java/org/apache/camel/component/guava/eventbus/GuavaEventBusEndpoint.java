@@ -30,10 +30,9 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
- * Guava EventBus (http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/eventbus/EventBus.html)
- * endpoint. Can create both producer and consumer ends of the route.
+ * The guava-eventbus component provides integration bridge between Camel and Google Guava EventBus.
  */
-@UriEndpoint(scheme = "guava-eventbus", title = "Guava EventBus", syntax = "guava-eventbus:eventBusRef", consumerClass = GuavaEventBusConsumer.class, label = "eventbus")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "guava-eventbus", title = "Guava EventBus", syntax = "guava-eventbus:eventBusRef", consumerClass = GuavaEventBusConsumer.class, label = "eventbus")
 public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     private EventBus eventBus;

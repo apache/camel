@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for  the file sort by expression
+ * Unit test for the file sort by expression
  */
 public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
 
@@ -74,7 +74,7 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fileUrl + "b/?sortBy=ignoreCase:file:name&initialDelay=500&delay=1000")
+                from(fileUrl + "b/?initialDelay=0&delay=10&sortBy=ignoreCase:file:name")
                         .convertBodyTo(String.class).to("mock:nocase");
             }
         });
@@ -92,7 +92,7 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fileUrl + "c/?sortBy=reverse:ignoreCase:file:name&initialDelay=750&delay=1000")
+                from(fileUrl + "c/?initialDelay=0&delay=10&sortBy=reverse:ignoreCase:file:name")
                         .convertBodyTo(String.class).to("mock:nocasereverse");
             }
         });

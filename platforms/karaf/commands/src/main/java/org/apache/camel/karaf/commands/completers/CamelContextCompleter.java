@@ -18,23 +18,28 @@ package org.apache.camel.karaf.commands.completers;
 
 import java.util.List;
 
-import jline.console.completer.StringsCompleter;
 import org.apache.camel.CamelContext;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
+import org.apache.karaf.shell.api.console.CommandLine;
+import org.apache.karaf.shell.api.console.Completer;
+import org.apache.karaf.shell.api.console.Session;
+import org.apache.karaf.shell.support.completers.StringsCompleter;
 
 /**
- * A JLine completer for the Camel contexts.
+ * A completer for the Camel contexts.
  */
-public class CamelContextCompleter extends CamelCompleterSupport {
+@Service
+public class CamelContextCompleter extends CamelControllerImpl implements Completer {
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public int complete(String buffer, int cursor, List candidates) {
+    public int complete(Session session, CommandLine commandLine, List<String> candidates) {
         try {
             StringsCompleter delegate = new StringsCompleter();
-            List<CamelContext> camelContexts = camelController.getLocalCamelContexts();
+            List<CamelContext> camelContexts = getLocalCamelContexts();
             for (CamelContext camelContext : camelContexts) {
                 delegate.getStrings().add(camelContext.getName());
             }
-            return delegate.complete(buffer, cursor, candidates);
+            return delegate.complete(session, commandLine, candidates);
         } catch (Exception e) {
             // nothing to do, no completion
         }

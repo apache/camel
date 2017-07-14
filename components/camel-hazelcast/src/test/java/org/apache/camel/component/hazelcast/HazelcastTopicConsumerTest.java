@@ -74,7 +74,7 @@ public class HazelcastTopicConsumerTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast:%sfoo", HazelcastConstants.TOPIC_PREFIX)).log("object...")
+                from(String.format("hazelcast-%sfoo", HazelcastConstants.TOPIC_PREFIX)).log("object...")
                         .choice()
                             .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.RECEIVED))
                                 .log("...received").to("mock:received")

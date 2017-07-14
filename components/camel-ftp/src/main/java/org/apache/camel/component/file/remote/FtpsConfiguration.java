@@ -29,15 +29,15 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class FtpsConfiguration extends FtpConfiguration {
 
-    @UriParam(defaultValue = "TLS")
+    @UriParam(defaultValue = "TLS", label = "security")
     private String securityProtocol = "TLS";
-    @UriParam
+    @UriParam(label = "security")
     private boolean isImplicit;
-    @UriParam
+    @UriParam(label = "security")
     private boolean disableSecureDataChannelDefaults;
-    @UriParam
+    @UriParam(label = "security")
     private String execProt;
-    @UriParam
+    @UriParam(label = "security")
     private Long execPbsz;
 
     public FtpsConfiguration() {

@@ -17,7 +17,7 @@
 package org.apache.camel.component.netty4.http;
 
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
@@ -51,7 +51,7 @@ public class NettyUseRawHttpResponseTest extends BaseNettyTest {
                         public void process(Exchange exchange) throws Exception {
                             HttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
                                                                                 NettyConverter.toByteBuffer("Bye World".getBytes()));
-                            response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, 9);
+                            response.headers().set(HttpHeaderNames.CONTENT_LENGTH.toString(), 9);
 
                             exchange.getOut().setBody(response);
                         }

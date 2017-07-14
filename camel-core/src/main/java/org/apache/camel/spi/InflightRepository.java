@@ -57,11 +57,25 @@ public interface InflightRepository extends StaticService {
         String getNodeId();
 
         /**
+         * The id of the route where the exchange originates (started)
+         */
+        String getFromRouteId();
+
+        /**
+         * The id of the route where the exchange currently is being processed
+         * <p/>
+         * Is <tt>null</tt> if message history is disabled.
+         * @deprecated use {@link #getAtRouteId()}
+         */
+        @Deprecated
+        String getRouteId();
+
+        /**
          * The id of the route where the exchange currently is being processed
          * <p/>
          * Is <tt>null</tt> if message history is disabled.
          */
-        String getRouteId();
+        String getAtRouteId();
 
     }
 
@@ -112,6 +126,15 @@ public interface InflightRepository extends StaticService {
     int size(Endpoint endpoint);
 
     /**
+     * Adds the route from the in flight registry.
+     * <p/>
+     * Is used for initializing up resources
+     *
+     * @param routeId the id of the route
+     */
+    void addRoute(String routeId);
+
+    /**
      * Removes the route from the in flight registry.
      * <p/>
      * Is used for cleaning up resources to avoid leaking.
@@ -136,6 +159,13 @@ public interface InflightRepository extends StaticService {
     Collection<InflightExchange> browse();
 
     /**
+     * A <i>read-only</i> browser of the {@link InflightExchange}s that are currently inflight that started from the given route.
+     *
+     * @param fromRouteId  the route id, or <tt>null</tt> for all routes.
+     */
+    Collection<InflightExchange> browse(String fromRouteId);
+
+    /**
      * A <i>read-only</i> browser of the {@link InflightExchange}s that are currently inflight.
      *
      * @param limit maximum number of entries to return
@@ -143,5 +173,23 @@ public interface InflightRepository extends StaticService {
      *                              set to <tt>false</tt> to sort by exchange id
      */
     Collection<InflightExchange> browse(int limit, boolean sortByLongestDuration);
+
+    /**
+     * A <i>read-only</i> browser of the {@link InflightExchange}s that are currently inflight that started from the given route.
+     *
+     * @param fromRouteId  the route id, or <tt>null</tt> for all routes.
+     * @param limit maximum number of entries to return
+     * @param sortByLongestDuration to sort by the longest duration. Set to <tt>true</tt> to include the exchanges that has been inflight the longest time,
+     *                              set to <tt>false</tt> to sort by exchange id
+     */
+    Collection<InflightExchange> browse(String fromRouteId, int limit, boolean sortByLongestDuration);
+
+    /**
+     * Gets the oldest {@link InflightExchange} that are currently inflight that started from the given route.
+     *
+     * @param fromRouteId  the route id, or <tt>null</tt> for all routes.
+     * @return the oldest, or <tt>null</tt> if none inflight
+     */
+    InflightExchange oldest(String fromRouteId);
 
 }

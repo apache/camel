@@ -30,13 +30,14 @@ import org.apache.camel.impl.ParameterConfiguration;
  * The configuration values can then be introspected, modified and converted back into a URI string
  * or Endpoint.
  *
- * For @{link UriEndpointComponent} implementations created for Endpoints annotated with {@link org.apache.camel.spi.UriEndpoint} and the
+ * For {@link org.apache.camel.impl.UriEndpointComponent} implementations created for Endpoints annotated with {@link org.apache.camel.spi.UriEndpoint} and the
  * associated annotations then all the parameter values can be introspected and the parameter values are converted to their
  * correct type.
  *
  * Other implementations keep all the types as String and there is no validation until you try to create
  * an Endpoint from the values.
  */
+@Deprecated
 public interface ComponentConfiguration {
 
     /**

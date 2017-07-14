@@ -37,6 +37,7 @@ import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
 import org.apache.camel.component.xmlsecurity.util.SameDocumentUriDereferencer;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,10 +46,18 @@ import org.junit.Test;
  */
 public class ECDSASignatureTest extends CamelTestSupport {
     
-    private static String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
-    
+    private static String payload;
     private boolean canTest = true;
+    
+    static {
+        boolean includeNewLine = true;
+        if (TestSupport.getJavaMajorVersion() >= 9) {
+            includeNewLine = false;
+        }
+        payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + (includeNewLine ? "\n" : "")
+            + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+    }
 
     public ECDSASignatureTest() throws Exception {
         try {
@@ -97,10 +106,10 @@ public class ECDSASignatureTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: ecdsa signature algorithm
                 from("direct:ecdsa_sha1")
-                    .to("xmlsecurity:sign://ecdsa_sha1?keyAccessor=#accessor"
+                    .to("xmlsecurity:sign:ecdsa_sha1?keyAccessor=#accessor"
                         + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1")
                         // .log("Body: + ${body}")
-                        .to("xmlsecurity:verify://ecdsa?keySelector=#selector")
+                        .to("xmlsecurity:verify:ecdsa?keySelector=#selector")
                     .to("mock:result");
                 // END SNIPPET: ecdsa signature algorithm
             }
@@ -108,9 +117,9 @@ public class ECDSASignatureTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: ecdsa signature algorithm
                 from("direct:ecdsa_sha224")
-                    .to("xmlsecurity:sign://ecdsa_sha224?keyAccessor=#accessor"
+                    .to("xmlsecurity:sign:ecdsa_sha224?keyAccessor=#accessor"
                         + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha224")
-                        .to("xmlsecurity:verify://ecdsa?keySelector=#selector")
+                        .to("xmlsecurity:verify:ecdsa?keySelector=#selector")
                     .to("mock:result");
                 // END SNIPPET: ecdsa signature algorithm
             }
@@ -118,9 +127,9 @@ public class ECDSASignatureTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: ecdsa signature algorithm
                 from("direct:ecdsa_sha256")
-                    .to("xmlsecurity:sign://ecdsa_sha256?keyAccessor=#accessor"
+                    .to("xmlsecurity:sign:ecdsa_sha256?keyAccessor=#accessor"
                         + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256")
-                        .to("xmlsecurity:verify://ecdsa?keySelector=#selector")
+                        .to("xmlsecurity:verify:ecdsa?keySelector=#selector")
                     .to("mock:result");
                 // END SNIPPET: ecdsa signature algorithm
             }
@@ -128,9 +137,9 @@ public class ECDSASignatureTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: ecdsa signature algorithm
                 from("direct:ecdsa_sha384")
-                    .to("xmlsecurity:sign://ecdsa_sha384?keyAccessor=#accessor"
+                    .to("xmlsecurity:sign:ecdsa_sha384?keyAccessor=#accessor"
                         + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384")
-                        .to("xmlsecurity:verify://ecdsa?keySelector=#selector")
+                        .to("xmlsecurity:verify:ecdsa?keySelector=#selector")
                     .to("mock:result");
                 // END SNIPPET: ecdsa signature algorithm
             }
@@ -138,9 +147,9 @@ public class ECDSASignatureTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: ecdsa signature algorithm
                 from("direct:ecdsa_sha512")
-                    .to("xmlsecurity:sign://ecdsa_sha512?keyAccessor=#accessor"
+                    .to("xmlsecurity:sign:ecdsa_sha512?keyAccessor=#accessor"
                         + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512")
-                        .to("xmlsecurity:verify://ecdsa?keySelector=#selector")
+                        .to("xmlsecurity:verify:ecdsa?keySelector=#selector")
                     .to("mock:result");
                 // END SNIPPET: ecdsa signature algorithm
             }
@@ -148,9 +157,9 @@ public class ECDSASignatureTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: ecdsa signature algorithm
                 from("direct:ecdsa_ripemd160")
-                    .to("xmlsecurity:sign://ecdsa_ripemd160?keyAccessor=#accessor"
+                    .to("xmlsecurity:sign:ecdsa_ripemd160?keyAccessor=#accessor"
                         + "&signatureAlgorithm=http://www.w3.org/2007/05/xmldsig-more#ecdsa-ripemd160")
-                        .to("xmlsecurity:verify://ecdsa?keySelector=#selector")
+                        .to("xmlsecurity:verify:ecdsa?keySelector=#selector")
                     .to("mock:result");
                 // END SNIPPET: ecdsa signature algorithm
             }

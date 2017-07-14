@@ -20,7 +20,10 @@ import org.apache.camel.Component;
 import org.apache.camel.component.bean.BeanEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
-@UriEndpoint(scheme = "ejb", title = "EJB", syntax = "ejb:beanName", producerOnly = true, label = "endpoint,java")
+/**
+ * The ejb component is for invoking EJB Java beans from Camel.
+ */
+@UriEndpoint(firstVersion = "2.4.0", scheme = "ejb", title = "EJB", syntax = "ejb:beanName", producerOnly = true, label = "endpoint,java")
 public class EjbEndpoint extends BeanEndpoint {
 
     public EjbEndpoint(String endpointUri, Component component) {

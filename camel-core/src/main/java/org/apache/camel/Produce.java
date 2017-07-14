@@ -39,8 +39,29 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 public @interface Produce {
+
+    /**
+     * The uri to produce to
+     */
     String uri() default "";
+
+    /**
+     * Reference to endpoint to produce to
+     */
     String ref() default "";
+
+    /**
+     * Use the field or getter on the bean to provide the uri to produce to
+     */
     String property() default "";
+
+    /**
+     * Id of {@link CamelContext} to use
+     */
     String context() default "";
+
+    /**
+     * Whether to use bean parameter binding
+     */
+    boolean binding() default true;
 }

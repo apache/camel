@@ -32,6 +32,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 public final class XmlHelper {
+
     private XmlHelper() { }
 
     public static Document buildNamespaceAwareDocument(File xml) throws SAXException, ParserConfigurationException, IOException {
@@ -51,5 +52,9 @@ public final class XmlHelper {
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(namespaceContext);
         return xPath;
+    }
+
+    public static boolean isNullOrEmpty(String text) {
+        return text == null || text.isEmpty();
     }
 }

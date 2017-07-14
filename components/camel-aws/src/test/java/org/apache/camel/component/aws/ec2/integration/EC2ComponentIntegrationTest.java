@@ -19,14 +19,7 @@ package org.apache.camel.component.aws.ec2.integration;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
-import com.amazonaws.services.ec2.model.DescribeInstancesResult;
-import com.amazonaws.services.ec2.model.InstanceStateName;
 import com.amazonaws.services.ec2.model.InstanceType;
-import com.amazonaws.services.ec2.model.MonitorInstancesResult;
-import com.amazonaws.services.ec2.model.MonitoringState;
-import com.amazonaws.services.ec2.model.RunInstancesResult;
-import com.amazonaws.services.ec2.model.UnmonitorInstancesResult;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

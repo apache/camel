@@ -87,7 +87,7 @@ public class QuickfixjMessageJsonTransformer {
                 append(dd.getValueName(tag, field.getObject().toString())).
                 append("\" ]");
             } else {
-                FieldType fieldType = dd.getFieldTypeEnum(field.getField());
+                FieldType fieldType = dd.getFieldType(field.getField());
                 if (Number.class.isAssignableFrom(fieldType.getJavaType())) {
                     sb.append(field.getObject());
                 } else {

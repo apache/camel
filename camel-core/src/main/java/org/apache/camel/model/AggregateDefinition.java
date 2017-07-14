@@ -32,16 +32,20 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AggregationStrategyClause;
 import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.builder.PredicateClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.ClosedCorrelationKeyException;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
@@ -57,7 +61,7 @@ import org.apache.camel.util.concurrent.SynchronousExecutorService;
 public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> implements ExecutorServiceAwareDefinition<AggregateDefinition> {
     @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
-    @XmlElement(name = "completionPredicate")
+    @XmlElement(name = "completionPredicate") @AsPredicate
     private ExpressionSubElementDefinition completionPredicate;
     @XmlElement(name = "completionTimeout")
     private ExpressionSubElementDefinition completionTimeoutExpression;
@@ -99,6 +103,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private Long completionInterval;
     @XmlAttribute
     private Long completionTimeout;
+    @XmlAttribute @Metadata(defaultValue = "1000")
+    private Long completionTimeoutCheckerInterval = 1000L;
     @XmlAttribute
     private Boolean completionFromBatchConsumer;
     @XmlAttribute
@@ -126,7 +132,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     public AggregateDefinition() {
     }
 
-    public AggregateDefinition(Predicate predicate) {
+    public AggregateDefinition(@AsPredicate Predicate predicate) {
         this(ExpressionNodeHelper.toExpressionDefinition(predicate));
     }
     
@@ -209,7 +215,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
                 timeoutThreadPool = routeContext.getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this,
                         AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER, timeoutCheckerExecutorServiceRef);
                 if (timeoutThreadPool == null) {
-                    throw new IllegalArgumentException("ExecutorServiceRef " + timeoutCheckerExecutorServiceRef + " not found in registry or as a thread pool profile.");
+                    throw new IllegalArgumentException("ExecutorServiceRef " + timeoutCheckerExecutorServiceRef 
+                            + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
                 }
                 shutdownTimeoutThreadPool = true;
             }
@@ -277,6 +284,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         }
         if (getAggregateController() != null) {
             answer.setAggregateController(getAggregateController());
+        }
+        if (getCompletionTimeoutCheckerInterval() != null) {
+            answer.setCompletionTimeoutCheckerInterval(getCompletionTimeoutCheckerInterval());
         }
         return answer;
     }
@@ -483,6 +493,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.completionTimeout = completionTimeout;
     }
 
+    public Long getCompletionTimeoutCheckerInterval() {
+        return completionTimeoutCheckerInterval;
+    }
+
+    public void setCompletionTimeoutCheckerInterval(Long completionTimeoutCheckerInterval) {
+        this.completionTimeoutCheckerInterval = completionTimeoutCheckerInterval;
+    }
+
     public ExpressionSubElementDefinition getCompletionPredicate() {
         return completionPredicate;
     }
@@ -660,7 +678,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     /**
      * Use eager completion checking which means that the {{completionPredicate}} will use the incoming Exchange.
-     * At opposed to without eager completion checking the {{completionPredicate}} will use the aggregated Exchange.
+     * As opposed to without eager completion checking the {{completionPredicate}} will use the aggregated Exchange.
      *
      * @return builder
      */
@@ -682,7 +700,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     /**
      * Closes a correlation key when its complete. Any <i>late</i> received exchanges which has a correlation key
-     * that has been closed, it will be defined and a {@link org.apache.camel.processor.aggregate.ClosedCorrelationKeyException}
+     * that has been closed, it will be defined and a {@link ClosedCorrelationKeyException}
      * is thrown.
      *
      * @param capacity the maximum capacity of the closed correlation key cache.
@@ -719,10 +737,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the completion size, which is the number of aggregated exchanges which would
-     * cause the aggregate to consider the group as complete and send out the aggregated exchange.
+     * Number of messages aggregated before the aggregation is complete. This option can be set as either
+     * a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result.
+     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
      *
-     * @param completionSize  the completion size
+     * @param completionSize  the completion size, must be a positive number
      * @return builder
      */
     public AggregateDefinition completionSize(int completionSize) {
@@ -731,8 +750,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the completion size, which is the number of aggregated exchanges which would
-     * cause the aggregate to consider the group as complete and send out the aggregated exchange.
+     * Number of messages aggregated before the aggregation is complete. This option can be set as either
+     * a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result.
+     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
      *
      * @param completionSize  the completion size as an {@link org.apache.camel.Expression} which is evaluated as a {@link Integer} type
      * @return builder
@@ -743,10 +763,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the completion interval, which would cause the aggregate to consider the group as complete
-     * and send out the aggregated exchange.
+     * A repeating period in millis by which the aggregator will complete all current aggregated exchanges.
+     * Camel has a background task which is triggered every period. You cannot use this option together
+     * with completionTimeout, only one of them can be used.
      *
-     * @param completionInterval  the interval in millis
+     * @param completionInterval  the interval in millis, must be a positive value
      * @return the builder
      */
     public AggregateDefinition completionInterval(long completionInterval) {
@@ -755,10 +776,18 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the completion timeout, which would cause the aggregate to consider the group as complete
-     * and send out the aggregated exchange.
+     * Time in millis that an aggregated exchange should be inactive before its complete (timeout).
+     * This option can be set as either a fixed value or using an Expression which allows you to evaluate
+     * a timeout dynamically - will use Long as result.
+     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
+     * You cannot use this option together with completionInterval, only one of the two can be used.
+     * <p/>
+     * By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option
+     * to configure how frequently to run the checker.
+     * The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value.
+     * It is not recommended to use very low timeout values or checker intervals.
      *
-     * @param completionTimeout  the timeout in millis
+     * @param completionTimeout  the timeout in millis, must be a positive value
      * @return the builder
      */
     public AggregateDefinition completionTimeout(long completionTimeout) {
@@ -767,8 +796,16 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the completion timeout, which would cause the aggregate to consider the group as complete
-     * and send out the aggregated exchange.
+     * Time in millis that an aggregated exchange should be inactive before its complete (timeout).
+     * This option can be set as either a fixed value or using an Expression which allows you to evaluate
+     * a timeout dynamically - will use Long as result.
+     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
+     * You cannot use this option together with completionInterval, only one of the two can be used.
+     * <p/>
+     * By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option
+     * to configure how frequently to run the checker.
+     * The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value.
+     * It is not recommended to use very low timeout values or checker intervals.
      *
      * @param completionTimeout  the timeout as an {@link Expression} which is evaluated as a {@link Long} type
      * @return the builder
@@ -776,6 +813,47 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     public AggregateDefinition completionTimeout(Expression completionTimeout) {
         setCompletionTimeoutExpression(new ExpressionSubElementDefinition(completionTimeout));
         return this;
+    }
+
+    /**
+     * Interval in millis that is used by the background task that checks for timeouts ({@link org.apache.camel.TimeoutMap}).
+     * <p/>
+     * By default the timeout checker runs every second.
+     * The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value.
+     * It is not recommended to use very low timeout values or checker intervals.
+     *
+     * @param completionTimeoutCheckerInterval  the interval in millis, must be a positive value
+     * @return the builder
+     */
+    public AggregateDefinition completionTimeoutCheckerInterval(long completionTimeoutCheckerInterval) {
+        setCompletionTimeoutCheckerInterval(completionTimeoutCheckerInterval);
+        return this;
+    }
+
+    /**
+     * Sets the AggregationStrategy to use with a fluent builder.
+     */
+    public AggregationStrategyClause<AggregateDefinition> aggregationStrategy() {
+        AggregationStrategyClause<AggregateDefinition> clause = new AggregationStrategyClause<>(this);
+        setAggregationStrategy(clause);
+        return clause;
+    }
+
+    /**
+     * Sets the AggregationStrategy to use with a fluent builder.
+     */
+    public AggregationStrategyClause<AggregateDefinition> strategy() {
+        return aggregationStrategy();
+    }
+
+    /**
+     * Sets the aggregate strategy to use
+     *
+     * @param aggregationStrategy  the aggregate strategy to use
+     * @return the builder
+     */
+    public AggregateDefinition strategy(AggregationStrategy aggregationStrategy) {
+        return aggregationStrategy(aggregationStrategy);
     }
 
     /**
@@ -862,12 +940,45 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the predicate used to determine if the aggregation is completed
+     * A Predicate to indicate when an aggregated exchange is complete.
+     * If this is not specified and the AggregationStrategy object implements Predicate,
+     * the aggregationStrategy object will be used as the completionPredicate.
      */
-    public AggregateDefinition completionPredicate(Predicate predicate) {
+    public AggregateDefinition completionPredicate(@AsPredicate Predicate predicate) {
         checkNoCompletedPredicate();
         setCompletionPredicate(new ExpressionSubElementDefinition(predicate));
         return this;
+    }
+
+    /**
+     * A Predicate to indicate when an aggregated exchange is complete.
+     * If this is not specified and the AggregationStrategy object implements Predicate,
+     * the aggregationStrategy object will be used as the completionPredicate.
+     */
+    @AsPredicate
+    public PredicateClause<AggregateDefinition> completionPredicate() {
+        PredicateClause<AggregateDefinition> clause = new PredicateClause<>(this);
+        completionPredicate(clause);
+        return clause;
+    }
+
+    /**
+     * A Predicate to indicate when an aggregated exchange is complete.
+     * If this is not specified and the AggregationStrategy object implements Predicate,
+     * the aggregationStrategy object will be used as the completionPredicate.
+     */
+    @AsPredicate
+    public PredicateClause<AggregateDefinition> completion() {
+        return completionPredicate();
+    }
+
+    /**
+     * A Predicate to indicate when an aggregated exchange is complete.
+     * If this is not specified and the AggregationStrategy object implements Predicate,
+     * the aggregationStrategy object will be used as the completionPredicate.
+     */
+    public AggregateDefinition completion(@AsPredicate Predicate predicate) {
+        return completionPredicate(predicate);
     }
 
     /**

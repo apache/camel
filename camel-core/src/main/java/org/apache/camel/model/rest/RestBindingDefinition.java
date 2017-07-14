@@ -24,15 +24,16 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Processor;
-import org.apache.camel.model.NoOutputDefinition;
-import org.apache.camel.processor.binding.RestBindingProcessor;
+import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.processor.RestBindingAdvice;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
@@ -41,7 +42,10 @@ import org.apache.camel.util.IntrospectionSupport;
 @Metadata(label = "rest")
 @XmlRootElement(name = "restBinding")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinition> {
+public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBindingDefinition> {
+
+    @XmlTransient
+    private Map<String, String> defaultValues;
 
     @XmlAttribute
     private String consumes;
@@ -49,7 +53,8 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
     @XmlAttribute
     private String produces;
 
-    @XmlAttribute @Metadata(defaultValue = "auto")
+    @XmlAttribute
+    @Metadata(defaultValue = "off")
     private RestBindingMode bindingMode;
 
     @XmlAttribute
@@ -63,25 +68,24 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
 
     @XmlAttribute
     private Boolean enableCORS;
-    
+
     @XmlAttribute
     private String component;
 
-    public RestBindingDefinition() {   
+    public RestBindingDefinition() {
     }
 
     @Override
     public String toString() {
         return "RestBinding";
     }
-    
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+
+    public RestBindingAdvice createRestBindingAdvice(RouteContext routeContext) throws Exception {
 
         CamelContext context = routeContext.getCamelContext();
         RestConfiguration config = context.getRestConfiguration(component, true);
-        
-        // these options can be overriden per rest verb
+
+        // these options can be overridden per rest verb
         String mode = config.getBindingMode().name();
         if (bindingMode != null) {
             mode = bindingMode.name();
@@ -100,7 +104,7 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
 
         if (mode == null || "off".equals(mode)) {
             // binding mode is off, so create a off mode binding processor
-            return new RestBindingProcessor(null, null, null, null, consumes, produces, mode, skip, cors, corsHeaders);
+            return new RestBindingAdvice(context, null, null, null, null, consumes, produces, mode, skip, cors, corsHeaders, defaultValues);
         }
 
         // setup json data format
@@ -134,7 +138,6 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 IntrospectionSupport.setProperty(context.getTypeConverter(), json, "useList", type.endsWith("[]"));
             }
             setAdditionalConfiguration(config, context, json, "json.in.");
-            context.addService(json);
 
             Class<?> outClazz = null;
             if (outType != null) {
@@ -146,7 +149,6 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "useList", outType.endsWith("[]"));
             }
             setAdditionalConfiguration(config, context, outJson, "json.out.");
-            context.addService(outJson);
         }
 
         // setup xml data format
@@ -180,7 +182,6 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 IntrospectionSupport.setProperty(context.getTypeConverter(), jaxb, "context", jc);
             }
             setAdditionalConfiguration(config, context, jaxb, "xml.in.");
-            context.addService(jaxb);
 
             Class<?> outClazz = null;
             if (outType != null) {
@@ -196,13 +197,12 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
             }
             setAdditionalConfiguration(config, context, outJaxb, "xml.out.");
-            context.addService(outJaxb);
         }
 
-        return new RestBindingProcessor(json, jaxb, outJson, outJaxb, consumes, produces, mode, skip, cors, corsHeaders);
+        return new RestBindingAdvice(context, json, jaxb, outJson, outJaxb, consumes, produces, mode, skip, cors, corsHeaders, defaultValues);
     }
 
-    private void setAdditionalConfiguration(RestConfiguration config, CamelContext context, 
+    private void setAdditionalConfiguration(RestConfiguration config, CamelContext context,
                                             DataFormat dataFormat, String prefix) throws Exception {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during introspection setProperties
@@ -227,7 +227,9 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 }
             }
 
-            IntrospectionSupport.setProperties(context.getTypeConverter(), dataFormat, copy);
+            // set reference properties first as they use # syntax that fools the regular properties setter
+            EndpointHelper.setReferenceProperties(context, dataFormat, copy);
+            EndpointHelper.setProperties(context, dataFormat, copy);
         }
     }
 
@@ -238,13 +240,34 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
     public String getConsumes() {
         return consumes;
     }
-    
+
+    /**
+     * Adds a default value for the query parameter
+     *
+     * @param paramName   query parameter name
+     * @param defaultValue the default value
+     */
+    public void addDefaultValue(String paramName, String defaultValue) {
+        if (defaultValues == null) {
+            defaultValues = new HashMap<String, String>();
+        }
+        defaultValues.put(paramName, defaultValue);
+    }
+
+    /**
+     * Gets the registered default values for query parameters
+     */
+    public Map<String, String> getDefaultValues() {
+        return defaultValues;
+    }
+
     /**
      * Sets the component name that this definition will apply to  
      */
     public void setComponent(String component) {
         this.component = component;
     }
+
     public String getComponent() {
         return component;
     }
@@ -274,7 +297,7 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
     /**
      * Sets the binding mode to use.
      * <p/>
-     * The default value is auto
+     * The default value is off
      */
     public void setBindingMode(RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
@@ -286,6 +309,9 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
 
     /**
      * Sets the class name to use for binding from input to POJO for the incoming data
+     * <p/>
+     * The canonical name of the class of the input data. Append a [] to the end of the canonical name
+     * if you want the input to be an array type.
      */
     public void setType(String type) {
         this.type = type;
@@ -297,6 +323,9 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
 
     /**
      * Sets the class name to use for binding from POJO to output for the outgoing data
+     * <p/>
+     * The canonical name of the class of the input data. Append a [] to the end of the canonical name
+     * if you want the input to be an array type.
      */
     public void setOutType(String outType) {
         this.outType = outType;
@@ -325,5 +354,10 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
      */
     public void setEnableCORS(Boolean enableCORS) {
         this.enableCORS = enableCORS;
+    }
+
+    @Override
+    public String getLabel() {
+        return "";
     }
 }

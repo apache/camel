@@ -45,12 +45,10 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
 
     @Override
     public Class<?> findClass(String key, String propertyPrefix, Class<?> checkClass) throws ClassNotFoundException, IOException {
-        if (propertyPrefix == null) {
-            propertyPrefix = "";
-        }
+        final String prefix = propertyPrefix != null ? propertyPrefix : "";
+        final String classKey = propertyPrefix + key;
 
-        Class<?> clazz = classMap.get(propertyPrefix + key);
-        if (clazz == null) {
+        return addToClassMap(classKey, () -> {
             BundleEntry entry = getResource(key, checkClass);
             if (entry != null) {
                 URL url = entry.url;
@@ -61,22 +59,19 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
                     reader = IOHelper.buffered(in);
                     Properties properties = new Properties();
                     properties.load(reader);
-                    String className = properties.getProperty(propertyPrefix + "class");
+                    String className = properties.getProperty(prefix + "class");
                     if (className == null) {
-                        throw new IOException("Expected property is missing: " + propertyPrefix + "class");
+                        throw new IOException("Expected property is missing: " + prefix + "class");
                     }
-                    clazz = entry.bundle.loadClass(className);
-                    classMap.put(propertyPrefix + key, clazz);
+                    return entry.bundle.loadClass(className);
                 } finally {
                     IOHelper.close(reader, key, null);
                     IOHelper.close(in, key, null);
                 }
             } else {
-                throw new NoFactoryAvailableException(propertyPrefix + key);
-            }           
-        }
-
-        return clazz;
+                throw new NoFactoryAvailableException(classKey);
+            }
+        });
     }
 
     @Override
@@ -101,7 +96,7 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
         URL url;
         for (Bundle bundle : bundles) {
             url = bundle.getEntry(getResourcePath() + name);
-            if (url != null && checkCompat(bundle, clazz)) {
+            if (url != null && checkCompatibility(bundle, clazz)) {
                 entry = new BundleEntry();
                 entry.url = url;
                 entry.bundle = bundle;
@@ -112,7 +107,7 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
         return entry;
     }
 
-    private boolean checkCompat(Bundle bundle, Class<?> clazz) {
+    private boolean checkCompatibility(Bundle bundle, Class<?> clazz) {
         if (clazz == null) {
             return true;
         }

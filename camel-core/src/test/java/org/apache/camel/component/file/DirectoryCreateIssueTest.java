@@ -71,7 +71,7 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // wait a little while for the files to settle down
-        Thread.sleep(200);
+        Thread.sleep(50);
 
         for (int i = 0; i < numFiles; i++) {
             assertTrue((new File(path + "/file" + i + ".txt")).isFile());

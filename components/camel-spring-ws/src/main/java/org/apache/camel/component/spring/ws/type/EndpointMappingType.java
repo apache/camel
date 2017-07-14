@@ -31,7 +31,7 @@ public enum EndpointMappingType {
 
     private String prefix;
 
-    private EndpointMappingType(String prefix) {
+    EndpointMappingType(String prefix) {
         this.prefix = prefix;
     }
 

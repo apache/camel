@@ -464,7 +464,7 @@ public final class ProcessorDefinitionHelper {
             // lookup in registry first and use existing thread pool if exists
             ExecutorService answer = lookupExecutorServiceRef(routeContext, name, definition, definition.getExecutorServiceRef());
             if (answer == null) {
-                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() + " not found in registry or as a thread pool profile.");
+                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() + " not found in registry (as an ExecutorService instance) or as a thread pool profile.");
             }
             return answer;
         } else if (useDefault) {
@@ -546,7 +546,8 @@ public final class ProcessorDefinitionHelper {
         } else if (definition.getExecutorServiceRef() != null) {
             ScheduledExecutorService answer = lookupScheduledExecutorServiceRef(routeContext, name, definition, definition.getExecutorServiceRef());
             if (answer == null) {
-                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() + " not found in registry or as a thread pool profile.");
+                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() 
+                        + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
             }
             return answer;
         } else if (useDefault) {
@@ -613,6 +614,10 @@ public final class ProcessorDefinitionHelper {
     }
 
     private static void addRestoreAction(final Object target, final Map<String, Object> properties) {
+        addRestoreAction(null, target, properties);
+    }
+    
+    private static void addRestoreAction(final CamelContext context, final Object target, final Map<String, Object> properties) {
         if (properties.isEmpty()) {
             return;
         }
@@ -626,7 +631,7 @@ public final class ProcessorDefinitionHelper {
             @Override
             public void run() {
                 try {
-                    IntrospectionSupport.setProperties(null, target, properties);
+                    IntrospectionSupport.setProperties(context, null, target, properties);
                 } catch (Exception e) {
                     LOG.warn("Could not restore definition properties", e);
                 }
@@ -742,7 +747,7 @@ public final class ProcessorDefinitionHelper {
                 }
             }
         }
-        addRestoreAction(definition, changedProperties);
+        addRestoreAction(camelContext, definition, changedProperties);
     }
 
     /**

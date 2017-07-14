@@ -34,28 +34,32 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Represents a timer endpoint that can generate periodic inbound exchanges triggered by a timer.
+ * The timer component is used for generating message exchanges when a timer fires.
  *
- * @version 
+ * This component is similar to the scheduler component, but has much less functionality.
  */
 @ManagedResource(description = "Managed TimerEndpoint")
-@UriEndpoint(scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true, consumerClass = TimerConsumer.class, label = "core,scheduling")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true, consumerClass = TimerConsumer.class, label = "core,scheduling")
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath @Metadata(required = "true")
     private String timerName;
-    @UriParam
-    private Date time;
-    @UriParam(defaultValue = "1000")
+    @UriParam(defaultValue = "1000", description = "If greater than 0, generate periodic events every period milliseconds."
+            + " You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).")
     private long period = 1000;
-    @UriParam(defaultValue = "1000")
+    @UriParam(defaultValue = "1000", description = "Miliseconds before first event is triggered."
+            + " You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).")
     private long delay = 1000;
-    @UriParam
-    private boolean fixedRate;
-    @UriParam(defaultValue = "true")
-    private boolean daemon = true;
     @UriParam(defaultValue = "0")
     private long repeatCount;
     @UriParam
+    private boolean fixedRate;
+    @UriParam(defaultValue = "true", label = "advanced")
+    private boolean daemon = true;
+    @UriParam(label = "advanced")
+    private Date time;
+    @UriParam(label = "advanced")
+    private String pattern;
+    @UriParam(label = "advanced")
     private Timer timer;
 
     public TimerEndpoint() {
@@ -93,7 +97,10 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        // do nothing, the timer will be set when the first consumer will request it
+        if (timerName == null) {
+            timerName = getEndpointUri();
+        }
+        // do nothing in regards to setTimer, the timer will be set when the first consumer will request it
     }
 
     @Override
@@ -109,9 +116,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     @ManagedAttribute(description = "Timer Name")
     public String getTimerName() {
-        if (timerName == null) {
-            timerName = getEndpointUri();
-        }
         return timerName;
     }
 
@@ -147,6 +151,8 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
      * The number of milliseconds to wait before the first event is generated. Should not be used in conjunction with the time option.
      * <p/>
      * The default value is 1000.
+     * You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).
+     * @see <a href="http://camel.apache.org/how-do-i-specify-time-period-in-a-human-friendly-syntax.html">human friendly syntax</a>
      */
     @ManagedAttribute(description = "Timer Delay")
     public void setDelay(long delay) {
@@ -175,6 +181,8 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
      * If greater than 0, generate periodic events every period milliseconds.
      * <p/>
      * The default value is 1000.
+     * You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).
+     * @see <a href="http://camel.apache.org/how-do-i-specify-time-period-in-a-human-friendly-syntax.html">human friendly syntax</a>
      */
     @ManagedAttribute(description = "Timer Period")
     public void setPeriod(long period) {
@@ -206,6 +214,17 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
      */
     public void setTime(Date time) {
         this.time = time;
+    }
+
+    public String getPattern() {
+        return pattern;
+    }
+
+    /**
+     * Allows you to specify a custom Date pattern to use for setting the time option using URI syntax.
+     */
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
     }
 
     public Timer getTimer(TimerConsumer consumer) {

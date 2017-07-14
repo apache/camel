@@ -20,13 +20,16 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 
 /**
  * MQTT Component
  */
 public class MQTTComponent extends UriEndpointComponent {
     private String host;
+    @Metadata(label = "security", secret = true)
     private String userName;
+    @Metadata(label = "security", secret = true)
     private String password;
 
     public MQTTComponent() {

@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.kafka.embedded;
 
-import kafka.utils.Time;
+import org.apache.kafka.common.utils.Time;
 
 class SystemTime implements Time {
+
     public long milliseconds() {
         return System.currentTimeMillis();
     }
@@ -33,5 +34,10 @@ class SystemTime implements Time {
         } catch (InterruptedException e) {
             // Ignore
         }
+    }
+
+    @Override
+    public long hiResClockMs() {
+        return 0;
     }
 }

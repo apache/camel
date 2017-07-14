@@ -23,27 +23,43 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Test manually as CI server cannot run this test")
 public class PublishSubscribeTest extends CamelTestSupport {
-    
+
+    private int port1;
+    private int port2;
+    private int port3;
+
     @EndpointInject(uri = "mock:neverland")
-    protected MockEndpoint unreachableEndpoint;
+    private MockEndpoint unreachableEndpoint;
 
     @EndpointInject(uri = "mock:notification")
-    protected MockEndpoint resultEndpoint;
+    private MockEndpoint resultEndpoint;
 
     @Produce(uri = "direct:start")
-    protected ProducerTemplate producerTemplate;
-    
+    private ProducerTemplate producerTemplate;
+
+    @Override
+    public void setUp() throws Exception {
+        port1 = AvailablePortFinder.getNextAvailable(17189);
+        port2 = AvailablePortFinder.getNextAvailable(port1 + 1);
+        port3 = AvailablePortFinder.getNextAvailable(port2 + 1);
+
+        super.setUp();
+    }
+
     @Test
     public void testPresenceAgentBasedPubSub() throws Exception {
         unreachableEndpoint.expectedMessageCount(0);
         resultEndpoint.expectedMinimumMessageCount(1);
-        
+
         producerTemplate.sendBodyAndHeader(
-            "sip://agent@localhost:5252?stackName=client&eventHeaderName=evtHdrName&eventId=evtid&fromUser=user2&fromHost=localhost&fromPort=3534", 
+            "sip://agent@localhost:" + port1 + "?stackName=client&eventHeaderName=evtHdrName&eventId=evtid&fromUser=user2&fromHost=localhost&fromPort=" + port3,
             "EVENT_A",
             "REQUEST_METHOD", Request.PUBLISH);         
 
@@ -56,11 +72,12 @@ public class PublishSubscribeTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {  
                 // Create PresenceAgent
-                from("sip://agent@localhost:5252?stackName=PresenceAgent&presenceAgent=true&eventHeaderName=evtHdrName&eventId=evtid")
+                fromF("sip://agent@localhost:%s?stackName=PresenceAgent&presenceAgent=true&eventHeaderName=evtHdrName&eventId=evtid", port1)
+                    .to("log:neverland")
                     .to("mock:neverland");
                 
-                from("sip://johndoe@localhost:5254?stackName=Subscriber&toUser=agent&toHost=localhost&toPort=5252&eventHeaderName=evtHdrName&eventId=evtid")
-                    .to("log:ReceivedEvent")
+                fromF("sip://johndoe@localhost:%s?stackName=Subscriber&toUser=agent&toHost=localhost&toPort=%s&eventHeaderName=evtHdrName&eventId=evtid", port2, port1)
+                    .to("log:notification")
                     .to("mock:notification");
             }
         };

@@ -22,6 +22,7 @@ import org.apache.camel.model.ProcessorDefinition;
 /**
  * Formatter to format trace logs when tracing {@link Exchange} during routing.
  */
+@Deprecated
 public interface TraceFormatter {
 
     /**

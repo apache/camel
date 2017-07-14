@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -151,7 +152,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      * @param uri  the from uri
      * @return the builder
      */
-    public RouteDefinition from(String uri) {
+    public RouteDefinition from(@AsEndpointUri String uri) {
         RouteDefinition route = createRoute();
         route.from(uri);
         return route(route);
@@ -175,7 +176,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      * @param uris  the from uri
      * @return the builder
      */
-    public RouteDefinition from(String... uris) {
+    public RouteDefinition from(@AsEndpointUri String... uris) {
         RouteDefinition route = createRoute();
         route.from(uris);
         return route(route);
@@ -240,7 +241,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      * @param uri uri of the endpoint
      * @return the interceptor builder to configure
      */
-    public InterceptFromDefinition interceptFrom(final String uri) {
+    public InterceptFromDefinition interceptFrom(@AsEndpointUri final String uri) {
         InterceptFromDefinition answer = new InterceptFromDefinition(uri);
         getInterceptFroms().add(answer);
         return answer;
@@ -253,7 +254,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      * @param uri uri of the endpoint
      * @return  the builder
      */
-    public InterceptSendToEndpointDefinition interceptSendToEndpoint(final String uri) {
+    public InterceptSendToEndpointDefinition interceptSendToEndpoint(@AsEndpointUri final String uri) {
         InterceptSendToEndpointDefinition answer = new InterceptSendToEndpointDefinition(uri);
         getInterceptSendTos().add(answer);
         return answer;

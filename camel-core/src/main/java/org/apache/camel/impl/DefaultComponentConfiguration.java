@@ -31,6 +31,7 @@ import org.apache.camel.util.IntrospectionSupport;
  * Default implementation for components which do not inherit from {@link UriEndpointComponent} and
  * do not have Endpoint classes annotated with {@link org.apache.camel.spi.UriEndpoint}
  */
+@Deprecated
 public class DefaultComponentConfiguration extends ComponentConfigurationSupport {
 
     public DefaultComponentConfiguration(Component component) {

@@ -17,8 +17,9 @@
 package org.apache.camel.builder.xml;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -51,8 +52,6 @@ public class XsltBuilderTest extends ContextTestSupport {
         URL styleSheet = getClass().getResource("example.xsl");
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet);
-        builder.setCamelContext(context);
-        builder.start();
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
@@ -67,8 +66,6 @@ public class XsltBuilderTest extends ContextTestSupport {
 
         XsltBuilder builder = new XsltBuilder();
         builder.setTransformerURL(styleSheet);
-        builder.setCamelContext(context);
-        builder.start();
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
@@ -82,8 +79,6 @@ public class XsltBuilderTest extends ContextTestSupport {
         File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet);
-        builder.setCamelContext(context);
-        builder.start();
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
@@ -98,8 +93,6 @@ public class XsltBuilderTest extends ContextTestSupport {
 
         XsltBuilder builder = new XsltBuilder();
         builder.setTransformerFile(styleSheet);
-        builder.setCamelContext(context);
-        builder.start();
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
@@ -112,9 +105,7 @@ public class XsltBuilderTest extends ContextTestSupport {
     public void testXsltInputStream() throws Exception {
         File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
 
-        XsltBuilder builder = XsltBuilder.xslt(new FileInputStream(styleSheet));
-        builder.setCamelContext(context);
-        builder.start();
+        XsltBuilder builder = XsltBuilder.xslt(Files.newInputStream(Paths.get(styleSheet.getAbsolutePath())));
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
@@ -128,9 +119,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
 
         XsltBuilder builder = new XsltBuilder();
-        builder.setTransformerInputStream(new FileInputStream(styleSheet));
-        builder.setCamelContext(context);
-        builder.start();
+        builder.setTransformerInputStream(Files.newInputStream(Paths.get(styleSheet.getAbsolutePath())));
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
@@ -142,11 +131,9 @@ public class XsltBuilderTest extends ContextTestSupport {
 
     public void testXsltSource() throws Exception {
         File file = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
-        Source styleSheet = new SAXSource(new InputSource(new FileInputStream(file)));
+        Source styleSheet = new SAXSource(new InputSource(Files.newInputStream(Paths.get(file.getAbsolutePath()))));
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet);
-        builder.setCamelContext(context);
-        builder.start();
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
@@ -158,14 +145,12 @@ public class XsltBuilderTest extends ContextTestSupport {
 
     public void testXsltTemplates() throws Exception {
         File file = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
-        Source source = new SAXSource(new InputSource(new FileInputStream(file)));
+        Source source = new SAXSource(new InputSource(Files.newInputStream(Paths.get(file.getAbsolutePath()))));
 
         XmlConverter converter = new XmlConverter();
         Templates styleSheet = converter.getTransformerFactory().newTemplates(source);
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet);
-        builder.setCamelContext(context);
-        builder.start();
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
@@ -179,8 +164,6 @@ public class XsltBuilderTest extends ContextTestSupport {
         URL styleSheet = getClass().getResource("example.xsl");
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet).outputString();
-        builder.setCamelContext(context);
-        builder.start();
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
@@ -195,8 +178,6 @@ public class XsltBuilderTest extends ContextTestSupport {
         URL styleSheet = getClass().getResource("example.xsl");
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet).outputBytes();
-        builder.setCamelContext(context);
-        builder.start();
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
@@ -211,8 +192,6 @@ public class XsltBuilderTest extends ContextTestSupport {
         URL styleSheet = getClass().getResource("example.xsl");
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet).outputDOM();
-        builder.setCamelContext(context);
-        builder.start();
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
@@ -227,8 +206,6 @@ public class XsltBuilderTest extends ContextTestSupport {
         URL styleSheet = getClass().getResource("example.xsl");
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet).outputFile();
-        builder.setCamelContext(context);
-        builder.start();
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
@@ -248,8 +225,6 @@ public class XsltBuilderTest extends ContextTestSupport {
         URL styleSheet = getClass().getResource("example.xsl");
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet).outputFile().deleteOutputFile();
-        builder.setCamelContext(context);
-        builder.start();
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
@@ -280,9 +255,6 @@ public class XsltBuilderTest extends ContextTestSupport {
         builder.setConverter(converter);
         assertSame(converter, builder.getConverter());
 
-        builder.setCamelContext(context);
-        builder.start();
-
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
 
@@ -299,9 +271,6 @@ public class XsltBuilderTest extends ContextTestSupport {
         builder.outputBytes();
         assertIsInstanceOf(StreamResultHandlerFactory.class, builder.getResultHandlerFactory());
 
-        builder.setCamelContext(context);
-        builder.start();
-
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
 
@@ -314,8 +283,6 @@ public class XsltBuilderTest extends ContextTestSupport {
         URL styleSheet = getClass().getResource("example.xsl");
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet);
-        builder.setCamelContext(context);
-        builder.start();
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(null);
@@ -333,8 +300,6 @@ public class XsltBuilderTest extends ContextTestSupport {
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet);
         builder.setFailOnNullBody(true);
-        builder.setCamelContext(context);
-        builder.start();
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(null);
@@ -352,8 +317,6 @@ public class XsltBuilderTest extends ContextTestSupport {
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet);
         builder.setFailOnNullBody(false);
-        builder.setCamelContext(context);
-        builder.start();
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(null);

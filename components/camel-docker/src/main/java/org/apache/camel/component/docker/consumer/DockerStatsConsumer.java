@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.docker.consumer;
 
-import java.util.concurrent.ExecutorService;
-
-import com.github.dockerjava.api.command.StatsCallback;
 import com.github.dockerjava.api.command.StatsCmd;
 import com.github.dockerjava.api.model.Statistics;
-
+import com.github.dockerjava.core.async.ResultCallbackTemplate;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -38,101 +35,65 @@ import org.slf4j.LoggerFactory;
 /**
  * Docker Consumer for streaming statistical events
  */
-public class DockerStatsConsumer extends DefaultConsumer implements StatsCallback {
+public class DockerStatsConsumer extends DefaultConsumer {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(DockerStatsConsumer.class);
 
     private DockerEndpoint endpoint;
-
     private DockerComponent component;
-
     private StatsCmd statsCmd;
-
-    private ExecutorService eventsExecutorService;
 
     public DockerStatsConsumer(DockerEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.component = (DockerComponent) endpoint.getComponent();
-
+        this.component = (DockerComponent)endpoint.getComponent();
     }
 
     @Override
     public DockerEndpoint getEndpoint() {
-        return (DockerEndpoint) super.getEndpoint();
+        return (DockerEndpoint)super.getEndpoint();
     }
-
-
 
     @Override
     protected void doStart() throws Exception {
-
-        statsCmd = DockerClientFactory.getDockerClient(component, endpoint.getConfiguration(), null).statsCmd(this);
-
         String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, endpoint.getConfiguration(), null, String.class);
 
-        statsCmd.withContainerId(containerId);
-        
-        eventsExecutorService = statsCmd.exec();
+        this.statsCmd = DockerClientFactory.getDockerClient(component, endpoint.getConfiguration(), null).statsCmd(containerId);
+        this.statsCmd.exec(new StatsCallback());
 
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-
-        if (eventsExecutorService != null && !eventsExecutorService.isTerminated()) {
-            LOGGER.trace("Stopping Docker statistics Executor Service");
-
-            eventsExecutorService.shutdown();
-        }
+        this.statsCmd.close();
 
         super.doStop();
     }
 
+    protected class StatsCallback extends ResultCallbackTemplate<StatsCallback, Statistics> {
 
-    @Override
-    public void onStats(Statistics statistics) {
+        public void onNext(Statistics statistics) {
+            LOGGER.debug("Received Docker Statistics Event: " + statistics);
 
-        LOGGER.debug("Received Docker Statistics Event: " + statistics);
+            final Exchange exchange = getEndpoint().createExchange();
+            Message message = exchange.getIn();
+            message.setBody(statistics);
 
-        final Exchange exchange = getEndpoint().createExchange();
-        Message message = exchange.getIn();
-        message.setBody(statistics);
-
-        try {
-            LOGGER.trace("Processing exchange [{}]...", exchange);
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    LOGGER.trace("Done processing exchange [{}]...", exchange);
-                }
-            });
-        } catch (Exception e) {
-            exchange.setException(e);
+            try {
+                LOGGER.trace("Processing exchange [{}]...", exchange);
+                getAsyncProcessor().process(exchange, new AsyncCallback() {
+                    @Override
+                    public void done(boolean doneSync) {
+                        LOGGER.trace("Done processing exchange [{}]...", exchange);
+                    }
+                });
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+            }
         }
-        if (exchange.getException() != null) {
-            getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-        }
-
-    }
-
-    @Override
-    public void onException(Throwable throwable) {
-        LOGGER.error("Error Consuming from Docker Statistics: {}", throwable.getMessage());
-    }
-
-    @Override
-    public void onCompletion(int numEvents) {
-
-        LOGGER.debug("Docker statistics connection completed. Events processed : {}", numEvents);
-
-        statsCmd.exec();
-
-    }
-
-    @Override
-    public boolean isReceiving() {
-        return isRunAllowed();
     }
 }

@@ -28,20 +28,26 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "cache", title = "EHCache", syntax = "cache:cacheName", consumerClass = CacheConsumer.class, label = "cache")
+/**
+ * The cache component enables you to perform caching operations using EHCache as the Cache Implementation.
+ *
+ * The cache itself is created on demand or if a cache of that name already exists then it is simply utilized with its original settings.
+ * This component supports producer and event based consumer endpoints.
+ * The Cache consumer is an event based consumer and can be used to listen and respond to specific cache activities.
+ * If you need to perform selections from a pre-existing cache, use the processors defined for the cache component.
+ */
+@UriEndpoint(firstVersion = "2.1.0", scheme = "cache", title = "EHCache", syntax = "cache:cacheName", consumerClass = CacheConsumer.class, label = "cache")
 public class CacheEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(CacheEndpoint.class);
     @UriParam
     private CacheConfiguration config;
-    @UriParam
+    @UriParam(label = "advanced")
     private CacheManagerFactory cacheManagerFactory;
     @UriParam
     private String key;

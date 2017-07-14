@@ -36,7 +36,7 @@ public class JacksonNameBindingTest extends CamelTestSupport {
 
         results.expectedMessageCount(1);
         results.message(0).body().isInstanceOf(TestPojo.class);
-        results.message(0).body().equals(in);
+        results.message(0).body().isEqualTo(in);
 
         template.sendBody("direct:start", in);
         results.assertIsSatisfied();

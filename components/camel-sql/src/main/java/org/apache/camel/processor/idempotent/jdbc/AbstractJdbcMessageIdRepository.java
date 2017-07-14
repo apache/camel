@@ -36,9 +36,9 @@ import org.springframework.transaction.support.TransactionTemplate;
  * <p/>
  * Subclasses need only implement theses methods:
  * <ul>
- *   <li>{@link #queryForInt(T key)}</li>
- *   <li>{@link #insert(T key)}</li>
- *   <li>{@link #delete(T key)}</li>
+ *   <li>{@link #queryForInt(Object key) queryForInt(T key)}</li>
+ *   <li>{@link #insert(Object key) insert(T key)}</li>
+ *   <li>{@link #delete(Object key) delete(T key)}</li>
  * </ul>
  * <p/>
  * These methods should perform the named database operation.
@@ -77,7 +77,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
      * @param key  the key
      * @return int number of rows
      */
-    protected abstract int queryForInt(final T key);
+    protected abstract int queryForInt(T key);
 
     /**
      * Operation that inserts the key if it does not already exist
@@ -85,7 +85,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
      * @param key  the key
      * @return int number of rows inserted
      */
-    protected abstract int insert(final T key);
+    protected abstract int insert(T key);
 
     /**
      * Operations that deletes the key if it exists
@@ -93,12 +93,11 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
      * @param key  the key
      * @return int number of rows deleted
      */
-    protected abstract int delete(final T key);
+    protected abstract int delete(T key);
     
     /**
      * Operations that deletes all the rows
      *
-     * @param key  the key
      * @return int number of rows deleted
      */
     protected abstract int delete();

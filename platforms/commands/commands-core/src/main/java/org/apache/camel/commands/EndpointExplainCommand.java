@@ -17,8 +17,6 @@
 package org.apache.camel.commands;
 
 import java.io.PrintStream;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -80,24 +78,6 @@ public class EndpointExplainCommand extends AbstractContextCommand {
             // use a basic json parser
             List<Map<String, String>> options = JsonSchemaHelper.parseJsonSchema("properties", json, true);
 
-            // lets sort the options by name
-            Collections.sort(options, new Comparator<Map<String, String>>() {
-                @Override
-                public int compare(Map<String, String> o1, Map<String, String> o2) {
-                    // sort by kind first (need to -1 as we want path on top), then name
-                    String kind1 = o1.get("kind");
-                    String kind2 = o2.get("kind");
-                    int answer = 0;
-                    if (kind1 != null && kind2 != null) {
-                        answer = -1 * kind1.compareTo(kind2);
-                    }
-                    if (answer == 0) {
-                        answer = o1.get("name").compareTo(o2.get("name"));
-                    }
-                    return answer;
-                }
-            });
-
             for (Map<String, String> option : options) {
                 out.print("Option:        ");
                 out.println(option.get("name"));
@@ -105,6 +85,11 @@ public class EndpointExplainCommand extends AbstractContextCommand {
                 if (kind != null) {
                     out.print("Kind:          ");
                     out.println(kind);
+                }
+                String group = option.get("group");
+                if (group != null) {
+                    out.print("Group:         ");
+                    out.println(group);
                 }
                 String type = option.get("type");
                 if (type != null) {
@@ -115,11 +100,6 @@ public class EndpointExplainCommand extends AbstractContextCommand {
                 if (javaType != null) {
                     out.print("Java Type:     ");
                     out.println(javaType);
-                }
-                String deprecated = option.get("deprecated");
-                if (deprecated != null) {
-                    out.print("Deprecated:    ");
-                    out.println(deprecated);
                 }
                 String value = option.get("value");
                 if (value != null) {

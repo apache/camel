@@ -25,21 +25,31 @@ import javax.inject.Qualifier;
 
 /**
  * A qualifier for injecting instances of {@link org.apache.camel.component.mock.MockEndpoint} into a bean.
+ *
+ * @deprecated Use {@link org.apache.camel.cdi.Uri} instead:
+ *
+ * <pre><code>
+ * {@literal @}Inject
+ * {@literal @}Uri("mock:outbound")
+ * MockEndpoint mock;
+ * </code></pre>
  */
+@Deprecated
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 public @interface Mock {
 
     /**
-     * Returns an optional URI used to create the MockEndpoint
+     * Returns an optional URI used to create the {@code MockEndpoint}.
      */
     @Nonbinding
     String value() default "";
 
     /**
-     * Returns the name of the CamelContext to use to resolve the endpoint for this URI
+     * Returns the name of the Camel context to use to resolve the {@code MockEndpoint}.
      */
     @Nonbinding
     String context() default "";
+
 }

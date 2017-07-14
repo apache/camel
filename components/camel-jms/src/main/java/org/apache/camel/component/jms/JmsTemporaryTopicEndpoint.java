@@ -38,13 +38,13 @@ public class JmsTemporaryTopicEndpoint extends JmsEndpoint implements Destinatio
 
     public JmsTemporaryTopicEndpoint(String endpointUri, String destination) {
         super(endpointUri, destination);
-        setDestinationType("temp:topic");
+        setDestinationType("temp-topic");
     }
 
     public JmsTemporaryTopicEndpoint(TemporaryTopic jmsDestination) throws JMSException {
-        super("jms:temp:topic:" + jmsDestination.getTopicName(), null);
+        super("jms:temp-topic:" + jmsDestination.getTopicName(), null);
         this.jmsDestination = jmsDestination;
-        setDestinationType("temp:topic");
+        setDestinationType("temp-topic");
         setDestination(jmsDestination);
     }
 

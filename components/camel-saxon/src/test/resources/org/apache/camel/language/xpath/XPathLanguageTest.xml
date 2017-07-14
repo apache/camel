@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,13 +8,14 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -48,6 +50,7 @@
       <to uri="mock:testSaxonWithFactoryResult"/>
     </route>
 
+    <!-- See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory
     <route>
       <from uri="direct:testSaxonWithObjectModel"/>
       <setBody>
@@ -56,6 +59,7 @@
       <log message="Test Saxon with object model: ${body}"/>
       <to uri="mock:testSaxonWithObjectModelResult"/>
     </route>
+    -->
 
     <!-- ************************ -->
     <!-- *** XPath Predicates *** -->
@@ -73,12 +77,13 @@
     <route>
       <from uri="direct:testSaxonWithFactoryPredicate"/>
       <filter>
-        <xpath factoryRef="saxonFactory" documentType="org.xml.sax.InputSource" resultType="java.lang.String">tokenize(a, '\|')[1] = 'Hello'</xpath>
+        <xpath factoryRef="saxonFactory" documentType="javax.xml.transform.sax.SAXSource" resultType="java.lang.String">tokenize(a, '\|')[1] = 'Hello'</xpath>
         <log message="Test Saxon with factory: ${body}"/>
         <to uri="mock:testSaxonWithFactoryResultPredicate"/>
       </filter>
     </route>
 
+    <!-- See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory
     <route>
       <from uri="direct:testSaxonWithObjectModelPredicate"/>
       <filter>
@@ -87,6 +92,7 @@
         <to uri="mock:testSaxonWithObjectModelResultPredicate"/>
       </filter>
     </route>
+    -->
 
   </camelContext>
 

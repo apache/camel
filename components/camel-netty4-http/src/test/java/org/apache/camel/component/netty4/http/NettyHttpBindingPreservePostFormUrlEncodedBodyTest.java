@@ -19,7 +19,6 @@ package org.apache.camel.component.netty4.http;
 import io.netty.handler.codec.http.FullHttpRequest;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
@@ -58,12 +57,12 @@ public class NettyHttpBindingPreservePostFormUrlEncodedBodyTest extends BaseNett
                         assertEquals("Get a wrong query parameter from the message header", "b", exchange.getIn().getHeader("query2"));
                         assertEquals("Get a wrong form parameter from the message header", "x", exchange.getIn().getHeader("b1"));
                         assertEquals("Get a wrong form parameter from the message header", "y", exchange.getIn().getHeader("b2"));
-                        assertEquals("Get a wrong form parameter from the message header", "localhost", exchange.getIn().getHeader("host"));
-                        
-                        NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();                        
+                        assertEquals("Get a wrong form parameter from the message header", "localhost:" + getPort(), exchange.getIn().getHeader("host"));
+
+                        NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
                         FullHttpRequest request = in.getHttpRequest();
-                        assertNotEquals("Relative path should NOT be used in POST", "/myapp/myservice?query1=a&query2=b", request.getUri());
-                                                  
+                        assertNotEquals("Relative path should NOT be used in POST", "/myapp/myservice?query1=a&query2=b", request.uri());
+
                         // send a response
                         exchange.getOut().getHeaders().clear();
                         exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/plain");

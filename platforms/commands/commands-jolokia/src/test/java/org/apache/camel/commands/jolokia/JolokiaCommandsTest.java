@@ -21,6 +21,9 @@ import org.apache.camel.commands.ContextListCommand;
 import org.apache.camel.commands.EipExplainCommand;
 import org.apache.camel.commands.EndpointExplainCommand;
 import org.apache.camel.commands.EndpointListCommand;
+import org.apache.camel.commands.RouteInfoCommand;
+import org.apache.camel.commands.RouteListCommand;
+import org.apache.camel.commands.RouteShowCommand;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -53,7 +56,7 @@ public class JolokiaCommandsTest {
             throw new IllegalArgumentException("Error connecting to " + url);
         }
 
-        ContextInfoCommand cmd = new ContextInfoCommand("myCamel", true);
+        ContextInfoCommand cmd = new ContextInfoCommand("camel-1", true);
         cmd.setStringEscape(new NoopStringEscape());
         cmd.execute(controller, System.out, System.err);
     }
@@ -80,7 +83,7 @@ public class JolokiaCommandsTest {
             throw new IllegalArgumentException("Error connecting to " + url);
         }
 
-        EndpointExplainCommand cmd = new EndpointExplainCommand("myCamel", true, "rest*");
+        EndpointExplainCommand cmd = new EndpointExplainCommand("camel-1", true, "rest*");
         cmd.execute(controller, System.out, System.err);
     }
 
@@ -93,7 +96,47 @@ public class JolokiaCommandsTest {
             throw new IllegalArgumentException("Error connecting to " + url);
         }
 
-        EipExplainCommand cmd = new EipExplainCommand("myCamel", "transform", true);
+        EipExplainCommand cmd = new EipExplainCommand("camel-1", "transform", true);
+        cmd.execute(controller, System.out, System.err);
+    }
+
+    @Test
+    public void testRouteList() throws Exception {
+        controller = new DefaultJolokiaCamelController();
+        controller.connect(url, null, null);
+
+        if (!controller.ping()) {
+            throw new IllegalArgumentException("Error connecting to " + url);
+        }
+
+        RouteListCommand cmd = new RouteListCommand("camel-1");
+        cmd.execute(controller, System.out, System.err);
+    }
+
+    @Test
+    public void testRouteInfo() throws Exception {
+        controller = new DefaultJolokiaCamelController();
+        controller.connect(url, null, null);
+
+        if (!controller.ping()) {
+            throw new IllegalArgumentException("Error connecting to " + url);
+        }
+
+        RouteInfoCommand cmd = new RouteInfoCommand("route1", "camel-1");
+        cmd.setStringEscape(new NoopStringEscape());
+        cmd.execute(controller, System.out, System.err);
+    }
+
+    @Test
+    public void testRouteShow() throws Exception {
+        controller = new DefaultJolokiaCamelController();
+        controller.connect(url, null, null);
+
+        if (!controller.ping()) {
+            throw new IllegalArgumentException("Error connecting to " + url);
+        }
+
+        RouteShowCommand cmd = new RouteShowCommand("route1", "camel-1");
         cmd.execute(controller, System.out, System.err);
     }
 

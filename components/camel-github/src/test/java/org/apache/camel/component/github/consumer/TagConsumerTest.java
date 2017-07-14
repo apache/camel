@@ -34,7 +34,7 @@ public class TagConsumerTest extends GitHubComponentTestBase {
             @Override
             public void configure() throws Exception {
                 context.addComponent("github", new GitHubComponent());
-                from("github://tag?" + GITHUB_CREDENTIALS_STRING)
+                from("github://tag?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo")
                         .process(new RepositoryTagProcessor())
                         .to(mockResultEndpoint);
             }

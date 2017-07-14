@@ -21,10 +21,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Random;
-import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -267,14 +268,23 @@ public final class FileUtil {
      * and uses OS specific file separators (eg {@link java.io.File#separator}).
      */
     public static String compactPath(String path) {
-        return compactPath(path, File.separatorChar);
+        return compactPath(path, "" + File.separatorChar);
+    }
+
+    /**
+     * Compacts a path by stacking it and reducing <tt>..</tt>,
+     * and uses the given separator.
+     *
+     */
+    public static String compactPath(String path, char separator) {
+        return compactPath(path, "" + separator);
     }
 
     /**
      * Compacts a path by stacking it and reducing <tt>..</tt>,
      * and uses the given separator.
      */
-    public static String compactPath(String path, char separator) {
+    public static String compactPath(String path, String separator) {
         if (path == null) {
             return null;
         }
@@ -293,7 +303,7 @@ public final class FileUtil {
         // preserve starting slash if given in input path
         boolean startsWithSlash = path.startsWith("/") || path.startsWith("\\");
         
-        Stack<String> stack = new Stack<String>();
+        Deque<String> stack = new ArrayDeque<>();
 
         // separator can either be windows or unix style
         String separatorRegex = "\\\\|/";
@@ -315,8 +325,9 @@ public final class FileUtil {
         if (startsWithSlash) {
             sb.append(separator);
         }
-        
-        for (Iterator<String> it = stack.iterator(); it.hasNext();) {
+
+        // now we build back using FIFO so need to use descending
+        for (Iterator<String> it = stack.descendingIterator(); it.hasNext();) {
             sb.append(it.next());
             if (it.hasNext()) {
                 sb.append(separator);
@@ -513,6 +524,13 @@ public final class FileUtil {
         return true;
     }
 
+    /**
+     * Copies the file
+     *
+     * @param from  the source file
+     * @param to    the destination file
+     * @throws IOException If an I/O error occurs during copy operation
+     */
     public static void copyFile(File from, File to) throws IOException {
         FileChannel in = null;
         FileChannel out = null;
@@ -534,6 +552,14 @@ public final class FileUtil {
         }
     }
 
+    /**
+     * Deletes the file.
+     * <p/>
+     * This implementation will attempt to delete the file up till three times with one second delay, which
+     * can mitigate problems on deleting files on some platforms such as Windows.
+     *
+     * @param file  the file to delete
+     */
     public static boolean deleteFile(File file) {
         // do not try to delete non existing files
         if (!file.exists()) {

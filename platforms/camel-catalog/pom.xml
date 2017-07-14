@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>platforms</artifactId>
+    <version>2.20.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>camel-catalog</artifactId>
+  <packaging>jar</packaging>
+  <name>Camel :: Platforms :: Camel Catalog</name>
+  <description>Camel Catalog</description>
+
+  <dependencies>
+
+    <!-- no dependency -->
+
+    <!-- testing -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- for testing simple language parser -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- for testing activemq component -->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-camel</artifactId>
+      <version>${activemq-version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- logging -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+
+      <!-- copy catalog source code from camel-core -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven-resources-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>src/main/java/org/apache/camel/catalog</outputDirectory>
+              <overwrite>true</overwrite>
+              <resources>
+                <resource>
+                  <directory>../../camel-core/src/main/java/org/apache/camel/runtimecatalog</directory>
+                  <!-- the following files are maintained in camel-core and not here, so they are copied over -->
+                  <includes>
+                    <include>AbstractCamelCatalog.java</include>
+                    <include>CatalogHelper.java</include>
+                    <include>CollectionStringBuffer.java</include>
+                    <include>EndpointValidationResult.java</include>
+                    <include>JSonSchemaHelper.java</include>
+                    <include>JSonSchemaResolver.java</include>
+                    <include>LanguageValidationResult.java</include>
+                    <include>SimpleValidationResult.java</include>
+                    <include>SuggestionStrategy.java</include>
+                    <include>TimePatternConverter.java</include>
+                    <include>UnsafeUriCharactersEncoder.java</include>
+                    <include>URISupport.java</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- rename runtimecatalog to catalog which is the package name we use here -->
+      <plugin>
+        <groupId>com.google.code.maven-replacer-plugin</groupId>
+        <artifactId>replacer</artifactId>
+        <version>1.5.3</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>replace</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <includes>
+            <include>${basedir}/src/main/java/org/apache/camel/catalog/AbstractCamelCatalog.java</include>
+            <include>${basedir}/src/main/java/org/apache/camel/catalog/CatalogHelper.java</include>
+            <include>${basedir}/src/main/java/org/apache/camel/catalog/CollectionStringBuffer.java</include>
+            <include>${basedir}/src/main/java/org/apache/camel/catalog/EndpointValidationResult.java</include>
+            <include>${basedir}/src/main/java/org/apache/camel/catalog/JSonSchemaHelper.java</include>
+            <include>${basedir}/src/main/java/org/apache/camel/catalog/JSonSchemaResolver.java</include>
+            <include>${basedir}/src/main/java/org/apache/camel/catalog/LanguageValidationResult.java</include>
+            <include>${basedir}/src/main/java/org/apache/camel/catalog/SimpleValidationResult.java</include>
+            <include>${basedir}/src/main/java/org/apache/camel/catalog/SuggestionStrategy.java</include>
+            <include>${basedir}/src/main/java/org/apache/camel/catalog/TimePatternConverter.java</include>
+            <include>${basedir}/src/main/java/org/apache/camel/catalog/UnsafeUriCharactersEncoder.java</include>
+            <include>${basedir}/src/main/java/org/apache/camel/catalog/URISupport.java</include>
+          </includes>
+          <replacements>
+            <replacement>
+              <token>org.apache.camel.runtimecatalog</token>
+              <value>org.apache.camel.catalog</value>
+            </replacement>
+          </replacements>
+        </configuration>
+      </plugin>
+
+      <!-- generate and include all components in the catalog -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <!-- prepare the catalog before the user guide / readme -->
+            <goals>
+              <goal>prepare-catalog</goal>
+              <goal>prepare-user-guide</goal>
+              <goal>prepare-readme</goal>
+            </goals>
+            <phase>process-resources</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package>org.apache.camel.catalog*</Export-Package>
+            <Import-Package>org.apache.camel.language.simple;resolution:=optional,*</Import-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+
+  </build>
+
+</project>

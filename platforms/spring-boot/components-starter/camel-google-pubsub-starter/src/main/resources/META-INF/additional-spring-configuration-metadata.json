@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.google-pubsub.enabled",
+      "description": "Enable google-pubsub component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -38,7 +38,7 @@ import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodHelper;
 import org.apache.camel.util.component.ApiName;
 import org.apache.commons.lang.ClassUtils;
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.doxia.siterenderer.RenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

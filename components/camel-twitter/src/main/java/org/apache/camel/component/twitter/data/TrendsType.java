@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.twitter.data;
 
+import org.apache.camel.component.twitter.TwitterHelper;
+
+@Deprecated
 public enum TrendsType {
     DAILY, WEEKLY, UNKNOWN;
 
-    public static TrendsType fromUri(String uri) {
-        for (TrendsType trendType : TrendsType.values()) {
-            if (trendType.name().equalsIgnoreCase(uri)) {
-                return trendType;
-            }
-        }
-        return TrendsType.UNKNOWN;
+    private static final TrendsType[] VALUES = values();
+
+    public static TrendsType fromString(String uri) {
+        return TwitterHelper.enumFromString(VALUES, uri, TrendsType.UNKNOWN);
     }
 }

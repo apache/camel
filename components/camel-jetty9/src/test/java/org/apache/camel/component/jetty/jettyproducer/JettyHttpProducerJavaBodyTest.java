@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpConstants;
 import org.junit.Test;
 
@@ -35,6 +36,9 @@ public class JettyHttpProducerJavaBodyTest extends BaseJettyTest {
 
     @Test
     public void testHttpSendJavaBodyAndReceiveString() throws Exception {
+        HttpCommonComponent jetty = context.getComponent("jetty", HttpCommonComponent.class);
+        jetty.setAllowJavaSerializedObject(true);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -66,6 +70,9 @@ public class JettyHttpProducerJavaBodyTest extends BaseJettyTest {
 
     @Test
     public void testHttpSendJavaBodyAndReceiveJavaBody() throws Exception {
+        HttpCommonComponent jetty = context.getComponent("jetty", HttpCommonComponent.class);
+        jetty.setAllowJavaSerializedObject(true);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -98,6 +105,9 @@ public class JettyHttpProducerJavaBodyTest extends BaseJettyTest {
 
     @Test
     public void testHttpSendStringAndReceiveJavaBody() throws Exception {
+        HttpCommonComponent jetty = context.getComponent("jetty", HttpCommonComponent.class);
+        jetty.setAllowJavaSerializedObject(true);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -117,7 +127,7 @@ public class JettyHttpProducerJavaBodyTest extends BaseJettyTest {
         });
         context.start();
 
-        MyCoolBean reply = template.requestBody("http://localhost:{{port}}/myapp/myservice", "Hello World", MyCoolBean.class);
+        MyCoolBean reply = template.requestBody("jetty:http://localhost:{{port}}/myapp/myservice", "Hello World", MyCoolBean.class);
 
         assertEquals(456, reply.getId());
         assertEquals("Camel rocks", reply.getName());

@@ -238,14 +238,14 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     }
 
     private void startConsumer(int size, Consumer consumer) throws Exception {
-        boolean started = super.startConsumer(consumer);
+        boolean started = resumeOrStartConsumer(consumer);
         if (started) {
             getLogger().log("Throttling consumer: " + size + " <= " + resumeInflightExchanges + " inflight exchange by resuming consumer: " + consumer);
         }
     }
 
     private void stopConsumer(int size, Consumer consumer) throws Exception {
-        boolean stopped = super.stopConsumer(consumer);
+        boolean stopped = suspendOrStopConsumer(consumer);
         if (stopped) {
             getLogger().log("Throttling consumer: " + size + " > " + maxInflightExchanges + " inflight exchange by suspending consumer: " + consumer);
         }

@@ -113,7 +113,7 @@ class Task implements Runnable {
     private final int verb;
     private final Entry template;
 
-    public Task(JavaSpaceEndpoint endpoint, Processor processor, JavaSpace javaSpace,
+    Task(JavaSpaceEndpoint endpoint, Processor processor, JavaSpace javaSpace,
             TransactionHelper transactionHelper, long transactionTimeout, int verb, String templateId) throws Exception {
         this.endpoint = endpoint;
         this.processor = processor;

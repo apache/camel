@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 public class GenericFile<T> implements WrappedFile<T>  {
     private static final Logger LOG = LoggerFactory.getLogger(GenericFile.class);
 
+    private final boolean probeContentType;
+
     private String copyFromAbsoluteFilePath;
     private String endpointPath;
     private String fileName;
@@ -48,6 +50,15 @@ public class GenericFile<T> implements WrappedFile<T>  {
     private boolean absolute;
     private boolean directory;
     private String charset;
+    private Map<String, Object> extendedAttributes;
+
+    public GenericFile() {
+        this(false);
+    }
+
+    public GenericFile(boolean probeContentType) {
+        this.probeContentType = probeContentType;
+    }
 
     public char getFileSeparator() {
         return File.separatorChar;
@@ -102,6 +113,19 @@ public class GenericFile<T> implements WrappedFile<T>  {
      * Bind this GenericFile to an Exchange
      */
     public void bindToExchange(Exchange exchange) {
+        GenericFileMessage<T> msg = commonBindToExchange(exchange);
+        populateHeaders(msg, false);
+    }
+    
+    /**
+     * Bind this GenericFile to an Exchange
+     */
+    public void bindToExchange(Exchange exchange, boolean isProbeContentTypeFromEndpoint) {
+        GenericFileMessage<T> msg = commonBindToExchange(exchange);
+        populateHeaders(msg, isProbeContentTypeFromEndpoint);
+    }
+
+    private GenericFileMessage<T> commonBindToExchange(Exchange exchange) {
         Map<String, Object> headers;
 
         exchange.setProperty(FileComponent.FILE_EXCHANGE_FILE, this);
@@ -120,7 +144,7 @@ public class GenericFile<T> implements WrappedFile<T>  {
             // remove any file related headers, as we will re-populate file headers
             msg.removeHeaders("CamelFile*");
         }
-        populateHeaders(msg);
+        return msg;
     }
 
     /**
@@ -128,20 +152,24 @@ public class GenericFile<T> implements WrappedFile<T>  {
      *
      * @param message the message to populate with headers
      */
-    public void populateHeaders(GenericFileMessage<T> message) {
+    public void populateHeaders(GenericFileMessage<T> message, boolean isProbeContentTypeFromEndpoint) {
         if (message != null) {
             message.setHeader(Exchange.FILE_NAME_ONLY, getFileNameOnly());
             message.setHeader(Exchange.FILE_NAME, getFileName());
             message.setHeader(Exchange.FILE_NAME_CONSUMED, getFileName());
             message.setHeader("CamelFileAbsolute", isAbsolute());
             message.setHeader("CamelFileAbsolutePath", getAbsoluteFilePath());
+
+            if (extendedAttributes != null) {
+                message.setHeader("CamelFileExtendedAttributes", extendedAttributes);
+            }
             
-            if (file instanceof File) {
+            if ((isProbeContentTypeFromEndpoint || probeContentType) && file instanceof File) {
                 File f = (File) file;
                 Path path = f.toPath();
                 try {
                     message.setHeader(Exchange.FILE_CONTENT_TYPE, Files.probeContentType(path));
-                } catch (Exception ex) {
+                } catch (Throwable e) {
                     // just ignore the exception
                 }
             }
@@ -185,7 +213,7 @@ public class GenericFile<T> implements WrappedFile<T>  {
 
         // Make sure the names is normalized.
         String newFileName = FileUtil.normalizePath(newName);
-        String newEndpointPath = FileUtil.normalizePath(endpointPath);
+        String newEndpointPath = FileUtil.normalizePath(endpointPath.endsWith("" + File.separatorChar) ? endpointPath : endpointPath + File.separatorChar);
 
         LOG.trace("Normalized endpointPath: {}", newEndpointPath);
         LOG.trace("Normalized newFileName: ()", newFileName);
@@ -278,6 +306,14 @@ public class GenericFile<T> implements WrappedFile<T>  {
 
     public void setCharset(String charset) {
         this.charset = charset;
+    }
+
+    public Map<String, Object> getExtendedAttributes() {
+        return extendedAttributes;
+    }
+
+    public void setExtendedAttributes(Map<String, Object> extendedAttributes) {
+        this.extendedAttributes = extendedAttributes;
     }
 
     @Override

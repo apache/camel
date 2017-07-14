@@ -25,11 +25,7 @@ import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.util.URISupport;
 
 /**
- * An <a href="http://camel.apache.org/atom.html">Atom Component</a>.
- * <p/>
- * Camel uses Apache Abdera as the Atom implementation.
- *
- * @version 
+ * To consume Atom RSS feeds.
  */
 public class AtomComponent extends FeedComponent {
 

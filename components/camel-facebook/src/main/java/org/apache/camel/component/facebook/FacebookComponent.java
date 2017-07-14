@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.facebook.config.FacebookConfiguration;
 import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
@@ -31,6 +32,7 @@ import org.apache.camel.util.IntrospectionSupport;
  */
 public class FacebookComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
     private FacebookConfiguration configuration;
 
     public FacebookComponent() {

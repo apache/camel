@@ -22,10 +22,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.HashMap;
+import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.boon.json.JsonFactory;
 import org.boon.json.ObjectMapper;
@@ -36,13 +39,14 @@ import org.boon.json.ObjectMapper;
  * href="http://richardhightower.github.io/site/Boon/">Boon</a> to marshal to
  * and from JSON.
  */
-public class BoonDataFormat implements DataFormat {
+public class BoonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, NonManagedService {
 
     private final ObjectMapper objectMapper;
     private Class<?> unmarshalType;
+    private boolean useList;
 
     public BoonDataFormat() {
-        this(HashMap.class);
+        this(null);
     }
 
     /**
@@ -67,6 +71,11 @@ public class BoonDataFormat implements DataFormat {
     }
 
     @Override
+    public String getDataFormatName() {
+        return "boon";
+    }
+
+    @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         BufferedWriter writer = IOHelper.buffered(new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange)));
         objectMapper.toJson(graph, writer);
@@ -76,9 +85,29 @@ public class BoonDataFormat implements DataFormat {
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         BufferedReader reader = IOHelper.buffered(new InputStreamReader(stream, IOHelper.getCharsetName(exchange)));
-        Object result = objectMapper.fromJson(reader, this.unmarshalType);
-        reader.close();
+        Object result;
+        try {
+            if (unmarshalType != null) {
+                result = objectMapper.fromJson(reader, unmarshalType);
+            } else {
+                result = objectMapper.fromJson(reader);
+            }
+        } finally {
+            IOHelper.close(reader);
+        }
         return result;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (useList) {
+            useList();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 
     // Properties
@@ -94,5 +123,20 @@ public class BoonDataFormat implements DataFormat {
 
     public ObjectMapper getObjectMapper() {
         return this.objectMapper;
+    }
+    
+    public Boolean getUseList() {
+        return useList;
+    }
+
+    public void setUseList(Boolean useList) {
+        this.useList = useList;
+    }    
+
+    /**
+     * Uses {@link java.util.List} when unmarshalling.
+     */
+    public void useList() {
+        setUnmarshalType(List.class);
     }
 }

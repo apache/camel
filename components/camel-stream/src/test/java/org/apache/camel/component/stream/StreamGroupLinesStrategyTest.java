@@ -38,7 +38,7 @@ public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
             StringBuilder buffer = new StringBuilder();
             for (String line : lines) {
                 buffer.append(line);
-                buffer.append("\n");
+                buffer.append(LS);
             }
             return buffer.toString();
         }

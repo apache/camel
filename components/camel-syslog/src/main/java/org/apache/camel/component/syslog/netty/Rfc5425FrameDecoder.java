@@ -16,28 +16,33 @@
  */
 package org.apache.camel.component.syslog.netty;
 
-import org.apache.camel.component.netty.ChannelHandlerFactory;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelHandler;
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.handler.codec.frame.FrameDecoder;
+import java.util.List;
 
-public class Rfc5425FrameDecoder extends FrameDecoder implements ChannelHandlerFactory {
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.ByteToMessageDecoder;
+
+import org.apache.camel.component.netty4.ChannelHandlerFactory;
+
+public class Rfc5425FrameDecoder extends ByteToMessageDecoder implements ChannelHandlerFactory {
 
     private Integer currentFramelength;
 
     @Override
-    protected Object decode(ChannelHandlerContext ctx, Channel channel, ChannelBuffer buffer) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         if (currentFramelength == null) {
             // find index of the first space, it should be after the length field
-            int index = indexOf(buffer, ChannelBuffers.wrappedBuffer(new byte[]{' '}));
+            int index = indexOf(in, Unpooled.wrappedBuffer(new byte[]{' '}));
 
             // Read part until the first space, if we have found one
             StringBuffer lengthbuffer = new StringBuffer();
             if (index > -1) {
-                lengthbuffer.append(new String(buffer.readBytes(index).array()));
+                ByteBuf byteBuf = in.readBytes(index);
+                byte[] dest = new byte[byteBuf.readableBytes()];
+                byteBuf.readBytes(dest);
+                lengthbuffer.append(new String(dest));
             }
 
             int length;
@@ -52,21 +57,21 @@ public class Rfc5425FrameDecoder extends FrameDecoder implements ChannelHandlerF
             // We have not found the length field, reset the buffer so we can
             // retry next time
             if (length < 0) {
-                buffer.resetReaderIndex();
-                return null;
+                in.resetReaderIndex();
+                return;
             }
             currentFramelength = length;
         }
 
         // Buffer does not contain enough data yet, wait until it does
-        if (buffer.readableBytes() < currentFramelength) {
-            return null;
+        if (in.readableBytes() < currentFramelength) {
+            return;
         }
 
         // read the message
         int lengthToRead = currentFramelength;
         currentFramelength = null;
-        return buffer.readBytes(lengthToRead);
+        out.add(in.readBytes(lengthToRead));
     }
 
     /**
@@ -74,7 +79,7 @@ public class Rfc5425FrameDecoder extends FrameDecoder implements ChannelHandlerF
      * between the readerIndex of the haystack and the first needle found in the
      * haystack. -1 is returned if no needle is found in the haystack.
      */
-    private static int indexOf(ChannelBuffer haystack, ChannelBuffer needle) {
+    private static int indexOf(ByteBuf haystack, ByteBuf needle) {
         for (int i = haystack.readerIndex(); i < haystack.writerIndex(); i++) {
             int haystackIndex = i;
             int needleIndex;

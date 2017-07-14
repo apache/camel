@@ -59,26 +59,24 @@ public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport 
     public void testDoNotMessWithComponent() throws Exception {
         // get default
         HttpEndpoint end = context.getEndpoint("http4://www.google.com", HttpEndpoint.class);
-        assertIsInstanceOf(MyBinding.class, end.getBinding());
+        assertIsInstanceOf(MyBinding.class, end.getHttpBinding());
 
         // use a endpoint specific binding
         HttpEndpoint end2 = context.getEndpoint("http4://www.google.com?httpBinding=#other", HttpEndpoint.class);
-        assertIsInstanceOf(MyOtherBinding.class, end2.getBinding());
+        assertIsInstanceOf(MyOtherBinding.class, end2.getHttpBinding());
 
         // and the default option has not been messed with
         HttpEndpoint end3 = context.getEndpoint("http4://www.google.com", HttpEndpoint.class);
-        assertIsInstanceOf(MyBinding.class, end3.getBinding());
+        assertIsInstanceOf(MyBinding.class, end3.getHttpBinding());
         
         // test the headerFilterStrategy
         HttpEndpoint end4 = context.getEndpoint("http4://www.google.com?headerFilterStrategy=#myStrategy", HttpEndpoint.class);
         assertIsInstanceOf(MyHeaderFilterStrategy.class, end4.getHeaderFilterStrategy());
     }
 
-    @SuppressWarnings("deprecation")
     private static class MyBinding extends DefaultHttpBinding {
     }
 
-    @SuppressWarnings("deprecation")
     private static class MyOtherBinding extends DefaultHttpBinding {
     }
     

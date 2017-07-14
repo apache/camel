@@ -64,6 +64,10 @@ public class ManagedRestRegistryTest extends ManagementTestSupport {
         TabularData data = (TabularData) mbeanServer.invoke(name, "listRestServices", null, null);
         assertEquals(3, data.size());
 
+        // should not be enabled as api-doc is not enabled or camel-swagger-java is not on classpath
+        String json = (String) mbeanServer.invoke(name, "apiDocAsJson", null, null);
+        assertNull(json);
+
         // remove all routes
         for (Route route : context.getRoutes()) {
             context.stopRoute(route.getId());

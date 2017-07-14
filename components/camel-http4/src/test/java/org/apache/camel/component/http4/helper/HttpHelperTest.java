@@ -162,6 +162,28 @@ public class HttpHelperTest {
         assertEquals(HttpMethods.POST, method);
     }
 
+    @Test
+    public void createURLShouldNotRemoveTrailingSlash() throws Exception {
+        String url = HttpHelper.createURL(
+                createExchangeWithOptionalCamelHttpUriHeader(null, "/"),
+                createHttpEndpoint(true, "http://www.google.com"));
+        assertEquals("http://www.google.com/", url);
+    }
+    @Test
+    public void createURLShouldAddPathAndQueryParamsAndSlash() throws Exception {
+        String url = HttpHelper.createURL(
+                createExchangeWithOptionalCamelHttpUriHeader(null, "search"),
+                createHttpEndpoint(true, "http://www.google.com/context?test=true"));
+        assertEquals("http://www.google.com/context/search?test=true", url);
+    }
+    @Test
+    public void createURLShouldAddPathAndQueryParamsAndRemoveDuplicateSlash() throws Exception {
+        String url = HttpHelper.createURL(
+                createExchangeWithOptionalCamelHttpUriHeader(null, "/search"),
+                createHttpEndpoint(true, "http://www.google.com/context/?test=true"));
+        assertEquals("http://www.google.com/context/search?test=true", url);
+    }
+
     private Exchange createExchangeWithOptionalHttpQueryAndHttpMethodHeader(String httpQuery, HttpMethods httpMethod) {
         CamelContext context = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(context);

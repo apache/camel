@@ -58,8 +58,6 @@ public final class MyCustomCodec {
                 int readerIndex = msg.readerIndex();
                 msg.getBytes(readerIndex, bytes);
                 out.add(bytes);
-            } else {
-                out.add((byte[])null);
             }
         }
 

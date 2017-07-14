@@ -39,8 +39,6 @@ public class SmppMessage extends DefaultMessage {
     private Command command;
     private SmppConfiguration configuration;
     
-    
-    
     public SmppMessage(SmppConfiguration configuration) {
         this.configuration = configuration;
     }
@@ -62,7 +60,9 @@ public class SmppMessage extends DefaultMessage {
 
     @Override
     public SmppMessage newInstance() {
-        return new SmppMessage(this.configuration);
+        SmppMessage answer = new SmppMessage(this.configuration);
+        answer.setCamelContext(getCamelContext());
+        return answer;
     }
     
     public boolean isAlertNotification() {
@@ -89,7 +89,8 @@ public class SmppMessage extends DefaultMessage {
             if (shortMessage == null || shortMessage.length == 0) {
                 return null;
             }
-            if (SmppUtils.parseAlphabetFromDataCoding(msgRequest.getDataCoding()) == Alphabet.ALPHA_8_BIT) {
+            Alphabet alphabet = Alphabet.parseDataCoding(msgRequest.getDataCoding());
+            if (SmppUtils.is8Bit(alphabet)) {
                 return shortMessage;
             }
             

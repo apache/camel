@@ -254,8 +254,10 @@ public final class HttpHelper {
      * @return the URL to invoke
      */
     public static String createURL(Exchange exchange, HttpCommonEndpoint endpoint) {
-        String uri = null;
-        if (!(endpoint.isBridgeEndpoint())) {
+        // rest producer may provide an override url to be used which we should discard if using (hence the remove)
+        String uri = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_URI);
+
+        if (uri == null && !(endpoint.isBridgeEndpoint())) {
             uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
         }
         if (uri == null) {
@@ -273,7 +275,7 @@ public final class HttpHelper {
         String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
         // NOW the HTTP_PATH is just related path, we don't need to trim it
         if (path != null) {
-            if (path.startsWith("/")) {
+            if (path.length() > 1 && path.startsWith("/")) {
                 path = path.substring(1);
             }
             if (path.length() > 0) {
@@ -283,7 +285,7 @@ public final class HttpHelper {
                 // if there are no query params
                 if (idx == -1) {
                     // make sure that there is exactly one "/" between HTTP_URI and HTTP_PATH
-                    uri = uri.endsWith("/") ? uri : uri + "/";
+                    uri = uri.endsWith("/") || path.startsWith("/") ? uri : uri + "/";
                     uri = uri.concat(path);
                 } else {
                     // there are query params, so inject the relative path in the right place
@@ -311,12 +313,20 @@ public final class HttpHelper {
      */
     public static URI createURI(Exchange exchange, String url, HttpCommonEndpoint endpoint) throws URISyntaxException {
         URI uri = new URI(url);
-        // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
-        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        // rest producer may provide an override query string to be used which we should discard if using (hence the remove)
+        String queryString = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_QUERY);
+        // is a query string provided in the endpoint URI or in a header
+        // (header overrules endpoint, raw query header overrules query header)
+        if (queryString == null) {
+            queryString = exchange.getIn().getHeader(Exchange.HTTP_RAW_QUERY, String.class);
+        }
+        if (queryString == null) {
+            queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        }
         if (queryString == null) {
             queryString = endpoint.getHttpUri().getRawQuery();
         }
-        // We should user the query string from the HTTP_URI header
+        // We should use the query string from the HTTP_URI header
         if (queryString == null) {
             queryString = uri.getRawQuery();
         }
@@ -408,6 +418,10 @@ public final class HttpHelper {
             // we should use the relative path if possible
             String baseUrl;
             relativeUrl = endpoint.getHttpUri().toASCIIString();
+            // strip query parameters from relative url
+            if (relativeUrl.contains("?")) {
+                relativeUrl = ObjectHelper.before(relativeUrl, "?");
+            }
             if (url.startsWith(relativeUrl)) {
                 baseUrl = url.substring(0, relativeUrl.length());
                 relativeUrl = url.substring(relativeUrl.length());
@@ -489,6 +503,8 @@ public final class HttpHelper {
             throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uriString, exchange, e);
         }
         if (uriString != null) {
+            // in case the URI string contains unsafe characters
+            uriString = UnsafeUriCharactersEncoder.encodeHttpURI(uriString);
             URI uri = new URI(uriString);
             queryString = uri.getQuery();
         }
@@ -496,18 +512,23 @@ public final class HttpHelper {
             queryString = endpoint.getHttpUri().getRawQuery();
         }
 
-        // compute what method to use either GET or POST
         HttpMethods answer;
-        HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
-        if (m != null) {
-            // always use what end-user provides in a header
-            answer = m;
-        } else if (queryString != null) {
-            // if a query string is provided then use GET
-            answer = HttpMethods.GET;
+        if (endpoint.getHttpMethod() != null) {
+            // endpoint configured take precedence
+            answer = endpoint.getHttpMethod();
         } else {
-            // fallback to POST if we have payload, otherwise GET
-            answer = hasPayload ? HttpMethods.POST : HttpMethods.GET;
+            // compute what method to use either GET or POST (header take precedence)
+            HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
+            if (m != null) {
+                // always use what end-user provides in a header
+                answer = m;
+            } else if (queryString != null) {
+                // if a query string is provided then use GET
+                answer = HttpMethods.GET;
+            } else {
+                // fallback to POST if we have payload, otherwise GET
+                answer = hasPayload ? HttpMethods.POST : HttpMethods.GET;
+            }
         }
 
         return answer;

@@ -25,10 +25,31 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
+        AmazonSDBClientMock mock = new AmazonSDBClientMock();
+        
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
+            .bind("amazonSDBClient", mock);
+        
         SdbComponent component = new SdbComponent(context);
         SdbEndpoint endpoint = (SdbEndpoint) component.createEndpoint(
-                "aws-sdb://TestDomain?accessKey=xxx&secretKey=yyy");
+                "aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient&accessKey=xxx&secretKey=yyy");
         
+        assertEquals("TestDomain", endpoint.getConfiguration().getDomainName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertNotNull(endpoint.getConfiguration().getAmazonSDBClient());
+        assertEquals(SdbOperations.PutAttributes, endpoint.getConfiguration().getOperation());
+        assertNull(endpoint.getConfiguration().getAmazonSdbEndpoint());
+        assertFalse(endpoint.getConfiguration().isConsistentRead());
+        assertNull(endpoint.getConfiguration().getMaxNumberOfDomains());
+    }
+
+    @Test
+    public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {
+        SdbComponent component = new SdbComponent(context);
+        SdbEndpoint endpoint = (SdbEndpoint) component.createEndpoint(
+            "aws-sdb://TestDomain?accessKey=xxx&secretKey=yyy");
+
         assertEquals("TestDomain", endpoint.getConfiguration().getDomainName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
@@ -62,15 +83,19 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithMaximalConfiguration() throws Exception {
+        AmazonSDBClientMock mock = new AmazonSDBClientMock();
+        
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
+            .bind("amazonSDBClient", mock);
         SdbComponent component = new SdbComponent(context);
         SdbEndpoint endpoint = (SdbEndpoint) component.createEndpoint(
-                "aws-sdb://TestDomain?accessKey=xxx&secretKey=yyy&operation=DeleteAttributes&consistentRead=true"
+                "aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient&accessKey=xxx&secretKey=yyy&operation=DeleteAttributes&consistentRead=true"
                 + "&maxNumberOfDomains=5");
         
         assertEquals("TestDomain", endpoint.getConfiguration().getDomainName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
-        assertNull(endpoint.getConfiguration().getAmazonSDBClient());
+        assertNotNull(endpoint.getConfiguration().getAmazonSDBClient());
         assertEquals(SdbOperations.DeleteAttributes, endpoint.getConfiguration().getOperation());
         assertNull(endpoint.getConfiguration().getAmazonSdbEndpoint());
         assertTrue(endpoint.getConfiguration().isConsistentRead());
@@ -99,5 +124,16 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         SdbComponent component = new SdbComponent(context);
         component.createEndpoint("aws-sdb://TestDomain?accessKey=xxx");
+    }
+    
+    @Test
+    public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
+        AmazonSDBClientMock mock = new AmazonSDBClientMock();
+        
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
+            .bind("amazonSDBClient", mock);
+        
+        SdbComponent component = new SdbComponent(context);
+        component.createEndpoint("aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient");
     }
 }

@@ -31,9 +31,11 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelLogger;
 
 /**
- * The control bus endpoint.
+ * The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
+ *
+ * For example, by sending a message to an Endpoint you can control the lifecycle of routes, or gather performance statistics.
  */
-@UriEndpoint(scheme = "controlbus", title = "Control Bus", syntax = "controlbus:command:language", producerOnly = true, label = "core,monitoring")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "controlbus", title = "Control Bus", syntax = "controlbus:command:language", producerOnly = true, label = "core,monitoring")
 public class ControlBusEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Command can be either route or language", enums = "route,language") @Metadata(required = "true")
@@ -93,6 +95,7 @@ public class ControlBusEndpoint extends DefaultEndpoint {
 
     /**
      * To specify a route by its id.
+     * The special keyword "current" indicates the current route.
      */
     public void setRouteId(String routeId) {
         this.routeId = routeId;

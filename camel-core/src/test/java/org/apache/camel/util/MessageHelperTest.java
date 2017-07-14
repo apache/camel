@@ -32,7 +32,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Test cases for {@link MessageHelper}
@@ -40,10 +39,11 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 public class MessageHelperTest extends TestCase {
     
     private Message message;
+    private CamelContext camelContext = new DefaultCamelContext();
     
     @Override
     protected void setUp() throws Exception {
-        message = new DefaultMessage();
+        message = new DefaultMessage(camelContext);
     }
 
     /*
@@ -95,7 +95,7 @@ public class MessageHelperTest extends TestCase {
 
     public void testCopyHeaders() throws Exception {
         Message source = message;
-        Message target = new DefaultMessage();
+        Message target = new DefaultMessage(camelContext);
 
         source.setHeader("foo", 123);
         source.setHeader("bar", 456);
@@ -109,7 +109,7 @@ public class MessageHelperTest extends TestCase {
 
     public void testCopyHeadersOverride() throws Exception {
         Message source = message;
-        Message target = new DefaultMessage();
+        Message target = new DefaultMessage(camelContext);
 
         source.setHeader("foo", 123);
         source.setHeader("bar", 456);

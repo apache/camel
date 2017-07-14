@@ -47,7 +47,8 @@ public class FileProducerFileExistAppendNoFileBeforeTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file?noop=true&delay=1000").convertBodyTo(String.class).to("mock:result");
+                from("file://target/file?noop=true&initialDelay=0&delay=10")
+                    .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

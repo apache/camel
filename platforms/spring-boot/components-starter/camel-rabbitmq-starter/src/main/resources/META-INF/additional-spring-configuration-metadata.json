@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.rabbitmq.enabled",
+      "description": "Enable rabbitmq component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

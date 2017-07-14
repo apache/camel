@@ -1,0 +1,15 @@
+{
+    "title": "Apache Camel User Manual",
+    "description": "Apache Camel User Manual and Reference Documentation",
+    "github": "apache/camel",
+    "githubHost": "https://github.com/",
+    "gitbook": "2.x.x",
+    "links": {
+        "home": "http://camel.apache.org/",
+        "issues": "http://camel.apache.org/",
+        "contribute": "http://camel.apache.org/contributing.html"
+    },
+    "variables": {
+        "version": "2.17"
+    }
+}

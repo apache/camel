@@ -154,7 +154,7 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
 
     public void testFileNotSupported() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setBody(new File("src/test/resources/log4j.properties"));
+        exchange.getIn().setBody(new File("src/test/resources/log4j2.properties"));
 
         try {
             DefaultExchangeHolder.marshal(exchange);

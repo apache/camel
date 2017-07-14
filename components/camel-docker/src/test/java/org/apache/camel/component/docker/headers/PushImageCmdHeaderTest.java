@@ -19,7 +19,7 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.PushImageCmd;
-
+import com.github.dockerjava.core.command.PushImageResultCallback;
 import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -36,6 +36,9 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
     @Mock
     private PushImageCmd mockObject;
 
+    @Mock
+    private PushImageResultCallback callback;
+    
     private String userName = "jdoe";
     private String password = "password";
     private String email = "jdoe@example.com";
@@ -67,6 +70,12 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
     @Override
     protected void setupMocks() {
         Mockito.when(dockerClient.pushImageCmd(Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(mockObject.exec(Matchers.anyObject())).thenReturn(callback);
+        try {
+            Mockito.when(callback.awaitCompletion()).thenReturn(callback);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

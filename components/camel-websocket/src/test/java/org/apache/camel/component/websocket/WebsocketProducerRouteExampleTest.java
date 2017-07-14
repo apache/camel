@@ -22,16 +22,17 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.ws.WebSocket;
-import com.ning.http.client.ws.WebSocketByteListener;
-import com.ning.http.client.ws.WebSocketTextListener;
-import com.ning.http.client.ws.WebSocketUpgradeHandler;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.ws.DefaultWebSocketListener;
+import org.asynchttpclient.ws.WebSocket;
+import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,11 +56,12 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
 
     @Test
     public void testWSHttpCall() throws Exception {
-        AsyncHttpClient c = new AsyncHttpClient();
+        AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/shop").execute(
             new WebSocketUpgradeHandler.Builder()
                 .addWebSocketListener(new WebSocketTextListener() {
+
                     @Override
                     public void onMessage(String message) {
                         received.add(message);
@@ -67,7 +69,6 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
                         latch.countDown();
                     }
 
-                    
                     @Override
                     public void onOpen(WebSocket websocket) {
                     }
@@ -98,11 +99,11 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
 
     @Test
     public void testWSBytesHttpCall() throws Exception {
-        AsyncHttpClient c = new AsyncHttpClient();
+        AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/shop").execute(
             new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new WebSocketByteListener() {
+                .addWebSocketListener(new DefaultWebSocketListener() {
 
                     @Override
                     public void onMessage(byte[] message) {
@@ -111,7 +112,6 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
                         latch.countDown();
                     }
 
-                   
                     @Override
                     public void onOpen(WebSocket websocket) {
                     }
@@ -145,6 +145,9 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
+                websocketComponent.setMaxThreads(20);
+                websocketComponent.setMinThreads(1);
                 from("direct:shop")
                     .log(">>> Message received from Shopping center : ${body}")
                     .to("websocket://localhost:" + port + "/shop");

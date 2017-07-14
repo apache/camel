@@ -46,6 +46,8 @@ public class HipchatConsumer extends ScheduledPollConsumer {
     private static final MapType MAP_TYPE = TypeFactory.defaultInstance().constructMapType(Map.class, String.class, Object.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final CloseableHttpClient HTTP_CLIENT = HttpClients.createDefault();
+    
+    private transient String hipchatConsumerToString;
 
     public HipchatConsumer(HipchatEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -116,6 +118,9 @@ public class HipchatConsumer extends ScheduledPollConsumer {
 
     @Override
     public String toString() {
-        return "HipchatConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (hipchatConsumerToString == null) {
+            hipchatConsumerToString = "HipchatConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return hipchatConsumerToString;
     }
 }

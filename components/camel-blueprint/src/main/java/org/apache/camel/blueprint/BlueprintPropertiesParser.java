@@ -96,11 +96,11 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
 
             if (method == null) {
                 try {
-                    method = AbstractPropertyPlaceholder.class.getDeclaredMethod("getProperty", String.class);
+                    method = AbstractPropertyPlaceholder.class.getDeclaredMethod("retrieveValue", String.class);
                     method.setAccessible(true);
                 } catch (NoSuchMethodException e) {
                     throw new IllegalStateException("Cannot add blueprint property placeholder: " + id
-                            + " as the method getProperty is not accessible", e);
+                            + " as the method retrieveValue is not accessible", e);
                 }
             }
         }
@@ -160,10 +160,6 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
             }
         }
         
-        if (answer == null) {
-            throw new IllegalArgumentException("Property placeholder key: " + key + " not found");
-        }
-
         log.trace("Returning parsed property key: {} as value: {}", key, answer);
         return answer;
     }

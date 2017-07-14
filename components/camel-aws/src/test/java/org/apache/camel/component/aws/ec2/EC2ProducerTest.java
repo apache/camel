@@ -19,6 +19,8 @@ package org.apache.camel.component.aws.ec2;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.amazonaws.services.ec2.model.CreateTagsResult;
+import com.amazonaws.services.ec2.model.DeleteTagsResult;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.InstanceStateName;
@@ -435,6 +437,54 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertEquals(resultGet.getInstanceMonitorings().get(0).getMonitoring().getState(), MonitoringState.Disabled.toString());
     }
     
+    @Test
+    public void ec2CreateTagsTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:createTags", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
+                Collection tags = new ArrayList();
+                tags.add("pacific");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_TAGS, tags);
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        CreateTagsResult resultGet = (CreateTagsResult) exchange.getIn().getBody();
+        
+        assertNotNull(resultGet);
+    }
+    
+    @Test
+    public void ec2DeleteTagsTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:deleteTags", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
+                Collection tags = new ArrayList();
+                tags.add("pacific");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_TAGS, tags);
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        DeleteTagsResult resultGet = (DeleteTagsResult) exchange.getIn().getBody();
+        
+        assertNotNull(resultGet);
+    }
+    
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
@@ -477,6 +527,12 @@ public class EC2ProducerTest extends CamelTestSupport {
                     .to("mock:result");
                 from("direct:unmonitor")
                     .to("aws-ec2://test?amazonEc2Client=#amazonEc2Client&operation=unmonitorInstances")
+                    .to("mock:result");
+                from("direct:createTags")
+                    .to("aws-ec2://test?amazonEc2Client=#amazonEc2Client&operation=createTags")
+                    .to("mock:result");
+                from("direct:deleteTags")
+                    .to("aws-ec2://test?amazonEc2Client=#amazonEc2Client&operation=deleteTags")
                     .to("mock:result");
             }
         };

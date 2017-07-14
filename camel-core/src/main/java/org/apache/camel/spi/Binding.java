@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
  * which can be applied to an Endpoint; such as ensuring that a particular
  * <a href="http://camel.apache.org/data-format.html">Data Format</a> is used on messages in and out of an endpoint.
  */
+@Deprecated
 public interface Binding {
 
     /**

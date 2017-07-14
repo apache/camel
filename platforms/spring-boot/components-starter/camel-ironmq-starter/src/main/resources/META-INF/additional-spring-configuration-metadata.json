@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.ironmq.enabled",
+      "description": "Enable ironmq component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

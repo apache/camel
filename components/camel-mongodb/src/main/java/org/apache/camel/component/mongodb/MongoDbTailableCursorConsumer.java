@@ -41,7 +41,7 @@ public class MongoDbTailableCursorConsumer extends DefaultConsumer {
             tailingProcess.stop();
         }
         if (executor != null) {
-            executor.shutdown();
+            endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
             executor = null;
         }
     }

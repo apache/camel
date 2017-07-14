@@ -35,7 +35,6 @@ public class TimerRestartTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
 
         context.stop();
-        Thread.sleep(2000);
 
         mock.reset();
 
@@ -50,7 +49,7 @@ public class TimerRestartTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("timer://foo?fixedRate=true&delay=0&period=500").to("mock:result");
+                from("timer://foo?fixedRate=true&delay=0&period=10").to("mock:result");
             }
         };
     }

@@ -20,12 +20,14 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Represents the component that manages {@link SplunkEndpoint}.
  */
 public class SplunkComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
     private SplunkConfigurationFactory splunkConfigurationFactory = new DefaultSplunkConfigurationFactory();
 
     public SplunkComponent() {

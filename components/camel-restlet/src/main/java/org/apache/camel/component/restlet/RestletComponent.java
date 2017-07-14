@@ -21,11 +21,11 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
@@ -33,14 +33,20 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.component.restlet.converter.RestletConverter;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.Component;
 import org.restlet.Restlet;
@@ -49,6 +55,7 @@ import org.restlet.data.ChallengeScheme;
 import org.restlet.data.Method;
 import org.restlet.data.Parameter;
 import org.restlet.data.Protocol;
+import org.restlet.engine.Engine;
 import org.restlet.security.ChallengeAuthenticator;
 import org.restlet.security.MapVerifier;
 import org.restlet.util.Series;
@@ -60,32 +67,55 @@ import org.slf4j.LoggerFactory;
  *
  * @version
  */
-public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory {
+public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);
+    private static final Object LOCK = new Object();
 
     private final Map<String, Server> servers = new HashMap<String, Server>();
     private final Map<String, MethodBasedRouter> routers = new HashMap<String, MethodBasedRouter>();
     private final Component component;
 
     // options that can be set on the restlet server
+    @Metadata(label = "consumer,advanced")
     private Boolean controllerDaemon;
+    @Metadata(label = "consumer,advanced")
     private Integer controllerSleepTimeMs;
+    @Metadata(label = "consumer")
     private Integer inboundBufferSize;
+    @Metadata(label = "consumer,advanced")
     private Integer minThreads;
+    @Metadata(label = "consumer,advanced")
     private Integer maxThreads;
+    @Metadata(label = "consumer,advanced")
     private Integer lowThreads;
+    @Metadata(label = "common")
     private Integer maxConnectionsPerHost;
+    @Metadata(label = "common")
     private Integer maxTotalConnections;
+    @Metadata(label = "consumer")
     private Integer outboundBufferSize;
+    @Metadata(label = "consumer,advanced")
     private Integer maxQueued;
+    @Metadata(label = "consumer,advanced")
     private Boolean persistingConnections;
+    @Metadata(label = "consumer,advanced")
     private Boolean pipeliningConnections;
+    @Metadata(label = "consumer,advanced")
     private Integer threadMaxIdleTimeMs;
+    @Metadata(label = "consumer")
     private Boolean useForwardedForHeader;
+    @Metadata(label = "consumer")
     private Boolean reuseAddress;
+    @Metadata(label = "consumer,advanced")
     private boolean disableStreamCache;
+    @Metadata(label = "consumer")
     private int port;
+    @Metadata(label = "producer")
     private Boolean synchronous;
+    @Metadata(label = "advanced")
+    private List<String> enabledConverters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public RestletComponent() {
         this(new Component());
@@ -100,26 +130,56 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        RestletEndpoint result = new RestletEndpoint(this, remaining);
+
+        // grab uri and remove all query parameters as we need to rebuild it a bit special
+        String endpointUri = uri;
+        if (endpointUri.indexOf('?') > 0) {
+            endpointUri = endpointUri.substring(0, endpointUri.indexOf('?'));
+        }
+        // normalize so the uri is as expected
+        endpointUri = URISupport.normalizeUri(endpointUri);
+
+        // decode %7B -> {
+        // decode %7D -> }
+        endpointUri = endpointUri.replaceAll("%7B", "{").replaceAll("%7D", "}");
+
+        // include restlet methods in the uri (use GET as default)
+        String restletMethods = getAndRemoveParameter(parameters, "restletMethods", String.class);
+        if (restletMethods != null) {
+            endpointUri = endpointUri + "?restletMethods=" + restletMethods.toUpperCase();
+        }
+        String restletMethod = null;
+        if (restletMethods == null) {
+            restletMethod = getAndRemoveParameter(parameters, "restletMethod", String.class, "GET");
+            endpointUri = endpointUri + "?restletMethod=" + restletMethod.toUpperCase();
+        }
+
+        RestletEndpoint result = new RestletEndpoint(this, endpointUri);
         if (synchronous != null) {
             result.setSynchronous(synchronous);
         }
         result.setDisableStreamCache(isDisableStreamCache());
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
-        // set the endpoint uri according to the parameter
-        result.updateEndpointUri();
-
-        // construct URI so we can use it to get the splitted information
-        URI u = new URI(remaining);
-        String protocol = u.getScheme();
-
-        String uriPattern = u.getPath();
-        if (parameters.size() > 0) {
-            uriPattern = uriPattern + "?" + URISupport.createQueryString(parameters);
+        if (restletMethods != null) {
+            result.setRestletMethods(RestletConverter.toMethods(restletMethods));
+        } else {
+            result.setRestletMethod(RestletConverter.toMethod(restletMethod));
         }
 
-        int port = 0;
+        // construct URI so we can use it to get the splitted information
+        // use raw values to support paths that has spaces
+        String remainingRaw = URISupport.extractRemainderPath(new URI(uri), true);
+        URI u = new URI(remainingRaw);
+        String protocol = u.getScheme();
+
+        String uriPattern = URISupport.createRemainingURI(u, parameters).getRawPath();
+        // must decode back to use {} style as that is what the restlet router expect to match in its uri pattern
+        // decode %7B -> {
+        // decode %7D -> }
+        uriPattern = uriPattern.replaceAll("%7B", "{").replaceAll("%7D", "}");
+
+        int port;
         String host = u.getHost();
         if (u.getPort() > 0) {
             port = u.getPort();
@@ -132,6 +192,17 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         result.setHost(host);
         if (port > 0) {
             result.setPort(port);
+        }
+
+        if (result.getSslContextParameters() == null) {
+            result.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
+        // any additional query parameters from parameters then we need to include them as well
+        if (!parameters.isEmpty()) {
+            result.setQueryParameters(parameters);
+            endpointUri = URISupport.appendParametersToURI(endpointUri, parameters);
+            result.setCompleteEndpointUri(endpointUri);
         }
 
         return result;
@@ -147,6 +218,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
             setProperties(this, config.getComponentProperties());
         }
+
+        cleanupConverters(enabledConverters);
 
         component.start();
     }
@@ -193,7 +266,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         List<MethodBasedRouter> routesToRemove = new ArrayList<MethodBasedRouter>();
 
-        String pattern = decodePattern(endpoint.getUriPattern());
+        String pattern = endpoint.getUriPattern();
         if (pattern != null && !pattern.isEmpty()) {
             MethodBasedRouter methodRouter = getMethodRouter(pattern, false);
             if (methodRouter != null) {
@@ -227,7 +300,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
             // remove router if its no longer in use
             if (!router.hasRoutes()) {
-                deattachUriPatternFrimRestlet(router.getUriPattern(), endpoint, router);
+                deAttachUriPatternFromRestlet(router.getUriPattern(), endpoint, router);
                 if (!router.isStopped()) {
                     router.stop();
                 }
@@ -249,7 +322,12 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     }
 
     protected Server createServer(RestletEndpoint endpoint) {
-        return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
+        // Consider hostname if provided. This is useful when loopback interface is required for security reasons.
+        if (endpoint.getHost() != null) {
+            return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getHost(), endpoint.getPort(), null);
+        } else {
+            return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
+        }
     }
 
     protected String stringArrayToString(String[] strings) {
@@ -266,7 +344,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         params.add("sslContextFactory",
             "org.restlet.engine.ssl.DefaultSslContextFactory");
 
-        SSLContext context = scp.createSSLContext();
+        SSLContext context = scp.createSSLContext(getCamelContext());
         SSLEngine engine = context.createSSLEngine();
 
         params.add("enabledProtocols", stringArrayToString(engine.getEnabledProtocols()));
@@ -394,7 +472,6 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     }
 
     private void attachUriPatternToRestlet(String offsetPath, String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
-        uriPattern = decodePattern(uriPattern);
         MethodBasedRouter router = getMethodRouter(uriPattern, true);
 
         Map<String, String> realm = endpoint.getRestletRealm();
@@ -435,20 +512,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         }
     }
 
-    private void deattachUriPatternFrimRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
+    private void deAttachUriPatternFromRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
         component.getDefaultHost().detach(target);
-        LOG.debug("Deattached methodRouter uriPattern: {}", uriPattern);
-    }
-
-    @Deprecated
-    protected String preProcessUri(String uri) {
-        // If the URI was not valid (i.e. contains '{' and '}'
-        // it was most likely encoded by normalizeEndpointUri in DefaultCamelContext.getEndpoint(String)
-        return UnsafeUriCharactersEncoder.encode(uri.replaceAll("%7B", "(").replaceAll("%7D", ")"));
-    }
-
-    private static String decodePattern(String pattern) {
-        return pattern == null ? null : pattern.replaceAll("\\(", "{").replaceAll("\\)", "}");
+        LOG.debug("De-attached methodRouter uriPattern: {}", uriPattern);
     }
 
     public Boolean getControllerDaemon() {
@@ -662,9 +728,47 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         this.synchronous = synchronous;
     }
 
+    public List<String> getEnabledConverters() {
+        return enabledConverters;
+    }
+
+    /**
+     * A list of converters to enable as full class name or simple class name.
+     * All the converters automatically registered are enabled if empty or null
+     */
+    public void setEnabledConverters(List<String> enabledConverters) {
+        if (enabledConverters != null && !enabledConverters.isEmpty()) {
+            this.enabledConverters = new ArrayList(enabledConverters);
+        }
+    }
+
+    /**
+     * A comma separated list of converters to enable as full class name or simple
+     * class name. All the converters automatically registered are enabled if
+     * empty or null
+     */
+    public void setEnabledConverters(String enabledConverters) {
+        if (ObjectHelper.isNotEmpty(enabledConverters)) {
+            this.enabledConverters = Arrays.asList(enabledConverters.split(","));
+        }
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
 
         String path = basePath;
         if (uriTemplate != null) {
@@ -683,7 +787,10 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         int port = this.getPort();
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration("restlet", true);
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = camelContext.getRestConfiguration("restlet", true);
+        }
         if (config.getScheme() != null) {
             scheme = config.getScheme();
         }
@@ -695,9 +802,21 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             port = num;
         }
 
+        // prefix path with context-path if configured in rest-dsl configuration
+        String contextPath = config.getContextPath();
+        if (ObjectHelper.isNotEmpty(contextPath)) {
+            contextPath = FileUtil.stripTrailingSeparator(contextPath);
+            contextPath = FileUtil.stripLeadingSeparator(contextPath);
+            if (ObjectHelper.isNotEmpty(contextPath)) {
+                path = contextPath + "/" + path;
+            }
+        }
+
         // if no explicit hostname set then resolve the hostname
         if (ObjectHelper.isEmpty(host)) {
-            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                host = "0.0.0.0";
+            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                 host = HostUtils.getLocalHostName();
             } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                 host = HostUtils.getLocalIp();
@@ -706,25 +825,31 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         Map<String, Object> map = new HashMap<String, Object>();
         // build query string, and append any endpoint configuration properties
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("restlet"))) {
+        if (config.getComponent() == null || config.getComponent().equals("restlet")) {
             // setup endpoint options
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
             }
         }
 
+        // allow HTTP Options as we want to handle CORS in rest-dsl
+        boolean cors = config.isEnableCORS();
+
         String query = URISupport.createQueryString(map);
 
         String url;
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
+        if (cors) {
+            restrict += ",OPTIONS";
+        }
 
         if (port > 0) {
-            url = "restlet:%s://%s:%s/%s?restletMethod=%s";
+            url = "restlet:%s://%s:%s/%s?restletMethods=%s";
             url = String.format(url, scheme, host, port, path, restrict);
         } else {
             // It could use the restlet servlet transport
-            url = "restlet:/%s?restletMethod=%s";
+            url = "restlet:/%s?restletMethods=%s";
             url = String.format(url, path, restrict);
         }
         if (!query.isEmpty()) {
@@ -732,14 +857,73 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         }
         // get the endpoint
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
-        setProperties(endpoint, parameters);
+        setProperties(camelContext, endpoint, parameters);
+
+        // the endpoint must be started before creating the consumer
+        ServiceHelper.startService(endpoint);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
-        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
+        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+            setProperties(camelContext, consumer, config.getConsumerProperties());
         }
 
         return consumer;
+    }
+
+    @Override
+    public Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath,
+                                      RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
+        return createConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration, parameters);
+    }
+
+    @Override
+    public Producer createProducer(CamelContext camelContext, String host,
+                                   String verb, String basePath, String uriTemplate, String queryParameters,
+                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+
+        // avoid leading slash
+        basePath = FileUtil.stripLeadingSeparator(basePath);
+        uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
+
+        // restlet method must be in upper-case
+        String restletMethod = verb.toUpperCase(Locale.US);
+
+        // get the endpoint
+        String url = "restlet:" + host;
+        if (!ObjectHelper.isEmpty(basePath)) {
+            url += "/" + basePath;
+        }
+        if (!ObjectHelper.isEmpty(uriTemplate)) {
+            url += "/" + uriTemplate;
+        }
+        url += "?restletMethod=" + restletMethod;
+
+        RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
+        if (parameters != null && !parameters.isEmpty()) {
+            setProperties(camelContext, endpoint, parameters);
+        }
+
+        // the endpoint must be started before creating the producer
+        ServiceHelper.startService(endpoint);
+
+        return endpoint.createProducer();
+    }
+
+    protected static void cleanupConverters(List<String> converters) {
+        if (converters != null && !converters.isEmpty()) {
+            // To avoid race conditions this operation relies on a global lock, we
+            // could have used Engine's instance as lock so we'd lock only operations
+            // on the same instance but we do not know how Engine is used by the
+            // restlet framework
+            synchronized (LOCK) {
+                Engine.getInstance().getRegisteredConverters().removeIf(
+                    converter ->
+                        !converters.contains(converter.getClass().getName())
+                        && !converters.contains(converter.getClass().getSimpleName())
+                );
+            }
+        }
     }
 }

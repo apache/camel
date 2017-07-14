@@ -16,6 +16,8 @@
  */
 package org.apache.camel.rx;
 
+import java.util.concurrent.ExecutorService;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -34,9 +36,38 @@ import rx.functions.Func1;
  */
 public class ReactiveCamel {
     private final CamelContext camelContext;
+    // a worker pool for running tasks such as stopping consumers which should not use the event loop
+    // thread from rx-java but use our own thread to process such tasks
+    private final ExecutorService workerPool;
 
+    /**
+     * Wrap the CamelContext as reactive.
+     * <p/>
+     * Uses a default value of 10 as maximum number of threads in the worker pool used for reactive background tasks.
+     *
+     * @param camelContext  the CamelContext
+     */
     public ReactiveCamel(CamelContext camelContext) {
+        this(camelContext, 10);
+    }
+
+    /**
+     * Wrap the CamelContext as reactive.
+     *
+     * @param camelContext  the CamelContext
+     * @param maxWorkerPoolSize  maximum number of threads in the worker pool used for reactive background tasks
+     */
+    public ReactiveCamel(CamelContext camelContext, int maxWorkerPoolSize) {
         this.camelContext = camelContext;
+        this.workerPool = camelContext.getExecutorServiceManager().newThreadPool(this, "ReactiveCamelWorker", 0, maxWorkerPoolSize);
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public Endpoint endpoint(String endpointUri) {
+        return CamelContextHelper.getMandatoryEndpoint(camelContext, endpointUri);
     }
 
     /**
@@ -79,6 +110,7 @@ public class ReactiveCamel {
     public <T> void sendTo(Observable<T> observable, String endpointUri) {
         sendTo(observable, endpoint(endpointUri));
     }
+
     /**
      * Sends events on the given {@link Observable} to the given camel endpoint
      */
@@ -119,33 +151,20 @@ public class ReactiveCamel {
         return new CamelOperator(endpoint);
     }
 
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public Endpoint endpoint(String endpointUri) {
-        return CamelContextHelper.getMandatoryEndpoint(camelContext, endpointUri);
-    }
-
     /**
      * Returns a newly created {@link Observable} given a function which converts
      * the {@link Exchange} from the Camel consumer to the required type
      */
-    protected <T> Observable<T> createEndpointObservable(final Endpoint endpoint,
-                                                         final Func1<Exchange, T> converter) {
-        Observable.OnSubscribe<T> func = new EndpointSubscribeFunc<T>(endpoint, converter);
+    private <T> Observable<T> createEndpointObservable(final Endpoint endpoint,
+                                                       final Func1<Exchange, T> converter) {
+        Observable.OnSubscribe<T> func = new EndpointSubscribeFunc<T>(workerPool, endpoint, converter);
         return new EndpointObservable<T>(endpoint, func);
     }
 
     /**
      * Return a newly created {@link Observable} without conversion
      */
-    protected Observable<Exchange> createEndpointObservable(final Endpoint endpoint) {
-        return new EndpointObservable<Exchange>(endpoint, new EndpointSubscribeFunc<Exchange>(endpoint, new Func1<Exchange, Exchange>() {
-            @Override
-            public Exchange call(Exchange exchange) {
-                return exchange;
-            }
-        }));
+    private Observable<Exchange> createEndpointObservable(final Endpoint endpoint) {
+        return new EndpointObservable<Exchange>(endpoint, new EndpointSubscribeFunc<Exchange>(workerPool, endpoint, exchange -> exchange));
     }
 }

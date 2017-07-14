@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -30,11 +31,10 @@ import java.util.Locale;
  * The {@link ConsumerPath} is used for the components to provide the details to the matcher.
  */
 public final class RestConsumerContextPathMatcher {
+
     private RestConsumerContextPathMatcher() {
-        
     }
     
-
     /**
      * Consumer path details which must be implemented and provided by the components.
      */
@@ -55,6 +55,11 @@ public final class RestConsumerContextPathMatcher {
          */
         T getConsumer();
 
+        /**
+         * Whether the consumer match on uri prefix
+         */
+        boolean isMatchOnUriPrefix();
+
     }
 
     /**
@@ -74,17 +79,29 @@ public final class RestConsumerContextPathMatcher {
             return false;
         }
 
-        String p1 = requestPath.toLowerCase(Locale.ENGLISH);
-        String p2 = consumerPath.toLowerCase(Locale.ENGLISH);
-
-        if (p1.equals(p2)) {
-            return true;
+        // remove starting/ending slashes
+        if (requestPath.startsWith("/")) {
+            requestPath = requestPath.substring(1);
+        }
+        if (requestPath.endsWith("/")) {
+            requestPath = requestPath.substring(0, requestPath.length() - 1);
+        }
+        // remove starting/ending slashes
+        if (consumerPath.startsWith("/")) {
+            consumerPath = consumerPath.substring(1);
+        }
+        if (consumerPath.endsWith("/")) {
+            consumerPath = consumerPath.substring(0, consumerPath.length() - 1);
         }
 
-        if (matchOnUriPrefix && p1.startsWith(p2)) {
+        if (matchOnUriPrefix && requestPath.toLowerCase(Locale.ENGLISH).startsWith(consumerPath.toLowerCase(Locale.ENGLISH))) {
             return true;
         }
-
+        
+        if (requestPath.equalsIgnoreCase(consumerPath)) {
+            return true;
+        }
+        
         return false;
     }
 
@@ -116,6 +133,32 @@ public final class RestConsumerContextPathMatcher {
                 answer = consumer;
                 break;
             }
+        }
+
+        // we could not find a direct match, and if the request is OPTIONS then we need all candidates
+        if (answer == null && isOptionsMethod(requestMethod)) {
+            candidates.clear();
+            candidates.addAll(consumerPaths);
+
+            // then try again to see if we can find a direct match
+            it = candidates.iterator();
+            while (it.hasNext()) {
+                ConsumerPath consumer = it.next();
+                if (matchRestPath(requestPath, consumer.getConsumerPath(), false)) {
+                    answer = consumer;
+                    break;
+                }
+            }
+        }
+
+        // if there are no wildcards, then select the matching with the longest path
+        boolean noWildcards = candidates.stream().allMatch(p -> countWildcards(p.getConsumerPath()) == 0);
+        if (noWildcards) {
+            // grab first which is the longest that matched the request path
+            answer = candidates.stream()
+                .filter(c -> matchPath(requestPath, c.getConsumerPath(), c.isMatchOnUriPrefix()))
+                // sort by longest by inverting the sort by multiply with -1
+                .sorted(Comparator.comparingInt(o -> -1 * o.getConsumerPath().length())).findFirst().orElse(null);
         }
 
         // then match by wildcard path
@@ -161,7 +204,7 @@ public final class RestConsumerContextPathMatcher {
     }
 
     /**
-     * Matches the given request HTTP method with the configured HTTP method of the consumer
+     * Matches the given request HTTP method with the configured HTTP method of the consumer.
      *
      * @param method   the request HTTP method
      * @param restrict the consumer configured HTTP restrict method
@@ -176,6 +219,15 @@ public final class RestConsumerContextPathMatcher {
     }
 
     /**
+     * Is the request method OPTIONS
+     *
+     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
+     */
+    private static boolean isOptionsMethod(String method) {
+        return "options".equalsIgnoreCase(method);
+    }
+
+    /**
      * Matches the given request path with the configured consumer path
      *
      * @param requestPath  the request path
@@ -183,6 +235,14 @@ public final class RestConsumerContextPathMatcher {
      * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
      */
     private static boolean matchRestPath(String requestPath, String consumerPath, boolean wildcard) {
+        // deal with null parameters
+        if (requestPath == null && consumerPath == null) {
+            return true;
+        }
+        if (requestPath == null || consumerPath == null) {
+            return false;
+        }
+
         // remove starting/ending slashes
         if (requestPath.startsWith("/")) {
             requestPath = requestPath.substring(1);

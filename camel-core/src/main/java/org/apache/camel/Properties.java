@@ -25,11 +25,13 @@ import java.lang.annotation.Target;
 /**
  * Marks a parameter as being an injection point of the properties of an {@link Exchange}
  *
+ * @deprecated use {@link ExchangeProperties} instead
  * @see Exchange#getProperties()  
  * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ElementType.PARAMETER })
+@Deprecated
 public @interface Properties {
 }

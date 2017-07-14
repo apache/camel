@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hipchat.integration;
 
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -33,6 +32,7 @@ import org.junit.Test;
 
 @Ignore("Must be manually tested. Provide your own auth key, user, & room from https://www.hipchat.com/docs/apiv2/auth")
 public class HipchatProducerIntegrationTest extends CamelTestSupport {
+
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
 
@@ -72,6 +72,23 @@ public class HipchatProducerIntegrationTest extends CamelTestSupport {
 
     }
 
+    @Test
+    public void sendToUriUnsafeRoomName() throws Exception {
+        result.expectedMessageCount(1);
+
+        Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(HipchatConstants.TO_ROOM, "Camel Test");
+                exchange.getIn().setHeader(HipchatConstants.TO_USER, "@ShreyasPurohit");
+                exchange.getIn().setBody("A room with spaces");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        assertResponseMessage(exchange1.getIn());
+    }
+
     private void assertResponseMessage(Message message) {
         assertEquals(204, message.getHeader(HipchatConstants.TO_ROOM_RESPONSE_STATUS, StatusLine.class).getStatusCode());
         assertEquals(204, message.getHeader(HipchatConstants.TO_USER_RESPONSE_STATUS, StatusLine.class).getStatusCode());
@@ -81,7 +98,7 @@ public class HipchatProducerIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String hipchatEndpointUri = "hipchat://?authToken=XXXX";
+                String hipchatEndpointUri = "hipchat:http:api.hipchat.com?authToken=XXXX";
 
                 from("direct:start")
                         .to(hipchatEndpointUri)

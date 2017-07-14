@@ -35,7 +35,7 @@ public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
     }
     
     private void testHttpClient(String uri) throws Exception {
-        System.getProperties().put("HTTPClient.dontChunkRequests", "yes");
+        System.setProperty("HTTPClient.dontChunkRequests", "yes");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
         mockEndpoint.expectedBodiesReceived("<b>Hello World</b>");
@@ -59,7 +59,7 @@ public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
         // should get the Content-Length
         assertEquals("Should get the transfer-encoding as chunked", "chunked", headers.get("Transfer-Encoding"));
         // remove the system property
-        System.getProperties().remove("HTTPClient.dontChunkRequests");
+        System.clearProperty("HTTPClient.dontChunkRequests");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

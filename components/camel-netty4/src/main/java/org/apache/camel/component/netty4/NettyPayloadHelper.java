@@ -41,7 +41,7 @@ public final class NettyPayloadHelper {
     public static Object getIn(NettyEndpoint endpoint, Exchange exchange) {
         if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
-            return DefaultExchangeHolder.marshal(exchange);
+            return DefaultExchangeHolder.marshal(exchange, true, endpoint.getConfiguration().isAllowSerializedHeaders());
         } else {
             if (endpoint.getConfiguration().isUseByteBuf()) {
                 // Just leverage the type converter 

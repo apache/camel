@@ -20,6 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.processor.UnitOfWorkProducer;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +29,17 @@ import rx.Observer;
 /**
  * An {@link Observer} which sends events to a given {@link Endpoint}
  */
-public class ObserverSender<T> implements Observer<T> {
+public class ObserverSender<T> extends ServiceSupport implements Observer<T> {
     private static final Logger LOG = LoggerFactory.getLogger(ObserverSender.class);
 
     private Producer producer;
 
     public ObserverSender(Endpoint endpoint) throws Exception {
+        // need to start endpoint before we create producer
+        ServiceHelper.startService(endpoint);
         this.producer = new UnitOfWorkProducer(endpoint.createProducer());
-        ServiceHelper.startService(producer);
+        // add as service so we ensure it gets stopped when CamelContext stops
+        endpoint.getCamelContext().addService(producer, true, true);
     }
 
     @Override
@@ -53,14 +57,14 @@ public class ObserverSender<T> implements Observer<T> {
 
     @Override
     public void onError(Throwable e) {
-        Exchange exchange = producer.createExchange();
+        Exchange exchange = producer.getEndpoint().createExchange();
         exchange.setException(e);
         send(exchange);
     }
 
     @Override
     public void onNext(T o) {
-        Exchange exchange = producer.createExchange();
+        Exchange exchange = producer.getEndpoint().createExchange();
         exchange.getIn().setBody(o);
         send(exchange);
     }
@@ -73,4 +77,13 @@ public class ObserverSender<T> implements Observer<T> {
         }
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(producer);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(producer);
+    }
 }

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.gora;
 
 import org.apache.camel.Consumer;
@@ -25,19 +24,12 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.store.DataStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Gora endpoint
+ * The gora component allows you to work with NoSQL databases using the Apache Gora framework.
  */
-@UriEndpoint(scheme = "gora", title = "Gora", syntax = "gora:name", consumerClass = GoraConsumer.class, label = "database,hadoop,nosql")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "gora", title = "Gora", syntax = "gora:name", consumerClass = GoraConsumer.class, label = "database,hadoop,nosql")
 public class GoraEndpoint extends DefaultEndpoint {
-
-    /**
-     * logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(GoraEndpoint.class);
 
     /**
      * Gora DataStore
@@ -68,39 +60,21 @@ public class GoraEndpoint extends DefaultEndpoint {
         this.dataStore = dataStore;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Producer createProducer() throws Exception {
-
         return new GoraProducer(this, this.configuration, this.dataStore);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
-        
         return new GoraConsumer(this, processor, this.configuration, this.dataStore);
     }
 
-    /**
-     * Get Configutation
-     *
-     * @return
-     */
     public GoraConfiguration getConfiguration() {
         return configuration;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isSingleton() {
-
         return true;
     }
 

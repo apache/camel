@@ -19,6 +19,7 @@ package org.apache.camel.component.cmis;
 import java.io.InputStream;
 import java.util.Map;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
@@ -31,24 +32,27 @@ import org.slf4j.LoggerFactory;
  */
 public class CMISConsumer extends ScheduledPollConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(CMISConsumer.class);
+    private final CMISSessionFacadeFactory sessionFacadeFactory;
     private CMISSessionFacade sessionFacade;
 
-    public CMISConsumer(CMISEndpoint endpoint, Processor processor) {
-        super(endpoint, processor);
+    public CMISConsumer(CMISEndpoint cmisEndpoint, Processor processor, CMISSessionFacadeFactory sessionFacadeFactory) {
+        super(cmisEndpoint, processor);
+        this.sessionFacadeFactory = sessionFacadeFactory;
+        this.sessionFacade = null;
     }
 
-    public CMISConsumer(CMISEndpoint cmisEndpoint, Processor processor, CMISSessionFacade sessionFacade) {
-        this(cmisEndpoint, processor);
-        this.sessionFacade = sessionFacade;
+    @Override
+    public CMISEndpoint getEndpoint() {
+        return (CMISEndpoint) super.getEndpoint();
     }
 
     @Override
     protected int poll() throws Exception {
-        return this.sessionFacade.poll(this);
+        return getSessionFacade().poll(this);
     }
     
-    public OperationContext createOperationContext() {
-        return sessionFacade.createOperationContext();
+    public OperationContext createOperationContext() throws Exception {
+        return getSessionFacade().createOperationContext();
     }
 
     int sendExchangeWithPropsAndBody(Map<String, Object> properties, InputStream inputStream)
@@ -60,4 +64,14 @@ public class CMISConsumer extends ScheduledPollConsumer {
         getProcessor().process(exchange);
         return 1;
     }
+
+    private CMISSessionFacade getSessionFacade() throws Exception {
+        if (sessionFacade == null) {
+            sessionFacade = sessionFacadeFactory.create(getEndpoint());
+            sessionFacade.initSession();
+        }
+
+        return sessionFacade;
+    }
+
 }

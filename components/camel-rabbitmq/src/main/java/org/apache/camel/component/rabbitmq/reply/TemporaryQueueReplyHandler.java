@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * {@link ReplyHandler} to handle processing replies when using temporary queues.
  *

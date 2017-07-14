@@ -84,7 +84,7 @@ public class SpringHttpsRouteTest {
         for (Object key : originalValues.keySet()) {
             Object value = originalValues.get(key);
             if (NULL_VALUE_MARKER.equals(value)) {
-                System.getProperties().remove(key);
+                System.clearProperty((String) key);
             } else {
                 System.setProperty((String) key, (String) value);
             }

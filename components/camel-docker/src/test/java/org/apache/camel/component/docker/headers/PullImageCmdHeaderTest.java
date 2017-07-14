@@ -19,7 +19,7 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.PullImageCmd;
-
+import com.github.dockerjava.core.command.PullImageResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -35,6 +35,9 @@ public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
     @Mock
     private PullImageCmd mockObject;
 
+    @Mock
+    private PullImageResultCallback callback;
+    
     @Test
     public void pullImageHeaderTest() {
 
@@ -59,6 +62,12 @@ public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
     @Override
     protected void setupMocks() {
         Mockito.when(dockerClient.pullImageCmd(Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(mockObject.exec(Matchers.anyObject())).thenReturn(callback);
+        try {
+            Mockito.when(callback.awaitCompletion()).thenReturn(callback);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -27,6 +27,7 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.http.HttpHost;
 import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 
 /**
@@ -59,6 +60,8 @@ public class Olingo2Configuration {
     private SSLContextParameters sslContextParameters;
     @UriParam
     private HttpAsyncClientBuilder httpAsyncClientBuilder;
+    @UriParam
+    private HttpClientBuilder httpClientBuilder;
 
     public Olingo2ApiName getApiName() {
         return apiName;
@@ -171,6 +174,18 @@ public class Olingo2Configuration {
         this.httpAsyncClientBuilder = httpAsyncClientBuilder;
     }
 
+    public HttpClientBuilder getHttpClientBuilder() {
+        return httpClientBuilder;
+    }
+
+    /**
+     * Custom HTTP client builder for more complex HTTP client configuration, overrides connectionTimeout, socketTimeout, proxy and sslContext.
+     * Note that a socketTimeout MUST be specified in the builder, otherwise OData requests could block indefinitely
+     */
+    public void setHttpClientBuilder(HttpClientBuilder httpClientBuilder) {
+        this.httpClientBuilder = httpClientBuilder;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
@@ -182,6 +197,7 @@ public class Olingo2Configuration {
             .append(proxy)
             .append(sslContextParameters)
             .append(httpAsyncClientBuilder)
+            .append(httpClientBuilder)
             .hashCode();
     }
 
@@ -197,7 +213,8 @@ public class Olingo2Configuration {
                 && proxy == null ? other.proxy == null : proxy.equals(other.proxy)
                 && sslContextParameters == null ? other.sslContextParameters == null : sslContextParameters.equals(other.sslContextParameters)
                 && httpAsyncClientBuilder == null ? other.httpAsyncClientBuilder == null
-                : httpAsyncClientBuilder.equals(other.httpAsyncClientBuilder);
+                : httpAsyncClientBuilder.equals(other.httpAsyncClientBuilder)
+                && httpClientBuilder == null ? other.httpClientBuilder == null : httpClientBuilder.equals(other.httpClientBuilder);
         }
         return false;
     }

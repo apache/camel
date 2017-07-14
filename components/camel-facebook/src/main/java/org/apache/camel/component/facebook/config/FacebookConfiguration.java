@@ -35,17 +35,17 @@ public class FacebookConfiguration implements Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(FacebookConfiguration.class);
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String oAuthAppId;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String oAuthAppSecret;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String oAuthAccessToken;
-    @UriParam(defaultValue = "https://www.facebook.com/dialog/oauth")
+    @UriParam(label = "security", defaultValue = "https://www.facebook.com/dialog/oauth")
     private String oAuthAuthorizationURL;
-    @UriParam
+    @UriParam(label = "security")
     private String oAuthPermissions;
-    @UriParam(defaultValue = "https://graph.facebook.com/oauth/access_token")
+    @UriParam(label = "security", defaultValue = "https://graph.facebook.com/oauth/access_token")
     private String oAuthAccessTokenURL;
     @UriParam
     private String clientURL;
@@ -61,13 +61,13 @@ public class FacebookConfiguration implements Cloneable {
     private Integer httpDefaultMaxPerRoute;
     @UriParam(defaultValue = "20")
     private Integer httpMaxTotalConnections;
-    @UriParam
+    @UriParam(label = "proxy")
     private String httpProxyHost;
-    @UriParam
+    @UriParam(label = "proxy")
     private String httpProxyPassword;
-    @UriParam
+    @UriParam(label = "proxy")
     private Integer httpProxyPort;
-    @UriParam
+    @UriParam(label = "proxy")
     private String httpProxyUser;
     @UriParam(defaultValue = "120000")
     private Integer httpReadTimeout;

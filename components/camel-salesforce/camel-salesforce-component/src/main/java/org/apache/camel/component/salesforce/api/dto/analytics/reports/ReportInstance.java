@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.salesforce.api.dto.analytics.reports;
 
+import java.time.ZonedDateTime;
+
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
-import org.joda.time.DateTime;
 
 /**
  * Report instance DTO.
@@ -29,8 +30,8 @@ public class ReportInstance extends AbstractDTOBase {
     private String url;
     private String ownerId;
     private Boolean hasDetailRows;
-    private DateTime completionDate;
-    private DateTime requestDate;
+    private ZonedDateTime completionDate;
+    private ZonedDateTime requestDate;
 
     public String getId() {
         return id;
@@ -72,19 +73,19 @@ public class ReportInstance extends AbstractDTOBase {
         this.hasDetailRows = hasDetailRows;
     }
 
-    public DateTime getCompletionDate() {
+    public ZonedDateTime getCompletionDate() {
         return completionDate;
     }
 
-    public void setCompletionDate(DateTime completionDate) {
+    public void setCompletionDate(ZonedDateTime completionDate) {
         this.completionDate = completionDate;
     }
 
-    public DateTime getRequestDate() {
+    public ZonedDateTime getRequestDate() {
         return requestDate;
     }
 
-    public void setRequestDate(DateTime requestDate) {
+    public void setRequestDate(ZonedDateTime requestDate) {
         this.requestDate = requestDate;
     }
 }

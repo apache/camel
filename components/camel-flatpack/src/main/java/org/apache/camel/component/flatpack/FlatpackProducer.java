@@ -27,7 +27,7 @@ import org.apache.camel.impl.DefaultProducer;
 class FlatpackProducer extends DefaultProducer {
     private FlatpackEndpoint endpoint;
 
-    public FlatpackProducer(FlatpackEndpoint endpoint) {
+    FlatpackProducer(FlatpackEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }

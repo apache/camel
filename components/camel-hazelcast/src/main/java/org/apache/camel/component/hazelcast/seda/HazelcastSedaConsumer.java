@@ -77,16 +77,17 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
             final Exchange exchange = this.getEndpoint().createExchange();
 
             TransactionContext transactionCtx = null;
-            if (endpoint.getConfiguration().isTransacted()) {
-                // Get and begin transaction if exist
-                transactionCtx = endpoint.getHazelcastInstance().newTransactionContext();
-
-                if (transactionCtx != null) {
-                    log.trace("Begin transaction: {}", transactionCtx.getTxnId());
-                    transactionCtx.beginTransaction();
-                }
-            }
             try {
+                if (endpoint.getConfiguration().isTransacted()) {
+                    // Get and begin transaction if exist
+                    transactionCtx = endpoint.getHazelcastInstance().newTransactionContext();
+
+                    if (transactionCtx != null) {
+                        log.trace("Begin transaction: {}", transactionCtx.getTxnId());
+                        transactionCtx.beginTransaction();
+                    }
+                }
+
                 final Object body = queue.poll(endpoint.getConfiguration().getPollTimeout(), TimeUnit.MILLISECONDS);
 
                 if (body != null) {
@@ -134,9 +135,16 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                 // Rollback
                 if (transactionCtx != null) {
                     log.trace("Rollback transaction: {}", transactionCtx.getTxnId());
-                    transactionCtx.rollbackTransaction();
+                    try {
+                        transactionCtx.rollbackTransaction();
+                    } catch (Throwable ignore) {
+                    }
                 }
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
+                try {
+                    Thread.sleep(endpoint.getConfiguration().getOnErrorDelay());
+                } catch (InterruptedException ignore) {
+                }
             }
         }
     }

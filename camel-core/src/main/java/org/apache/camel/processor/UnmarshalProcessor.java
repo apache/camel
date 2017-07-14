@@ -122,12 +122,15 @@ public class UnmarshalProcessor extends ServiceSupport implements AsyncProcessor
         if (dataFormat instanceof CamelContextAware) {
             ((CamelContextAware) dataFormat).setCamelContext(camelContext);
         }
-        ServiceHelper.startService(dataFormat);
+        // add dataFormat as service which will also start the service
+        // (false => we handle the lifecycle of the dataFormat)
+        getCamelContext().addService(dataFormat, false, true);
     }
 
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(dataFormat);
+        getCamelContext().removeService(dataFormat);
     }
 
 }

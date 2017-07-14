@@ -40,7 +40,7 @@ import org.junit.Test;
 
 public class HttpsRouteTest extends BaseJettyTest {
 
-    private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
+    public static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
 
     protected String expectedBody = "<hello>world!</hello>";
     protected String pwd = "changeit";
@@ -81,7 +81,7 @@ public class HttpsRouteTest extends BaseJettyTest {
         for (Object key : originalValues.keySet()) {
             Object value = originalValues.get(key);
             if (NULL_VALUE_MARKER.equals(value)) {
-                System.getProperties().remove(key);    
+                System.clearProperty((String) key);
             } else {
                 System.setProperty((String)key, (String)value);
             }

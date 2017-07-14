@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.gora;
 
 import java.io.IOException;
@@ -30,10 +29,6 @@ import org.apache.hadoop.conf.Configuration;
 
 import static org.apache.camel.component.gora.GoraConstants.GORA_DEFAULT_DATASTORE_KEY;
 
-/**
- * Camel-Gora {@link Endpoint}.
- *
- */
 public class GoraComponent extends UriEndpointComponent {
 
     /**
@@ -63,9 +58,7 @@ public class GoraComponent extends UriEndpointComponent {
      * @throws IOException
      */
     private void init(final GoraConfiguration config) throws IOException {
-        
         this.goraProperties = DataStoreFactory.createProps();
-
         this.dataStore = DataStoreFactory.getDataStore(goraProperties.getProperty(GORA_DEFAULT_DATASTORE_KEY,
                                                                                   config.getDataStoreClass()),
                                                         config.getKeyClass(),
@@ -73,9 +66,6 @@ public class GoraComponent extends UriEndpointComponent {
                                                         this.configuration);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Endpoint createEndpoint(final String uri,
                                       final String remaining,
@@ -84,31 +74,17 @@ public class GoraComponent extends UriEndpointComponent {
         final GoraConfiguration config = new GoraConfiguration();
         setProperties(config, parameters);
         config.setName(remaining);
-
-        try {
-
-            init(config);
-        } catch (IOException ex) {
-
-            throw new RuntimeException(ex);
-        }
-
+        init(config);
         return new GoraEndpoint(uri, this, config, dataStore);
     }
 
     /**
      * Get DataStore
-     *
-     * @return DataStore
      */
     public DataStore<Object, Persistent> getDataStore() {
-
         return dataStore;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void doStart() throws Exception {
         if (configuration == null) {
@@ -116,12 +92,8 @@ public class GoraComponent extends UriEndpointComponent {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void doStop() throws Exception {
-
         if (dataStore != null) {
             dataStore.close();
         }

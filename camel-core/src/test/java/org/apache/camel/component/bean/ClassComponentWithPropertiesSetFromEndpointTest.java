@@ -38,7 +38,7 @@ public class ClassComponentWithPropertiesSetFromEndpointTest extends ContextTest
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("class:org.apache.camel.component.bean.MyPrefixBean?prefix=Bye")
+                    .to("class:org.apache.camel.component.bean.MyPrefixBean?bean.prefix=Bye")
                     .to("mock:result");
             }
         };

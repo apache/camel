@@ -23,7 +23,6 @@ import org.apache.commons.httpclient.HttpClient;
 import org.junit.Test;
 
 /**
- * @version 
  */
 public class HttpProxyTest extends CamelTestSupport {
 

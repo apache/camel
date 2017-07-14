@@ -1,0 +1,181 @@
+## MLLP Component
+
+*Available as of Camel version 2.17*
+
+The MLLP component is specifically designed to handle the nuances of the
+MLLP protocol and provide the functionality required by Healthcare
+providers to communicate with other systems using the MLLP protocol.
+ The MLLP component  provides a simple configuration URI, automated HL7
+acknowledgment generation and automatic acknowledgement interrogation.
+
+The MLLP protocol does not typically use a large number of concurrent
+TCP connections - a single active TCP connection is the normal case.
+ Therefore, the MLLP component uses a simple thread-per-connection model
+based an standard Java Sockets. This keeps the implementation simple
+and eliminates the dependencies other than Camel itself.
+
+The component supports the following:
+
+* A Camel consumer using a TCP Server
+* A Camel producer using a TCP Client
+
+The MLLP component uses byte[] payloads, and relies on Camel Type
+Conversion to convert byte[] to other types.  
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+---------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-mllp</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+---------------------------------------------------------
+
+### MLLP Options
+
+
+
+// component options: START
+The MLLP component has no options.
+// component options: END
+
+
+
+
+
+
+
+
+// endpoint options: START
+The MLLP endpoint is configured using URI syntax:
+
+    mllp:hostname:port
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **hostname** | *Required* Hostname or IP for connection for the TCP connection. The default value is null which means any local IP address |  | String
+| **port** | *Required* Port number for the TCP connection |  | int
+|=======================================================================
+
+#### Query Parameters (22 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **autoAck** (common) | Enable/Disable the automatic generation of a MLLP Acknowledgement MLLP Consumers only | true | boolean
+| **bufferWrites** (common) | Enable/Disable the validation of HL7 Payloads If enabled MLLP Payloads are buffered and written to the external system in a single write(byte) operation. If disabled the MLLP payload will not be buffered and three write operations will be used. The first operation will write the MLLP start-of-block character 0x0b (ASCII VT) the second operation will write the HL7 payload and the third operation will writh the MLLP end-of-block character and the MLLP end-of-data character 0x1c 0x0d (ASCII FS CR). | true | boolean
+| **hl7Headers** (common) | Enable/Disable the automatic generation of message headers from the HL7 Message MLLP Consumers only | true | boolean
+| **keepAlive** (common) | Enable/disable the SO_KEEPALIVE socket option. | true | boolean
+| **reuseAddress** (common) | Enable/disable the SO_REUSEADDR socket option. | false | boolean
+| **tcpNoDelay** (common) | Enable/disable the TCP_NODELAY socket option. | true | boolean
+| **validatePayload** (common) | Enable/Disable the validation of HL7 Payloads If enabled HL7 Payloads received from external systems will be validated (see Hl7Util.generateInvalidPayloadExceptionMessage for details on the validation). If and invalid payload is detected a MllpInvalidMessageException (for consumers) or a MllpInvalidAcknowledgementException will be thrown. | false | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **backlog** (advanced) | The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full the connection is refused. | 5 | int
+| **receiveBufferSize** (advanced) | Sets the SO_RCVBUF option to the specified value (in bytes) |  | Integer
+| **sendBufferSize** (advanced) | Sets the SO_SNDBUF option to the specified value (in bytes) |  | Integer
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **charsetName** (codec) | Set the CamelCharsetName property on the exchange |  | String
+| **acceptTimeout** (timeout) | Timeout (in milliseconds) while waiting for a TCP connection TCP Server Only | 60000 | int
+| **bindRetryInterval** (timeout) | TCP Server Only - The number of milliseconds to wait between bind attempts | 5000 | int
+| **bindTimeout** (timeout) | TCP Server Only - The number of milliseconds to retry binding to a server port | 30000 | int
+| **connectTimeout** (timeout) | Timeout (in milliseconds) for establishing for a TCP connection TCP Client only | 30000 | int
+| **maxReceiveTimeouts** (timeout) | The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset. | -1 | int
+| **readTimeout** (timeout) | The SO_TIMEOUT value (in milliseconds) used after the start of an MLLP frame has been received | 500 | int
+| **receiveTimeout** (timeout) | The SO_TIMEOUT value (in milliseconds) used when waiting for the start of an MLLP frame | 10000 | int
+|=======================================================================
+// endpoint options: END
+
+
+
+
+
+
+
+### MLLP Consumer
+
+The MLLP Consumer supports receiving MLLP-framed messages and sending
+HL7 Acknowledgements.  The MLLP Consumer can automatically generate the
+HL7 Acknowledgement (HL7 Application Acknowledgements only - AA, AE and
+AR), or the acknowledgement can be specified using
+the CamelMllpAcknowledgement exchange property.  Additionally, the type
+of acknowledgement that will be generated can be controlled by setting
+the CamelMllpAcknowledgementType exchange property.
+
+### *Message Headers*
+
+The MLLP Consumer adds these headers on the Camel message:
+
+[width="100%",cols="<34%,<33%,<33%",]
+|===========================================
+|*Key* |*MSH field* |*Example*
+|CamelMllpLocalAddress |  | 
+|CamelMllpRemoteAddress |  | 
+|CamelMllpSendingApplication |MSH-3 |APPA
+|CamelMllpSendingFacility |MSH-4 |FACA
+|CamelMllpReceivingApplication |MSH-5 |CAMEL
+|CamelMllpReceivingFacility |MSH-6 |FACB
+|CamelMllpTimestamp |MSH-7 |20150106235900
+|CamelMllpSecurity |MSH-8 | 
+|CamelMllpMessageType |MSH-9 |ADT^A04
+|CamelMllpEventType |MSH-9-1 |AD4
+|CamelMllpTriggerEvent |MSH-9-2 |A04
+|CamelMllpMessageControlId |MSH-10 |12345
+|CamelMllpProcessingId |MSH-11 |P
+|CamelMllpVersionId |MSH-12 |2.3.1
+|CamelMllpCharset |MSH-18 | 
+|===========================================
+
+All headers are String types. If a header value is missing, its value
+is null.
+
+### *Exchange Properties*
+
+The type of acknowledgment the MLLP Consumer generates can be controlled
+by these properties on the Camel exchange:
+
+[width="100%",cols="<34%,<33%,<33%",]
+|====================================
+|*Key* |  |*Example*
+|CamelMllpAcknowledgement |  | 
+|CamelMllpAcknowledgementType |  | AR
+|====================================
+
+All headers are String types. If a header value is missing, its value
+is null.
+
+### Consumer Configuration
+
+### MLLP Producer
+
+The MLLP Producer supports sending MLLP-framed messages and receiving
+HL7 Acknowledgements.  The MLLP Producer interrogates the HL7
+Acknowledgments and raises exceptions if a negative acknowledgement is
+received.  The received acknowledgement is interrogated and an exception
+is raised in the event of a negative acknowledgement.
+
+### *Message Headers*
+
+The MLLP Producer adds these headers on the Camel message:
+
+[width="100%",cols="<34%,<33%,<33%",]
+|===================================
+|*Key* |*MSH field* |*Example*
+|CamelMllpLocalAddress |  | 
+|CamelMllpRemoteAddress |  | 
+|CamelMllpAcknowledgement |  | 
+|CamelMllpAcknowledgementType |  |AA
+|===================================
+
+All headers are String types. If a header value is missing, its value
+is null.

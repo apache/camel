@@ -1,0 +1,111 @@
+## Ignite endpoints Component
+
+*Available as of Camel version 2.17*
+
+https://ignite.apache.org/[Apache Ignite] In-Memory Data Fabric is a high-performance, integrated and distributed in-memory platform for computing and transacting on large-scale data sets in real-time, orders of magnitude faster than possible with traditional disk-based or flash technologies. It is designed to deliver uncompromised performance for a wide set of in-memory computing use cases from high performance computing, to the industry most advanced data grid, highly available service grid, and streaming. See all https://ignite.apache.org/features.html[features].
+
+image:https://ignite.apache.org/images/apache-ignite.png[]
+
+This component offers seven endpoints to cover much of Ignite's functionality:
+
+* link:ignite-cache-component.html[Ignite Cache].
+* link:ignite-compute-component.html[Ignite Compute].
+* link:ignite-messaging-component.html[Ignite Messaging].
+* link:ignite-events-component.html[Ignite Events].
+* link:ignite-set-component.html[Ignite Sets].
+* link:ignite-queue-component.html[Ignite Queues].
+* link:ignite-idgen-component.html[Ignite ID Generator].
+
+To use this component, add the following dependency to your pom.xml:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ignite</artifactId>
+    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+[IMPORTANT,title=Running in OSGi]
+====
+If running in an OSGi container, please don't miss the <<Ignite-OsgiSupport,OSGi Support>> section below.
+====
+
+
+
+### Initializing the Ignite component
+
+Each instance of the Ignite component is associated with an underlying org.apache.ignite.Ignite instance. You can interact with two Ignite clusters by initializing two instances of the Ignite component and binding them to different IgniteConfigurations. There are 3 ways to initialize the Ignite component:
+
+* By passing in an existing org.apache.ignite.Ignite instance. Here's an example using Spring config:
+
+[source,xml]
+------------------------------------------------------------
+<bean name="ignite" class="org.apache.camel.component.ignite.IgniteComponent">
+   <property name="ignite" ref="ignite" />
+</bean>
+------------------------------------------------------------
+
+* By passing in an IgniteConfiguration, either constructed programmatically or through inversion of control (e.g. Spring, Blueprint, etc.). Here's an example using Spring config:
+
+[source,xml]
+-------------------------------------------------------------------
+<bean name="ignite" class="org.apache.camel.component.ignite.IgniteComponent">
+   <property name="igniteConfiguration">
+      <bean class="org.apache.ignite.configuration.IgniteConfiguration">
+         [...]
+      </bean>
+   </property>
+</bean>
+-------------------------------------------------------------------
+
+* By passing in a URL, InputStream or String URL to a Spring-based configuration file. In all three cases, you inject them in the same property called configurationResource. Here's an example using Spring config:
+
+[source,xml]
+-------------------------------------------------------------------
+<bean name="ignite" class="org.apache.camel.component.ignite.IgniteComponent">
+   <property name="configurationResource" value="file:[...]/ignite-config.xml" />
+</bean>
+-------------------------------------------------------------------
+
+Additionally, if using Camel programmatically, there are several convenience static methods in IgniteComponent that return a component out of any of these configuration options:
+
+* IgniteComponent#fromIgnite(Ignite)
+* IgniteComponent#fromConfiguration(IgniteConfiguration)
+* IgniteComponent#fromInputStream(InputStream)
+* IgniteComponent#fromUrl(URL)
+* IgniteComponent#fromLocation(String)
+
+You may use those methods to quickly create an IgniteComponent with your chosen configuration technique.
+
+### General options
+
+All endpoints share the following options:
+[width="100%",cols="1,1,1,4,1,1",options="header"]
+|=======================================================================
+| Option | Type | Default value | Description
+| propagateIncomingBodyIfNoReturnValue | boolean | true |
+If the underlying Ignite operation returns void (no return type), this flag determines whether the producer will copy the IN body into the OUT body.
+
+| treatCollectionsAsCacheObjects | boolean | false |
+Some Ignite operations can deal with multiple elements at once, if passed a Collection. Enabling this option will treat Collections as a single object, invoking the operation variant for cardinality 1.
+|=======================================================================
+
+### OSGi Support
+
+TIP: Apache Ignite supports OSGi from version 1.5.0.final onwards.
+
+When installing on Apache Karaf:
+
+1. Installing the camel-ignite feature will require the Ignite feature repository to be present.
+2. You must have exported from the JRE (system bundle) some low-level, non-standard packages that Ignite requires.
+
+Please refer to the OSGi section in the Ignite documentation for more information.
+
+### See Also
+
+* http://camel.apache.org/configuring-camel.html[Configuring Camel]
+* http://camel.apache.org/component.html[Component]
+* http://camel.apache.org/endpoint.html[Endpoint]
+* http://camel.apache.org/getting-started.html[Getting Started]

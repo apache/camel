@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.commands.AbstractLocalCamelController;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ public class CamelControllerImpl extends AbstractLocalCamelController {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelControllerImpl.class);
 
+    @Reference
     private BundleContext bundleContext;
 
     public void setBundleContext(BundleContext bundleContext) {

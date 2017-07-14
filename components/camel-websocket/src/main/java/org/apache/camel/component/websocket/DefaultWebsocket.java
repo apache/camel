@@ -19,41 +19,46 @@ package org.apache.camel.component.websocket;
 import java.io.Serializable;
 import java.util.UUID;
 
-import org.eclipse.jetty.websocket.WebSocket;
-import org.eclipse.jetty.websocket.WebSocket.OnBinaryMessage;
-import org.eclipse.jetty.websocket.WebSocket.OnTextMessage;
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultWebsocket implements WebSocket, OnTextMessage, OnBinaryMessage, Serializable {
+@WebSocket
+public class DefaultWebsocket implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LoggerFactory.getLogger(DefaultWebsocket.class);
 
     private final WebsocketConsumer consumer;
     private final NodeSynchronization sync;
-    private Connection connection;
+    private Session session;
     private String connectionKey;
+    private String pathSpec;
 
-    public DefaultWebsocket(NodeSynchronization sync, WebsocketConsumer consumer) {
+    public DefaultWebsocket(NodeSynchronization sync, String pathSpec, WebsocketConsumer consumer) {
         this.sync = sync;
         this.consumer = consumer;
+        this.pathSpec = pathSpec;
     }
 
-    @Override
+    @OnWebSocketClose
     public void onClose(int closeCode, String message) {
         LOG.trace("onClose {} {}", closeCode, message);
         sync.removeSocket(this);
     }
 
-    @Override
-    public void onOpen(Connection connection) {
-        LOG.trace("onOpen {}", connection);
-        this.connection = connection;
+    @OnWebSocketConnect
+    public void onConnect(Session session) {
+        LOG.trace("onConnect {}", session);
+        this.session = session;
         this.connectionKey = UUID.randomUUID().toString();
         sync.addSocket(this);
     }
 
-    @Override
+    @OnWebSocketMessage
     public void onMessage(String message) {
         LOG.debug("onMessage: {}", message);
         if (this.consumer != null) {
@@ -64,7 +69,7 @@ public class DefaultWebsocket implements WebSocket, OnTextMessage, OnBinaryMessa
     }
 
 
-    @Override
+    @OnWebSocketMessage
     public void onMessage(byte[] data, int offset, int length) {
         LOG.debug("onMessage: byte[]");
         if (this.consumer != null) {
@@ -76,12 +81,16 @@ public class DefaultWebsocket implements WebSocket, OnTextMessage, OnBinaryMessa
         }
     }
 
-    public Connection getConnection() {
-        return connection;
+    public Session getSession() {
+        return session;
+    }
+    
+    public String getPathSpec() {
+        return pathSpec;
     }
 
-    public void setConnection(Connection connection) {
-        this.connection = connection;
+    public void setSession(Session session) {
+        this.session = session;
     }
 
     public String getConnectionKey() {

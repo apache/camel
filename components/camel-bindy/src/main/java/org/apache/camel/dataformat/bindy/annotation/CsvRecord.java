@@ -79,10 +79,21 @@ public @interface CsvRecord {
      * Indicate if the values must be quoted when marshaling (optional)
      */
     boolean quoting() default false;
+    
+    /**
+     * Indicate if the values must be escaped when quoting (optional)
+     */
+    boolean quotingEscaped() default false;
 
     /**
      * Last record spans rest of line (optional)
      */
     boolean autospanLine() default false;
+    
+    /**
+     * The allowEmptyStream parameter will allow to prcoess 
+     * the unavaiable stream for CSV file.
+     */
+    boolean allowEmptyStream() default false;
 
 }

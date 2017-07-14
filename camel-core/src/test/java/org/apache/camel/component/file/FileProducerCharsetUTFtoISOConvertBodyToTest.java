@@ -17,15 +17,15 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.IOHelper;
 
 /**
  *
@@ -55,7 +55,7 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
         }
 
         // write the byte array to a file using plain API
-        FileOutputStream fos = new FileOutputStream("target/charset/input/input.txt");
+        OutputStream fos = Files.newOutputStream(Paths.get("target/charset/input/input.txt"));
         fos.write(utf);
         fos.close();
 
@@ -68,7 +68,7 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
         File file = new File("target/charset/output.txt");
         assertTrue("File should exist", file.exists());
 
-        InputStream fis = IOHelper.buffered(new FileInputStream(file));
+        InputStream fis = Files.newInputStream(Paths.get(file.getAbsolutePath()));
         byte[] buffer = new byte[100];
 
         int len = fis.read(buffer);
@@ -96,7 +96,7 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
             @Override
             public void configure() throws Exception {
                 // the input file is in utf-8
-                from("file:target/charset/input?noop=true&charset=utf-8")
+                from("file:target/charset/input?initialDelay=0&delay=10&noop=true&charset=utf-8")
                     // now convert the input file from utf-8 to iso-8859-1
                     .convertBodyTo(byte[].class, "iso-8859-1")
                     // and write the file using that encoding

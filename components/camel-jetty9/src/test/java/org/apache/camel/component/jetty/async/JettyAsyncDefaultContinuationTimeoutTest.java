@@ -46,7 +46,7 @@ public class JettyAsyncDefaultContinuationTimeoutTest extends BaseJettyTest {
             long taken = watch.stop();
 
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(503, cause.getStatusCode());
+            assertEquals(504, cause.getStatusCode());
 
             // should be approx 30-34 sec.
             assertTrue("Timeout should occur faster than " + taken, taken < 34000);

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.jms.enabled",
+      "description": "Enable jms component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -24,13 +24,13 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
@@ -47,10 +47,12 @@ import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.ObjectValue;
 import net.sf.saxon.value.Whitespace;
 import org.apache.camel.BytesSource;
 import org.apache.camel.Exchange;
@@ -80,6 +82,7 @@ import org.slf4j.LoggerFactory;
 public abstract class XQueryBuilder implements Expression, Predicate, NamespaceAware, Processor {
     private static final Logger LOG = LoggerFactory.getLogger(XQueryBuilder.class);
     private Configuration configuration;
+    private Map<String, Object> configurationProperties = new HashMap<String, Object>();
     private XQueryExpression expression;
     private StaticQueryContext staticQueryContext;
     private Map<String, Object> parameters = new HashMap<String, Object>();
@@ -364,6 +367,10 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         initialized.set(false);
     }
 
+    public Map<String, String> getNamespaces() {
+        return namespacePrefixes;
+    }
+
     public XQueryExpression getExpression() throws IOException, XPathException {
         return expression;
     }
@@ -374,6 +381,16 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
+        // change configuration, we must re initialize
+        initialized.set(false);
+    }
+
+    public Map<String, Object> getConfigurationProperties() {
+        return configurationProperties;
+    }
+
+    public void setConfigurationProperties(Map<String, Object> configurationProperties) {
+        this.configurationProperties = Collections.unmodifiableMap(new HashMap<>(configurationProperties));
         // change configuration, we must re initialize
         initialized.set(false);
     }
@@ -604,12 +621,23 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         throws Exception {
         addParameters(dynamicQueryContext, exchange.getProperties());
         addParameters(dynamicQueryContext, exchange.getIn().getHeaders(), "in.headers.");
-        dynamicQueryContext.setParameter("in.body", exchange.getIn().getBody());
+        dynamicQueryContext.setParameter(
+            StructuredQName.fromClarkName("in.body"),
+            new ObjectValue(exchange.getIn().getBody())
+        );
+
         addParameters(dynamicQueryContext, getParameters());
 
-        dynamicQueryContext.setParameter("exchange", exchange);
+        dynamicQueryContext.setParameter(
+            StructuredQName.fromClarkName("exchange"),
+            new ObjectValue(exchange)
+        );
         if (exchange.hasOut() && exchange.getPattern().isOutCapable()) {
-            dynamicQueryContext.setParameter("out.body", exchange.getOut().getBody());
+            dynamicQueryContext.setParameter(
+                StructuredQName.fromClarkName("out.body"),
+                new ObjectValue(exchange.getOut().getBody())
+            );
+
             addParameters(dynamicQueryContext, exchange.getOut().getHeaders(), "out.headers.");
         }
     }
@@ -621,7 +649,13 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     protected void addParameters(DynamicQueryContext dynamicQueryContext, Map<String, Object> map, String parameterPrefix) {
         Set<Map.Entry<String, Object>> propertyEntries = map.entrySet();
         for (Map.Entry<String, Object> entry : propertyEntries) {
-            dynamicQueryContext.setParameter(parameterPrefix + entry.getKey(), entry.getValue());
+            // skip headers with null values
+            if (entry.getValue() != null) {
+                dynamicQueryContext.setParameter(
+                        StructuredQName.fromClarkName(parameterPrefix + entry.getKey()),
+                        new ObjectValue(entry.getValue())
+                );
+            }
         }
     }
 
@@ -638,13 +672,17 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             LOG.debug("Initializing XQueryBuilder {}", this);
             if (configuration == null) {
                 configuration = new Configuration();
-                configuration.setHostLanguage(Configuration.XQUERY);
                 configuration.setStripsWhiteSpace(isStripsAllWhiteSpace() ? Whitespace.ALL : Whitespace.IGNORABLE);
                 LOG.debug("Created new Configuration {}", configuration);
             } else {
                 LOG.debug("Using existing Configuration {}", configuration);
             }
 
+            if (configurationProperties != null && !configurationProperties.isEmpty()) {
+                for (Map.Entry<String, Object> entry : configurationProperties.entrySet()) {
+                    configuration.setConfigurationProperty(entry.getKey(), entry.getValue());
+                }
+            }
             staticQueryContext = getConfiguration().newStaticQueryContext();
             if (moduleURIResolver != null) {
                 staticQueryContext.setModuleURIResolver(moduleURIResolver);

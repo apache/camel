@@ -54,7 +54,7 @@ final class MockConnectionSettings extends SplunkConfiguration {
     private Service service;
     private Socket socket;
 
-    public MockConnectionSettings(Service service, Socket socket) {
+    MockConnectionSettings(Service service, Socket socket) {
         this.service = service;
         this.socket = socket;
         mockSplunkWriterApi();
@@ -82,7 +82,7 @@ final class MockConnectionSettings extends SplunkConfiguration {
     class MockConnectionFactory extends SplunkConnectionFactory {
         private Service service;
 
-        public MockConnectionFactory(Service service) {
+        MockConnectionFactory(Service service) {
             super("foo", "bar");
             this.service = service;
         }

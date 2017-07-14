@@ -56,10 +56,6 @@ public class JmsDeadLetterQueueUsingTransferExchangeTest extends CamelTestSuppor
         template.sendBody("direct:start", "Kabom");
 
         assertMockEndpointsSatisfied();
-
-        Exchange dead = mock.getReceivedExchanges().get(0);
-        // caused exception is stored as a property
-        assertEquals("Kabom", dead.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
     }
 
     protected CamelContext createCamelContext() throws Exception {

@@ -45,6 +45,8 @@ public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
         String out = template.requestBody("http://localhost:{{port}}/myserver", body, String.class);
         assertEquals(body2, out);
 
+        // give time for file to be deleted
+        Thread.sleep(500);
         // the temporary files should have been deleted
         File file = new File("target/cachedir");
         String[] files = file.list();

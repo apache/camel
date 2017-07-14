@@ -45,7 +45,7 @@ public class InfinispanRemoteProducerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("infinispan://localhost");
+                        .to("infinispan://my-cache?hosts=localhost");
             }
         };
     }

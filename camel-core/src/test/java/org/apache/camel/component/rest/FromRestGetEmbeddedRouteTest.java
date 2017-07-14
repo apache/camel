@@ -43,7 +43,7 @@ public class FromRestGetEmbeddedRouteTest extends ContextTestSupport {
         assertNotNull(rest);
         assertEquals("/say/hello", rest.getPath());
         assertEquals(1, rest.getVerbs().size());
-        ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(1));
+        ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(0));
         assertEquals("mock:hello", to.getUri());
 
         rest = context.getRestDefinitions().get(1);
@@ -51,7 +51,7 @@ public class FromRestGetEmbeddedRouteTest extends ContextTestSupport {
         assertEquals("/say/bye", rest.getPath());
         assertEquals(2, rest.getVerbs().size());
         assertEquals("application/json", rest.getVerbs().get(0).getConsumes());
-        to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(1));
+        to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(0));
         assertEquals("mock:bye", to.getUri());
 
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory

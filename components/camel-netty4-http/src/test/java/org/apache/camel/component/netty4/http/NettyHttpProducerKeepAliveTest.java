@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.netty4.http;
 
-import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -61,7 +62,7 @@ public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
         });
         
         assertMockEndpointsSatisfied();
-        assertEquals(HttpHeaders.Values.CLOSE, ex.getOut().getHeader(HttpHeaders.Names.CONNECTION));
+        assertEquals(HttpHeaderValues.CLOSE.toString(), ex.getOut().getHeader(HttpHeaderNames.CONNECTION.toString()));
     }
     
 

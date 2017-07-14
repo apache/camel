@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.salesforce.api.dto.analytics.reports;
 
+import java.time.ZonedDateTime;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Salesforce DTO for SObject Report
@@ -40,7 +42,7 @@ public class Report extends AbstractSObjectBase {
     private String NamespacePrefix;
 
     // LastRunDate
-    private org.joda.time.DateTime LastRunDate;
+    private ZonedDateTime LastRunDate;
 
     // Format
     @XStreamConverter(PicklistEnumConverter.class)
@@ -77,12 +79,12 @@ public class Report extends AbstractSObjectBase {
     }
 
     @JsonProperty("LastRunDate")
-    public org.joda.time.DateTime getLastRunDate() {
+    public ZonedDateTime getLastRunDate() {
         return this.LastRunDate;
     }
 
     @JsonProperty("LastRunDate")
-    public void setLastRunDate(org.joda.time.DateTime LastRunDate) {
+    public void setLastRunDate(ZonedDateTime LastRunDate) {
         this.LastRunDate = LastRunDate;
     }
 

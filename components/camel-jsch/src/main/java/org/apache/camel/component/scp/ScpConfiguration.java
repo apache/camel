@@ -30,13 +30,13 @@ public class ScpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_SFTP_PORT = 22;
     public static final String DEFAULT_MOD = "664";
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "security", defaultValue = "true")
     private boolean useUserKnownHostsFile = true;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String knownHostsFile;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String privateKeyFile;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String privateKeyFilePassphrase;
     @UriParam(enums = "no,yes", defaultValue = "no")
     private String strictHostKeyChecking;
@@ -44,8 +44,10 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     private String chmod = DEFAULT_MOD;
     // comma separated list of ciphers. 
     // null means default jsch list will be used
-    @UriParam
+    @UriParam(label = "security,advanced")
     private String ciphers;
+    @UriParam(label = "security", secret = true)
+    private String preferredAuthentications;
 
     public ScpConfiguration() {
         setProtocol("scp");
@@ -148,6 +150,19 @@ public class ScpConfiguration extends RemoteFileConfiguration {
 
     public String getCiphers() {
         return ciphers;
+    }
+
+    /**
+     * Set a comma separated list of authentications that will be used in order of preference.
+     * Possible authentication methods are defined by JCraft JSCH. Some examples include: gssapi-with-mic,publickey,keyboard-interactive,password
+     * If not specified the JSCH and/or system defaults will be used.
+     */
+    public void setPreferredAuthentications(final String preferredAuthentications) {
+        this.preferredAuthentications = preferredAuthentications;
+    }
+
+    public String getPreferredAuthentications() {
+        return preferredAuthentications;
     }
 
 }

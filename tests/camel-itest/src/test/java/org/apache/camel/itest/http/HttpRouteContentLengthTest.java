@@ -49,15 +49,11 @@ public class HttpRouteContentLengthTest extends CamelTestSupport {
 
         assertNotNull(out);
         assertEquals("Bye Camel request.: 14", out.getOut().getBody(String.class));
-        
-        
-        
     }
     
     protected String getHttpEndpointScheme() {
         return "http4://localhost:";
     }
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

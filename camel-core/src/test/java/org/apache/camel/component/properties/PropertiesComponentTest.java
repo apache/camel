@@ -573,13 +573,13 @@ public class PropertiesComponentTest extends ContextTestSupport {
     }
 
     public void testCamelProperties() throws Exception {
-        context.getProperties().put("foo", "Hello {{cool.name}}");
-        context.getProperties().put("bar", "cool.name");
+        context.getGlobalOptions().put("foo", "Hello {{cool.name}}");
+        context.getGlobalOptions().put("bar", "cool.name");
 
         context.start();
 
-        assertEquals("Hello Camel", context.getProperties().get("foo"));
-        assertEquals("cool.name", context.getProperties().get("bar"));
+        assertEquals("Hello Camel", context.getGlobalOptions().get("foo"));
+        assertEquals("cool.name", context.getGlobalOptions().get("bar"));
     }
 
     @Override

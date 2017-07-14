@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.chronicle-engine.enabled",
+      "description": "Enable chronicle-engine component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

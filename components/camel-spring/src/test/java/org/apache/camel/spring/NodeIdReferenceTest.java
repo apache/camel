@@ -29,7 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @ContextConfiguration
 public class NodeIdReferenceTest extends SpringRunWithTestSupport {
-    protected String expectedBody = "Godday World";
+    protected String expectedBody = "Hi World";
 
     @Autowired
     protected ProducerTemplate producer;

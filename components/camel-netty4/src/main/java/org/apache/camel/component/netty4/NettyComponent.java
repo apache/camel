@@ -26,13 +26,22 @@ import io.netty.util.concurrent.EventExecutorGroup;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 
-public class NettyComponent extends UriEndpointComponent {
+public class NettyComponent extends UriEndpointComponent implements SSLContextParametersAware {
+
+    @Metadata(label = "advanced")
     private NettyConfiguration configuration;
+    @Metadata(label = "advanced", defaultValue = "16")
+    private int maximumPoolSize = 16;
+    @Metadata(label = "advanced")
     private volatile EventExecutorGroup executorService;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public NettyComponent() {
         super(NettyEndpoint.class);
@@ -44,6 +53,19 @@ public class NettyComponent extends UriEndpointComponent {
 
     public NettyComponent(CamelContext context) {
         super(context, NettyEndpoint.class);
+    }
+
+    public int getMaximumPoolSize() {
+        return maximumPoolSize;
+    }
+
+    /**
+     * The thread pool size for the EventExecutorGroup if its in use.
+     * <p/>
+     * The default value is 16.
+     */
+    public void setMaximumPoolSize(int maximumPoolSize) {
+        this.maximumPoolSize = maximumPoolSize;
     }
 
     @Override
@@ -63,6 +85,10 @@ public class NettyComponent extends UriEndpointComponent {
             if (IntrospectionSupport.getProperties(bootstrapConfiguration, options, null, false)) {
                 IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), config, options);
             }
+        }
+
+        if (config.getSslContextParameters() == null) {
+            config.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         // validate config
@@ -101,6 +127,19 @@ public class NettyComponent extends UriEndpointComponent {
         this.executorService = executorService;
     }
 
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
     public EventExecutorGroup getExecutorService() {
         return executorService;
     }
@@ -110,7 +149,8 @@ public class NettyComponent extends UriEndpointComponent {
         if (configuration == null) {
             configuration = new NettyConfiguration();
         }
-        
+
+        //Only setup the executorService if it is needed
         if (configuration.isUsingExecutorService() && executorService == null) {
             executorService = createExecutorService();
         }
@@ -124,17 +164,22 @@ public class NettyComponent extends UriEndpointComponent {
         // we should use a shared thread pool as recommended by Netty
         String pattern = getCamelContext().getExecutorServiceManager().getThreadNamePattern();
         ThreadFactory factory = new CamelThreadFactory(pattern, "NettyEventExecutorGroup", true);
-        return new DefaultEventExecutorGroup(configuration.getMaximumPoolSize(), factory);
+        return new DefaultEventExecutorGroup(getMaximumPoolSize(), factory);
     }
 
     @Override
     protected void doStop() throws Exception {
-
-        if (executorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+        //Only shutdown the executorService if it is created by netty component
+        if (configuration.isUsingExecutorService() && executorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
             executorService = null;
         }
 
+        //shutdown workerPool if configured
+        if (configuration.getWorkerGroup() != null) {
+            configuration.getWorkerGroup().shutdownGracefully();
+        }
+               
         super.doStop();
     }
 

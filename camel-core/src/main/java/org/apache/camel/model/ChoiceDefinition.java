@@ -30,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -44,7 +45,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
-    @XmlElementRef
+    @XmlElementRef @AsPredicate
     private List<WhenDefinition> whenClauses = new ArrayList<WhenDefinition>();
     @XmlElement
     private OtherwiseDefinition otherwise;
@@ -179,7 +180,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
      * @param predicate the predicate
      * @return the builder
      */
-    public ChoiceDefinition when(Predicate predicate) {
+    public ChoiceDefinition when(@AsPredicate Predicate predicate) {
         addClause(new WhenDefinition(predicate));
         return this;
     }
@@ -189,6 +190,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
      *
      * @return expression to be used as builder to configure the when node
      */
+    @AsPredicate
     public ExpressionClause<ChoiceDefinition> when() {
         ExpressionClause<ChoiceDefinition> clause = new ExpressionClause<ChoiceDefinition>(this);
         addClause(new WhenDefinition(clause));

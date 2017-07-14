@@ -22,9 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- * Defines the <a href="http://aws.amazon.com/sns/">AWS SNS Component</a> 
- */
 public class SnsComponent extends UriEndpointComponent {
     
     public SnsComponent() {
@@ -42,7 +39,11 @@ public class SnsComponent extends UriEndpointComponent {
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Topic name must be specified.");
         }
-        configuration.setTopicName(remaining);
+        if (remaining.startsWith("arn:")) {
+            configuration.setTopicArn(remaining);
+        } else {
+            configuration.setTopicName(remaining);
+        }
 
         if (configuration.getAmazonSNSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSNSClient or accessKey and secretKey must be specified");

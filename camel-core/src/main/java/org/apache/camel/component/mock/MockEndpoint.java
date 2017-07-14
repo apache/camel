@@ -54,7 +54,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ExpressionComparator;
 import org.apache.camel.util.FileUtil;
@@ -64,6 +63,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The mock component is used for testing routes and mediation rules using mocks.
+ * <p/>
  * A Mock endpoint which provides a literate, fluent API for testing routes
  * using a <a href="http://jmock.org/">JMock style</a> API.
  * <p/>
@@ -92,7 +93,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "mock", title = "Mock", syntax = "mock:name", producerOnly = true, label = "core,testing")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "mock", title = "Mock", syntax = "mock:name", producerOnly = true, label = "core,testing", lenientProperties = true)
 public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);
     // must be volatile so changes is visible between the thread which performs the assertions
@@ -117,21 +118,23 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     @UriPath(description = "Name of mock endpoint") @Metadata(required = "true")
     private String name;
-    @UriParam(defaultValue = "-1")
+    @UriParam(label = "producer", defaultValue = "-1")
     private int expectedCount;
-    @UriParam(defaultValue = "0")
+    @UriParam(label = "producer", defaultValue = "0")
     private long sleepForEmptyTest;
-    @UriParam(defaultValue = "0")
+    @UriParam(label = "producer", defaultValue = "0")
     private long resultWaitTime;
-    @UriParam(defaultValue = "0")
+    @UriParam(label = "producer", defaultValue = "0")
     private long resultMinimumWaitTime;
-    @UriParam(defaultValue = "0")
+    @UriParam(label = "producer", defaultValue = "0")
     private long assertPeriod;
-    @UriParam(defaultValue = "-1")
+    @UriParam(label = "producer", defaultValue = "-1")
     private int retainFirst;
-    @UriParam(defaultValue = "-1")
+    @UriParam(label = "producer", defaultValue = "-1")
     private int retainLast;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer")
+    private int reportGroup;
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean copyOnExchange = true;
 
     public MockEndpoint(String endpointUri, Component component) {
@@ -519,7 +522,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      */
     public void expectedHeaderReceived(final String name, final Object value) {
         if (expectedHeaderValues == null) {
-            expectedHeaderValues = new CaseInsensitiveMap();
+            expectedHeaderValues = getCamelContext().getHeadersMapFactory().newMap();
             // we just wants to expects to be called once
             expects(new Runnable() {
                 public void run() {
@@ -677,7 +680,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         }
 
         if (actualValue instanceof Expression) {
-            actualValue = ((Expression)actualValue).evaluate(exchange, expectedValue != null ? expectedValue.getClass() : Object.class);
+            Class clazz = Object.class;
+            if (expectedValue != null) {
+                clazz = expectedValue.getClass();
+            }
+            actualValue = ((Expression)actualValue).evaluate(exchange, clazz);
         } else if (actualValue instanceof Predicate) {
             actualValue = ((Predicate)actualValue).matches(exchange);
         } else if (expectedValue != null) {
@@ -1217,6 +1224,17 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         this.retainLast = retainLast;
     }
 
+    public int isReportGroup() {
+        return reportGroup;
+    }
+
+    /**
+     * A number that is used to turn on throughput logging based on groups of the size.
+     */
+    public void setReportGroup(int reportGroup) {
+        this.reportGroup = reportGroup;
+    }
+
     public boolean isCopyOnExchange() {
         return copyOnExchange;
     }
@@ -1291,7 +1309,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         if (expectedHeaderValues != null) {
             if (actualHeaderValues == null) {
-                actualHeaderValues = new CaseInsensitiveMap();
+                actualHeaderValues = getCamelContext().getHeadersMapFactory().newMap();
             }
             if (in.hasHeaders()) {
                 actualHeaderValues.putAll(in.getHeaders());
@@ -1300,7 +1318,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         if (expectedPropertyValues != null) {
             if (actualPropertyValues == null) {
-                actualPropertyValues = new ConcurrentHashMap<String, Object>();
+                actualPropertyValues = getCamelContext().getHeadersMapFactory().newMap();
             }
             actualPropertyValues.putAll(copy.getProperties());
         }
@@ -1392,7 +1410,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         StopWatch watch = new StopWatch();
         waitForCompleteLatch(resultWaitTime);
-        long delta = watch.stop();
+        long delta = watch.taken();
         LOG.debug("Took {} millis to complete latch", delta);
 
         if (resultMinimumWaitTime > 0 && delta < resultMinimumWaitTime) {

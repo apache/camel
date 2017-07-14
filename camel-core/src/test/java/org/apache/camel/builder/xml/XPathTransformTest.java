@@ -62,7 +62,7 @@ public class XPathTransformTest extends ContextTestSupport {
 
         expect(l.isInfoEnabled()).andReturn(true).anyTimes();
 
-        l.info(contains("Namespaces discovered in message"), anyObject());
+        l.info(contains("Namespaces discovered in message"), anyObject(Object.class));
         expectLastCall().times(1);
         replay(l);
 
@@ -91,7 +91,7 @@ public class XPathTransformTest extends ContextTestSupport {
         expect(l.isInfoEnabled()).andReturn(true).anyTimes();
 
         Capture<String> captures = new Capture<String>(CaptureType.ALL);
-        l.info(capture(captures), anyObject());
+        l.info(capture(captures), anyObject(Object.class));
         expectLastCall().anyTimes();
 
         replay(l);

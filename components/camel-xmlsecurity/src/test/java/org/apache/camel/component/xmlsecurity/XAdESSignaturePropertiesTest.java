@@ -66,6 +66,7 @@ import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
 import org.apache.camel.component.xmlsecurity.util.TestKeystore;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -74,7 +75,17 @@ import static org.apache.camel.component.xmlsecurity.XmlSignatureTest.checkThrow
 public class XAdESSignaturePropertiesTest extends CamelTestSupport {
 
     private static final String NOT_EMPTY = "NOT_EMPTY";
-    private static String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+    private static String payload;
+    
+    static {
+        boolean includeNewLine = true;
+        if (TestSupport.getJavaMajorVersion() >= 9) {
+            includeNewLine = false;
+        }
+        payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + (includeNewLine ? "\n" : "")
+            + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -102,27 +113,27 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
             public void configure() throws Exception {
                 onException(XmlSignatureException.class).handled(true).to("mock:exception");
                 from("direct:enveloped")
-                        .to("xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties&parentLocalName=root&parentNamespace=http://test/test")
+                        .to("xmlsecurity:sign:xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties&parentLocalName=root&parentNamespace=http://test/test")
                         .to("mock:result");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 onException(XmlSignatureException.class).handled(true).to("mock:exception");
-                from("direct:enveloping").to("xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties")
+                from("direct:enveloping").to("xmlsecurity:sign:xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties")
                         .to("mock:result");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 onException(XmlSignatureException.class).handled(true).to("mock:exception");
                 from("direct:emptySignatureId").to(
-                        "xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties&signatureId=").to(
+                        "xmlsecurity:sign:xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties&signatureId=").to(
                         "mock:result");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 onException(Exception.class).handled(false).to("mock:exception");
                 from("direct:detached").to(
-                        "xmlsecurity:sign://detached?keyAccessor=#keyAccessorDefault&xpathsToIdAttributes=#xpathsToIdAttributes&"//
+                        "xmlsecurity:sign:detached?keyAccessor=#keyAccessorDefault&xpathsToIdAttributes=#xpathsToIdAttributes&"//
                                 + "schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&properties=#xmlSignatureProperties")
                         .to("mock:result");
             }
@@ -712,7 +723,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
 
     private XmlSignerEndpoint getSignerEndpoint() {
         return (XmlSignerEndpoint) context().getEndpoint(
-                "xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties");
+                "xmlsecurity:sign:xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties");
     }
 
     private String getPathToSignatureProperties() {
@@ -888,7 +899,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
 
         private String alias = "bob";
 
-        public CertChainXAdESSignatureProperties() {
+        CertChainXAdESSignatureProperties() {
             setAddSigningTime(false);
         }
 

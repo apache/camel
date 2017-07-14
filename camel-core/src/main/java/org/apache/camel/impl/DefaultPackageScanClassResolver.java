@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import org.apache.camel.NonManagedService;
 import org.apache.camel.StaticService;
 import org.apache.camel.impl.scan.AnnotatedWithAnyPackageScanFilter;
 import org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter;
@@ -46,7 +47,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,12 +55,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Default implement of {@link org.apache.camel.spi.PackageScanClassResolver}
  */
-public class DefaultPackageScanClassResolver extends ServiceSupport implements PackageScanClassResolver, StaticService {
+public class DefaultPackageScanClassResolver extends ServiceSupport implements PackageScanClassResolver, StaticService, NonManagedService {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final Set<ClassLoader> classLoaders = new LinkedHashSet<ClassLoader>();
-    // use a JAR cache to speed up scanning JARs, but let it be soft referenced so it can claim the data when memory is needed
-    private final Map<String, List<String>> jarCache = new LRUSoftCache<String, List<String>>(1000);
+    private Map<String, List<String>> jarCache;
     private Set<PackageScanFilter> scanFilters;
     private String[] acceptableSchemes = {};
 
@@ -393,7 +393,6 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
     private void loadImplementationsInJar(PackageScanFilter test, String parent, InputStream stream,
                                                        String urlPath, Set<Class<?>> classes, Map<String, List<String>> jarCache) {
         ObjectHelper.notNull(classes, "classes");
-        ObjectHelper.notNull(jarCache, "jarCache");
 
         List<String> entries = jarCache != null ? jarCache.get(urlPath) : null;
         if (entries == null) {
@@ -416,7 +415,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
      * @param urlPath the url of the jar file to be examined for classes
      * @return all the .class entries from the JAR
      */
-    private List<String> doLoadJarClassEntries(InputStream stream, String urlPath) {
+    protected List<String> doLoadJarClassEntries(InputStream stream, String urlPath) {
         List<String> entries = new ArrayList<String>();
 
         JarInputStream jarStream = null;
@@ -507,8 +506,12 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
-        // noop
+        if (jarCache == null) {
+            // use a JAR cache to speed up scanning JARs, but let it be soft referenced so it can claim the data when memory is needed
+            jarCache = LRUCacheFactory.newLRUCache(1000);
+        }
     }
 
     protected void doStop() throws Exception {

@@ -28,6 +28,7 @@ import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
  * Represents the configuration of a URI query parameter value to allow type conversion
  * and better validation of the configuration of URIs and Endpoints
  */
+@Deprecated
 public class ParameterConfiguration {
     private final String name;
     private final Class<?> parameterType;

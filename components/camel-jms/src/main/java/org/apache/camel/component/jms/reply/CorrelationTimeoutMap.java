@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms.reply;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.support.DefaultTimeoutMap;
@@ -30,9 +31,11 @@ import org.apache.camel.support.DefaultTimeoutMap;
 public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
 
     private CorrelationListener listener;
+    private ExecutorService executorService;
 
-    public CorrelationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
+    public CorrelationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis, ExecutorService executorService) {
         super(executor, requestMapPollTimeMillis);
+        this.executorService = executorService;
     }
 
     public void setListener(CorrelationListener listener) {
@@ -40,7 +43,7 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
         this.listener = listener;
     }
 
-    public boolean onEviction(String key, ReplyHandler value) {
+    public boolean onEviction(final String key, final ReplyHandler value) {
         try {
             if (listener != null) {
                 listener.onEviction(key);
@@ -49,12 +52,23 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
             // ignore
         }
 
-        // trigger timeout
-        try {
-            value.onTimeout(key);
-        } catch (Throwable e) {
-            // must ignore so we ensure we evict the element
-            log.warn("Error processing onTimeout for correlationID: " + key + " due: " + e.getMessage() + ". This exception is ignored.", e);
+        final Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                // trigger timeout
+                try {
+                    value.onTimeout(key);
+                } catch (Throwable e) {
+                    // must ignore so we ensure we evict the element
+                    log.warn("Error processing onTimeout for correlationID: " + key + " due: " + e.getMessage() + ". This exception is ignored.", e);
+                }
+            }
+        };
+        if (executorService != null) {
+            executorService.submit(task);
+        } else {
+            // run task synchronously
+            task.run();
         }
 
         // return true to remove the element

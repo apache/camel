@@ -47,11 +47,12 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
                 fromF("timer://foo?time=%s", time).to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         // period is default 1000 so we can get more messages
         mock.expectedMinimumMessageCount(1);
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
@@ -68,10 +69,11 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
                 fromF("timer://foo?period=0&time=%s", time).to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
@@ -88,11 +90,12 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
                 fromF("timer://foo?fixedRate=true&time=%s", time).to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         // period is default 1000 so we can get more messages
         mock.expectedMinimumMessageCount(1);
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
@@ -109,11 +112,12 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
                 fromF("timer://foo?time=%s", time).to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         // period is default 1000 so we can get more messages
         mock.expectedMinimumMessageCount(1);
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
@@ -130,10 +134,11 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
                 fromF("timer://foo?period=0&time=%s", time).to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
@@ -150,11 +155,12 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
                 fromF("timer://foo?time=%s&pattern=dd-MM-yyyy HH:mm:ss", time).to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         // period is default 1000 so we can get more messages
         mock.expectedMinimumMessageCount(1);
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
@@ -171,10 +177,11 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
                 fromF("timer://foo?period=0&time=%s&pattern=dd-MM-yyyy HH:mm:ss", time).to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }

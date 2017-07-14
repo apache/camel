@@ -37,8 +37,24 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 public @interface Consume {
+
+    /**
+     * The uri to consume from
+     */
     String uri() default "";
+
+    /**
+     * Reference to endpoint to consume from
+     */
     String ref() default "";
+
+    /**
+     * Use the field or getter on the bean to provide the uri to consume from
+     */
     String property() default "";
+
+    /**
+     * Id of {@link CamelContext} to use
+     */
     String context() default "";
 }

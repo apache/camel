@@ -1,0 +1,75 @@
+# Spring Boot and ServiceCall EIP Example
+
+This example show how to use Camel with ServiceCall EIP with spring-boot and consul.
+
+This example includes two maven modules:
+
+ - services that exposes a number of services
+ - consumer that consumes services
+
+## Configuration
+
+The consumer is configured in the src/main/resources/application.properties in which we blacklist some services for being discovered and we add some additional services not managed by consul
+
+    # Configure service filter
+    camel.cloud.service-filter.blacklist[service-1] = localhost:9012
+
+    # Configure additional services
+    camel.cloud.service-discovery.services[service-2] = localhost:9021,localhost:9022,localhost:9023
+
+
+## Build
+
+You can build this example using
+
+    mvn compile
+
+## Run the example
+
+Using multiple shells:
+
+ - start consul:
+
+  $ cd services
+  $ src/main/bash/consul-run-linux.sh      (for linux)
+  $ src/main/bash/consul-run-osx.sh        (for mac osx)
+
+ - start the service-1 service group:
+
+  $ cd services
+  $ mvn spring-boot:run -Dspring.profiles.active=service-1
+
+  - start the service-2 service group:
+
+  $ cd services
+  $ mvn spring-boot:run -Dspring.profiles.active=service-2
+
+  - start the consumer
+
+  $ cd consumer
+  $ mvn spring-boot:run
+
+## Test the example:
+
+In a new shell:
+
+  $ curl localhost:8080/camel/serviceCall/service1
+  Hi!, I'm service-1 on camel-1/route1
+  $ curl localhost:8080/camel/serviceCall/service2
+  Hi!, I'm service-1 on camel-1/route2
+
+If you keep calling the http endpoint you'll notice they are consumed using a round robin policy and that one of the services registered in consul is not taken into account according to the blacklist.
+
+## Web console
+
+You can open the Consul web console
+
+     http://localhost:8500/ui
+
+Where you can find information about the services and its state.
+     
+
+## More information
+
+You can find more information about Apache Camel at the website: http://camel.apache.org/
+

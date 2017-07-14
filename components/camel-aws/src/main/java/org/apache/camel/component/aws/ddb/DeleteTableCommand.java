@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.aws.ddb;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
-
 import org.apache.camel.Exchange;
 
 public class DeleteTableCommand extends AbstractDdbCommand {
+
     public DeleteTableCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration,
                               Exchange exchange) {
         super(ddbClient, configuration, exchange);
@@ -33,12 +36,14 @@ public class DeleteTableCommand extends AbstractDdbCommand {
         TableDescription tableDescription = ddbClient
                 .deleteTable(new DeleteTableRequest(determineTableName())).getTableDescription();
 
-        addToResult(DdbConstants.PROVISIONED_THROUGHPUT, tableDescription.getProvisionedThroughput());
-        addToResult(DdbConstants.CREATION_DATE, tableDescription.getCreationDateTime());
-        addToResult(DdbConstants.ITEM_COUNT, tableDescription.getItemCount());
-        addToResult(DdbConstants.KEY_SCHEMA, tableDescription.getKeySchema());
-        addToResult(DdbConstants.TABLE_NAME, tableDescription.getTableName());
-        addToResult(DdbConstants.TABLE_SIZE, tableDescription.getTableSizeBytes());
-        addToResult(DdbConstants.TABLE_STATUS, tableDescription.getTableStatus());
+        Map tmp = new HashMap<>();
+        tmp.put(DdbConstants.PROVISIONED_THROUGHPUT, tableDescription.getProvisionedThroughput());
+        tmp.put(DdbConstants.CREATION_DATE, tableDescription.getCreationDateTime());
+        tmp.put(DdbConstants.ITEM_COUNT, tableDescription.getItemCount());
+        tmp.put(DdbConstants.KEY_SCHEMA, tableDescription.getKeySchema());
+        tmp.put(DdbConstants.TABLE_NAME, tableDescription.getTableName());
+        tmp.put(DdbConstants.TABLE_SIZE, tableDescription.getTableSizeBytes());
+        tmp.put(DdbConstants.TABLE_STATUS, tableDescription.getTableStatus());
+        addToResults(tmp);
     }
 }

@@ -19,12 +19,8 @@ package org.apache.camel.component.atmos.integration.producer;
 import org.apache.camel.component.atmos.AtmosConfiguration;
 import org.apache.camel.component.atmos.AtmosEndpoint;
 import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AtmosProducer extends DefaultProducer {
-
-    private static final transient Logger LOG = LoggerFactory.getLogger(AtmosProducer.class);
 
     protected AtmosEndpoint endpoint;
     protected AtmosConfiguration configuration;
@@ -40,8 +36,6 @@ public abstract class AtmosProducer extends DefaultProducer {
         if (configuration.getClient() == null) {
             //create atmos client
             configuration.createClient();
-
-            LOG.info("producer atmos client created");
         }
 
         super.doStart();
@@ -49,10 +43,8 @@ public abstract class AtmosProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (configuration.getClient() == null) {
+        if (configuration.getClient() != null) {
             configuration.setClient(null);
-
-            LOG.info("producer atmos client deleted");
         }
         super.doStop();
     }

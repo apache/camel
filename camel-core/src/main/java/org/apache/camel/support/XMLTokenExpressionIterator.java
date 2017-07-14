@@ -48,7 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * An {@link org.apache.camel.language.tokenizer.XMLTokenizeLanguage} based iterator.
  */
 public class XMLTokenExpressionIterator extends ExpressionAdapter implements NamespaceAware {
     protected final String path;
@@ -72,6 +72,11 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         this.nsmap = nsmap;
     }
 
+    @Override
+    public Map<String, String> getNamespaces() {
+        return nsmap;
+    }
+
     public void setMode(char mode) {
         this.mode = mode;
     }
@@ -89,19 +94,11 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
     }
 
     protected Iterator<?> createIterator(InputStream in, String charset) throws XMLStreamException, UnsupportedEncodingException {
-        Reader reader;
-        if (charset == null) {
-            reader = new InputStreamReader(in);
-        } else {
-            reader = new InputStreamReader(in, charset);
-        }
-        XMLTokenIterator iterator = new XMLTokenIterator(path, nsmap, mode, group, reader);
-        return iterator;
+        return new XMLTokenIterator(path, nsmap, mode, group, in, charset);
     }
 
     protected Iterator<?> createIterator(Reader in) throws XMLStreamException {
-        XMLTokenIterator iterator = new XMLTokenIterator(path, nsmap, mode, group, in);
-        return iterator;
+        return new XMLTokenIterator(path, nsmap, mode, group, in);
     }
 
     @Override
@@ -158,6 +155,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         private static final Logger LOG = LoggerFactory.getLogger(XMLTokenIterator.class);
         private static final Pattern NAMESPACE_PATTERN = Pattern.compile("xmlns(:\\w+|)\\s*=\\s*('[^']*'|\"[^\"]*\")");
 
+        private transient InputStream originalInputStream;
+
         private AttributedQName[] splitpath;
         private int index;
         private char mode;
@@ -178,23 +177,25 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
         private Object nextToken;
         
-        public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, InputStream in, String charset) 
+        XMLTokenIterator(String path, Map<String, String> nsmap, char mode, InputStream in, String charset) 
             throws XMLStreamException, UnsupportedEncodingException {
             // woodstox's getLocation().etCharOffset() does not return the offset correctly for InputStream, so use Reader instead.
             this(path, nsmap, mode, 1, new InputStreamReader(in, charset));
+            this.originalInputStream = in;
         }
 
-        public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, int group, InputStream in, String charset) 
+        XMLTokenIterator(String path, Map<String, String> nsmap, char mode, int group, InputStream in, String charset) 
             throws XMLStreamException, UnsupportedEncodingException {
             // woodstox's getLocation().etCharOffset() does not return the offset correctly for InputStream, so use Reader instead.
-            this(path, nsmap, mode, new InputStreamReader(in, charset));
+            this(path, nsmap, mode, group, new InputStreamReader(in, charset));
+            this.originalInputStream = in;
         }
 
-        public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, Reader in) throws XMLStreamException {
+        XMLTokenIterator(String path, Map<String, String> nsmap, char mode, Reader in) throws XMLStreamException {
             this(path, nsmap, mode, 1, in);
         }
 
-        public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, int group, Reader in) throws XMLStreamException {
+        XMLTokenIterator(String path, Map<String, String> nsmap, char mode, int group, Reader in) throws XMLStreamException {
             final String[] sl = path.substring(1).split("/");
             this.splitpath = new AttributedQName[sl.length];
             for (int i = 0; i < sl.length; i++) {
@@ -278,7 +279,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             return c;
         }
         
-        private String getCurrenText() {
+        private String getCurrentText() {
             int pos = reader.getLocation().getCharacterOffset();
             String txt = in.getText(pos - consumed);
             consumed = pos;
@@ -357,7 +358,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             readCurrent(true);
             popName();
             
-            String token = createContextualToken(getCurrenText());
+            String token = createContextualToken(getCurrentText());
             if (mode == 'i') {
                 popNamespaces();
             }
@@ -466,7 +467,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         LOG.trace("se={}; depth={}; trackdepth={}", new Object[]{name, depth, trackdepth});
                     }
                     
-                    String token = getCurrenText();
+                    String token = getCurrentText();
                     // perform the second compliance test
                     if (!compliant) {
                         if (token != null && token.startsWith("<") && !token.startsWith("<?")) {
@@ -600,8 +601,12 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         public void close() throws IOException {
             try {
                 reader.close();
-            } catch (XMLStreamException e) {
-                throw new IOException(e);
+            } catch (Exception e) {
+                // ignore
+            }
+            // need to close the original input stream as well as the reader do not delegate close it
+            if (originalInputStream != null) {
+                IOHelper.close(originalInputStream);
             }
         }
     }
@@ -611,17 +616,17 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         private Pattern lcpattern;
         private boolean nsany;
         
-        public AttributedQName(String localPart) {
+        AttributedQName(String localPart) {
             super(localPart);
             checkWildcard("", localPart);
         }
 
-        public AttributedQName(String namespaceURI, String localPart, String prefix) {
+        AttributedQName(String namespaceURI, String localPart, String prefix) {
             super(namespaceURI, localPart, prefix);
             checkWildcard(namespaceURI, localPart);
         }
 
-        public AttributedQName(String namespaceURI, String localPart) {
+        AttributedQName(String namespaceURI, String localPart) {
             super(namespaceURI, localPart);
             checkWildcard(namespaceURI, localPart);
         }

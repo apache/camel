@@ -19,6 +19,7 @@ package org.apache.camel.management;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +28,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version 
@@ -114,8 +117,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // give it time to complete
-        Thread.sleep(200);
+        assertTrue(oneExchangeDone.matchesMockWaitTime());
 
         assertEquals(12, events.size());
         ExchangeSendingEvent e0 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(0));
@@ -153,9 +155,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give it time to complete
-        Thread.sleep(200);
-
-        assertEquals(6, events.size());
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(6, events.size()));
 
         // we should find log:foo which we tapped
         // which runs async so they can be in random order

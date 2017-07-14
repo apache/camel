@@ -39,7 +39,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onCompletion().parallelProcessing()
                     .to("mock:before")
-                    .delay(1000)
+                    .delay(250)
                     .setBody(simple("OnComplete:${body}"))
                     .to("mock:after");
 
@@ -69,7 +69,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onCompletion().parallelProcessing()
                     .to("mock:before")
-                    .delay(1000)
+                    .delay(250)
                     .setBody(simple("OnComplete:${body}"))
                     .to("mock:after");
 
@@ -103,7 +103,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onCompletion().useOriginalBody().parallelProcessing()
                     .to("mock:before")
-                    .delay(1000)
+                    .delay(250)
                     .setBody(simple("OnComplete:${body}"))
                     .to("mock:after");
 
@@ -133,7 +133,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onCompletion().useOriginalBody().parallelProcessing()
                     .to("mock:before")
-                    .delay(1000)
+                    .delay(250)
                     .setBody(simple("OnComplete:${body}"))
                     .to("mock:after");
 
@@ -168,7 +168,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onCompletion().parallelProcessing()
                     .to("mock:before")
-                    .delay(1000)
+                    .delay(250)
                     .setBody(simple("OnComplete:${body}"))
                     // this exception does not cause any side effect as we are in async mode
                     .throwException(new IllegalAccessException("From onComplete"))

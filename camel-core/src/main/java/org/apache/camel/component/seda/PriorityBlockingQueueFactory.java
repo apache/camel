@@ -24,6 +24,7 @@ import java.util.concurrent.PriorityBlockingQueue;
  * Implementation of {@link BlockingQueueFactory} producing {@link java.util.concurrent.PriorityBlockingQueue}
  */
 public class PriorityBlockingQueueFactory<E> implements BlockingQueueFactory<E> {
+
     /**
      * Comparator used to sort exchanges
      */

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.language.groovy.enabled",
+      "description": "Enable groovy language",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

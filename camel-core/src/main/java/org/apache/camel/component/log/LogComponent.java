@@ -24,6 +24,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.processor.DefaultExchangeFormatter;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 public class LogComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(LogComponent.class);
 
+    @Metadata(label = "advanced")
     private ExchangeFormatter exchangeFormatter;
 
     public LogComponent() {
@@ -73,7 +75,7 @@ public class LogComponent extends UriEndpointComponent {
         if (localFormatter != null) {
             setProperties(localFormatter, parameters);
         } else if (localFormatter == null && exchangeFormatter != null) {
-            // do not set properties, the exchangeFormatter is explicitly set, thefore the 
+            // do not set properties, the exchangeFormatter is explicitly set, therefore the
             // user would have set its properties explicitly too
             localFormatter = exchangeFormatter;
         } else {
@@ -96,8 +98,8 @@ public class LogComponent extends UriEndpointComponent {
     /**
      * Gets optional {@link Logger} instance from parameters. If non-null, the provided instance will be used as
      * {@link Logger} in {@link CamelLogger}
-     * 
-     * @param parameters
+     *
+     * @param parameters the parameters
      * @return the Logger object from the parameter
      */
     protected Logger getLogger(Map<String, Object> parameters) {

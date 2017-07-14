@@ -22,7 +22,7 @@ public enum DropboxUploadMode {
 
     private final String text;
 
-    private DropboxUploadMode(final String text) {
+    DropboxUploadMode(final String text) {
         this.text = text;
     }
 

@@ -262,7 +262,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         private Lock deliveryRequestLock = new ReentrantLock();
         private Condition deliveryRequestCondition = deliveryRequestLock.newCondition();
         
-        public Delivery() {
+        Delivery() {
             super(camelContext.getExecutorServiceManager().resolveThreadName("Resequencer Delivery"));
         }
         

@@ -32,12 +32,14 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation", title = "Protobuf")
+@Metadata(firstVersion = "2.2.0", label = "dataformat,transformation", title = "Protobuf")
 @XmlRootElement(name = "protobuf")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProtobufDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String instanceClass;
+    @XmlAttribute @Metadata(enums = "native,json", defaultValue = "native")
+    private String contentTypeFormat;
     @XmlTransient
     private Object defaultInstance;
     
@@ -49,6 +51,12 @@ public class ProtobufDataFormat extends DataFormatDefinition {
         this();
         setInstanceClass(instanceClass); 
     }
+    
+    public ProtobufDataFormat(String instanceClass, String contentTypeFormat) {
+        this();
+        setInstanceClass(instanceClass);
+        setContentTypeFormat(contentTypeFormat);
+    }
 
     public String getInstanceClass() {
         return instanceClass;
@@ -59,6 +67,20 @@ public class ProtobufDataFormat extends DataFormatDefinition {
      */
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;
+    }
+    
+    /**
+     * Defines a content type format in which protobuf message will be
+     * serialized/deserialized from(to) the Java been.
+     * The format can either be native or json for either native protobuf or json fields representation.
+     * The default value is native.
+     */
+    public void setContentTypeFormat(String contentTypeFormat) {
+        this.contentTypeFormat = contentTypeFormat;
+    }
+
+    public String getContentTypeFormat() {
+        return contentTypeFormat;
     }
 
     public Object getDefaultInstance() {
@@ -73,6 +95,9 @@ public class ProtobufDataFormat extends DataFormatDefinition {
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (this.instanceClass != null) {
             setProperty(camelContext, dataFormat, "instanceClass", instanceClass);
+        }
+        if (this.contentTypeFormat != null) {
+            setProperty(camelContext, dataFormat, "contentTypeFormat", contentTypeFormat);
         }
         if (this.defaultInstance != null) {
             setProperty(camelContext, dataFormat, "defaultInstance", defaultInstance);

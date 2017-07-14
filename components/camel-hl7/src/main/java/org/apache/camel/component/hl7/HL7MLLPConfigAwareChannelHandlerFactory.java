@@ -27,11 +27,11 @@ abstract class HL7MLLPConfigAwareChannelHandlerFactory extends DefaultChannelHan
 
     protected final HL7MLLPConfig config;
 
-    public HL7MLLPConfigAwareChannelHandlerFactory() {
+    HL7MLLPConfigAwareChannelHandlerFactory() {
         this(new HL7MLLPConfig());
     }
 
-    public HL7MLLPConfigAwareChannelHandlerFactory(HL7MLLPConfig config) {
+    HL7MLLPConfigAwareChannelHandlerFactory(HL7MLLPConfig config) {
         this.config = config;
     }
     

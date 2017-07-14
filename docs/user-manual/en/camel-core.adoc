@@ -1,0 +1,55 @@
+[TIP]
+====
+This page is work in progress. The layering is probably not yet correct
+====
+
+Camel-core is the basic module of apache camel. It contains the public
+API and the Java DSL and several implementation packages.
+
+The most important packages are:
+[width="100%",cols="20%,80%",options="header",]
+|=======================================================================
+|Package Name |Description
+
+|builder |The Camel Domain Specific Language for creating Routes, Predicates,
+Expressions and Error Handlers
+
+|model |Contains the classes (*Type) that form the java DSL. The central class
+is the RouteBuilder
+
+|language |Language APIs and plugins for Expressions and Predicates
+
+|component |Some simple components like bean or log. You will find most components
+in the other camel modules
+
+|impl |Implementation classes for model and camel
+
+|processor |Processors to implement the Enterprise Integration Patterns
+
+|spi |Service provider interfaces. Strategy APIs for implementors to extend
+Camel
+
+|camel |Base package for camel. Defintions like Message and CamelContext can be
+found there
+|=======================================================================
+
+[[Camel-Core-ArchitectureDiagram]]
+Architecture Diagram
+--------------------
+
+The diagram shows the (relaxed) layering of the top level packages in
+camel-core. Relaxed means that a layer may reference any layer below
+it.image:camel-core.data/architecture.png[image]
+
+[[Camel-Core-ArchitectureDiagramincludingcurrentviolations]]
+Architecture Diagram including current violations 
+--------------------------------------------------
+
+Each arrow upwards shows a violation in the layering. That means some
+class inside the package references a class of a package above it. These
+diagrams were built with an architecture tool called structure 101. We
+have an offer from the manufacturer headway software to supply us with
+licenses for all camel developers that are interested. If you want a
+license please contact me (Christian Schneider chris at
+die-schneider.net). I will then try to organize a license for you. +
+ image:camel-core.data/architecture_incl_violations.png[image]

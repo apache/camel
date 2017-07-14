@@ -68,7 +68,7 @@ public final class ResultSetConversionStrategies {
     private static class LimitResultSetConversionStrategy implements ResultSetConversionStrategy {
         private final int rowMax;
 
-        public LimitResultSetConversionStrategy(int rowMax) {
+        LimitResultSetConversionStrategy(int rowMax) {
             this.rowMax = rowMax;
         }
 

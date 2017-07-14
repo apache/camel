@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation", title = "Base64")
+@Metadata(firstVersion = "2.11.0", label = "dataformat,transformation", title = "Base64")
 @XmlRootElement(name = "base64")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Base64DataFormat extends DataFormatDefinition {

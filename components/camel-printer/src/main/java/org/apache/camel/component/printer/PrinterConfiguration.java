@@ -40,9 +40,9 @@ public class PrinterConfiguration {
 
     @UriPath @Metadata(required = "true")
     private String hostname;
-    @UriPath @Metadata(required = "true")
+    @UriPath
     private int port;
-    @UriPath @Metadata(required = "true")
+    @UriPath
     private String printername;
     @UriParam
     private String printerPrefix;

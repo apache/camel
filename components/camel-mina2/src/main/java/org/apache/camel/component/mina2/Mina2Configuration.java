@@ -43,45 +43,47 @@ public class Mina2Configuration implements Cloneable {
     private int port;
     @UriParam(defaultValue = "true")
     private boolean sync = true;
-    @UriParam
+    @UriParam(label = "codec")
     private boolean textline;
-    @UriParam
+    @UriParam(label = "codec")
     private Mina2TextLineDelimiter textlineDelimiter;
-    @UriParam
+    @UriParam(label = "codec")
     private ProtocolCodecFactory codec;
-    @UriParam
+    @UriParam(label = "codec")
     private String encoding;
+    @UriParam(defaultValue = "10000")
+    private long writeTimeout = 10000;
     @UriParam(defaultValue = "30000")
     private long timeout = 30000;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean lazySessionCreation = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean transferExchange;
     @UriParam
     private boolean minaLogger;
-    @UriParam(defaultValue = "-1")
+    @UriParam(label = "codec", defaultValue = "-1")
     private int encoderMaxLineLength = -1;
-    @UriParam(defaultValue = "1024")
+    @UriParam(label = "codec", defaultValue = "1024")
     private int decoderMaxLineLength = 1024;
-    @UriParam
+    @UriParam(label = "codec")
     private List<IoFilter> filters;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "codec", defaultValue = "true")
     private boolean allowDefaultCodec = true;
     @UriParam
     private boolean disconnect;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean disconnectOnNoReply = true;
-    @UriParam(defaultValue = "WARN")
+    @UriParam(label = "consumer,advanced", defaultValue = "WARN")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
-    @UriParam
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "security", defaultValue = "true")
     private boolean autoStartTls = true;
-    @UriParam(defaultValue = "16")
+    @UriParam(label = "advanced", defaultValue = "16")
     private int maximumPoolSize = 16; // 16 is the default mina setting
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "advanced", defaultValue = "true")
     private boolean orderedThreadPoolExecutor = true;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean cachedAddress = true;
     @UriParam(label = "consumer")
     private boolean clientMode;
@@ -198,6 +200,17 @@ public class Mina2Configuration implements Cloneable {
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
+    }
+
+    public long getWriteTimeout() {
+        return writeTimeout;
+    }
+
+    /**
+     * Maximum amount of time it should take to send data to the MINA session. Default is 10000 milliseconds.
+     */
+    public void setWriteTimeout(long writeTimeout) {
+        this.writeTimeout = writeTimeout;
     }
 
     public long getTimeout() {

@@ -20,7 +20,6 @@ import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import com.amazonaws.services.simpledb.model.UpdateCondition;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,15 +38,6 @@ public abstract class AbstractSdbCommand {
     }
 
     public abstract void execute();
-    
-    protected Message getMessageForResponse(Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
-    }
 
     protected String determineDomainName() {
         String domainName = exchange.getIn().getHeader(SdbConstants.DOMAIN_NAME, String.class);

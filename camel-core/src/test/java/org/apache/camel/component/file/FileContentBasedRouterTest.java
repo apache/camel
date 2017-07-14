@@ -38,31 +38,30 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
     }
 
     public void testRouteLondon() throws Exception {
-        sendFiles();
-
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
         // should not load the content of the body into memory unless demand for it
         // so the type received should be a GenericFile (holder for the file)
         mock.message(0).body().isInstanceOf(GenericFile.class);
 
+        sendFiles();
+
         assertMockEndpointsSatisfied();
     }
 
     public void testRouteParis() throws Exception {
-        sendFiles();
-
         MockEndpoint mock = getMockEndpoint("mock:paris");
         mock.expectedMessageCount(1);
         // should not load the content of the body into memory unless demand for it
         // so the type received should be a GenericFile (holder for the file)
         mock.message(0).body().isInstanceOf(GenericFile.class);
 
+        sendFiles();
+
         assertMockEndpointsSatisfied();
     }
 
     public void testRouteOther() throws Exception {
-        sendFiles();
 
         MockEndpoint mock = getMockEndpoint("mock:other");
         mock.expectedMessageCount(1);
@@ -70,6 +69,8 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
         // should not load the content of the body into memory unless demand for it
         // so the type received should be a GenericFile (holder for the file)
         mock.message(0).body().isInstanceOf(GenericFile.class);
+
+        sendFiles();
 
         assertMockEndpointsSatisfied();
     }
@@ -79,7 +80,7 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/cbr?noop=true")
+                from("file://target/cbr?noop=true&initialDelay=0&delay=10")
                     .choice()
                         .when(header("CamelFileName").isEqualTo("london.txt")).to("mock:london")
                         .when(header("CamelFileName").isEqualTo("paris.txt")).to("mock:paris")

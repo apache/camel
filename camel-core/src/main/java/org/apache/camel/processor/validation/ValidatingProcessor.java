@@ -16,14 +16,12 @@
  */
 package org.apache.camel.processor.validation;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -61,21 +59,23 @@ import org.slf4j.LoggerFactory;
  */
 public class ValidatingProcessor implements AsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(ValidatingProcessor.class);
-    private final XmlConverter converter = new XmlConverter();
-    private String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
-    private volatile Schema schema;
-    private Source schemaSource;
-    private volatile SchemaFactory schemaFactory;
-    private URL schemaUrl;
-    private File schemaFile;
-    private byte[] schemaAsByteArray;
+    private final SchemaReader schemaReader;
     private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
+    private final XmlConverter converter = new XmlConverter();
     private boolean useDom;
     private boolean useSharedSchema = true;
-    private LSResourceResolver resourceResolver;
     private boolean failOnNullBody = true;
     private boolean failOnNullHeader = true;
     private String headerName;
+
+    public ValidatingProcessor() {
+        schemaReader = new SchemaReader();
+    }
+
+    public ValidatingProcessor(SchemaReader schemaReader) {
+        // schema reader can be a singelton per schema, therefore make reuse, see ValidatorEndpoint and ValidatorProducer
+        this.schemaReader = schemaReader;
+    }
 
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
@@ -182,84 +182,66 @@ public class ValidatingProcessor implements AsyncProcessor {
     }
 
     public void loadSchema() throws Exception {
-        // force loading of schema
-        schema = createSchema();
+        schemaReader.loadSchema();
     }
 
     // Properties
     // -----------------------------------------------------------------------
 
     public Schema getSchema() throws IOException, SAXException {
-        if (schema == null) {
-            synchronized (this) {
-                if (schema == null) {
-                    schema = createSchema();
-                }
-            }
-        }
-        return schema;
+        return schemaReader.getSchema();
     }
 
     public void setSchema(Schema schema) {
-        this.schema = schema;
+        schemaReader.setSchema(schema);
     }
 
     public String getSchemaLanguage() {
-        return schemaLanguage;
+        return schemaReader.getSchemaLanguage();
     }
 
     public void setSchemaLanguage(String schemaLanguage) {
-        this.schemaLanguage = schemaLanguage;
+        schemaReader.setSchemaLanguage(schemaLanguage);
     }
 
     public Source getSchemaSource() throws IOException {
-        if (schemaSource == null) {
-            schemaSource = createSchemaSource();
-        }
-        return schemaSource;
+        return schemaReader.getSchemaSource();
     }
 
     public void setSchemaSource(Source schemaSource) {
-        this.schemaSource = schemaSource;
+        schemaReader.setSchemaSource(schemaSource);
     }
 
     public URL getSchemaUrl() {
-        return schemaUrl;
+        return schemaReader.getSchemaUrl();
     }
 
     public void setSchemaUrl(URL schemaUrl) {
-        this.schemaUrl = schemaUrl;
+        schemaReader.setSchemaUrl(schemaUrl);
     }
 
     public File getSchemaFile() {
-        return schemaFile;
+        return schemaReader.getSchemaFile();
     }
 
     public void setSchemaFile(File schemaFile) {
-        this.schemaFile = schemaFile;
+        schemaReader.setSchemaFile(schemaFile);
     }
 
     public byte[] getSchemaAsByteArray() {
-        return schemaAsByteArray;
+        return schemaReader.getSchemaAsByteArray();
     }
 
     public void setSchemaAsByteArray(byte[] schemaAsByteArray) {
-        this.schemaAsByteArray = schemaAsByteArray;
+        schemaReader.setSchemaAsByteArray(schemaAsByteArray);
     }
 
     public SchemaFactory getSchemaFactory() {
-        if (schemaFactory == null) {
-            synchronized (this) {
-                if (schemaFactory == null) {
-                    schemaFactory = createSchemaFactory();
-                }
-            }
-        }
-        return schemaFactory;
+        return schemaReader.getSchemaFactory();
     }
 
     public void setSchemaFactory(SchemaFactory schemaFactory) {
-        this.schemaFactory = schemaFactory;
+        schemaReader.setSchemaFactory(schemaFactory);
     }
 
     public ValidatorErrorHandler getErrorHandler() {
@@ -294,11 +276,11 @@ public class ValidatingProcessor implements AsyncProcessor {
     }
 
     public LSResourceResolver getResourceResolver() {
-        return resourceResolver;
+        return schemaReader.getResourceResolver();
     }
 
     public void setResourceResolver(LSResourceResolver resourceResolver) {
-        this.resourceResolver = resourceResolver;
+        schemaReader.setResourceResolver(resourceResolver);
     }
 
     public boolean isFailOnNullBody() {
@@ -329,45 +311,15 @@ public class ValidatingProcessor implements AsyncProcessor {
     // -----------------------------------------------------------------------
 
     protected SchemaFactory createSchemaFactory() {
-        SchemaFactory factory = SchemaFactory.newInstance(schemaLanguage);
-        if (getResourceResolver() != null) {
-            factory.setResourceResolver(getResourceResolver());
-        }
-        return factory;
+        return schemaReader.createSchemaFactory();
     }
 
     protected Source createSchemaSource() throws IOException {
-        throw new IllegalArgumentException("You must specify either a schema, schemaFile, schemaSource or schemaUrl property");
+        return schemaReader.createSchemaSource();
     }
 
     protected Schema createSchema() throws SAXException, IOException {
-        SchemaFactory factory = getSchemaFactory();
-
-        URL url = getSchemaUrl();
-        if (url != null) {
-            synchronized (this) {
-                return factory.newSchema(url);
-            }
-        }
-
-        File file = getSchemaFile();
-        if (file != null) {
-            synchronized (this) {
-                return factory.newSchema(file);
-            }
-        }
-
-        byte[] bytes = getSchemaAsByteArray();
-        if (bytes != null) {
-            synchronized (this) {
-                return factory.newSchema(new StreamSource(new ByteArrayInputStream(schemaAsByteArray)));
-            }
-        }
-
-        Source source = getSchemaSource();
-        synchronized (this) {
-            return factory.newSchema(source);
-        }
+        return schemaReader.createSchema();
     }
 
     /**

@@ -16,16 +16,14 @@
  */
 package org.apache.camel.support;
 
-import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
+
 import java.text.MessageFormat;
-import java.util.ArrayList;
+
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;

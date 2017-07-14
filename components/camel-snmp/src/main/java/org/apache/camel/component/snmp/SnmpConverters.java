@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.StringHelper;
 import org.snmp4j.PDU;
 import org.snmp4j.PDUv1;
 import org.snmp4j.smi.OID;
@@ -51,7 +52,7 @@ public final class SnmpConverters {
         try {
             OIDList list = new OIDList();
 
-            if (s != null && s.indexOf(",") != -1) {
+            if (s != null && s.contains(",")) {
                 // seems to be a comma separated oid list
                 StringTokenizer strTok = new StringTokenizer(s, ",");
                 while (strTok.hasMoreTokens()) {
@@ -121,7 +122,7 @@ public final class SnmpConverters {
             sb.append(b.getOid().toString());
             sb.append(OID_TAG_CLOSE);
             sb.append(VALUE_TAG_OPEN);
-            sb.append(getXmlSafeString(b.getVariable().toString()));
+            sb.append(StringHelper.xmlEncode(b.getVariable().toString()));
             sb.append(VALUE_TAG_CLOSE);
             sb.append(ENTRY_TAG_CLOSE);
         }
@@ -132,7 +133,4 @@ public final class SnmpConverters {
         return sb.toString();
     }
 
-    private static String getXmlSafeString(String string) {
-        return string.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("&", "&amp;").replaceAll("\"", "&quot;").replaceAll("'", "&apos;");
-    }
 }

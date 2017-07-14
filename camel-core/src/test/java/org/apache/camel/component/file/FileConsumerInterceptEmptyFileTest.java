@@ -57,7 +57,7 @@ public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
             public void configure() throws Exception {
                 interceptFrom().when(simple("${file:length} == 0")).to("mock:skip").stop();
 
-                from("file://target/exclude/")
+                from("file://target/exclude/?initialDelay=10&delay=10")
                     .convertBodyTo(String.class).to("log:test").to("mock:result");
             }
         };

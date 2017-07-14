@@ -35,7 +35,9 @@ import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
@@ -60,6 +62,8 @@ public class DefaultRouteContext implements RouteContext {
     private boolean routeAdded;
     private Boolean trace;
     private Boolean messageHistory;
+    private Boolean logMask;
+    private Boolean logExhaustedMessageBody;
     private Boolean streamCache;
     private Boolean handleFault;
     private Long delay;
@@ -190,6 +194,31 @@ public class DefaultRouteContext implements RouteContext {
             // wrap in route lifecycle
             internal.addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
 
+            // wrap in REST binding
+            if (route.getRestBindingDefinition() != null) {
+                try {
+                    internal.addAdvice(route.getRestBindingDefinition().createRestBindingAdvice(this));
+                } catch (Exception e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
+            }
+
+            // wrap in contract
+            if (route.getInputType() != null || route.getOutputType() != null) {
+                Contract contract = new Contract();
+                if (route.getInputType() != null) {
+                    contract.setInputType(route.getInputType().getUrn());
+                    contract.setValidateInput(route.getInputType().isValidate());
+                }
+                if (route.getOutputType() != null) {
+                    contract.setOutputType(route.getOutputType().getUrn());
+                    contract.setValidateOutput(route.getOutputType().isValidate());
+                }
+                internal.addAdvice(new ContractAdvice(contract));
+                // make sure to enable data type as its in use when using input/output types on routes
+                camelContext.setUseDataType(true);
+            }
+
             // and create the route that wraps the UoW
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), internal);
             edcr.getProperties().put(Route.ID_PROPERTY, routeId);
@@ -283,6 +312,32 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
+    public void setLogMask(Boolean logMask) {
+        this.logMask = logMask;
+    }
+
+    public Boolean isLogMask() {
+        if (logMask != null) {
+            return logMask;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isLogMask();
+        }
+    }
+
+    public void setLogExhaustedMessageBody(Boolean logExhaustedMessageBody) {
+        this.logExhaustedMessageBody = logExhaustedMessageBody;
+    }
+
+    public Boolean isLogExhaustedMessageBody() {
+        if (logExhaustedMessageBody != null) {
+            return logExhaustedMessageBody;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isLogExhaustedMessageBody();
+        }
+    }
+
     public void setStreamCaching(Boolean cache) {
         this.streamCache = cache;
     }
@@ -339,10 +394,12 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     public void setAllowUseOriginalMessage(Boolean allowUseOriginalMessage) {
-        throw new IllegalArgumentException("This option can only be configured on CamelContext");
+        // can only be configured on CamelContext
+        getCamelContext().setAllowUseOriginalMessage(allowUseOriginalMessage);
     }
 
     public Boolean isAllowUseOriginalMessage() {
+        // can only be configured on CamelContext
         return getCamelContext().isAllowUseOriginalMessage();
     }
 
@@ -384,4 +441,5 @@ public class DefaultRouteContext implements RouteContext {
     public List<RoutePolicy> getRoutePolicyList() {
         return routePolicyList;
     }
+
 }

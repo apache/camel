@@ -56,6 +56,7 @@ public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
             throw new Fault(t);
         }
     }
+
     public void handleMessage(Message message) throws Fault {
         Object maps =
             RMContextUtils.retrieveMAPs(message, false, true);
@@ -102,7 +103,7 @@ public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
 
         private Message outMessage;
 
-        public WrappedOutputStream(Message m) {
+        WrappedOutputStream(Message m) {
             this.outMessage = m;
         }
 
@@ -120,7 +121,7 @@ public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
 
         @Override
         public void write(int b) throws IOException {
-            // TODO Auto-generated method stub
+            // noop
         }
     }
 }

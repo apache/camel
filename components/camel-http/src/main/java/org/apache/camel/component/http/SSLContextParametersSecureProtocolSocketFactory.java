@@ -23,9 +23,9 @@ import java.net.UnknownHostException;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.params.HttpConnectionParams;
 import org.apache.commons.httpclient.protocol.ControllerThreadSocketFactory;
 import org.apache.commons.httpclient.protocol.SecureProtocolSocketFactory;
@@ -55,11 +55,23 @@ public class SSLContextParametersSecureProtocolSocketFactory implements SecurePr
      * parameters.
      *
      * @param params the configuration parameters to use when creating the socket factory
+     * @deprecated use {@link #SSLContextParametersSecureProtocolSocketFactory(SSLContextParameters, CamelContext)}
      */
+    @Deprecated
     public SSLContextParametersSecureProtocolSocketFactory(SSLContextParameters params) {
+        this(params, null);
+    }
 
+    /**
+     * Creates a new instance using a factory created by the provided client configuration
+     * parameters.
+     *
+     * @param params the configuration parameters to use when creating the socket factory
+     * @param camelContext the Camel context
+     */
+    public SSLContextParametersSecureProtocolSocketFactory(SSLContextParameters params, CamelContext camelContext) {
         try {
-            this.context = params.createSSLContext();
+            this.context = params.createSSLContext(camelContext);
             this.factory = this.context.getSocketFactory();
         } catch (Exception e) {
             throw new RuntimeCamelException("Error creating the SSLContext.", e);
@@ -67,15 +79,12 @@ public class SSLContextParametersSecureProtocolSocketFactory implements SecurePr
     }    
 
     @Override
-    public Socket createSocket(String host, int port, 
-                               InetAddress localAddress, int localPort) throws IOException, UnknownHostException {
+    public Socket createSocket(String host, int port, InetAddress localAddress, int localPort) throws IOException {
         return this.factory.createSocket(host, port, localAddress, localPort);
     }
 
     @Override
-    public Socket createSocket(String host, int port, 
-                               InetAddress localAddress, int localPort, HttpConnectionParams params) throws IOException, UnknownHostException,
-        ConnectTimeoutException {
+    public Socket createSocket(String host, int port, InetAddress localAddress, int localPort, HttpConnectionParams params) throws IOException {
         
         if (params == null) {
             throw new IllegalArgumentException("Parameters may not be null");

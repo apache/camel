@@ -22,12 +22,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Ignore;
 
 /**
  * This is a manual test to run
  *
  * @version
  */
+@Ignore("Manual test")
 public class RouteContextProcessorTest extends ContextTestSupport {
 
     // Number of concurrent processing threads

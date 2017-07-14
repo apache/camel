@@ -28,6 +28,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 import static org.apache.camel.maven.packaging.PackageComponentMojo.prepareComponent;
 import static org.apache.camel.maven.packaging.PackageDataFormatMojo.prepareDataFormat;
 import static org.apache.camel.maven.packaging.PackageLanguageMojo.prepareLanguage;
+import static org.apache.camel.maven.packaging.PackageOtherMojo.prepareOthers;
 
 /**
  * Prepares a Camel component analyzing if the maven module contains Camel
@@ -35,6 +36,7 @@ import static org.apache.camel.maven.packaging.PackageLanguageMojo.prepareLangua
  *     <li>components</li>
  *     <li>dataformats</li>
  *     <li>languages</li>
+ *     <li>others</li>
  * </ul>
  * And for each of those generates extra descriptors and schema files for easier auto-discovery in Camel and tooling.
  *
@@ -73,7 +75,14 @@ public class PrepareComponentMojo extends AbstractMojo {
     protected File languageOutDir;
 
     /**
-     * The output directory for generated languages file
+     * The output directory for generated others file
+     *
+     * @parameter default-value="${project.build.directory}/generated/camel/others"
+     */
+    protected File otherOutDir;
+
+    /**
+     * The output directory for generated schema file
      *
      * @parameter default-value="${project.build.directory}/classes"
      */
@@ -107,6 +116,7 @@ public class PrepareComponentMojo extends AbstractMojo {
         prepareComponent(getLog(), project, projectHelper, componentOutDir, buildContext);
         prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir, buildContext);
         prepareLanguage(getLog(), project, projectHelper, languageOutDir, schemaOutDir, buildContext);
+        prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
     }
 
 }

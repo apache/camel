@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
+ * @version
  */
 public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
@@ -46,11 +46,12 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
     private HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
     private boolean throwExceptionOnFailure;
     private boolean transferException;
+    private boolean allowJavaSerializedObject;
     private String okStatusCodeRange;
 
     public DefaultJettyHttpBinding() {
     }
-    
+
     public void populateResponse(Exchange exchange, JettyContentExchange httpExchange) throws Exception {
         int responseCode = httpExchange.getResponseStatus();
 
@@ -99,6 +100,14 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
+    }
+
+    public boolean isAllowJavaSerializedObject() {
+        return allowJavaSerializedObject;
+    }
+
+    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+        this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 
     public String getOkStatusCodeRange() {
@@ -183,11 +192,17 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
         // if content type is serialized java object, then de-serialize it to a Java object
         if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
-            try {
-                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, httpExchange.getResponseContentBytes());
-                return HttpHelper.deserializeJavaObjectFromStream(is, exchange.getContext());
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
+            // only deserialize java if allowed
+            if (isAllowJavaSerializedObject() || isTransferException()) {
+                try {
+                    InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, httpExchange.getResponseContentBytes());
+                    return HttpHelper.deserializeJavaObjectFromStream(is, exchange.getContext());
+                } catch (Exception e) {
+                    throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
+                }
+            } else {
+                // empty body
+                return null;
             }
         } else {
             // just grab the raw content body
@@ -196,7 +211,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
     }
 
     Map<String, String> getSimpleMap(Map<String, Collection<String>> headers) {
-        Map<String, String> result = new HashMap<String , String>();
+        Map<String, String> result = new HashMap<String, String>();
         for (String key : headers.keySet()) {
             Collection<String> valueCol = headers.get(key);
             String value = (valueCol == null) ? null : valueCol.iterator().next();

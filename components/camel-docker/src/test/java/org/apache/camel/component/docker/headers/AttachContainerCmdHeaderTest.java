@@ -19,7 +19,7 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.AttachContainerCmd;
-
+import com.github.dockerjava.core.command.AttachContainerResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -34,6 +34,9 @@ public class AttachContainerCmdHeaderTest extends BaseDockerHeaderTest<AttachCon
 
     @Mock
     private AttachContainerCmd mockObject;
+
+    @Mock
+    private AttachContainerResultCallback callback;
 
     @Test
     public void attachContainerHeaderTest() {
@@ -53,7 +56,6 @@ public class AttachContainerCmdHeaderTest extends BaseDockerHeaderTest<AttachCon
         headers.put(DockerConstants.DOCKER_TIMESTAMPS, timestamps);
         headers.put(DockerConstants.DOCKER_LOGS, logs);
 
-
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).attachContainerCmd(containerId);
@@ -68,6 +70,12 @@ public class AttachContainerCmdHeaderTest extends BaseDockerHeaderTest<AttachCon
     @Override
     protected void setupMocks() {
         Mockito.when(dockerClient.attachContainerCmd(Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(mockObject.exec(Matchers.anyObject())).thenReturn(callback);
+        try {
+            Mockito.when(callback.awaitCompletion()).thenReturn(callback);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -38,7 +38,7 @@ import org.apache.camel.util.IOHelper;
  */
 public class DefaultFactoryFinder implements FactoryFinder {
 
-    protected final ConcurrentMap<String, Class<?>> classMap = new ConcurrentHashMap<String, Class<?>>();
+    private final ConcurrentMap<String, Class<?>> classMap = new ConcurrentHashMap<String, Class<?>>();
     private final ClassResolver classResolver;
     private final String path;
 
@@ -47,10 +47,12 @@ public class DefaultFactoryFinder implements FactoryFinder {
         this.path = resourcePath;
     }
 
+    @Override
     public String getResourcePath() {
         return path;
     }
 
+    @Override
     public Object newInstance(String key) throws NoFactoryAvailableException {
         try {
             return newInstance(key, null);
@@ -59,6 +61,7 @@ public class DefaultFactoryFinder implements FactoryFinder {
         }
     }
 
+    @Override
     public <T> List<T> newInstances(String key, Injector injector, Class<T> type) throws ClassNotFoundException, IOException {
         List<Class<T>> list = CastUtils.cast(findClasses(key));
         List<T> answer = new ArrayList<T>(list.size());
@@ -66,23 +69,20 @@ public class DefaultFactoryFinder implements FactoryFinder {
         return answer;
     }
 
+    @Override
     public Class<?> findClass(String key) throws ClassNotFoundException, IOException {
         return findClass(key, null);
     }
 
+    @Override
     public Class<?> findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
-        String prefix = propertyPrefix != null ? propertyPrefix : "";
+        final String prefix = propertyPrefix != null ? propertyPrefix : "";
+        final String classKey = prefix + key;
 
-        Class<?> clazz = classMap.get(prefix + key);
-        if (clazz == null) {
-            clazz = newInstance(doFindFactoryProperties(key), prefix);
-            if (clazz != null) {
-                classMap.put(prefix + key, clazz);
-            }
-        }
-        return clazz;
+        return addToClassMap(classKey, () -> newInstance(doFindFactoryProperties(key), prefix));
     }
 
+    @Override
     public Class<?> findClass(String key, String propertyPrefix, Class<?> clazz) throws ClassNotFoundException, IOException {
         // Just ignore clazz which is only useful for OSGiFactoryFinder
         return findClass(key, propertyPrefix);
@@ -150,6 +150,48 @@ public class DefaultFactoryFinder implements FactoryFinder {
         } finally {
             IOHelper.close(reader, key, null);
             IOHelper.close(in, key, null);
+        }
+    }
+
+    /*
+     * This is a wrapper function to deal with exceptions in lambdas: the exception
+     * is wrapped by a runtime exception (WrappedRuntimeException) which we catch
+     * later on with the only purpose to re-throw the original exception.
+     */
+    protected Class<?> addToClassMap(String key, ClassSupplier mappingFunction) throws ClassNotFoundException, IOException {
+        try {
+            return classMap.computeIfAbsent(key, (String classKey) -> {
+                try {
+                    return mappingFunction.get();
+                } catch (ClassNotFoundException e) {
+                    throw new WrappedRuntimeException(e);
+                } catch (NoFactoryAvailableException e) {
+                    throw new WrappedRuntimeException(e);
+                } catch (IOException e) {
+                    throw new WrappedRuntimeException(e);
+                }
+            });
+        } catch (WrappedRuntimeException e) {
+            if (e.getCause() instanceof ClassNotFoundException) {
+                throw (ClassNotFoundException)e.getCause();
+            } else if (e.getCause() instanceof NoFactoryAvailableException) {
+                throw (NoFactoryAvailableException)e.getCause();
+            } else if (e.getCause() instanceof IOException) {
+                throw (IOException)e.getCause();
+            } else {
+                throw new RuntimeException(e.getCause());
+            }
+        }
+    }
+
+    @FunctionalInterface
+    protected interface ClassSupplier {
+        Class<?> get() throws ClassNotFoundException, IOException;
+    }
+
+    private final class WrappedRuntimeException extends RuntimeException {
+        WrappedRuntimeException(Exception e) {
+            super(e);
         }
     }
 }

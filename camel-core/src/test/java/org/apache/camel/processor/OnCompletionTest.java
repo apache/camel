@@ -43,6 +43,7 @@ public class OnCompletionTest extends ContextTestSupport {
     public void testSynchronizeFailure() throws Exception {
         getMockEndpoint("mock:sync").expectedMessageCount(1);
         getMockEndpoint("mock:sync").expectedPropertyReceived(Exchange.ON_COMPLETION, true);
+        getMockEndpoint("mock:sync").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);

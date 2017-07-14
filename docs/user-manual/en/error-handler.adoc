@@ -1,0 +1,389 @@
+[[ErrorHandler-ErrorHandler]]
+Error Handler
+~~~~~~~~~~~~~
+
+Camel supports pluggable
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/ErrorHandler.html[ErrorHandler]
+strategies to deal with errors processing an
+link:event-driven-consumer.html[Event Driven Consumer]. An alternative
+is to specify the error handling directly in the link:dsl.html[DSL]
+using the link:exception-clause.html[Exception Clause].
+
+For introduction and background material see
+link:error-handling-in-camel.html[Error handling in Camel].
+
+*Exception Clause*
+
+Using link:error-handler.html[Error Handler] combined with
+link:exception-clause.html[Exception Clause] is a very powerful
+combination. We encourage end-users to use this combination in your
+error handling strategies. See samples and
+link:exception-clause.html[Exception Clause].
+
+*Using try ... catch ... finally*
+
+Related to error handling is the link:try-catch-finally.html[Try Catch
+Finally] as DSL you can use directly in your route. Its basically a
+mimic of the regular try catch finally in the Java language but with
+more power.
+
+The current implementations Camel provides out of the box are:
+
+[[ErrorHandler-Nontransacted]]
+Non transacted
+~~~~~~~~~~~~~~
+
+* link:defaulterrorhandler.html[DefaultErrorHandler] is the default
+error handler in Camel. This error handler does not support a dead
+letter queue, it will propagate exceptions back to the caller, as if
+there where no error handler at all. It has a limited set of features.
+* link:dead-letter-channel.html[Dead Letter Channel] which supports
+attempting to redeliver the message exchange a number of times before
+sending it to a dead letter endpoint
+* LoggingErrorHandler for just catching and logging exceptions
+* NoErrorHandler for no error handling
+
+[[ErrorHandler-Transacted]]
+Transacted
+~~~~~~~~~~
+
+* link:transactionerrorhandler.html[TransactionErrorHandler] is the
+default error handler in Camel for transacted routes. See the
+link:transactional-client.html[Transactional Client] EIP pattern.
+
+These error handlers can be applied in the link:dsl.html[DSL] to an
+entire set of rules or a specific routing rule as we show in the next
+examples. Error handling rules are inherited on each routing rule within
+a single link:routebuilder.html[RouteBuilder]
+
+[[ErrorHandler-ShortSummaryoftheprovidedErrorHandlers]]
+Short Summary of the provided Error Handlers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[[ErrorHandler-DefaultErrorHandlerhttps://cwiki.apache.org/confluence/pages/viewpage.action?pageId=113880]]
+link:defaulterrorhandler.html[DefaultErrorHandler]
+++++++++++++++++++++++++++++++++++++++++++++++++++
+
+The link:defaulterrorhandler.html[DefaultErrorHandler] is the default
+error handler in Camel. Unlike link:dead-letter-channel.html[Dead Letter
+Channel] it does not have any dead letter queue, and do *not* handle
+exceptions by default.
+
+[[ErrorHandler-DeadLetterChannelhttps://cwiki.apache.org/confluence/pages/viewpage.action?pageId=49482]]
+link:dead-letter-channel.html[Dead Letter Channel]
+++++++++++++++++++++++++++++++++++++++++++++++++++
+
+The link:dead-letter-channel.html[Dead Letter Channel] will redeliver at
+most 6 times using 1 second delay, and if the exchange failed it will be
+logged at ERROR level.
+
+You can configure the default dead letter endpoint to use:
+
+or in Spring DSL
+
+[source,xml]
+-----------------------------------------------------------------------------------------------------
+<bean id="deadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+  <property name="deadLetterUri" value="log:dead"/>
+</bean>
+
+<camelContext errorHandlerRef="deadLetterErrorHandler" xmlns="http://camel.apache.org/schema/spring">
+  ...
+</camelContext>
+-----------------------------------------------------------------------------------------------------
+
+or also from *Camel 2.3.0 onwards*
+
+[source,xml]
+--------------------------------------------------------------------------------------------------
+<camel:errorHandler id="deadLetterErrorHandler" type="DeadLetterChannel" deadLetterUri="log:dead">
+
+<camel:camelContext errorHandlerRef="deadLetterErrorHandler">
+  ...
+</camel:camelContext>
+--------------------------------------------------------------------------------------------------
+
+[[ErrorHandler-LoggingErrorHandler]]
+Logging Error Handler
++++++++++++++++++++++
+
+The logging error handler will log (by default at ERROR level) whenever
+an uncaught exception is thrown. The logging category, logger and level
+may all be defined in the builder.
+
+[source,java]
+----------------------------------------------------------------------------
+errorHandler(loggingErrorHandler("mylogger.name").level(LoggingLevel.INFO));
+----------------------------------------------------------------------------
+
+or in Spring DSL
+
+[source,xml]
+--------------------------------------------------------------------------------------------------
+<bean id="loggingErrorHandler" class="org.apache.camel.builder.LoggingErrorHandler">
+  <property name="logName" value="mylogger.name"/>
+  <property name="level" value="DEBUG"/>
+</bean>
+
+<camelContext errorHandlerRef="loggingErrorHandler" xmlns="http://camel.apache.org/schema/spring">
+  ...
+</camelContext>
+--------------------------------------------------------------------------------------------------
+
+or also from *Camel 2.3.0 onwards*
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------
+<camel:errorHandler id="loggingErrorHandler" type="LoggingErrorHandler" logName="mylogger.name" level="DEBUG"/>
+
+<camel:camelContext errorHandlerRef="loggingErrorHandler">
+  ...
+</camel:camelContext>
+---------------------------------------------------------------------------------------------------------------
+
+This would create an error handler which logs exceptions using the
+category mylogger.name and uses the level INFO for all log messages
+created.
+
+[source,java]
+---------------------------------------------------------------------------------------------------------
+from("seda:a").errorHandler(loggingErrorHandler("mylogger.name").level(LoggingLevel.DEBUG)).to("seda:b");
+---------------------------------------------------------------------------------------------------------
+
+Loggers may also be defined for specific routes.
+
+[[ErrorHandler-NoErrorHandler]]
+No Error Handler
+++++++++++++++++
+
+The no error handler is to be used for disabling error handling.
+
+[source,java]
+-------------------------------
+errorHandler(noErrorHandler());
+-------------------------------
+
+or in Spring DSL
+
+[source,xml]
+---------------------------------------------------------------------------------------------
+<bean id="noErrorHandler" class="org.apache.camel.builder.NoErrorHandlerBuilder"/>
+
+<camelContext errorHandlerRef="noErrorHandler" xmlns="http://camel.apache.org/schema/spring">
+  ...
+</camelContext>
+---------------------------------------------------------------------------------------------
+
+or also from *Camel 2.3.0 onwards*
+
+[source,xml]
+---------------------------------------------------------------
+<camel:errorHandler id="noErrorHandler" type="NoErrorHandler"/>
+
+<camel:camelContext errorHandlerRef="noErrorHandler">
+  ...
+</camel:camelContext>
+---------------------------------------------------------------
+
+[[ErrorHandler]]
+link:transactionerrorhandler.html[TransactionErrorHandler]
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+The link:transactionerrorhandler.html[TransactionErrorHandler] is the
+default error handler in Camel for transacted routes.
+
+TIP:If you have marked a route as transacted using the *transacted* DSL then
+Camel will automatic use a
+link:transactionerrorhandler.html[TransactionErrorHandler]. It will try
+to lookup the global/per route configured error handler and use it if
+its a `TransactionErrorHandlerBuilder` instance. If not Camel will
+automatic create a temporary
+link:transactionerrorhandler.html[TransactionErrorHandler] that
+overrules the default error handler. This is convention over
+configuration.
+
+[[ErrorHandler-Featuressupportbyvariouss]]
+Features support by various link:error-handler.html[Error Handler]s
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Here is a breakdown of which features is supported by the
+link:error-handler.html[Error Handler](s):
+
+[width="100%",cols="20%,80%",options="header",]
+|=======================================================================
+|Feature |Supported by the following link:error-handler.html[Error Handler]
+
+|all scopes |link:defaulterrorhandler.html[DefaultErrorHandler],
+link:transactionerrorhandler.html[TransactionErrorHandler],
+link:dead-letter-channel.html[Dead Letter Channel]
+
+|onException |link:defaulterrorhandler.html[DefaultErrorHandler],
+link:transactionerrorhandler.html[TransactionErrorHandler],
+link:dead-letter-channel.html[Dead Letter Channel]
+
+|onWhen |link:defaulterrorhandler.html[DefaultErrorHandler],
+link:transactionerrorhandler.html[TransactionErrorHandler],
+link:dead-letter-channel.html[Dead Letter Channel]
+
+|continued |link:defaulterrorhandler.html[DefaultErrorHandler],
+link:transactionerrorhandler.html[TransactionErrorHandler],
+link:dead-letter-channel.html[Dead Letter Channel]
+
+|handled |link:defaulterrorhandler.html[DefaultErrorHandler],
+link:transactionerrorhandler.html[TransactionErrorHandler],
+link:dead-letter-channel.html[Dead Letter Channel]
+
+|Custom ExceptionPolicy |link:defaulterrorhandler.html[DefaultErrorHandler],
+link:transactionerrorhandler.html[TransactionErrorHandler],
+link:dead-letter-channel.html[Dead Letter Channel]
+
+|useOriginalBody |link:defaulterrorhandler.html[DefaultErrorHandler],
+link:transactionerrorhandler.html[TransactionErrorHandler],
+link:dead-letter-channel.html[Dead Letter Channel]
+
+|retryWhile |link:defaulterrorhandler.html[DefaultErrorHandler],
+link:transactionerrorhandler.html[TransactionErrorHandler],
+link:dead-letter-channel.html[Dead Letter Channel]
+
+|onRedelivery |link:defaulterrorhandler.html[DefaultErrorHandler],
+link:transactionerrorhandler.html[TransactionErrorHandler],
+link:dead-letter-channel.html[Dead Letter Channel]
+
+|RedeliveryPolicy |link:defaulterrorhandler.html[DefaultErrorHandler],
+link:transactionerrorhandler.html[TransactionErrorHandler],
+link:dead-letter-channel.html[Dead Letter Channel]
+
+|asyncDelayedRedelivery |link:defaulterrorhandler.html[DefaultErrorHandler],
+link:transactionerrorhandler.html[TransactionErrorHandler],
+link:dead-letter-channel.html[Dead Letter Channel]
+
+|redeliverWhileStopping |link:defaulterrorhandler.html[DefaultErrorHandler],
+link:transactionerrorhandler.html[TransactionErrorHandler],
+link:dead-letter-channel.html[Dead Letter Channel]
+
+|dead letter queue |link:dead-letter-channel.html[Dead Letter Channel]
+
+|onPrepareFailure |link:defaulterrorhandler.html[DefaultErrorHandler],
+link:dead-letter-channel.html[Dead Letter Channel]
+
+|=======================================================================
+
+See link:exception-clause.html[Exception Clause] documentation for
+documentation of some of the features above.
+
+[[ErrorHandler-Scopes]]
+Scopes
+^^^^^^
+
+The error handler is scoped as either
+
+* global
+* per route
+
+The following example shows how you can register a global error handler
+(in this case using the logging handler)
+
+[source,java]
+---------------------------------------------------------------
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        // use logging error handler
+        errorHandler(loggingErrorHandler("com.mycompany.foo"));
+
+        // here is our regular route
+        from("seda:a").to("seda:b");
+    }
+};
+---------------------------------------------------------------
+
+The following example shows how you can register a route specific error
+handler; the customized logging handler is only registered for the route
+from link:endpoint.html[Endpoint] *seda:a*
+
+[source,java]
+---------------------------------------------------------------
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        // this route is using a nested logging error handler
+        from("seda:a")
+            // here we configure the logging error handler
+            .errorHandler(loggingErrorHandler("com.mycompany.foo"))
+            // and we continue with the routing here
+            .to("seda:b");
+
+        // this route will use the default error handler (DeadLetterChannel)
+        from("seda:b").to("seda:c");
+    }
+};
+---------------------------------------------------------------
+
+[[ErrorHandler-Springbasedconfiguration]]
+Spring based configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Java DSL vs. Spring DSL*
+The error handler is configured a bit differently in Java DSL and Spring
+DSL. Spring DSL relies more on standard Spring bean configuration
+whereas Java DSL uses fluent builders.
+
+
+The error handler can be configured as a spring bean and scoped in:
+
+* global (the camelContext tag)
+* per route (the route tag)
+* or per policy (the policy/transacted tag)
+
+The error handler is configured with the `errorHandlerRef` attribute.
+
+TIP:*Error Handler Hierarchy*
+The error handlers is inherited, so if you only have set a global error
+handler then its use everywhere. But you can override this in a route
+and use another error handler.
+
+[[ErrorHandler-Springbasedconfigurationsample]]
+Spring based configuration sample
++++++++++++++++++++++++++++++++++
+
+In this sample we configure a link:dead-letter-channel.html[Dead Letter
+Channel] on the route that should redeliver at most 3 times and use a
+little delay before retrying. First we configure the reference to *myDeadLetterErrorHandler* using
+the `errorHandlerRef` attribute on the `route` tag.
+
+Then we configure *myDeadLetterErrorHandler* that is our
+link:dead-letter-channel.html[Dead Letter Channel]. This configuration
+is standard Spring using the bean element. +
+ And finally we have another spring bean for the redelivery policy where
+we can configure the options for how many times to redeliver, delays
+etc.
+
+From Camel 2.3.0, camel provides a customer bean configuration for the
+Error Handler, you can find the examples here.
+
+[[ErrorHandler-Usingthetransactionalerrorhandler]]
+Using the transactional error handler
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The transactional error handler is based on spring transaction. This
+requires the usage of the camel-spring component. +
+ See link:transactional-client.html[Transactional Client] that has many
+samples for how to use and transactional behavior and configuration with
+this error handler.
+
+[[ErrorHandler-Seealso]]
+See also
+^^^^^^^^
+
+* link:error-handling-in-camel.html[Error handling in Camel] for
+introduction and background material on error handling in Camel
+* link:dead-letter-channel.html[Dead Letter Channel] for the dead letter
+error handler
+* link:defaulterrorhandler.html[DefaultErrorHandler] for the default
+error handler in Camel
+* link:transactionerrorhandler.html[TransactionErrorHandler] for the
+default error handler for transacted routes
+* link:transactional-client.html[Transactional Client] for transactional
+behavior
+* link:exception-clause.html[Exception Clause] as it supports *handling*
+thrown exceptions
+* link:try-catch-finally.html[Try Catch Finally] for try ... catch ...
+finally as DSL you can use in the routing

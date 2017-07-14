@@ -17,11 +17,14 @@
 package org.apache.camel.component.xquery;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ResourceHelper;
 
 /**
@@ -30,7 +33,12 @@ import org.apache.camel.util.ResourceHelper;
  */
 public class XQueryComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
     private ModuleURIResolver moduleURIResolver = new XQueryModuleURIResolver(this);
+    @Metadata(label = "advanced")
+    private Configuration configuration;
+    @Metadata(label = "advanced")
+    private Map<String, Object> configurationProperties = new HashMap<>();
 
     public XQueryComponent() {
         super(XQueryEndpoint.class);
@@ -38,6 +46,8 @@ public class XQueryComponent extends UriEndpointComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         XQueryEndpoint answer = new XQueryEndpoint(uri, this);
+        answer.setConfiguration(configuration);
+        answer.setConfigurationProperties(getConfigurationProperties());
         setProperties(answer, parameters);
 
         answer.setResourceUri(remaining);
@@ -59,5 +69,27 @@ public class XQueryComponent extends UriEndpointComponent {
      */
     public void setModuleURIResolver(ModuleURIResolver moduleURIResolver) {
         this.moduleURIResolver = moduleURIResolver;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * To use a custom Saxon configuration
+     */
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+    }
+
+    public Map<String, Object> getConfigurationProperties() {
+        return configurationProperties;
+    }
+
+    /**
+     * To set custom Saxon configuration properties
+     */
+    public void setConfigurationProperties(Map<String, Object> configurationProperties) {
+        this.configurationProperties = configurationProperties;
     }
 }

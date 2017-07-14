@@ -108,7 +108,7 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast:%sfoo", HazelcastConstants.INSTANCE_PREFIX)).log("instance...").choice()
+                from(String.format("hazelcast-%sfoo", HazelcastConstants.INSTANCE_PREFIX)).log("instance...").choice()
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED)).log("...added").to("mock:added").otherwise().log("...removed").to("mock:removed");
             }
         };

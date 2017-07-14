@@ -19,6 +19,7 @@ package org.apache.camel.component.zookeeper;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.zookeeper.WatchedEvent;
@@ -48,15 +49,20 @@ public class ZooKeeperMessage extends DefaultMessage {
 
     public static final String ZOOKEEPER_OPERATION = "CamelZookeeperOperation";
 
-    public ZooKeeperMessage(String node, Stat statistics, WatchedEvent watchedEvent) {
-        this(node, statistics, Collections.<String, Object>emptyMap(), watchedEvent);
+    public ZooKeeperMessage(CamelContext camelContext) {
+        super(camelContext);
     }
 
-    public ZooKeeperMessage(String node, Stat statistics, Map<String, Object> headers) {
-        this(node, statistics, headers, null);
+    public ZooKeeperMessage(CamelContext camelContext, String node, Stat statistics, WatchedEvent watchedEvent) {
+        this(camelContext, node, statistics, Collections.<String, Object>emptyMap(), watchedEvent);
     }
 
-    public ZooKeeperMessage(String node, Stat statistics, Map<String, Object> headers, WatchedEvent watchedEvent) {
+    public ZooKeeperMessage(CamelContext camelContext, String node, Stat statistics, Map<String, Object> headers) {
+        this(camelContext, node, statistics, headers, null);
+    }
+
+    public ZooKeeperMessage(CamelContext camelContext, String node, Stat statistics, Map<String, Object> headers, WatchedEvent watchedEvent) {
+        super(camelContext);
         setHeaders(headers);
         this.setHeader(ZOOKEEPER_NODE, node);
         this.setHeader(ZOOKEEPER_STATISTICS, statistics);
@@ -80,7 +86,9 @@ public class ZooKeeperMessage extends DefaultMessage {
         }
         return path;
     }
-    
-    
 
+    @Override
+    public DefaultMessage newInstance() {
+        return new ZooKeeperMessage(getCamelContext());
+    }
 }

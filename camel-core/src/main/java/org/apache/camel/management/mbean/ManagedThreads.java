@@ -40,13 +40,18 @@ public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMB
 
     @Override
     public Boolean isCallerRunsWhenRejected() {
-        return processor.isCallerRunsWhenRejected();
+        if (processor.getExecutorService() instanceof ThreadPoolExecutor) {
+            String name = getRejectedPolicy();
+            return "CallerRuns".equals(name);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public String getRejectedPolicy() {
-        if (processor.getRejectedPolicy() != null) {
-            return processor.getRejectedPolicy().name();
+        if (processor.getExecutorService() instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) processor.getExecutorService()).getRejectedExecutionHandler().toString();
         } else {
             return null;
         }

@@ -56,7 +56,6 @@ public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProc
         AsyncProcessorHelper.process(this, exchange);
     }
 
-    @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Exception cause = exception;
 
@@ -80,7 +79,8 @@ public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProc
     }
 
     public String getTraceLabel() {
-        return "throwException[" + exception.getClass().getSimpleName() + "]";
+        String className = this.exception == null ? this.type.getSimpleName() : this.exception.getClass().getSimpleName();
+        return "throwException[" + className + "]";
     }
 
     public String getId() {

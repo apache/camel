@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.velocity.app.VelocityEngine;
 
@@ -27,6 +28,8 @@ import org.apache.velocity.app.VelocityEngine;
  * @version 
  */
 public class VelocityComponent extends UriEndpointComponent {
+
+    @Metadata(label = "advanced")
     private VelocityEngine velocityEngine;
     
     public VelocityComponent() {

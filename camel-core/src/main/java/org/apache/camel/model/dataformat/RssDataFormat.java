@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * RSS data format
  */
-@Metadata(label = "dataformat,transformation", title = "RSS")
+@Metadata(firstVersion = "2.1.0", label = "dataformat,transformation", title = "RSS")
 @XmlRootElement(name = "rss")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RssDataFormat extends DataFormatDefinition {

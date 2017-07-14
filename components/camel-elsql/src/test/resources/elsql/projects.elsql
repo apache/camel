@@ -1,0 +1,25 @@
+@NAME(projectsById)
+  SELECT *
+  FROM projects
+  WHERE license = :body
+  ORDER BY id
+@NAME(projectsByIdBody)
+  SELECT *
+  FROM projects
+  WHERE license = :${body.license}
+  ORDER BY id
+@NAME(allProjects)
+  SELECT *
+  FROM projects
+  ORDER BY id
+@NAME(projectById)
+  SELECT *
+  FROM projects
+  WHERE id = :id
+@NAME(updateLicense)
+  UPDATE projects
+  SET license = :lic
+  WHERE id = :id
+@NAME(insertProject)
+  INSERT INTO projects (id, project, license)
+  VALUES (:id, :project, :license)

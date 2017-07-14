@@ -17,6 +17,7 @@
 package org.apache.camel.component.olingo2.api.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -46,6 +47,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
@@ -57,12 +59,14 @@ import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
-import org.apache.http.nio.client.util.HttpAsyncClientUtils;
 import org.apache.olingo.odata2.api.ODataServiceVersion;
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.client.batch.BatchChangeSet;
@@ -111,7 +115,10 @@ public final class Olingo2AppImpl implements Olingo2App {
     private static final String MULTIPART_MIME_TYPE = "multipart/";
     private static final ContentType TEXT_PLAIN_WITH_CS_UTF_8 = ContentType.TEXT_PLAIN.withCharset(Consts.UTF_8);
 
-    private final CloseableHttpAsyncClient client;
+    /**
+     * Reference to CloseableHttpAsyncClient (default) or CloseableHttpClient
+     */
+    private final Closeable client;
 
     private String serviceUri;
     private ContentType contentType;
@@ -121,11 +128,12 @@ public final class Olingo2AppImpl implements Olingo2App {
      * Create Olingo2 Application with default HTTP configuration.
      */
     public Olingo2AppImpl(String serviceUri) {
-        this(serviceUri, null);
+        // By default create HTTP Asynchronous client
+        this(serviceUri, (HttpAsyncClientBuilder) null);
     }
 
     /**
-     * Create Olingo2 Application with custom HTTP client builder.
+     * Create Olingo2 Application with custom HTTP Asynchronous client builder.
      *
      * @param serviceUri Service Application base URI.
      * @param builder custom HTTP client builder.
@@ -133,12 +141,30 @@ public final class Olingo2AppImpl implements Olingo2App {
     public Olingo2AppImpl(String serviceUri, HttpAsyncClientBuilder builder) {
         setServiceUri(serviceUri);
 
+        CloseableHttpAsyncClient asyncClient;
         if (builder == null) {
-            this.client = HttpAsyncClients.createDefault();
+            asyncClient = HttpAsyncClients.createDefault();
+        } else {
+            asyncClient = builder.build();
+        }
+        asyncClient.start();
+        this.client = asyncClient;
+        this.contentType = ContentType.create("application/json", Consts.UTF_8);
+    }
+
+    /**
+     * Create Olingo2 Application with custom HTTP Synchronous client builder.
+     *
+     * @param serviceUri Service Application base URI.
+     * @param builder Custom HTTP Synchronous client builder.
+     */
+    public Olingo2AppImpl(String serviceUri, HttpClientBuilder builder) {
+        setServiceUri(serviceUri);
+        if (builder == null) {
+            this.client = HttpClients.createDefault();
         } else {
             this.client = builder.build();
         }
-        this.client.start();
         this.contentType = ContentType.create("application/json", Consts.UTF_8);
     }
 
@@ -178,7 +204,12 @@ public final class Olingo2AppImpl implements Olingo2App {
 
     @Override
     public void close() {
-        HttpAsyncClientUtils.closeQuietly(client);
+        if (client != null) {
+            try {
+                client.close();
+            } catch (final IOException ignore) {
+            }
+        }
     }
 
     @Override
@@ -301,10 +332,10 @@ public final class Olingo2AppImpl implements Olingo2App {
     private <T> void readContent(UriInfoWithType uriInfo, InputStream content, Olingo2ResponseHandler<T> responseHandler) {
         try {
             responseHandler.onResponse(this.<T>readContent(uriInfo, content));
-        } catch (EntityProviderException e) {
+        } catch (Exception e) {
             responseHandler.onException(e);
-        } catch (ODataApplicationException e) {
-            responseHandler.onException(e);
+        } catch (Error e) {
+            responseHandler.onException(new ODataApplicationException("Runtime Error Occurred", Locale.ENGLISH, e));
         }
     }
 
@@ -389,6 +420,17 @@ public final class Olingo2AppImpl implements Olingo2App {
                 EntityProviderReadProperties.init().build());
             break;
 
+        // Function Imports
+        case URI10:
+        case URI11:
+        case URI12:
+        case URI13:
+        case URI14:
+            response = (T) EntityProvider.readFunctionImport(getContentType(),
+                uriInfo.getFunctionImport(), content,
+                EntityProviderReadProperties.init().build());
+            break;
+
         default:
             throw new ODataApplicationException("Unsupported resource type " + uriInfo.getTargetType(),
                 Locale.ENGLISH);
@@ -444,9 +486,9 @@ public final class Olingo2AppImpl implements Olingo2App {
                         switch (uriInfo.getUriType()) {
                         case URI9:
                             // $batch
+                            String type = result.containsHeader(HttpHeaders.CONTENT_TYPE) ? result.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue() : null;
                             final List<BatchSingleResponse> singleResponses = EntityProvider.parseBatchResponse(
-                                result.getEntity().getContent(),
-                                result.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
+                                result.getEntity().getContent(), type);
 
                             // parse batch response bodies
                             final List<Olingo2BatchResponse> responses = new ArrayList<Olingo2BatchResponse>();
@@ -551,14 +593,10 @@ public final class Olingo2AppImpl implements Olingo2App {
                     }
                 }
             });
-        } catch (ODataException e) {
+        } catch (Exception e) {
             responseHandler.onException(e);
-        } catch (URISyntaxException e) {
-            responseHandler.onException(e);
-        } catch (UnsupportedEncodingException e) {
-            responseHandler.onException(e);
-        } catch (IOException e) {
-            responseHandler.onException(e);
+        } catch (Error e) {
+            responseHandler.onException(new ODataApplicationException("Runtime Error Occurred", Locale.ENGLISH, e));
         }
     }
 
@@ -728,7 +766,12 @@ public final class Olingo2AppImpl implements Olingo2App {
         }
 
         // Olingo is sensitive to batch part charset case!!
-        headers.put(HttpHeaders.ACCEPT, getResourceContentType(uriInfo).toString().toLowerCase());
+        final ContentType contentType = getResourceContentType(uriInfo);
+        headers.put(HttpHeaders.ACCEPT, contentType.withCharset("").toString().toLowerCase());
+        final Charset charset = contentType.getCharset();
+        if (null != charset) {
+            headers.put(HttpHeaders.ACCEPT_CHARSET, charset.name().toLowerCase());
+        }
         if (!headers.containsKey(HttpHeaders.CONTENT_TYPE)) {
             headers.put(HttpHeaders.CONTENT_TYPE, getContentType());
         }
@@ -750,9 +793,14 @@ public final class Olingo2AppImpl implements Olingo2App {
     private BatchQueryPart createBatchQueryPart(UriInfoWithType uriInfo, Olingo2BatchQueryRequest batchRequest) {
 
         final Map<String, String> headers = new HashMap<String, String>(batchRequest.getHeaders());
+        final ContentType contentType = getResourceContentType(uriInfo);
+        final Charset charset = contentType.getCharset();
         if (!headers.containsKey(HttpHeaders.ACCEPT)) {
             // Olingo is sensitive to batch part charset case!!
-            headers.put(HttpHeaders.ACCEPT, getResourceContentType(uriInfo).toString().toLowerCase());
+            headers.put(HttpHeaders.ACCEPT, contentType.withCharset("").toString().toLowerCase());
+        }
+        if (!headers.containsKey(HttpHeaders.ACCEPT_CHARSET) && (null != charset)) {
+            headers.put(HttpHeaders.ACCEPT_CHARSET, charset.name().toLowerCase());
         }
 
         return BatchQueryPart.method("GET")
@@ -975,16 +1023,19 @@ public final class Olingo2AppImpl implements Olingo2App {
                         FutureCallback<HttpResponse> callback) {
 
         // add accept header when its not a form or multipart
-        final String contentTypeString = contentType.toString();
         if (!ContentType.APPLICATION_FORM_URLENCODED.getMimeType().equals(contentType.getMimeType())
             && !contentType.getMimeType().startsWith(MULTIPART_MIME_TYPE)) {
             // otherwise accept what is being sent
-            httpUriRequest.addHeader(HttpHeaders.ACCEPT, contentTypeString);
+            httpUriRequest.addHeader(HttpHeaders.ACCEPT, contentType.withCharset("").toString().toLowerCase());
+            final Charset charset = contentType.getCharset();
+            if (null != charset) {
+                httpUriRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, charset.name().toLowerCase());
+            }
         }
         // is something being sent?
         if (httpUriRequest instanceof HttpEntityEnclosingRequestBase
             && httpUriRequest.getFirstHeader(HttpHeaders.CONTENT_TYPE) == null) {
-            httpUriRequest.addHeader(HttpHeaders.CONTENT_TYPE, contentTypeString);
+            httpUriRequest.addHeader(HttpHeaders.CONTENT_TYPE, contentType.toString());
         }
 
         // set user specified custom headers
@@ -1003,7 +1054,18 @@ public final class Olingo2AppImpl implements Olingo2App {
         }
 
         // execute request
-        client.execute(httpUriRequest, callback);
+        if (client instanceof CloseableHttpAsyncClient) {
+            ((CloseableHttpAsyncClient) client).execute(httpUriRequest, callback);
+        } else {
+            // invoke the callback methods explicitly after executing the
+            // request synchronously
+            try {
+                CloseableHttpResponse result = ((CloseableHttpClient) client).execute(httpUriRequest);
+                callback.completed(result);
+            } catch (IOException e) {
+                callback.failed(e);
+            }
+        }
     }
 
 }

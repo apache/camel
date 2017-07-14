@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.kafka.enabled",
+      "description": "Enable kafka component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

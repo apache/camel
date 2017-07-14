@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.hbase;
 
-import org.apache.hadoop.hbase.client.HTableInterface;
+import org.apache.hadoop.hbase.client.Table;
 
 public interface HBaseRemoveHandler {
 
@@ -25,5 +25,5 @@ public interface HBaseRemoveHandler {
      * The removal is not necessarily physical remove.
      * The implementation decides how a row can be considered as removed.
      */
-    void remove(HTableInterface table, byte[] row);
+    void remove(Table table, byte[] row);
 }

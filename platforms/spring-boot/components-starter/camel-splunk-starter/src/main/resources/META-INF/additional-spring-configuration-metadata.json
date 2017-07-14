@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.splunk.enabled",
+      "description": "Enable splunk component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

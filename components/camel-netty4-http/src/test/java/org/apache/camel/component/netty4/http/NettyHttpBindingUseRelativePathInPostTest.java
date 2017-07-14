@@ -58,11 +58,11 @@ public class NettyHttpBindingUseRelativePathInPostTest extends BaseNettyTest {
                         assertEquals("Get a wrong form parameter from the message header", "x", exchange.getIn().getHeader("b1"));
                         assertEquals("Get a wrong form parameter from the message header", "y", exchange.getIn().getHeader("b2"));
                         assertEquals("Get a wrong form parameter from the message header", "localhost:" + getPort(), exchange.getIn().getHeader("host"));
-                        
-                        NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();                        
+
+                        NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
                         FullHttpRequest request = in.getHttpRequest();
-                        assertEquals("Relative path not used in POST", "/myapp/myservice?query1=a&query2=b", request.getUri());
-                        
+                        assertEquals("Relative path not used in POST", "/myapp/myservice?query1=a&query2=b", request.uri());
+
                         // send a response
                         exchange.getOut().getHeaders().clear();
                         exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/plain");

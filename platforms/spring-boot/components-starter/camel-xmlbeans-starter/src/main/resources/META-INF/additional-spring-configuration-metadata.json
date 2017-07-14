@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.xmlbeans.enabled",
+      "description": "Enable xmlbeans dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

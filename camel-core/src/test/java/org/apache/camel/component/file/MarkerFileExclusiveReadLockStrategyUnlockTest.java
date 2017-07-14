@@ -47,8 +47,8 @@ public class MarkerFileExclusiveReadLockStrategyUnlockTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/marker-unlock/input-a?fileName=file1.dat&readLock=markerFile")
-                        .pollEnrich("file:target/marker-unlock/input-b?fileName=file2.dat&readLock=markerFile")
+                from("file:target/marker-unlock/input-a?fileName=file1.dat&readLock=markerFile&initialDelay=0&delay=10")
+                        .pollEnrich("file:target/marker-unlock/input-b?fileName=file2.dat&readLock=markerFile&initialDelay=0&delay=10")
                         .to("mock:result");
             }
         };

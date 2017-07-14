@@ -123,6 +123,20 @@ public class TokenizerTest extends ExchangeTestSupport {
         assertEquals("Claus", names.get(1));
     }
 
+    public void testTokenizePairSimple() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizePair("${header.foo}", "${header.bar}", false);
+
+        exchange.getIn().setHeader("foo", "[START]");
+        exchange.getIn().setHeader("bar", "[END]");
+        exchange.getIn().setBody("2011-11-11\n[START]James[END]\n[START]Claus[END]\n2 records");
+
+        List<?> names = exp.evaluate(exchange, List.class);
+        assertEquals(2, names.size());
+
+        assertEquals("James", names.get(0));
+        assertEquals("Claus", names.get(1));
+    }
+
     public void testTokenizePairIncludeTokens() throws Exception {
         Expression exp = TokenizeLanguage.tokenizePair("[START]", "[END]", true);
 
@@ -138,6 +152,21 @@ public class TokenizerTest extends ExchangeTestSupport {
     public void testTokenizeXMLPair() throws Exception {
         Expression exp = TokenizeLanguage.tokenizeXML("<person>",  null);
 
+        exchange.getIn().setBody("<persons><person>James</person><person>Claus</person><person>Jonathan</person><person>Hadrian</person></persons>");
+
+        List<?> names = exp.evaluate(exchange, List.class);
+        assertEquals(4, names.size());
+
+        assertEquals("<person>James</person>", names.get(0));
+        assertEquals("<person>Claus</person>", names.get(1));
+        assertEquals("<person>Jonathan</person>", names.get(2));
+        assertEquals("<person>Hadrian</person>", names.get(3));
+    }
+
+    public void testTokenizeXMLPairSimple() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("${header.foo}", null);
+
+        exchange.getIn().setHeader("foo", "<person>");
         exchange.getIn().setBody("<persons><person>James</person><person>Claus</person><person>Jonathan</person><person>Hadrian</person></persons>");
 
         List<?> names = exp.evaluate(exchange, List.class);

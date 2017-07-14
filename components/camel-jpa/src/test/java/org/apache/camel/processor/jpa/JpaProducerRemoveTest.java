@@ -21,7 +21,6 @@ import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jpa.JpaConstants;
 import org.apache.camel.component.jpa.JpaEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
@@ -52,7 +51,7 @@ public class JpaProducerRemoveTest extends AbstractJpaTest {
         mock.reset();
 
         entityManager = emf.createEntityManager();
-        template.sendBody("direct:remove", new SendEmail("foo@beer.org"));
+        template.sendBody("direct:remove", persistedEntity);
         exchange = mock.getReceivedExchanges().get(0);
         persistedEntity = exchange.getIn().getBody(SendEmail.class);
         emfindEntity = entityManager.find(SendEmail.class, persistedEntity.getId());

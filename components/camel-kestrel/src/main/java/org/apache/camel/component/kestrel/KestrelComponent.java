@@ -27,6 +27,7 @@ import net.spy.memcached.MemcachedClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,13 +38,15 @@ import org.slf4j.LoggerFactory;
 public class KestrelComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(KestrelComponent.class);
 
-    private KestrelConfiguration configuration;
     private ConnectionFactory memcachedConnectionFactory;
 
     /**
      * We cache the memcached clients by queue for reuse
      */
     private final Map<String, MemcachedClient> memcachedClientCache = new HashMap<String, MemcachedClient>();
+
+    @Metadata(label = "advanced")
+    private KestrelConfiguration configuration;
 
     public KestrelComponent() {
         this(new KestrelConfiguration());

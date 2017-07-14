@@ -40,7 +40,7 @@ public final class BeanPrivateClassWithInterfaceMethodTest extends ContextTestSu
     public void testPackagePrivateClassBinding() throws InterruptedException {
         MockEndpoint mockResult = getMockEndpoint("mock:packagePrivateClassResult");
         mockResult.setExpectedMessageCount(1);
-        mockResult.message(0).body().equals(EXPECTED_OUTPUT);
+        mockResult.message(0).body().isEqualTo(EXPECTED_OUTPUT);
 
         template.sendBody("direct:testPackagePrivateClass", INPUT_BODY);
 
@@ -51,7 +51,7 @@ public final class BeanPrivateClassWithInterfaceMethodTest extends ContextTestSu
     public void testPrivateClassBinding() throws InterruptedException {
         MockEndpoint mockResult = getMockEndpoint("mock:privateClassResult");
         mockResult.setExpectedMessageCount(1);
-        mockResult.message(0).body().equals(EXPECTED_OUTPUT);
+        mockResult.message(0).body().isEqualTo(EXPECTED_OUTPUT);
 
         template.sendBody("direct:testPrivateClass", INPUT_BODY);
 

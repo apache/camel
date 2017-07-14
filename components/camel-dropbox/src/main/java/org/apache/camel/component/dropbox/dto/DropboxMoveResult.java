@@ -16,21 +16,23 @@
  */
 package org.apache.camel.component.dropbox.dto;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 
+public class DropboxMoveResult {
 
-public class DropboxMoveResult extends DropboxResult {
-    
-    /**
-     * Object payload contained in Exchange
-     * Exchange Header and Body contains the mode path
-     * @param exchange
-     */
-    @Override
-    public void populateExchange(Exchange exchange) {
-        String movedPath = (String)resultEntries;
-        exchange.getIn().setHeader(DropboxResultHeader.MOVED_PATH.name(), movedPath);
-        exchange.getIn().setBody(movedPath);
+    private final String oldPath;
+
+    private final String newPath;
+
+    public DropboxMoveResult(String oldPath, String newPath) {
+        this.oldPath = oldPath;
+        this.newPath = newPath;
+    }
+
+    public String getOldPath() {
+        return oldPath;
+    }
+
+    public String getNewPath() {
+        return newPath;
     }
 }

@@ -24,6 +24,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.socket.nio.BossPool;
 import org.jboss.netty.channel.socket.nio.WorkerPool;
 import org.jboss.netty.handler.ssl.SslHandler;
@@ -41,15 +42,15 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected int port;
     @UriParam(label = "consumer")
     protected boolean broadcast;
-    @UriParam(defaultValue = "65536")
+    @UriParam(label = "advanced", defaultValue = "65536")
     protected long sendBufferSize = 65536;
-    @UriParam(defaultValue = "65536")
+    @UriParam(label = "advanced", defaultValue = "65536")
     protected long receiveBufferSize = 65536;
-    @UriParam
+    @UriParam(label = "advanced")
     protected int receiveBufferSizePredictor;
-    @UriParam(label = "consumer", defaultValue = "1")
+    @UriParam(label = "consumer,advanced", defaultValue = "1")
     protected int bossCount = 1;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     protected int workerCount;
     @UriParam(defaultValue = "true")
     protected boolean keepAlive = true;
@@ -59,43 +60,48 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected boolean reuseAddress = true;
     @UriParam(label = "producer", defaultValue = "10000")
     protected long connectTimeout = 10000;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     protected int backlog;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     protected ServerPipelineFactory serverPipelineFactory;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     protected NettyServerBootstrapFactory nettyServerBootstrapFactory;
+    @UriParam(label = "advanced", prefix = "option.", multiValue = true)
     protected Map<String, Object> options;
     // SSL options is also part of the server bootstrap as the server listener on port X is either plain or SSL
-    @UriParam
+    @UriParam(label = "security")
     protected boolean ssl;
-    @UriParam
+    @UriParam(label = "security")
     protected boolean sslClientCertHeaders;
-    @UriParam
+    @UriParam(label = "security")
     protected SslHandler sslHandler;
-    @UriParam
+    @UriParam(label = "security")
     protected SSLContextParameters sslContextParameters;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,security")
     protected boolean needClientAuth;
-    @UriParam
+    @UriParam(label = "security")
     protected File keyStoreFile;
-    @UriParam
+    @UriParam(label = "security")
     protected File trustStoreFile;
-    @UriParam
+    @UriParam(label = "security")
     protected String keyStoreResource;
-    @UriParam
+    @UriParam(label = "security")
     protected String trustStoreResource;
-    @UriParam(defaultValue = "JKS")
+    @UriParam(defaultValue = "JKS", label = "security")
     protected String keyStoreFormat = "JKS";
-    @UriParam(defaultValue = "SunX509")
+    @UriParam(defaultValue = "SunX509", label = "security")
     protected String securityProvider = "SunX509";
-    @UriParam(defaultValue = DEFAULT_ENABLED_PROTOCOLS)
+    @UriParam(defaultValue = DEFAULT_ENABLED_PROTOCOLS, label = "security")
     protected String enabledProtocols = DEFAULT_ENABLED_PROTOCOLS;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     protected String passphrase;
+    @UriParam(label = "consumer,advanced")
     protected BossPool bossPool;
+    @UriParam(label = "consumer,advanced")
     protected WorkerPool workerPool;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
+    protected ChannelGroup channelGroup;
+    @UriParam(label = "consumer,advanced")
     protected String networkInterface;
     
     public String getAddress() {
@@ -463,6 +469,17 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
      */
     public void setWorkerPool(WorkerPool workerPool) {
         this.workerPool = workerPool;
+    }
+
+    public ChannelGroup getChannelGroup() {
+        return channelGroup;
+    }
+
+    /**
+     * To use a explicit ChannelGroup.
+     */
+    public void setChannelGroup(ChannelGroup channelGroup) {
+        this.channelGroup = channelGroup;
     }
 
     public String getNetworkInterface() {

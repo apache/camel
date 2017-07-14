@@ -78,7 +78,7 @@ public enum DisruptorWaitStrategy {
 
     private final Class<? extends WaitStrategy> waitStrategyClass;
 
-    private DisruptorWaitStrategy(final Class<? extends WaitStrategy> waitStrategyClass) {
+    DisruptorWaitStrategy(final Class<? extends WaitStrategy> waitStrategyClass) {
 
         this.waitStrategyClass = waitStrategyClass;
     }

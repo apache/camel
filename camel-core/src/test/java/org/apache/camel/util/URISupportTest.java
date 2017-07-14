@@ -231,6 +231,18 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals(path, URISupport.sanitizePath(path));
     }
 
+    public void testSanitizeUriWithRawPassword() {
+        String uri = "http://foo?username=me&password=RAW(me#@123)&foo=bar";
+        String expected = "http://foo?username=me&password=xxxxxx&foo=bar";
+        assertEquals(expected, URISupport.sanitizeUri(uri));
+    }
+
+    public void testSanitizeUriRawUnsafePassword() {
+        String uri = "sftp://localhost/target?password=RAW(beforeAmp&afterAmp)&username=jrandom";
+        String expected = "sftp://localhost/target?password=xxxxxx&username=jrandom";
+        assertEquals(expected, URISupport.sanitizeUri(uri));
+    }
+
     public void testNormalizeEndpointUriWithUserInfoSpecialSign() throws Exception {
         String out1 = URISupport.normalizeUri("ftp://us%40r:t%st@localhost:21000/tmp3/camel?foo=us@r");
         assertEquals("ftp://us%40r:t%25st@localhost:21000/tmp3/camel?foo=us%40r", out1);
@@ -324,4 +336,12 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals("stub://foo?foo=456&bar=yes", newUri);
     }
 
+    public void testPathAndQueryOf() {
+        assertEquals("/", URISupport.pathAndQueryOf(URI.create("http://localhost")));
+        assertEquals("/", URISupport.pathAndQueryOf(URI.create("http://localhost:80")));
+        assertEquals("/", URISupport.pathAndQueryOf(URI.create("http://localhost:80/")));
+        assertEquals("/path", URISupport.pathAndQueryOf(URI.create("http://localhost:80/path")));
+        assertEquals("/path/", URISupport.pathAndQueryOf(URI.create("http://localhost:80/path/")));
+        assertEquals("/path?query=value", URISupport.pathAndQueryOf(URI.create("http://localhost:80/path?query=value")));
+    }
 }

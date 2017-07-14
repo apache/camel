@@ -20,7 +20,6 @@ import java.util.Locale;
 
 import com.dropbox.core.DbxClient;
 import com.dropbox.core.DbxRequestConfig;
-import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.apache.camel.spi.Metadata;
@@ -55,7 +54,7 @@ public class DropboxConfiguration {
     //id of the app
     @UriParam @Metadata(required = "true")
     private String clientIdentifier;
-    //reference to dropboxclient
+    //reference to dropbox client
     @UriParam
     private DbxClient client;
 
@@ -73,10 +72,9 @@ public class DropboxConfiguration {
     /**
      * Obtain a new instance of DbxClient and store it in configuration.
      */
-    public void createClient() throws DropboxException {
+    public void createClient() {
         DbxRequestConfig config = new DbxRequestConfig(clientIdentifier, Locale.getDefault().toString());
-        DbxClient client = new DbxClient(config, accessToken);
-        this.client = client;
+        this.client = new DbxClient(config, accessToken);
     }
 
     public String getAccessToken() {
@@ -128,7 +126,7 @@ public class DropboxConfiguration {
     }
 
     /**
-     * A space-separated list of substrings to search for. A file matches only if it contains all the substrings. If this option is not set, all files will be matched.
+     * A space-separated list of sub-strings to search for. A file matches only if it contains all the sub-strings. If this option is not set, all files will be matched.
      */
     public void setQuery(String query) {
         this.query = query;

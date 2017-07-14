@@ -29,6 +29,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringManagedSedaEndpointTest extends SpringTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringManagedSedaEndpointTest.xml");
     }
@@ -70,6 +75,11 @@ public class SpringManagedSedaEndpointTest extends SpringTestSupport {
         assertEquals(1, size2.longValue());
 
         String out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{0}, new String[]{"java.lang.Integer"});
+        assertNotNull(out);
+        // message body is not dumped when browsing exchange
+        assertFalse(out.contains("Hi World"));
+
+        out = (String) mbeanServer.invoke(name, "browseMessageBody", new Object[]{0}, new String[]{"java.lang.Integer"});
         assertNotNull(out);
         assertTrue(out.contains("Hi World"));
 

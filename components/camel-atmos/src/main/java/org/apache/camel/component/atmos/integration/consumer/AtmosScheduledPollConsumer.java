@@ -48,8 +48,6 @@ public abstract class AtmosScheduledPollConsumer extends ScheduledPollConsumer {
         if (configuration.getClient() == null) {
             //create atmos client
             configuration.createClient();
-
-            LOG.info("consumer atmos client created");
         }
 
         super.doStart();
@@ -62,10 +60,8 @@ public abstract class AtmosScheduledPollConsumer extends ScheduledPollConsumer {
      */
     @Override
     protected void doStop() throws Exception {
-        if (configuration.getClient() == null) {
+        if (configuration.getClient() != null) {
             configuration.setClient(null);
-
-            LOG.info("consumer atmos client deleted");
         }
         super.doStop();
     }

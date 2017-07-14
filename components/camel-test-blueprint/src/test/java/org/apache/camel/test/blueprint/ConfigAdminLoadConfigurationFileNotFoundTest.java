@@ -17,7 +17,6 @@
 package org.apache.camel.test.blueprint;
 
 import org.junit.Test;
-import org.osgi.framework.BundleContext;
 
 /**
  *

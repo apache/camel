@@ -24,6 +24,7 @@ import org.apache.camel.impl.PollingConsumerSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.support.destination.JmsDestinationAccessor;
 
 /**
  *  A JMS {@link org.apache.camel.PollingConsumer}.
@@ -48,11 +49,11 @@ public class JmsPollingConsumer extends PollingConsumerSupport implements Servic
     }
 
     public Exchange receiveNoWait() {
-        return receive(JmsTemplate.RECEIVE_TIMEOUT_NO_WAIT);
+        return receive(JmsDestinationAccessor.RECEIVE_TIMEOUT_NO_WAIT);
     }
 
     public Exchange receive() {
-        return receive(JmsTemplate.RECEIVE_TIMEOUT_INDEFINITE_WAIT);
+        return receive(JmsDestinationAccessor.RECEIVE_TIMEOUT_INDEFINITE_WAIT);
     }
 
     public Exchange receive(long timeout) {

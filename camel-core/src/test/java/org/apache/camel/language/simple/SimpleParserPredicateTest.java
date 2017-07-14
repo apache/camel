@@ -223,6 +223,11 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         parser = new SimplePredicateParser("${body[foo bar]} == 456", true);
         pre = parser.parsePredicate();
         assertTrue("Should match", pre.matches(exchange));
+
+        // no header with that name
+        parser = new SimplePredicateParser("${body[unknown]} == 456", true);
+        pre = parser.parsePredicate();
+        assertFalse("Should not match", pre.matches(exchange));
     }
 
     protected JndiRegistry createRegistry() throws Exception {
@@ -254,5 +259,22 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         parser = new SimplePredicateParser("${body[key3]} in ${ref:myList}", true);
         pre = parser.parsePredicate();
         assertFalse("Should not match", pre.matches(exchange));
+    }
+
+    public void testSimpleInEmpty() throws Exception {
+        SimplePredicateParser parser = new SimplePredicateParser("${body} in ',,gold,silver'", true);
+        Predicate pre = parser.parsePredicate();
+
+        exchange.getIn().setBody("gold");
+        assertTrue("Should match gold", pre.matches(exchange));
+
+        exchange.getIn().setBody("silver");
+        assertTrue("Should match silver", pre.matches(exchange));
+
+        exchange.getIn().setBody("");
+        assertTrue("Should match empty", pre.matches(exchange));
+
+        exchange.getIn().setBody("bronze");
+        assertFalse("Should not match bronze", pre.matches(exchange));
     }
 }

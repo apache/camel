@@ -47,6 +47,7 @@ public class BlueprintModelJAXBContextFactory implements ModelJAXBContextFactory
         classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
         classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
         classes.add(org.apache.camel.model.rest.RestDefinition.class);
+        classes.add(org.apache.camel.model.cloud.ServiceCallDefinition.class);
 
         StringBuilder packages = new StringBuilder();
         for (Class<?> cl : classes) {

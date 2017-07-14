@@ -40,6 +40,8 @@ public final class RabbitMQConstants {
     public static final String IMMEDIATE = "rabbitmq.IMMEDIATE";
     public static final String RABBITMQ_DEAD_LETTER_EXCHANGE = "x-dead-letter-exchange";
     public static final String RABBITMQ_DEAD_LETTER_ROUTING_KEY = "x-dead-letter-routing-key";
+    public static final String RABBITMQ_DIRECT_REPLY_EXCHANGE = "";
+    public static final String RABBITMQ_DIRECT_REPLY_ROUTING_KEY = "amq.rabbitmq.reply-to";
     
     private RabbitMQConstants() {
         //Constants class

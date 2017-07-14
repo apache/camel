@@ -41,7 +41,7 @@ public class StompConsumerTest extends StompBaseTest {
         context.addRoutes(createRouteBuilder());
         context.start();
 
-        Stomp stomp = new Stomp("tcp://localhost:" + getPort());
+        Stomp stomp = createStompClient();
         final BlockingConnection producerConnection = stomp.connectBlocking();
 
         MockEndpoint mock = getMockEndpoint("mock:result");

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
@@ -23,6 +24,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version
@@ -46,20 +49,17 @@ public class DistributedTimeoutTest extends AbstractDistributedTest {
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template2.sendBodyAndHeader("direct:start", "B", "id", 123);
 
-        // wait 3 seconds so that the timeout kicks in
-        Thread.sleep(3000);
+        // wait a bit until the timeout was triggered
+        await().atMost(2, TimeUnit.SECONDS).until(() -> invoked.get() == 1);
 
         mock.assertIsSatisfied();
         mock2.assertIsSatisfied();
-
-        // should invoke the timeout method
-        assertEquals(1, invoked.get());
 
         assertNotNull(receivedExchange);
         assertEquals("AB", receivedExchange.getIn().getBody());
         assertEquals(-1, receivedIndex);
         assertEquals(-1, receivedTotal);
-        assertEquals(2000, receivedTimeout);
+        assertEquals(200, receivedTimeout);
 
         mock.reset();
         mock.expectedMessageCount(0);
@@ -72,8 +72,8 @@ public class DistributedTimeoutTest extends AbstractDistributedTest {
         template2.sendBodyAndHeader("direct:start", "C", "id", 123);
 
         // should complete before timeout
-        mock2.assertIsSatisfied(2000);
-        mock.assertIsSatisfied(5000);
+        mock2.assertIsSatisfied(500);
+        mock.assertIsSatisfied(500);
 
         // should have not invoked the timeout method anymore
         assertEquals(1, invoked.get());
@@ -85,12 +85,13 @@ public class DistributedTimeoutTest extends AbstractDistributedTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .aggregate(header("id"), new MyAggregationStrategy())
+                    .aggregate(header("id"), new MyAggregationStrategy())
                         .aggregationRepository(sharedAggregationRepository)
                         .optimisticLocking()
                         .discardOnCompletionTimeout()
                         .completionSize(3)
-                        .completionTimeout(2000)  // use a 2 second timeout
+                        .completionTimeout(200)
+                        .completionTimeoutCheckerInterval(10)
                         .to("mock:aggregated");
             }
         };

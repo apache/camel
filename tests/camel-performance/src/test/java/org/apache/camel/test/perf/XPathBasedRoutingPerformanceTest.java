@@ -56,7 +56,7 @@ public class XPathBasedRoutingPerformanceTest extends AbstractBasePerformanceTes
         execute(count);
 
         assertMockEndpointsSatisfied();
-        log.warn("Ran {} tests in {} ms", count, watch.taken());
+        log.warn("Ran {} tests in {}ms", count, watch.taken());
     }
 
     @Override

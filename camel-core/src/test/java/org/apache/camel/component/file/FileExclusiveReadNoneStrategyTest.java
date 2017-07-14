@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileExclusiveReadNoneStrategyTest.class);
-    private String fileUrl = "file://target/exclusiveread/slowfile?noop=true&consumer.delay=500&readLock=none";
+    private String fileUrl = "file://target/exclusiveread/slowfile?noop=true&initialDelay=0&delay=10&readLock=none";
 
     @Override
     protected void setUp() throws Exception {
@@ -48,7 +48,7 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:start").process(new MySlowFileProcessor());
-                from(fileUrl + "&readLockTimeout=1000").to("mock:result");
+                from(fileUrl + "&readLockTimeout=500").to("mock:result");
             }
         };
     }
@@ -75,7 +75,7 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
             FileOutputStream fos = new FileOutputStream(file);
             fos.write("Hello World".getBytes());
             for (int i = 0; i < 3; i++) {
-                Thread.sleep(1000);
+                Thread.sleep(100);
                 fos.write(("Line #" + i).getBytes());
                 LOG.info("Appending to slowfile");
             }

@@ -91,7 +91,7 @@ public final class UnitOfWorkHelper {
             // reverse so we invoke it FILO style instead of FIFO
             Collections.reverse(copy);
             // and honor if any was ordered by sorting it accordingly
-            Collections.sort(copy, new OrderedComparator());
+            copy.sort(OrderedComparator.get());
 
             // invoke synchronization callbacks
             for (Synchronization synchronization : copy) {
@@ -119,7 +119,7 @@ public final class UnitOfWorkHelper {
             // reverse so we invoke it FILO style instead of FIFO
             Collections.reverse(copy);
             // and honor if any was ordered by sorting it accordingly
-            Collections.sort(copy, new OrderedComparator());
+            copy.sort(OrderedComparator.get());
 
             // invoke synchronization callbacks
             for (Synchronization synchronization : copy) {
@@ -144,7 +144,7 @@ public final class UnitOfWorkHelper {
             // reverse so we invoke it FILO style instead of FIFO
             Collections.reverse(copy);
             // and honor if any was ordered by sorting it accordingly
-            Collections.sort(copy, new OrderedComparator());
+            copy.sort(OrderedComparator.get());
 
             // invoke synchronization callbacks
             for (Synchronization synchronization : copy) {

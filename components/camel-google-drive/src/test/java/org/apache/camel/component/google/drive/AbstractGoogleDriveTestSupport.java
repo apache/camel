@@ -42,7 +42,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
     protected static String testFolderId;
     protected static String testFileId;
 
-    protected static final String TEST_UPLOAD_FILE = "src/test/resources/log4j.properties";
+    protected static final String TEST_UPLOAD_FILE = "src/test/resources/log4j2.properties";
     protected static final String TEST_UPLOAD_IMG = "src/test/resources/camel-box-small.png";
     protected static final java.io.File UPLOAD_FILE = new java.io.File(TEST_UPLOAD_FILE);
 
@@ -50,7 +50,6 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
     private static String propertyText;
 
     
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
     private static final String REFRESH_TOKEN_PROPERTY = "refreshToken";
     
@@ -91,7 +90,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         String line;
         while ((line = reader.readLine()) != null) {
-            builder.append(line).append(LINE_SEPARATOR);
+            builder.append(line).append(LS);
         }
         propertyText = builder.toString();
 

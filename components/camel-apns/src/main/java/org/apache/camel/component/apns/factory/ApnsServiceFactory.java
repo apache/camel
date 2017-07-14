@@ -192,7 +192,7 @@ public class ApnsServiceFactory implements CamelContextAware {
 
     private void configureApnsCertificate(ApnsServiceBuilder builder) throws IOException, GeneralSecurityException {
         if (getSslContextParameters() != null) {
-            builder.withSSLContext(getSslContextParameters().createSSLContext());
+            builder.withSSLContext(getSslContextParameters().createSSLContext(getCamelContext()));
             return;
         }
 
@@ -202,7 +202,7 @@ public class ApnsServiceFactory implements CamelContextAware {
 
         InputStream certificateInputStream = null;
         try {
-            certificateInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), getCertificatePath());
+            certificateInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, getCertificatePath());
             builder.withCert(certificateInputStream, getCertificatePassword());
         } finally {
             ResourceUtils.close(certificateInputStream);

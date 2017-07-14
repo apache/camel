@@ -27,10 +27,7 @@ import com.datastax.driver.core.querybuilder.Update;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.cassandraunit.CassandraCQLUnit;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -38,7 +35,7 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
 
-public class CassandraComponentProducerUnpreparedTest extends CamelTestSupport {
+public class CassandraComponentProducerUnpreparedTest extends BaseCassandraTest {
 
     private static final String CQL = "insert into camel_user(login, first_name, last_name) values (?, ?, ?)";
     private static final String NO_PARAMETER_CQL = "select login, first_name, last_name from camel_user";
@@ -51,16 +48,6 @@ public class CassandraComponentProducerUnpreparedTest extends CamelTestSupport {
 
     @Produce(uri = "direct:inputNoParameter")
     ProducerTemplate noParameterProducerTemplate;
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        CassandraUnitUtils.startEmbeddedCassandra();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        CassandraUnitUtils.cleanEmbeddedCassandra();
-    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

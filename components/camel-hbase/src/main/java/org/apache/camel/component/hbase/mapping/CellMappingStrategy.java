@@ -34,7 +34,7 @@ public interface CellMappingStrategy {
     HBaseData resolveModel(Message message);
 
     /**
-     * Applies the KeyValues of a get opration to the {@link Exchange}.
+     * Applies the KeyValues of a get operation to the {@link Exchange}.
      *
      * @param message The message that will be applied the Get result.
      * @param data The rows that will be applied to the message.

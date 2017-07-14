@@ -53,7 +53,9 @@ public final class CamelContextTrackerRegistry {
     synchronized void contextCreated(CamelContext camelContext) {
         for (CamelContextTracker tracker : trackers) {
             try {
-                tracker.contextCreated(camelContext);
+                if (tracker.accept(camelContext)) {
+                    tracker.contextCreated(camelContext);
+                }
             } catch (Exception e) {
                 LOG.warn("Error calling CamelContext tracker. This exception is ignored.", e);
             }

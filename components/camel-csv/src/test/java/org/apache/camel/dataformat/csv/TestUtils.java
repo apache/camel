@@ -16,7 +16,7 @@
  */
 package org.apache.camel.dataformat.csv;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -39,7 +39,7 @@ final class TestUtils {
             throw new IllegalArgumentException("Cannot create a map with an add number of strings");
         }
 
-        Map<String, String> map = new HashMap<String, String>(strings.length / 2);
+        Map<String, String> map = new LinkedHashMap<>(strings.length / 2);
         for (int i = 0; i < strings.length; i += 2) {
             map.put(strings[i], strings[i + 1]);
         }

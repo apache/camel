@@ -37,6 +37,7 @@ import org.apache.camel.util.CamelLogger;
  *
  * @version 
  */
+@Deprecated
 public class Tracer implements InterceptStrategy, Service {
     private static final String JPA_TRACE_EVENT_MESSAGE = "org.apache.camel.processor.interceptor.jpa.JpaTraceEventMessage";
 
@@ -102,7 +103,7 @@ public class Tracer implements InterceptStrategy, Service {
      */
     public synchronized CamelLogProcessor getLogger(ExchangeFormatter formatter) {
         if (logger == null) {
-            logger = new CamelLogProcessor(new CamelLogger(getLogName(), getLogLevel()), formatter);
+            logger = new CamelLogProcessor(new CamelLogger(getLogName(), getLogLevel()), formatter, null, null);
         }
         return logger;
     }
@@ -341,7 +342,6 @@ public class Tracer implements InterceptStrategy, Service {
     public void setJpaTraceEventMessageClassName(String jpaTraceEventMessageClassName) {
         this.jpaTraceEventMessageClassName = jpaTraceEventMessageClassName;
     }
-
 
     public boolean isJmxTraceNotifications() {
         return jmxTraceNotifications;

@@ -35,7 +35,7 @@ public class DockerClientProfileTest {
         Integer requestTimeout = 40;
         boolean secure = true;
         String certPath = "/docker/cert/path";
-
+        String cmdExecFactory = DockerConstants.DEFAULT_CMD_EXEC_FACTORY;
 
         DockerClientProfile clientProfile1 = new DockerClientProfile();
         clientProfile1.setHost(host);
@@ -46,6 +46,7 @@ public class DockerClientProfileTest {
         clientProfile1.setRequestTimeout(requestTimeout);
         clientProfile1.setSecure(secure);
         clientProfile1.setCertPath(certPath);
+        clientProfile1.setCmdExecFactory(cmdExecFactory);
 
         DockerClientProfile clientProfile2 = new DockerClientProfile();
         clientProfile2.setHost(host);
@@ -56,6 +57,7 @@ public class DockerClientProfileTest {
         clientProfile2.setRequestTimeout(requestTimeout);
         clientProfile2.setSecure(secure);
         clientProfile2.setCertPath(certPath);
+        clientProfile2.setCmdExecFactory(cmdExecFactory);
 
         assertEquals(clientProfile1, clientProfile2);
     }

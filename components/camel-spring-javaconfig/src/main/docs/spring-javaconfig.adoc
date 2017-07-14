@@ -1,0 +1,98 @@
+[[SpringJavaConfig-SpringJavaConfig]]
+Spring Java Config
+~~~~~~~~~~~~~~~~~~
+
+link:spring.html[Spring] started life using XML Config to wire beans
+together. However some folks don't like using XML and would rather use
+Java code which led to the creation of Guice along with the Spring
+JavaConfig project.
+
+You can use either the XML or Java config approaches with Camel; its
+your choice really on which you prefer.
+
+[[SpringJavaConfig-UsingSpringJavaConfig]]
+Using Spring Java Config
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+To use Spring Java Config in your Camel project the easiest thing to do
+is add the following to your pom.xml
+
+[source,xml]
+--------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-spring-javaconfig</artifactId>
+  <version>${camel-version}</version>
+</dependency>
+--------------------------------------------------
+
+This will then add the dependencies on the Spring JavaConfig library
+along with some helper classes for configuring Camel inside Spring.
+
+Note that this library is totally optional; you could just wire Camel
+together yourself with Java Config.
+
+[[SpringJavaConfig-Configuration]]
+Configuration
+^^^^^^^^^^^^^
+
+The most common case of using JavaConfig with Camel would be to create
+configuration with defined list of routes to be used by router.
+
+[source,java]
+--------------------------------------------------------------------
+@Configuration
+public class MyRouteConfiguration extends CamelConfiguration {
+
+    @Autowire
+    private MyRouteBuilder myRouteBuilder;
+
+    @Autowire
+    private MyAnotherRouteBuilder myAnotherRouteBuilder;
+
+    @Override
+    public List<RouteBuilder> routes() {
+        return Arrays.asList(myRouteBuilder, myAnotherRouteBuilder);
+    } 
+
+}
+--------------------------------------------------------------------
+
+Starting from Camel 2.13.0 you can skip the *routes()* definition, and
+fall back to the *RouteBuilder* instances located in the Spring context.
+
+[source,java]
+--------------------------------------------------------------
+@Configuration
+@ComponentScan("com.example.routes")
+public class MyRouteConfiguration extends CamelConfiguration {
+}
+--------------------------------------------------------------
+
+[[SpringJavaConfig-Testing]]
+Testing
+^^^^^^^
+
+Since *Camel 2.11.0* you can use the `CamelSpringJUnit4ClassRunner` with
+`CamelSpringDelegatingTestContextLoader`. This is the recommended way to
+test Java Config and Camel integration.
+
+If you wish to create a collection of *RouteBuilder* instances then
+derive from the *CamelConfiguration* helper class and implement the
+*routes()* method. Keep in mind that (starting from the Camel 2.13.0) if
+you don't override *routes()* method, then *CamelConfiguration* will use
+all *RouteBuilder* instances available in the Spring context.
+
+The following
+http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[example
+using Java Config] demonstrates how to test Java Config integration with
+Camel 2.10 and lower. Keep in mind that `JavaConfigContextLoader` is
+deprecated and could be removed in the future versions of Camel on the
+behalf of the `CamelSpringDelegatingTestContextLoader`.
+
+The *@ContextConfiguration* annotation tells the
+link:spring-testing.html[Spring Testing] framework to load the
+*ContextConfig* class as the configuration to use. This class derives
+from *SingleRouteCamelConfiguration* which is a helper Spring Java
+Config class which will configure the CamelContext for us and then
+register the RouteBuilder we create.

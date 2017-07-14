@@ -17,19 +17,26 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.ContextSuspendCommand;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
+import org.apache.camel.karaf.commands.completers.CamelContextCompleter;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "camel", name = "context-suspend", description = "Suspends a Camel context.")
-public class ContextSuspend extends CamelCommandSupport {
+@Service
+public class ContextSuspend extends CamelControllerImpl implements Action {
 
     @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
+    @Completion(CamelContextCompleter.class)
     String context;
 
     @Override
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         ContextSuspendCommand command = new ContextSuspendCommand(context);
-        return command.execute(camelController, System.out, System.err);
+        return command.execute(this, System.out, System.err);
     }
 
 }

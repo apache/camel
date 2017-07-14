@@ -92,7 +92,7 @@ public class ManagedSendDynamicProcessorTest extends ManagementTestSupport {
 
         String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
         assertNotNull(json);
-        assertTrue(json.contains("\"description\": \"Sends the message to a dynamic endpoint (uri supports languages)"));
+        assertTrue(json.contains("\"description\": \"Sends the message to a dynamic endpoint"));
         assertTrue(json.contains(" \"uri\": { \"kind\": \"attribute\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
                 + " \"deprecated\": \"false\", \"value\": \"direct:${header.whereto}\""));
     }

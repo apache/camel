@@ -68,7 +68,7 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
     public void httpsGet() throws Exception {
 
         Exchange exchange = template.request("https4://127.0.0.1:" + localServer.getLocalPort() 
-            + "/mail/?x509HostnameVerifier=x509HostnameVerifier&sslContextParametersRef=sslContextParameters", new Processor() {
+            + "/mail/?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });

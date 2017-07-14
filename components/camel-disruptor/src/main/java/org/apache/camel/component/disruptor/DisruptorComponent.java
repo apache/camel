@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,14 +37,20 @@ public class DisruptorComponent extends UriEndpointComponent {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorComponent.class);
 
+    @Metadata(defaultValue = "" + DEFAULT_BUFFER_SIZE)
     private int bufferSize = -1;
     //for SEDA compatibility only
     private int queueSize = -1;
 
+    @Metadata(label = "consumer", defaultValue = "1")
     private int defaultConcurrentConsumers = 1;
+    @Metadata(label = "consumer")
     private boolean defaultMultipleConsumers;
+    @Metadata(label = "producer", defaultValue = "Multi")
     private DisruptorProducerType defaultProducerType = DisruptorProducerType.Multi;
+    @Metadata(label = "consumer", defaultValue = "Blocking")
     private DisruptorWaitStrategy defaultWaitStrategy = DisruptorWaitStrategy.Blocking;
+    @Metadata(label = "producer", defaultValue = "true")
     private boolean defaultBlockWhenFull = true;
 
     //synchronized access guarded by this

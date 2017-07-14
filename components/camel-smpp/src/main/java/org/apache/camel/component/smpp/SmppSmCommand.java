@@ -75,25 +75,27 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         return config.getSplittingPolicy();
     }
 
-    protected SmppSplitter createSplitter(Message message) {
-        Alphabet alphabet = determineAlphabet(message);
-
-        String body = message.getBody(String.class);
+    protected SmppSplitter createSplitter(Message message) throws SmppException {
 
         SmppSplitter splitter;
-        switch (alphabet) {
-        case ALPHA_8_BIT:
-            splitter = new Smpp8BitSplitter(body.length());
-            break;
-        case ALPHA_UCS2:
-            splitter = new SmppUcs2Splitter(body.length());
-            break;
-        case ALPHA_DEFAULT:
-        default:
-            splitter = new SmppDefaultSplitter(body.length());
-            break;
+        // use the splitter if provided via header
+        if (message.getHeaders().containsKey(SmppConstants.DATA_SPLITTER)) {
+            splitter = message.getHeader(SmppConstants.DATA_SPLITTER, SmppSplitter.class);
+            if (null != splitter) {
+                return splitter;
+            }
+            throw new SmppException("Invalid splitter given. Must be instance of SmppSplitter");
         }
+        Alphabet alphabet = determineAlphabet(message);
+        String body = message.getBody(String.class);
 
+        if (SmppUtils.is8Bit(alphabet)) {
+            splitter = new Smpp8BitSplitter(body.length());
+        } else if (alphabet == Alphabet.ALPHA_UCS2) {
+            splitter = new SmppUcs2Splitter(body.length());
+        } else {
+            splitter = new SmppDefaultSplitter(body.length());
+        }
         return splitter;
     }
 
@@ -112,10 +114,10 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
     private static boolean has8bitDataCoding(Message message) {
         Byte dcs = message.getHeader(SmppConstants.DATA_CODING, Byte.class);
         if (dcs != null) {
-            return SmppUtils.parseAlphabetFromDataCoding(dcs.byteValue()) == Alphabet.ALPHA_8_BIT;
+            return SmppUtils.is8Bit(Alphabet.parseDataCoding(dcs.byteValue()));
         } else {
             Byte alphabet = message.getHeader(SmppConstants.ALPHABET, Byte.class);
-            return alphabet != null && alphabet.equals(Alphabet.ALPHA_8_BIT.value());
+            return alphabet != null && SmppUtils.is8Bit(Alphabet.valueOf(alphabet));
         }
     }
 

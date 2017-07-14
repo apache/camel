@@ -35,11 +35,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.aryEq;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isNull;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
 public class SmppReplaceSmCommandTest {
@@ -100,10 +100,10 @@ public class SmppReplaceSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR, "1818");
         exchange.getIn().setHeader(SmppConstants.SCHEDULE_DELIVERY_TIME, new Date(1111111));
         exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, new Date(2222222));
-        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS).value());
+        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
         exchange.getIn().setBody("new short message body");
-        session.replaceShortMessage(eq("1"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"), eq("-300101001831100-"), eq("-300101003702200-"),
-                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)), eq((byte) 0), aryEq("new short message body".getBytes()));
+        session.replaceShortMessage(eq("1"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"), eq("-300101001831100+"), eq("-300101003702200+"),
+                eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)), eq((byte) 0), aryEq("new short message body".getBytes()));
         
         replay(session);
         
@@ -124,10 +124,10 @@ public class SmppReplaceSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR, "1818");
         exchange.getIn().setHeader(SmppConstants.SCHEDULE_DELIVERY_TIME, new Date(1111111));
         exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, "000003000000000R"); // three days
-        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS).value());
+        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
         exchange.getIn().setBody("new short message body");
-        session.replaceShortMessage(eq("1"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"), eq("-300101001831100-"), eq("000003000000000R"),
-                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)), eq((byte) 0), aryEq("new short message body".getBytes()));
+        session.replaceShortMessage(eq("1"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"), eq("-300101001831100+"), eq("000003000000000R"),
+                eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)), eq((byte) 0), aryEq("new short message body".getBytes()));
         
         replay(session);
         

@@ -21,7 +21,7 @@ import javax.jms.Connection;
 
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
-import org.apache.camel.SuspendableService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.impl.DefaultConsumer;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.support.JmsUtils;
@@ -34,7 +34,7 @@ import org.springframework.jms.support.JmsUtils;
  * @see DefaultJmsMessageListenerContainer
  * @see SimpleJmsMessageListenerContainer
  */
-public class JmsConsumer extends DefaultConsumer implements SuspendableService {
+public class JmsConsumer extends DefaultConsumer implements Suspendable {
     private volatile AbstractMessageListenerContainer listenerContainer;
     private volatile EndpointMessageListener messageListener;
     private volatile boolean initialized;
@@ -185,6 +185,7 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         // then we will use updated configuration from jms endpoint that may have been managed using JMX
         listenerContainer = null;
         messageListener = null;
+        initialized = false;
 
         // shutdown thread pool if listener container was using a private thread pool
         if (shutdownExecutorService && executorService != null) {
@@ -236,6 +237,8 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         } else {
             if (listenerContainer != null) {
                 startListenerContainer();
+            } else {
+                log.warn("The listenerContainer is not instantiated. Probably there was a timeout during the Suspend operation. Please restart your consumer route.");
             }
         }
     }

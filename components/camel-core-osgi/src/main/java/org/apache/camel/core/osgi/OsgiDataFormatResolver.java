@@ -16,10 +16,14 @@
  */
 package org.apache.camel.core.osgi;
 
+import java.util.Collection;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResolverHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -37,34 +41,43 @@ public class OsgiDataFormatResolver implements DataFormatResolver {
 
     public DataFormat resolveDataFormat(String name, CamelContext context) {
         // lookup in registry first
-        Object bean = null;
-        try {
-            bean = context.getRegistry().lookupByName(name);
-            if (bean != null) {
-                LOG.debug("Found language: {} in registry: {}", name, bean);
-            }
-        } catch (Exception e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
-            }
+        DataFormat dataFormat = ResolverHelper.lookupDataFormatInRegistryWithFallback(context, name);
+        if (dataFormat == null) {
+            dataFormat = getDataFormat(name, context, false);
         }
-        if (bean instanceof DataFormat) {
-            return (DataFormat) bean;
+
+        if (dataFormat == null) {
+            dataFormat = createDataFormat(name, context);
         }
-        return getDataFormat(name, context);
+
+        return dataFormat;
     }
 
-    protected DataFormat getDataFormat(String name, CamelContext context) {
+    public DataFormat createDataFormat(String name, CamelContext context) {
+        DataFormat dataFormat = null;
+
+        // lookup in registry first
+        DataFormatFactory dataFormatFactory = ResolverHelper.lookupDataFormatFactoryInRegistryWithFallback(context, name);
+        if (dataFormatFactory != null) {
+            dataFormat = dataFormatFactory.newInstance();
+        }
+
+        if (dataFormat == null) {
+            dataFormat = getDataFormat(name, context, true);
+        }
+
+        return dataFormat;
+    }
+
+    private DataFormat getDataFormat(String name, CamelContext context, boolean create) {
         LOG.trace("Finding DataFormat: {}", name);
         try {
-            ServiceReference<?>[] refs = bundleContext.getServiceReferences(DataFormatResolver.class.getName(), "(dataformat=" + name + ")");
+            Collection<ServiceReference<DataFormatResolver>> refs = bundleContext.getServiceReferences(DataFormatResolver.class, "(dataformat=" + name + ")");
             if (refs != null) {
-                for (ServiceReference<?> ref : refs) {
-                    Object service = bundleContext.getService(ref);
-                    if (DataFormatResolver.class.isAssignableFrom(service.getClass())) {
-                        DataFormatResolver resolver = (DataFormatResolver) service;
-                        return resolver.resolveDataFormat(name, context);
-                    }
+                for (ServiceReference<DataFormatResolver> ref : refs) {
+                    return create
+                        ? bundleContext.getService(ref).createDataFormat(name, context)
+                        : bundleContext.getService(ref).resolveDataFormat(name, context);
                 }
             }
             return null;

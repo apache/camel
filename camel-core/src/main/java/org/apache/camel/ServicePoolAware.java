@@ -19,7 +19,9 @@ package org.apache.camel;
 /**
  * Marker interface to indicate this service can be pooled using a {@link org.apache.camel.spi.ServicePool}.
  *
+ * @deprecated favor not using non-singleton services
  * @version 
  */
+@Deprecated
 public interface ServicePoolAware {
 }

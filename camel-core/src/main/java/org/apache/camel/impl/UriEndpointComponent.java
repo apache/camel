@@ -33,7 +33,10 @@ import org.slf4j.LoggerFactory;
 /**
  * A component implementation for endpoints which are annotated with UriEndpoint to describe
  * their configurable parameters via annotations
+ *
+ * @deprecated use {@link DefaultComponent}
  */
+@Deprecated
 public abstract class UriEndpointComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(UriEndpointComponent.class);
 

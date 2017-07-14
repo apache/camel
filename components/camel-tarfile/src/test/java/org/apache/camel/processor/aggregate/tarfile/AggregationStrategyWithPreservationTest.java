@@ -34,8 +34,12 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
 
     private static final int EXPECTED_NO_FILES = 5;
 
+    private TarAggregationStrategy tar = new TarAggregationStrategy(true, true);
+
     @Override
     public void setUp() throws Exception {
+        tar.setParentDir("target/temp");
+        deleteDirectory("target/temp");
         deleteDirectory("target/out");
         super.setUp();
     }
@@ -83,7 +87,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // Untar file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/aggregate/tarfile/data?consumer.delay=1000&noop=true&recursive=true")
-                        .aggregate(new TarAggregationStrategy(true, true))
+                        .aggregate(tar)
                         .constant(true)
                         .completionFromBatchConsumer()
                         .eagerCheckCompletion()

@@ -37,8 +37,10 @@ public final class DockerTestUtils {
         parameters.put(DockerConstants.DOCKER_SERVER_ADDRESS, dockerConfiguration.getServerAddress());
         parameters.put(DockerConstants.DOCKER_MAX_PER_ROUTE_CONNECTIONS, dockerConfiguration.getMaxPerRouteConnections());
         parameters.put(DockerConstants.DOCKER_MAX_TOTAL_CONNECTIONS, dockerConfiguration.getMaxTotalConnections());
-        parameters.put(DockerConstants.DOCKER_LOGGING_FILTER, false);
-        parameters.put(DockerConstants.DOCKER_FOLLOW_REDIRECT_FILTER, false);
+        parameters.put(DockerConstants.DOCKER_SECURE, dockerConfiguration.isSecure());
+        parameters.put(DockerConstants.DOCKER_TLSVERIFY, dockerConfiguration.isTlsVerify());
+        parameters.put(DockerConstants.DOCKER_SOCKET_ENABLED, dockerConfiguration.isSocket());
+        parameters.put(DockerConstants.DOCKER_CMD_EXEC_FACTORY, dockerConfiguration.getCmdExecFactory());
 
         return parameters;
     }
@@ -51,11 +53,12 @@ public final class DockerTestUtils {
         clientProfile.setServerAddress(dockerConfiguration.getServerAddress());
         clientProfile.setMaxPerRouteConnections(dockerConfiguration.getMaxPerRouteConnections());
         clientProfile.setMaxTotalConnections(dockerConfiguration.getMaxTotalConnections());
-        clientProfile.setLoggingFilter(false);
-        clientProfile.setFollowRedirectFilter(false);
-        clientProfile.setSecure(false);
+        clientProfile.setSecure(dockerConfiguration.isSecure());
+        clientProfile.setTlsVerify(dockerConfiguration.isTlsVerify());
+        clientProfile.setSocket(dockerConfiguration.isSocket());
+        clientProfile.setCmdExecFactory(dockerConfiguration.getCmdExecFactory());
+        
         return clientProfile;
-
     }
 
 }

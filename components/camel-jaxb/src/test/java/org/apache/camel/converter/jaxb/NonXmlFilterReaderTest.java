@@ -89,7 +89,7 @@ public class NonXmlFilterReaderTest {
     static class ConstantReader extends Reader {
         private char[] constant;
 
-        public ConstantReader(char[] constant) {
+        ConstantReader(char[] constant) {
             this.constant = constant;
         }
 

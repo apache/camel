@@ -1,0 +1,456 @@
+[[SpringBoot-SpringBoot]]
+Spring Boot
+~~~~~~~~~~~
+
+*Available as of Camel 2.15*
+
+Spring Boot component provides auto-configuration for Apache Camel. Our
+opinionated auto-configuration of the Camel context auto-detects Camel
+routes available in the Spring context and registers the key Camel
+utilities (like producer template, consumer template and the type
+converter) as beans.
+
+Maven users will need to add the following dependency to their `pom.xml`
+in order to use this component:
+
+[source,xml]
+------------------------------------------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring-boot</artifactId>
+    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------------------------------------------
+
+`camel-spring-boot` jar comes with the `spring.factories` file, so as
+soon as you add that dependency into your classpath, Spring Boot will
+automatically auto-configure Camel for you.
+
+[[SpringBoot-CamelSpringBootStarter]]
+Camel Spring Boot Starter
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.17*
+
+Apache Camel ships
+a https://github.com/spring-projects/spring-boot/tree/master/spring-boot-starters[Spring
+Boot Starter] module that allows you to develop Spring Boot applications
+using starters. There is a
+https://github.com/apache/camel/tree/master/examples/camel-example-spring-boot-starter[sample
+application] in the source code also.
+
+To use the starter, add the following to your spring boot pom.xml file:
+
+[source,xml]
+------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring-boot-starter</artifactId>
+    <version>2.17.0</version>
+</dependency>
+------------------------------------------------------
+
+Then you can just add classes with your Camel routes such as:
+
+[source,java]
+------------------------------------------------
+package com.example;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyRoute extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        from("timer:foo").to("log:bar");
+    }
+}
+------------------------------------------------
+
+Then these routes will be started automatically.
+
+You can customize the Camel application in the `application.properties`
+or `application.yml` file. 
+
+[[SpringBoot-Auto-configuredCamelcontext]]
+Auto-configured Camel context
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The most important piece of functionality provided by the Camel
+auto-configuration is `CamelContext` instance.
+Camel auto-configuration creates a `SpringCamelContext` for you and
+takes care of the proper initialization and shutdown of that context.
+The created Camel context is also registered in the Spring application
+context (under `camelContext` bean name), so you can access it just as
+ any other Spring bean.
+
+[source,java]
+----------------------------------------------
+@Configuration
+public class MyAppConfig {
+
+  @Autowired
+  CamelContext camelContext;
+
+  @Bean
+  MyService myService() {
+    return new DefaultMyService(camelContext);
+  }
+
+}
+----------------------------------------------
+
+[[SpringBoot-Auto-detectingCamelroutes]]
+Auto-detecting Camel routes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Camel auto-configuration collects all the `RouteBuilder` instances from
+the Spring context and automatically injects them into the provided
+`CamelContext`. That means that creating new Camel route with the Spring
+Boot starter is as simple as adding the `@Component` annotated class to
+your classpath:
+
+[source,java]
+----------------------------------------------
+@Component
+public class MyRouter extends RouteBuilder {
+
+  @Override
+  public void configure() throws Exception {
+    from("jms:invoices").to("file:/invoices");
+  }
+
+}
+----------------------------------------------
+
+ +
+...or creating a new route `RouteBuilder` bean in your `@Configuration`
+class:
+
+[source,java]
+--------------------------------------------------
+@Configuration
+public class MyRouterConfiguration {
+
+  @Bean
+  RoutesBuilder myRouter() {
+    return new RouteBuilder() {
+
+      @Override
+      public void configure() throws Exception {
+        from("jms:invoices").to("file:/invoices");
+      }
+
+    };
+  }
+ 
+}
+--------------------------------------------------
+
+[[SpringBoot-Camelproperties]]
+Camel properties
+^^^^^^^^^^^^^^^^
+
+Spring Boot auto-configuration automatically connects
+to http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config[Spring
+Boot external configuration] (like properties placeholders, OS
+environment variables or system properties) with
+the link:properties.html[Camel properties support]. It basically means
+that any property defined in `application.properties` file:  
+
+[source,xml]
+-------------------------
+route.from = jms:invoices
+-------------------------
+
+...or set via system property...
+
+[source,xml]
+-----------------------------------------------------------
+java -Droute.to=jms:processed.invoices -jar mySpringApp.jar
+-----------------------------------------------------------
+
+...can be used as placeholders in Camel route:
+
+[source,java]
+----------------------------------------------
+@Component
+public class MyRouter extends RouteBuilder {
+
+  @Override
+  public void configure() throws Exception {
+    from("{{route.from}}").to("{{route.to}}");
+  }
+
+}
+----------------------------------------------
+
+[[SpringBoot-CustomCamelcontextconfiguration]]
+Custom Camel context configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you would like to perform some operations on `CamelContext` bean
+created by Camel auto-configuration,
+register `CamelContextConfiguration` instance in your Spring context:
+
+[source,java]
+---------------------------------------------------------
+@Configuration
+public class MyAppConfig {
+
+  ...
+
+  @Bean
+  CamelContextConfiguration contextConfiguration() {
+    return new CamelContextConfiguration() {
+      @Override
+      void beforeApplicationStart(CamelContext context) {
+        // your custom configuration goes here
+      }
+    };
+  }
+
+}
+---------------------------------------------------------
+
+Method
+C`amelContextConfiguration#``beforeApplicationStart(CamelContext)` will
+be called just before the Spring context is started, so the
+`CamelContext` instance passed to this callback is
+fully auto-configured. You can add many instances of
+C`amelContextConfiguration` into your Spring context - all of them will
+be executed.
+
+[[SpringBoot-DisablingJMX]]
+Disabling JMX
+^^^^^^^^^^^^^
+
+To disable JMX of the auto-configured `CamelContext` use
+`camel.springboot.jmxEnabled` property (JMX is enabled by default). For
+example you could add the following property to your
+`application.properties` file:
+
+[source,xml]
+-----------------------------------
+camel.springboot.jmxEnabled = false
+-----------------------------------
+
+[[SpringBoot-Auto-configuredconsumerandproducertemplates]]
+Auto-configured consumer and producer templates
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Camel auto-configuration provides pre-configured `ConsumerTemplate` and
+`ProducerTemplate` instances. You can simply inject them into your
+Spring-managed beans:
+
+[source,java]
+------------------------------------------------------------------------------------------
+@Component
+public class InvoiceProcessor {
+
+  @Autowired
+  private ProducerTemplate producerTemplate;
+
+  @Autowired
+  private ConsumerTemplate consumerTemplate;
+  public void processNextInvoice() {
+    Invoice invoice = consumerTemplate.receiveBody("jms:invoices", Invoice.class);
+    ...
+    producerTemplate.sendBody("netty-http:http://invoicing.com/received/" + invoice.id());
+  }
+
+}
+------------------------------------------------------------------------------------------
+
+By default consumer templates and producer templates come with the
+endpoint cache sizes set to 1000. You can change those values via the
+following Spring properties:
+
+[source,xml]
+------------------------------------------------
+camel.springboot.consumerTemplateCacheSize = 100
+camel.springboot.producerTemplateCacheSize = 200
+------------------------------------------------
+
+[[SpringBoot-Auto-configuredTypeConverter]]
+Auto-configured TypeConverter
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Camel auto-configuration registers a `TypeConverter` instance named
+`typeConverter` in the Spring context.
+
+[source,java]
+-------------------------------------------------------------
+@Component
+public class InvoiceProcessor {
+
+  @Autowired
+  private TypeConverter typeConverter;
+
+  public long parseInvoiceValue(Invoice invoice) {
+    String invoiceValue = invoice.grossValue();
+    return typeConverter.convertTo(Long.class, invoiceValue);
+  }
+
+}
+-------------------------------------------------------------
+
+[[SpringBoot-SpringtypeconversionAPIbridge]]
+Spring type conversion API bridge
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Spring comes with
+the powerful http://docs.spring.io/spring/docs/current/spring-framework-reference/html/validation.html#core-convert[type
+conversion API]. Spring API happens to be very similar to the Camel
+link:type-converter.html[type converter API]. As those APIs are so
+similar, Camel Spring Boot automatically registers a bridge converter
+(`SpringTypeConverter`) that delegates to the Spring conversion API.That
+means that out-of-the-box Camel will treat Spring Converters like Camel
+ones. With this approach you can enjoy both Camel and Spring converters
+accessed via Camel `TypeConverter` API:
+
+[source,java]
+---------------------------------------------------------------------------
+@Component
+public class InvoiceProcessor {
+
+  @Autowired
+  private TypeConverter typeConverter;
+
+  public UUID parseInvoiceId(Invoice invoice) {
+    // Using Spring's StringToUUIDConverter
+    UUID id = invoice.typeConverter.convertTo(UUID.class, invoice.getId());
+  }
+
+}
+---------------------------------------------------------------------------
+
+ 
+
+Under the hood Camel Spring Boot delegates conversion to the Spring's
+`ConversionService` instances available in the application context. If
+no `ConversionService` instance is available, Camel Spring Boot
+auto-configuration will create one for you.
+
+[[SpringBoot-Disablingtypeconversionsfeatures]]
+Disabling type conversions features
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you don't want Camel Spring Boot to register type-conversions related
+features (like `TypeConverter` instance or Spring bridge) set the
+`camel.springboot.typeConversion` property to `false`.
+
+[source,xml]
+---------------------------------------
+camel.springboot.typeConversion = false
+---------------------------------------
+
+
+[[SpringBoot-Blockingmainthread]]
+Blocking main thread
+^^^^^^^^^^^^^^^^^^^^
+
+This feature is available starting from Camel *2.15.2*. Camel
+applications extending FatJarRouter by default block the main thread of
+the application. It means that after you start your fat jar, your
+application waits for Ctrl+C signal and does not exit immediately. If
+you would like to achieve similar behavior for non-`FatJarRouter`
+applications, retrieve `CamelSpringBootApplicationController `bean from
+your `ApplicationContext` and use the former to block the main thread of
+your application using
+`CamelSpringBootApplicationController#blockMainThread()` method.
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+public static void main(String... args) {
+    ApplicationContext applicationContext = new SpringApplication(MyCamelApplication.class).run(args);
+    CamelSpringBootApplicationController applicationController =
+            applicationContext.getBean(CamelSpringBootApplicationController.class);
+    applicationController.blockMainThread();
+}
+------------------------------------------------------------------------------------------------------
+
+[[SpringBoot-AddingXMLroutes]]
+Adding XML routes
+^^^^^^^^^^^^^^^^^
+
+By default you can put Camel XML routes in the classpath under the
+directory camel, which camel-spring-boot will auto detect and include.
+From *Camel 2.17* onwards you can configure the directory name or turn
+this off using the configuration option
+
+[source,java]
+-----------------------------------------------------------
+// turn off
+camel.springboot.xmlRoutes = false
+// scan in the com/foo/routes classpath
+camel.springboot.xmlRoutes = classpath:com/foo/routes/*.xml
+-----------------------------------------------------------
+
+The XML files should be Camel XML routes (not CamelContext) such as
+
+[source,xml]
+---------------------------------------------------------
+   <routes xmlns="http://camel.apache.org/schema/spring">
+        <route id="test">
+            <from uri="timer://trigger"/>
+            <transform>
+                <simple>ref:myBean</simple>
+            </transform>
+            <to uri="log:out"/>
+        </route>
+    </routes>
+---------------------------------------------------------
+
+[[SpringBoot-AddingREST]]
+Adding XML Rest-DSL
+^^^^^^^^^^^^^^^^^^^
+
+By default you can put Camel Rest-DSL XML routes in the classpath under the
+directory camel-rest, which camel-spring-boot will auto detect and include.
+You can configure the directory name or turn this off using the configuration option
+
+[source,java]
+-----------------------------------------------------------
+// turn off
+camel.springboot.xmlRests = false
+// scan in the com/foo/routes classpath
+camel.springboot.xmlRests = classpath:com/foo/rests/*.xml
+-----------------------------------------------------------
+
+The Rest-DSL XML files should be Camel XML rests (not CamelContext) such as
+
+[source,xml]
+---------------------------------------------------------
+   <rests xmlns="http://camel.apache.org/schema/spring">
+      <rest>
+         <post uri="/persons">
+            <to uri="direct:postPersons"/>
+         </post>
+         <get uri="/persons">
+            <to uri="direct:getPersons"/>
+         </get>
+         <get uri="/persons/{personId}">
+             <to uri="direct:getPersionId"/>
+         </get>
+         <put uri="/persons/{personId}">
+             <to uri="direct:putPersionId"/>
+         </put>
+         <delete uri="/persons/{personId}">
+             <to uri="direct:deletePersionId"/>
+         </delete>
+      </rest>
+    </rests>
+---------------------------------------------------------
+
+[[SpringBoot-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+

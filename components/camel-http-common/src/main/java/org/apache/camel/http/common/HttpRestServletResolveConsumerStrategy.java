@@ -42,24 +42,9 @@ public class HttpRestServletResolveConsumerStrategy extends HttpServletResolveCo
             return null;
         }
 
-        List<RestConsumerContextPathMatcher.ConsumerPath> paths = new ArrayList<RestConsumerContextPathMatcher.ConsumerPath>();
+        List<RestConsumerContextPathMatcher.ConsumerPath> paths = new ArrayList<>();
         for (final Map.Entry<String, HttpConsumer> entry : consumers.entrySet()) {
-            paths.add(new RestConsumerContextPathMatcher.ConsumerPath<HttpConsumer>() {
-                @Override
-                public String getRestrictMethod() {
-                    return entry.getValue().getEndpoint().getHttpMethodRestrict();
-                }
-
-                @Override
-                public String getConsumerPath() {
-                    return entry.getValue().getPath();
-                }
-
-                @Override
-                public HttpConsumer getConsumer() {
-                    return entry.getValue();
-                }
-            });
+            paths.add(new HttpRestConsumerPath(entry.getValue()));
         }
 
         RestConsumerContextPathMatcher.ConsumerPath<HttpConsumer> best = RestConsumerContextPathMatcher.matchBestPath(method, path, paths);

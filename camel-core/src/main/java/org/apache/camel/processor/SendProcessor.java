@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable, EndpointAware, IdAware {
     protected static final Logger LOG = LoggerFactory.getLogger(SendProcessor.class);
+    protected transient String traceLabelToString;
     protected final CamelContext camelContext;
     protected final ExchangePattern pattern;
     protected ProducerCache producerCache;
@@ -81,7 +82,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
 
     @Override
     public String toString() {
-        return "sendTo(" + destination + (pattern != null ? " " + pattern : "") + ")";
+        return "sendTo(" + destination + ")";
     }
 
     public String getId() {
@@ -100,7 +101,10 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
     }
 
     public String getTraceLabel() {
-        return URISupport.sanitizeUri(destination.getEndpointUri());
+        if (traceLabelToString == null) {
+            traceLabelToString = URISupport.sanitizeUri(destination.getEndpointUri());
+        }
+        return traceLabelToString;
     }
 
     @Override
@@ -128,25 +132,30 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         // if we have a producer then use that as its optimized
         if (producer != null) {
 
-            // record timing for sending the exchange using the producer
-            final StopWatch watch = new StopWatch();
-
             final Exchange target = configureExchange(exchange, pattern);
 
-            EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
-            LOG.debug(">>>> {} {}", destination, exchange);
+            final boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
+            StopWatch sw = null;
+            if (sending) {
+                sw = new StopWatch();
+            }
 
-            boolean sync = true;
+            // record timing for sending the exchange using the producer
+            final StopWatch watch = sw;
+
             try {
-                sync = producer.process(exchange, new AsyncCallback() {
+                LOG.debug(">>>> {} {}", destination, exchange);
+                return producer.process(exchange, new AsyncCallback() {
                     @Override
                     public void done(boolean doneSync) {
                         try {
                             // restore previous MEP
                             target.setPattern(existingPattern);
                             // emit event that the exchange was sent to the endpoint
-                            long timeTaken = watch.stop();
-                            EventHelper.notifyExchangeSent(target.getContext(), target, destination, timeTaken);
+                            if (watch != null) {
+                                long timeTaken = watch.taken();
+                                EventHelper.notifyExchangeSent(target.getContext(), target, destination, timeTaken);
+                            }
                         } finally {
                             callback.done(doneSync);
                         }
@@ -154,10 +163,10 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
                 });
             } catch (Throwable throwable) {
                 exchange.setException(throwable);
-                callback.done(sync);
+                callback.done(true);
             }
 
-            return sync;
+            return true;
         }
 
         // send the exchange to the destination using the producer cache for the non optimized producers

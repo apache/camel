@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.weather;
 
-import java.net.URL;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
 
 public class WeatherProducer extends DefaultProducer {
 
@@ -44,20 +45,30 @@ public class WeatherProducer extends DefaultProducer {
             q = getEndpoint().getConfiguration().getQuery(location);
         }
 
-        log.debug("Going to execute the Weather query {}", q);
-        String weather = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, new URL(q));
-        log.debug("Got back the Weather information {}", weather);
+        HttpClient httpClient = ((WeatherComponent) getEndpoint().getComponent()).getHttpClient();
+        GetMethod method = new GetMethod(q);
+        try {
+            log.debug("Going to execute the Weather query {}", q);
+            int statusCode = httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK) {
+                throw new IllegalStateException("Got the invalid http status value '" + method.getStatusLine() + "' as the result of the query '" + query + "'");
+            }
+            String weather = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, method.getResponseBodyAsStream());
+            log.debug("Got back the Weather information {}", weather);
 
-        if (ObjectHelper.isEmpty(weather)) {
-            throw new IllegalStateException("Got the unexpected value '" + weather + "' as the result of the query '" + q + "'");
-        }
+            if (ObjectHelper.isEmpty(weather)) {
+                throw new IllegalStateException("Got the unexpected value '" + weather + "' as the result of the query '" + q + "'");
+            }
 
-        String header = getEndpoint().getConfiguration().getHeaderName();
-        if (header != null) {
-            exchange.getIn().setHeader(header, weather);
-        } else {
-            exchange.getIn().setBody(weather);
+            String header = getEndpoint().getConfiguration().getHeaderName();
+            if (header != null) {
+                exchange.getIn().setHeader(header, weather);
+            } else {
+                exchange.getIn().setBody(weather);
+            }
+            exchange.getIn().setHeader(WeatherConstants.WEATHER_QUERY, q);
+        } finally {
+            method.releaseConnection();
         }
-        exchange.getIn().setHeader(WeatherConstants.WEATHER_QUERY, q);
     }
 }

@@ -33,7 +33,7 @@ public class SpringRestRestletPojoInOutTest extends CamelSpringTestSupport {
     @BeforeClass
     public static void initializePortNum() {
         portNum = AvailablePortFinder.getNextAvailable();
-        System.getProperties().setProperty("test.port", "" + portNum);
+        System.setProperty("test.port", "" + portNum);
     }
 
     @Override

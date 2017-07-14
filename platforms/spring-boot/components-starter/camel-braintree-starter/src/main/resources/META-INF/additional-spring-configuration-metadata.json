@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.braintree.enabled",
+      "description": "Enable braintree component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

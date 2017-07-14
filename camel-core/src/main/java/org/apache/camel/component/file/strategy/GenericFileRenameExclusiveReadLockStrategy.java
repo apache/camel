@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.file.strategy;
 
+import java.io.FileNotFoundException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.StopWatch;
@@ -70,7 +73,15 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
                 }
             }
 
-            exclusive = operations.renameFile(file.getAbsoluteFilePath(), newFile.getAbsoluteFilePath());
+            try {
+                exclusive = operations.renameFile(file.getAbsoluteFilePath(), newFile.getAbsoluteFilePath());
+            } catch (GenericFileOperationFailedException ex) {
+                if (ex.getCause() != null && ex.getCause() instanceof FileNotFoundException) {
+                    exclusive = false;
+                } else {
+                    throw ex;
+                }
+            }
             if (exclusive) {
                 LOG.trace("Acquired exclusive read lock to file: {}", file);
                 // rename it back so we can read it

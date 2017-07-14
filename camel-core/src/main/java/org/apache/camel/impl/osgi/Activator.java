@@ -242,14 +242,41 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             return true;
         }
         BundleCapability packageCap = packageCapabilities.get(clazz.getPackage().getName());
-        BundleWiring wiring = bundle.adapt(BundleWiring.class);
-        List<BundleWire> imports = wiring.getRequiredWires(PACKAGE_NAMESPACE);
-        for (BundleWire importWire : imports) {
-            if (packageCap.equals(importWire.getCapability())) {
-                return true;
+        if (packageCap != null) {
+            BundleWiring wiring = bundle.adapt(BundleWiring.class);
+            List<BundleWire> imports = wiring.getRequiredWires(PACKAGE_NAMESPACE);
+            for (BundleWire importWire : imports) {
+                if (packageCap.equals(importWire.getCapability())) {
+                    return true;
+                }
             }
         }
+
+        // it may be running outside real OSGi container such as when unit testing with camel-test-blueprint
+        // then we need to use a different canSee algorithm that works outside real OSGi
+        if (bundle.getBundleId() > 0) {
+            Bundle root = bundle.getBundleContext().getBundle(0);
+            if (root != null && "org.apache.felix.connect".equals(root.getSymbolicName())) {
+                return checkCompat(bundle, clazz);
+            }
+        }
+
         return false;
+    }
+
+    /**
+     * Check if bundle can see the given class used by camel-test-blueprint
+     */
+    protected static boolean checkCompat(Bundle bundle, Class<?> clazz) {
+        // Check bundle compatibility
+        try {
+            if (bundle.loadClass(clazz.getName()) != clazz) {
+                return false;
+            }
+        } catch (Throwable t) {
+            return false;
+        }
+        return true;
     }
 
     protected static class BundleComponentResolver extends BaseResolver<Component> implements ComponentResolver {
@@ -318,7 +345,18 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             this.dataformats = dataformats;
         }
 
+        @Override
         public DataFormat resolveDataFormat(String name, CamelContext context) {
+            DataFormat dataFormat = createInstance(name, dataformats.get(name), context);
+            if (dataFormat == null) {
+                dataFormat = createDataFormat(name, context);
+            }
+
+            return dataFormat;
+        }
+
+        @Override
+        public DataFormat createDataFormat(String name, CamelContext context) {
             return createInstance(name, dataformats.get(name), context);
         }
 
@@ -326,6 +364,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             return null;
         }
 
+        @Override
         public void register() {
             doRegister(DataFormatResolver.class, "dataformat", dataformats.keySet());
         }
@@ -398,9 +437,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                         LOG.trace("Loading {} class", pkg);
                         try {
                             Class<?> clazz = bundle.loadClass(pkg);
-                            if (test.matches(clazz)) {
-                                classes.add(clazz);
-                            }
+                            classes.add(clazz);
                             // the class could be found and loaded so continue to next
                             continue;
                         } catch (Throwable t) {

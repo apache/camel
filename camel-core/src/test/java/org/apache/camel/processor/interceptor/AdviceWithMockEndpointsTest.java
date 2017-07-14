@@ -34,6 +34,7 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e1
+    // tag::e1[]
     public void testAdvisedMockEndpoints() throws Exception {
         // advice the first route using the inlined AdviceWith route builder
         // which has extended capabilities than the regular route builder
@@ -64,9 +65,11 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
         assertNotNull(context.hasEndpoint("mock:direct:foo"));
         assertNotNull(context.hasEndpoint("mock:log:foo"));
     }
+    // end::e1[]
     // END SNIPPET: e1
 
     // START SNIPPET: e2
+    // tag::e2[]
     public void testAdvisedMockEndpointsWithPattern() throws Exception {
         // advice the first route using the inlined AdviceWith route builder
         // which has extended capabilities than the regular route builder
@@ -97,10 +100,12 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
         assertNull(context.hasEndpoint("mock:direct:start"));
         assertNull(context.hasEndpoint("mock:direct:foo"));
     }
+    // end::e2[]
     // END SNIPPET: e2
 
 
     // START SNIPPET: route
+    // tag::route[]
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -112,5 +117,6 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
             }
         };
     }
+    // end::route[]
     // END SNIPPET: route
 }

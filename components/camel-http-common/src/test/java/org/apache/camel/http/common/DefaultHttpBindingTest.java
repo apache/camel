@@ -35,6 +35,7 @@ public class DefaultHttpBindingTest extends CamelTestSupport {
         assertNotEquals(value, date.toString());
         assertEquals(value, DefaultHttpBinding.getHttpDateFormat().format(date));
     }
+
     @Test
     public void testConvertDateTypeConverter() throws Exception {
         DefaultHttpBinding binding = new DefaultHttpBinding();
@@ -44,6 +45,7 @@ public class DefaultHttpBindingTest extends CamelTestSupport {
         String value = binding.convertHeaderValueToString(exchange, date);
         assertEquals(value, date.toString());
     }
+
     @Test
     public void testConvertLocale() throws Exception {
         DefaultHttpBinding binding = new DefaultHttpBinding();
@@ -54,6 +56,7 @@ public class DefaultHttpBindingTest extends CamelTestSupport {
         assertNotEquals(value, l.toString());
         assertEquals("zh-CN", value);
     }
+
     @Test
     public void testConvertLocaleTypeConverter() throws Exception {
         DefaultHttpBinding binding = new DefaultHttpBinding();

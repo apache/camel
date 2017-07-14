@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,8 +24,16 @@ import org.apache.camel.spi.RuntimeEndpointRegistry;
 
 public class RuntimeEndpointRegistryTest extends ContextTestSupport {
 
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+        camelContext.setRuntimeEndpointRegistry(new DefaultRuntimeEndpointRegistry());
+        return camelContext;
+    }
+
     public void testRuntimeEndpointRegistry() throws Exception {
         RuntimeEndpointRegistry registry = context.getRuntimeEndpointRegistry();
+
         assertEquals(0, registry.getAllEndpoints(false).size());
         // we have 2 at the start as we have all endpoints for the route consumers
         assertEquals(2, registry.getAllEndpoints(true).size());

@@ -24,10 +24,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.impl.SimpleRegistry;
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggingEvent;
+import org.apache.logging.log4j.Level;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
@@ -45,54 +42,44 @@ public class LogCustomLoggerTest extends ContextTestSupport {
     // to capture the warnings from LogComponent
     private static StringWriter sw2;
 
-    private static final class CapturingAppender extends AppenderSkeleton {
-        private StringWriter sw;
-
-        private CapturingAppender(StringWriter sw) {
-            this.sw = sw;
-        }
-
-        @Override
-        protected void append(LoggingEvent event) {
-            this.sw.append(event.getLoggerName());
-        }
-
-        @Override
-        public void close() {
-        }
-
-        @Override
-        public boolean requiresLayout() {
-            return false;
-        }
-    }
-
     @Before @Override
     public void setUp() throws Exception {
         super.setUp();
         sw1 = new StringWriter();
         sw2 = new StringWriter();
-        Logger.getLogger(LogCustomLoggerTest.class).removeAllAppenders();
-        Logger.getLogger(LogCustomLoggerTest.class).addAppender(new CapturingAppender(sw1));
-        Logger.getLogger(LogCustomLoggerTest.class).setLevel(Level.TRACE);
-        Logger.getLogger("provided.logger1.name").removeAllAppenders();
-        Logger.getLogger("provided.logger1.name").addAppender(new CapturingAppender(sw1));
-        Logger.getLogger("provided.logger1.name").setLevel(Level.TRACE);
-        Logger.getLogger("provided.logger2.name").removeAllAppenders();
-        Logger.getLogger("provided.logger2.name").addAppender(new CapturingAppender(sw1));
-        Logger.getLogger("provided.logger2.name").setLevel(Level.TRACE);
-        Logger.getLogger("irrelevant.logger.name").removeAllAppenders();
-        Logger.getLogger("irrelevant.logger.name").addAppender(new CapturingAppender(sw1));
-        Logger.getLogger("irrelevant.logger.name").setLevel(Level.TRACE);
-        Logger.getLogger(LogComponent.class).removeAllAppenders();
-        Logger.getLogger(LogComponent.class).addAppender(new CapturingAppender(sw2));
-        Logger.getLogger(LogComponent.class).setLevel(Level.TRACE);
+
+        ConsumingAppender.newAppender(
+            LogCustomLoggerTest.class.getCanonicalName(),
+            "LogCustomLoggerTest",
+            Level.TRACE,
+            event -> sw1.append(event.getLoggerName()));
+        ConsumingAppender.newAppender(
+            "provided.logger1.name",
+            "logger1",
+            Level.TRACE,
+            event -> sw1.append(event.getLoggerName()));
+        ConsumingAppender.newAppender(
+            "provided.logger2.name",
+            "logger2",
+            Level.TRACE,
+            event -> sw1.append(event.getLoggerName()));
+        ConsumingAppender.newAppender(
+            "irrelevant.logger.name",
+            "irrelevant",
+            Level.TRACE,
+            event -> sw1.append(event.getLoggerName()));
+        ConsumingAppender.newAppender(
+            LogComponent.class.getCanonicalName(),
+            "LogComponent",
+            Level.TRACE,
+            event -> sw2.append(event.getLoggerName()));
     }
 
     @Test
     public void testFallbackLogger() throws Exception {
         String endpointUri = "log:" + LogCustomLoggerTest.class.getCanonicalName();
         template.requestBody(endpointUri, "hello");
+
         assertThat(sw1.toString(), equalTo(LogCustomLoggerTest.class.getCanonicalName()));
     }
 

@@ -30,7 +30,10 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "git", title = "Git", syntax = "git:localpath", label = "file")
+/**
+ * The git component is used for working with git repositories.
+ */
+@UriEndpoint(firstVersion = "2.16.0", scheme = "git", title = "Git", syntax = "git:localPath", label = "file")
 public class GitEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -43,7 +46,7 @@ public class GitEndpoint extends DefaultEndpoint {
     @UriParam
     private String tagName;
 
-    @UriParam(label = "consumer")
+    @UriParam(enums = "commit,tag,branch", label = "consumer")
     private GitType type;
 
     @UriParam
@@ -55,7 +58,15 @@ public class GitEndpoint extends DefaultEndpoint {
     @UriParam
     private String remotePath;
 
-    @UriParam(label = "producer")
+    @UriParam
+    private String remoteName;
+
+    // Set to true for backward compatibility , better to set to false (native git behavior)
+    @UriParam(defaultValue = "true")
+    @Metadata(label = "producer")
+    private boolean allowEmpty = true;
+
+    @UriParam(enums = "clone,init,add,remove,commit,commitAll,createBranch,deleteBranch,createTag,deleteTag,status,log,push,pull,showBranches,cherryPick,remoteAdd,remoteList", label = "producer")
     private String operation;
 
     public GitEndpoint(String uri, GitComponent component) {
@@ -173,4 +184,25 @@ public class GitEndpoint extends DefaultEndpoint {
         this.tagName = tagName;
     }
 
+    /**
+     * The remote repository name to use in particular operation like pull
+     */
+    public String getRemoteName() {
+        return remoteName;
+    }
+
+    public void setRemoteName(String remoteName) {
+        this.remoteName = remoteName;
+    }
+
+    /**
+     * The flag to manage empty git commits
+     */
+    public boolean isAllowEmpty() {
+        return allowEmpty;
+    }
+
+    public void setAllowEmpty(boolean allowEmpty) {
+        this.allowEmpty = allowEmpty;
+    }
 }

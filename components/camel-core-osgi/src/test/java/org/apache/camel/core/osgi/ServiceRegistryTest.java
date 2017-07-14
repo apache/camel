@@ -39,7 +39,11 @@ public class ServiceRegistryTest extends CamelOsgiTestSupport {
         Object service = context.getRegistry().lookupByName(MyService.class.getName());
         assertNotNull("MyService should not be null", service);
         assertTrue("It should be the instance of MyService ", service instanceof MyService);
-
+        
+        Object serviceByPid = context.getRegistry().lookupByName(CamelMockBundleContext.SERVICE_PID_PREFIX + MyService.class.getName());
+        assertNotNull("MyService should not be null", serviceByPid);
+        assertTrue("It should be the instance of MyService ", serviceByPid instanceof MyService);
+        
         Map<String, MyService> collection = context.getRegistry().findByTypeWithName(MyService.class);
         assertNotNull("MyService should not be null", collection);
         assertNotNull("There should have one MyService.", collection.get(MyService.class.getName()));

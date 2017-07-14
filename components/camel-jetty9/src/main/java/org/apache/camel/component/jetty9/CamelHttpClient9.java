@@ -19,12 +19,18 @@ package org.apache.camel.component.jetty9;
 import java.util.concurrent.Executor;
 
 import org.apache.camel.component.jetty.CamelHttpClient;
+import org.eclipse.jetty.client.HttpClientTransport;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
+@Deprecated
 public class CamelHttpClient9 extends CamelHttpClient {
     
     public CamelHttpClient9(SslContextFactory sslContextFactory) {
         super(sslContextFactory);
+    }
+
+    public CamelHttpClient9(HttpClientTransport transport, SslContextFactory sslContextFactory) {
+        super(transport, sslContextFactory);
     }
 
     protected boolean hasThreadPool() {

@@ -16,21 +16,37 @@
  */
 package org.apache.camel.management;
 
+import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version 
  */
 public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
 
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
     public void testLoadStatisticsAreDisabledByDefault() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
             return;
         }
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("log:foo").delay(2000).to("mock:result");
+            }
+        });
+        context.start();
 
         boolean load = context.getManagementStrategy().getManagementAgent().getLoadStatisticsEnabled() != null
                 && context.getManagementStrategy().getManagementAgent().getLoadStatisticsEnabled();
@@ -57,9 +73,17 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
         if (isPlatform("aix")) {
             return;
         }
+
         context.getManagementStrategy().getManagementAgent().setLoadStatisticsEnabled(true);
-        context.stop();
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("log:foo").delay(2000).to("mock:result");
+            }
+        });
         context.start();
+
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
@@ -69,26 +93,18 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
         template.asyncSendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
-        Thread.sleep(2000);
-        String load01 = (String)mbeanServer.getAttribute(on, "Load01");
-        String load05 = (String)mbeanServer.getAttribute(on, "Load05");
-        String load15 = (String)mbeanServer.getAttribute(on, "Load15");
-        assertNotNull(load01);
-        assertNotNull(load05);
-        assertNotNull(load15);
-        assertTrue(Double.parseDouble(load01.replace(',', '.')) >= 0);
-        assertTrue(Double.parseDouble(load05.replace(',', '.')) >= 0);
-        assertTrue(Double.parseDouble(load15.replace(',', '.')) >= 0);
-    }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("log:foo").delay(2000).to("mock:result");
-            }
-        };
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            String load01 = (String)mbeanServer.getAttribute(on, "Load01");
+            String load05 = (String)mbeanServer.getAttribute(on, "Load05");
+            String load15 = (String)mbeanServer.getAttribute(on, "Load15");
+            assertNotNull(load01);
+            assertNotNull(load05);
+            assertNotNull(load15);
+            assertTrue(Double.parseDouble(load01.replace(',', '.')) >= 0);
+            assertTrue(Double.parseDouble(load05.replace(',', '.')) >= 0);
+            assertTrue(Double.parseDouble(load15.replace(',', '.')) >= 0);
+        });
     }
 
 }

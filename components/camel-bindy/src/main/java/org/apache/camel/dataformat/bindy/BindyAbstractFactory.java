@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 public abstract class BindyAbstractFactory implements BindyFactory {
     private static final Logger LOG = LoggerFactory.getLogger(BindyAbstractFactory.class);
     protected final Map<String, List<Field>> annotatedLinkFields = new LinkedHashMap<String, List<Field>>();
+    protected FormatFactory formatFactory;
     protected Set<Class<?>> models;
     protected Set<String> modelClassNames;
     protected String crlf;
@@ -168,7 +169,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         String key2Formatted;
         String keyGenerated;
 
-        // Test added for ticket - camel-2773
+        // BigIntegerFormatFactory added for ticket - camel-2773
         if ((key1 != null) && (key2 != null)) {
             key2Formatted = getNumberFormat().format((long) key2);
             keyGenerated = String.valueOf(key1) + key2Formatted;
@@ -244,5 +245,9 @@ public abstract class BindyAbstractFactory implements BindyFactory {
 
     public void setLocale(String locale) {
         this.locale = locale;
+    }
+
+    public void setFormatFactory(FormatFactory formatFactory) {
+        this.formatFactory = formatFactory;
     }
 }

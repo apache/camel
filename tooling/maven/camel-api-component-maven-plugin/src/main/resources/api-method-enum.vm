@@ -27,7 +27,10 @@ import java.util.List;
 import $proxyType.CanonicalName;
 
 import org.apache.camel.util.component.ApiMethod;
+import org.apache.camel.util.component.ApiMethodArg;
 import org.apache.camel.util.component.ApiMethodImpl;
+
+import static org.apache.camel.util.component.ApiMethodArg.arg;
 
 /**
  * Camel {@link ApiMethod} Enumeration for $proxyType.Name
@@ -35,13 +38,16 @@ import org.apache.camel.util.component.ApiMethodImpl;
 public enum $enumName implements ApiMethod {
 
 #foreach ( $model in $models )
-    ${model.UniqueName}($helper.getType($model.ResultType), "$model.Name"#foreach ( $arg in $model.Arguments ), $helper.getType($arg.Type), "$arg.Name"#end)#if ( $foreach.hasNext ),#else;#end
-
+    ${model.UniqueName}(
+        $helper.getType($model.ResultType),
+        "$model.Name"#foreach ( $arg in $model.Arguments ),
+        arg("$arg.Name", $helper.getType($arg.Type))#end)#if ( $foreach.hasNext ),$newLine#else;#end
 #end
 
+    $newLine
     private final ApiMethod apiMethod;
 
-    private ${enumName}(Class<?> resultType, String name, Object... args) {
+    private ${enumName}(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(${proxyType.SimpleName}.class, resultType, name, args);
     }
 

@@ -33,6 +33,7 @@ import org.apache.camel.language.LanguageAnnotation;
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @LanguageAnnotation(language = "el")
+@Deprecated
 public @interface EL {
     String value();
 }

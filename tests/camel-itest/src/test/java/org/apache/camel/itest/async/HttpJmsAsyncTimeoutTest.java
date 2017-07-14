@@ -41,7 +41,7 @@ public class HttpJmsAsyncTimeoutTest extends HttpAsyncTestSupport {
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(503, cause.getStatusCode());
+            assertEquals(504, cause.getStatusCode());
         }
     }
 

@@ -31,19 +31,22 @@ import org.kie.services.client.api.RemoteRuntimeEngineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "jbpm", title = "JBPM", syntax = "jbpm:host", producerOnly = true, label = "process")
+/**
+ * The jbpm component provides integration with jBPM (Business Process Management).
+ */
+@UriEndpoint(firstVersion = "2.6.0", scheme = "jbpm", title = "JBPM", syntax = "jbpm:connectionURL", producerOnly = true, label = "process")
 public class JBPMEndpoint extends DefaultEndpoint {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(JBPMEndpoint.class);
 
     @UriParam
-    private final JBPMConfiguration configuration;
-    private RuntimeEngine runtimeEngine;
+    private JBPMConfiguration configuration;
 
     public JBPMEndpoint(String uri, JBPMComponent component, JBPMConfiguration configuration) throws URISyntaxException, MalformedURLException {
         super(uri, component);
         this.configuration = configuration;
-        LOGGER.trace("creating endpoint: [{}]", configuration);
+    }
 
+    public Producer createProducer() throws Exception {
         RemoteRestRuntimeEngineBuilder engineBuilder = RemoteRuntimeEngineFactory.newRestBuilder();
         if (configuration.getUserName() != null) {
             engineBuilder.addUserName(configuration.getUserName());
@@ -66,12 +69,8 @@ public class JBPMEndpoint extends DefaultEndpoint {
         if (configuration.getExtraJaxbClasses() != null) {
             engineBuilder.addExtraJaxbClasses(configuration.getExtraJaxbClasses());
         }
-        runtimeEngine = engineBuilder.build();
-        LOGGER.trace("created endpoint");
+        RuntimeEngine runtimeEngine = engineBuilder.build();
 
-    }
-
-    public Producer createProducer() throws Exception {
         return new JBPMProducer(this, runtimeEngine);
     }
 
@@ -81,6 +80,10 @@ public class JBPMEndpoint extends DefaultEndpoint {
 
     public boolean isSingleton() {
         return true;
+    }
+
+    public void setConfiguration(JBPMConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     public JBPMConfiguration getConfiguration() {

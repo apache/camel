@@ -188,7 +188,6 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
             contentId(TEST_RESOURCE_CONTENT_ID).operation(Operation.CREATE).body(data).build());
 
         // 6. update address in created entry
-        @SuppressWarnings("unchecked")
         final Map<String, Object> updateData = new HashMap<String, Object>(data);
         Map<String, Object> address = (Map<String, Object>) updateData.get(ADDRESS);
         address.put("Street", "Main Street");

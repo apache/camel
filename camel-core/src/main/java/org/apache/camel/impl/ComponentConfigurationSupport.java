@@ -37,6 +37,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 /**
  * Useful base class for implementations of {@link ComponentConfiguration}
  */
+@Deprecated
 public abstract class ComponentConfigurationSupport implements ComponentConfiguration {
     protected final Component component;
     private Map<String, Object> propertyValues = new HashMap<String, Object>();
@@ -123,7 +124,7 @@ public abstract class ComponentConfigurationSupport implements ComponentConfigur
                 queryParams.add(key + "=" + UnsafeUriCharactersEncoder.encode(value.toString()));
             }
         }
-        Collections.sort(queryParams);
+        queryParams.sort(null);
         StringBuilder builder = new StringBuilder();
         String base = getBaseUri();
         if (base != null) {

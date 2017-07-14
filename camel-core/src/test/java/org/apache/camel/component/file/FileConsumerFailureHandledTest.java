@@ -118,7 +118,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
                 onException(ValidationException.class).handled(true).to("mock:invalid");
 
                 // our route logic to process files from the input folder
-                from("file:target/messages/input/?delete=true").
+                from("file:target/messages/input/?initialDelay=0&delay=10&delete=true").
                     process(new MyValidatorProcessor()).
                     to("mock:valid");
             }

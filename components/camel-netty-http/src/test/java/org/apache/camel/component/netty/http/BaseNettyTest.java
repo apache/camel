@@ -49,7 +49,6 @@ public class BaseNettyTest extends CamelTestSupport {
             // use next free port
             port = AvailablePortFinder.getNextAvailable(port + 1);
         }
-
     }
 
     @AfterClass

@@ -134,7 +134,7 @@ public class CamelSWFWorkflowClientTest {
         when(clientExternal.getWorkflowExecution()).thenReturn(workflowExecution);
 
 
-        String[] ids = camelSWFWorkflowClient.startWorkflowExecution(null, null, "eventName", "version", null);
+        String[] ids = camelSWFWorkflowClient.startWorkflowExecution(null, null, "eventName", "version", null, Collections.singletonList("camelTest"));
 
         verify(clientExternal).startWorkflowExecution(new Object[]{null});
         assertThat("123", is(ids[0]));

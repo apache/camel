@@ -62,6 +62,8 @@ public class DefaultConsumerBridgeErrorHandlerRedeliveryTest extends DefaultCons
                                 redeliverCounter.incrementAndGet();
                             }
                         })
+                        // setting delay to zero is just to make unit testing faster
+                        .redeliveryDelay(0)
                         .handled(true)
                         .to("mock:dead");
 

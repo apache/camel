@@ -47,6 +47,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // on exception to catch all IO exceptions and handle them specially
                 onException(IOException.class)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(3)
                     .to("mock:b")
                     .process(new Processor() {
@@ -105,6 +106,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // on exception to catch all IO exceptions and handle them specially
                 onException(IOException.class)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(3)
                     // this time we handle the exception
                     .handled(true)
@@ -168,6 +170,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
                 // on exception to catch all IO exceptions and handle them specially
                 onException(IOException.class)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(3)
                     .to("mock:b")
                     .process(new Processor() {
@@ -232,6 +235,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
                 // on exception to catch all IO exceptions and handle them specially
                 onException(IOException.class)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(3)
                     // this time we handle the exception
                     .handled(true)
@@ -298,6 +302,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
                 // on exception to catch all IO exceptions and handle them specially
                 onException(IOException.class)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(3)
                     .to("mock:b")
                     .process(new Processor() {
@@ -364,6 +369,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
                 // on exception to catch all IO exceptions and handle them specially
                 onException(IOException.class)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(3)
                     // we now handle the exception
                     .handled(true)

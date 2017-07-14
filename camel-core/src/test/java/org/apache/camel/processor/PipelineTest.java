@@ -132,9 +132,11 @@ public class PipelineTest extends ContextTestSupport {
         });
         // there is always breadcrumb header
         assertEquals("There should have no message header", 1, exchange.getOut().getHeaders().size());
+        assertEquals("There should have no attachments", 0, exchange.getOut().getAttachmentObjects().size());
         assertEquals("There should have no attachments", 0, exchange.getOut().getAttachments().size());
         assertEquals("Get a wrong message body", "test", exchange.getOut().getBody());
         assertNull(exchange.getOut().getHeader("test"));
+        assertNull(exchange.getOut().getAttachmentObject("test1.xml"));
         assertNull(exchange.getOut().getAttachment("test1.xml"));
         
     }
@@ -184,6 +186,7 @@ public class PipelineTest extends ContextTestSupport {
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             exchange.getOut().copyFrom(exchange.getIn());
+                            assertNotNull("The test attachment should not be null", exchange.getOut().getAttachmentObject("test1.xml"));
                             assertNotNull("The test attachment should not be null", exchange.getOut().getAttachment("test1.xml"));
                             assertNotNull("The test header should not be null", exchange.getOut().getHeader("test"));
                             exchange.getOut().removeAttachment("test1.xml");

@@ -31,6 +31,7 @@ public class MQTTConsumerMultipleTopicsTest extends MQTTBaseTest {
     @Test
     public void testConsumeMultipleTopics() throws Exception {
         MQTT mqtt = new MQTT();
+        mqtt.setHost(MQTTTestSupport.getHostForMQTTEndpoint());
         BlockingConnection publisherConnection = mqtt.blockingConnection();
         Topic topic1 = new Topic(TEST_TOPIC, QoS.AT_MOST_ONCE);
         Topic topic2 = new Topic(TEST_TOPIC_2, QoS.AT_MOST_ONCE);
@@ -54,7 +55,7 @@ public class MQTTConsumerMultipleTopicsTest extends MQTTBaseTest {
 
         return new RouteBuilder() {
             public void configure() {
-                from("mqtt:bar?subscribeTopicNames=" + TEST_TOPICS)
+                from("mqtt:bar?subscribeTopicNames=" + TEST_TOPICS + "&host=" + MQTTTestSupport.getHostForMQTTEndpoint())
                     .transform(body().convertToString())
                     .to("mock:result");
             }

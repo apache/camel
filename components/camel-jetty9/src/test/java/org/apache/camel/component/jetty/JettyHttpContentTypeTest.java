@@ -24,7 +24,7 @@ import org.junit.Test;
 
 public class JettyHttpContentTypeTest extends BaseJettyTest {
 
-    private static final String CHARSET = "ISO-8859-1";
+    private static final String CHARSET = "iso-8859-1";
 
     @Test
     public void testContentType() throws Exception {

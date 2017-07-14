@@ -60,7 +60,7 @@ public class NettyHttpMethodRestrictTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty-http://http://localhost:{{port}}/methodRestrict?httpMethodRestrict=POST").process(new Processor() {
+                from("netty-http:http://localhost:{{port}}/methodRestrict?httpMethodRestrict=POST").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
                         String request = in.getBody(String.class);

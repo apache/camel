@@ -38,6 +38,14 @@ public class FileApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest {
             outFile.delete();
         }
 
+        final FileApiMethodGeneratorMojo mojo = createGeneratorMojo();
+        mojo.execute();
+
+        // check target file was generated
+        assertExists(outFile);
+    }
+
+    protected FileApiMethodGeneratorMojo createGeneratorMojo() {
         final FileApiMethodGeneratorMojo mojo = new FileApiMethodGeneratorMojo();
         mojo.substitutions = new Substitution[2];
         mojo.substitutions[0] = new Substitution(".+", "(.+)", "java.util.List", "$1List", false);
@@ -52,11 +60,7 @@ public class FileApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest {
         // exclude name2, and int times
         mojo.excludeConfigNames = "name2";
         mojo.excludeConfigTypes = "int";
-
-        mojo.execute();
-
-        // check target file was generated
-        assertExists(outFile);
+        return mojo;
     }
 
 }

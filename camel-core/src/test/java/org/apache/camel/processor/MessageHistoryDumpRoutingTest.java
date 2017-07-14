@@ -45,7 +45,7 @@ public class MessageHistoryDumpRoutingTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setMessageHistory(true);
                 // to test that the message history exchange gets clipped
-                context.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "100");
+                context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "100");
 
                 from("seda:start")
                         .to("log:foo")

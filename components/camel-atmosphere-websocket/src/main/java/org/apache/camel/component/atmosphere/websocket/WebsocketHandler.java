@@ -41,14 +41,17 @@ public class WebsocketHandler implements WebSocketProtocol {
     @Override
     public void onClose(WebSocket webSocket) {
         LOG.debug("closing websocket");
+        String connectionKey = store.getConnectionKey(webSocket);
+        sendEventNotification(connectionKey, WebsocketConstants.ONCLOSE_EVENT_TYPE);
         store.removeWebSocket(webSocket);
-        
         LOG.debug("websocket closed");
     }
 
     @Override
     public void onError(WebSocket webSocket, WebSocketException t) {
         LOG.error("websocket on error", t);
+        String connectionKey = store.getConnectionKey(webSocket);
+        sendEventNotification(connectionKey, WebsocketConstants.ONERROR_EVENT_TYPE);
     }
 
     @Override
@@ -56,6 +59,7 @@ public class WebsocketHandler implements WebSocketProtocol {
         LOG.debug("opening websocket");
         String connectionKey = UUID.randomUUID().toString();
         store.addWebSocket(connectionKey, webSocket);
+        sendEventNotification(connectionKey, WebsocketConstants.ONOPEN_EVENT_TYPE);
         LOG.debug("websocket opened");
     }
 
@@ -89,4 +93,9 @@ public class WebsocketHandler implements WebSocketProtocol {
         this.store = consumer.getEndpoint().getWebSocketStore();
     }
 
+    private void sendEventNotification(final String connectionKey, final int eventType) {
+        if (consumer.isEnableEventsResending()) {
+            consumer.sendEventNotification(connectionKey, eventType);
+        }
+    }
 }

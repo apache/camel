@@ -26,6 +26,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
@@ -40,14 +41,14 @@ public class GenericFileProducer<T> extends DefaultProducer {
     protected final GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
     // assume writing to 100 different files concurrently at most for the same file producer
-    private final LRUCache<String, Lock> locks = new LRUCache<String, Lock>(100);
+    private final LRUCache<String, Lock> locks = LRUCacheFactory.newLRUCache(100);
 
     protected GenericFileProducer(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations) {
         super(endpoint);
         this.endpoint = endpoint;
         this.operations = operations;
     }
-    
+
     public String getFileSeparator() {
         return File.separator;
     }
@@ -227,7 +228,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             handleFailedWrite(exchange, e);
         }
 
-        postWriteCheck();
+        postWriteCheck(exchange);
     }
 
     /**
@@ -248,7 +249,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
     /**
      * Perform any actions that need to occur after we are done such as disconnecting.
      */
-    public void postWriteCheck() {
+    public void postWriteCheck(Exchange exchange) {
         // nothing needed to check
     }
 
@@ -389,18 +390,22 @@ public class GenericFileProducer<T> extends DefaultProducer {
             answer = normalizePath(answer);
         }
 
+        // stack path in case the temporary file uses .. paths
+        answer = FileUtil.compactPath(answer, getFileSeparator());
+
         return answer;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
-        super.doStart();
         ServiceHelper.startService(locks);
+        super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(locks);
         super.doStop();
+        ServiceHelper.stopService(locks);
     }
 }

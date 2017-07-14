@@ -19,6 +19,8 @@ package org.apache.camel.dataformat.soap;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.ws.soap.SOAPFaultException;
+
 import com.example.customerservice.GetCustomersByName;
 
 import org.apache.camel.EndpointInject;
@@ -58,6 +60,17 @@ public class SoapUnMarshalTest extends CamelTestSupport {
         assertEquals("Smith", request.getName());
     }
 
+    @Test
+    public void testUnMarshalSoapFaultWithoutDetail() throws IOException, InterruptedException {
+        try {
+            InputStream in = this.getClass().getResourceAsStream("faultWithoutDetail.xml");
+            producer.sendBody(in);
+            fail("Should have thrown an Exception.");
+        } catch (Exception e) {
+            assertEquals(SOAPFaultException.class, e.getCause().getClass());
+        }
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

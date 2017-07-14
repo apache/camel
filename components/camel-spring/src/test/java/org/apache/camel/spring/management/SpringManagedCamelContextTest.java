@@ -31,6 +31,11 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedCamelContextTest.xml");
     }
@@ -95,7 +100,6 @@ public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
 
-        @SuppressWarnings("unchecked")
         TabularData data = (TabularData) mbeanServer.invoke(on, "listEips", null, null);
         assertNotNull(data);
         assertTrue(data.size() > 150);

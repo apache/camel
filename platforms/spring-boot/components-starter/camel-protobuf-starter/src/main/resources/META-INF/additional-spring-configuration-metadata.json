@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.protobuf.enabled",
+      "description": "Enable protobuf dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -29,7 +29,6 @@ import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
-
 /**
  * A helper class for working with predicates
  *
@@ -328,6 +327,27 @@ public final class PredicateBuilder {
 
             protected String getOperationText() {
                 return "contains";
+            }
+        };
+    }
+    
+    public static Predicate containsIgnoreCase(final Expression left, final Expression right) {
+        return new BinaryPredicateSupport(left, right) {
+
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
+                if (leftValue == null && rightValue == null) {
+                    // they are equal
+                    return true;
+                } else if (leftValue == null || rightValue == null) {
+                    // only one of them is null so they are not equal
+                    return false;
+                }
+
+                return ObjectHelper.containsIgnoreCase(leftValue, rightValue);
+            }
+
+            protected String getOperationText() {
+                return "~~";
             }
         };
     }

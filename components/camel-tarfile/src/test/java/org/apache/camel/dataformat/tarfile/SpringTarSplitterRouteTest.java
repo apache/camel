@@ -26,7 +26,9 @@ public class SpringTarSplitterRouteTest extends CamelSpringTestSupport {
     @Test
     public void testSplitter() throws InterruptedException {
         MockEndpoint processTarEntry = getMockEndpoint("mock:processTarEntry");
+
         processTarEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola", "hello", "greetings");
+
         assertMockEndpointsSatisfied();
     }
     

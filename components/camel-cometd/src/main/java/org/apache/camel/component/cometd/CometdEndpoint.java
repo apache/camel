@@ -31,9 +31,12 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Endpoint for Camel Cometd.
+ * The cometd component is a transport for working with the Jetty implementation of the cometd/bayeux protocol.
+ *
+ * Using this component in combination with the dojo toolkit library it's possible to push Camel messages directly
+ * into the browser using an AJAX based mechanism.
  */
-@UriEndpoint(scheme = "cometd,cometds", title = "CometD", syntax = "cometd:host:port/channelName", consumerClass = CometdConsumer.class, label = "websocket")
+@UriEndpoint(firstVersion = "2.0.0", scheme = "cometd,cometds", title = "CometD", syntax = "cometd:host:port/channelName", consumerClass = CometdConsumer.class, label = "websocket")
 public class CometdEndpoint extends DefaultEndpoint {
 
     private CometdComponent component;
@@ -67,8 +70,8 @@ public class CometdEndpoint extends DefaultEndpoint {
     private String allowedOrigins;
     @UriParam
     private String filterPath;
-    @UriParam(label = "producer", defaultValue = "true")
-    private boolean disconnectLocalSession = true;
+    @UriParam(label = "producer")
+    private boolean disconnectLocalSession;
 
     public CometdEndpoint(CometdComponent component, String uri, String remaining, Map<String, Object> parameters) {
         super(uri, component);
@@ -109,7 +112,7 @@ public class CometdEndpoint extends DefaultEndpoint {
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     public String getPath() {

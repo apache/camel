@@ -70,7 +70,7 @@ public class FileConsumerBeginExpressionRenameStrategyTest extends ContextTestSu
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/reports?preMove=../inprogress/${file:name.noext}.bak")
+                from("file://target/reports?preMove=../inprogress/${file:name.noext}.bak&initialDelay=0&delay=10")
                         .process(new Processor() {
                             @SuppressWarnings("unchecked")
                             public void process(Exchange exchange) throws Exception {

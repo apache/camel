@@ -31,22 +31,21 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
  * A {@link org.apache.camel.component.properties.PropertiesParser} which is using
  * &nbsp;<a href="http://www.jasypt.org/">Jasypt</a> to decrypt encrypted values.
  * <p/>
- * The parts of the values which should be decrpted must be enclosed in the prefix and suffix token.
+ * The parts of the values which should be decrypted must be enclosed in the prefix and suffix token.
  */
 public class JasyptPropertiesParser extends DefaultPropertiesParser {
 
     public static final String JASYPT_PREFIX_TOKEN = "ENC(";
     public static final String JASYPT_SUFFIX_TOKEN = ")";
 
+    private static final String JASYPT_REGEX = JASYPT_PREFIX_TOKEN.replace("(", "\\(") + "(.+?)" + JASYPT_SUFFIX_TOKEN.replace(")", "\\)");
+    private static final Pattern PATTERN = Pattern.compile(JASYPT_REGEX);
+
     private StringEncryptor encryptor;
     private String password;
     private String algorithm;
 
-    private Pattern pattern;
-
     public JasyptPropertiesParser() {
-        String regex = JASYPT_PREFIX_TOKEN.replace("(", "\\(") + "(.+?)" + JASYPT_SUFFIX_TOKEN.replace(")", "\\)");
-        pattern = Pattern.compile(regex);
     }
 
     @Override
@@ -54,7 +53,7 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         log.trace(format("Parsing property '%s=%s'", key, value));
         if (value != null) {
             initEncryptor();
-            Matcher matcher = pattern.matcher(value);
+            Matcher matcher = PATTERN.matcher(value);
             while (matcher.find()) {
                 log.trace(format("Decrypting part '%s'", matcher.group(0)));
                 String decrypted = encryptor.decrypt(matcher.group(1));
@@ -73,7 +72,7 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
                 pbeStringEncryptor.setAlgorithm(algorithm);
                 log.debug(format("Initialized encryptor using %s algorithm and provided password", algorithm));
             } else {
-                log.debug(format("Initialized encryptor using default algorithm and provided password"));
+                log.debug("Initialized encryptor using default algorithm and provided password");
             }
             encryptor = pbeStringEncryptor;
         }
@@ -92,7 +91,7 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         if (password.startsWith("sysenv:")) {
             password = System.getenv(ObjectHelper.after(password, "sysenv:"));
         }
-        if (password.startsWith("sys:")) {
+        if (ObjectHelper.isNotEmpty(password) && password.startsWith("sys:")) {
             password = System.getProperty(ObjectHelper.after(password, "sys:"));
         }
         this.password = password;
