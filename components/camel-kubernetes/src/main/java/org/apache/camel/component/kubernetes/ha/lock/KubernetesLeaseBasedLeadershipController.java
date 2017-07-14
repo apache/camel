@@ -163,8 +163,9 @@ public class KubernetesLeaseBasedLeadershipController implements Service {
 
         long time = Math.min(timeRetry, timeDeadline);
         long delay = Math.max(0, time - System.currentTimeMillis());
-        LOG.debug("Next renewal timeout event will be fired in {} seconds", delay / 1000);
-        return delay;
+        long delayJittered = jitter(delay, lockConfiguration.getJitterFactor());
+        LOG.debug("Next renewal timeout event will be fired in {} seconds", delayJittered / 1000);
+        return delayJittered;
     }
 
 
@@ -340,10 +341,18 @@ public class KubernetesLeaseBasedLeadershipController implements Service {
     private void updateLatestLeaderInfo(ConfigMap configMap) {
         LOG.debug("Updating internal status about the current leader");
         this.latestLeaderInfo = ConfigMapLockUtils.getLeaderInfo(configMap, this.lockConfiguration.getGroupName());
+
+        // Notify about changes in current leader if any
+        this.eventDispatcherExecutor.execute(this::checkAndNotifyNewLeader);
+        if (this.latestLeaderInfo.isLeader(this.lockConfiguration.getPodName())) {
+            this.eventDispatcherExecutor.schedule(this::checkAndNotifyNewLeader, this.lockConfiguration.getRenewDeadlineSeconds() * 1000 + FIXED_ADDITIONAL_DELAY, TimeUnit.MILLISECONDS);
+        } else if (this.latestLeaderInfo.getLeader() != null) {
+            this.eventDispatcherExecutor.schedule(this::checkAndNotifyNewLeader, this.lockConfiguration.getLeaseDurationSeconds() * 1000 + FIXED_ADDITIONAL_DELAY, TimeUnit.MILLISECONDS);
+        }
     }
 
     private void checkAndNotifyNewLeader() {
-        LOG.debug("Checking if the current leader has changed to notify the event handler...");
+        LOG.info("Checking if the current leader has changed to notify the event handler...");
         LeaderInfo newLeaderInfo = this.latestLeaderInfo;
         if (newLeaderInfo == null) {
             return;
