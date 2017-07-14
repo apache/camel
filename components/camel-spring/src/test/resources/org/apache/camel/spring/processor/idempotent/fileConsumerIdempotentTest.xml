@@ -38,7 +38,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="file://target/fileidempotent/?idempotent=true&amp;idempotentRepository=#fileStore&amp;move=done/${file:name}"/>
+            <from uri="file://target/fileidempotent/?initialDelay=0&amp;delay=10&amp;idempotent=true&amp;idempotentRepository=#fileStore&amp;move=done/${file:name}"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

@@ -30,13 +30,14 @@ public class MainExampleTest extends TestCase {
         main.addRouteBuilder(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://src/test/data?noop=true").process(new MyProcessor()).to("file://target/mainTest");
+                from("file://src/test/data?initialDelay=0&delay=10&noop=true").process(new MyProcessor()).to("file://target/mainTest");
             }
         });
         main.start();
 
-        // then some time later
-        Thread.sleep(1000);
+        // run for 100 millis
+        main.setDuration(100);
+
         main.stop();
     }
     
@@ -44,8 +45,10 @@ public class MainExampleTest extends TestCase {
         Main main = new Main();
         main.setFileApplicationContextUri("src/test/resources/org/apache/camel/spring/routingUsingProcessor.xml");
         main.start();
-        // sleep for a while
-        Thread.sleep(1000);
+
+        // run for 100 millis
+        main.setDuration(100);
+
         main.stop();
     }
 

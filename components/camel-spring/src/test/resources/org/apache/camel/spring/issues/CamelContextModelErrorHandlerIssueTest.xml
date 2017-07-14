@@ -23,7 +23,7 @@
                       retryAttemptedLogLevel="ERROR" asyncDelayedRedelivery="true" maximumRedeliveries="6"/>
   </errorHandler>
   <route>
-    <from uri="file:src/data?noop=true"/>
+    <from uri="file:src/data?initialDelay=0&amp;delay=10&amp;noop=true"/>
     <choice>
       <when>
         <xpath>/person/city = 'London'</xpath>

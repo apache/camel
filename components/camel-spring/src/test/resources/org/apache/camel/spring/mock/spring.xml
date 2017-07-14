@@ -27,7 +27,7 @@
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
-      <from uri="file:src/test/data?noop=true"/>
+      <from uri="file:src/test/data?initialDelay=0&amp;delay=10&amp;noop=true"/>
       <filter>
         <xpath>/person/city = 'London'</xpath>
         <to uri="mock:matched"/>
