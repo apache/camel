@@ -29,7 +29,7 @@
       <description>here is a sample which processes the input files
         (leaving them in place - see the 'noop' flag)
         then performs content based routing on the message using XPath</description>
-      <from uri="file:src/data?noop=true" customId="true" id="fromFile">
+      <from uri="file:src/data?initialDelay=0&amp;delay=10&amp;noop=true" customId="true" id="fromFile">
         <description/>
       </from>
       <choice customId="true" id="myChoice">

@@ -58,14 +58,13 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         // reset mock and set new expectations
         mock.reset();
         mock.expectedMessageCount(0);
+        // sleep to let the consumer try to poll the file
+        mock.setResultMinimumWaitTime(50);
 
         // move file back
         File file = new File("target/fileidempotent/done/report.txt");
         File renamed = new File("target/fileidempotent/report.txt");
         file.renameTo(renamed);
-
-        // sleep to let the consumer try to poll the file
-        Thread.sleep(2000);
 
         // should NOT consume the file again, let 2 secs pass to let the consumer try to consume it but it should not
         assertMockEndpointsSatisfied();
