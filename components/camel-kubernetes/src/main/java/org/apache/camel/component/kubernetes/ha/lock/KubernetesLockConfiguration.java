@@ -30,9 +30,9 @@ public class KubernetesLockConfiguration implements Cloneable {
 
 
     public static final double DEFAULT_JITTER_FACTOR = 1.2;
-    public static final long DEFAULT_LEASE_DURATION_SECONDS = 20;
-    public static final long DEFAULT_RENEW_DEADLINE_SECONDS = 15;
-    public static final long DEFAULT_RETRY_PERIOD_SECONDS = 6;
+    public static final long DEFAULT_LEASE_DURATION_SECONDS = 60;
+    public static final long DEFAULT_RENEW_DEADLINE_SECONDS = 45;
+    public static final long DEFAULT_RETRY_PERIOD_SECONDS = 9;
 
     public static final long DEFAULT_RETRY_ON_ERROR_INTERVAL_SECONDS = 5;
     public static final long DEFAULT_WATCH_REFRESH_INTERVAL_SECONDS = 1800;
