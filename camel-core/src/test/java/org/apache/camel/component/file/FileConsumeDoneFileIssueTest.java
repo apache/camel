@@ -89,6 +89,36 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         assertFalse("Done file should be deleted", new File("target/done2/c.txt.done").exists());
         
     }
+    
+    public void testFileDoneFileNameContainingDollarSign() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
+
+        template.sendBodyAndHeader("file:target/done2", "A", Exchange.FILE_NAME, "$a$.txt");
+        template.sendBodyAndHeader("file:target/done2", "B", Exchange.FILE_NAME, "$b.txt");
+        template.sendBodyAndHeader("file:target/done2", "C", Exchange.FILE_NAME, "c$.txt");
+        template.sendBodyAndHeader("file:target/done2", "a", Exchange.FILE_NAME, "$a$.txt.done");
+        template.sendBodyAndHeader("file:target/done2", "b", Exchange.FILE_NAME, "$b.txt.done");
+        template.sendBodyAndHeader("file:target/done2", "c", Exchange.FILE_NAME, "c$.txt.done");
+        
+        assertTrue("Done file should exists", new File("target/done2/$a$.txt.done").exists());
+        assertTrue("Done file should exists", new File("target/done2/$b.txt.done").exists());
+        assertTrue("Done file should exists", new File("target/done2/c$.txt.done").exists());
+
+        getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("A", "B", "C");
+
+        context.startRoute("bar");
+
+        assertMockEndpointsSatisfied();
+        assertTrue(notify.matchesMockWaitTime());
+
+        Thread.sleep(50);
+
+        // the done file should be deleted
+        assertFalse("Done file should be deleted", new File("target/done2/$a$.txt.done").exists());
+        assertFalse("Done file should be deleted", new File("target/done2/$b.txt.done").exists());
+        assertFalse("Done file should be deleted", new File("target/done2/c$.txt.done").exists());
+        
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
