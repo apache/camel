@@ -125,6 +125,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>${maven-surefire-plugin-version}</version>
             <configuration>
+              <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
               <includes>
                 <include>**/*Test.java</include>
               </includes>
