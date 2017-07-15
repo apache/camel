@@ -28,7 +28,6 @@ public class RetryRouteScopedUntilRecipientListParallelIssueTest extends RetryRo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
                 from("seda:start")
                     .onException(Exception.class).redeliveryDelay(0).retryWhile(method("myRetryBean")).end()
                     .recipientList(header("recipientListHeader")).parallelProcessing()

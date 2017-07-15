@@ -43,6 +43,7 @@ public class RetryWhileSimpleExpressionIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class)
                     .retryWhile(simple("${body.areWeCool} == 'no'"))
+                    .redeliveryDelay(0)
                     .handled(true)
                     .to("mock:error");
 
