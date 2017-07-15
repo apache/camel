@@ -20,13 +20,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
@@ -89,7 +89,7 @@ public class TypeConverterTest {
                 // ignore
             }
 
-            xmlAsString = getResourceAsString("sample_soap.xml");
+            xmlAsString = IOHelper.loadText(getClass().getClassLoader().getResourceAsStream("sample_soap.xml"));
             xmlAsBytes = xmlAsString.getBytes(StandardCharsets.UTF_8);
         }
 
@@ -100,12 +100,6 @@ public class TypeConverterTest {
             } catch (Exception e) {
                 // ignore
             }
-        }
-
-        private String getResourceAsString(String resource) {
-            Scanner s = new Scanner(getClass().getClassLoader().getResourceAsStream(resource))
-                    .useDelimiter("\\A");
-            return s.hasNext() ? s.next() : "";
         }
     }
 

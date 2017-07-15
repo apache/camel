@@ -105,6 +105,6 @@ public class SimpleMockTest {
     public void simpleMockTest(BenchmarkState state, Blackhole bh) {
         ProducerTemplate template = state.producer;
         template.sendBody("direct:start", "Hello World");
-   }
+    }
 
 }
