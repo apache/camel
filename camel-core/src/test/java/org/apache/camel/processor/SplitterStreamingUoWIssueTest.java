@@ -55,7 +55,7 @@ public class SplitterStreamingUoWIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/splitter?delete=true&sortBy=file:name")
+                from("file:target/splitter?initialDelay=0&delay=10&delete=true&sortBy=file:name")
                     .split(body().tokenize(",")).streaming()
                         .to("seda:queue")
                     .end()

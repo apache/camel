@@ -32,7 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
 
-    private static String url = "file:target/pending";
+    private static String url = "file:target/pending?initialDelay=0&delay=10";
     private static AtomicInteger counter = new AtomicInteger();
     private static CountDownLatch latch = new CountDownLatch(2);
 
