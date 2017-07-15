@@ -73,7 +73,7 @@ public class XPathFromFileExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/xpath?moveFailed=error&move=ok")
+                from("file:target/xpath?initialDelay=0&delay=10&moveFailed=error&move=ok")
                     .onException(Exception.class)
                         .to("mock:error")
                     .end()

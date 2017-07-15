@@ -350,7 +350,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         deleteDirectory("target/foo");
         template.sendBodyAndHeader("file:target/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        Exchange exchange = consumer.receive("file:target/foo?delete=true");
+        Exchange exchange = consumer.receive("file:target/foo?initialDelay=0&delay=10&delete=true");
         assertNotNull(exchange);
         assertEquals("Hello World", exchange.getIn().getBody(String.class));
 

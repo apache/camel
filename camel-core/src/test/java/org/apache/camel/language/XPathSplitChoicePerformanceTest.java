@@ -28,11 +28,13 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.junit.Ignore;
 import org.slf4j.Logger;
 
 /**
  *
  */
+@Ignore("Test manually")
 public class XPathSplitChoicePerformanceTest extends ContextTestSupport {
 
     private int size = 20 * 1000;
@@ -76,7 +78,7 @@ public class XPathSplitChoicePerformanceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data?noop=true")
+                from("file:target/data?initialDelay=0&delay=10&noop=true")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             log.info("Starting to process file");

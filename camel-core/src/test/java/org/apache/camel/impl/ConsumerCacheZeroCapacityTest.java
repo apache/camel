@@ -36,7 +36,7 @@ public class ConsumerCacheZeroCapacityTest extends ContextTestSupport {
 
         assertEquals("Size should be 0", 0, cache.size());
 
-        Endpoint endpoint = context.getEndpoint("file:target/foo?fileName=foo.txt&delay=10");
+        Endpoint endpoint = context.getEndpoint("file:target/foo?fileName=foo.txt&initialDelay=0&delay=10");
         PollingConsumer consumer = cache.acquirePollingConsumer(endpoint);
         assertNotNull(consumer);
         assertEquals("Started", ((org.apache.camel.support.ServiceSupport) consumer).getStatus().name());

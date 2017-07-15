@@ -56,11 +56,11 @@ public class ZipDataFormatFileUnmarshalDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/zip?delete=true")
+                from("file:target/zip?initialDelay=0&delay=10&delete=true")
                     .marshal().zip()
                     .to("file:target/zip/out?fileName=${file:name}.zip");
 
-                from("file:target/zip/out?delete=true")
+                from("file:target/zip/out?initialDelay=0&delay=10&delete=true")
                     .unmarshal().zip()
                     .to("mock:result");
             }
