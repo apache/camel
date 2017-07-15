@@ -52,7 +52,7 @@ public class FileSplitStreamingWithChoiceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filesplit")
+                from("file://target/filesplit?initialDelay=0&delay=10")
                     .split(body().tokenize(LS)).streaming()
                     .to("mock:split")
                     .choice()

@@ -58,7 +58,7 @@ public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends C
                     .to("file://target/outbox")
                     .to("mock:error");
 
-                from("file://target/inbox")
+                from("file://target/inbox?initialDelay=0&delay=10")
                     .transform(constant("B"))
                     .setHeader("path", constant("mock:throwException"))
                     // must enable share uow to let the onException use
