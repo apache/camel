@@ -54,7 +54,7 @@ public class TokenPairPredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/pair?move=ok")
+                from("file:target/pair?initialDelay=0&delay=10&move=ok")
                     .choice()
                         // does not make so much sense to use a tokenPair in a predicate
                         // but you can do it nevertheless

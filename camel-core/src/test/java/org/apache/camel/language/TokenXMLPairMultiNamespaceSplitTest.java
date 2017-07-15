@@ -18,6 +18,7 @@ package org.apache.camel.language;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Ignore;
 
 /**
  *
@@ -37,6 +38,7 @@ public class TokenXMLPairMultiNamespaceSplitTest extends TokenXMLPairNamespaceSp
         assertMockEndpointsSatisfied();
     }
 
+    @Ignore
     public void testTokenXMLPair2() throws Exception {
         // noop
     }
