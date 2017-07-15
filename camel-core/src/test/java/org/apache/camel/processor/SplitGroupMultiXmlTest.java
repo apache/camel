@@ -63,7 +63,7 @@ public class SplitGroupMultiXmlTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("file:target/pair")
+                from("file:target/pair?initialDelay=0&delay=10")
                         // split the order child tags, and inherit namespaces from the orders root tag
                         .split().tokenizeXML("order", "orders", 2)
                         .to("log:split")

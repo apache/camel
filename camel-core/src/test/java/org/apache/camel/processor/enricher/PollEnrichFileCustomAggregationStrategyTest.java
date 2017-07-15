@@ -61,9 +61,9 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/enrich?move=.done")
+                from("file://target/enrich?initialDelay=0&delay=10&move=.done")
                     .to("mock:start")
-                    .pollEnrich("file://target/enrichdata?readLock=markerFile&move=.done", 10000, new ReplaceAggregationStrategy())
+                    .pollEnrich("file://target/enrichdata?initialDelay=0&delay=10&readLock=markerFile&move=.done", 10000, new ReplaceAggregationStrategy())
                     .to("mock:result");
             }
         };

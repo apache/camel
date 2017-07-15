@@ -45,8 +45,8 @@ public class PollEnrichFileDefaultAggregationStrategyTest extends ContextTestSup
 
         template.sendBodyAndHeader("file://target/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
 
-        log.info("Sleeping for 1 sec before writing enrichdata file");
-        Thread.sleep(1000);
+        log.info("Sleeping for 0.25 sec before writing enrichdata file");
+        Thread.sleep(250);
         template.sendBodyAndHeader("file://target/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
         log.info("... write done");
 
@@ -60,9 +60,9 @@ public class PollEnrichFileDefaultAggregationStrategyTest extends ContextTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/enrich?move=.done")
+                from("file://target/enrich?initialDelay=0&delay=10&move=.done")
                     .to("mock:start")
-                    .pollEnrich("file://target/enrichdata?readLock=markerFile&move=.done", 10000)
+                    .pollEnrich("file://target/enrichdata?initialDelay=0&delay=10&readLock=markerFile&move=.done", 10000)
                     .to("mock:result");
             }
         };

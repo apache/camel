@@ -79,7 +79,7 @@ public class SplitterParallelBigFileTest extends ContextTestSupport {
                 // lower max pool to 10 for less number of concurrent threads
                 //context.getExecutorServiceStrategy().getDefaultThreadPoolProfile().setMaxPoolSize(10);
 
-                from("file:target/split")
+                from("file:target/split?initialDelay=0&delay=10")
                     .split(body().tokenize(LS)).streaming().parallelProcessing()
                         .to("log:split?groupSize=1000")
                     .end()
