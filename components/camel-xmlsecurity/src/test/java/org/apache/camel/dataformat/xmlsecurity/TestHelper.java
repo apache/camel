@@ -18,10 +18,12 @@ package org.apache.camel.dataformat.xmlsecurity;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -35,8 +37,6 @@ import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.diff.Diff;
 
