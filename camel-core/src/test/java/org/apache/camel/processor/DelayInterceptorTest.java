@@ -28,29 +28,23 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DelayInterceptorTest extends ContextTestSupport {
 
-    public void testSendingSomeMessages() throws Exception {
+    public void testDelayer() throws Exception {
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10; i++) {
             template.sendBody("direct:start", "Message #" + i);
         }
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should not be that fast to run: " + delta, delta > 3800);
+        assertTrue("Should not be that fast to run: " + delta, delta > 100);
         // some OS boxes are slow
-        assertTrue("Should not take that long to run: " + delta, delta < 11000);
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        disableJMX();
-        super.setUp();
+        assertTrue("Should not take that long to run: " + delta, delta < 5000);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             // START SNIPPET: e1
             public void configure() throws Exception {
-                // configure delayer for each step 200 millis
-                getContext().setDelayer(200L);
+                // configure delayer for each step 10 millis
+                getContext().setDelayer(10L);
 
                 // regular routes here
 

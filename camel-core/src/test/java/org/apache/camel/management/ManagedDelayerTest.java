@@ -52,11 +52,11 @@ public class ManagedDelayerTest extends ManagementTestSupport {
         Long last = (Long) mbeanServer.getAttribute(routeName, "LastProcessingTime");
         Long total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue("Should take around 1 sec: was " + last, last > 900);
-        assertTrue("Should take around 1 sec: was " + total, total > 900);
+        assertTrue("Should take around 0.1 sec: was " + last, last > 90);
+        assertTrue("Should take around 0.1 sec: was " + total, total > 90);
 
         // change the delay time using JMX
-        mbeanServer.invoke(delayerName, "constantDelay", new Object[]{2000}, new String[]{"java.lang.Integer"});
+        mbeanServer.invoke(delayerName, "constantDelay", new Object[]{200}, new String[]{"java.lang.Integer"});
 
         // send in another message
         template.sendBody("direct:start", "Bye World");
@@ -69,8 +69,8 @@ public class ManagedDelayerTest extends ManagementTestSupport {
         last = (Long) mbeanServer.getAttribute(routeName, "LastProcessingTime");
         total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue("Should take around 2 sec: was " + last, last > 1900);
-        assertTrue("Should be around 3 sec now: was " + total, total > 2900);
+        assertTrue("Should take around 0.2 sec: was " + last, last > 190);
+        assertTrue("Should be around 0.3 sec now: was " + total, total > 290);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class ManagedDelayerTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .to("log:foo")
-                    .delay(1000).id("mydelayer")
+                    .delay(100).id("mydelayer")
                     .to("mock:result");
             }
         };

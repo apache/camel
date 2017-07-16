@@ -64,7 +64,7 @@ public class AggregatorExceptionHandleTest extends ContextTestSupport {
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
                 from("direct:start")
-                    .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(1000L)
+                    .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String body = exchange.getIn().getBody(String.class);

@@ -24,7 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd 
     ">
 
-    <camelContext delayer="200" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext delayer="10" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
             <to uri="mock:result"/>
