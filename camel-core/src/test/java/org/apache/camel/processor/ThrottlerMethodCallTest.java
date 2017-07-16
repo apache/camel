@@ -23,14 +23,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-
+import org.apache.camel.util.StopWatch;
 
 /**
  * @version
  */
 public class ThrottlerMethodCallTest extends ContextTestSupport {
-    private static final int INTERVAL = 500;
-    protected int messageCount = 9;
+    private static final int INTERVAL = 100;
+    protected int messageCount = 10;
 
     protected boolean canTest() {
         // skip test on windows as it does not run well there
@@ -44,8 +44,8 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
         return jndi;
     }
 
-    public long getMessagesPerSecond() {
-        return 1;
+    public long getMessagesPerInterval() {
+        return 3;
     }
 
     public void testConfigurationWithMethodCallExpression() throws Exception {
@@ -58,7 +58,7 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
 
         ExecutorService executor = Executors.newFixedThreadPool(messageCount);
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         for (int i = 0; i < messageCount; i++) {
             executor.execute(new Runnable() {
                 public void run() {
@@ -70,11 +70,9 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
         // let's wait for the exchanges to arrive
         resultEndpoint.assertIsSatisfied();
 
-        // now assert that they have actually been throttled
-        long minimumTime = (messageCount - 1) * INTERVAL;
-        // add a little slack
-        long delta = System.currentTimeMillis() - start + 200;
-        assertTrue("Should take at least " + minimumTime + "ms, was: " + delta, delta >= minimumTime);
+        // should take a little time
+        assertTrue(watch.taken() > 100);
+
         executor.shutdownNow();
     }
 
@@ -82,7 +80,7 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:expressionMethod")
-                    .throttle(method("myBean", "getMessagesPerSecond")).timePeriodMillis(INTERVAL)
+                    .throttle(method("myBean", "getMessagesPerInterval")).timePeriodMillis(INTERVAL)
                         .to("log:result", "mock:result");
             }
         };

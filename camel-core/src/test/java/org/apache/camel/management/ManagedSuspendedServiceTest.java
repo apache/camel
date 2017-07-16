@@ -70,9 +70,9 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
 
         await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
-                // now its suspended by the policy
-                Boolean bool = (Boolean) mbeanServer.getAttribute(on, "Suspended");
-                assertEquals(true, bool.booleanValue());
+            // now its suspended by the policy
+            Boolean bool = (Boolean) mbeanServer.getAttribute(on, "Suspended");
+            assertEquals(true, bool.booleanValue());
         });
 
         // the route is suspended by the policy so we should only receive one
