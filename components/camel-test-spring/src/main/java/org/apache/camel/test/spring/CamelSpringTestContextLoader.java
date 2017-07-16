@@ -82,7 +82,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         
         try {            
             GenericApplicationContext context = createContext(testClass, mergedConfig);
-            context.getEnvironment().setActiveProfiles(mergedConfig.getActiveProfiles());
+            prepareContext(context, mergedConfig);
             loadBeanDefinitions(context, mergedConfig);
             return loadContext(context, testClass);
         } finally {
