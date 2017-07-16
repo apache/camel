@@ -68,7 +68,7 @@ public class AggregatePreCompleteAwareStrategyTimeoutTest extends ContextTestSup
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(header("id"), new BodyInPreCompleteAggregatingStrategy()).completionTimeout(1000)
+                    .aggregate(header("id"), new BodyInPreCompleteAggregatingStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10)
                         .to("mock:aggregated");
             }
         };

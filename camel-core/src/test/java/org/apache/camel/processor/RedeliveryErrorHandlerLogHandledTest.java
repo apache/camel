@@ -159,6 +159,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 errorHandler(defaultErrorHandler()
+                        .redeliveryDelay(0)
                         .maximumRedeliveries(3)
                         .logExhausted(true).logHandled(true).logRetryStackTrace(true).logStackTrace(true)
                         .retryAttemptedLogLevel(LoggingLevel.WARN).retriesExhaustedLogLevel(LoggingLevel.ERROR));

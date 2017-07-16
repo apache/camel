@@ -22,6 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 public class AggregateTimeoutWithNoExecutorServiceTest extends ContextTestSupport {
+
     public void testThreadUsedForEveryAggregatorWhenDefaultExecutorServiceUsed() throws Exception {
         assertTrue("There should be a thread for every aggregator when using defaults", 
                 AggregateTimeoutWithExecutorServiceTest.aggregateThreadsCount() >= AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS);
@@ -47,8 +48,8 @@ public class AggregateTimeoutWithNoExecutorServiceTest extends ContextTestSuppor
             public void configure() throws Exception {
                 for (int i = 0; i < AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS; ++i) {
                     from("direct:start" + i)
-                        // aggregate timeout after 3th seconds
-                        .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(3000)
+                        // aggregate timeout after 0.1 second
+                        .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10)
                         .to("mock:result" + i);
                 }
             }

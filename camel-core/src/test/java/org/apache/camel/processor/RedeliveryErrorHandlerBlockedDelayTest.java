@@ -54,7 +54,7 @@ public class RedeliveryErrorHandlerBlockedDelayTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // will by default block
                 errorHandler(defaultErrorHandler()
-                    .maximumRedeliveries(5).redeliveryDelay(2000));
+                    .maximumRedeliveries(5).redeliveryDelay(10));
 
                 from("seda:start")
                     .to("log:before")
