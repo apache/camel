@@ -154,6 +154,21 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     }
 
     /**
+     * Sets the interval in milli seconds the stream resequencer will at most wait
+     * while waiting for condition of being able to deliver.
+     *
+     * @param deliveryAttemptInterval  interval in millis
+     * @return the builder
+     */
+    public ResequenceDefinition deliveryAttemptInterval(long deliveryAttemptInterval) {
+        if (streamConfig == null) {
+            throw new IllegalStateException("deliveryAttemptInterval() only supported for stream resequencer");
+        }
+        streamConfig.setDeliveryAttemptInterval(deliveryAttemptInterval);
+        return this;
+    }
+
+    /**
      * Sets the rejectOld flag to throw an error when a message older than the last delivered message is processed
      * @return the builder
      */
@@ -405,6 +420,9 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
 
         StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), internal, comparator, expression);
         resequencer.setTimeout(config.getTimeout());
+        if (config.getDeliveryAttemptInterval() != null) {
+            resequencer.setDeliveryAttemptInterval(config.getDeliveryAttemptInterval());
+        }
         resequencer.setCapacity(config.getCapacity());
         resequencer.setRejectOld(config.getRejectOld());
         if (config.getIgnoreInvalidExchanges() != null) {

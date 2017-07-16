@@ -30,7 +30,7 @@ public class ResequencerBatchOrderTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .resequence(body()).batch().size(2).timeout(3000)
+                    .resequence(body()).batch().size(2).timeout(50)
                     .to("mock:result");
             }
         };

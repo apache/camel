@@ -69,7 +69,6 @@ import org.slf4j.LoggerFactory;
  */
 public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
 
-    private static final long DELIVERY_ATTEMPT_INTERVAL = 1000L;
     private static final Logger LOG = LoggerFactory.getLogger(StreamResequencer.class);
 
     private String id;
@@ -81,7 +80,8 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
     private Delivery delivery;
     private int capacity;
     private boolean ignoreInvalidExchanges;
-    
+    private long deliveryAttemptInterval = 1000L;
+
     /**
      * Creates a new {@link StreamResequencer} instance.
      * 
@@ -147,6 +147,10 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
 
     public void setTimeout(long timeout) {
         engine.setTimeout(timeout);
+    }
+
+    public void setDeliveryAttemptInterval(long deliveryAttemptInterval) {
+        this.deliveryAttemptInterval = deliveryAttemptInterval;
     }
 
     public boolean isIgnoreInvalidExchanges() {
@@ -272,7 +276,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
                 try {
                     deliveryRequestLock.lock();
                     try {
-                        deliveryRequestCondition.await(DELIVERY_ATTEMPT_INTERVAL, TimeUnit.MILLISECONDS);
+                        deliveryRequestCondition.await(deliveryAttemptInterval, TimeUnit.MILLISECONDS);
                     } finally {
                         deliveryRequestLock.unlock();
                     }
