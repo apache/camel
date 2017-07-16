@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.jmx;
 
-import static org.junit.Assert.assertFalse;
-
 import java.io.File;
-
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -32,6 +29,8 @@ import javax.xml.transform.stream.StreamSource;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
+
+import static org.junit.Assert.assertFalse;
 
 public final class XmlFixture {
 
@@ -51,7 +50,7 @@ public final class XmlFixture {
                 .ignoreComments().ignoreWhitespace()
                 .checkForSimilar().build();
         try {
-             assertFalse(aMessage + ":\n" + diff.toString(), diff.hasDifferences());
+            assertFalse(aMessage + ":\n" + diff.toString(), diff.hasDifferences());
         } catch (Throwable t) {
             dump(aActual);
             throw t;
