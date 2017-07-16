@@ -30,9 +30,9 @@
 
     <route>
       <from uri="direct:expressionMethod"/>
-      <throttle timePeriodMillis="500">
-        <!-- use a java  bean method call to determine how many messages to throttle per 0.5 sec -->
-        <method ref="myBean" method="getMessagesPerSecond"/>
+      <throttle timePeriodMillis="100">
+        <!-- use a java  bean method call to determine how many messages to throttle per 0.1 sec -->
+        <method ref="myBean" method="getMessagesPerInterval"/>
         <to uri="mock:result"/>
       </throttle>
     </route>
