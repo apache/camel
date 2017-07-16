@@ -43,7 +43,8 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:foo").delay(2000).to("mock:result");
+                // must be a bit more than 1 sec
+                from("direct:start").to("log:foo").delay(1200).to("mock:result");
             }
         });
         context.start();
@@ -79,7 +80,8 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:foo").delay(2000).to("mock:result");
+                // must be a bit more than 1 sec
+                from("direct:start").to("log:foo").delay(1200).to("mock:result");
             }
         });
         context.start();
