@@ -106,7 +106,7 @@ public class DocumentationEnricher {
         if (!isNullOrEmpty(descriptionText)) {
             String text = descriptionText;
             if (!isNullOrEmpty(defaultValueText)) {
-                text += ". Default value: " + defaultValueText;
+                text += (!text.endsWith(".") ? "." : "") + (" Default value: " + defaultValueText);
             }
             addDocumentation(item, text);
         } else {
