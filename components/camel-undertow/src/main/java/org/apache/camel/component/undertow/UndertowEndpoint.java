@@ -26,6 +26,7 @@ import io.undertow.server.HttpServerExchange;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -126,7 +127,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     }
 
     public Exchange createExchange(HttpServerExchange httpExchange) throws Exception {
-        Exchange exchange = createExchange();
+        Exchange exchange = createExchange(ExchangePattern.InOut);
 
         Message in = getUndertowHttpBinding().toCamelMessage(httpExchange, exchange);
 
