@@ -28,7 +28,7 @@ public class ClientApplication {
     public void setupCamel(@Observes CamelContextStartingEvent event) {
         // create zipkin
         ZipkinTracer zipkin = new ZipkinTracer();
-        zipkin.setHostName("192.168.99.100");
+        zipkin.setHostName("localhost");
         zipkin.setPort(9410);
         zipkin.addClientServiceMapping("http://localhost:9090/service1", "service1");
         // capture 100% of all the events
