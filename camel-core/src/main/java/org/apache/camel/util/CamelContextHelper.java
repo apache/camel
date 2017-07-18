@@ -32,6 +32,7 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -766,5 +767,4 @@ public final class CamelContextHelper {
             }
         }
     }
-
 }

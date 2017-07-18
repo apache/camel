@@ -19,12 +19,7 @@ package org.apache.camel.component.twitter;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
-import org.apache.camel.VerifiableComponent;
-import org.apache.camel.component.twitter.data.ConsumerType;
-import org.apache.camel.component.twitter.data.EndpointType;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @deprecated Use
  * {@link org.apache.camel.component.twitter.directmessage.TwitterDirectMessageComponent},
  * {@link org.apache.camel.component.twitter.search.TwitterSearchComponent},
- * {@link org.apache.camel.component.twitter.streaming..TwitterStreamingComponent} or
+ * {@link org.apache.camel.component.twitter.streaming.TwitterStreamingComponent} or
  * {@link org.apache.camel.component.twitter.timeline.TwitterTimelineComponent}
  * instead.
  */
@@ -46,12 +41,14 @@ public class TwitterComponent extends AbstractTwitterComponent {
     private static final Logger LOG = LoggerFactory.getLogger(TwitterComponent.class);
 
     public TwitterComponent() {
+        super("twitter");
     }
 
     public TwitterComponent(CamelContext context) {
-        super(context);
+        super(context, "twitter");
     }
 
+    @Override
     protected Endpoint doCreateEndpoint(TwitterConfiguration properties, String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String[] tokens = remaining.split("/");
         LOG.warn("The scheme syntax 'twitter:{}' has been deprecated. Use 'twitter-{}' instead.", tokens[0], tokens[0]);
@@ -72,12 +69,5 @@ public class TwitterComponent extends AbstractTwitterComponent {
         endpoint.setUser(getAndRemoveParameter(parameters, "user", String.class));
         endpoint.setKeywords(getAndRemoveParameter(parameters, "keywords", String.class));
         return endpoint;
-    }
-
-    /**
-     * Get a verifier for the twitter component.
-     */
-    public ComponentVerifier getVerifier() {
-        return new DefaultTwitterComponentVerifier(this);
     }
 }

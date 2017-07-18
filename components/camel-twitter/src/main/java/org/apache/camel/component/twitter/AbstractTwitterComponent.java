@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.VerifiableComponent;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 
@@ -29,7 +30,6 @@ import org.apache.camel.spi.Metadata;
  * Base Twitter component
  */
 public abstract class AbstractTwitterComponent extends DefaultComponent implements VerifiableComponent {
-
     @Metadata(label = "security", secret = true)
     private String consumerKey;
     @Metadata(label = "security", secret = true)
@@ -47,13 +47,17 @@ public abstract class AbstractTwitterComponent extends DefaultComponent implemen
     @Metadata(label = "proxy")
     private Integer httpProxyPort;
 
-    public AbstractTwitterComponent() {
+    protected AbstractTwitterComponent(String componentVerifierScheme) {
+        this(null, componentVerifierScheme);
     }
 
-    public AbstractTwitterComponent(CamelContext context) {
+    protected AbstractTwitterComponent(CamelContext context, String componentVerifierScheme) {
         super(context);
+
+        registerExtension(() -> new TwitterComponentVerifierExtension(componentVerifierScheme));
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         TwitterConfiguration properties = new TwitterConfiguration();
         properties.setConsumerKey(consumerKey);
@@ -162,4 +166,11 @@ public abstract class AbstractTwitterComponent extends DefaultComponent implemen
         return httpProxyPort;
     }
 
+    /**
+     * Get a verifier for the component.
+     */
+    @Override
+    public ComponentVerifier getVerifier() {
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
+    }
 }

@@ -28,6 +28,7 @@ import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.VerifiableComponent;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.internal.OperationName;
@@ -199,10 +200,13 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     private SubscriptionHelper subscriptionHelper;
 
     public SalesforceComponent() {
+        this(null);
     }
 
     public SalesforceComponent(CamelContext context) {
         super(context);
+
+        registerExtension(SalesforceComponentVerifierExtension::new);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -656,7 +660,8 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         return classMap;
     }
 
+    @Override
     public ComponentVerifier getVerifier() {
-        return new SalesforceComponentVerifier(this);
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

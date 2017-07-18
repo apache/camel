@@ -21,8 +21,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.camel.ComponentVerifier.VerificationError;
-import org.apache.camel.ComponentVerifier.VerificationError.StandardCode;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
+import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError;
+import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode;
+import org.apache.camel.component.extension.verifier.OptionsGroup;
+import org.apache.camel.component.extension.verifier.ResultErrorHelper;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -49,7 +52,7 @@ public class ResultErrorHelperTest {
     @Test
     public void shouldValidateParameterExclusions() {
         // combining param2 and param3 is not OK
-        final List<VerificationError> results = ResultErrorHelper.requiresAny(map("param1", "param2", "param3"),
+        final List<ComponentVerifierExtension.VerificationError> results = ResultErrorHelper.requiresAny(map("param1", "param2", "param3"),
             groups);
 
         assertEquals(3, results.size());

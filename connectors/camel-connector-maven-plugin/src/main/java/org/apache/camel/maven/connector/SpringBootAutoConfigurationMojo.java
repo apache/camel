@@ -211,7 +211,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         prefix += connectorScheme.toLowerCase(Locale.US);
 
         for (OptionModel option : model.getComponentOptions()) {
-            boolean isComponentOption= componentOptions != null && componentOptions.stream().anyMatch(o -> o.equals(option.getName()));
+            boolean isComponentOption = componentOptions != null && componentOptions.stream().anyMatch(o -> o.equals(option.getName()));
             boolean isEndpointOption = endpointOptions != null && endpointOptions.stream().anyMatch(o -> o.equals(option.getName()));
 
             // only include the options that has been explicit configured in the

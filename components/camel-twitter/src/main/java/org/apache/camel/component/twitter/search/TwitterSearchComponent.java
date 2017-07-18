@@ -18,11 +18,9 @@ package org.apache.camel.component.twitter.search;
 
 import java.util.Map;
 
-import org.apache.camel.ComponentVerifier;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.twitter.AbstractTwitterComponent;
-import org.apache.camel.component.twitter.DefaultTwitterComponentVerifier;
 import org.apache.camel.component.twitter.TwitterConfiguration;
 import org.apache.camel.spi.Metadata;
 
@@ -32,14 +30,16 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 public class TwitterSearchComponent extends AbstractTwitterComponent {
 
-    protected Endpoint doCreateEndpoint(TwitterConfiguration properties, String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        return new TwitterSearchEndpoint(uri, remaining, this, properties);
+    public TwitterSearchComponent() {
+        super("twitter-search");
     }
 
-    /**
-     * Get a verifier for the twitter search component.
-     */
-    public ComponentVerifier getVerifier() {
-        return new DefaultTwitterComponentVerifier(this, "twitter-search");
+    public TwitterSearchComponent(CamelContext context) {
+        super(context, "twitter-search");
+    }
+
+    @Override
+    protected Endpoint doCreateEndpoint(TwitterConfiguration properties, String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        return new TwitterSearchEndpoint(uri, remaining, this, properties);
     }
 }

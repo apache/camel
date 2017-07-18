@@ -26,9 +26,9 @@ import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.direct.DirectComponent;
+import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
+import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.verifier.DefaultComponentVerifier;
-import org.apache.camel.impl.verifier.ResultBuilder;
 
 public class ManagedComponentTest extends ManagementTestSupport {
     private static final String[] VERIFY_SIGNATURE = new String[] {
@@ -100,7 +100,7 @@ public class ManagedComponentTest extends ManagementTestSupport {
     private static class MyVerifiableComponent extends DefaultComponent implements VerifiableComponent {
         @Override
         public ComponentVerifier getVerifier() {
-            return new DefaultComponentVerifier("my-verifiable-component", getCamelContext()) {
+            return new DefaultComponentVerifierExtension("my-verifiable-component", getCamelContext()) {
                 @Override
                 protected Result verifyConnectivity(Map<String, Object> parameters) {
                     return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY).build();

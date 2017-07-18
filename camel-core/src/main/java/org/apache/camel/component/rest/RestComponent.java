@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.VerifiableComponent;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.model.rest.RestConstants;
 import org.apache.camel.spi.Metadata;
@@ -49,6 +50,10 @@ public class RestComponent extends DefaultComponent implements VerifiableCompone
     private String apiDoc;
     @Metadata(label = "producer")
     private String host;
+
+    public RestComponent() {
+        registerExtension(RestComponentVerifierExtension::new);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -235,13 +240,8 @@ public class RestComponent extends DefaultComponent implements VerifiableCompone
         }
     }
 
-    /**
-     * Get the {@link ComponentVerifier}
-     *
-     * @return the Component Verifier
-     */
     @Override
     public ComponentVerifier getVerifier() {
-        return new RestComponentVerifier(this);
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

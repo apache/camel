@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -36,9 +37,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
+import org.apache.camel.component.extension.verifier.ResultBuilder;
+import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.verifier.ResultBuilder;
-import org.apache.camel.impl.verifier.ResultErrorBuilder;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -83,6 +85,8 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         if (!catalog.findComponentNames().contains(componentScheme)) {
             this.catalog.addComponent(componentScheme, this.model.getBaseJavaType(), catalog.componentJSonSchema(baseScheme));
         }
+
+        registerExtension(this::getComponentVerifierExtension);
     }
 
     @Override
@@ -172,16 +176,20 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         this.options = Collections.unmodifiableMap(new HashMap<>(baseComponentOptions));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public ComponentVerifier getVerifier() {
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
+    }
+
+    private ComponentVerifierExtension getComponentVerifierExtension() {
         try {
             // Create the component but no need to add it to the camel context
             // nor to start it.
             final Component component = createNewBaseComponent();
+            final Optional<ComponentVerifierExtension> extension = component.getExtension(ComponentVerifierExtension.class);
 
-            if (component instanceof VerifiableComponent) {
-                return (scope, map) -> {
+            if (extension.isPresent()) {
+                return (ComponentVerifierExtension.Scope scope, Map<String, Object> map) -> {
                     Map<String, Object> options;
 
                     try {
@@ -192,18 +200,18 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
                     } catch (URISyntaxException | NoTypeConversionAvailableException e) {
                         // If a failure is detected while reading the catalog, wrap it
                         // and stop the validation step.
-                        return ResultBuilder.withStatusAndScope(ComponentVerifier.Result.Status.OK, scope)
+                        return ResultBuilder.withStatusAndScope(ComponentVerifierExtension.Result.Status.OK, scope)
                             .error(ResultErrorBuilder.withException(e).build())
                             .build();
                     }
 
-                    return ((VerifiableComponent) component).getVerifier().verify(scope, options);
+                    return extension.get().verify(scope, options);
                 };
             } else {
                 return (scope, map) -> {
-                    return ResultBuilder.withStatusAndScope(ComponentVerifier.Result.Status.UNSUPPORTED, scope)
+                    return ResultBuilder.withStatusAndScope(ComponentVerifierExtension.Result.Status.UNSUPPORTED, scope)
                         .error(
-                            ResultErrorBuilder.withCode(ComponentVerifier.VerificationError.StandardCode.UNSUPPORTED)
+                            ResultErrorBuilder.withCode(ComponentVerifierExtension.VerificationError.StandardCode.UNSUPPORTED)
                                 .detail("camel_connector_name", getConnectorName())
                                 .detail("camel_component_name", getComponentName())
                                 .build())
@@ -212,7 +220,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
             }
         } catch (Exception e) {
             return (scope, map) -> {
-                return ResultBuilder.withStatusAndScope(ComponentVerifier.Result.Status.OK, scope)
+                return ResultBuilder.withStatusAndScope(ComponentVerifierExtension.Result.Status.OK, scope)
                     .error(ResultErrorBuilder.withException(e).build())
                     .build();
             };
