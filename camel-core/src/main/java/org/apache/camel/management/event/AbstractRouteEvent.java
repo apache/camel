@@ -16,20 +16,26 @@
  */
 package org.apache.camel.management.event;
 
+import java.util.EventObject;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 
 /**
+ * Base class for {@link CamelContext} events.
+ *
  * @version 
  */
-public class RouteStoppedEvent extends AbstractRouteEvent {
-    private static final long serialVersionUID = -4466503512787398888L;
+public abstract class AbstractRouteEvent extends EventObject {
+    private static final long serialVersionUID = 1L;
+    private Route route;
 
-    public RouteStoppedEvent(Route source) {
+    public AbstractRouteEvent(Route source) {
         super(source);
+        this.route = source;
     }
 
-    @Override
-    public String toString() {
-        return "Stopped route: " + getRoute().getId();
+    public Route getRoute() {
+        return route;
     }
 }

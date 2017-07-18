@@ -16,29 +16,20 @@
  */
 package org.apache.camel.management.event;
 
-import java.util.EventObject;
-
 import org.apache.camel.Route;
 
 /**
  * @version 
  */
-public class RouteStartedEvent extends EventObject {
+public class RouteStartedEvent extends AbstractRouteEvent {
     private static final long serialVersionUID = 1330257282431407329L;
-
-    private final Route route;
 
     public RouteStartedEvent(Route source) {
         super(source);
-        this.route = source;
-    }
-
-    public Route getRoute() {
-        return route;
     }
 
     @Override
     public String toString() {
-        return "Started route: " + route.getId();
+        return "Started route: " + getRoute().getId();
     }
 }
