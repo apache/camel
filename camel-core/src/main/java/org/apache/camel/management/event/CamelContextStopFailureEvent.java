@@ -16,27 +16,19 @@
  */
 package org.apache.camel.management.event;
 
-import java.util.EventObject;
-
 import org.apache.camel.CamelContext;
 
 /**
  * @version 
  */
-public class CamelContextStopFailureEvent extends EventObject {
+public class CamelContextStopFailureEvent extends AbstractContextEvent {
     private static final long serialVersionUID = -802046840118188292L;
 
-    private CamelContext context;
     private Throwable cause;
 
     public CamelContextStopFailureEvent(CamelContext context, Throwable cause) {
         super(context);
-        this.context = context;
         this.cause = cause;
-    }
-
-    public CamelContext getContext() {
-        return context;
     }
 
     public Throwable getCause() {
@@ -45,6 +37,6 @@ public class CamelContextStopFailureEvent extends EventObject {
 
     @Override
     public String toString() {
-        return "Failed to stop Camel: " + context.getName() + " due to " + cause.getMessage();
+        return "Failed to stop Camel: " + getContext().getName() + " due to " + cause.getMessage();
     }
 }
