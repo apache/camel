@@ -21,7 +21,7 @@ import org.apache.camel.CamelContext;
 /**
  * @version 
  */
-public class CamelContextStopFailureEvent extends AbstractContextEvent {
+public class CamelContextStopFailureEvent extends AbstractContextEvent implements FailureEvent {
     private static final long serialVersionUID = -802046840118188292L;
 
     private Throwable cause;
@@ -31,6 +31,7 @@ public class CamelContextStopFailureEvent extends AbstractContextEvent {
         this.cause = cause;
     }
 
+    @Override
     public Throwable getCause() {
         return cause;
     }

@@ -16,28 +16,6 @@
  */
 package org.apache.camel.management.event;
 
-import org.apache.camel.CamelContext;
-
-/**
- * @version 
- */
-public class CamelContextStartupFailureEvent extends AbstractContextEvent implements FailureEvent {
-    private static final long serialVersionUID = -4271899927507894567L;
-
-    private Throwable cause;
-
-    public CamelContextStartupFailureEvent(CamelContext context, Throwable cause) {
-        super(context);
-        this.cause = cause;
-    }
-
-    @Override
-    public Throwable getCause() {
-        return cause;
-    }
-
-    @Override
-    public String toString() {
-        return "Failed to start Camel: " + getContext().getName() + " due to " + cause.getMessage();
-    }
+public interface FailureEvent {
+    Throwable getCause();
 }
