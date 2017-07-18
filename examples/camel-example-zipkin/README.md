@@ -22,13 +22,11 @@ Service1 is configured in the `src/main/resources/application.properties` proper
 Service2 is configured in the `src/main/java/sample/camel/Service2Route.java` source file.
 Client is configured in the `src/main/java/sample/camel/ClientApplication.java` source file.
 
-Here you need to configure the hostname and port number for the Zipkin Server.
-
 ### Build
 
 First, start Zipkin as described below in the [Zipkin web console]("Zipkin web console") section
 
-Then start by compiling this example:
+Then compile this example:
 
 ```sh
 $ mvn compile
