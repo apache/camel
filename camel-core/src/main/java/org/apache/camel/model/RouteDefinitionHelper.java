@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
@@ -643,4 +644,23 @@ public final class RouteDefinitionHelper {
         }
     }
 
+    /**
+     * Creates a route definition from uri.
+     *
+     * @param uri the uri
+     * @return the route definition
+     */
+    public static RouteDefinition from(String uri) {
+        return new RouteDefinition().from(uri);
+    }
+
+    /**
+     * Creates a route definition from endpoint.
+     *
+     * @param endpoint the endpoint
+     * @return the route definition
+     */
+    public static RouteDefinition from(Endpoint endpoint) {
+        return new RouteDefinition().from(endpoint);
+    }
 }
