@@ -17,11 +17,9 @@
 package org.apache.camel.component.servicenow;
 
 import java.util.Map;
-
 import javax.ws.rs.ProcessingException;
 
 import org.apache.camel.ComponentVerifier;
-import org.apache.camel.ComponentVerifier.VerificationError;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,9 +33,9 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
         return false;
     }
 
-    protected ServiceNowComponentVerifier getVerifier() {
+    protected ServiceNowComponentVerifierExtension getVerifier() {
         ServiceNowComponent component = context().getComponent("servicenow", ServiceNowComponent.class);
-        ServiceNowComponentVerifier verifier = (ServiceNowComponentVerifier)component.getVerifier();
+        ServiceNowComponentVerifierExtension verifier = (ServiceNowComponentVerifierExtension)component.getVerifier();
 
         return verifier;
     }
@@ -62,7 +60,7 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
 
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
         Assert.assertEquals("instanceName", result.getErrors().get(0).getParameterKeys().iterator().next());
     }
 
@@ -74,7 +72,7 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
 
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
         Assert.assertEquals("userName", result.getErrors().get(0).getParameterKeys().iterator().next());
     }
 
@@ -109,9 +107,9 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
 
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
-        Assert.assertNotNull(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
-        Assert.assertTrue(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof ProcessingException);
+        Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
+        Assert.assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+        Assert.assertTrue(result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof ProcessingException);
     }
 
     @Test
@@ -123,10 +121,10 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
 
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
-        Assert.assertNotNull(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
-        Assert.assertEquals(400, result.getErrors().get(0).getDetails().get(VerificationError.HttpAttribute.HTTP_CODE));
-        Assert.assertTrue(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof ServiceNowException);
+        Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
+        Assert.assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+        Assert.assertEquals(400, result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.HttpAttribute.HTTP_CODE));
+        Assert.assertTrue(result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof ServiceNowException);
     }
 
     @Test
@@ -140,10 +138,10 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
 
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(VerificationError.StandardCode.AUTHENTICATION, result.getErrors().get(0).getCode());
-        Assert.assertNotNull(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
-        Assert.assertEquals(401, result.getErrors().get(0).getDetails().get(VerificationError.HttpAttribute.HTTP_CODE));
-        Assert.assertTrue(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof ServiceNowException);
+        Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.AUTHENTICATION, result.getErrors().get(0).getCode());
+        Assert.assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+        Assert.assertEquals(401, result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.HttpAttribute.HTTP_CODE));
+        Assert.assertTrue(result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof ServiceNowException);
         Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("userName"));
         Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("password"));
         Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("oauthClientId"));

@@ -31,6 +31,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.VerifiableComponent;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
@@ -67,10 +68,13 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     private UndertowHostOptions hostOptions;
 
     public UndertowComponent() {
+        this(null);
     }
 
     public UndertowComponent(CamelContext context) {
         super(context);
+
+        registerExtension(UndertowComponentVerifierExtension::new);
     }
 
     @Override
@@ -361,11 +365,9 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         this.hostOptions = hostOptions;
     }
 
-    /**
-     *
-     */
+    @Override
     public ComponentVerifier getVerifier() {
-        return new UndertowComponentVerifier(this);
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 
 }

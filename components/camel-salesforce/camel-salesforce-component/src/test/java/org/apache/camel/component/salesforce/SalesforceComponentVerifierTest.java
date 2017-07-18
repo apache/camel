@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.ComponentVerifier;
-import org.apache.camel.ComponentVerifier.VerificationError;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -72,11 +71,9 @@ public class SalesforceComponentVerifierTest extends CamelTestSupport {
         return answer;
     }
 
-    protected SalesforceComponentVerifier getVerifier() {
+    protected ComponentVerifier getVerifier() {
         SalesforceComponent component = context().getComponent("salesforce", SalesforceComponent.class);
-        SalesforceComponentVerifier verifier = (SalesforceComponentVerifier)component.getVerifier();
-
-        return verifier;
+        return component.getVerifier();
     }
 
     // *********************************
@@ -120,9 +117,9 @@ public class SalesforceComponentVerifierTest extends CamelTestSupport {
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(3, result.getErrors().size());
 
-        Assert.assertEquals(VerificationError.StandardCode.INCOMPLETE_PARAMETER_GROUP, result.getErrors().get(0).getCode());
-        Assert.assertEquals(VerificationError.StandardCode.INCOMPLETE_PARAMETER_GROUP, result.getErrors().get(1).getCode());
-        Assert.assertEquals(VerificationError.StandardCode.INCOMPLETE_PARAMETER_GROUP, result.getErrors().get(2).getCode());
+        Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.INCOMPLETE_PARAMETER_GROUP, result.getErrors().get(0).getCode());
+        Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.INCOMPLETE_PARAMETER_GROUP, result.getErrors().get(1).getCode());
+        Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.INCOMPLETE_PARAMETER_GROUP, result.getErrors().get(2).getCode());
     }
 
     // *********************************
@@ -148,10 +145,10 @@ public class SalesforceComponentVerifierTest extends CamelTestSupport {
         Assert.assertEquals(2, result.getErrors().size());
 
         // Exception
-        Assert.assertEquals(VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
-        Assert.assertNotNull(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
-        Assert.assertTrue(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof SalesforceException);
-        Assert.assertEquals(400, result.getErrors().get(0).getDetails().get(VerificationError.HttpAttribute.HTTP_CODE));
+        Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
+        Assert.assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+        Assert.assertTrue(result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof SalesforceException);
+        Assert.assertEquals(400, result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.HttpAttribute.HTTP_CODE));
 
         // Salesforce Error
         Assert.assertEquals("invalid_grant", result.getErrors().get(1).getDetail("salesforce_code"));
@@ -171,9 +168,9 @@ public class SalesforceComponentVerifierTest extends CamelTestSupport {
         Assert.assertEquals(2, result.getErrors().size());
 
         // Exception
-        Assert.assertEquals(VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
-        Assert.assertNotNull(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
-        Assert.assertTrue(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof SalesforceException);
+        Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
+        Assert.assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+        Assert.assertTrue(result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof SalesforceException);
         Assert.assertEquals(400, result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.HttpAttribute.HTTP_CODE));
 
         // Salesforce Error

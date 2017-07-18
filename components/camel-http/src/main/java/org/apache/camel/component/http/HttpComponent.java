@@ -30,6 +30,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.VerifiableComponent;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpConfiguration;
@@ -64,11 +65,13 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     private boolean useGlobalSslContextParameters;
 
     public HttpComponent() {
-        super(HttpEndpoint.class);
+        this(HttpEndpoint.class);
     }
 
     public HttpComponent(Class<? extends HttpEndpoint> endpointClass) {
         super(endpointClass);
+
+        registerExtension(HttpComponentVerifierExtension::new);
     }
 
     /**
@@ -387,10 +390,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    /**
-     * TODO: document
-     */
+    @Override
     public ComponentVerifier getVerifier() {
-        return new HttpComponentVerifier(this);
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

@@ -18,10 +18,9 @@ package org.apache.camel.component.twitter.directmessage;
 
 import java.util.Map;
 
-import org.apache.camel.ComponentVerifier;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.twitter.AbstractTwitterComponent;
-import org.apache.camel.component.twitter.DefaultTwitterComponentVerifier;
 import org.apache.camel.component.twitter.TwitterConfiguration;
 import org.apache.camel.spi.Metadata;
 
@@ -31,14 +30,16 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 public class TwitterDirectMessageComponent extends AbstractTwitterComponent {
 
-    protected Endpoint doCreateEndpoint(TwitterConfiguration properties, String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        return new TwitterDirectMessageEndpoint(uri, remaining, this, properties);
+    public TwitterDirectMessageComponent() {
+        super("twitter-directmessage");
     }
 
-    /**
-     * Get a verifier for the twitter directmessage component.
-     */
-    public ComponentVerifier getVerifier() {
-        return new DefaultTwitterComponentVerifier(this, "twitter-directmessage");
+    public TwitterDirectMessageComponent(CamelContext context) {
+        super(context, "twitter-directmessage");
+    }
+
+    @Override
+    protected Endpoint doCreateEndpoint(TwitterConfiguration properties, String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        return new TwitterDirectMessageEndpoint(uri, remaining, this, properties);
     }
 }

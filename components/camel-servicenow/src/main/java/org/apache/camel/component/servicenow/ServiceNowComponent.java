@@ -16,14 +16,19 @@
  */
 package org.apache.camel.component.servicenow;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.VerifiableComponent;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.component.extension.ComponentExtension;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
@@ -32,7 +37,7 @@ import org.apache.camel.util.IntrospectionSupport;
  * Represents the component that manages {@link ServiceNowEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class ServiceNowComponent extends UriEndpointComponent implements VerifiableComponent, SSLContextParametersAware {
+public class ServiceNowComponent extends DefaultComponent implements VerifiableComponent, SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private ServiceNowConfiguration configuration;
@@ -40,7 +45,11 @@ public class ServiceNowComponent extends UriEndpointComponent implements Verifia
     private boolean useGlobalSslContextParameters;
 
     public ServiceNowComponent() {
-        super(ServiceNowEndpoint.class);
+        this.configuration = new ServiceNowConfiguration();
+    }
+
+    public ServiceNowComponent(CamelContext camelContext) {
+        super(camelContext);
 
         this.configuration = new ServiceNowConfiguration();
     }
@@ -183,10 +192,24 @@ public class ServiceNowComponent extends UriEndpointComponent implements Verifia
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    /**
-     * TODO: document
-     */
+    @Override
     public ComponentVerifier getVerifier() {
-        return new ServiceNowComponentVerifier(this);
+        return new ServiceNowComponentVerifierExtension(this);
+    }
+
+    @Override
+    public Collection<Class<? extends ComponentExtension>> getExtensionTypes() {
+        return Collections.singletonList(ComponentVerifierExtension.class);
+    }
+
+    @Override
+    public <T extends ComponentExtension> Optional<T> getExtension(Class<T> extensionType) {
+        if (ComponentVerifierExtension.class.isAssignableFrom(extensionType)) {
+            return Optional.of(
+                extensionType.cast(new ServiceNowComponentVerifierExtension(this))
+            );
+        }
+
+        return Optional.empty();
     }
 }
