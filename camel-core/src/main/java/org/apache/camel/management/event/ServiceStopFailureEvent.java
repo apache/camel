@@ -23,7 +23,7 @@ import org.apache.camel.CamelContext;
 /**
  * @version 
  */
-public class ServiceStopFailureEvent extends EventObject {
+public class ServiceStopFailureEvent extends EventObject implements FailureEvent {
     private static final long serialVersionUID = 4139591666998762617L;
 
     private CamelContext context;
@@ -45,6 +45,7 @@ public class ServiceStopFailureEvent extends EventObject {
         return service;
     }
 
+    @Override
     public Throwable getCause() {
         return cause;
     }
