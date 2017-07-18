@@ -16,20 +16,25 @@
  */
 package org.apache.camel.management.event;
 
+import java.util.EventObject;
+
 import org.apache.camel.CamelContext;
 
 /**
+ * Base class for {@link CamelContext} events.
+ *
  * @version 
  */
-public class CamelContextStartedEvent extends AbstractContextEvent {
-    private static final long serialVersionUID = 6761726800283073490L;
+public abstract class AbstractContextEvent extends EventObject {
+    private static final long serialVersionUID = 1L;
+    private CamelContext context;
 
-    public CamelContextStartedEvent(CamelContext source) {
+    public AbstractContextEvent(CamelContext source) {
         super(source);
+        this.context = source;
     }
 
-    @Override
-    public String toString() {
-        return "Started CamelContext: " + getContext().getName();
+    public CamelContext getContext() {
+        return context;
     }
 }
