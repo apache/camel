@@ -16,21 +16,19 @@ Where client -> service1 -> service2 using HTTP.
 
 ### Configuration
 
-This examples assumes you will run Zipkin on the same host using the default collector port of 9410.  If you wish to change those, you can do so using these files:  
+This example assumes you will run Zipkin on the same host using the default collector port of 9410.  If you wish to change those, you can do so using these files:  
 
 Service1 is configured in the `src/main/resources/application.properties` properties file.
-Service2 is configured in the `src/main/java/sample/camel/Service2Route.java` source code.
+Service2 is configured in the `src/main/java/sample/camel/Service2Route.java` source file.
 Client is configured in the `src/main/java/sample/camel/ClientApplication.java` source file.
-
-src/main/java/sample/camel/ClientApplication.java
 
 Here you need to configure the hostname and port number for the Zipkin Server.
 
 ### Build
 
-First, start Zipkin as described belos in the [Zipkin web console]("Zipkin web console") section
+First, start Zipkin as described below in the [Zipkin web console]("Zipkin web console") section
 
-You will need to compile this example first:
+Then start by compiling this example:
 
 ```sh
 $ mvn compile
