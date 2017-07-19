@@ -205,7 +205,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         a1.waitForAnyLeader(2, TimeUnit.SECONDS);
         a2.waitForAnyLeader(2, TimeUnit.SECONDS);
         b1.waitForAnyLeader(2, TimeUnit.SECONDS);
-        b1.waitForAnyLeader(2, TimeUnit.SECONDS);
+        b2.waitForAnyLeader(2, TimeUnit.SECONDS);
 
         assertNotNull(a1.getCurrentLeader());
         assertTrue(a1.getCurrentLeader().startsWith("a"));
