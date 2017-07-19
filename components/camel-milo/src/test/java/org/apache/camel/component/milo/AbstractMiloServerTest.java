@@ -28,6 +28,32 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 
 public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
+    private int serverPort;
+
+    @Override
+    protected void doPreSetup() throws Exception {
+        super.doPreSetup();
+        this.serverPort = Ports.pickServerPort();
+    }
+
+    public int getServerPort() {
+        return this.serverPort;
+    }
+
+    /**
+     * Replace the port placeholder with the dynamic server port
+     * 
+     * @param uri the URI to process
+     * @return the result, may be {@code null} if the input is {@code null}
+     */
+    protected String resolve(String uri) {
+        if (uri == null) {
+            return uri;
+        }
+
+        return uri.replace("@@port@@", Integer.toString(this.serverPort));
+    }
+
     public static void testBody(final AssertionClause clause, final Consumer<DataValue> valueConsumer) {
         testBody(clause, DataValue.class, valueConsumer);
     }
@@ -63,7 +89,7 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
     protected void configureMiloServer(final MiloServerComponent server) throws Exception {
         server.setBindAddresses("localhost");
-        server.setBindPort(12685);
+        server.setBindPort(this.serverPort);
         server.setUserAuthenticationCredentials("foo:bar,foo2:bar2");
     }
 
