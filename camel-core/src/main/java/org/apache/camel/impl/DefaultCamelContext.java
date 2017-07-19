@@ -229,7 +229,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ManagementStrategy managementStrategy;
     private ManagementMBeanAssembler managementMBeanAssembler;
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
-    private final Map<String, RouteDefinition> routeDefinitionsFromRegistry = new HashMap<>();
     private final List<RestDefinition> restDefinitions = new ArrayList<RestDefinition>();
     private Map<String, RestConfiguration> restConfigurations = new ConcurrentHashMap<>();
     private Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
@@ -3304,24 +3303,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // start components
         startServices(components.values());
-
-        // Remove routes definition previously found on the registry so in case
-        // context restart new routes eventually removed from the registry won't
-        // stay as zombie.
-        removeRouteDefinitions(routeDefinitionsFromRegistry.values());
-
-        Map<String, RouteDefinition> defs = getRegistry().findByTypeWithName(RouteDefinition.class);
-        if (!defs.isEmpty()) {
-            routeDefinitionsFromRegistry.putAll(defs);
-            for (Map.Entry<String, RouteDefinition> entry: defs.entrySet()) {
-                if (ObjectHelper.isEmpty(entry.getValue().getId())) {
-                    // If routes do not have an id, use the bean name
-                    entry.getValue().setId(entry.getKey());
-                }
-            }
-
-            addRouteDefinitions(defs.values());
-        }
 
         // start the route definitions before the routes is started
         startRouteDefinitions(routeDefinitions);
