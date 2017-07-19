@@ -177,6 +177,7 @@
                   </extraOptions>
                   <nullableOptions>
                     <nullableOption>queryParams</nullableOption>
+                    <nullableOption>endpointHttpHeaders</nullableOption>
                   </nullableOptions>
                 </api>
               </apis>
