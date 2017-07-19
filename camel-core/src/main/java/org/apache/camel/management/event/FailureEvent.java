@@ -16,6 +16,12 @@
  */
 package org.apache.camel.management.event;
 
+/**
+ * This interface is implemented by all events that contain an exception and is used to
+ * retrieve the exception in a universal way.
+ *  
+ * @version
+ */
 public interface FailureEvent {
     Throwable getCause();
 }
