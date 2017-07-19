@@ -265,6 +265,7 @@ public class KubernetesLeaseBasedLeadershipController implements Service {
 
             LOG.debug("ConfigMap {} successfully created and local pod is leader", this.lockConfiguration.getConfigMapName());
             updateLatestLeaderInfo(newConfigMap);
+            scheduleCheckForPossibleLeadershipLoss();
             return true;
         } else {
             LOG.debug("Lock configmap already present in the Kubernetes namespace. Checking...");
@@ -285,6 +286,7 @@ public class KubernetesLeaseBasedLeadershipController implements Service {
 
                     LOG.debug("ConfigMap {} successfully updated and local pod is leader", this.lockConfiguration.getConfigMapName());
                     updateLatestLeaderInfo(updatedConfigMap);
+                    scheduleCheckForPossibleLeadershipLoss();
                     return true;
                 } catch (Exception ex) {
                     LOG.warn("An attempt to become leader has failed. It's possible that the leadership has been taken by another pod");
@@ -341,13 +343,12 @@ public class KubernetesLeaseBasedLeadershipController implements Service {
     private void updateLatestLeaderInfo(ConfigMap configMap) {
         LOG.debug("Updating internal status about the current leader");
         this.latestLeaderInfo = ConfigMapLockUtils.getLeaderInfo(configMap, this.lockConfiguration.getGroupName());
+    }
 
-        // Notify about changes in current leader if any
-        this.eventDispatcherExecutor.execute(this::checkAndNotifyNewLeader);
+    private void scheduleCheckForPossibleLeadershipLoss() {
+        // Adding check for the case of main thread busy on http calls
         if (this.latestLeaderInfo.isLeader(this.lockConfiguration.getPodName())) {
             this.eventDispatcherExecutor.schedule(this::checkAndNotifyNewLeader, this.lockConfiguration.getRenewDeadlineSeconds() * 1000 + FIXED_ADDITIONAL_DELAY, TimeUnit.MILLISECONDS);
-        } else if (this.latestLeaderInfo.getLeader() != null) {
-            this.eventDispatcherExecutor.schedule(this::checkAndNotifyNewLeader, this.lockConfiguration.getLeaseDurationSeconds() * 1000 + FIXED_ADDITIONAL_DELAY, TimeUnit.MILLISECONDS);
         }
     }
 
