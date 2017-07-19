@@ -68,6 +68,18 @@ public class JacksonJsonAdapter implements JsonPathAdapter {
         return null;
     }
 
+    @Override
+    public String writeAsString(Object value, Exchange exchange) {
+        ObjectMapper mapper = resolveObjectMapper(exchange.getContext().getRegistry());
+        try {
+            return mapper.writeValueAsString(value);
+        } catch (Throwable e) {
+            // ignore because we are attempting to convert
+        }
+
+        return null;
+    }
+
     private ObjectMapper resolveObjectMapper(Registry registry) {
         Set<ObjectMapper> mappers = registry.findByType(ObjectMapper.class);
         if (mappers.size() == 1) {

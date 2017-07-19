@@ -44,6 +44,11 @@ public class JsonPathLanguageConfiguration
      */
     private Boolean allowEasyPredicate = true;
     /**
+     * Whether to write the output of each row/element as a JSon String value
+     * instead of a Map/POJO value.
+     */
+    private Boolean writeAsString = false;
+    /**
      * Whether to trim the value to remove leading and trailing whitespaces and
      * line breaks
      */
@@ -71,6 +76,14 @@ public class JsonPathLanguageConfiguration
 
     public void setAllowEasyPredicate(Boolean allowEasyPredicate) {
         this.allowEasyPredicate = allowEasyPredicate;
+    }
+
+    public Boolean getWriteAsString() {
+        return writeAsString;
+    }
+
+    public void setWriteAsString(Boolean writeAsString) {
+        this.writeAsString = writeAsString;
     }
 
     public Boolean getTrim() {

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -50,17 +51,19 @@ public class JsonPathEngine {
 
     private static final Pattern SIMPLE_PATTERN = Pattern.compile("\\$\\{[^\\}]+\\}", Pattern.MULTILINE);
     private final String expression;
+    private final boolean writeAsString;
     private final JsonPath path;
     private final Configuration configuration;
     private JsonPathAdapter adapter;
     private volatile boolean initJsonAdapter;
 
     public JsonPathEngine(String expression) {
-        this(expression, false, true, null);
+        this(expression, false, false, true, null);
     }
 
-    public JsonPathEngine(String expression, boolean suppressExceptions, boolean allowSimple, Option[] options) {
+    public JsonPathEngine(String expression, boolean writeAsString, boolean suppressExceptions, boolean allowSimple, Option[] options) {
         this.expression = expression;
+        this.writeAsString = writeAsString;
 
         Defaults defaults = DefaultsImpl.INSTANCE;
         if (options != null) {
@@ -94,15 +97,65 @@ public class JsonPathEngine {
     }
 
     public Object read(Exchange exchange) throws Exception {
+        Object answer;
         if (path == null) {
             Expression exp = exchange.getContext().resolveLanguage("simple").createExpression(expression);
             String text = exp.evaluate(exchange, String.class);
             JsonPath path = JsonPath.compile(text);
             LOG.debug("Compiled dynamic JsonPath: {}", expression);
-            return doRead(path, exchange);
+            answer = doRead(path, exchange);
         } else {
-            return doRead(path, exchange);
+            answer = doRead(path, exchange);
         }
+
+        if (writeAsString) {
+
+            if (!initJsonAdapter) {
+                doInitAdapter(exchange);
+            }
+
+            if (adapter == null) {
+                LOG.debug("Cannot writeAsString as adapter cannot be initialized");
+                // return as-is as there is no adapter
+                return answer;
+            }
+
+            // write each row as a string but keep it as a list/iterable
+            if (answer instanceof Iterable) {
+                List<String> list = new ArrayList<>();
+                Iterable it = (Iterable) answer;
+                for (Object o : it) {
+                    if (adapter != null) {
+                        String json = adapter.writeAsString(o, exchange);
+                        if (json != null) {
+                            list.add(json);
+                        }
+                    }
+                }
+                return list;
+            } else if (answer instanceof Map) {
+                Map map = (Map) answer;
+                for (Object key : map.keySet()) {
+                    Object value = map.get(key);
+                    if (adapter != null) {
+                        String json = adapter.writeAsString(value, exchange);
+                        if (json != null) {
+                            map.put(key, json);
+                        }
+                    }
+                }
+                return map;
+            } else {
+                if (adapter != null) {
+                    String json = adapter.writeAsString(answer, exchange);
+                    if (json != null) {
+                        return json;
+                    }
+                }
+            }
+        }
+
+        return answer;
     }
 
     private Object doRead(JsonPath path, Exchange exchange) throws IOException, CamelExchangeException {
@@ -182,6 +235,23 @@ public class JsonPathEngine {
         Object json = exchange.getIn().getBody();
         LOG.trace("JSonPath: {} is read with adapter from message body: {}", path, json);
 
+        doInitAdapter(exchange);
+
+        if (adapter != null) {
+            LOG.trace("Attempting to use JacksonJsonAdapter: {}", adapter);
+            Map map = adapter.readValue(json, exchange);
+            if (map != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("JacksonJsonAdapter converted message body from: {} to: java.util.Map", ObjectHelper.classCanonicalName(json));
+                }
+                return path.read(map, configuration);
+            }
+        }
+
+        return null;
+    }
+
+    private void doInitAdapter(Exchange exchange) {
         if (!initJsonAdapter) {
             try {
                 // need to load this adapter dynamically as its optional
@@ -200,18 +270,5 @@ public class JsonPathEngine {
             }
             initJsonAdapter = true;
         }
-
-        if (adapter != null) {
-            LOG.trace("Attempting to use JacksonJsonAdapter: {}", adapter);
-            Map map = adapter.readValue(json, exchange);
-            if (map != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("JacksonJsonAdapter converted message body from: {} to: java.util.Map", ObjectHelper.classCanonicalName(json));
-                }
-                return path.read(map, configuration);
-            }
-        }
-
-        return null;
     }
 }
