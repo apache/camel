@@ -34,7 +34,7 @@ public class MonitorItemTest extends AbstractMiloServerTest {
 
     private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
 
-    private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:tcp://foo:bar@localhost:12685?node="
+    private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:tcp://foo:bar@localhost:@@port@@?node="
                                                         + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
 
     private static final String MOCK_TEST_1 = "mock:test1";
@@ -52,7 +52,7 @@ public class MonitorItemTest extends AbstractMiloServerTest {
             public void configure() throws Exception {
                 from(DIRECT_START_1).to(MILO_SERVER_ITEM_1);
 
-                from(MILO_CLIENT_ITEM_C1_1).to(MOCK_TEST_1);
+                from(resolve(MILO_CLIENT_ITEM_C1_1)).to(MOCK_TEST_1);
             }
         };
     }
