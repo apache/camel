@@ -352,7 +352,7 @@ public class KubernetesLeaseBasedLeadershipController implements Service {
     }
 
     private void checkAndNotifyNewLeader() {
-        LOG.info("Checking if the current leader has changed to notify the event handler...");
+        LOG.debug("Checking if the current leader has changed to notify the event handler...");
         LeaderInfo newLeaderInfo = this.latestLeaderInfo;
         if (newLeaderInfo == null) {
             return;
@@ -371,7 +371,7 @@ public class KubernetesLeaseBasedLeadershipController implements Service {
 
         // Sending notifications in case of leader change
         if (!newLeader.equals(this.currentLeader)) {
-            LOG.info("Current leader has changed from {} to {}. Sending notifications...", this.currentLeader, newLeader);
+            LOG.info("Current leader has changed from {} to {}. Sending notification...", this.currentLeader, newLeader);
             this.currentLeader = newLeader;
             eventHandler.onKubernetesClusterEvent((KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent) () -> newLeader);
         } else {
