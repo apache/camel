@@ -40,7 +40,7 @@
 
     <camel.osgi.export.pkg>${componentPackage}</camel.osgi.export.pkg>
     <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
-    <maven.exe.file.extension></maven.exe.file.extension>
+    <maven.exe.file.extension />
   </properties>
 
   <dependencies>
@@ -179,6 +179,7 @@
                   </extraOptions>
                   <nullableOptions>
                     <nullableOption>queryParams</nullableOption>
+                    <nullableOption>endpointHttpHeaders</nullableOption>
                   </nullableOptions>
                 </api>
               </apis>
