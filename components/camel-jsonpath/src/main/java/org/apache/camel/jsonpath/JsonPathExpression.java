@@ -39,6 +39,7 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
     private boolean suppressExceptions;
     private boolean allowSimple = true;
     private boolean allowEasyPredicate = true;
+    private boolean writeAsString;
     private Option[] options;
 
     public JsonPathExpression(String expression) {
@@ -101,6 +102,17 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
         this.allowEasyPredicate = allowEasyPredicate;
     }
 
+    public boolean isWriteAsString() {
+        return writeAsString;
+    }
+
+    /**
+     * Whether to write the output of each row/element as a JSon String value instead of a Map/POJO value.
+     */
+    public void setWriteAsString(boolean writeAsString) {
+        this.writeAsString = writeAsString;
+    }
+
     public Option[] getOptions() {
         return options;
     }
@@ -145,7 +157,7 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
 
         LOG.debug("Initializing {} using: {}", predicate ? "predicate" : "expression", exp);
         try {
-            engine = new JsonPathEngine(exp, suppressExceptions, allowSimple, options);
+            engine = new JsonPathEngine(exp, writeAsString, suppressExceptions, allowSimple, options);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(exp, e);
         }
