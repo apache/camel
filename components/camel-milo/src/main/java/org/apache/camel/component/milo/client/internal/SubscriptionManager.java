@@ -174,7 +174,12 @@ public class SubscriptionManager {
                 } else {
                     final NodeId nodeId = s.getPartialNodeId().toNodeId(namespaceIndex);
                     final ReadValueId itemId = new ReadValueId(nodeId, AttributeId.Value.uid(), null, QualifiedName.NULL_VALUE);
-                    final MonitoringParameters parameters = new MonitoringParameters(entry.getKey(), s.getSamplingInterval(), null, null, null);
+                    Double samplingInterval = s.getSamplingInterval();
+                    if (samplingInterval == null) {
+                        // work around a bug (NPE) in Eclipse Milo 0.1.3
+                        samplingInterval = 0.0;
+                    }
+                    final MonitoringParameters parameters = new MonitoringParameters(entry.getKey(), samplingInterval, null, null, null);
                     items.add(new MonitoredItemCreateRequest(itemId, MonitoringMode.Reporting, parameters));
                 }
             }
