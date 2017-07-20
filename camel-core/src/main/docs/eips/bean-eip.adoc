@@ -26,7 +26,7 @@ The Bean EIP supports 5 options which are listed below:
 | method | String | Sets the method name on the bean to use
 | beanType | String | Sets the Class of the bean
 | cache | Boolean | Caches the bean lookup to avoid lookup up bean on every usage.
-| multiParameterArray | Boolean | Whether the message body is an array type.
+| multiParameterArray | Boolean | *Deprecated* Whether the message body is an array type.
 |=======================================================================
 // eip options: END
 
