@@ -63,7 +63,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.flink</groupId>
-      <artifactId>flink-clients_2.10</artifactId>
+      <artifactId>flink-clients_2.11</artifactId>
       <version>${flink-version}</version>
       <exclusions>
         <exclusion>
@@ -78,7 +78,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.flink</groupId>
-      <artifactId>flink-streaming-java_2.10</artifactId>
+      <artifactId>flink-streaming-java_2.11</artifactId>
       <version>${flink-version}</version>
       <exclusions>
         <exclusion>
@@ -96,7 +96,7 @@
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
-      <version>${scala-2.10-version}</version>
+      <version>${scala-version}</version>
     </dependency>
 
     <!--testing-->
