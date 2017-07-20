@@ -45,7 +45,6 @@
     <module>camel-core-xml</module>
     <module>camel-blueprint</module>
     <module>camel-spring</module>
-    <module>camel-spring-dm</module>
     <module>camel-bam</module>
     <module>camel-groovy</module>
     <module>camel-groovy-dsl</module>
