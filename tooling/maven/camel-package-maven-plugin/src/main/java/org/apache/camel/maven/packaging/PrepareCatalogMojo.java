@@ -339,10 +339,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
             File[] components = componentsDir.listFiles();
             if (components != null) {
                 for (File dir : components) {
-                    // skip camel-spring-dm
-                    if (dir.isDirectory() && "camel-spring-dm".equals(dir.getName())) {
-                        continue;
-                    }
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
 
@@ -669,10 +665,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
             File[] languages = componentsDir.listFiles();
             if (languages != null) {
                 for (File dir : languages) {
-                    // skip camel-spring-dm
-                    if (dir.isDirectory() && "camel-spring-dm".equals(dir.getName())) {
-                        continue;
-                    }
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
                         findLanguageFilesRecursive(target, jsonFiles, languageFiles, new CamelLanguagesFileFilter());

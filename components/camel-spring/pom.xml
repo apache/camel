@@ -32,7 +32,6 @@
   <packaging>jar</packaging>
 
   <properties>
-    <!-- use spring-all-version-range to support camel-spring-dm also -->
     <camel.osgi.import>
       !org.springframework.boot.*,
       !org.springframework.context.annotation.*;resolution:=optional,
