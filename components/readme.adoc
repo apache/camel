@@ -1065,8 +1065,6 @@ Number of Miscellaneous Components: 38 in 38 JAR artifacts (14 deprecated)
 
 | link:camel-spring-cloud-netflix/src/main/docs/spring-cloud-netflix.adoc[Spring Cloud Netflix] (camel-spring-cloud-netflix) | 2.19 | Camel Cloud integration with Spring Cloud Netflix
 
-| link:camel-spring-dm/src/main/docs/spring-dm.adoc[Spring DM] (camel-spring-dm) | 2.18 | *deprecated* Camel SpringDM (OSGi) XML DSL
-
 | link:camel-spring-javaconfig/src/main/docs/spring-javaconfig.adoc[Spring Java Configuration] (camel-spring-javaconfig) | 2.0 | Using Camel with Spring Java Configuration
 
 | link:camel-spring-security/src/main/docs/spring-security.adoc[Spring Security] (camel-spring-security) | 2.3 | Security using Spring Security
