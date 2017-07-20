@@ -197,6 +197,9 @@ public class PackageLanguageMojo extends AbstractMojo {
                                 if (row.containsKey("deprecated")) {
                                     languageModel.setDeprecated(row.get("deprecated"));
                                 }
+                                if (row.containsKey("deprecationNote")) {
+                                    languageModel.setDeprecationNote(row.get("deprecationNote"));
+                                }
                                 if (row.containsKey("javaType")) {
                                     languageModel.setModelJavaType(row.get("javaType"));
                                 }
@@ -403,6 +406,7 @@ public class PackageLanguageMojo extends AbstractMojo {
         private String firstVersion;
         private String label;
         private String deprecated;
+        private String deprecationNote;
         private String javaType;
         private String modelJavaType;
         private String groupId;
@@ -471,6 +475,14 @@ public class PackageLanguageMojo extends AbstractMojo {
 
         public void setDeprecated(String deprecated) {
             this.deprecated = deprecated;
+        }
+
+        public String getDeprecationNote() {
+            return deprecationNote;
+        }
+
+        public void setDeprecationNote(String deprecationNote) {
+            this.deprecationNote = deprecationNote;
         }
 
         public String getJavaType() {

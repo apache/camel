@@ -24,6 +24,7 @@ public class DataFormatOptionModel {
     private String type;
     private String javaType;
     private String deprecated;
+    private String deprecationNote;
     private String description;
     private String defaultValue;
     private String enumValues;
@@ -74,6 +75,14 @@ public class DataFormatOptionModel {
 
     public void setDeprecated(String deprecated) {
         this.deprecated = deprecated;
+    }
+
+    public String getDeprecationNote() {
+        return deprecationNote;
+    }
+
+    public void setDeprecationNote(String deprecationNote) {
+        this.deprecationNote = deprecationNote;
     }
 
     public String getDescription() {

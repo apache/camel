@@ -1791,6 +1791,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         component.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         component.setLabel(getSafeValue("label", rows));
         component.setDeprecated(getSafeValue("deprecated", rows));
+        component.setDeprecationNote(getSafeValue("deprecationNote", rows));
         component.setConsumerOnly(getSafeValue("consumerOnly", rows));
         component.setProducerOnly(getSafeValue("producerOnly", rows));
         component.setJavaType(getSafeValue("javaType", rows));
@@ -1807,6 +1808,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setType(getSafeValue("type", row));
             option.setJavaType(getSafeValue("javaType", row));
             option.setDeprecated(getSafeValue("deprecated", row));
+            option.setDeprecationNote(getSafeValue("deprecationNote", row));
             option.setDescription(getSafeValue("description", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setEnums(getSafeValue("enum", row));
@@ -1827,6 +1829,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setPrefix(getSafeValue("prefix", row));
             option.setMultiValue(getSafeValue("multiValue", row));
             option.setDeprecated(getSafeValue("deprecated", row));
+            option.setDeprecationNote(getSafeValue("deprecationNote", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setDescription(getSafeValue("description", row));
             option.setEnumValues(getSafeValue("enum", row));
@@ -1847,6 +1850,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         dataFormat.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         dataFormat.setLabel(getSafeValue("label", rows));
         dataFormat.setDeprecated(getSafeValue("deprecated", rows));
+        dataFormat.setDeprecationNote(getSafeValue("deprecationNote", rows));
         dataFormat.setJavaType(getSafeValue("javaType", rows));
         dataFormat.setGroupId(getSafeValue("groupId", rows));
         dataFormat.setArtifactId(getSafeValue("artifactId", rows));
@@ -1861,6 +1865,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setType(getSafeValue("type", row));
             option.setJavaType(getSafeValue("javaType", row));
             option.setDeprecated(getSafeValue("deprecated", row));
+            option.setDeprecationNote(getSafeValue("deprecationNote", row));
             option.setDescription(getSafeValue("description", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setEnumValues(getSafeValue("enum", row));
@@ -1881,6 +1886,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         language.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         language.setLabel(getSafeValue("label", rows));
         language.setDeprecated(getSafeValue("deprecated", rows));
+        language.setDeprecationNote(getSafeValue("deprecationNote", rows));
         language.setJavaType(getSafeValue("javaType", rows));
         language.setGroupId(getSafeValue("groupId", rows));
         language.setArtifactId(getSafeValue("artifactId", rows));
@@ -1895,6 +1901,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setType(getSafeValue("type", row));
             option.setJavaType(getSafeValue("javaType", row));
             option.setDeprecated(getSafeValue("deprecated", row));
+            option.setDeprecationNote(getSafeValue("deprecationNote", row));
             option.setDescription(getSafeValue("description", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setEnumValues(getSafeValue("enum", row));
@@ -1914,6 +1921,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         model.setJavaType(getSafeValue("javaType", rows));
         model.setLabel(getSafeValue("label", rows));
         model.setDeprecated(getSafeValue("deprecated", rows));
+        model.setDeprecationNote(getSafeValue("deprecationNote", rows));
 
         rows = parseJsonSchema("properties", json, true);
         for (Map<String, String> row : rows) {
@@ -1927,6 +1935,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setJavaType(getSafeValue("javaType", row));
             option.setEnums(getSafeValue("enum", row));
             option.setDeprecated(getSafeValue("deprecated", row));
+            option.setDeprecationNote(getSafeValue("deprecationNote", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setDescription(getSafeValue("description", row));
             option.setEnums(getSafeValue("enums", row));
