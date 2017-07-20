@@ -41,8 +41,8 @@ public class WriteClientTest extends AbstractMiloServerTest {
     private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
     private static final String MILO_SERVER_ITEM_2 = "milo-server:myitem2";
 
-    private static final String MILO_CLIENT_BASE_C1 = "milo-client:tcp://foo:bar@localhost:12685";
-    private static final String MILO_CLIENT_BASE_C2 = "milo-client:tcp://foo2:bar2@localhost:12685";
+    private static final String MILO_CLIENT_BASE_C1 = "milo-client:tcp://foo:bar@localhost:@@port@@";
+    private static final String MILO_CLIENT_BASE_C2 = "milo-client:tcp://foo2:bar2@localhost:@@port@@";
 
     private static final String MILO_CLIENT_ITEM_C1_1 = MILO_CLIENT_BASE_C1 + "?node=" + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
     private static final String MILO_CLIENT_ITEM_C1_2 = MILO_CLIENT_BASE_C1 + "?node=" + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem2");
@@ -80,11 +80,11 @@ public class WriteClientTest extends AbstractMiloServerTest {
                 from(MILO_SERVER_ITEM_1).to(MOCK_TEST_1);
                 from(MILO_SERVER_ITEM_2).to(MOCK_TEST_2);
 
-                from(DIRECT_START_1).to(MILO_CLIENT_ITEM_C1_1);
-                from(DIRECT_START_2).to(MILO_CLIENT_ITEM_C1_2);
+                from(DIRECT_START_1).to(resolve(MILO_CLIENT_ITEM_C1_1));
+                from(DIRECT_START_2).to(resolve(MILO_CLIENT_ITEM_C1_2));
 
-                from(DIRECT_START_3).to(MILO_CLIENT_ITEM_C2_1);
-                from(DIRECT_START_4).to(MILO_CLIENT_ITEM_C2_2);
+                from(DIRECT_START_3).to(resolve(MILO_CLIENT_ITEM_C2_1));
+                from(DIRECT_START_4).to(resolve(MILO_CLIENT_ITEM_C2_2));
             }
         };
     }

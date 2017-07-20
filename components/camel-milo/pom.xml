@@ -99,10 +99,6 @@
         <configuration>
           <!-- required due to issue eclipse/milo#23 -->
           <reuseForks>false</reuseForks>
-          <!-- TODO: CAMEL-11144 -->
-          <excludes>
-            <exclude>**Test.java</exclude>
-          </excludes>
         </configuration>
       </plugin>
     </plugins>
