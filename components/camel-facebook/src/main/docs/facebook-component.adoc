@@ -94,7 +94,7 @@ with the following path and query parameters:
 | **appId** (common) | The ID of the Facebook Application |  | String
 | **center** (common) | Location latitude and longitude |  | GeoLocation
 | **checkinId** (common) | The checkin ID |  | String
-| **checkinUpdate** (common) | The checkin to be created. Deprecated instead create a Post with an attached location |  | CheckinUpdate
+| **checkinUpdate** (common) | *Deprecated* The checkin to be created. Deprecated instead create a Post with an attached location |  | CheckinUpdate
 | **clientURL** (common) | Facebook4J API client URL |  | String
 | **clientVersion** (common) | Facebook4J client API version |  | String
 | **commentId** (common) | The comment ID |  | String
