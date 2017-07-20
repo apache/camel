@@ -42,7 +42,7 @@ public final class JsonSchemaHelper {
     }
 
     public static String toJson(String name, String displayName, String kind, Boolean required, String type, String defaultValue, String description,
-                                Boolean deprecated, Boolean secret, String group, String label, boolean enumType, Set<String> enums,
+                                Boolean deprecated, String deprecationNote, Boolean secret, String group, String label, boolean enumType, Set<String> enums,
                                 boolean oneOfType, Set<String> oneOffTypes, boolean asPredicate, String optionalPrefix, String prefix, boolean multiValue) {
         String typeName = JsonSchemaHelper.getType(type, enumType);
 
@@ -127,6 +127,10 @@ public final class JsonSchemaHelper {
             sb.append(", \"deprecated\": ");
             // boolean value
             sb.append(deprecated.toString());
+        }
+        if (!Strings.isNullOrEmpty(deprecationNote)) {
+            sb.append(", \"deprecationNote\": ");
+            sb.append(Strings.doubleQuote(deprecationNote));
         }
 
         if (secret != null) {
