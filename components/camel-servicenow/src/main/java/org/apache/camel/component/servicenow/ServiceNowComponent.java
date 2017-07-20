@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.servicenow;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
@@ -28,30 +27,41 @@ import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.extension.ComponentExtension;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
+import org.apache.camel.component.extension.MetaDataExtension;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the component that manages {@link ServiceNowEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 public class ServiceNowComponent extends DefaultComponent implements VerifiableComponent, SSLContextParametersAware {
+    private static final Collection<Class<? extends ComponentExtension>> EXTENSIONS = Arrays.asList(ComponentVerifierExtension.class, MetaDataExtension.class);
 
+    @Metadata(label = "advanced")
+    private String instanceName;
     @Metadata(label = "advanced")
     private ServiceNowConfiguration configuration;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
+    private ServiceNowComponentVerifierExtension verifierExtension;
+    private ServiceNowMetaDataExtension metaDataExtension;
+
     public ServiceNowComponent() {
-        this.configuration = new ServiceNowConfiguration();
+        this(null);
     }
 
     public ServiceNowComponent(CamelContext camelContext) {
         super(camelContext);
 
         this.configuration = new ServiceNowConfiguration();
+
+        registerExtension(ServiceNowComponentVerifierExtension::new);
+        registerExtension(ServiceNowMetaDataExtension::new);
     }
 
     @Override
@@ -82,6 +92,12 @@ public class ServiceNowComponent extends DefaultComponent implements VerifiableC
 
         setProperties(configuration, parameters);
 
+        if (ObjectHelper.isEmpty(remaining)) {
+            // If an instance is not set on the endpoint uri, use the one set on
+            // component.
+            remaining = instanceName;
+        }
+
         String instanceName = getCamelContext().resolvePropertyPlaceholders(remaining);
         if (!configuration.hasApiUrl()) {
             configuration.setApiUrl(String.format("https://%s.service-now.com/api", instanceName));
@@ -95,6 +111,17 @@ public class ServiceNowComponent extends DefaultComponent implements VerifiableC
         }
 
         return new ServiceNowEndpoint(uri, this, configuration, instanceName);
+    }
+
+    public String getInstanceName() {
+        return instanceName;
+    }
+
+    /**
+     * The ServiceNow instance name
+     */
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
     }
 
     public ServiceNowConfiguration getConfiguration() {
@@ -194,22 +221,6 @@ public class ServiceNowComponent extends DefaultComponent implements VerifiableC
 
     @Override
     public ComponentVerifier getVerifier() {
-        return new ServiceNowComponentVerifierExtension(this);
-    }
-
-    @Override
-    public Collection<Class<? extends ComponentExtension>> getExtensionTypes() {
-        return Collections.singletonList(ComponentVerifierExtension.class);
-    }
-
-    @Override
-    public <T extends ComponentExtension> Optional<T> getExtension(Class<T> extensionType) {
-        if (ComponentVerifierExtension.class.isAssignableFrom(extensionType)) {
-            return Optional.of(
-                extensionType.cast(new ServiceNowComponentVerifierExtension(this))
-            );
-        }
-
-        return Optional.empty();
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

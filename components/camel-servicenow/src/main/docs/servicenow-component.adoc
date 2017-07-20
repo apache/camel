@@ -30,13 +30,14 @@ for this component:
 
 
 // component options: START
-The ServiceNow component supports 9 options which are listed below.
+The ServiceNow component supports 10 options which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
+| **instanceName** (advanced) | The ServiceNow instance name |  | String
 | **configuration** (advanced) | The ServiceNow default configuration |  | ServiceNowConfiguration
 | **apiUrl** (producer) | The ServiceNow REST API url |  | String
 | **userName** (security) | ServiceNow user account name |  | String

@@ -41,6 +41,10 @@ public class ServiceNowComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * The ServiceNow instance name
+     */
+    private String instanceName;
+    /**
      * The ServiceNow default configuration
      */
     private ServiceNowConfigurationNestedConfiguration configuration;
@@ -78,6 +82,14 @@ public class ServiceNowComponentConfiguration
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public String getInstanceName() {
+        return instanceName;
+    }
+
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
 
     public ServiceNowConfigurationNestedConfiguration getConfiguration() {
         return configuration;

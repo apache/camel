@@ -32,8 +32,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.URISupport;
 
 public abstract class AbstractServiceNowProcessor implements Processor {
 
@@ -79,43 +77,8 @@ public abstract class AbstractServiceNowProcessor implements Processor {
     // Header
     // *********************************
 
-
     protected AbstractServiceNowProcessor setHeaders(Message message, Class<?> responseModel, Response response) throws Exception {
-        List<String> links = response.getStringHeaders().get(HttpHeaders.LINK);
-        if (links != null) {
-            for (String link : links) {
-                String[] parts = link.split(";");
-                if (parts.length != 2) {
-                    continue;
-                }
-
-                // Sanitize parts
-                String uri = StringHelper.between(parts[0], "<", ">");
-                String rel = StringHelper.removeQuotes(StringHelper.after(parts[1], "="));
-
-                Map<String, Object> query = URISupport.parseQuery(uri);
-                Object offset = query.get(ServiceNowParams.SYSPARM_OFFSET.getId());
-
-                if (offset != null) {
-                    switch (rel) {
-                    case ServiceNowConstants.LINK_FIRST:
-                        message.setHeader(ServiceNowConstants.OFFSET_FIRST, offset);
-                        break;
-                    case ServiceNowConstants.LINK_LAST:
-                        message.setHeader(ServiceNowConstants.OFFSET_LAST, offset);
-                        break;
-                    case ServiceNowConstants.LINK_NEXT:
-                        message.setHeader(ServiceNowConstants.OFFSET_NEXT, offset);
-                        break;
-                    case ServiceNowConstants.LINK_PREV:
-                        message.setHeader(ServiceNowConstants.OFFSET_PREV, offset);
-                        break;
-                    default:
-                        break;
-                    }
-                }
-            }
-        }
+        ServiceNowHelper.findOffsets(response, (k, v) -> message.setHeader(k, v));
 
         String attachmentMeta = response.getHeaderString(ServiceNowConstants.ATTACHMENT_META_HEADER);
         if (ObjectHelper.isNotEmpty(attachmentMeta)) {
