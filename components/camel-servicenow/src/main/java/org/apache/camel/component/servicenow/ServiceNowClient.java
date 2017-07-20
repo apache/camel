@@ -18,6 +18,7 @@ package org.apache.camel.component.servicenow;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Function;
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -34,10 +35,12 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 
 public final class ServiceNowClient {
+    private final CamelContext camelContext;
     private final ServiceNowConfiguration configuration;
     private final WebClient client;
 
     ServiceNowClient(CamelContext camelContext, ServiceNowConfiguration configuration) throws Exception {
+        this.camelContext = camelContext;
         this.configuration = configuration;
         this.client = WebClient.create(
             configuration.getApiUrl(),
@@ -97,6 +100,11 @@ public final class ServiceNowClient {
         return this;
     }
 
+    public ServiceNowClient queryF(String name, String format, Object... values) {
+        client.query(name, String.format(format, values));
+        return this;
+    }
+
     public ServiceNowClient query(ServiceNowParam param, Message message) {
         Object value = param.getHeaderValue(message, configuration);
         if (value != null) {
@@ -107,10 +115,34 @@ public final class ServiceNowClient {
     }
 
     public Response invoke(String httpMethod) throws Exception {
-        return invoke(httpMethod, null);
+        return invoke(client, httpMethod, null);
     }
 
     public Response invoke(String httpMethod, Object body) throws Exception {
+        return invoke(client, httpMethod, body);
+    }
+
+    public <T> T trasform(String httpMethod, Function<Response, T> function) throws Exception {
+        return function.apply(invoke(client, httpMethod, null));
+    }
+
+    public <T> T trasform(String httpMethod, Object body, Function<Response, T> function) throws Exception {
+        return function.apply(invoke(client, httpMethod, body));
+    }
+
+    public ServiceNowClient reset() {
+        client.back(true);
+        client.reset();
+        client.resetQuery();
+
+        return this;
+    }
+
+    // *******************************
+    // Helpers
+    // *******************************
+
+    private Response invoke(WebClient client, String httpMethod, Object body) throws Exception {
         Response response = client.invoke(httpMethod, body);
         int code = response.getStatus();
 
@@ -145,18 +177,6 @@ public final class ServiceNowClient {
 
         return response;
     }
-
-    public ServiceNowClient reset() {
-        client.back(true);
-        client.reset();
-        client.resetQuery();
-
-        return this;
-    }
-
-    // *******************************
-    // Helpers
-    // *******************************
 
     private static void configureRequestContext(
             CamelContext context, ServiceNowConfiguration configuration, WebClient client) throws Exception {

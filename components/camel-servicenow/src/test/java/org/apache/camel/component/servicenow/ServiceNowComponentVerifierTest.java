@@ -33,11 +33,8 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
         return false;
     }
 
-    protected ServiceNowComponentVerifierExtension getVerifier() {
-        ServiceNowComponent component = context().getComponent("servicenow", ServiceNowComponent.class);
-        ServiceNowComponentVerifierExtension verifier = (ServiceNowComponentVerifierExtension)component.getVerifier();
-
-        return verifier;
+    protected ComponentVerifier getVerifier() {
+        return context().getComponent("servicenow", ServiceNowComponent.class).getVerifier();
     }
 
     // *********************************

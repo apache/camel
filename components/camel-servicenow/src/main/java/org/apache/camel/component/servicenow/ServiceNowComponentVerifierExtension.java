@@ -25,13 +25,10 @@ import org.apache.camel.component.extension.verifier.NoSuchOptionException;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 
-public class ServiceNowComponentVerifierExtension extends DefaultComponentVerifierExtension {
-    private final ServiceNowComponent component;
+final class ServiceNowComponentVerifierExtension extends DefaultComponentVerifierExtension {
 
-    ServiceNowComponentVerifierExtension(ServiceNowComponent component) {
-        super("servicenow", component.getCamelContext());
-
-        this.component = component;
+    ServiceNowComponentVerifierExtension() {
+        super("servicenow");
     }
 
     // *********************************
