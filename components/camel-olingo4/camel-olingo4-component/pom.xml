@@ -35,7 +35,7 @@
   <properties>
     <componentName>Olingo4</componentName>
     <schemeName>olingo4</schemeName>
-    <maven.exe.file.extension></maven.exe.file.extension>
+    <maven.exe.file.extension/>
     <camel.osgi.export.pkg>${componentPackage}</camel.osgi.export.pkg>
     <componentPackage>org.apache.camel.component.olingo4</componentPackage>
     <outPackage>org.apache.camel.component.olingo4.internal</outPackage>
@@ -148,6 +148,7 @@
                   </extraOptions>
                   <nullableOptions>
                     <nullableOption>queryParams</nullableOption>
+                    <nullableOption>endpointHttpHeaders</nullableOption>
                   </nullableOptions>
                 </api>
               </apis>
