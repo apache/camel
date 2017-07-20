@@ -28,5 +28,4 @@ The following components do not have a starter because of compatibility issues:
 * **camel-scala**
 * **camel-scr** (intended for OSGi only)
 * **camel-spark-rest**
-* **camel-spring-dm**
 * **camel-swagger** (`camel-swagger-java-starter` is included)

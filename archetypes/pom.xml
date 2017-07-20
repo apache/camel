@@ -48,7 +48,6 @@
     <module>camel-archetype-scr</module>
     <module>camel-archetype-spring</module>
     <module>camel-archetype-spring-boot</module>
-    <module>camel-archetype-spring-dm</module>
     <module>camel-archetype-web</module>
   </modules>
 
