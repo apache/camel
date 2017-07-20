@@ -36,28 +36,6 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class CookieHandlerTest extends CamelTestSupport {
-    /*
-     * This test tries to set a cookie for domain .example.com from host
-     * www.example.com or www.sub.example.com According to RFC 2965 section
-     * 3.3.1 the latter cookie has to be rejected, however if we set the cookie
-     * policy to ACCEPT_ALL the cookie will be accepted again. If a cookie is
-     * set, the resulting Cookie header has two lines, one containing the
-     * version and one the (single) cookie.
-     */
-    @Parameters(name = "{index}: {4} policy for {2} returns {3} Cookie header lines")
-    public static Iterable<Object[]> data() {
-        return Arrays
-            .asList(new Object[][] {{new InstanceCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.example.com/acme/foo", 2,
-                                     "InstanceCookieHandler with ACCEPT_ORIGINAL_SERVER"},
-                                    {new InstanceCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.sub.example.com/acme/foo", 0,
-                                     "InstanceCookieHandler with ACCEPT_ORIGINAL_SERVER"},
-                                    {new InstanceCookieHandler(), CookiePolicy.ACCEPT_ALL, "http://www.sub.example.com/acme/foo", 2, "InstanceCookieHandler with ACCEPT_ALL"},
-                                    {new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.example.com/acme/foo", 2,
-                                     "ExchangeCookieHandler with ACCEPT_ORIGINAL_SERVER"},
-                                    {new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.sub.example.com/acme/foo", 0,
-                                     "ExchangeCookieHandler with ACCEPT_ORIGINAL_SERVER"},
-                                    {new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ALL, "http://www.sub.example.com/acme/foo", 2, "ExchangeCookieHandler with ACCEPT_ALL"}});
-    }
 
     private String uriStr;
     private CookieHandler cookieHandler;
@@ -71,6 +49,30 @@ public class CookieHandlerTest extends CamelTestSupport {
         this.cookiePolicy = cookiePolicy;
         this.uriStr = uri;
         this.expectedNumberOfCookieValues = expectedNumberOfCookieValues;
+    }
+    
+    /*
+     * This test tries to set a cookie for domain .example.com from host
+     * www.example.com or www.sub.example.com According to RFC 2965 section
+     * 3.3.1 the latter cookie has to be rejected, however if we set the cookie
+     * policy to ACCEPT_ALL the cookie will be accepted again. If a cookie is
+     * set, the resulting Cookie header has two lines, one containing the
+     * version and one the (single) cookie.
+     */
+    @Parameters(name = "{index}: {4} policy for {2} returns {3} Cookie header lines")
+    
+    public static Iterable<Object[]> data() {
+        return Arrays
+            .asList(new Object[][] {{new InstanceCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.example.com/acme/foo", 2,
+                                     "InstanceCookieHandler with ACCEPT_ORIGINAL_SERVER"},
+                                    {new InstanceCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.sub.example.com/acme/foo", 0,
+                                     "InstanceCookieHandler with ACCEPT_ORIGINAL_SERVER"},
+                                    {new InstanceCookieHandler(), CookiePolicy.ACCEPT_ALL, "http://www.sub.example.com/acme/foo", 2, "InstanceCookieHandler with ACCEPT_ALL"},
+                                    {new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.example.com/acme/foo", 2,
+                                     "ExchangeCookieHandler with ACCEPT_ORIGINAL_SERVER"},
+                                    {new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.sub.example.com/acme/foo", 0,
+                                     "ExchangeCookieHandler with ACCEPT_ORIGINAL_SERVER"},
+                                    {new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ALL, "http://www.sub.example.com/acme/foo", 2, "ExchangeCookieHandler with ACCEPT_ALL"}});
     }
 
     @Before
