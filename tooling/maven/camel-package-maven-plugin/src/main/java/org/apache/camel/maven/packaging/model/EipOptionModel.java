@@ -27,6 +27,7 @@ public class EipOptionModel {
     private String label;
     private String description;
     private boolean deprecated;
+    private String deprecationNote;
     private boolean input;
     private boolean output;
 
@@ -100,6 +101,14 @@ public class EipOptionModel {
 
     public void setDeprecated(boolean deprecated) {
         this.deprecated = deprecated;
+    }
+
+    public String getDeprecationNote() {
+        return deprecationNote;
+    }
+
+    public void setDeprecationNote(String deprecationNote) {
+        this.deprecationNote = deprecationNote;
     }
 
     public boolean isInput() {

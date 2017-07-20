@@ -33,6 +33,7 @@ public class LanguageModel {
     private String firstVersion;
     private String label;
     private String deprecated;
+    private String deprecationNote;
     private String javaType;
     private String groupId;
     private String artifactId;
@@ -109,6 +110,14 @@ public class LanguageModel {
 
     public void setDeprecated(String deprecated) {
         this.deprecated = deprecated;
+    }
+
+    public String getDeprecationNote() {
+        return deprecationNote;
+    }
+
+    public void setDeprecationNote(String deprecationNote) {
+        this.deprecationNote = deprecationNote;
     }
 
     public String getJavaType() {

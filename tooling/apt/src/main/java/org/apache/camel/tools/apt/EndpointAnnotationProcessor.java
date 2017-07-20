@@ -444,6 +444,10 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 String methodName = method.getSimpleName().toString();
                 boolean deprecated = method.getAnnotation(Deprecated.class) != null;
                 Metadata metadata = method.getAnnotation(Metadata.class);
+                String deprecationNote = null;
+                if (metadata != null) {
+                    deprecationNote = metadata.deprecationNode();
+                }
 
                 // must be the setter
                 boolean isSetter = methodName.startsWith("set") && method.getParameters().size() == 1 & method.getReturnType().getKind().equals(TypeKind.VOID);
@@ -526,7 +530,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
                 String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                 ComponentOption option = new ComponentOption(name, displayName, fieldTypeName, required, defaultValue, defaultValueNote,
-                        docComment.trim(), deprecated, secret, group, label, isEnum, enums);
+                        docComment.trim(), deprecated, deprecationNote, secret, group, label, isEnum, enums);
                 componentOptions.add(option);
             }
 
@@ -555,6 +559,10 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
                 Metadata metadata = fieldElement.getAnnotation(Metadata.class);
                 boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+                String deprecationNote = null;
+                if (metadata != null) {
+                    deprecationNote = metadata.deprecationNode();
+                }
                 Boolean secret = metadata != null ? metadata.secret() : null;
 
                 UriPath path = fieldElement.getAnnotation(UriPath.class);
@@ -629,7 +637,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
                     String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                     boolean isSecret = secret != null ? secret : false;
-                    EndpointPath ep = new EndpointPath(name, displayName, fieldTypeName, required, defaultValue, docComment, deprecated, isSecret, group, label, isEnum, enums);
+                    EndpointPath ep = new EndpointPath(name, displayName, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote,
+                        isSecret, group, label, isEnum, enums);
                     endpointPaths.add(ep);
                 }
 
@@ -724,7 +733,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         boolean isSecret = secret != null ? secret : param.secret();
                         String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                         EndpointOption option = new EndpointOption(name, displayName, fieldTypeName, required, defaultValue, defaultValueNote,
-                                docComment.trim(), paramOptionalPrefix, paramPrefix, multiValue, deprecated, isSecret, group, label, isEnum, enums);
+                                docComment.trim(), paramOptionalPrefix, paramPrefix, multiValue, deprecated, deprecationNote, isSecret, group, label, isEnum, enums);
                         endpointOptions.add(option);
                     }
                 }
