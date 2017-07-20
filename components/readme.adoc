@@ -1009,7 +1009,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 38 in 38 JAR artifacts (14 deprecated)
+Number of Miscellaneous Components: 37 in 37 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================

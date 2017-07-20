@@ -85,7 +85,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | **diskExpiryThreadInterval Seconds** (common) | The number of seconds between runs of the disk expiry thread. |  | long
 | **diskPersistent** (common) | Whether the disk store persists between restarts of the application. | false | boolean
-| **diskStorePath** (common) | This parameter is ignored. CacheManager sets it using setter injection. |  | String
+| **diskStorePath** (common) | *Deprecated* This parameter is ignored. CacheManager sets it using setter injection. |  | String
 | **eternal** (common) | Sets whether elements are eternal. If eternal timeouts are ignored and the element never expires. | false | boolean
 | **key** (common) | The default key to use. If a key is provided in the message header then the key from the header takes precedence. |  | String
 | **maxElementsInMemory** (common) | The number of elements that may be stored in the defined cache in memory. | 1000 | int
