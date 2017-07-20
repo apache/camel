@@ -22,7 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchChangeRequest;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchQueryRequest;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchRequest;
@@ -220,6 +222,32 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         assertNotNull(error);
         LOG.info("Read deleted entity error: {}", error.getMessage());
     }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testEndpointHttpHeaders() throws Exception {
+        final Map<String, Object> headers = new HashMap<String, Object>();
+        final ClientEntity entity = (ClientEntity)requestBodyAndHeaders("direct://read-etag", null, headers);
+        
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:check-etag-header");
+        mockEndpoint.expectedMessageCount(1);
+        mockEndpoint.assertIsSatisfied();
+        
+        Map<String, String> responseHttpHeaders = (Map<String, String>)mockEndpoint.getExchanges().get(0).getIn().getHeader("CamelOlingo4.responseHttpHeaders");
+        assertEquals(responseHttpHeaders.get("ETag"), entity.getETag());
+        
+        Map<String, String> endpointHttpHeaders = new HashMap<String, String>();
+        endpointHttpHeaders.put("If-Match", entity.getETag());
+        headers.put("CamelOlingo4.endpointHttpHeaders", endpointHttpHeaders);
+        requestBodyAndHeaders("direct://delete-with-etag", null, headers);
+        
+        // check for deleted entity with ETag
+        try {
+            requestBody("direct://read-etag", null);
+        } catch (CamelExecutionException e) {
+            assertStringContains(e.getCause().getMessage(), "The request resource is not found.");
+        }
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -258,6 +286,10 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
 
                 // test route for batch
                 from("direct://batch").to("olingo4://batch");
+                
+                from("direct://read-etag").to("olingo4://read/Airlines('AA')").to("mock:check-etag-header");
+                
+                from("direct://delete-with-etag").to("olingo4://delete/Airlines('AA')");
             }
         };
     }

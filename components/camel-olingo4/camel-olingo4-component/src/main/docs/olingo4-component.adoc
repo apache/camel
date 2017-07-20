@@ -4,12 +4,12 @@
 
 The Olingo4 component utilizes http://olingo.apache.org/[Apache Olingo]
 version 4.0 APIs to interact with OData 4.0 compliant service.
-Since verison 4.0 OData is OASIS standard and number of popular opensource 
+Since version 4.0 OData is OASIS standard and number of popular open source 
 and commercial vendors and products support this protocol.
 A sample list of supporting products can be found on the OData 
 http://www.odata.org/ecosystem/[website].
 
-The Olingo4 component supports reading entitiy sets, entities,
+The Olingo4 component supports reading entity sets, entities,
 simple and complex properties, counts, using custom and OData
 system query parameters. It supports updating entities and properties.
 It also supports submitting queries and change requests as a single OData batch operation. 
@@ -129,21 +129,30 @@ _Manufacturers_ and keyPredicate option _'1'_. 
 |=======================================================================
 |Endpoint |Options |HTTP Method |Result Body Type
 
-|batch |data |POST with multipart/mixed batch request |java.util.List<org.apache.camel.component.olingo4.api.batch.Olingo4BatchResponse>
+|batch |data, endpointHttpHeaders |POST with multipart/mixed batch request |java.util.List<org.apache.camel.component.olingo4.api.batch.Olingo4BatchResponse>
 
-|create |data, resourcePath |POST |org.apache.olingo.client.api.domain.ClientEntity for new entries
+|create |data, resourcePath, endpointHttpHeaders |POST |org.apache.olingo.client.api.domain.ClientEntity for new entries
 org.apache.olingo.commons.api.http.HttpStatusCode for other OData resources
 
-|delete |resourcePath |DELETE |org.apache.olingo.commons.api.http.HttpStatusCode
+|delete |resourcePath, endpointHttpHeaders |DELETE |org.apache.olingo.commons.api.http.HttpStatusCode
 
-|merge |data, resourcePath |MERGE |org.apache.olingo.commons.api.http.HttpStatusCode
+|merge |data, resourcePath, endpointHttpHeaders |MERGE |org.apache.olingo.commons.api.http.HttpStatusCode
 
-|patch |data, resourcePath |PATCH |org.apache.olingo.commons.api.http.HttpStatusCode
+|patch |data, resourcePath, endpointHttpHeaders |PATCH |org.apache.olingo.commons.api.http.HttpStatusCode
 
-|read |queryParams, resourcePath |GET |Depends on OData resource being queried as described next
+|read |queryParams, resourcePath, endpointHttpHeaders |GET |Depends on OData resource being queried as described next
 
-|update |data, resourcePath |PUT |org.apache.olingo.commons.api.http.HttpStatusCode
+|update |data, resourcePath, endpointHttpHeaders |PUT |org.apache.olingo.commons.api.http.HttpStatusCode
 |=======================================================================
+
+### Endpoint HTTP Headers (since *Camel 2.20*)
+The component level configuration property **httpHeaders** supplies static HTTP header information. 
+However, some systems requires dynamic header information to be passed to and received from the endpoint.
+A sample use case would be systems that require dynamic security tokens.  The **endpointHttpHeaders** 
+and **responseHttpHeaders** endpoint properties provides this capability.  Set headers that need to 
+be passed to the endpoint in the *`CamelOlingo4.endpointHttpHeaders`* property and the 
+response headers will be returned in a *`CamelOlingo4.responseHttpHeaders`* property.  
+Both properties are of the type *`java.util.Map<String, String>`*.
 
 ### OData Resource Type Mapping
 
