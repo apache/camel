@@ -182,6 +182,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
         buffer.append("\n    \"label\": \"").append(getOrElse(componentModel.getLabel(), "")).append("\",");
         buffer.append("\n    \"deprecated\": ").append(componentModel.isDeprecated()).append(",");
+        buffer.append("\n    \"deprecationNote\": \"").append(getOrElse(componentModel.getDeprecationNode(), "")).append("\",");
         buffer.append("\n    \"async\": ").append(componentModel.isAsync()).append(",");
         buffer.append("\n    \"consumerOnly\": ").append(componentModel.isConsumerOnly()).append(",");
         buffer.append("\n    \"producerOnly\": ").append(componentModel.isProducerOnly()).append(",");
@@ -230,7 +231,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             boolean asPredicate = false;
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "property", required, entry.getType(), defaultValue, doc,
-                entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
+                entry.isDeprecated(), entry.getDeprecationNode(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
                 false, null, asPredicate, optionalPrefix, prefix, multiValue));
         }
         buffer.append("\n  },");
@@ -282,7 +283,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             boolean asPredicate = false;
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "path", required, entry.getType(), defaultValue, doc,
-                entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
+                entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
                 false, null, asPredicate, optionalPrefix, prefix, multiValue));
         }
 
@@ -328,7 +329,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             boolean asPredicate = false;
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "parameter", required, entry.getType(), defaultValue,
-                doc, entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
+                doc, entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
                 false, null, asPredicate, optionalPrefix, prefix, multiValue));
         }
         buffer.append("\n  }");
@@ -394,6 +395,12 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 deprecated = name != null && name.contains("(deprecated)");
             }
             model.setDeprecated(deprecated);
+
+            String deprecationNote = null;
+            if (endpointClassElement.getAnnotation(Metadata.class) != null) {
+                deprecationNote = endpointClassElement.getAnnotation(Metadata.class).deprecationNode();
+            }
+            model.setDeprecationNode(deprecationNote);
 
             if (map.containsKey("groupId")) {
                 model.setGroupId(map.get("groupId"));

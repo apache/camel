@@ -89,9 +89,6 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     public Consumer createConsumer(Processor processor) throws Exception {
         Consumer answer = new DataSetConsumer(this, processor);
         configureConsumer(answer);
-
-        // expectedMessageCount((int) size);
-
         return answer;
     }
 
