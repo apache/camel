@@ -37,7 +37,7 @@
     <label>rest,api</label>
 
     <camel.osgi.import.before.defaults>
-      scala.*;version="[2.10,2.11)"
+      scala.*;version="[2.11,2.12)"
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.swagger.*</camel.osgi.export.pkg>
   </properties>
@@ -59,18 +59,18 @@
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
-      <version>${scala-2.10-version}</version>
+      <version>${scala-version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.wordnik</groupId>
-      <artifactId>swagger-jaxrs_2.10</artifactId>
+      <artifactId>swagger-jaxrs_2.11</artifactId>
       <version>${swagger-scala-version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.wordnik</groupId>
-      <artifactId>swagger-servlet_2.10</artifactId>
+      <artifactId>swagger-servlet_2.11</artifactId>
       <version>${swagger-scala-version}</version>
     </dependency>
 
