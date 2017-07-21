@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 /**
  * For calling out to external HTTP servers using Apache HTTP Client 4.x.
  */
-@UriEndpoint(firstVersion = "2.3.0", scheme = "http4,http4s", title = "HTTP4,HTTP4S", syntax = "http4:httpUri",
+@UriEndpoint(firstVersion = "2.3.0", scheme = "http4,https4", title = "HTTP4,HTTPS4", syntax = "http4:httpUri",
     producerOnly = true, label = "http", lenientProperties = true)
 public class HttpEndpoint extends HttpCommonEndpoint {
 
@@ -101,7 +101,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientConnectionManager clientConnectionManager) throws URISyntaxException {
         this(endPointURI, component, httpURI, HttpClientBuilder.create(), clientConnectionManager, null);
     }
-    
+
     public HttpEndpoint(String endPointURI, HttpComponent component, HttpClientBuilder clientBuilder,
                         HttpClientConnectionManager clientConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         this(endPointURI, component, null, clientBuilder, clientConnectionManager, clientConfigurer);
@@ -178,7 +178,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         } else {
             clientBuilder.useSystemProperties();
         }
-        
+
         if (isAuthenticationPreemptive()) {
             // setup the PreemptiveAuthInterceptor here
             clientBuilder.addInterceptorFirst(new PreemptiveAuthInterceptor());
@@ -232,7 +232,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     public HttpClientConfigurer getHttpClientConfigurer() {
         return httpClientConfigurer;
     }
-    
+
     /**
      * Register a custom configuration strategy for new {@link HttpClient} instances
      * created by producers or consumers such as to configure authentication mechanisms etc
@@ -307,7 +307,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
     public void setCookieHandler(CookieHandler cookieHandler) {
         super.setCookieHandler(cookieHandler);
-        // if we set an explicit cookie handler 
+        // if we set an explicit cookie handler
         this.cookieStore = new NoopCookieStore();
     }
 
