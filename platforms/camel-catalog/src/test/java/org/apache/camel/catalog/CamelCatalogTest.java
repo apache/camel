@@ -458,6 +458,15 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testAsEndpointUriStream() throws Exception {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("kind", "url");
+        map.put("url", "http://camel.apache.org");
+
+        assertEquals("stream:url?url=http://camel.apache.org", catalog.asEndpointUri("stream", map, false));
+    }
+
+    @Test
     public void testEndpointPropertiesJms() throws Exception {
         Map<String, String> map = catalog.endpointProperties("jms:queue:foo");
         assertNotNull(map);

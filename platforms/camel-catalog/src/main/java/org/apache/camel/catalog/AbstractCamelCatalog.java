@@ -67,6 +67,7 @@ public abstract class AbstractCamelCatalog {
     // CHECKSTYLE:OFF
 
     private static final Pattern SYNTAX_PATTERN = Pattern.compile("(\\w+)");
+    private static final Pattern COMPONENT_SYNTAX_PARSER = Pattern.compile("([^\\w-]*)([\\w-]+)");
 
     private SuggestionStrategy suggestionStrategy;
     private JSonSchemaResolver jsonSchemaResolver;
@@ -879,15 +880,15 @@ public abstract class AbstractCamelCatalog {
         }
 
         // grab the syntax
-        String syntax = null;
+        String originalSyntax = null;
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
         for (Map<String, String> row : rows) {
             if (row.containsKey("syntax")) {
-                syntax = row.get("syntax");
+                originalSyntax = row.get("syntax");
                 break;
             }
         }
-        if (syntax == null) {
+        if (originalSyntax == null) {
             throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
         }
 
@@ -897,20 +898,17 @@ public abstract class AbstractCamelCatalog {
         rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
         // clip the scheme from the syntax
-        syntax = after(syntax, ":");
-
-        String originalSyntax = syntax;
+        originalSyntax = after(originalSyntax, ":");
 
         // build at first according to syntax (use a tree map as we want the uri options sorted)
-        Map<String, String> copy = new TreeMap<String, String>();
-        for (Map.Entry<String, String> entry : properties.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue() != null ? entry.getValue() : "";
-            if (syntax != null && syntax.contains(key)) {
-                syntax = syntax.replace(key, value);
-            } else {
-                copy.put(key, value);
-            }
+        Map<String, String> copy = new TreeMap<>(properties);
+        String syntax = "";
+        Matcher syntaxMatcher = COMPONENT_SYNTAX_PARSER.matcher(originalSyntax);
+        while (syntaxMatcher.find()) {
+            syntax += syntaxMatcher.group(1);
+            String propertyName = syntaxMatcher.group(2);
+            String propertyValue = copy.remove(propertyName);
+            syntax += propertyValue != null ? propertyValue : propertyName;
         }
 
         // do we have all the options the original syntax needs (easy way)
@@ -924,9 +922,7 @@ public abstract class AbstractCamelCatalog {
 
         if (hasAllKeys) {
             // we have all the keys for the syntax so we can build the uri the easy way
-            if (syntax != null) {
-                sb.append(syntax);
-            }
+            sb.append(syntax);
 
             if (!copy.isEmpty()) {
                 boolean hasQuestionmark = sb.toString().contains("?");
