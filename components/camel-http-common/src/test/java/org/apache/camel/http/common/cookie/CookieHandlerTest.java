@@ -36,6 +36,20 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class CookieHandlerTest extends CamelTestSupport {
+    private CookieHandler cookieHandler;
+    private CookiePolicy cookiePolicy;
+    private int expectedNumberOfCookieValues;
+    private String uriStr;
+
+    private Exchange exchange;
+
+    public CookieHandlerTest(CookieHandler cookieHandler, CookiePolicy cookiePolicy, String uri, int expectedNumberOfCookieValues, String description) {
+        this.cookieHandler = cookieHandler;
+        this.cookiePolicy = cookiePolicy;
+        this.uriStr = uri;
+        this.expectedNumberOfCookieValues = expectedNumberOfCookieValues;
+    }
+
     /*
      * This test tries to set a cookie for domain .example.com from host
      * www.example.com or www.sub.example.com According to RFC 2965 section
@@ -57,20 +71,6 @@ public class CookieHandlerTest extends CamelTestSupport {
                                     {new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.sub.example.com/acme/foo", 0,
                                      "ExchangeCookieHandler with ACCEPT_ORIGINAL_SERVER"},
                                     {new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ALL, "http://www.sub.example.com/acme/foo", 2, "ExchangeCookieHandler with ACCEPT_ALL"}});
-    }
-
-    private String uriStr;
-    private CookieHandler cookieHandler;
-    private CookiePolicy cookiePolicy;
-    private int expectedNumberOfCookieValues;
-
-    private Exchange exchange;
-
-    public CookieHandlerTest(CookieHandler cookieHandler, CookiePolicy cookiePolicy, String uri, int expectedNumberOfCookieValues, String description) {
-        this.cookieHandler = cookieHandler;
-        this.cookiePolicy = cookiePolicy;
-        this.uriStr = uri;
-        this.expectedNumberOfCookieValues = expectedNumberOfCookieValues;
     }
 
     @Before
