@@ -74,7 +74,7 @@ public class HttpComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = "http4-component")
+    @Bean(name = {"http4-component", "https4-component"})
     @ConditionalOnMissingBean(HttpComponent.class)
     public HttpComponent configureHttpComponent() throws Exception {
         HttpComponent component = new HttpComponent();

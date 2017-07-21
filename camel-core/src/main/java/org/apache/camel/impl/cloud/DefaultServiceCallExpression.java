@@ -75,7 +75,7 @@ public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {
             if (port == null) {
                 scheme = "http4";
             } else if (port == 443) {
-                scheme = "http4s";
+                scheme = "https4";
             } else {
                 scheme = "http4";
             }
