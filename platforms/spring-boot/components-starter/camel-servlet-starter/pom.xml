@@ -38,7 +38,19 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-servlet</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>javax.servlet-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
     <!-- Test dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
