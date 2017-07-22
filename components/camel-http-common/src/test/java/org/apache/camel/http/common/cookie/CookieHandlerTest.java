@@ -40,7 +40,6 @@ public class CookieHandlerTest extends CamelTestSupport {
     private CookiePolicy cookiePolicy;
     private int expectedNumberOfCookieValues;
     private String uriStr;
-
     private Exchange exchange;
 
     public CookieHandlerTest(CookieHandler cookieHandler, CookiePolicy cookiePolicy, String uri, int expectedNumberOfCookieValues, String description) {
@@ -49,7 +48,7 @@ public class CookieHandlerTest extends CamelTestSupport {
         this.uriStr = uri;
         this.expectedNumberOfCookieValues = expectedNumberOfCookieValues;
     }
-
+    
     /*
      * This test tries to set a cookie for domain .example.com from host
      * www.example.com or www.sub.example.com According to RFC 2965 section
