@@ -605,7 +605,7 @@
     <spark-rest-version>2.6.0</spark-rest-version>
     <spark-rest-bundle-version>2.6.0_1</spark-rest-bundle-version>
     <splunk-version>1.6.3.0_1</splunk-version>
-    <spring-batch-version>3.0.7.RELEASE</spring-batch-version>
+    <spring-batch-version>3.0.8.RELEASE</spring-batch-version>
     <spring-batch-bundle-version>3.0.7.RELEASE_1</spring-batch-bundle-version>
     <spring-boot-version>1.5.4.RELEASE</spring-boot-version>
     <spring-cloud-commons-version>1.2.3.RELEASE</spring-cloud-commons-version>
@@ -613,7 +613,7 @@
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
     <spring-data-commons-version>1.11.6.RELEASE</spring-data-commons-version>
     <spring-data-redis-version>1.8.3.RELEASE</spring-data-redis-version>
-    <spring-integration-version>4.3.9.RELEASE</spring-integration-version>
+    <spring-integration-version>4.3.11.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-ldap-version>2.3.1.RELEASE</spring-ldap-version>
     <spring-ldap-bundle-version>2.3.1.RELEASE_1</spring-ldap-bundle-version>
