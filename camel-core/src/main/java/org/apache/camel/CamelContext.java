@@ -306,6 +306,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     <T> T hasService(Class<T> type);
 
     /**
+     * Has the given service type already been added to this CamelContext?
+     *
+     * @param type the class type
+     * @return the services instance or empty set.
+     */
+    <T> Set<T> hasServices(Class<T> type);
+
+    /**
      * Defers starting the service until {@link CamelContext} is (almost started) or started and has initialized all its prior services and routes.
      * <p/>
      * If {@link CamelContext} is already started then the service is started immediately.

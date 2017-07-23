@@ -1512,6 +1512,17 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return null;
     }
 
+    @Override
+    public <T> Set<T> hasServices(Class<T> type) {
+        Set<T> set = new HashSet<>();
+        for (Service service : servicesToStop) {
+            if (type.isInstance(service)) {
+                set.add((T) service);
+            }
+        }
+        return set;
+    }
+
     public void deferStartService(Object object, boolean stopOnShutdown) throws Exception {
         if (object instanceof Service) {
             Service service = (Service) object;

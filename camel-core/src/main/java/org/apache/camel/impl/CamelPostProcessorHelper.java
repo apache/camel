@@ -37,10 +37,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ProxyInstantiationException;
 import org.apache.camel.Service;
 import org.apache.camel.builder.DefaultFluentProducerTemplate;
-import org.apache.camel.component.bean.BeanInfo;
-import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
-import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.DeferServiceFactory;
 import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.util.CamelContextHelper;
@@ -96,20 +93,30 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         Consume consume = method.getAnnotation(Consume.class);
         if (consume != null && matchContext(consume.context())) {
             LOG.debug("Creating a consumer for: " + consume);
-            subscribeMethod(method, bean, beanName, consume.uri(), consume.ref(), consume.property());
+            subscribeMethod(method, bean, beanName, consume.uri(), consume.ref(), consume.property(), consume.predicate());
         }
     }
 
-    public void subscribeMethod(Method method, Object bean, String beanName, String endpointUri, String endpointName, String endpointProperty) {
+    public void subscribeMethod(Method method, Object bean, String beanName, String endpointUri, String endpointName, String endpointProperty, String predicate) {
         // lets bind this method to a listener
         String injectionPointName = method.getName();
         Endpoint endpoint = getEndpointInjection(bean, endpointUri, endpointName, endpointProperty, injectionPointName, true);
         if (endpoint != null) {
             try {
-                Processor processor = createConsumerProcessor(bean, method, endpoint);
-                Consumer consumer = endpoint.createConsumer(processor);
-                LOG.debug("Created processor: {} for consumer: {}", processor, consumer);
-                startService(consumer, endpoint.getCamelContext(), bean, beanName);
+                SubscribeMethodProcessor processor = getConsumerProcessor(endpoint);
+                if (processor == null) {
+                    // create new processor and new consumer which happens the first time
+                    processor = new SubscribeMethodProcessor(endpoint);
+                    // make sure processor is registered in registry so we can reuse it (eg we can look it up)
+                    endpoint.getCamelContext().addService(processor, true);
+                    processor.addMethod(bean, method, endpoint, predicate);
+                    Consumer consumer = endpoint.createConsumer(processor);
+                    startService(consumer, endpoint.getCamelContext(), bean, beanName);
+                } else {
+                    // add to existing processor
+                    processor.addMethod(bean, method, endpoint, predicate);
+                }
+                LOG.debug("Subscribed method: {} to consume from endpoint: {} with predicate: {}", method, endpoint, predicate);
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
@@ -134,17 +141,9 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         }
     }
 
-    /**
-     * Create a processor which invokes the given method when an incoming
-     * message exchange is received
-     */
-    protected Processor createConsumerProcessor(final Object pojo, final Method method, final Endpoint endpoint) {
-        BeanInfo info = new BeanInfo(getCamelContext(), method);
-        BeanProcessor answer = new BeanProcessor(pojo, info);
-        // must ensure the consumer is being executed in an unit of work so synchronization callbacks etc is invoked
-        CamelInternalProcessor internal = new CamelInternalProcessor(answer);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));
-        return internal;
+    protected SubscribeMethodProcessor getConsumerProcessor(Endpoint endpoint) {
+        Set<SubscribeMethodProcessor> processors = endpoint.getCamelContext().hasServices(SubscribeMethodProcessor.class);
+        return processors.stream().filter(s -> s.getEndpoint() == endpoint).findFirst().orElse(null);
     }
 
     public Endpoint getEndpointInjection(Object bean, String uri, String name, String propertyName,
