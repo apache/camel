@@ -28,7 +28,7 @@ public class NumberRoute extends RouteBuilder {
         // which is send to this seda queue that the NumberPojo will consume
         from("timer:number?period=1s")
             .transform().simple("${random(0,200)}")
-            .to("seda:numbers");
+            .to("direct:numbers");
     }
 
 }
