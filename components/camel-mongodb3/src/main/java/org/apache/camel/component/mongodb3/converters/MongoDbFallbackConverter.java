@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.bson.Document;
 
 @Converter
 public final class MongoDbFallbackConverter {
@@ -39,6 +40,7 @@ public final class MongoDbFallbackConverter {
     }
 
     @FallbackConverter
+    @SuppressWarnings("unchecked")
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry)
         throws InvalidPayloadException {
 
@@ -73,6 +75,9 @@ public final class MongoDbFallbackConverter {
         if (type == DBObject.class) {
             Map<?, ?> m = OBJECT_MAPPER.convertValue(value, Map.class);
             return new BasicDBObject(m);
+        } else if (type == Document.class) {
+            Map<String, Object> m = OBJECT_MAPPER.convertValue(value, Map.class);
+            return new Document(m);
         }
 
         return null;
