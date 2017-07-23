@@ -898,11 +898,13 @@ public abstract class AbstractCamelCatalog {
         rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
         // clip the scheme from the syntax
-        originalSyntax = after(originalSyntax, ":");
+        String syntax = "";
+        if (originalSyntax.contains(":")) {
+            originalSyntax = after(originalSyntax, ":");
+        }
 
         // build at first according to syntax (use a tree map as we want the uri options sorted)
         Map<String, String> copy = new TreeMap<>(properties);
-        String syntax = "";
         Matcher syntaxMatcher = COMPONENT_SYNTAX_PARSER.matcher(originalSyntax);
         while (syntaxMatcher.find()) {
             syntax += syntaxMatcher.group(1);
