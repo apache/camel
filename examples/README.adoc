@@ -46,7 +46,7 @@ Number of Examples: 93 (8 deprecated)
 
 | link:camel-example-spring-boot-live-reload/readme.adoc[Spring Boot Live Reload] (camel-example-spring-boot-live-reload) | Beginner | An example showing how to use the live reload feature of Spring Boot with Camel
 
-| link:camel-example-spring-boot-pojo/readme.md[Spring Boot Pojo] (camel-example-spring-boot-pojo) | Beginner | An example showing how to work with Camel POJO routing with Spring Boot
+| link:camel-example-spring-boot-pojo/README.adoc[Spring Boot Pojo] (camel-example-spring-boot-pojo) | Beginner | An example showing how to work with Camel POJO routing with Spring Boot
 
 | link:camel-example-spring-boot-routecontroller/readme.adoc[Spring Boot Routecontroller] (camel-example-spring-boot-routecontroller) | Beginner | An example showing how to work with Camel Route Controller and Spring Boot
 
