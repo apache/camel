@@ -16,3 +16,4 @@
 #
 
 org.apache.camel.component.mongodb3.converters.MongoDbBasicConverters
+org.apache.camel.component.mongodb3.converters.MongoDbFallbackConverter
