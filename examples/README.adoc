@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 92 (9 deprecated)
+Number of Examples: 93 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |=======================================================================
@@ -45,6 +45,10 @@ Number of Examples: 92 (9 deprecated)
 | link:camel-example-spring-boot/readme.adoc[Spring Boot] (camel-example-spring-boot) | Beginner | An example showing how to work with Camel and Spring Boot
 
 | link:camel-example-spring-boot-live-reload/readme.adoc[Spring Boot Live Reload] (camel-example-spring-boot-live-reload) | Beginner | An example showing how to use the live reload feature of Spring Boot with Camel
+
+| link:camel-example-spring-boot-pojo/readme.md[Spring Boot Pojo] (camel-example-spring-boot-pojo) | Beginner | An example showing how to work with Camel POJO routing with Spring Boot
+
+| link:camel-example-spring-boot-routecontroller/readme.adoc[Spring Boot Routecontroller] (camel-example-spring-boot-routecontroller) | Beginner | An example showing how to work with Camel Route Controller and Spring Boot
 
 | link:camel-example-spring-javaconfig/README.md[Spring Java Config] (camel-example-spring-javaconfig) | Beginner | An example showing how to work with Camel and Spring Java Config
 
@@ -142,8 +146,6 @@ Number of Examples: 92 (9 deprecated)
 | link:camel-example-cxf-osgi/README.md[CXF OSGi] (camel-example-cxf-osgi) | OSGi | An example which use a CXF consumer and the OSGI HTTP Service
 
 | link:camel-example-netty-http/README.md[Netty HTTP] (camel-example-netty-http) | OSGi | An example showing how to use a shared Netty HTTP server with multiple Camel applications in OSGi container
-
-| link:camel-example-osgi-rmi/README.md[OSGi RMI] (camel-example-osgi-rmi) | OSGi | *deprecated* A OSGi example which exposes a RMI service.
 
 | link:camel-example-servlet-rest-blueprint/README.md[Servlet REST Blueprint] (camel-example-servlet-rest-blueprint) | OSGi | An example using Servlet REST with OSGi Blueprint
 
