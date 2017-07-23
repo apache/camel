@@ -98,6 +98,7 @@
     <module>camel-example-spring-boot-geocoder</module>
     <module>camel-example-spring-boot-live-reload</module>
     <module>camel-example-spring-boot-metrics</module>
+    <module>camel-example-spring-boot-pojo</module>
     <module>camel-example-spring-boot-rest-jpa</module>
     <module>camel-example-spring-boot-rest-swagger</module>
     <module>camel-example-spring-boot-routecontroller</module>
