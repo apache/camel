@@ -29,6 +29,7 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.IsSingleton;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -102,9 +103,14 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         String injectionPointName = method.getName();
         Endpoint endpoint = getEndpointInjection(bean, endpointUri, endpointName, endpointProperty, injectionPointName, true);
         if (endpoint != null) {
+            boolean multipleConsumer = false;
+            if (endpoint instanceof MultipleConsumersSupport) {
+                multipleConsumer = ((MultipleConsumersSupport) endpoint).isMultipleConsumersSupported();
+            }
             try {
                 SubscribeMethodProcessor processor = getConsumerProcessor(endpoint);
-                if (processor == null) {
+                // if multiple consumer then create a new consumer per subscribed method
+                if (multipleConsumer || processor == null) {
                     // create new processor and new consumer which happens the first time
                     processor = new SubscribeMethodProcessor(endpoint);
                     // make sure processor is registered in registry so we can reuse it (eg we can look it up)
@@ -113,10 +119,14 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                     Consumer consumer = endpoint.createConsumer(processor);
                     startService(consumer, endpoint.getCamelContext(), bean, beanName);
                 } else {
-                    // add to existing processor
+                    // add method to existing processor
                     processor.addMethod(bean, method, endpoint, predicate);
                 }
-                LOG.debug("Subscribed method: {} to consume from endpoint: {} with predicate: {}", method, endpoint, predicate);
+                if (predicate != null) {
+                    LOG.debug("Subscribed method: {} to consume from endpoint: {} with predicate: {}", method, endpoint, predicate);
+                } else {
+                    LOG.debug("Subscribed method: {} to consume from endpoint: {}", method, endpoint);
+                }
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
