@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.CountDownLatch;
@@ -609,12 +608,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      */
     public void expectedPropertyReceived(final String name, final Object value) {
         if (expectedPropertyValues == null) {
-            expectedPropertyValues = new ConcurrentHashMap<String, Object>();
+            expectedPropertyValues = new HashMap<String, Object>();
         }
-        if (value != null) {
-            // ConcurrentHashMap cannot store null values
-            expectedPropertyValues.put(name, value);
-        }
+        expectedPropertyValues.put(name, value);
 
         expects(new Runnable() {
             public void run() {
@@ -624,7 +620,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                         String key = entry.getKey();
                         Object expectedValue = entry.getValue();
 
-                        // we accept that an expectedValue of null also means that the header may be absent
+                        // we accept that an expectedValue of null also means that the property may be absent
                         if (expectedValue != null) {
                             assertTrue("Exchange " + i + " has no properties", !exchange.getProperties().isEmpty());
                             boolean hasKey = exchange.getProperties().containsKey(key);
