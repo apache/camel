@@ -521,6 +521,21 @@ public class MockEndpointTest extends ContextTestSupport {
             assertEquals("mock://result No property with name bar found for message: 0", e.getMessage());
         }
     }
+    
+    public void testPropertyNotReceived() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedPropertyReceived("foo", null);
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setProperty("foo", 123);
+            }
+        });
+
+        mock.assertIsNotSatisfied();
+    }
+
 
     public void testPropertyInvalidValue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
