@@ -102,6 +102,7 @@
     <module>camel-couchbase</module>
     <module>camel-couchdb</module>
     <module>camel-crypto</module>
+    <module>camel-crypto-cms</module>
     <module>camel-csv</module>
     <module>camel-digitalocean</module>
     <module>camel-disruptor</module>
