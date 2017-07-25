@@ -21,7 +21,6 @@ import static org.apache.camel.component.as2.api.AS2Constants.AS2_FROM_HEADER;
 import static org.apache.camel.component.as2.api.AS2Constants.AS2_TO_HEADER;
 import static org.apache.camel.component.as2.api.AS2Constants.AS2_VERSION_HEADER;
 import static org.apache.camel.component.as2.api.AS2Constants.CONTENT_TYPE_HEADER;
-import static org.apache.camel.component.as2.api.AS2Constants.HTTP_MESSAGE_ID_FQDN;
 import static org.apache.camel.component.as2.api.AS2Constants.MESSAGE_ID_HEADER;
 import static org.apache.camel.component.as2.api.AS2Constants.SUBJECT_HEADER;
 
@@ -61,10 +60,10 @@ public class AS2ClientManager {
      * @throws IOException 
      * @throws HttpException 
      */
-    public AS2Interchange sendNoEncryptNoSign(String ediMessage, String subject,  String as2From, String as2To) throws InvalidAS2NameException, HttpException, IOException {
+    public AS2Interchange sendNoEncryptNoSign(String requestUri, String ediMessage, String subject,  String as2From, String as2To) throws InvalidAS2NameException, HttpException, IOException {
         AS2Interchange interchange = new AS2Interchange();
         
-        BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", "/");
+        BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", requestUri);
         interchange.setRequest(request);
         
         /* AS2-Version header */
@@ -87,7 +86,7 @@ public class AS2ClientManager {
 
         /* Message-Id header*/
         // SHOULD be set to aid in message reconciliation
-        request.addHeader(MESSAGE_ID_HEADER, Util.createMessageId(HTTP_MESSAGE_ID_FQDN));
+        request.addHeader(MESSAGE_ID_HEADER, Util.createMessageId(as2ClientConnection.getClientFqdn()));
         
          // Create Message Body
         /* EDI Message is Message Body */

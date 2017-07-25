@@ -1,14 +1,26 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.as2.api;
-
-import static org.apache.camel.component.as2.api.AS2Constants.HTTP_ORIGIN_SERVER;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.http.ConnectionClosedException;
 import org.apache.http.HttpException;
@@ -36,24 +48,23 @@ public class AS2ServerConnection {
 
     private static final String REQUEST_LISTENER_THREAD_NAME_PREFIX = "AS2Svr-";
     private static final String REQUEST_HANDLER_THREAD_NAME_PREFIX = "AS2Hdlr-";
-
+    
     static class RequestListenerThread extends Thread {
 
         private final ServerSocket serversocket;
         private final HttpService httpService;
+        private UriHttpRequestHandlerMapper reqistry;
 
-        public RequestListenerThread(int port, HttpRequestHandler httpRequestHandler) throws IOException {
+        public RequestListenerThread(String originServer, int port) throws IOException {
             setName(REQUEST_LISTENER_THREAD_NAME_PREFIX + port);
             serversocket = new ServerSocket(port);
 
             // Set up HTTP protocol processor for incoming connections
             final HttpProcessor inhttpproc = new ImmutableHttpProcessor(
-                    new HttpResponseInterceptor[] { new ResponseContent(true), new ResponseServer(HTTP_ORIGIN_SERVER),
+                    new HttpResponseInterceptor[] { new ResponseContent(true), new ResponseServer(originServer),
                             new ResponseDate(), new ResponseConnControl() });
 
-            // Set up incoming request handler
-            final UriHttpRequestHandlerMapper reqistry = new UriHttpRequestHandlerMapper();
-            reqistry.register("*", httpRequestHandler);
+            reqistry = new UriHttpRequestHandlerMapper();
 
             // Set up the HTTP service
             httpService = new HttpService(inhttpproc, reqistry);
@@ -86,6 +97,15 @@ public class AS2ServerConnection {
                 }
             }
         }
+        
+        void registerHandler(String requestUriPattern, HttpRequestHandler httpRequestHandler) {
+            reqistry.register(requestUriPattern, httpRequestHandler);
+        }
+        
+        void unregisterHandler(String requestUri) {
+            reqistry.unregister(requestUri);
+        }
+
     }
 
     static class RequestHandlerThread extends Thread {
@@ -105,7 +125,7 @@ public class AS2ServerConnection {
 
         @Override
         public void run() {
-            LOG.info("New connection thread");
+            LOG.info("Processing new AS2 request");
             final HttpContext context = new BasicHttpContext(null);
 
             try {
@@ -127,34 +147,43 @@ public class AS2ServerConnection {
                 }
             }
         }
+        
     }
     
-    private Map<Integer, RequestListenerThread> listenerThreads = new HashMap<Integer, RequestListenerThread>();
+    private RequestListenerThread listenerThread;
 
-    public AS2ServerConnection() {
-    }
-
-    public void listen(HttpRequestHandler handler, int port) throws IOException {
-        RequestListenerThread listenerThread = new RequestListenerThread(port, handler);
+    public AS2ServerConnection(String originServer, Integer serverPortNumber) throws IOException {
+        listenerThread = new RequestListenerThread(originServer, serverPortNumber);
         listenerThread.setDaemon(true);
         listenerThread.start();
-        synchronized (listenerThreads) {
-            listenerThreads.put(port, listenerThread);
+    }
+    
+    public void close() {
+        if (listenerThread != null) {
+            synchronized (listenerThread) {
+                try {
+                    listenerThread.serversocket.close();
+                } catch (IOException e) {
+                    LOG.debug(e.getMessage(), e);
+                } finally {
+                    listenerThread = null;
+                }
+            }
+        }
+    }
+
+    public void listen(String requestUri, HttpRequestHandler handler) throws IOException {
+        if (listenerThread != null) {
+            synchronized (listenerThread) {
+                listenerThread.registerHandler(requestUri, handler);
+            }
         }
     }
     
-    public void stopListnering(int port) {
-        RequestListenerThread thread = null;
-        synchronized(listenerThreads) {
-            thread = listenerThreads.remove(port);
-        }
+    public void stopListening(String requestUri) {
         
-        if (thread != null) {
-            try {
-                thread.serversocket.close();
-            } catch (IOException e) {
-                LOG.debug(e.getMessage(), e);
-            }
+        if (listenerThread != null) {
+            listenerThread.unregisterHandler(requestUri);
         }
     }
 

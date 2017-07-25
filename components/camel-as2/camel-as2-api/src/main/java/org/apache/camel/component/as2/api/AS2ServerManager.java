@@ -38,18 +38,18 @@ public class AS2ServerManager {
         this.as2ServerConnection = as2ServerConnection;
     }
     
-    public void listen(HttpRequestHandler handler, int port) {
+    public void listen(String requestUriPattern, HttpRequestHandler handler) {
         try {
-            as2ServerConnection.listen(handler, port);
+            as2ServerConnection.listen(requestUriPattern, handler);
         } catch (IOException e) {
-            LOG.error("Failed to listen on port " + port + ": " + e.getMessage(), e);
-            throw new RuntimeException("Failed to listen on port " + port + ": " + e.getMessage(), e);
+            LOG.error("Failed to listen for '" + requestUriPattern + "' requests: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to listen for '" + requestUriPattern + "' requests: " + e.getMessage(), e);
         }
                 
     }
     
-    public void stopListening(int port) {
-        as2ServerConnection.stopListnering(port);
+    public void stopListening(String requestUri) {
+        as2ServerConnection.stopListening(requestUri);
     }
     
 }

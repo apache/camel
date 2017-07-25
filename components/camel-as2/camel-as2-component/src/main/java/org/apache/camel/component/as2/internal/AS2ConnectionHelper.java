@@ -43,7 +43,8 @@ public class AS2ConnectionHelper {
      * @throws IOException - Failed to establish connection.
      */
     public static AS2ClientConnection createAS2ClientConnection(AS2Configuration configuration) throws UnknownHostException, IOException {
-        return new AS2ClientConnection(configuration.getTargetHostname(), configuration.getTargetPortNumber());
+        return new AS2ClientConnection(configuration.getAs2Version(), configuration.getUserAgent(), configuration.getClientFqdn(),
+                configuration.getTargetHostname(), configuration.getTargetPortNumber());
     }
     
     /**
@@ -51,8 +52,9 @@ public class AS2ConnectionHelper {
      * 
      * @param configuration - configuration used to configure connection.
      * @return The AS2 server connection.
+     * @throws IOException 
      */
-    public static AS2ServerConnection createAS2ServerConnection(AS2Configuration configuration) {
-        return new AS2ServerConnection();
+    public static AS2ServerConnection createAS2ServerConnection(AS2Configuration configuration) throws IOException {
+        return new AS2ServerConnection(configuration.getServer(), configuration.getServerPortNumber());
     }
 }

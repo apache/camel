@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.as2.api;
 
+import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpCoreContext;
 
 /**
@@ -98,6 +99,35 @@ public interface AS2Constants {
      */
     public static final String MESSAGE_ID_HEADER = "Message-Id";
     
+    /**
+     * Message Header Name for Target Host
+     */
+    public static final String TARGET_HOST_HEADER = HTTP.TARGET_HOST;
+    
+    /**
+     * Message Header Name for User Agent
+     */
+    public static final String USER_AGENT_HEADER = HTTP.USER_AGENT;
+    
+    /**
+     * Message Header Name for Date
+     */
+    public static final String DATE_HEADER = HTTP.DATE_HEADER;
+    
+    /**
+     * Message Header Name for Content Length
+     */
+    public static final String CONTENT_LENGTH_HEADER = HTTP.CONTENT_LEN;
+    
+    /**
+     * Message Header Name for Connection
+     */
+    public static final String CONNECTION_HEADER = HTTP.CONN_DIRECTIVE;
+    
+    /**
+     * Message Header Name for Connection
+     */
+    public static final String EXPECT_HEADER = HTTP.EXPECT_DIRECTIVE;
     
     //
     // AS2 MIME Content Types

@@ -36,6 +36,9 @@ public class AS2Configuration {
     @UriPath
     @Metadata(required = "true")
     private String methodName;
+    
+    @UriPath
+    private String as2Version = "1.1";
 
     @UriParam
     private String userAgent = "Camel AS2 Client Endpoint";
@@ -47,13 +50,13 @@ public class AS2Configuration {
     private String targetHostname;
     
     @UriParam
-    private int targetPortNumber;
+    private Integer targetPortNumber;
     
     @UriParam
     private String clientFqdn = "camel.apache.org";
     
     @UriParam
-    private int serverPortNumber;
+    private Integer serverPortNumber;
 
     /**
      * What kind of operation to perform
@@ -67,7 +70,7 @@ public class AS2Configuration {
     /**
      * What kind of operation to perform
      * 
-     * @param apiName
+     * @param apiName -
      *            the API Name to set
      */
     public void setApiName(AS2ApiName apiName) {
@@ -77,7 +80,7 @@ public class AS2Configuration {
     /**
      * What sub operation to use for the selected operation
      * 
-     * @return the methodName
+     * @return The methodName
      */
     public String getMethodName() {
         return methodName;
@@ -86,11 +89,32 @@ public class AS2Configuration {
     /**
      * What sub operation to use for the selected operation
      * 
-     * @param methodName
+     * @param methodName -
      *            the methodName to set
      */
     public void setMethodName(String methodName) {
         this.methodName = methodName;
+    }
+
+    /**
+     * The version of the AS2 protocol.
+     * 
+     * @return The version of the AS2 protocol.
+     */
+    public String getAs2Version() {
+        return as2Version;
+    }
+
+    /**
+     * The version of the AS2 protocol.
+     * 
+     * @param as2Version - the version of the AS2 protocol.
+     */
+    public void setAs2Version(String as2Version) {
+        if (!as2Version.equals("1.0") && !as2Version.equals("1.1")) {
+            throw new IllegalArgumentException(String.format("Value '%s' of configuration parameter 'as2Version' must be either '1.0' or '1.1'", as2Version));
+        }
+        this.as2Version = as2Version;
     }
 
     /**
@@ -167,7 +191,7 @@ public class AS2Configuration {
      */
     public void setTargetPortNumber(String targetPortNumber) {
         try {
-            this.targetPortNumber = Integer.parseUnsignedInt(targetPortNumber);
+            this.targetPortNumber = Integer.valueOf(targetPortNumber);
         } catch (NumberFormatException e) {
             throw new RuntimeCamelException(String.format("Invalid target port number: %s", targetPortNumber));
         }
@@ -203,7 +227,7 @@ public class AS2Configuration {
      * 
      * @return The server port number.
      */
-    public int getServerPortNumber() {
+    public Integer getServerPortNumber() {
         return serverPortNumber;
     }
 
@@ -214,7 +238,7 @@ public class AS2Configuration {
      */
     public void setServerPortNumber(String serverPortNumber) {
         try {
-            this.serverPortNumber = Integer.parseUnsignedInt(serverPortNumber);
+            this.serverPortNumber = Integer.valueOf(serverPortNumber);
         } catch (NumberFormatException e) {
             throw new RuntimeCamelException(String.format("Invalid target port number: %s", targetPortNumber));
         }

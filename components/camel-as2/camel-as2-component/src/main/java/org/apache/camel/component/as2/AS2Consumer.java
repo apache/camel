@@ -42,7 +42,7 @@ import org.apache.http.protocol.HttpRequestHandler;
 public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuration> implements HttpRequestHandler {
     
     private static final String HANDLER_PROPERTY = "handler";
-    private static final String SERVER_PORT_NUMBER_PROPERTY = "serverPortNumber";
+    private static final String REQUEST_URI_PROPERTY = "requestUri";
 
     private AS2ServerConnection as2ServerConnection;
     
@@ -88,8 +88,8 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
     
     @Override
     protected void doStop() throws Exception {
-        int portNumber = (Integer) properties.get(SERVER_PORT_NUMBER_PROPERTY);
-        apiProxy.stopListening(portNumber);
+        String requestUri = (String) properties.get(REQUEST_URI_PROPERTY);
+        apiProxy.stopListening(requestUri);
 
         super.doStop();
     }

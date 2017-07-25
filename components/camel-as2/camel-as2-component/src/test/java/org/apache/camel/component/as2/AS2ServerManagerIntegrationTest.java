@@ -30,6 +30,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AS2ServerManagerIntegrationTest.class);
     private static final String PATH_PREFIX = AS2ApiCollection.getCollection().getApiName(AS2ServerManagerApiMethod.class).getName();
 
+    private static final String REQUEST_URI = "/";
     private static final String AS2_NAME = "878051556";
     private static final String SUBJECT = "Test Case";
     
@@ -65,14 +66,15 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         sendTestMessage();
         
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2Server");
-        mockEndpoint.expectedMinimumMessageCount(2);
-        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(10, TimeUnit.SECONDS));
         mockEndpoint.assertIsSatisfied();
 
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
         assertNotNull("poll result", exchanges);
         assertFalse("poll result", exchanges.isEmpty());
         LOG.debug("poll result: " + exchanges);
+        
     }
     
 
@@ -81,14 +83,19 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for listen
-                from("as2://" + PATH_PREFIX + "/listen?port=8888").to("mock:as2Receive");
+                from("as2://" + PATH_PREFIX + "/listen?serverPortNumber=8888").to("mock:as2Receive");
             }
         };
     }
     
     private void sendTestMessage() throws UnknownHostException, IOException, InvalidAS2NameException, HttpException {
-        AS2ClientConnection clientConnection = new AS2ClientConnection("localhost", 8888);
+        AS2ClientConnection clientConnection = new AS2ClientConnection("1.1", "AS2ServerManagerIntegrationTest Client", "example.org", "localhost", 8888);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
-        clientManager.sendNoEncryptNoSign(EDI_MESSAGE, SUBJECT, AS2_NAME, AS2_NAME);
+        clientManager.sendNoEncryptNoSign(REQUEST_URI, EDI_MESSAGE, SUBJECT, AS2_NAME, AS2_NAME);
+    }
+    
+    @Override
+    protected int getShutdownTimeout() {
+        return 600000;
     }
 }

@@ -1,7 +1,5 @@
 package org.apache.camel.component.as2.api;
 
-import static org.apache.camel.component.as2.api.AS2Constants.HTTP_USER_AGENT;
-
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -29,8 +27,34 @@ public class AS2ClientConnection {
     private HttpProcessor httpProcessor;
     private HttpCoreContext httpContext;
     private DefaultBHttpClientConnection httpConnection;
+    private String as2Version;
+    private String userAgent;
+    private String clientFqdn;
     
-    public AS2ClientConnection(String targetHostName, int targetPortNumber) throws UnknownHostException, IOException {
+    public AS2ClientConnection(String as2Version, String userAgent, String clientFqdn, String targetHostName, Integer targetPortNumber) throws UnknownHostException, IOException {
+        if (as2Version == null) {
+            throw new IllegalArgumentException("Parameter 'as2Version' can not be null");
+        }
+        this.as2Version = as2Version;
+
+        if (userAgent == null) {
+            throw new IllegalArgumentException("Parameter 'userAgent' can not be null");
+        }
+        this.userAgent = userAgent;
+
+        if (clientFqdn == null) {
+            throw new IllegalArgumentException("Parameter 'clientFqdn' can not be null");
+        }
+        this.clientFqdn = clientFqdn;
+
+        if (targetHostName == null) {
+            throw new IllegalArgumentException("Parameter 'targetHostName' can not be null");
+        }
+                
+        if (targetPortNumber == null) {
+            throw new IllegalArgumentException("Parameter 'targetPortNumber' can not be null");
+        }
+                
         // Build Context
         httpContext = HttpCoreContext.create();
         HttpHost targetHost = new HttpHost(targetHostName, targetPortNumber);
@@ -39,7 +63,7 @@ public class AS2ClientConnection {
         // Build Processor
         httpProcessor = HttpProcessorBuilder.create()
                 .add(new RequestTargetHost())
-                .add(new RequestUserAgent(HTTP_USER_AGENT))
+                .add(new RequestUserAgent(this.userAgent))
                 .add(new RequestDate())
                 .add(new RequestContent())
                 .add(new RequestConnControl())
@@ -58,6 +82,18 @@ public class AS2ClientConnection {
         httpConnection = connectionFactory.createConnection(socket);
     }
     
+    public String getAs2Version() {
+        return as2Version;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public String getClientFqdn() {
+        return clientFqdn;
+    }
+
     public HttpResponse send(HttpRequest request) throws HttpException, IOException {
 
         // Execute Request

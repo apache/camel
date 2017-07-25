@@ -154,7 +154,11 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     }
     
     private void createAS2ServerConnection() {
-        as2ServerConnection = AS2ConnectionHelper.createAS2ServerConnection(configuration);
+        try {
+            as2ServerConnection = AS2ConnectionHelper.createAS2ServerConnection(configuration);
+        } catch (IOException e) {
+            throw new RuntimeCamelException("Server HTTP connection failed", e);
+        }
     }
 
 }

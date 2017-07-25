@@ -79,7 +79,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         final org.apache.camel.component.as2.api.AS2Interchange result = requestBodyAndHeaders("direct://SENDNOENCRYPTNOSIGN", null, headers);
 
         assertNotNull("sendNoEncryptNoSign result", result);
-        LOG.debug("sendNoEncryptNoSign: " + result);
+        LOG.info("sendNoEncryptNoSign: " + result.getResponse());
     }
     
     @BeforeClass
@@ -90,7 +90,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
     @AfterClass
     public static void teardownTest() throws Exception {
         if (serverConnection != null) {
-            serverConnection.stopListnering(8888);
+            serverConnection.stopListening("/");
         }
     }
 
@@ -111,13 +111,13 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         @Override
         public void handle(HttpRequest request, HttpResponse response, HttpContext context)
                 throws HttpException, IOException {
-           LOG.debug("Received test message: " + request);
+           LOG.info("Received test message: " + request);
         }
         
     }
     
     private static void receiveTestMessages() throws IOException {
-        serverConnection = new AS2ServerConnection();
-        serverConnection.listen(new RequestHandler(), 8888);
+        serverConnection = new AS2ServerConnection("AS2ClientManagerIntegrationTest Server", 8888);
+        serverConnection.listen("/", new RequestHandler());
     }
 }
