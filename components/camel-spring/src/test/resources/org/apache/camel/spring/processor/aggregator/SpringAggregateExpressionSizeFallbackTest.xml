@@ -31,10 +31,10 @@
             <aggregate strategyRef="aggregatorStrategy" completionSize="3">
                 <correlationExpression>
                     <simple>header.id</simple>
-                </correlationExpression>
-                <completionSize>
+                </correlationExpression>                
+                <completionSizeExpr>
                     <header>mySize</header>
-                </completionSize>
+                </completionSizeExpr>
                 <to uri="mock:aggregated"/>
             </aggregate>
         </route>

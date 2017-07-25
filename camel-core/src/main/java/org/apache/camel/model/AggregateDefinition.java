@@ -754,11 +754,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result.
      * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
      *
-     * @param completionSize  the completion size as an {@link org.apache.camel.Expression} which is evaluated as a {@link Integer} type
+     * @param completionSizeExpr  the completion size as an {@link org.apache.camel.Expression} which is evaluated as a {@link Integer} type
      * @return builder
      */
-    public AggregateDefinition completionSize(Expression completionSize) {
-        setCompletionSizeExpression(new ExpressionSubElementDefinition(completionSize));
+    public AggregateDefinition completionSizeExpr(Expression completionSizeExpr) {
+        setCompletionSizeExpression(new ExpressionSubElementDefinition(completionSizeExpr));
         return this;
     }
 
@@ -807,11 +807,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value.
      * It is not recommended to use very low timeout values or checker intervals.
      *
-     * @param completionTimeout  the timeout as an {@link Expression} which is evaluated as a {@link Long} type
+     * @param completionTimeoutExpr  the timeout as an {@link Expression} which is evaluated as a {@link Long} type
      * @return the builder
      */
-    public AggregateDefinition completionTimeout(Expression completionTimeout) {
-        setCompletionTimeoutExpression(new ExpressionSubElementDefinition(completionTimeout));
+    public AggregateDefinition completionTimeoutExpr(Expression completionTimeoutExpr) {
+        setCompletionTimeoutExpression(new ExpressionSubElementDefinition(completionTimeoutExpr));
         return this;
     }
 

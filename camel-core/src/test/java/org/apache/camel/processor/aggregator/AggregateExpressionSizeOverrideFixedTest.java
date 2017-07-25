@@ -51,7 +51,7 @@ public class AggregateExpressionSizeOverrideFixedTest extends ContextTestSupport
             public void configure() throws Exception {
                 from("direct:start")
                     .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .completionSize(2).completionSize(header("mySize"))
+                        .completionSize(2).completionSizeExpr(header("mySize"))
                         .to("mock:aggregated");
             }
         };

@@ -53,7 +53,7 @@ public class AggregateExpressionSizeTest extends ContextTestSupport {
                     // Aggregate them using the BodyInAggregatingStrategy strategy which
                     // and the header mySize determines the number of aggregated messages should trigger the completion
                     // and send it to mock:aggregated
-                    .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(header("mySize"))
+                    .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSizeExpr(header("mySize"))
                         .to("mock:aggregated");
                 // END SNIPPET: e1
             }

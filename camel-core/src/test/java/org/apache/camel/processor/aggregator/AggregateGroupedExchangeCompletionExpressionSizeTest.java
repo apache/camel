@@ -44,7 +44,7 @@ public class AggregateGroupedExchangeCompletionExpressionSizeTest extends Contex
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(constant(true)).completionSize(header("size"))
+                    .aggregate(constant(true)).completionSizeExpr(header("size"))
                     .groupExchanges()
                     .to("mock:result");
             }

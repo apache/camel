@@ -53,7 +53,7 @@ public class AggregateExpressionSizeOverrideFixedTimeoutTest extends ContextTest
             public void configure() throws Exception {
                 from("direct:start")
                     .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .completionSize(2).completionSize(header("mySize"))
+                        .completionSize(2).completionSizeExpr(header("mySize"))
                         .completionTimeout(1000)
                         .to("mock:aggregated");
             }
