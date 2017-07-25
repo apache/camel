@@ -21,7 +21,7 @@ curl -XGET -s http://localhost:8080/camel/routes
 +
 [source]
 ----
-curl -XGET -s http://localhost:8080/camel/routes/${id}/info
+curl -XGET -s http://localhost:8080/camel/routes/{id}/info
 ----
 
 * To stop a route

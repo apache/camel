@@ -48,6 +48,8 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
     public CamelRoutesEndpoint(CamelContext camelContext) {
         super(ENDPOINT_ID);
         this.camelContext = camelContext;
+        // is enabled by default
+        this.setEnabled(true);
     }
 
     @Override

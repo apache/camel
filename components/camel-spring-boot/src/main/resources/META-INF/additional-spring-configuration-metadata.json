@@ -10,7 +10,7 @@
       "name": "endpoints.camelroutes.enabled",
       "type": "java.lang.Boolean",
       "description": "Enable Camel Routes endpoint.",
-      "defaultValue": true
+      "defaultValue": false
     }
   ]
 }
