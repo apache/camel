@@ -57,7 +57,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-http-common</artifactId>
     </dependency>
-
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
