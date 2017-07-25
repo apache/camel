@@ -19,15 +19,9 @@ package org.apache.camel.example.springboot.geocoder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+// CHECKSTYLE:OFF
 @SpringBootApplication
 public class Application {
-
-    /*
-     * For  PMD HideUtilityClassConstructorCheck
-     */
-    private void noop() {
-
-    }
 
     /**
      * Main method to start the application.
@@ -37,3 +31,4 @@ public class Application {
     }
 
 }
+// CHECKSTYLE:ON

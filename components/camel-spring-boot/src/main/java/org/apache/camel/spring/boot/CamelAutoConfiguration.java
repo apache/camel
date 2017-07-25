@@ -46,6 +46,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ReloadStrategy;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -445,6 +446,12 @@ public class CamelAutoConfiguration {
         if (routeController != null) {
             LOG.info("Using RouteController: " + routeController);
             camelContext.setRouteController(routeController);
+        }
+
+        // rest-dsl global configuration
+        RestConfiguration restConfiguration = getSingleBeanOfType(applicationContext, RestConfiguration.class);
+        if (restConfiguration != null) {
+            camelContext.setRestConfiguration(restConfiguration);
         }
 
         // set the default thread pool profile if defined
