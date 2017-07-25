@@ -113,6 +113,7 @@
     <module>camel-core-starter</module>
     <module>camel-couchbase-starter</module>
     <module>camel-couchdb-starter</module>
+    <module>camel-crypto-cms-starter</module>
     <module>camel-crypto-starter</module>
     <module>camel-csv-starter</module>
     <module>camel-cxf-starter</module>
