@@ -522,7 +522,7 @@ public class MockEndpointTest extends ContextTestSupport {
         }
     }
     
-    public void testPropertyNotReceived() throws Exception {
+    public void testPropertyExpectedNull() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedPropertyReceived("foo", null);
@@ -534,8 +534,27 @@ public class MockEndpointTest extends ContextTestSupport {
         });
 
         mock.assertIsNotSatisfied();
-    }
 
+        resetMocks();
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setProperty("foo", null);
+            }
+        });
+
+        mock.assertIsSatisfied();
+
+        resetMocks();
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                // no foo property
+            }
+        });
+
+        mock.assertIsSatisfied();
+    }
 
     public void testPropertyInvalidValue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
