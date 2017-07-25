@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -122,7 +123,7 @@ public class RestSwaggerServlet extends HttpServlet {
 
         String contextId = null;
         String route = request.getPathInfo();
-        String accept = request.getHeader(Exchange.ACCEPT_CONTENT_TYPE);
+        String accept = request.getHeader("Accept");
 
         // whether to use json or yaml
         boolean json = false;
@@ -135,8 +136,8 @@ public class RestSwaggerServlet extends HttpServlet {
             route = route.substring(0, route.length() - 13);
         }
         if (accept != null && !json && !yaml) {
-            json = accept.contains("json");
-            yaml = accept.contains("yaml");
+            json = accept.toLowerCase(Locale.US).contains("json");
+            yaml = accept.toLowerCase(Locale.US).contains("yaml");
         }
         if (!json && !yaml) {
             // json is default
