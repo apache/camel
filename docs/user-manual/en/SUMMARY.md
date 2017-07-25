@@ -174,6 +174,7 @@
 	* [Couchbase](couchbase-component.adoc)
 	* [CouchDB](couchdb-component.adoc)
 	* [Crypto (JCE)](crypto-component.adoc)
+	* [Crypto CMS](crypto-cms-component.adoc)
 	* [CXF](cxf-component.adoc)
 	* [CXF-RS](cxfrs-component.adoc)
 	* [DigitalOcean](digitalocean-component.adoc)
