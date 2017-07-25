@@ -49,7 +49,7 @@ public final class MessagePublisherClient {
         camelContext.addRoutes(new RouteBuilder() {
             public void configure() {
                 PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
-                pc.setLocation("classpath:application.properties");
+                pc.setLocation("classpath:example.properties");
 
                 // setup google pubsub component
                 GooglePubsubComponent googlePubsub = PubsubUtil.createComponent();

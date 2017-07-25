@@ -43,7 +43,7 @@ public interface PubsubUtil {
 
     static Properties loadProperties() {
         Properties properties = new Properties();
-        InputStream fileIn = PubsubUtil.class.getClassLoader().getResourceAsStream("application.properties");
+        InputStream fileIn = PubsubUtil.class.getClassLoader().getResourceAsStream("example.properties");
         try {
             properties.load(fileIn);
 
