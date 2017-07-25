@@ -68,6 +68,7 @@
         <include>org.apache.camel:camel-couchdb</include>
         <include>org.apache.camel:camel-couchbase</include>
         <include>org.apache.camel:camel-crypto</include>
+        <include>org.apache.camel:camel-crypto-cms</include>
         <include>org.apache.camel:camel-csv</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-cxf-transport</include>
@@ -358,6 +359,7 @@
         <include>org.apache.camel:camel-couchdb-starter</include>
         <include>org.apache.camel:camel-couchbase-starter</include>
         <include>org.apache.camel:camel-crypto-starter</include>
+        <include>org.apache.camel:camel-crypto-cms-starter</include>
         <include>org.apache.camel:camel-csv-starter</include>
         <include>org.apache.camel:camel-cxf-starter</include>
         <include>org.apache.camel:camel-cxf-transport-starter</include>

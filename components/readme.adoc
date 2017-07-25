@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 275 in 189 JAR artifacts (17 deprecated)
+Number of Components: 276 in 190 JAR artifacts (17 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -172,6 +172,9 @@ Number of Components: 275 in 189 JAR artifacts (17 deprecated)
 
 | link:camel-crypto/src/main/docs/crypto-component.adoc[Crypto (JCE)] (camel-crypto) +
 `crypto:cryptoOperation:name` | 2.3 | The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
+
+| link:camel-crypto-cms/src/main/docs/crypto-cms-component.adoc[Crypto CMS] (camel-crypto-cms) +
+`crypto-cms:cryptoOperation:name` | 2.20 | Camel Cryptographic Message Syntax Support
 
 | link:camel-cxf/src/main/docs/cxf-component.adoc[CXF] (camel-cxf) +
 `cxf:beanId:address` | 1.0 | The cxf component is used for SOAP WebServices using Apache CXF.
