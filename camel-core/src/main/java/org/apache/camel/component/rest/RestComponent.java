@@ -64,7 +64,7 @@ public class RestComponent extends DefaultComponent implements VerifiableCompone
 
         // if no explicit host was given, then fallback and use default configured host
         String h = getAndRemoveOrResolveReferenceParameter(parameters, "host", String.class, host);
-        if (h == null && config != null) {
+        if (h == null) {
             h = config.getHost();
             int port = config.getPort();
             // is there a custom port number
@@ -118,7 +118,7 @@ public class RestComponent extends DefaultComponent implements VerifiableCompone
         answer.setUriTemplate(uriTemplate);
 
         // if no explicit component name was given, then fallback and use default configured component name
-        if (answer.getComponentName() == null && config != null) {
+        if (answer.getComponentName() == null) {
             String name = config.getProducerComponent();
             if (name == null) {
                 // fallback and use the consumer name
@@ -127,7 +127,7 @@ public class RestComponent extends DefaultComponent implements VerifiableCompone
             answer.setComponentName(name);
         }
         // if no explicit producer api was given, then fallback and use default configured
-        if (answer.getApiDoc() == null && config != null) {
+        if (answer.getApiDoc() == null) {
             answer.setApiDoc(config.getProducerApiDoc());
         }
 
@@ -188,6 +188,9 @@ public class RestComponent extends DefaultComponent implements VerifiableCompone
     }
 
     private RestConfiguration mergeConfigurations(RestConfiguration conf, RestConfiguration from) throws Exception {
+        if (conf == from) {
+            return conf;
+        }
         if (from != null) {
             Map<String, Object> map = IntrospectionSupport.getNonNullProperties(from);
 

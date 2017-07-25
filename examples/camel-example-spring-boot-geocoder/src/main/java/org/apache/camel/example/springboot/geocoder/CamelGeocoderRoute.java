@@ -25,31 +25,23 @@ import static org.apache.camel.model.rest.RestParamType.query;
 
 /**
  * A simple Camel REST DSL route example using the Geocoder component and documented with Swagger
- * 
  */
 @Component
-public class CamelRouter extends RouteBuilder {
+public class CamelGeocoderRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        restConfiguration()
-            .component("servlet")
-            .bindingMode(RestBindingMode.json)
-            .dataFormatProperty("prettyPrint", "true")
-            .apiContextPath("/api-doc")
-                .apiProperty("api.title", "Geocoder API").apiProperty("api.version", "1.0.0")
-                .apiProperty("cors", "true");
-
+        // rest-dsl is also configured in the application.properties file
 
         rest("/geocoder").description("Geocoder REST service")
-                .consumes("application/json")
-                .produces("application/json")
+            .consumes("application/json")
+            .produces("application/json")
 
-                .get().description("Geocoder address lookup").outType(GeocodeResponse.class)
+            .get().description("Geocoder address lookup").outType(GeocodeResponse.class)
                 .param().name("address").type(query).description("The address to lookup").dataType("string").endParam()
                 .responseMessage().code(200).message("Geocoder successful").endResponseMessage()
+                // call the geocoder to lookup details from the provided address
                 .toD("geocoder:address:${header.address}");
-
     }
 
 }
