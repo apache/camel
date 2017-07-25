@@ -73,6 +73,7 @@ public interface Exchange {
 
     String AUTHENTICATION                   = "CamelAuthentication";
     String AUTHENTICATION_FAILURE_POLICY_ID = "CamelAuthenticationFailurePolicyId";
+    @Deprecated
     String ACCEPT_CONTENT_TYPE              = "CamelAcceptContentType";
     String AGGREGATED_SIZE                  = "CamelAggregatedSize";
     String AGGREGATED_TIMEOUT               = "CamelAggregatedTimeout";
