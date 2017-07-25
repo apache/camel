@@ -94,6 +94,24 @@ public final class UnitOfWorkHelper {
             copy.sort(OrderedComparator.get());
 
             // invoke synchronization callbacks
+            // must remember some properties which we cannot use during onCompletion processing
+            // as otherwise we may cause issues
+            // but keep the caused exception stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
+            Object stop = exchange.removeProperty(Exchange.ROUTE_STOP);
+            Object failureHandled = exchange.removeProperty(Exchange.FAILURE_HANDLED);
+            Object errorhandlerHandled = exchange.removeProperty(Exchange.ERRORHANDLER_HANDLED);
+            Object rollbackOnly = exchange.removeProperty(Exchange.ROLLBACK_ONLY);
+            Object rollbackOnlyLast = exchange.removeProperty(Exchange.ROLLBACK_ONLY_LAST);
+            final boolean originalFault = exchange.hasOut() ? exchange.getOut().isFault() : exchange.getIn().isFault();
+            if (exchange.hasOut()) {
+                exchange.getOut().setFault(false);
+            } else {
+                exchange.getIn().setFault(false);
+            }
+
+            Exception cause = exchange.getException();
+            exchange.setException(null);
+
             for (Synchronization synchronization : copy) {
                 try {
                     if (failed) {
@@ -106,7 +124,44 @@ public final class UnitOfWorkHelper {
                 } catch (Throwable e) {
                     // must catch exceptions to ensure all synchronizations have a chance to run
                     log.warn("Exception occurred during onCompletion. This exception will be ignored.", e);
+                } finally {
+                    // remove properties that may cause issues. This will ensure all synchronizations complete
+                    exchange.removeProperty(Exchange.ROUTE_STOP);
+                    exchange.removeProperty(Exchange.FAILURE_HANDLED);
+                    exchange.removeProperty(Exchange.ERRORHANDLER_HANDLED);
+                    exchange.removeProperty(Exchange.ROLLBACK_ONLY);
+                    exchange.removeProperty(Exchange.ROLLBACK_ONLY_LAST);
+                    exchange.setException(null);
+                    if (exchange.hasOut()) {
+                        exchange.getOut().setFault(false);
+                    } else {
+                        exchange.getIn().setFault(false);
+                    }
                 }
+            }
+            
+            if (stop != null) {
+                exchange.setProperty(Exchange.ROUTE_STOP, stop);
+            }
+            if (failureHandled != null) {
+                exchange.setProperty(Exchange.FAILURE_HANDLED, failureHandled);
+            }
+            if (errorhandlerHandled != null) {
+                exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, errorhandlerHandled);
+            }
+            if (rollbackOnly != null) {
+                exchange.setProperty(Exchange.ROLLBACK_ONLY, rollbackOnly);
+            }
+            if (rollbackOnlyLast != null) {
+                exchange.setProperty(Exchange.ROLLBACK_ONLY_LAST, rollbackOnlyLast);
+            }
+            if (cause != null) {
+                exchange.setException(cause);
+            }
+            if (exchange.hasOut()) {
+                exchange.getOut().setFault(originalFault);
+            } else {
+                exchange.getIn().setFault(originalFault);
             }
         }
     }
