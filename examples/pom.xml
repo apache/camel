@@ -58,6 +58,7 @@
     <module>camel-example-console</module>
     <module>camel-example-etl</module>
     <module>camel-example-ftp</module>
+    <module>camel-example-google-pubsub</module>
     <module>camel-example-guice-jms</module>
     <module>camel-example-groovy</module>
     <module>camel-example-hazelcast-kubernetes</module>

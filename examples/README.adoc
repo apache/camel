@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 93 (8 deprecated)
+Number of Examples: 94 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |=======================================================================
@@ -128,6 +128,8 @@ Number of Examples: 93 (8 deprecated)
 | link:camel-example-zipkin/README.md[Zipkin] (camel-example-zipkin) | Management and Monitoring | An example showing how to trace incoming and outgoing messages from Camel with Zipkin
 
 | link:camel-example-activemq-tomcat/README.md[ActiveMQ Tomcat] (camel-example-activemq-tomcat) | Messaging | An example using ActiveMQ Broker and Camel with Apache Tomcat
+
+| link:camel-example-google-pubsub/README.adoc[Google Pubsub] (camel-example-google-pubsub) | Messaging | An example for Google Pubsub
 
 | link:camel-example-guice-jms/README.md[Guice JMS] (camel-example-guice-jms) | Messaging | *deprecated* An example showing how to work with Camel, Guice and JMS
 
