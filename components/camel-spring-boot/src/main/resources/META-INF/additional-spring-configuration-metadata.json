@@ -3,7 +3,8 @@
     {
       "name": "endpoints.camelroutes.path",
       "type": "java.lang.String",
-      "description": "Endpoint URL path."
+      "description": "Endpoint URL path.",
+      "defaultValue": "/camel/routes"
     },
     {
       "name": "endpoints.camelroutes.enabled",
