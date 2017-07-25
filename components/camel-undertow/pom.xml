@@ -46,6 +46,11 @@
       <artifactId>camel-http-common</artifactId>
     </dependency>
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>${javax.servlet-api-version}</version>
+    </dependency>
+    <dependency>
       <groupId>io.undertow</groupId>
       <artifactId>undertow-core</artifactId>
       <version>${undertow-version}</version>

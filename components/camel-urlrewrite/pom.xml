@@ -54,14 +54,15 @@
       <artifactId>camel-http-common</artifactId>
     </dependency>
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>${javax.servlet-api-version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.tuckey</groupId>
       <artifactId>urlrewritefilter</artifactId>
       <version>${urlrewritefilter-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <!-- test dependencies -->

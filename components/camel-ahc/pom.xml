@@ -48,6 +48,11 @@
       <artifactId>camel-http-common</artifactId>
     </dependency>
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>${javax.servlet-api-version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.asynchttpclient</groupId>
       <artifactId>async-http-client</artifactId>
       <version>${ahc-version}</version>
