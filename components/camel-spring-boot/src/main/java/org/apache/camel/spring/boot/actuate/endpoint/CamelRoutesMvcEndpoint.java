@@ -40,13 +40,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ConfigurationProperties(prefix = "endpoints." + CamelRoutesEndpoint.ENDPOINT_ID)
 public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
 
-    private static final ResponseEntity<?> NOT_FOUND = ResponseEntity.notFound().build();
+    /**
+     * Default path
+     */
+    public static final String PATH = "/camel/routes";
 
     private final CamelRoutesEndpoint delegate;
 
     public CamelRoutesMvcEndpoint(CamelRoutesEndpoint delegate) {
         super(delegate);
 
+        this.setPath(PATH);
         this.delegate = delegate;
     }
 
