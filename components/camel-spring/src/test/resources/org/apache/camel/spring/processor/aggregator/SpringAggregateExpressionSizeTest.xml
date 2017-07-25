@@ -32,9 +32,9 @@
                 <correlationExpression>
                     <simple>header.id</simple>
                 </correlationExpression>
-                <completionSize>
+                <completionSizeExpr>
                     <header>mySize</header>
-                </completionSize>
+                </completionSizeExpr>
                 <to uri="mock:aggregated"/>
             </aggregate>
         </route>

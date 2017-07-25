@@ -31,9 +31,9 @@
                 <correlationExpression>
                     <constant>true</constant>
                 </correlationExpression>
-                <completionSize>
+                <completionSizeExpr>
                     <header>size</header>
-                </completionSize>
+                </completionSizeExpr>
                 <to uri="mock:result"/>
             </aggregate>
         </route>

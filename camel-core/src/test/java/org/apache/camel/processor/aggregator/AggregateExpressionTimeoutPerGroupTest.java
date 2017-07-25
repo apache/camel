@@ -67,7 +67,7 @@ public class AggregateExpressionTimeoutPerGroupTest extends ContextTestSupport {
                     // and the timeout header contains the timeout in millis of inactivity them timeout and complete the aggregation
                     // and send it to mock:aggregated
                     .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .completionTimeout(header("timeout")).completionTimeout(1000).completionTimeoutCheckerInterval(10)
+                        .completionTimeoutExpr(header("timeout")).completionTimeout(1000).completionTimeoutCheckerInterval(10)
                         .to("mock:aggregated");
                 // END SNIPPET: e1
             }
