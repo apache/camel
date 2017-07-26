@@ -904,7 +904,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      * Logging level used when a read lock could not be acquired.
      * By default a WARN is logged.
      * You can change this level, for example to OFF to not have any logging.
-     * This option is only applicable for readLock of types: changed, fileLock, rename.
+     * This option is only applicable for readLock of types: changed, fileLock, idempotent, idempotent-changed, idempotent-rename, rename.
      */
     public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
         this.readLockLoggingLevel = readLockLoggingLevel;
