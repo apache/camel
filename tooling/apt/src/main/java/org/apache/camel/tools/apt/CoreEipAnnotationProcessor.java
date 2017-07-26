@@ -576,7 +576,7 @@ public class CoreEipAnnotationProcessor {
                 deprecationNote = metadata.deprecationNode();
             }
 
-            EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, false,null, true, oneOfTypes, false);
+            EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, false, null, true, oneOfTypes, false);
             eipOptions.add(ep);
         }
     }
@@ -814,7 +814,7 @@ public class CoreEipAnnotationProcessor {
                 deprecationNote = metadata.deprecationNode();
             }
 
-            EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, true, "", "", deprecated, deprecationNote,false, null, true, oneOfTypes, false);
+            EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, true, "", "", deprecated, deprecationNote, false, null, true, oneOfTypes, false);
             eipOptions.add(ep);
         }
     }
