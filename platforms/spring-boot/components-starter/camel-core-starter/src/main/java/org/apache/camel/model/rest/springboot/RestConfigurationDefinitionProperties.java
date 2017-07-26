@@ -16,11 +16,10 @@
  */
 package org.apache.camel.model.rest.springboot;
 
-import java.util.List;
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestHostNameResolver;
-import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -146,17 +145,17 @@ public class RestConfigurationDefinitionProperties {
      * Allows to configure as many additional properties for the rest component
      * in use.
      */
-    private List<RestPropertyDefinition> componentProperty;
+    private Map<String, Object> componentProperty;
     /**
      * Allows to configure as many additional properties for the rest endpoint
      * in use.
      */
-    private List<RestPropertyDefinition> endpointProperty;
+    private Map<String, Object> endpointProperty;
     /**
      * Allows to configure as many additional properties for the rest consumer
      * in use.
      */
-    private List<RestPropertyDefinition> consumerProperty;
+    private Map<String, Object> consumerProperty;
     /**
      * Allows to configure as many additional properties for the data formats in
      * use. For example set property prettyPrint to true to have json outputted
@@ -166,17 +165,17 @@ public class RestConfigurationDefinitionProperties {
      * value xml.out.mustBeJAXBElement is only for the XML data format for the
      * outgoing. A key without a prefix is a common key for all situations.
      */
-    private List<RestPropertyDefinition> dataFormatProperty;
+    private Map<String, Object> dataFormatProperty;
     /**
      * Allows to configure as many additional properties for the api
      * documentation (swagger). For example set property api.title to my cool
      * stuff
      */
-    private List<RestPropertyDefinition> apiProperty;
+    private Map<String, Object> apiProperty;
     /**
      * Allows to configure custom CORS headers.
      */
-    private List<RestPropertyDefinition> corsHeaders;
+    private Map<String, Object> corsHeaders;
 
     public String getComponent() {
         return component;
@@ -322,55 +321,51 @@ public class RestConfigurationDefinitionProperties {
         this.xmlDataFormat = xmlDataFormat;
     }
 
-    public List<RestPropertyDefinition> getComponentProperty() {
+    public Map<String, Object> getComponentProperty() {
         return componentProperty;
     }
 
-    public void setComponentProperty(
-            List<RestPropertyDefinition> componentProperty) {
+    public void setComponentProperty(Map<String, Object> componentProperty) {
         this.componentProperty = componentProperty;
     }
 
-    public List<RestPropertyDefinition> getEndpointProperty() {
+    public Map<String, Object> getEndpointProperty() {
         return endpointProperty;
     }
 
-    public void setEndpointProperty(
-            List<RestPropertyDefinition> endpointProperty) {
+    public void setEndpointProperty(Map<String, Object> endpointProperty) {
         this.endpointProperty = endpointProperty;
     }
 
-    public List<RestPropertyDefinition> getConsumerProperty() {
+    public Map<String, Object> getConsumerProperty() {
         return consumerProperty;
     }
 
-    public void setConsumerProperty(
-            List<RestPropertyDefinition> consumerProperty) {
+    public void setConsumerProperty(Map<String, Object> consumerProperty) {
         this.consumerProperty = consumerProperty;
     }
 
-    public List<RestPropertyDefinition> getDataFormatProperty() {
+    public Map<String, Object> getDataFormatProperty() {
         return dataFormatProperty;
     }
 
-    public void setDataFormatProperty(
-            List<RestPropertyDefinition> dataFormatProperty) {
+    public void setDataFormatProperty(Map<String, Object> dataFormatProperty) {
         this.dataFormatProperty = dataFormatProperty;
     }
 
-    public List<RestPropertyDefinition> getApiProperty() {
+    public Map<String, Object> getApiProperty() {
         return apiProperty;
     }
 
-    public void setApiProperty(List<RestPropertyDefinition> apiProperty) {
+    public void setApiProperty(Map<String, Object> apiProperty) {
         this.apiProperty = apiProperty;
     }
 
-    public List<RestPropertyDefinition> getCorsHeaders() {
+    public Map<String, Object> getCorsHeaders() {
         return corsHeaders;
     }
 
-    public void setCorsHeaders(List<RestPropertyDefinition> corsHeaders) {
+    public void setCorsHeaders(Map<String, Object> corsHeaders) {
         this.corsHeaders = corsHeaders;
     }
 }
