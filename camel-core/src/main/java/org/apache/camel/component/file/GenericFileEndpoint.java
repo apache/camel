@@ -58,7 +58,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     protected static final String DEFAULT_STRATEGYFACTORY_CLASS = "org.apache.camel.component.file.strategy.GenericFileProcessStrategyFactory";
     protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
-    
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     // common options
@@ -166,8 +166,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected boolean readLockMarkerFile = true;
     @UriParam(label = "consumer,lock", defaultValue = "true")
     protected boolean readLockDeleteOrphanLockFiles = true;
-    @UriParam(label = "consumer,lock", defaultValue = "WARN")
-    protected LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
+    @UriParam(label = "consumer,lock", defaultValue = "DEBUG")
+    protected LoggingLevel readLockLoggingLevel = LoggingLevel.DEBUG;
     @UriParam(label = "consumer,lock", defaultValue = "1")
     protected long readLockMinLength = 1;
     @UriParam(label = "consumer,lock", defaultValue = "0")
@@ -594,7 +594,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      * Either you can specify a fixed name. Or you can use dynamic placeholders.
      * The done file will always be written in the same folder as the original file.
      * <p/>
-     * Consumer: If provided, Camel will only consume files if a done file exists. 
+     * Consumer: If provided, Camel will only consume files if a done file exists.
      * This option configures what file name to use. Either you can specify a fixed name.
      * Or you can use dynamic placeholders.The done file is always expected in the same folder
      * as the original file.
