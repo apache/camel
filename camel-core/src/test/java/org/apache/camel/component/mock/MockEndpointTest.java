@@ -125,6 +125,49 @@ public class MockEndpointTest extends ContextTestSupport {
         }
     }
 
+    public void testExpectsPropertiesInAnyOrder() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedPropertyValuesReceivedInAnyOrder("foo", 123, 456);
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setProperty("foo", 456);
+            }
+        });
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setProperty("foo", 123);
+            }
+        });
+
+        resultEndpoint.assertIsSatisfied();
+    }
+
+    public void testExpectsPropertiesInAnyOrderFail() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedPropertyValuesReceivedInAnyOrder("foo", 123, 456);
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setProperty("foo", 123);
+            }
+        });
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setProperty("foo", 789);
+            }
+        });
+
+        try {
+            resultEndpoint.assertIsNotSatisfied();
+            fail("Should fail");
+        } catch (AssertionError e) {
+            assertEquals("mock://result Expected 2 properties with key[bar], received 1 properties. Expected property values: [456]", e.getMessage());
+        }
+    }
+
     public void testNoDuplicateMessagesPass() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
         resultEndpoint.expectsNoDuplicates(header("counter"));
