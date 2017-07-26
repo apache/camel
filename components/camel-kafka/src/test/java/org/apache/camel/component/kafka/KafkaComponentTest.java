@@ -149,6 +149,7 @@ public class KafkaComponentTest {
         props.put(ProducerConfig.RETRY_BACKOFF_MS_CONFIG, "100");
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
+        props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "false");
         props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "PLAINTEXT");
         props.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, "TLSv1.2, TLSv1.1, TLSv1");
         props.put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, "JKS");

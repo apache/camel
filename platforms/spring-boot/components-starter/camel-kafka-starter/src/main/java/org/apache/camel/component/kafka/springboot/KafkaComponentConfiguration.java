@@ -672,6 +672,15 @@ public class KafkaComponentConfiguration
          * class cast exception in runtime
          */
         private String interceptorClasses;
+        /**
+         * If set to 'true' the producer will ensure that exactly one copy of
+         * each message is written in the stream. If 'false', producer retries
+         * may write duplicates of the retried message in the stream. If set to
+         * true this option will require max.in.flight.requests.per.connection
+         * to be set to 1 and retries cannot be zero and additionally acks must
+         * be set to 'all'.
+         */
+        private Boolean enableIdempotence = false;
 
         public String getGroupId() {
             return groupId;
@@ -1324,6 +1333,14 @@ public class KafkaComponentConfiguration
 
         public void setInterceptorClasses(String interceptorClasses) {
             this.interceptorClasses = interceptorClasses;
+        }
+
+        public Boolean getEnableIdempotence() {
+            return enableIdempotence;
+        }
+
+        public void setEnableIdempotence(Boolean enableIdempotence) {
+            this.enableIdempotence = enableIdempotence;
         }
     }
 }
