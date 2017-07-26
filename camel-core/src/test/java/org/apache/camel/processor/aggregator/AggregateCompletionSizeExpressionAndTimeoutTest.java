@@ -40,7 +40,7 @@ public class AggregateCompletionSizeExpressionAndTimeoutTest extends ContextTest
                 from("direct:start")
                     .split(body().tokenize(","))
                         .aggregate(constant(true), new BodyInAggregatingStrategy())
-                            .completionSize(constant(2)).completionTimeout(1000)
+                            .completionSizeExpr(constant(2)).completionTimeout(1000)
                             .to("log:result", "mock:result");
             }
         };

@@ -49,7 +49,7 @@ public class AggregateExpressionSizeFallbackTest extends ContextTestSupport {
                 from("direct:start")
                     .aggregate(header("id"), new BodyInAggregatingStrategy())
                         // if no mySize header it will fallback to the 3 in size
-                        .completionSize(header("mySize")).completionSize(3)
+                        .completionSizeExpr(header("mySize")).completionSize(3)
                         .to("mock:aggregated");
             }
         };

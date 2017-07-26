@@ -65,7 +65,7 @@ public class AggregateGroupedExchangeSizePredicateTest extends ContextTestSuppor
             public void configure() throws Exception {
                 from("direct:start")
                     // must use eagerCheckCompletion so we can check the groupSize header on the incoming exchange 
-                    .aggregate(new GroupedExchangeAggregationStrategy()).constant(true).eagerCheckCompletion().completionSize(header("groupSize"))
+                    .aggregate(new GroupedExchangeAggregationStrategy()).constant(true).eagerCheckCompletion().completionSizeExpr(header("groupSize"))
                         .to("mock:result")
                     .end();
             }

@@ -49,7 +49,7 @@ public class AggregateExpressionTimeoutFallbackTest extends ContextTestSupport {
                 from("direct:start")
                     .aggregate(header("id"), new BodyInAggregatingStrategy())
                         // if no timeout header it will fallback to the 2000 seconds
-                        .completionTimeout(header("timeout")).completionTimeout(2000)
+                        .completionTimeoutExpr(header("timeout")).completionTimeout(2000)
                         .to("mock:aggregated");
             }
         };

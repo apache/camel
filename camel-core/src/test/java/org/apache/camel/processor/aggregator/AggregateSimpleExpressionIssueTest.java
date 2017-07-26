@@ -96,7 +96,7 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
                     .log("Picked up ${file:name}")
                     .split().tokenize("\n").streaming()
                         .aggregate(constant(true), aggStrategy)
-                        .completionSize(simple("1000")).completionTimeout(simple("500"))
+                        .completionSizeExpr(simple("1000")).completionTimeoutExpr(simple("500"))
                             .bean(myBean)
                         .end()
                     .end();
