@@ -39,6 +39,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +56,7 @@ public class ElasticsearchProducer extends DefaultProducer {
     public ElasticsearchProducer(ElasticsearchEndpoint endpoint, ElasticsearchConfiguration configuration) {
         super(endpoint);
         this.configuration = configuration;
+        this.client = endpoint.getClient();
     }
 
     private ElasticsearchOperation resolveOperation(Exchange exchange) {
@@ -218,7 +220,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             LOG.info("Connecting to the ElasticSearch cluster: " + configuration.getClusterName());
             
             if (configuration.getIp() != null) {
-                client = new PreBuiltTransportClient(getSettings())
+                client = new PreBuiltXPackTransportClient(getSettings())
                     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(configuration.getIp()), configuration.getPort()));
             } else if (configuration.getTransportAddressesList() != null
                     && !configuration.getTransportAddressesList().isEmpty()) {
@@ -234,11 +236,20 @@ public class ElasticsearchProducer extends DefaultProducer {
     }
 
     private Settings getSettings() {
-        return Settings.builder()
-                .put("cluster.name", configuration.getClusterName())
-                .put("client.transport.ignore_cluster_name", false)
-                .put("client.transport.sniff", configuration.getClientTransportSniff())
-                .build();
+        final Settings.Builder settings = Settings.builder()
+            .put("cluster.name", configuration.getClusterName())
+            .put("client.transport.ignore_cluster_name", false)
+            .put("client.transport.sniff", configuration.getClientTransportSniff())
+            .put("transport.ping_schedule", configuration.getPingSchedule())
+            .put("client.transport.ping_timeout", configuration.getPingTimeout())
+            .put("client.transport.sniff", configuration.getClientTransportSniff())
+            .put("request.headers.X-Found-Cluster", configuration.getClusterName());//according to the documentation this should be the same as cluster name
+
+        if (configuration.getUser() != null && configuration.getPassword() != null) {
+            settings.put("xpack.security.user", configuration.getUser() +":"+ configuration.getPassword())
+            .put("xpack.security.transport.ssl.enabled", configuration.getEnabledSSL());
+        }
+        return settings.build();
     }
 
     @Override
