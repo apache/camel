@@ -514,9 +514,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * You can set multiple expectations for different header names.
      * If you set a value of <tt>null</tt> that means we accept either the header is absent, or its value is <tt>null</tt>
      * <p/>
-     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages, then
-     * there must be 3 values.
-     * <p/>
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedHeaderReceived(final String name, final Object value) {
@@ -636,6 +633,56 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             }
         });
     }
+
+    /**
+     * Adds an expectation that the given property values are received by this
+     * endpoint in any order.
+     * <p/>
+     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages, then
+     * there must be 3 values.
+     * <p/>
+     * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
+     */
+    public void expectedPropertyValuesReceivedInAnyOrder(final String name, final List<?> values) {
+        expectedMessageCount(values.size());
+
+        expects(new Runnable() {
+            public void run() {
+                // these are the expected values to find
+                final Set<Object> actualPropertyValues = new CopyOnWriteArraySet<Object>(values);
+
+                for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                    Exchange exchange = getReceivedExchange(i);
+
+                    Object actualValue = exchange.getProperty(name);
+                    for (Object expectedValue : actualPropertyValues) {
+                        actualValue = extractActualValue(exchange, actualValue, expectedValue);
+                        // remove any found values
+                        actualPropertyValues.remove(actualValue);
+                    }
+                }
+
+                // should be empty, as we should find all the values
+                assertTrue("Expected " + values.size() + " properties with key[" + name + "], received " + (values.size() - actualPropertyValues.size())
+                        + " properties. Expected property values: " + actualPropertyValues, actualPropertyValues.isEmpty());
+            }
+        });
+    }
+
+    /**
+     * Adds an expectation that the given property values are received by this
+     * endpoint in any order
+     * <p/>
+     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages, then
+     * there must be 3 values.
+     * <p/>
+     * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
+     */
+    public void expectedPropertyValuesReceivedInAnyOrder(String name, Object... values) {
+        List<Object> valueList = new ArrayList<Object>();
+        valueList.addAll(Arrays.asList(values));
+        expectedPropertyValuesReceivedInAnyOrder(name, valueList);
+    }    
 
     /**
      * Adds an expectation that the given body values are received by this
