@@ -209,7 +209,7 @@ public class KafkaConfiguration implements Cloneable {
     //enable.idempotence
     //reconnect.backoff.ms
     @UriParam(label = "producer", defaultValue = "false")
-    private boolean enableIdempotence = false;
+    private boolean enableIdempotence;
 
     // SSL
     @UriParam(label = "common,security")
