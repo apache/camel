@@ -35,6 +35,9 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
  */
 public class ElasticsearchComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
+    private TransportClient client;
+
     public ElasticsearchComponent() {
         super(ElasticsearchEndpoint.class);
     }
@@ -50,7 +53,7 @@ public class ElasticsearchComponent extends UriEndpointComponent {
         
         config.setTransportAddressesList(parseTransportAddresses(config.getTransportAddresses(), config));
         
-        Endpoint endpoint = new ElasticsearchEndpoint(uri, this, config);
+        Endpoint endpoint = new ElasticsearchEndpoint(uri, this, config, client);
         return endpoint;
     }
     
@@ -72,5 +75,17 @@ public class ElasticsearchComponent extends UriEndpointComponent {
             addressesTrAd.add(new InetSocketTransportAddress(InetAddress.getByName(hostname), port));
         }
         return addressesTrAd;
+    }
+
+    public TransportClient getClient() {
+        return client;
+    }
+
+    /**
+     * To use an existing configured Elasticsearch client, instead of creating a client per endpoint.
+     * This allow to customize the client with specific settings.
+     */
+    public void setClient(TransportClient client) {
+        this.client = client;
     }
 }

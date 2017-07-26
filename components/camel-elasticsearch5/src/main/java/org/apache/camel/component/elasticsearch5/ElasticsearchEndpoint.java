@@ -24,6 +24,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.elasticsearch.client.transport.TransportClient;
 
 /**
  * The elasticsearch component is used for interfacing with ElasticSearch server using 5.x API.
@@ -33,12 +34,14 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchEndpoint.class);
 
+    private TransportClient client;
     @UriParam
     protected final ElasticsearchConfiguration configuration;
 
-    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config) throws Exception {
+    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config, TransportClient client) throws Exception {
         super(uri, component);
         this.configuration = config;
+        this.client = client;
     }
 
     public Producer createProducer() throws Exception {
@@ -51,5 +54,9 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     
     public boolean isSingleton() {
         return true;
+    }
+
+    public TransportClient getClient() {
+        return client;
     }
 }

@@ -64,7 +64,7 @@ public class ElasticsearchClusterBaseTest extends CamelTestSupport {
                  .baseTransportPort(ES_BASE_TRANSPORT_PORT)
                  .baseHttpPort(ES_BASE_HTTP_PORT)
                  .basePath("target/testcluster/")
-                 .useLogger());
+                 .disableESLogger());
 
         // wait for green status
         runner.ensureGreen();
