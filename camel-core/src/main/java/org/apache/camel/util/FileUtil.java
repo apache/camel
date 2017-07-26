@@ -17,10 +17,9 @@
 package org.apache.camel.util;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -532,24 +531,7 @@ public final class FileUtil {
      * @throws IOException If an I/O error occurs during copy operation
      */
     public static void copyFile(File from, File to) throws IOException {
-        FileChannel in = null;
-        FileChannel out = null;
-        try {
-            in = new FileInputStream(from).getChannel();
-            out = new FileOutputStream(to).getChannel();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Using FileChannel to copy from: " + in + " to: " + out);
-            }
-
-            long size = in.size();
-            long position = 0;
-            while (position < size) {
-                position += in.transferTo(position, BUFFER_SIZE, out);
-            }
-        } finally {
-            IOHelper.close(in, from.getName(), LOG);
-            IOHelper.close(out, to.getName(), LOG);
-        }
+        Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
     /**

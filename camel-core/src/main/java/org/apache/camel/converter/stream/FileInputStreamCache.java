@@ -19,15 +19,12 @@ package org.apache.camel.converter.stream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.WritableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,22 +91,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
 
     public void writeTo(OutputStream os) throws IOException {
         if (stream == null && ciphers == null) {
-            FileInputStream s = new FileInputStream(file);
-            long len = file.length();
-            WritableByteChannel out;
-            if (os instanceof WritableByteChannel) {
-                out = (WritableByteChannel)os;
-            } else {
-                out = Channels.newChannel(os);
-            }
-            FileChannel fc = s.getChannel();
-            long pos = 0;
-            while (pos < len) {
-                long i = fc.transferTo(pos, len - pos, out);
-                pos += i;
-            }
-            s.close();
-            fc.close();
+            Files.copy(file.toPath(), os);
         } else {
             IOHelper.copy(getInputStream(), os);
         }
@@ -147,7 +129,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
     }
 
     private InputStream createInputStream(File file) throws IOException {
-        InputStream in = new BufferedInputStream(new FileInputStream(file));
+        InputStream in = new BufferedInputStream(Files.newInputStream(file.toPath(), StandardOpenOption.READ));
         if (ciphers != null) {
             in = new CipherInputStream(in, ciphers.getDecryptor()) {
                 boolean closed;
@@ -258,7 +240,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
             tempFile = FileUtil.createTempFile("cos", ".tmp", strategy.getSpoolDirectory());
 
             LOG.trace("Creating temporary stream cache file: {}", tempFile);
-            OutputStream out = new BufferedOutputStream(new FileOutputStream(tempFile));
+            OutputStream out = new BufferedOutputStream(Files.newOutputStream(tempFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE));
             if (ObjectHelper.isNotEmpty(strategy.getSpoolChiper())) {
                 try {
                     if (ciphers == null) {
