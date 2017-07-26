@@ -60,6 +60,27 @@ public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
 
     @ResponseBody
     @GetMapping(
+        value = "/{id}/detail",
+        produces = {
+            ActuatorMediaTypes.APPLICATION_ACTUATOR_V1_JSON_VALUE,
+            MediaType.APPLICATION_JSON_VALUE
+        }
+    )
+    public Object detail(
+            @PathVariable String id) {
+
+        return doIfEnabled(() -> {
+            Object result = delegate.getRouteDetailsInfo(id);
+            if (result == null) {
+                throw new NoSuchRouteException("No such route " + id);
+            }
+
+            return result;
+        });
+    }
+    
+    @ResponseBody
+    @GetMapping(
         value = "/{id}/info",
         produces = {
             ActuatorMediaTypes.APPLICATION_ACTUATOR_V1_JSON_VALUE,
@@ -70,7 +91,7 @@ public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
             @PathVariable String id) {
 
         return doIfEnabled(() -> {
-            Object result = delegate.getRouteDetailsInfo(id);
+            Object result = delegate.getRouteInfo(id);
             if (result == null) {
                 throw new NoSuchRouteException("No such route " + id);
             }

@@ -59,7 +59,7 @@ public class CamelRoutesMvcEndpointTest extends Assert {
 
     @Test
     public void testMvcRoutesEndpoint() throws Exception {
-        Object result = endpoint.info("foo-route");
+        Object result = endpoint.detail("foo-route");
 
         assertTrue(result instanceof RouteDetailsEndpointInfo);
         assertEquals("foo-route", ((RouteDetailsEndpointInfo)result).getId());

@@ -56,6 +56,15 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
     public List<RouteEndpointInfo> invoke() {
         return getRoutesInfo();
     }
+    
+    public RouteEndpointInfo getRouteInfo(String id) {
+        Route route = camelContext.getRoute(id);
+        if (route != null) {
+            return new RouteEndpointInfo(route);
+        }
+
+        return null;
+    }
 
     public List<RouteEndpointInfo> getRoutesInfo() {
         return camelContext.getRoutes().stream()

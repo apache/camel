@@ -24,6 +24,14 @@ curl -XGET -s http://localhost:8080/camel/routes
 curl -XGET -s http://localhost:8080/camel/routes/{id}/info
 ----
 
+* To get details about a route
++
+[source]
+----
+curl -XGET -s http://localhost:8080/camel/routes/{id}/detail
+----
+
+
 * To stop a route
 +
 [source]
