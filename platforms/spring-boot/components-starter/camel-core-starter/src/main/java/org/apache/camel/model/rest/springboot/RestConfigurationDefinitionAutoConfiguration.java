@@ -22,6 +22,7 @@ import javax.annotation.Generated;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestConstants;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -62,6 +63,26 @@ public class RestConfigurationDefinitionAutoConfiguration {
         IntrospectionSupport.setProperties(camelContext,
                 camelContext.getTypeConverter(), definition, properties);
         definition.setEnableCORS(config.getEnableCors());
+        if (config.getApiProperty() != null) {
+            definition.setApiProperties(new HashMap<>(CollectionHelper
+                    .flatternKeysInMap(config.getApiProperty(), ".")));
+        }
+        if (config.getComponentProperty() != null) {
+            definition.setComponentProperties(new HashMap<>(CollectionHelper
+                    .flatternKeysInMap(config.getComponentProperty(), ".")));
+        }
+        if (config.getConsumerProperty() != null) {
+            definition.setConsumerProperties(new HashMap<>(CollectionHelper
+                    .flatternKeysInMap(config.getConsumerProperty(), ".")));
+        }
+        if (config.getDataFormatProperty() != null) {
+            definition.setDataFormatProperties(new HashMap<>(CollectionHelper
+                    .flatternKeysInMap(config.getDataFormatProperty(), ".")));
+        }
+        if (config.getEndpointProperty() != null) {
+            definition.setEndpointProperties(new HashMap<>(CollectionHelper
+                    .flatternKeysInMap(config.getEndpointProperty(), ".")));
+        }
         return definition;
     }
 }

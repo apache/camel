@@ -420,6 +420,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
             if ("java.util.List<org.apache.camel.model.PropertyDefinition>".equalsIgnoreCase(type)) {
                 type = "java.util.Map<java.lang.String, java.lang.String>";
+            } else if ("java.util.List<org.apache.camel.model.rest.RestPropertyDefinition>".equalsIgnoreCase(type)) {
+                type = "java.util.Map<java.lang.String, java.lang.Object>";
             }
 
             if ("enableCORS".equalsIgnoreCase(name)) {
@@ -473,6 +475,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
         javaClass.addImport("java.util.Map");
         javaClass.addImport("java.util.HashMap");
+        javaClass.addImport("org.apache.camel.util.CollectionHelper");
         javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
         javaClass.addImport("org.apache.camel.CamelContext");
         javaClass.addImport("org.apache.camel.model.rest.RestConstants");
@@ -512,6 +515,24 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             + "// as enable-c-o-r-s if left uppercase in Configuration\n"
             + "definition.setEnableCORS(config.getEnableCors());\n"
             + "\n"
+            + "if (config.getApiProperty() != null) {\n"
+            + "    definition.setApiProperties(new HashMap<>(CollectionHelper.flatternKeysInMap(config.getApiProperty(), \".\")));\n"
+            + "}\n"
+            + "if (config.getComponentProperty() != null) {\n"
+            + "    definition.setComponentProperties(new HashMap<>(CollectionHelper.flatternKeysInMap(config.getComponentProperty(), \".\")));\n"
+            + "}\n"
+            + "if (config.getConsumerProperty() != null) {\n"
+            + "    definition.setConsumerProperties(new HashMap<>(CollectionHelper.flatternKeysInMap(config.getConsumerProperty(), \".\")));\n"
+            + "}\n"
+//            + "if (config.getCorsHeaders() != null) {\n"
+//            + "    definition.setCorsHeaders(new HashMap<>(config.getCorsHeaders()));\n"
+//            + "}\n"
+            + "if (config.getDataFormatProperty() != null) {\n"
+            + "    definition.setDataFormatProperties(new HashMap<>(CollectionHelper.flatternKeysInMap(config.getDataFormatProperty(), \".\")));\n"
+            + "}\n"
+            + "if (config.getEndpointProperty() != null) {\n"
+            + "    definition.setEndpointProperties(new HashMap<>(CollectionHelper.flatternKeysInMap(config.getEndpointProperty(), \".\")));\n"
+            + "}\n"
             + "return definition;"
         );
 
