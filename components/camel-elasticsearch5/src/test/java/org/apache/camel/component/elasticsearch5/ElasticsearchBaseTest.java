@@ -33,7 +33,7 @@ import org.elasticsearch.node.InternalSettingsPreparer;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.Netty4Plugin;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -62,7 +62,7 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
             .put("path.home", "target/home")
             .put("transport.profiles.default.port", ES_TRANSPORT_PORT)
             .build(), Arrays.asList(Netty4Plugin.class)).start();
-        client = new PreBuiltTransportClient(Settings.EMPTY).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), ES_TRANSPORT_PORT));
+        client = new PreBuiltXPackTransportClient(Settings.EMPTY).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), ES_TRANSPORT_PORT));
     }
 
     @AfterClass

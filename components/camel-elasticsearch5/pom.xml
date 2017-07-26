@@ -38,6 +38,20 @@
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=elasticsearch5</camel.osgi.export.service>
   </properties>
 
+  <repositories>
+    <!-- add the elasticsearch repo -->
+    <repository>
+      <id>elasticsearch-releases</id>
+      <url>https://artifacts.elastic.co/maven</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -46,6 +60,11 @@
     <dependency>
       <groupId>org.elasticsearch.client</groupId>
       <artifactId>transport</artifactId>
+      <version>${elasticsearch5-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.elasticsearch.client</groupId>
+      <artifactId>x-pack-transport</artifactId>
       <version>${elasticsearch5-version}</version>
     </dependency>
     <dependency>

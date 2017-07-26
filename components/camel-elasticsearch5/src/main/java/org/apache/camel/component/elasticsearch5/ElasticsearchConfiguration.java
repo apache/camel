@@ -47,6 +47,21 @@ public class ElasticsearchConfiguration {
     private int port = ElasticsearchConstants.DEFAULT_PORT;
     @UriParam(defaultValue = "true")
     private Boolean clientTransportSniff = true;
+    @UriParam(defaultValue = "" +ElasticsearchConstants.DEFAULT_PING_SCHEDULE)
+    private String pingSchedule = ElasticsearchConstants.DEFAULT_PING_SCHEDULE;
+    @UriParam(defaultValue = "" +ElasticsearchConstants.DEFAULT_PING_TIMEOUT)
+    private String pingTimeout = ElasticsearchConstants.DEFAULT_PING_TIMEOUT;
+    @UriParam(defaultValue = "" +ElasticsearchConstants.DEFAULT_TCP_CONNECT_TIMEOUT)
+    private String tcpConnectTimeout = ElasticsearchConstants.DEFAULT_TCP_CONNECT_TIMEOUT;
+    @UriParam(defaultValue = "false")
+    private Boolean tcpCompress = false;
+    @UriParam
+    private String user;
+    @UriParam(secret = true)
+    private String password;
+    @UriParam(defaultValue = "false")
+    private Boolean enabledSSL = false;
+
 
     /**
      * Name of the cluster
@@ -154,5 +169,83 @@ public class ElasticsearchConfiguration {
 
     public void setTransportAddressesList(List<InetSocketTransportAddress> transportAddressesList) {
         this.transportAddressesList = transportAddressesList;
+    }
+
+    /**
+     * The time(in unit) the client ping the cluster.
+     */
+    public String getPingSchedule() {
+        return pingSchedule;
+    }
+
+    public void setPingSchedule(String pingSchedule) {
+        this.pingSchedule = pingSchedule;
+    }
+
+    /**
+     *  The time( in unit) to wait for connection timeout.
+     */
+    public String getTcpConnectTimeout() {
+        return tcpConnectTimeout;
+    }
+
+    public void setTcpConnectTimeout(String tcpConnectTimeout) {
+        this.tcpConnectTimeout = tcpConnectTimeout;
+    }
+
+    /**
+     * true if compression (LZF) enable between all nodes.
+     */
+    public Boolean getTcpCompress() {
+        return tcpCompress;
+    }
+
+    public void setTcpCompress(Boolean tcpCompress) {
+        this.tcpCompress = tcpCompress;
+    }
+
+    /**
+     *  User for authenticate against the cluster. Requires "transport_client" role
+     *  for accessing the cluster
+     */
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    /**
+     *  Password for authenticate against the cluster
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * Enable SSL
+     */
+    public Boolean getEnabledSSL() {
+        return enabledSSL;
+    }
+
+    public void setEnabledSSL(Boolean enabledSSL) {
+        this.enabledSSL = enabledSSL;
+    }
+
+    /**
+     * The time(in unit) to wait for a ping response from a node too return.
+     */
+    public String getPingTimeout() {
+        return pingTimeout;
+    }
+
+    public void setPingTimeout(String pingTimeout) {
+        this.pingTimeout = pingTimeout;
     }
 }
