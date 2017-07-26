@@ -83,6 +83,13 @@ public class RestConfigurationDefinitionAutoConfiguration {
             definition.setEndpointProperties(new HashMap<>(CollectionHelper
                     .flatternKeysInMap(config.getEndpointProperty(), ".")));
         }
+        if (config.getCorsHeaders() != null) {
+            Map<String, Object> map = CollectionHelper.flatternKeysInMap(
+                    config.getCorsHeaders(), ".");
+            Map<String, String> target = new HashMap<>();
+            map.forEach((k, v) -> target.put(k, v.toString()));
+            definition.setCorsHeaders(target);
+        }
         return definition;
     }
 }
