@@ -58,7 +58,9 @@ import org.springframework.test.context.junit4.SpringRunner;
         "camel.rest.data-format-property.prettyPrint=true",
         "camel.rest.api-property.api.title=My cool API",
         "camel.rest.api-property.api.version=1.0.0",
-        "camel.rest.api-property.cors=true"
+        "camel.rest.api-property.cors=true",
+        "camel.rest.cors-headers.foo=123",
+        "camel.rest.cors-headers.bar=456"
     }
 )
 public class CamelRestTest {
@@ -77,6 +79,8 @@ public class CamelRestTest {
         Assert.assertEquals("My cool API", context.getRestConfiguration().getApiProperties().get("api.title"));
         Assert.assertEquals("1.0.0", context.getRestConfiguration().getApiProperties().get("api.version"));
         Assert.assertEquals("true", context.getRestConfiguration().getApiProperties().get("cors"));
+        Assert.assertEquals("123", context.getRestConfiguration().getCorsHeaders().get("foo"));
+        Assert.assertEquals("456", context.getRestConfiguration().getCorsHeaders().get("bar"));
     }
 
     // ***********************************
