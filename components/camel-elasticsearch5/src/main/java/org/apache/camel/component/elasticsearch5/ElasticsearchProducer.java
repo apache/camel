@@ -38,7 +38,6 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.index.IndexNotFoundException;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -228,7 +227,7 @@ public class ElasticsearchProducer extends DefaultProducer {
                 for (TransportAddress address : configuration.getTransportAddressesList()) {
                     addresses.add(address);
                 }
-                client = new PreBuiltTransportClient(getSettings()).addTransportAddresses(addresses.toArray(new TransportAddress[addresses.size()]));
+                client = new PreBuiltXPackTransportClient(getSettings()).addTransportAddresses(addresses.toArray(new TransportAddress[addresses.size()]));
             } else {
                 LOG.info("Incorrect ip address and port parameters settings for ElasticSearch cluster");
             }
@@ -238,7 +237,6 @@ public class ElasticsearchProducer extends DefaultProducer {
     private Settings getSettings() {
         final Settings.Builder settings = Settings.builder()
             .put("cluster.name", configuration.getClusterName())
-            .put("client.transport.ignore_cluster_name", false)
             .put("client.transport.sniff", configuration.getClientTransportSniff())
             .put("transport.ping_schedule", configuration.getPingSchedule())
             .put("client.transport.ping_timeout", configuration.getPingTimeout())
@@ -247,7 +245,7 @@ public class ElasticsearchProducer extends DefaultProducer {
 
         if (configuration.getUser() != null && configuration.getPassword() != null) {
             settings.put("xpack.security.user", configuration.getUser() +":"+ configuration.getPassword())
-            .put("xpack.security.transport.ssl.enabled", configuration.getEnabledSSL());
+            .put("xpack.security.transport.ssl.enabled", configuration.getEnableSSL());
         }
         return settings.build();
     }
