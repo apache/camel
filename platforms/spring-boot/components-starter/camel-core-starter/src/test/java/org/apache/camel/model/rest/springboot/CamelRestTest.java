@@ -24,7 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.apache.camel.impl.DefaultUuidGenerator;
+import org.apache.camel.impl.ActiveMQUuidGenerator;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
@@ -138,9 +138,9 @@ public class CamelRestTest {
             // just use a seda endpoint for testing purpose
             String id;
             if (uriTemplate != null) {
-                id = DefaultUuidGenerator.generateSanitizedId(basePath + uriTemplate);
+                id = ActiveMQUuidGenerator.generateSanitizedId(basePath + uriTemplate);
             } else {
-                id = DefaultUuidGenerator.generateSanitizedId(basePath);
+                id = ActiveMQUuidGenerator.generateSanitizedId(basePath);
             }
             // remove leading dash as we add that ourselves
             if (id.startsWith("-")) {
@@ -167,7 +167,7 @@ public class CamelRestTest {
             Map<String, Object> parameters) throws Exception {
 
             // just use a seda endpoint for testing purpose
-            String id = DefaultUuidGenerator.generateSanitizedId(contextPath);
+            String id = ActiveMQUuidGenerator.generateSanitizedId(contextPath);
             // remove leading dash as we add that ourselves
             if (id.startsWith("-")) {
                 id = id.substring(1);
