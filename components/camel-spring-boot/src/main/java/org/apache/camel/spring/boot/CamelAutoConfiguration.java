@@ -410,12 +410,6 @@ public class CamelAutoConfiguration {
             camelContext.setSSLContextParameters(sslContextParametersSupplier.get());
         }
 
-        // rest-dsl global configuration
-        RestConfiguration restConfiguration = getSingleBeanOfType(applicationContext, RestConfiguration.class);
-        if (restConfiguration != null) {
-            camelContext.setRestConfiguration(restConfiguration);
-        }
-
         // set the default thread pool profile if defined
         initThreadPoolProfiles(applicationContext, camelContext);
     }
