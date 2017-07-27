@@ -45,8 +45,8 @@ public class ElasticsearchConfiguration {
     private String transportAddresses;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_PORT)
     private int port = ElasticsearchConstants.DEFAULT_PORT;
-    @UriParam(defaultValue = "true")
-    private Boolean clientTransportSniff = true;
+    @UriParam(defaultValue = "false")
+    private Boolean clientTransportSniff = false;
     @UriParam(defaultValue = "" +ElasticsearchConstants.DEFAULT_PING_SCHEDULE)
     private String pingSchedule = ElasticsearchConstants.DEFAULT_PING_SCHEDULE;
     @UriParam(defaultValue = "" +ElasticsearchConstants.DEFAULT_PING_TIMEOUT)
@@ -60,7 +60,7 @@ public class ElasticsearchConfiguration {
     @UriParam(secret = true)
     private String password;
     @UriParam(defaultValue = "false")
-    private Boolean enabledSSL = false;
+    private Boolean enableSSL = false;
 
 
     /**
@@ -230,12 +230,12 @@ public class ElasticsearchConfiguration {
     /**
      * Enable SSL
      */
-    public Boolean getEnabledSSL() {
-        return enabledSSL;
+    public Boolean getEnableSSL() {
+        return enableSSL;
     }
 
-    public void setEnabledSSL(Boolean enabledSSL) {
-        this.enabledSSL = enabledSSL;
+    public void setEnableSSL(Boolean enableSSL) {
+        this.enableSSL = enableSSL;
     }
 
     /**
