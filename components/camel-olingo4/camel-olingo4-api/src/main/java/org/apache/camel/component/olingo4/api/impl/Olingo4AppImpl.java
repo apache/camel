@@ -572,7 +572,8 @@ public final class Olingo4AppImpl implements Olingo4App {
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
                     final ContentType acceptType = getResourceContentType(uriInfo);
                     final String acceptCharset = acceptType.getParameter(ContentType.PARAMETER_CHARSET);
-                    writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT, acceptType.getType().toLowerCase());
+                    writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT,
+                            contentType.getType().toLowerCase() + "/" + contentType.getSubtype().toLowerCase());
                     if (null != acceptCharset) {
                         writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT_CHARSET, acceptCharset.toLowerCase());
                     }
@@ -597,7 +598,8 @@ public final class Olingo4AppImpl implements Olingo4App {
                     writeHttpHeader(batchRequestHeaderOutputStream, HttpHeader.ODATA_VERSION, ODataServiceVersion.V40.toString());
                     final ContentType acceptType = getResourceContentType(uriInfo);
                     final String acceptCharset = acceptType.getParameter(ContentType.PARAMETER_CHARSET);
-                    writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT, acceptType.getType().toLowerCase());
+                    writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT,
+                            contentType.getType().toLowerCase() + "/" + contentType.getSubtype().toLowerCase());
                     if (null != acceptCharset) {
                         writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT_CHARSET, acceptCharset.toLowerCase());
                     }
@@ -821,7 +823,8 @@ public final class Olingo4AppImpl implements Olingo4App {
         // add accept header when its not a form or multipart
         if (!ContentType.APPLICATION_FORM_URLENCODED.equals(contentType) && !contentType.toContentTypeString().startsWith(MULTIPART_MIME_TYPE)) {
             // otherwise accept what is being sent
-            httpUriRequest.addHeader(HttpHeaders.ACCEPT, contentType.getType().toLowerCase());
+            httpUriRequest.addHeader(HttpHeaders.ACCEPT,
+                    contentType.getType().toLowerCase() + "/" + contentType.getSubtype().toLowerCase());
             final String acceptCharset = contentType.getParameter(ContentType.PARAMETER_CHARSET);
             if (null != acceptCharset) {
                 httpUriRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, acceptCharset.toLowerCase());
