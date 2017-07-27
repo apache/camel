@@ -448,12 +448,6 @@ public class CamelAutoConfiguration {
             camelContext.setRouteController(routeController);
         }
 
-        // rest-dsl global configuration
-        RestConfiguration restConfiguration = getSingleBeanOfType(applicationContext, RestConfiguration.class);
-        if (restConfiguration != null) {
-            camelContext.setRestConfiguration(restConfiguration);
-        }
-
         // set the default thread pool profile if defined
         initThreadPoolProfiles(applicationContext, camelContext);
     }
