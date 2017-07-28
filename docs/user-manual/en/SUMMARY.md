@@ -263,6 +263,7 @@
 	* [Kubernetes Build Config](kubernetes-build-configs-component.adoc)
 	* [Kubernetes Builds](kubernetes-builds-component.adoc)
 	* [Kubernetes ConfigMap](kubernetes-config-maps-component.adoc)
+	* [Kubernetes Deployments](kubernetes-deployments-component.adoc)
 	* [Kubernetes Namespaces](kubernetes-namespaces-component.adoc)
 	* [Kubernetes Nodes](kubernetes-nodes-component.adoc)
 	* [Kubernetes Persistent Volume](kubernetes-persistent-volumes-component.adoc)

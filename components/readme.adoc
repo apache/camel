@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 276 in 190 JAR artifacts (17 deprecated)
+Number of Components: 277 in 190 JAR artifacts (17 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -451,6 +451,9 @@ Number of Components: 276 in 190 JAR artifacts (17 deprecated)
 
 | link:camel-kubernetes/src/main/docs/kubernetes-config-maps-component.adoc[Kubernetes ConfigMap] (camel-kubernetes) +
 `kubernetes-config-maps:masterUrl` | 2.17 | The Kubernetes Configmaps component provides a producer to execute kubernetes configmap operations.
+
+| link:camel-kubernetes/src/main/docs/kubernetes-deployments-component.adoc[Kubernetes Deployments] (camel-kubernetes) +
+`kubernetes-deployments:masterUrl` | 2.20 | The Kubernetes Nodes component provides a producer to execute kubernetes node operations and a consumer to consume node events.
 
 | link:camel-kubernetes/src/main/docs/kubernetes-namespaces-component.adoc[Kubernetes Namespaces] (camel-kubernetes) +
 `kubernetes-namespaces:masterUrl` | 2.17 | The Kubernetes Namespaces component provides a producer to execute kubernetes namespace operations and a consumer to consume namespace events.
