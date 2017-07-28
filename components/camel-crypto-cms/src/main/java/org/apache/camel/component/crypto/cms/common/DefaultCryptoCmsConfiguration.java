@@ -35,7 +35,7 @@ public abstract class DefaultCryptoCmsConfiguration {
     private KeyStore keyStore;
 
     /**
-     * Keystore containing signer private keys verifier public keys, encryptor
+     * Keystore containing signer private keys, verifier public keys, encryptor
      * public keys, decryptor private keys depending on the operation. Use
      * either this parameter or the parameter 'keystore'.
      */
