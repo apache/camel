@@ -46,9 +46,7 @@ final class Marshaller<W extends AbstractWriter<?>> {
      */
     Marshaller(String[] headers, boolean adaptHeaders) {
         if (headers != null) {
-            synchronized (this.headers) {
-                this.headers.addAll(Arrays.asList(headers));   
-            }
+            this.headers.addAll(Arrays.asList(headers));
         }
         this.adaptHeaders = adaptHeaders;
     }
@@ -88,9 +86,7 @@ final class Marshaller<W extends AbstractWriter<?>> {
         Map<?, ?> map = convertToMandatoryType(exchange, Map.class, row);
         if (adaptHeaders) {
             for (Object key : map.keySet()) {
-                synchronized (headers) {
-                    headers.add(convertToMandatoryType(exchange, String.class, key));
-                }
+                headers.add(convertToMandatoryType(exchange, String.class, key));
             }
         }
 
