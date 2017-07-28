@@ -161,10 +161,10 @@ public class MockEndpointTest extends ContextTestSupport {
         });
 
         try {
-            resultEndpoint.assertIsNotSatisfied();
+            resultEndpoint.assertIsSatisfied();
             fail("Should fail");
         } catch (AssertionError e) {
-            assertEquals("mock://result Expected 2 properties with key[bar], received 1 properties. Expected property values: [456]", e.getMessage());
+            assertEquals("mock://result Expected 2 properties with key[foo], received 1 properties. Expected property values: [456]", e.getMessage());
         }
     }
 
