@@ -110,9 +110,8 @@ public class ComponentTest extends CamelTestSupport {
                 recipient.setKeyStoreParameters(keystore);
 
                 DefaultSignerInfo signerInfo = new DefaultSignerInfo();
-                signerInfo.setIncludeCertificates(true); // optional default
-                                                         // value is true
-                signerInfo.setSignatureAlgorithm("SHA256withRSA"); // mandatory
+                signerInfo.setIncludeCertificates(true); 
+                signerInfo.setSignatureAlgorithm("SHA256withRSA"); 
                 signerInfo.setPrivateKeyAlias("rsa");
                 signerInfo.setKeyStoreParameters(keystore);
 
@@ -120,8 +119,6 @@ public class ComponentTest extends CamelTestSupport {
                 signerInfo2.setSignatureAlgorithm("SHA256withDSA"); // mandatory
                 signerInfo2.setPrivateKeyAlias("dsa");
                 signerInfo2.setKeyStoreParameters(keystore);
-
-                getContext().addComponent("crypto-cms", new CryptoCmsComponent(getContext()));
 
                 simpleReg.put("keyStoreParameters", keystore);
                 simpleReg.put("signer1", signerInfo);

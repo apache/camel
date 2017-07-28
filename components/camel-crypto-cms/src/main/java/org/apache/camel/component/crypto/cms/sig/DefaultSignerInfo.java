@@ -50,10 +50,10 @@ public class DefaultSignerInfo extends DefaultCryptoCmsConfiguration implements 
     @UriParam(label = "sign", defaultValue = "true")
     private boolean includeCertificates = true;
 
-    @UriParam(label = "sign,advanced")
+    @UriParam(label = "sign")
     private CMSAttributeTableGenerator signedAttributeGenerator = new DefaultSignedAttributeTableGenerator();
 
-    @UriParam(label = "sign,advanced", defaultValue = "null")
+    @UriParam(label = "sign", defaultValue = "null")
     private CMSAttributeTableGenerator unsignedAttributeGenerator;
 
     /**

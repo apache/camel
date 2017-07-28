@@ -32,7 +32,7 @@ public final class KeystoreUtil {
         if (keystoreName.startsWith("test")) {
             pw = "abcd1234";
         } else {
-            pw = "";
+            pw = "Abcd1234";
         }
         keystorePas.setPassword(pw);
         return keystorePas;
