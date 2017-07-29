@@ -37,15 +37,23 @@ public class SwaggerRestApiProcessorFactory implements RestApiProcessorFactory {
 
         // need to include host in options
         String host = (String) options.get("host");
-        if (host == null) {
-            host = configuration.getHost();
-            int port = configuration.getPort();
-            if (host != null && port > 0) {
-                options.put("host", host + ":" + port);
-            } else if (host != null) {
+        if (host != null) {
+            options.put("host", host);
+        } else {
+            // favor using explicit configured host for the api
+            host = configuration.getApiHost();
+            if (host != null) {
                 options.put("host", host);
             } else {
-                options.put("host", "localhost");
+                host = configuration.getHost();
+                int port = configuration.getPort();
+                if (host != null && port > 0) {
+                    options.put("host", host + ":" + port);
+                } else if (host != null) {
+                    options.put("host", host);
+                } else {
+                    options.put("host", "localhost");
+                }
             }
         }
         // and context path is the base.path

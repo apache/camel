@@ -55,6 +55,9 @@ public class RestConfigurationDefinition {
     private String host;
 
     @XmlAttribute
+    private String apiHost;
+
+    @XmlAttribute
     private String port;
 
     @XmlAttribute @Metadata(label = "producer")
@@ -169,6 +172,19 @@ public class RestConfigurationDefinition {
      */
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public String getApiHost() {
+        return apiHost;
+    }
+
+    /**
+     * To use an specific hostname for the API documentation (eg swagger)
+     * <p/>
+     * This can be used to override the generated host with this configured hostname
+     */
+    public void setApiHost(String apiHost) {
+        this.apiHost = apiHost;
     }
 
     public String getPort() {
@@ -476,6 +492,15 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * To define a specific host to use for API documentation (eg swagger) instead
+     * of using a generated API hostname that is relative to the REST service host.
+     */
+    public RestConfigurationDefinition apiHost(String host) {
+        setApiHost(host);
+        return this;
+    }
+
+    /**
      * To specify the port number to use for the REST service
      */
     public RestConfigurationDefinition port(int port) {
@@ -719,6 +744,9 @@ public class RestConfigurationDefinition {
         }
         if (host != null) {
             answer.setHost(CamelContextHelper.parseText(context, host));
+        }
+        if (apiHost != null) {
+            answer.setApiHost(CamelContextHelper.parseText(context, apiHost));
         }
         if (port != null) {
             answer.setPort(CamelContextHelper.parseInteger(context, port));

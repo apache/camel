@@ -57,6 +57,11 @@ public class RestConfigurationDefinitionProperties {
      */
     private String host;
     /**
+     * To use an specific hostname for the API documentation (eg swagger) This
+     * can be used to override the generated host with this configured hostname
+     */
+    private String apiHost;
+    /**
      * The port number to use for exposing the REST service. Notice if you use
      * servlet component then the port number configured here does not apply as
      * the port number in use is the actual port number the servlet component is
@@ -215,6 +220,14 @@ public class RestConfigurationDefinitionProperties {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public String getApiHost() {
+        return apiHost;
+    }
+
+    public void setApiHost(String apiHost) {
+        this.apiHost = apiHost;
     }
 
     public String getPort() {

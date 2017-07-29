@@ -206,12 +206,15 @@ public class RestSwaggerServlet extends HttpServlet {
                 base = "";
             }
             String path = translateContextPath(request);
-            swaggerConfig.setHost(url.getHost());
 
-            if (url.getPort() != 80 && url.getPort() != -1) {
-                swaggerConfig.setHost(url.getHost() + ":" + url.getPort());
-            } else {
+            // setup host if not configured
+            if (swaggerConfig.getHost() == null) {
                 swaggerConfig.setHost(url.getHost());
+                if (url.getPort() != 80 && url.getPort() != -1) {
+                    swaggerConfig.setHost(url.getHost() + ":" + url.getPort());
+                } else {
+                    swaggerConfig.setHost(url.getHost());
+                }
             }
             swaggerConfig.setBasePath(buildUrl(path, base));
         }
