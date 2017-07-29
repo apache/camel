@@ -25,6 +25,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -46,7 +47,6 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ReloadStrategy;
-import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -223,6 +223,26 @@ public class CamelAutoConfiguration {
     RoutesCollector routesCollector(ApplicationContext applicationContext, CamelConfigurationProperties config) {
         Collection<CamelContextConfiguration> configurations = applicationContext.getBeansOfType(CamelContextConfiguration.class).values();
         return new RoutesCollector(applicationContext, new ArrayList<CamelContextConfiguration>(configurations), config);
+    }
+
+    /**
+     * Default fluent producer template for the bootstrapped Camel context.
+     * Create the bean lazy as it should only be created if its in-use.
+     */
+    // We explicitly declare the destroyMethod to be "" as the Spring @Bean
+    // annotation defaults to AbstractBeanDefinition.INFER_METHOD otherwise
+    // and in that case Service::close (FluentProducerTemplate implements Service)
+    // would be used for bean destruction. And we want Camel to handle the
+    // lifecycle.
+    @Bean(destroyMethod = "")
+    @ConditionalOnMissingBean(FluentProducerTemplate.class)
+    @Lazy
+    FluentProducerTemplate fluentProducerTemplate(CamelContext camelContext,
+                                                 CamelConfigurationProperties config) throws Exception {
+        final FluentProducerTemplate fluentProducerTemplate = camelContext.createFluentProducerTemplate(config.getProducerTemplateCacheSize());
+        // we add this fluentProducerTemplate as a Service to CamelContext so that it performs proper lifecycle (start and stop)
+        camelContext.addService(fluentProducerTemplate);
+        return fluentProducerTemplate;
     }
 
     /**

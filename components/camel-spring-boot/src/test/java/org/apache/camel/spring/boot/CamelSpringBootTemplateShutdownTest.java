@@ -18,6 +18,7 @@ package org.apache.camel.spring.boot;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.support.ServiceSupport;
 import org.junit.Before;
@@ -40,30 +41,36 @@ public class CamelSpringBootTemplateShutdownTest {
 
     ProducerTemplate producerTemplate;
 
+    FluentProducerTemplate fluentProducerTemplate;
+
     @Before
     public void setupApplicationContext() {
         applicationContext = new AnnotationConfigApplicationContext(CamelAutoConfiguration.class);
         camelContext = applicationContext.getBean(CamelContext.class);
         consumerTemplate = applicationContext.getBean(ConsumerTemplate.class);
         producerTemplate = applicationContext.getBean(ProducerTemplate.class);
+        fluentProducerTemplate = applicationContext.getBean(FluentProducerTemplate.class);
     }
 
     @Test
     public void shouldStopTemplatesWithCamelShutdown() throws Exception {
         assertTrue(((ServiceSupport) consumerTemplate).isStarted());
         assertTrue(((ServiceSupport) producerTemplate).isStarted());
+        assertTrue(((ServiceSupport) fluentProducerTemplate).isStarted());
 
         camelContext.stop();
 
         assertTrue(((ServiceSupport) camelContext).isStopped());
         assertTrue(((ServiceSupport) consumerTemplate).isStopped());
         assertTrue(((ServiceSupport) producerTemplate).isStopped());
+        assertTrue(((ServiceSupport) fluentProducerTemplate).isStopped());
     }
 
     @Test
     public void shouldStopTemplatesWithApplicationContextShutdown() throws Exception {
         assertTrue(((ServiceSupport) consumerTemplate).isStarted());
         assertTrue(((ServiceSupport) producerTemplate).isStarted());
+        assertTrue(((ServiceSupport) fluentProducerTemplate).isStarted());
 
         applicationContext.close();
 
@@ -71,6 +78,7 @@ public class CamelSpringBootTemplateShutdownTest {
         assertTrue(((ServiceSupport) camelContext).isStopped());
         assertTrue(((ServiceSupport) consumerTemplate).isStopped());
         assertTrue(((ServiceSupport) producerTemplate).isStopped());
+        assertTrue(((ServiceSupport) fluentProducerTemplate).isStopped());
     }
 
 }
