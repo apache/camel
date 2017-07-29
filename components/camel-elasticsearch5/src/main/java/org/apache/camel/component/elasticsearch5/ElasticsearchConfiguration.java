@@ -47,11 +47,11 @@ public class ElasticsearchConfiguration {
     private int port = ElasticsearchConstants.DEFAULT_PORT;
     @UriParam(defaultValue = "false")
     private Boolean clientTransportSniff = false;
-    @UriParam(defaultValue = "" +ElasticsearchConstants.DEFAULT_PING_SCHEDULE)
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_PING_SCHEDULE)
     private String pingSchedule = ElasticsearchConstants.DEFAULT_PING_SCHEDULE;
-    @UriParam(defaultValue = "" +ElasticsearchConstants.DEFAULT_PING_TIMEOUT)
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_PING_TIMEOUT)
     private String pingTimeout = ElasticsearchConstants.DEFAULT_PING_TIMEOUT;
-    @UriParam(defaultValue = "" +ElasticsearchConstants.DEFAULT_TCP_CONNECT_TIMEOUT)
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_TCP_CONNECT_TIMEOUT)
     private String tcpConnectTimeout = ElasticsearchConstants.DEFAULT_TCP_CONNECT_TIMEOUT;
     @UriParam(defaultValue = "false")
     private Boolean tcpCompress = false;
@@ -206,7 +206,7 @@ public class ElasticsearchConfiguration {
 
     /**
      *  User for authenticate against the cluster. Requires "transport_client" role
-     *  for accessing the cluster
+     *  for accessing the cluster. Require XPack client jar on the classpath
      */
     public String getUser() {
         return user;
@@ -217,7 +217,7 @@ public class ElasticsearchConfiguration {
     }
 
     /**
-     *  Password for authenticate against the cluster
+     *  Password for authenticate against the cluster. Require XPack client jar on the classpath
      */
     public String getPassword() {
         return password;
@@ -228,7 +228,7 @@ public class ElasticsearchConfiguration {
     }
 
     /**
-     * Enable SSL
+     * Enable SSL. Require XPack client jar on the classpath
      */
     public Boolean getEnableSSL() {
         return enableSSL;
