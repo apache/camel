@@ -153,7 +153,7 @@ public class ElasticsearchConfiguration {
     }
 
     /**
-     * Is the client allowed to sniff the rest of the cluster or not (default true). This setting map to the <tt>client.transport.sniff</tt> setting.
+     * Is the client allowed to sniff the rest of the cluster or not. This setting map to the <tt>client.transport.sniff</tt> setting.
      */
     public boolean getClientTransportSniff() {
         return clientTransportSniff;
