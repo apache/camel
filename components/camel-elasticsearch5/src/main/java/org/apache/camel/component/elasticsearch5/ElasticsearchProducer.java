@@ -17,10 +17,12 @@
 package org.apache.camel.component.elasticsearch5;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
@@ -234,16 +236,18 @@ public class ElasticsearchProducer extends DefaultProducer {
         }
     }
 
-    private TransportClient createClient() {
+    private TransportClient createClient() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         final Settings.Builder settings = getSettings();
-        try {
-            Class clazz = Class.forName("org.elasticsearch.xpack.client.PreBuiltXPackTransportClient");
+        final CamelContext camelContext = getEndpoint().getCamelContext();
+        final Class<?> clazz = camelContext.getClassResolver().resolveClass("org.elasticsearch.xpack.client.PreBuiltXPackTransportClient");
+        if (clazz != null) {
             Constructor<?> ctor = clazz.getConstructor(Settings.class, Class[].class);
             settings.put("xpack.security.user", configuration.getUser() + ":" + configuration.getPassword())
                 .put("xpack.security.transport.ssl.enabled", configuration.getEnableSSL());
+            LOG.debug("XPack Client was found on the classpath");
             return (TransportClient) ctor.newInstance(new Object[] {settings.build(), new Class[0]});
-        } catch (Exception e) {
-            LOG.info("XPack Client was not found on the classpath, using the standard client");
+        } else {
+            LOG.debug("XPack Client was not found on the classpath, using the standard client");
             return new PreBuiltTransportClient(settings.build());
         }
     }
