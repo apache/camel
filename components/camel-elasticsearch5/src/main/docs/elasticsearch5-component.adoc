@@ -67,7 +67,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
-| **clientTransportSniff** (producer) | Is the client allowed to sniff the rest of the cluster or not (default true). This setting map to the client.transport.sniff setting. | false | boolean
+| **clientTransportSniff** (producer) | Is the client allowed to sniff the rest of the cluster or not. This setting map to the client.transport.sniff setting. | false | boolean
 | **indexName** (producer) | The name of the index to act against |  | String
 | **indexType** (producer) | The type of the index to act against |  | String
 | **ip** (producer) | The TransportClient remote host ip to use |  | String
