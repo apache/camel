@@ -45,22 +45,22 @@ public class ElasticsearchConfiguration {
     private String transportAddresses;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_PORT)
     private int port = ElasticsearchConstants.DEFAULT_PORT;
-    @UriParam(defaultValue = "false")
-    private Boolean clientTransportSniff = false;
+    @UriParam
+    private boolean clientTransportSniff;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_PING_SCHEDULE)
     private String pingSchedule = ElasticsearchConstants.DEFAULT_PING_SCHEDULE;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_PING_TIMEOUT)
     private String pingTimeout = ElasticsearchConstants.DEFAULT_PING_TIMEOUT;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_TCP_CONNECT_TIMEOUT)
     private String tcpConnectTimeout = ElasticsearchConstants.DEFAULT_TCP_CONNECT_TIMEOUT;
-    @UriParam(defaultValue = "false")
-    private Boolean tcpCompress = false;
     @UriParam
+    private boolean tcpCompress;
+    @UriParam(label = "authentication")
     private String user;
-    @UriParam(secret = true)
+    @UriParam(label = "authentication", secret = true)
     private String password;
-    @UriParam(defaultValue = "false")
-    private Boolean enableSSL = false;
+    @UriParam(label = "advanced,security")
+    private boolean enableSSL;
 
 
     /**
@@ -155,11 +155,11 @@ public class ElasticsearchConfiguration {
     /**
      * Is the client allowed to sniff the rest of the cluster or not (default true). This setting map to the <tt>client.transport.sniff</tt> setting.
      */
-    public Boolean getClientTransportSniff() {
+    public boolean getClientTransportSniff() {
         return clientTransportSniff;
     }
 
-    public void setClientTransportSniff(Boolean clientTransportSniff) {
+    public void setClientTransportSniff(boolean clientTransportSniff) {
         this.clientTransportSniff = clientTransportSniff;
     }
 
@@ -196,11 +196,11 @@ public class ElasticsearchConfiguration {
     /**
      * true if compression (LZF) enable between all nodes.
      */
-    public Boolean getTcpCompress() {
+    public boolean getTcpCompress() {
         return tcpCompress;
     }
 
-    public void setTcpCompress(Boolean tcpCompress) {
+    public void setTcpCompress(boolean tcpCompress) {
         this.tcpCompress = tcpCompress;
     }
 
@@ -230,11 +230,11 @@ public class ElasticsearchConfiguration {
     /**
      * Enable SSL. Require XPack client jar on the classpath
      */
-    public Boolean getEnableSSL() {
+    public boolean getEnableSSL() {
         return enableSSL;
     }
 
-    public void setEnableSSL(Boolean enableSSL) {
+    public void setEnableSSL(boolean enableSSL) {
         this.enableSSL = enableSSL;
     }
 
