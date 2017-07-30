@@ -22,6 +22,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.elasticsearch.client.transport.TransportClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,9 +37,12 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     @UriParam
     protected final ElasticsearchConfiguration configuration;
 
-    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config) throws Exception {
+    private TransportClient client;
+
+    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config, TransportClient client) throws Exception {
         super(uri, component);
         this.configuration = config;
+        this.client = client;
     }
 
     public Producer createProducer() throws Exception {
@@ -51,5 +55,9 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     
     public boolean isSingleton() {
         return true;
+    }
+
+    public TransportClient getClient() {
+        return client;
     }
 }
