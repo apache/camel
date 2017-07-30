@@ -17,7 +17,6 @@
 package org.apache.camel.component.elasticsearch5;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,9 +82,9 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (request instanceof BulkRequest) {
             // do we want bulk or bulk_index?
             if (configuration.getOperation() == ElasticsearchOperation.BULK_INDEX) {
-                return configuration.getOperation().BULK_INDEX;
+                return ElasticsearchOperation.BULK_INDEX;
             } else {
-                return configuration.getOperation().BULK;
+                return ElasticsearchOperation.BULK;
             }
         } else if (request instanceof DeleteRequest) {
             return ElasticsearchOperation.DELETE;
@@ -219,16 +218,12 @@ public class ElasticsearchProducer extends DefaultProducer {
         super.doStart();
 
         if (client == null) {
-            LOG.info("Connecting to the ElasticSearch cluster: " + configuration.getClusterName());
+            LOG.info("Connecting to the ElasticSearch cluster: {}", configuration.getClusterName());
             if (configuration.getIp() != null) {
-                client = createClient()
-                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(configuration.getIp()), configuration.getPort()));
-            } else if (configuration.getTransportAddressesList() != null
-                && !configuration.getTransportAddressesList().isEmpty()) {
+                client = createClient().addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(configuration.getIp()), configuration.getPort()));
+            } else if (configuration.getTransportAddressesList() != null && !configuration.getTransportAddressesList().isEmpty()) {
                 List<TransportAddress> addresses = new ArrayList<TransportAddress>(configuration.getTransportAddressesList().size());
-                for (TransportAddress address : configuration.getTransportAddressesList()) {
-                    addresses.add(address);
-                }
+                addresses.addAll(configuration.getTransportAddressesList());
                 client = createClient().addTransportAddresses(addresses.toArray(new TransportAddress[addresses.size()]));
             } else {
                 LOG.info("Incorrect ip address and port parameters settings for ElasticSearch cluster");
@@ -236,7 +231,7 @@ public class ElasticsearchProducer extends DefaultProducer {
         }
     }
 
-    private TransportClient createClient() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private TransportClient createClient() throws Exception {
         final Settings.Builder settings = getSettings();
         final CamelContext camelContext = getEndpoint().getCamelContext();
         final Class<?> clazz = camelContext.getClassResolver().resolveClass("org.elasticsearch.xpack.client.PreBuiltXPackTransportClient");
@@ -244,10 +239,10 @@ public class ElasticsearchProducer extends DefaultProducer {
             Constructor<?> ctor = clazz.getConstructor(Settings.class, Class[].class);
             settings.put("xpack.security.user", configuration.getUser() + ":" + configuration.getPassword())
                 .put("xpack.security.transport.ssl.enabled", configuration.getEnableSSL());
-            LOG.debug("XPack Client was found on the classpath");
-            return (TransportClient) ctor.newInstance(new Object[] {settings.build(), new Class[0]});
+            LOG.info("XPack Client was found on the classpath");
+            return (TransportClient) ctor.newInstance(new Object[]{settings.build(), new Class[0]});
         } else {
-            LOG.debug("XPack Client was not found on the classpath, using the standard client");
+            LOG.debug("XPack Client was not found on the classpath, using the standard client.");
             return new PreBuiltTransportClient(settings.build());
         }
     }
