@@ -17,10 +17,16 @@
 package org.apache.camel.component.kubernetes.ha.utils;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
+import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodListBuilder;
 import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import io.fabric8.mockwebserver.utils.ResponseProvider;
@@ -41,7 +47,15 @@ public class LockTestServer extends KubernetesMockServer {
 
     private Long delayRequests;
 
+    private Set<String> pods;
+
     public LockTestServer(ConfigMapLockSimulator lockSimulator) {
+        this(lockSimulator, Collections.emptySet());
+    }
+
+    public LockTestServer(ConfigMapLockSimulator lockSimulator, Collection<String> initialPods) {
+
+        this.pods = new TreeSet<>(initialPods);
 
         expect().get().withPath("/api/v1/namespaces/test/configmaps/" + lockSimulator.getConfigMapName()).andReply(new ResponseProvider<Object>() {
             ThreadLocal<Integer> responseCode = new ThreadLocal<>();
@@ -132,8 +146,9 @@ public class LockTestServer extends KubernetesMockServer {
         }).always();
 
         // Other resources
-        expect().get().withPath("/api/v1/namespaces/test/pods").andReturn(200, new PodListBuilder().withNewMetadata().withResourceVersion("1").and().build()).always();
-        expect().get().withPath("/api/v1/namespaces/test/pods?resourceVersion=1&watch=true").andUpgradeToWebSocket().open().done().always();
+        expect().get().withPath("/api/v1/namespaces/test/pods").andReply(200, request -> new PodListBuilder().withNewMetadata().withResourceVersion("1").and().withItems(
+                getCurrentPods().stream().map(name -> new PodBuilder().withNewMetadata().withName(name).and().build()).collect(Collectors.toList())
+        ).build()).always();
     }
 
 
@@ -143,6 +158,18 @@ public class LockTestServer extends KubernetesMockServer {
 
     public void setRefuseRequests(boolean refuseRequests) {
         this.refuseRequests = refuseRequests;
+    }
+
+    public synchronized Collection<String> getCurrentPods() {
+        return new TreeSet<>(this.pods);
+    }
+
+    public synchronized void removePod(String pod) {
+        this.pods.remove(pod);
+    }
+
+    public synchronized void addPod(String pod) {
+        this.pods.add(pod);
     }
 
     public Long getDelayRequests() {

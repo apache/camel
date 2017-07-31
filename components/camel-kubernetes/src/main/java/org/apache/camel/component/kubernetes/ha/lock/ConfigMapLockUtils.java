@@ -18,6 +18,7 @@ package org.apache.camel.component.kubernetes.ha.lock;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
@@ -36,7 +37,7 @@ public final class ConfigMapLockUtils {
 
     private static final String LEADER_PREFIX = "leader.pod.";
 
-    private static final String TIMESTAMP_PREFIX = "leader.timestamp.";
+    private static final String LOCAL_TIMESTAMP_PREFIX = "leader.local.timestamp.";
 
     private ConfigMapLockUtils() {
     }
@@ -49,19 +50,19 @@ public final class ConfigMapLockUtils {
                     .addToLabels("kind", "locks").
                 endMetadata()
                 .addToData(LEADER_PREFIX + leaderInfo.getGroupName(), leaderInfo.getLeader())
-                .addToData(TIMESTAMP_PREFIX + leaderInfo.getGroupName(), formatDate(leaderInfo.getTimestamp()))
+                .addToData(LOCAL_TIMESTAMP_PREFIX + leaderInfo.getGroupName(), formatDate(leaderInfo.getLocalTimestamp()))
                 .build();
     }
 
     public static ConfigMap getConfigMapWithNewLeader(ConfigMap configMap, LeaderInfo leaderInfo) {
         return new ConfigMapBuilder(configMap)
                 .addToData(LEADER_PREFIX + leaderInfo.getGroupName(), leaderInfo.getLeader())
-                .addToData(TIMESTAMP_PREFIX + leaderInfo.getGroupName(), formatDate(leaderInfo.getTimestamp()))
+                .addToData(LOCAL_TIMESTAMP_PREFIX + leaderInfo.getGroupName(), formatDate(leaderInfo.getLocalTimestamp()))
                 .build();
     }
 
-    public static LeaderInfo getLeaderInfo(ConfigMap configMap, String group) {
-        return new LeaderInfo(group, getLeader(configMap, group), getTimestamp(configMap, group));
+    public static LeaderInfo getLeaderInfo(ConfigMap configMap, Set<String> members, String group) {
+        return new LeaderInfo(group, getLeader(configMap, group), getLocalTimestamp(configMap, group), members);
     }
 
     private static String getLeader(ConfigMap configMap, String group) {
@@ -81,8 +82,8 @@ public final class ConfigMapLockUtils {
         return null;
     }
 
-    private static Date getTimestamp(ConfigMap configMap, String group) {
-        String timestamp = getConfigMapValue(configMap, TIMESTAMP_PREFIX + group);
+    private static Date getLocalTimestamp(ConfigMap configMap, String group) {
+        String timestamp = getConfigMapValue(configMap, LOCAL_TIMESTAMP_PREFIX + group);
         if (timestamp == null) {
             return null;
         }
