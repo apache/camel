@@ -132,6 +132,28 @@ public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
 
     @ResponseBody
     @PostMapping(
+            value = "/{id}/reset",
+            produces = {
+                    ActuatorMediaTypes.APPLICATION_ACTUATOR_V1_JSON_VALUE,
+                    MediaType.APPLICATION_JSON_VALUE
+            }
+    )
+    public Object reset(
+            @PathVariable String id) {
+
+        return doIfEnabled(() -> {
+            try {
+                delegate.resetRoute(id);
+            } catch (Exception e) {
+                throw new GenericException("Error resetting route stats " + id, e);
+            }
+
+            return ResponseEntity.ok().build();
+        });
+    }
+
+    @ResponseBody
+    @PostMapping(
         value = "/{id}/suspend",
         produces = {
             ActuatorMediaTypes.APPLICATION_ACTUATOR_V1_JSON_VALUE,

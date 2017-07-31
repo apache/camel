@@ -58,9 +58,7 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
     }
 
     public List<RouteEndpointInfo> getRoutesInfo() {
-        return camelContext.getRoutes().stream()
-            .map(RouteEndpointInfo::new)
-            .collect(Collectors.toList());
+        return camelContext.getRoutes().stream().map(RouteEndpointInfo::new).collect(Collectors.toList());
     }
 
     public RouteDetailsEndpointInfo getRouteDetailsInfo(String id) {
@@ -74,6 +72,11 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
 
     public void startRoute(String id) throws Exception {
         camelContext.getRouteController().startRoute(id);
+    }
+
+    public void resetRoute(String id) throws Exception {
+        ManagedRouteMBean resetRoute = camelContext.getManagedRoute(id, ManagedRouteMBean.class);
+        resetRoute.reset();
     }
 
     public void stopRoute(String id, Optional<Long> timeout, Optional<TimeUnit> timeUnit, Optional<Boolean> abortAfterTimeout) throws Exception {
@@ -99,7 +102,7 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
     /**
      * Container for exposing {@link org.apache.camel.Route} information as JSON.
      */
-    @JsonPropertyOrder({"id", "description", "uptime", "uptimeMillis"})
+    @JsonPropertyOrder({ "id", "description", "uptime", "uptimeMillis"})
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class RouteEndpointInfo {
 
@@ -120,7 +123,7 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
             this.uptimeMillis = route.getUptimeMillis();
 
             if (route instanceof StatefulService) {
-                this.status = ((StatefulService) route).getStatus().name();
+                this.status = ((StatefulService)route).getStatus().name();
             } else {
                 this.status = null;
             }
@@ -148,8 +151,7 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
     }
 
     /**
-     * Container for exposing {@link org.apache.camel.Route} information
-     * with route details as JSON. Route details are retrieved from JMX.
+     * Container for exposing {@link org.apache.camel.Route} information with route details as JSON. Route details are retrieved from JMX.
      */
     public static class RouteDetailsEndpointInfo extends RouteEndpointInfo {
 
