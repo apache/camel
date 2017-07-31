@@ -17,6 +17,7 @@
 package org.apache.camel.component.kubernetes.ha.lock;
 
 import java.util.Date;
+import java.util.Set;
 
 import org.apache.camel.util.ObjectHelper;
 
@@ -29,28 +30,31 @@ public class LeaderInfo {
 
     private String leader;
 
-    private Date timestamp;
+    private Date localTimestamp;
+
+    private Set<String> members;
 
     public LeaderInfo() {
     }
 
-    public LeaderInfo(String groupName, String leader, Date timestamp) {
+    public LeaderInfo(String groupName, String leader, Date timestamp, Set<String> members) {
         this.groupName = groupName;
         this.leader = leader;
-        this.timestamp = timestamp;
+        this.localTimestamp = timestamp;
+        this.members = members;
     }
 
-    public boolean isTimeElapsedSeconds(long timeSeconds) {
-        if (timestamp == null) {
-            return true;
-        }
-        long now = System.currentTimeMillis();
-        return timestamp.getTime() + timeSeconds * 1000 <= now;
+    public boolean hasEmptyLeader() {
+        return this.leader == null;
     }
 
-    public boolean isLeader(String pod) {
+    public boolean hasValidLeader() {
+        return this.leader != null && this.members.contains(this.leader);
+    }
+
+    public boolean isValidLeader(String pod) {
         ObjectHelper.notNull(pod, "pod");
-        return pod.equals(leader);
+        return hasValidLeader() && pod.equals(leader);
     }
 
     public String getGroupName() {
@@ -69,12 +73,20 @@ public class LeaderInfo {
         this.leader = leader;
     }
 
-    public Date getTimestamp() {
-        return timestamp;
+    public Date getLocalTimestamp() {
+        return localTimestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
+    public void setLocalTimestamp(Date localTimestamp) {
+        this.localTimestamp = localTimestamp;
+    }
+
+    public Set<String> getMembers() {
+        return members;
+    }
+
+    public void setMembers(Set<String> members) {
+        this.members = members;
     }
 
     @Override
@@ -82,9 +94,9 @@ public class LeaderInfo {
         final StringBuilder sb = new StringBuilder("LeaderInfo{");
         sb.append("groupName='").append(groupName).append('\'');
         sb.append(", leader='").append(leader).append('\'');
-        sb.append(", timestamp=").append(timestamp);
+        sb.append(", localTimestamp=").append(localTimestamp);
+        sb.append(", members=").append(members);
         sb.append('}');
         return sb.toString();
     }
-
 }

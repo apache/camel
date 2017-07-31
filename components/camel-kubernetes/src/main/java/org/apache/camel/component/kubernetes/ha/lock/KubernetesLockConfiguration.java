@@ -28,14 +28,10 @@ public class KubernetesLockConfiguration implements Cloneable {
 
     public static final String DEFAULT_CONFIGMAP_NAME = "leaders";
 
-
     public static final double DEFAULT_JITTER_FACTOR = 1.2;
-    public static final long DEFAULT_LEASE_DURATION_SECONDS = 60;
-    public static final long DEFAULT_RENEW_DEADLINE_SECONDS = 45;
-    public static final long DEFAULT_RETRY_PERIOD_SECONDS = 9;
-
-    public static final long DEFAULT_RETRY_ON_ERROR_INTERVAL_SECONDS = 5;
-    public static final long DEFAULT_WATCH_REFRESH_INTERVAL_SECONDS = 1800;
+    public static final long DEFAULT_LEASE_DURATION_MILLIS = 60000;
+    public static final long DEFAULT_RENEW_DEADLINE_MILLIS = 45000;
+    public static final long DEFAULT_RETRY_PERIOD_MILLIS = 9000;
 
     /**
      * Kubernetes namespace containing the pods and the ConfigMap used for locking.
@@ -63,37 +59,25 @@ public class KubernetesLockConfiguration implements Cloneable {
     private Map<String, String> clusterLabels = new HashMap<>();
 
     /**
-     * Indicates the maximum amount of time a Kubernetes watch should be kept active, before being recreated.
-     * Watch recreation can be disabled by putting value <= 0.
-     */
-    private long retryOnErrorIntervalSeconds = DEFAULT_RETRY_ON_ERROR_INTERVAL_SECONDS;
-
-    /**
-     * A jitter factor to apply in order to prevent all pods to try to become leaders in the same instant.
+     * A jitter factor to apply in order to prevent all pods to call Kubernetes APIs in the same instant.
      */
     private double jitterFactor = DEFAULT_JITTER_FACTOR;
 
     /**
      * The default duration of the lease for the current leader.
      */
-    private long leaseDurationSeconds = DEFAULT_LEASE_DURATION_SECONDS;
+    private long leaseDurationMillis = DEFAULT_LEASE_DURATION_MILLIS;
 
     /**
-     * The deadline after which the leader must stop trying to renew its leadership (and yield it).
+     * The deadline after which the leader must stop its services because it may have lost the leadership.
      */
-    private long renewDeadlineSeconds = DEFAULT_RENEW_DEADLINE_SECONDS;
+    private long renewDeadlineMillis = DEFAULT_RENEW_DEADLINE_MILLIS;
 
     /**
-     * The time between two subsequent attempts to acquire/renew the leadership (or after the lease expiration).
-     * It is randomized using the jitter factor in case of new leader election (not renewal).
+     * The time between two subsequent attempts to check and acquire the leadership.
+     * It is randomized using the jitter factor.
      */
-    private long retryPeriodSeconds = DEFAULT_RETRY_PERIOD_SECONDS;
-
-    /**
-     * Set this to a positive value in order to recreate watchers after a certain amount of time
-     * (to prevent them becoming stale).
-     */
-    private long watchRefreshIntervalSeconds = DEFAULT_WATCH_REFRESH_INTERVAL_SECONDS;
+    private long retryPeriodMillis = DEFAULT_RETRY_PERIOD_MILLIS;
 
     public KubernetesLockConfiguration() {
     }
@@ -149,14 +133,6 @@ public class KubernetesLockConfiguration implements Cloneable {
         this.clusterLabels = clusterLabels;
     }
 
-    public long getRetryOnErrorIntervalSeconds() {
-        return retryOnErrorIntervalSeconds;
-    }
-
-    public void setRetryOnErrorIntervalSeconds(long retryOnErrorIntervalSeconds) {
-        this.retryOnErrorIntervalSeconds = retryOnErrorIntervalSeconds;
-    }
-
     public double getJitterFactor() {
         return jitterFactor;
     }
@@ -165,36 +141,28 @@ public class KubernetesLockConfiguration implements Cloneable {
         this.jitterFactor = jitterFactor;
     }
 
-    public long getLeaseDurationSeconds() {
-        return leaseDurationSeconds;
+    public long getLeaseDurationMillis() {
+        return leaseDurationMillis;
     }
 
-    public void setLeaseDurationSeconds(long leaseDurationSeconds) {
-        this.leaseDurationSeconds = leaseDurationSeconds;
+    public void setLeaseDurationMillis(long leaseDurationMillis) {
+        this.leaseDurationMillis = leaseDurationMillis;
     }
 
-    public long getRenewDeadlineSeconds() {
-        return renewDeadlineSeconds;
+    public long getRenewDeadlineMillis() {
+        return renewDeadlineMillis;
     }
 
-    public void setRenewDeadlineSeconds(long renewDeadlineSeconds) {
-        this.renewDeadlineSeconds = renewDeadlineSeconds;
+    public void setRenewDeadlineMillis(long renewDeadlineMillis) {
+        this.renewDeadlineMillis = renewDeadlineMillis;
     }
 
-    public long getRetryPeriodSeconds() {
-        return retryPeriodSeconds;
+    public long getRetryPeriodMillis() {
+        return retryPeriodMillis;
     }
 
-    public void setRetryPeriodSeconds(long retryPeriodSeconds) {
-        this.retryPeriodSeconds = retryPeriodSeconds;
-    }
-
-    public long getWatchRefreshIntervalSeconds() {
-        return watchRefreshIntervalSeconds;
-    }
-
-    public void setWatchRefreshIntervalSeconds(long watchRefreshIntervalSeconds) {
-        this.watchRefreshIntervalSeconds = watchRefreshIntervalSeconds;
+    public void setRetryPeriodMillis(long retryPeriodMillis) {
+        this.retryPeriodMillis = retryPeriodMillis;
     }
 
     public KubernetesLockConfiguration copy() {
@@ -214,12 +182,10 @@ public class KubernetesLockConfiguration implements Cloneable {
         sb.append(", groupName='").append(groupName).append('\'');
         sb.append(", podName='").append(podName).append('\'');
         sb.append(", clusterLabels=").append(clusterLabels);
-        sb.append(", retryOnErrorIntervalSeconds=").append(retryOnErrorIntervalSeconds);
         sb.append(", jitterFactor=").append(jitterFactor);
-        sb.append(", leaseDurationSeconds=").append(leaseDurationSeconds);
-        sb.append(", renewDeadlineSeconds=").append(renewDeadlineSeconds);
-        sb.append(", retryPeriodSeconds=").append(retryPeriodSeconds);
-        sb.append(", watchRefreshIntervalSeconds=").append(watchRefreshIntervalSeconds);
+        sb.append(", leaseDurationMillis=").append(leaseDurationMillis);
+        sb.append(", renewDeadlineMillis=").append(renewDeadlineMillis);
+        sb.append(", retryPeriodMillis=").append(retryPeriodMillis);
         sb.append('}');
         return sb.toString();
     }

@@ -28,16 +28,21 @@ import org.apache.camel.ha.CamelClusterEventListener;
 import org.apache.camel.ha.CamelClusterMember;
 import org.apache.camel.ha.CamelClusterView;
 import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Records leadership changes and allow to do assertions.
  */
 public class LeaderRecorder implements CamelClusterEventListener.Leadership {
 
+    private static final Logger LOG = LoggerFactory.getLogger(LeaderRecorder.class);
+
     private List<LeadershipInfo> leaderships = new CopyOnWriteArrayList<>();
 
     @Override
     public void leadershipChanged(CamelClusterView view, CamelClusterMember leader) {
+        LOG.info("Cluster view {} - leader changed to: {}", view.getLocalMember(), leader);
         this.leaderships.add(new LeadershipInfo(leader != null ? leader.getId() : null, System.currentTimeMillis()));
     }
 
