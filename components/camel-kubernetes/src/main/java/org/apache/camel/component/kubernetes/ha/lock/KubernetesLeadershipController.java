@@ -346,7 +346,7 @@ public class KubernetesLeadershipController implements Service {
     }
 
     private String logPrefix() {
-        return "Leadership Controller [" + this.lockConfiguration.getPodName() + "]";
+        return "Pod[" + this.lockConfiguration.getPodName() + "]";
     }
 
 }

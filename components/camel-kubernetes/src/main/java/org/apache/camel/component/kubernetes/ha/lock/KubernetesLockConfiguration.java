@@ -29,9 +29,9 @@ public class KubernetesLockConfiguration implements Cloneable {
     public static final String DEFAULT_CONFIGMAP_NAME = "leaders";
 
     public static final double DEFAULT_JITTER_FACTOR = 1.2;
-    public static final long DEFAULT_LEASE_DURATION_MILLIS = 60000;
-    public static final long DEFAULT_RENEW_DEADLINE_MILLIS = 45000;
-    public static final long DEFAULT_RETRY_PERIOD_MILLIS = 9000;
+    public static final long DEFAULT_LEASE_DURATION_MILLIS = 30000;
+    public static final long DEFAULT_RENEW_DEADLINE_MILLIS = 20000;
+    public static final long DEFAULT_RETRY_PERIOD_MILLIS = 5000;
 
     /**
      * Kubernetes namespace containing the pods and the ConfigMap used for locking.
