@@ -155,6 +155,7 @@ public class TimedLeaderNotifier implements Service {
         final Optional<String> newLeader = leader;
         if (!newLeader.equals(lastCommunicatedLeader)) {
             lastCommunicatedLeader = newLeader;
+            LOG.debug("Communicating new leader: {}" + newLeader);
             handler.onKubernetesClusterEvent(new KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent() {
                 @Override
                 public Optional<String> getData() {
@@ -166,6 +167,7 @@ public class TimedLeaderNotifier implements Service {
         final Set<String> newMembers = members;
         if (!newMembers.equals(lastCommunicatedMembers)) {
             lastCommunicatedMembers = newMembers;
+            LOG.debug("Communicating new cluster members: {}" + newMembers);
             handler.onKubernetesClusterEvent(new KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent() {
                 @Override
                 public Set<String> getData() {

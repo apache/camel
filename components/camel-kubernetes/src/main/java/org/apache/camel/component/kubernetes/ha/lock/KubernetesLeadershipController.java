@@ -130,7 +130,7 @@ public class KubernetesLeadershipController implements Service {
             LOG.info("{} The cluster has no leaders. Trying to acquire the leadership...", logPrefix());
             boolean acquired = tryAcquireLeadership();
             if (acquired) {
-                LOG.info("{} Leadership acquired by current pod ({}) with immediate effect", logPrefix(), this.lockConfiguration.getPodName());
+                LOG.info("{} Leadership acquired by current pod with immediate effect", logPrefix());
                 this.currentState = State.LEADER;
                 this.serializedExecutor.execute(this::refreshStatus);
                 return;
@@ -142,7 +142,7 @@ public class KubernetesLeadershipController implements Service {
             LOG.info("{} Leadership has been lost by old owner. Trying to acquire the leadership...", logPrefix());
             boolean acquired = tryAcquireLeadership();
             if (acquired) {
-                LOG.info("{} Leadership acquired by current pod ({})", logPrefix(), this.lockConfiguration.getPodName());
+                LOG.info("{} Leadership acquired by current pod", logPrefix());
                 this.currentState = State.BECOMING_LEADER;
                 this.serializedExecutor.execute(this::refreshStatus);
                 return;
@@ -151,7 +151,7 @@ public class KubernetesLeadershipController implements Service {
             }
         } else if (this.latestLeaderInfo.isValidLeader(this.lockConfiguration.getPodName())) {
             // We are leaders for some reason (e.g. pod restart on failure)
-            LOG.info("{} Leadership is already owned by current pod ({})", logPrefix(), this.lockConfiguration.getPodName());
+            LOG.info("{} Leadership is already owned by current pod", logPrefix());
             this.currentState = State.BECOMING_LEADER;
             this.serializedExecutor.execute(this::refreshStatus);
             return;
@@ -172,7 +172,7 @@ public class KubernetesLeadershipController implements Service {
         // Wait always the same amount of time before becoming the leader
         // Even if the current pod is already leader, we should let a possible old version of the pod to shut down
         long delay = this.lockConfiguration.getLeaseDurationMillis();
-        LOG.info("{} Current pod ({}) owns the leadership, but it will be effective in {} seconds...", logPrefix(), this.lockConfiguration.getPodName(), new BigDecimal(delay).divide(BigDecimal
+        LOG.info("{} Current pod owns the leadership, but it will be effective in {} seconds...", logPrefix(), new BigDecimal(delay).divide(BigDecimal
                 .valueOf(1000), 2, BigDecimal.ROUND_HALF_UP));
 
         try {
@@ -181,7 +181,7 @@ public class KubernetesLeadershipController implements Service {
             LOG.warn("Thread interrupted", e);
         }
 
-        LOG.info("{} Current pod ({}) is becoming the new leader now...", logPrefix(), this.lockConfiguration.getPodName());
+        LOG.info("{} Current pod is becoming the new leader now...", logPrefix());
         this.currentState = State.LEADER;
         this.serializedExecutor.execute(this::refreshStatus);
     }
@@ -196,7 +196,7 @@ public class KubernetesLeadershipController implements Service {
         }
 
         if (this.latestLeaderInfo.isValidLeader(this.lockConfiguration.getPodName())) {
-            LOG.debug("{} Current Pod ({}) is still the leader", logPrefix(), this.lockConfiguration.getPodName());
+            LOG.debug("{} Current Pod is still the leader", logPrefix());
             this.leaderNotifier.refreshLeadership(Optional.of(this.lockConfiguration.getPodName()),
                     timeBeforePulling,
                     this.lockConfiguration.getRenewDeadlineMillis(),
@@ -204,7 +204,7 @@ public class KubernetesLeadershipController implements Service {
             rescheduleAfterDelay();
             return;
         } else {
-            LOG.debug("{} Current Pod ({}) has lost the leadership", logPrefix(), this.lockConfiguration.getPodName());
+            LOG.debug("{} Current Pod has lost the leadership", logPrefix());
             this.currentState = State.NOT_LEADER;
             // set a empty leader to signal leadership loss
             this.leaderNotifier.refreshLeadership(Optional.empty(),
@@ -212,8 +212,8 @@ public class KubernetesLeadershipController implements Service {
                     lockConfiguration.getLeaseDurationMillis(),
                     this.latestLeaderInfo.getMembers());
 
-            // wait a lease time and restart
-            this.serializedExecutor.schedule(this::refreshStatus, this.lockConfiguration.getLeaseDurationMillis(), TimeUnit.MILLISECONDS);
+            // restart from scratch to acquire leadership
+            this.serializedExecutor.execute(this::refreshStatus);
         }
     }
 
@@ -257,7 +257,7 @@ public class KubernetesLeadershipController implements Service {
             LOG.warn(logPrefix() + " Unexpected condition. Latest leader info or list of members is empty.");
             return false;
         } else if (!members.contains(this.lockConfiguration.getPodName())) {
-            LOG.warn(logPrefix() + " The list of cluster members " + latestLeaderInfo.getMembers() + " does not contain the current pod (" + this.lockConfiguration.getPodName() + "). Cannot acquire"
+            LOG.warn(logPrefix() + " The list of cluster members " + latestLeaderInfo.getMembers() + " does not contain the current Pod. Cannot acquire"
                     + " leadership.");
             return false;
         }
@@ -311,7 +311,7 @@ public class KubernetesLeadershipController implements Service {
                 }
             } else {
                 // Another pod is the leader and it's still active
-                LOG.debug("{} Another pod ({}) is the current leader and it is still active", logPrefix(), this.latestLeaderInfo.getLeader());
+                LOG.debug("{} Another Pod ({}) is the current leader and it is still active", logPrefix(), this.latestLeaderInfo.getLeader());
                 return false;
             }
         }
