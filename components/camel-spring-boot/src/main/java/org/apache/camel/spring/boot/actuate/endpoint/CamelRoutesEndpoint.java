@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
@@ -34,6 +36,8 @@ import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.RouteEn
 import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
 import org.springframework.boot.actuate.endpoint.Endpoint;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 /**
  * {@link Endpoint} to expose {@link org.apache.camel.Route} information.
@@ -58,9 +62,7 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
     }
 
     public List<RouteEndpointInfo> getRoutesInfo() {
-        return camelContext.getRoutes().stream()
-            .map(RouteEndpointInfo::new)
-            .collect(Collectors.toList());
+        return camelContext.getRoutes().stream().map(RouteEndpointInfo::new).collect(Collectors.toList());
     }
 
     public RouteDetailsEndpointInfo getRouteDetailsInfo(String id) {
@@ -74,6 +76,19 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
 
     public void startRoute(String id) throws Exception {
         camelContext.getRouteController().startRoute(id);
+    }
+
+    public String resetRoute(String id) throws Exception {
+        ManagedRouteMBean resetRoute = camelContext.getManagedRoute(id, ManagedRouteMBean.class);
+        if (resetRoute != null) {
+            resetRoute.reset(true);
+        } else {
+            String description = "The provided route id does not exists";
+            ResponseEntity<?> objectResponseEntity = ResponseEntity.status(HttpStatus.NO_CONTENT).body(description);
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(objectResponseEntity);
+        }
+        return null;
     }
 
     public void stopRoute(String id, Optional<Long> timeout, Optional<TimeUnit> timeUnit, Optional<Boolean> abortAfterTimeout) throws Exception {
@@ -99,7 +114,7 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
     /**
      * Container for exposing {@link org.apache.camel.Route} information as JSON.
      */
-    @JsonPropertyOrder({"id", "description", "uptime", "uptimeMillis"})
+    @JsonPropertyOrder({ "id", "description", "uptime", "uptimeMillis"})
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class RouteEndpointInfo {
 
@@ -120,7 +135,7 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
             this.uptimeMillis = route.getUptimeMillis();
 
             if (route instanceof StatefulService) {
-                this.status = ((StatefulService) route).getStatus().name();
+                this.status = ((StatefulService)route).getStatus().name();
             } else {
                 this.status = null;
             }
@@ -148,8 +163,7 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
     }
 
     /**
-     * Container for exposing {@link org.apache.camel.Route} information
-     * with route details as JSON. Route details are retrieved from JMX.
+     * Container for exposing {@link org.apache.camel.Route} information with route details as JSON. Route details are retrieved from JMX.
      */
     public static class RouteDetailsEndpointInfo extends RouteEndpointInfo {
 
