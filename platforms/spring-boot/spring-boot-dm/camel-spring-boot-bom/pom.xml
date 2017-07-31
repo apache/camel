@@ -1197,7 +1197,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-twillio-starter</artifactId>
+        <artifactId>camel-twilio-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
