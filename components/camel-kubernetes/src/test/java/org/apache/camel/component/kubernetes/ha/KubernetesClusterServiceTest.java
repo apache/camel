@@ -42,7 +42,10 @@ import org.junit.Test;
  */
 public class KubernetesClusterServiceTest extends CamelTestSupport {
 
-    private static final int LEASE_TIME_SECONDS = 5;
+    private static final int LEASE_TIME_MILLIS = 2000;
+    private static final int RENEW_DEADLINE_MILLIS = 1000;
+    private static final int RETRY_PERIOD_MILLIS = 200;
+    private static final double JITTER_FACTOR = 1.1;
 
     private ConfigMapLockSimulator lockSimulator;
 
@@ -75,6 +78,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         mypod2.waitForAnyLeader(2, TimeUnit.SECONDS);
 
         String leader = mypod1.getCurrentLeader();
+        assertNotNull(leader);
         assertTrue(leader.startsWith("mypod"));
         assertEquals("Leaders should be equals", mypod2.getCurrentLeader(), leader);
     }
@@ -129,6 +133,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         LeaderRecorder formerLoserRecorder = firstLeader.equals("mypod1") ? mypod2 : mypod1;
 
         refuseRequestsFromPod(firstLeader);
+        disconnectPod(firstLeader);
 
         formerLeaderRecorder.waitForALeaderChange(7, TimeUnit.SECONDS);
         formerLoserRecorder.waitForANewLeader(firstLeader, 7, TimeUnit.SECONDS);
@@ -139,12 +144,12 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         Long lossTimestamp = formerLeaderRecorder.getLastTimeOf(l -> l == null);
         Long gainTimestamp = formerLoserRecorder.getLastTimeOf(secondLeader::equals);
 
-        assertTrue("At least 2 seconds must elapse from leadership loss and regain (see renewDeadlineSeconds)", gainTimestamp >= lossTimestamp + 2000);
-        checkLeadershipChangeDistance(LEASE_TIME_SECONDS, TimeUnit.SECONDS, mypod1, mypod2);
+        assertTrue("At least half distance must elapse from leadership loss and regain (see renewDeadlineSeconds)", gainTimestamp >= lossTimestamp + (LEASE_TIME_MILLIS - RENEW_DEADLINE_MILLIS) / 2);
+        checkLeadershipChangeDistance((LEASE_TIME_MILLIS - RENEW_DEADLINE_MILLIS) / 2, TimeUnit.MILLISECONDS, mypod1, mypod2);
     }
 
     @Test
-    public void testSlowLeaderLosingLeadership() throws Exception {
+    public void testSlowLeaderLosingLeadershipOnlyInternally() throws Exception {
         LeaderRecorder mypod1 = addMember("mypod1");
         LeaderRecorder mypod2 = addMember("mypod2");
         context.start();
@@ -159,17 +164,9 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
 
         delayRequestsFromPod(firstLeader, 10, TimeUnit.SECONDS);
 
-        formerLeaderRecorder.waitForALeaderChange(7, TimeUnit.SECONDS);
-        formerLoserRecorder.waitForANewLeader(firstLeader, 7, TimeUnit.SECONDS);
-
-        String secondLeader = formerLoserRecorder.getCurrentLeader();
-        assertNotEquals("The firstLeader should be different from the new one", firstLeader, secondLeader);
-
-        Long lossTimestamp = formerLeaderRecorder.getLastTimeOf(l -> l == null);
-        Long gainTimestamp = formerLoserRecorder.getLastTimeOf(secondLeader::equals);
-
-        assertTrue("At least 2 seconds must elapse from leadership loss and regain (see renewDeadlineSeconds)", gainTimestamp >= lossTimestamp + 2000);
-        checkLeadershipChangeDistance(LEASE_TIME_SECONDS, TimeUnit.SECONDS, mypod1, mypod2);
+        Thread.sleep(LEASE_TIME_MILLIS);
+        assertNull(formerLeaderRecorder.getCurrentLeader());
+        assertEquals(firstLeader, formerLoserRecorder.getCurrentLeader());
     }
 
     @Test
@@ -185,9 +182,9 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
 
         for (int i = 0; i < 3; i++) {
             refuseRequestsFromPod(firstLeader);
-            Thread.sleep(1000);
+            Thread.sleep(RENEW_DEADLINE_MILLIS);
             allowRequestsFromPod(firstLeader);
-            Thread.sleep(2000);
+            Thread.sleep(LEASE_TIME_MILLIS);
         }
 
         assertEquals(firstLeader, mypod1.getCurrentLeader());
@@ -229,6 +226,18 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         this.lockServers.get(pod).setRefuseRequests(false);
     }
 
+    private void disconnectPod(String pod) {
+        for (LockTestServer server : this.lockServers.values()) {
+            server.removePod(pod);
+        }
+    }
+
+    private void connectPod(String pod) {
+        for (LockTestServer server : this.lockServers.values()) {
+            server.addPod(pod);
+        }
+    }
+
     private void checkLeadershipChangeDistance(long minimum, TimeUnit unit, LeaderRecorder... recorders) {
         List<LeaderRecorder.LeadershipInfo> infos = Arrays.stream(recorders)
                 .flatMap(lr -> lr.getLeadershipInfo().stream())
@@ -245,7 +254,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
                 } else if (info.getLeader() != null && !info.getLeader().equals(currentLeaderLastSeen.getLeader())) {
                     // switch
                     long delay = info.getChangeTimestamp() - currentLeaderLastSeen.getChangeTimestamp();
-                    assertTrue("Lease time not elapsed between switch", delay >= TimeUnit.MILLISECONDS.convert(minimum, unit));
+                    assertTrue("Lease time not elapsed between switch, minimum=" + TimeUnit.MILLISECONDS.convert(minimum, unit) + ", found=" + delay, delay >= TimeUnit.MILLISECONDS.convert(minimum,
+                            unit));
                     currentLeaderLastSeen = info;
                 }
             }
@@ -268,11 +278,10 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         KubernetesClusterService member = new KubernetesClusterService(configuration);
         member.setKubernetesNamespace("test");
         member.setPodName(name);
-        member.setLeaseDurationSeconds(LEASE_TIME_SECONDS);
-        member.setRenewDeadlineSeconds(3); // 5-3 = at least 2 seconds for switching on leadership loss
-        member.setRetryPeriodSeconds(1);
-        member.setRetryOnErrorIntervalSeconds(1);
-        member.setJitterFactor(1.2);
+        member.setLeaseDurationMillis(LEASE_TIME_MILLIS);
+        member.setRenewDeadlineMillis(RENEW_DEADLINE_MILLIS);
+        member.setRetryPeriodMillis(RETRY_PERIOD_MILLIS);
+        member.setJitterFactor(JITTER_FACTOR);
 
         LeaderRecorder recorder = new LeaderRecorder();
         try {
@@ -280,6 +289,10 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
             context().addService(member);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
+        }
+
+        for (String pod : this.lockServers.keySet()) {
+            connectPod(pod);
         }
         return recorder;
     }

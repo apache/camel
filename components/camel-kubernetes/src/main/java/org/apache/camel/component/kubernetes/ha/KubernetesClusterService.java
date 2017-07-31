@@ -82,25 +82,22 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
         if (config.getJitterFactor() < 1) {
             throw new IllegalStateException("jitterFactor must be >= 1 (found: " + config.getJitterFactor() + ")");
         }
-        if (config.getRetryOnErrorIntervalSeconds() <= 0) {
-            throw new IllegalStateException("retryOnErrorIntervalSeconds must be > 0 (found: " + config.getRetryOnErrorIntervalSeconds() + ")");
+        if (config.getRetryPeriodMillis() <= 0) {
+            throw new IllegalStateException("retryPeriodMillis must be > 0 (found: " + config.getRetryPeriodMillis() + ")");
         }
-        if (config.getRetryPeriodSeconds() <= 0) {
-            throw new IllegalStateException("retryPeriodSeconds must be > 0 (found: " + config.getRetryPeriodSeconds() + ")");
+        if (config.getRenewDeadlineMillis() <= 0) {
+            throw new IllegalStateException("renewDeadlineMillis must be > 0 (found: " + config.getRenewDeadlineMillis() + ")");
         }
-        if (config.getRenewDeadlineSeconds() <= 0) {
-            throw new IllegalStateException("renewDeadlineSeconds must be > 0 (found: " + config.getRenewDeadlineSeconds() + ")");
+        if (config.getLeaseDurationMillis() <= 0) {
+            throw new IllegalStateException("leaseDurationMillis must be > 0 (found: " + config.getLeaseDurationMillis() + ")");
         }
-        if (config.getLeaseDurationSeconds() <= 0) {
-            throw new IllegalStateException("leaseDurationSeconds must be > 0 (found: " + config.getLeaseDurationSeconds() + ")");
+        if (config.getLeaseDurationMillis() <= config.getRenewDeadlineMillis()) {
+            throw new IllegalStateException("leaseDurationMillis must be greater than renewDeadlineMillis "
+                    + "(" + config.getLeaseDurationMillis() + " is not greater than " + config.getRenewDeadlineMillis() + ")");
         }
-        if (config.getLeaseDurationSeconds() <= config.getRenewDeadlineSeconds()) {
-            throw new IllegalStateException("leaseDurationSeconds must be greater than renewDeadlineSeconds "
-                    + "(" + config.getLeaseDurationSeconds() + " is not greater than " + config.getRenewDeadlineSeconds() + ")");
-        }
-        if (config.getRenewDeadlineSeconds() <= config.getJitterFactor() * config.getRetryPeriodSeconds()) {
-            throw new IllegalStateException("renewDeadlineSeconds must be greater than jitterFactor*retryPeriodSeconds "
-                    + "(" + config.getRenewDeadlineSeconds() + " is not greater than " + config.getJitterFactor() + "*" + config.getRetryPeriodSeconds() + ")");
+        if (config.getRenewDeadlineMillis() <= config.getJitterFactor() * config.getRetryPeriodMillis()) {
+            throw new IllegalStateException("renewDeadlineMillis must be greater than jitterFactor*retryPeriodMillis "
+                    + "(" + config.getRenewDeadlineMillis() + " is not greater than " + config.getJitterFactor() + "*" + config.getRetryPeriodMillis() + ")");
         }
 
         return config;
@@ -176,16 +173,8 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
         lockConfiguration.setKubernetesResourcesNamespace(kubernetesResourcesNamespace);
     }
 
-    public long getRetryOnErrorIntervalSeconds() {
-        return lockConfiguration.getRetryOnErrorIntervalSeconds();
-    }
-
-    /**
-     * Indicates the maximum amount of time a Kubernetes watch should be kept active, before being recreated.
-     * Watch recreation can be disabled by putting value <= 0.
-     */
-    public void setRetryOnErrorIntervalSeconds(long retryOnErrorIntervalSeconds) {
-        lockConfiguration.setRetryOnErrorIntervalSeconds(retryOnErrorIntervalSeconds);
+    public String getKubernetesResourcesNamespaceOrDefault(KubernetesClient kubernetesClient) {
+        return lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient);
     }
 
     public double getJitterFactor() {
@@ -193,56 +182,43 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
     }
 
     /**
-     * A jitter factor to apply in order to prevent all pods to try to become leaders in the same instant.
+     * A jitter factor to apply in order to prevent all pods to call Kubernetes APIs in the same instant.
      */
     public void setJitterFactor(double jitterFactor) {
         lockConfiguration.setJitterFactor(jitterFactor);
     }
 
-    public long getLeaseDurationSeconds() {
-        return lockConfiguration.getLeaseDurationSeconds();
+    public long getLeaseDurationMillis() {
+        return lockConfiguration.getLeaseDurationMillis();
     }
 
     /**
      * The default duration of the lease for the current leader.
      */
-    public void setLeaseDurationSeconds(long leaseDurationSeconds) {
-        lockConfiguration.setLeaseDurationSeconds(leaseDurationSeconds);
+    public void setLeaseDurationMillis(long leaseDurationMillis) {
+        lockConfiguration.setLeaseDurationMillis(leaseDurationMillis);
     }
 
-    public long getRenewDeadlineSeconds() {
-        return lockConfiguration.getRenewDeadlineSeconds();
-    }
-
-    /**
-     * The deadline after which the leader must stop trying to renew its leadership (and yield it).
-     */
-    public void setRenewDeadlineSeconds(long renewDeadlineSeconds) {
-        lockConfiguration.setRenewDeadlineSeconds(renewDeadlineSeconds);
-    }
-
-    public long getRetryPeriodSeconds() {
-        return lockConfiguration.getRetryPeriodSeconds();
+    public long getRenewDeadlineMillis() {
+        return lockConfiguration.getRenewDeadlineMillis();
     }
 
     /**
-     * The time between two subsequent attempts to acquire/renew the leadership (or after the lease expiration).
-     * It is randomized using the jitter factor in case of new leader election (not renewal).
+     * The deadline after which the leader must stop its services because it may have lost the leadership.
      */
-    public void setRetryPeriodSeconds(long retryPeriodSeconds) {
-        lockConfiguration.setRetryPeriodSeconds(retryPeriodSeconds);
+    public void setRenewDeadlineMillis(long renewDeadlineMillis) {
+        lockConfiguration.setRenewDeadlineMillis(renewDeadlineMillis);
     }
 
-    public long getWatchRefreshIntervalSeconds() {
-        return lockConfiguration.getWatchRefreshIntervalSeconds();
+    public long getRetryPeriodMillis() {
+        return lockConfiguration.getRetryPeriodMillis();
     }
 
     /**
-     * Set this to a positive value in order to recreate watchers after a certain amount of time,
-     * to avoid having stale watchers.
+     * The time between two subsequent attempts to check and acquire the leadership.
+     * It is randomized using the jitter factor.
      */
-    public void setWatchRefreshIntervalSeconds(long watchRefreshIntervalSeconds) {
-        lockConfiguration.setWatchRefreshIntervalSeconds(watchRefreshIntervalSeconds);
+    public void setRetryPeriodMillis(long retryPeriodMillis) {
+        lockConfiguration.setRetryPeriodMillis(retryPeriodMillis);
     }
-
 }
