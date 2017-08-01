@@ -155,25 +155,33 @@ public class TimedLeaderNotifier implements Service {
         final Optional<String> newLeader = leader;
         if (!newLeader.equals(lastCommunicatedLeader)) {
             lastCommunicatedLeader = newLeader;
-            LOG.debug("Communicating new leader: {}" + newLeader);
-            handler.onKubernetesClusterEvent(new KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent() {
-                @Override
-                public Optional<String> getData() {
-                    return newLeader;
-                }
-            });
+            LOG.info("The cluster has a new leader: {}", newLeader);
+            try {
+                handler.onKubernetesClusterEvent(new KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent() {
+                    @Override
+                    public Optional<String> getData() {
+                        return newLeader;
+                    }
+                });
+            } catch (Throwable t) {
+                LOG.warn("Error while communicating the new leader to the handler", t);
+            }
         }
 
         final Set<String> newMembers = members;
         if (!newMembers.equals(lastCommunicatedMembers)) {
             lastCommunicatedMembers = newMembers;
-            LOG.debug("Communicating new cluster members: {}" + newMembers);
-            handler.onKubernetesClusterEvent(new KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent() {
-                @Override
-                public Set<String> getData() {
-                    return newMembers;
-                }
-            });
+            LOG.info("The list of cluster members has changed: {}", newMembers);
+            try {
+                handler.onKubernetesClusterEvent(new KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent() {
+                    @Override
+                    public Set<String> getData() {
+                        return newMembers;
+                    }
+                });
+            } catch (Throwable t) {
+                LOG.warn("Error while communicating the cluster members to the handler", t);
+            }
         }
 
     }
