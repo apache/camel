@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servicenow.model.Incident;
+import org.apache.camel.component.servicenow.model.IncidentWithParms;
 import org.junit.Test;
 
 public class ServiceNowTableTest extends ServiceNowTestSupport {
@@ -49,6 +50,38 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
         List<Incident> items = exchange.getIn().getBody(List.class);
 
         assertNotNull(items);
+        assertTrue(items.size() <= 10);
+        assertNotNull(exchange.getIn().getHeader(ServiceNowConstants.RESPONSE_TYPE));
+        assertNotNull(exchange.getIn().getHeader(ServiceNowConstants.OFFSET_FIRST));
+        assertNotNull(exchange.getIn().getHeader(ServiceNowConstants.OFFSET_NEXT));
+        assertNotNull(exchange.getIn().getHeader(ServiceNowConstants.OFFSET_LAST));
+    }
+
+    @Test
+    public void testRetrieveSomeWithParams() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:servicenow");
+        mock.expectedMessageCount(1);
+
+        template().sendBodyAndHeaders(
+            "direct:servicenow",
+            null,
+            kvBuilder()
+                .put(ServiceNowConstants.RESOURCE, "table")
+                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                .put(ServiceNowParams.SYSPARM_LIMIT, 10)
+                .put(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, false)
+                .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                .put(ServiceNowConstants.MODEL, IncidentWithParms.class)
+                .build()
+        );
+
+        mock.assertIsSatisfied();
+
+        Exchange exchange = mock.getExchanges().get(0);
+        List<Incident> items = exchange.getIn().getBody(List.class);
+
+        assertNotNull(items);
+        assertFalse(items.isEmpty());
         assertTrue(items.size() <= 10);
         assertNotNull(exchange.getIn().getHeader(ServiceNowConstants.RESPONSE_TYPE));
         assertNotNull(exchange.getIn().getHeader(ServiceNowConstants.OFFSET_FIRST));

@@ -78,6 +78,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
                 .query(ServiceNowParams.SYSPARM_OFFSET, in)
                 .query(ServiceNowParams.SYSPARM_CATALOG, in)
                 .query(ServiceNowParams.SYSPARM_VIEW, in)
+                .query(responseModel)
                 .invoke(HttpMethod.GET)
             : client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
@@ -87,6 +88,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
                 .path("items")
                 .path(sysId)
                 .query(ServiceNowParams.SYSPARM_VIEW, in)
+                .query(responseModel)
                 .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(in, responseModel, response);
@@ -117,6 +119,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
             .path(ObjectHelper.notNull(sysId, "sysId"))
             .path("submit_guide")
             .query(ServiceNowParams.SYSPARM_VIEW, in)
+            .query(responseModel)
             .invoke(HttpMethod.POST, in.getMandatoryBody());
 
         setBodyAndHeaders(in, responseModel, response);
@@ -145,6 +148,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
             .path("items")
             .path(ObjectHelper.notNull(sysId, "sysId"))
             .path("submit_guide")
+            .query(responseModel)
             .invoke(HttpMethod.POST, in.getMandatoryBody());
 
         setBodyAndHeaders(in, responseModel, response);
@@ -173,6 +177,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
             .path("items")
             .path(ObjectHelper.notNull(sysId, "sysId"))
             .path("add_to_cart")
+            .query(responseModel)
             .invoke(HttpMethod.POST);
 
         setBodyAndHeaders(in, responseModel, response);
@@ -203,6 +208,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
             .path(ObjectHelper.notNull(sysId, "sysId"))
             .path("submit_producer")
             .query(ServiceNowParams.SYSPARM_VIEW, in)
+            .query(responseModel)
             .invoke(HttpMethod.POST, in.getMandatoryBody());
 
         setBodyAndHeaders(in, responseModel, response);

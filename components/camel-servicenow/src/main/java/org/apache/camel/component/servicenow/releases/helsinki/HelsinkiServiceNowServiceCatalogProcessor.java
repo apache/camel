@@ -67,6 +67,7 @@ class HelsinkiServiceNowServiceCatalogProcessor extends AbstractServiceNowProces
                 .query(ServiceNowParams.SYSPARM_LIMIT, in)
                 .query(ServiceNowParams.SYSPARM_QUERY, in)
                 .query(ServiceNowParams.SYSPARM_VIEW, in)
+                .query(responseModel)
                 .invoke(HttpMethod.GET)
             : client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
@@ -76,6 +77,7 @@ class HelsinkiServiceNowServiceCatalogProcessor extends AbstractServiceNowProces
                 .path("catalogs")
                 .path(sysId)
                 .query(ServiceNowParams.SYSPARM_VIEW, in)
+                .query(responseModel)
                 .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(in, responseModel, response);
@@ -108,6 +110,7 @@ class HelsinkiServiceNowServiceCatalogProcessor extends AbstractServiceNowProces
             .query(ServiceNowParams.SYSPARM_LIMIT, in)
             .query(ServiceNowParams.SYSPARM_VIEW, in)
             .query(ServiceNowParams.SYSPARM_OFFSET, in)
+            .query(responseModel)
             .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(in, responseModel, response);

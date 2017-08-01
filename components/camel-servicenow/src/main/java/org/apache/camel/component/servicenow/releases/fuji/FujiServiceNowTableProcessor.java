@@ -72,6 +72,7 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
                 .query(ServiceNowParams.SYSPARM_FIELDS, in)
                 .query(ServiceNowParams.SYSPARM_LIMIT, in)
                 .query(ServiceNowParams.SYSPARM_VIEW, in)
+                .query(responseModel)
                 .invoke(HttpMethod.GET)
             : client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
@@ -84,6 +85,7 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
                 .query(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, in)
                 .query(ServiceNowParams.SYSPARM_FIELDS, in)
                 .query(ServiceNowParams.SYSPARM_VIEW, in)
+                .query(responseModel)
                 .invoke(HttpMethod.GET);
     }
 
@@ -105,6 +107,7 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
             .query(ServiceNowParams.SYSPARM_INPUT_DISPLAY_VALUE, in)
             .query(ServiceNowParams.SYSPARM_SUPPRESS_AUTO_SYS_FIELD, in)
             .query(ServiceNowParams.SYSPARM_VIEW, in)
+            .query(responseModel)
             .invoke(HttpMethod.POST, in.getMandatoryBody());
     }
 
@@ -127,6 +130,7 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
             .query(ServiceNowParams.SYSPARM_INPUT_DISPLAY_VALUE, in)
             .query(ServiceNowParams.SYSPARM_SUPPRESS_AUTO_SYS_FIELD, in)
             .query(ServiceNowParams.SYSPARM_VIEW, in)
+            .query(responseModel)
             .invoke(HttpMethod.PUT, in.getMandatoryBody());
     }
 
@@ -142,6 +146,7 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
             .path("table")
             .path(tableName)
             .path(ObjectHelper.notNull(sysId, "sysId"))
+            .query(responseModel)
             .invoke(HttpMethod.DELETE);
     }
 
@@ -164,6 +169,7 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
             .query(ServiceNowParams.SYSPARM_INPUT_DISPLAY_VALUE, in)
             .query(ServiceNowParams.SYSPARM_SUPPRESS_AUTO_SYS_FIELD, in)
             .query(ServiceNowParams.SYSPARM_VIEW, in)
+            .query(responseModel)
             .invoke("PATCH", in.getMandatoryBody());
     }
 }
