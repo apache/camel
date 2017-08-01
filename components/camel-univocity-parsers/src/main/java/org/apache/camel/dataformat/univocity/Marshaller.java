@@ -16,17 +16,18 @@
  */
 package org.apache.camel.dataformat.univocity;
 
+import static org.apache.camel.util.ExchangeHelper.convertToMandatoryType;
+import static org.apache.camel.util.ExchangeHelper.convertToType;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
-import com.univocity.parsers.common.AbstractWriter;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 
-import static org.apache.camel.util.ExchangeHelper.convertToMandatoryType;
-import static org.apache.camel.util.ExchangeHelper.convertToType;
+import com.univocity.parsers.common.AbstractWriter;
 
 /**
  * This class marshalls the exchange body using an uniVocity writer. It can automatically generates headers and keep
@@ -85,16 +86,29 @@ final class Marshaller<W extends AbstractWriter<?>> {
     private void writeRow(Exchange exchange, Object row, W writer) throws NoTypeConversionAvailableException {
         Map<?, ?> map = convertToMandatoryType(exchange, Map.class, row);
         if (adaptHeaders) {
-            for (Object key : map.keySet()) {
-                headers.add(convertToMandatoryType(exchange, String.class, key));
+            synchronized (headers) {
+                for (Object key : map.keySet()) {
+                    headers.add(convertToMandatoryType(exchange, String.class, key));
+                }
+                writeRow(map, writer);
             }
+        } else {
+            writeRow(map, writer);
         }
+    }
 
-        Object[] values = new Object[headers.size()];
-        int index = 0;
-        for (String header : headers) {
-            values[index++] = map.get(header);
-        }
-        writer.writeRow(values);
+    /**
+     * Writes the given map as row.
+     * 
+     * @param map row values by header
+     * @param writer uniVocity writer to use
+     */
+    private void writeRow(Map<?, ?> map, W writer) {
+      Object[] values = new Object[headers.size()];
+      int index = 0;
+      for (String header : headers) {
+          values[index++] = map.get(header);
+      }
+      writer.writeRow(values);
     }
 }
