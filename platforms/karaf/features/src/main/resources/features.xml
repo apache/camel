@@ -617,7 +617,7 @@
   </feature>
   <feature name='camel-fastjson' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>wrap:mvn:com.alibaba/fastjson/${fastjson-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.fastjson/${fastjson-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-fastjson/${project.version}</bundle>
   </feature>
   <feature name='camel-flatpack' version='${project.version}' resolver='(obr)' start-level='50'>
