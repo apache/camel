@@ -57,19 +57,10 @@ public class LocalDateFormatFactory extends AbstractFormatFactory {
             DateTimeFormatter df = this.getDateFormat();
 
             ObjectHelper.notNull(this.pattern, "pattern");
-
-            if (doesStringFitLengthOfPattern(string)) {
-                date = LocalDate.parse(string, df);
-                return date;
-            } else {
-                throw new FormatException("Date provided does not fit the pattern defined");
-            }
-
+            date = LocalDate.parse(string, df);
+            return date;
         }
-
-        private boolean doesStringFitLengthOfPattern(String string) {
-            return string.length() <= this.pattern.length();
-        }
+       
 
         DateTimeFormatter getDateFormat() {
             DateTimeFormatter result;
