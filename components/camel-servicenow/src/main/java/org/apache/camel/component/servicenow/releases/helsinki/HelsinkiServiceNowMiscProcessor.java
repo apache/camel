@@ -60,6 +60,7 @@ class HelsinkiServiceNowMiscProcessor extends AbstractServiceNowProcessor {
             .path("global")
             .path("user_role_inheritance")
             .query(ServiceNowParams.PARAM_USER_SYS_ID, in)
+            .query(responseModel)
             .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(in, responseModel, response);
@@ -85,6 +86,7 @@ class HelsinkiServiceNowMiscProcessor extends AbstractServiceNowProcessor {
             .path(apiVersion)
             .path("identifyreconcile")
             .query(ServiceNowParams.SYSPARM_DATA_SOURCE, in)
+            .query(responseModel)
             .invoke(HttpMethod.POST, in.getMandatoryBody());
 
         setBodyAndHeaders(in, responseModel, response);

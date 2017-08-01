@@ -37,7 +37,7 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
     protected void doProcess(Exchange exchange, Class<?> requestModel, Class<?> responseModel, String action, String apiVersion, String tableName, String sysId) throws Exception {
         Response response;
         if (ObjectHelper.equal(ServiceNowConstants.ACTION_RETRIEVE, action, true)) {
-            response = retrieveRecord(exchange.getIn(), apiVersion, tableName, sysId);
+            response = retrieveRecord(exchange.getIn(), requestModel, responseModel, apiVersion, tableName, sysId);
         } else if (ObjectHelper.equal(ServiceNowConstants.ACTION_CREATE, action, true)) {
             response = createRecord(exchange.getIn(), requestModel, responseModel, apiVersion, tableName);
         } else {
@@ -51,7 +51,7 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
      * GET
      * https://instance.service-now.com/api/now/import/{tableName}/{sys_id}
      */
-    private Response retrieveRecord(Message in, String apiVersion, String tableName, String sysId) throws Exception {
+    private Response retrieveRecord(Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId) throws Exception {
         return client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
@@ -59,6 +59,7 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
             .path("import")
             .path(tableName)
             .path(ObjectHelper.notNull(sysId, "sysId"))
+            .query(responseModel)
             .invoke(HttpMethod.GET);
     }
 
@@ -66,7 +67,7 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
      * POST
      * https://instance.service-now.com/api/now/import/{tableName}
      */
-    private Response createRecord(Message in, Class<?> requestModel, Class<?> responseModell, String apiVersion, String tableName) throws Exception {
+    private Response createRecord(Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName) throws Exception {
         validateBody(in, requestModel);
         return client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
@@ -74,6 +75,7 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
             .path(apiVersion)
             .path("import")
             .path(tableName)
+            .query(responseModel)
             .invoke(HttpMethod.POST, in.getMandatoryBody());
     }
 }

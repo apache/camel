@@ -26,15 +26,21 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
+import org.apache.camel.component.servicenow.annotations.ServiceNowSysParm;
 import org.apache.camel.component.servicenow.auth.AuthenticationRequestFilter;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ServiceNowClient {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowClient.class);
+
     private final CamelContext camelContext;
     private final ServiceNowConfiguration configuration;
     private final WebClient client;
@@ -68,7 +74,7 @@ public final class ServiceNowClient {
     }
 
     public ServiceNowClient path(Object path) {
-        if (path != null) {
+        if (ObjectHelper.isNotEmpty(path)) {
             client.path(path);
         }
 
@@ -109,6 +115,27 @@ public final class ServiceNowClient {
         Object value = param.getHeaderValue(message, configuration);
         if (value != null) {
             client.query(param.getId(), value);
+        }
+
+        return this;
+    }
+
+    public ServiceNowClient query(Class<?> model) {
+        if (model != null) {
+            String name;
+            String value;
+
+            for (ServiceNowSysParm parm : model.getAnnotationsByType(ServiceNowSysParm.class)) {
+                name = parm.name();
+                value = parm.value();
+
+                // SysParms defined on model have precedence and replace query param
+                // with same name set via Message headers.
+                if (ObjectHelper.isNotEmpty(name) && ObjectHelper.isNotEmpty(value)) {
+                    LOGGER.debug("Replace query param {} with value {}", name, value);
+                    client.replaceQueryParam(name, value);
+                }
+            }
         }
 
         return this;

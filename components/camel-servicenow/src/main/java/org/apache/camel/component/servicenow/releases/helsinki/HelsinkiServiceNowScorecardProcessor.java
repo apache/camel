@@ -79,6 +79,7 @@ class HelsinkiServiceNowScorecardProcessor extends AbstractServiceNowProcessor {
             .query(ServiceNowParams.SYSPARM_ELEMENTS_FILTER, in)
             .query(ServiceNowParams.SYSPARM_BREAKDOWN_RELATION, in)
             .query(ServiceNowParams.SYSPARM_INCLUDE_SCORE_NOTES, in)
+            .query(responseModel)
             .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(in, responseModel, response);

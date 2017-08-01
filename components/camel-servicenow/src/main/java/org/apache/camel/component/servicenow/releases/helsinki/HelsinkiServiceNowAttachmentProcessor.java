@@ -143,6 +143,7 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
             .query(ServiceNowParams.PARAM_TABLE_NAME, in)
             .query(ServiceNowParams.PARAM_TABLE_SYS_ID, in)
             .query(ServiceNowParams.PARAM_ENCRYPTION_CONTEXT, in)
+            .query(responseModel)
             .invoke(HttpMethod.POST, in.getMandatoryBody(InputStream.class));
 
         setBodyAndHeaders(in, responseModel, response);
@@ -170,6 +171,7 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
             .path(apiVersion)
             .path("attachment")
             .path(ObjectHelper.notNull(sysId, "sysId"))
+            .query(responseModel)
             .invoke(HttpMethod.DELETE);
 
         setBodyAndHeaders(in, responseModel, response);

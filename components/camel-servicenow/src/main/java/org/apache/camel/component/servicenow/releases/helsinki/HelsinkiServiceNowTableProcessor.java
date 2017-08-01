@@ -71,6 +71,7 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
                 .query(ServiceNowParams.SYSPARM_LIMIT, in)
                 .query(ServiceNowParams.SYSPARM_OFFSET, in)
                 .query(ServiceNowParams.SYSPARM_VIEW, in)
+                .query(responseModel)
                 .invoke(HttpMethod.GET)
             : client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
@@ -83,6 +84,7 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
                 .query(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, in)
                 .query(ServiceNowParams.SYSPARM_FIELDS, in)
                 .query(ServiceNowParams.SYSPARM_VIEW, in)
+                .query(responseModel)
                 .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(exchange.getIn(), responseModel, response);
@@ -101,6 +103,7 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
         final String sysId = getSysID(in);
 
         validateBody(in, requestModel);
+
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
@@ -113,6 +116,7 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
             .query(ServiceNowParams.SYSPARM_INPUT_DISPLAY_VALUE, in)
             .query(ServiceNowParams.SYSPARM_SUPPRESS_AUTO_SYS_FIELD, in)
             .query(ServiceNowParams.SYSPARM_VIEW, in)
+            .query(responseModel)
             .invoke(HttpMethod.POST, in.getMandatoryBody());
 
         setBodyAndHeaders(exchange.getIn(), responseModel, response);
@@ -131,6 +135,7 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
         final String sysId = getSysID(in);
 
         validateBody(in, requestModel);
+
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
@@ -144,6 +149,7 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
             .query(ServiceNowParams.SYSPARM_INPUT_DISPLAY_VALUE, in)
             .query(ServiceNowParams.SYSPARM_SUPPRESS_AUTO_SYS_FIELD, in)
             .query(ServiceNowParams.SYSPARM_VIEW, in)
+            .query(responseModel)
             .invoke(HttpMethod.PUT, in.getMandatoryBody());
 
         setBodyAndHeaders(exchange.getIn(), responseModel, response);
@@ -167,6 +173,7 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
             .path("table")
             .path(tableName)
             .path(ObjectHelper.notNull(sysId, "sysId"))
+            .query(responseModel)
             .invoke(HttpMethod.DELETE, null);
 
         setBodyAndHeaders(exchange.getIn(), responseModel, response);
@@ -185,6 +192,7 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
         final String sysId = getSysID(in);
 
         validateBody(in, requestModel);
+
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
@@ -198,6 +206,7 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
             .query(ServiceNowParams.SYSPARM_INPUT_DISPLAY_VALUE, in)
             .query(ServiceNowParams.SYSPARM_SUPPRESS_AUTO_SYS_FIELD, in)
             .query(ServiceNowParams.SYSPARM_VIEW, in)
+            .query(responseModel)
             .invoke("PATCH", in.getMandatoryBody());
 
         setBodyAndHeaders(exchange.getIn(), responseModel, response);

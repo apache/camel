@@ -61,6 +61,7 @@ class HelsinkiServiceNowServiceCatalogCategoriesProcessor extends AbstractServic
             .path("categories")
             .path(ObjectHelper.notNull(sysId, "sysId"))
             .query(ServiceNowParams.SYSPARM_VIEW, in)
+            .query(responseModel)
             .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(in, responseModel, response);

@@ -38,7 +38,7 @@ class FujiServiceNowAggregateProcessor extends FujiServiceNowProcessor {
     protected void doProcess(Exchange exchange, Class<?> requestModel, Class<?> responseModel, String action, String apiVersion, String tableName, String sysId) throws Exception {
         Response response;
         if (ObjectHelper.equal(ServiceNowConstants.ACTION_RETRIEVE, action, true)) {
-            response = retrieveStats(exchange.getIn(), tableName);
+            response = retrieveStats(exchange.getIn(), requestModel, responseModel, tableName);
         } else {
             throw new IllegalArgumentException("Unknown action " + action);
         }
@@ -46,7 +46,7 @@ class FujiServiceNowAggregateProcessor extends FujiServiceNowProcessor {
         setBodyAndHeaders(exchange.getIn(), responseModel, response);
     }
 
-    private Response retrieveStats(Message in, String tableName) throws Exception {
+    private Response retrieveStats(Message in, Class<?> requestModel, Class<?> responseModel, String tableName) throws Exception {
         final String apiVersion = getApiVersion(in);
 
         return client.reset()
@@ -66,6 +66,7 @@ class FujiServiceNowAggregateProcessor extends FujiServiceNowProcessor {
             .query(ServiceNowParams.SYSPARM_ORDER_BY, in)
             .query(ServiceNowParams.SYSPARM_HAVING, in)
             .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
+            .query(responseModel)
             .invoke(HttpMethod.GET);
     }
 }

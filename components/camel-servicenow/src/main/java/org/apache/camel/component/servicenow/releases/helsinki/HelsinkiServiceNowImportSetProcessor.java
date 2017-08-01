@@ -56,6 +56,7 @@ class HelsinkiServiceNowImportSetProcessor extends AbstractServiceNowProcessor {
             .path("import")
             .path(ObjectHelper.notNull(tableName, "tableName"))
             .path(ObjectHelper.notNull(sysId, "sysId"))
+            .query(responseModel)
             .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(in, responseModel, response);
@@ -79,6 +80,7 @@ class HelsinkiServiceNowImportSetProcessor extends AbstractServiceNowProcessor {
             .path(apiVersion)
             .path("import")
             .path(tableName)
+            .query(responseModel)
             .invoke(HttpMethod.POST, in.getMandatoryBody());
 
         setBodyAndHeaders(in, responseModel, response);

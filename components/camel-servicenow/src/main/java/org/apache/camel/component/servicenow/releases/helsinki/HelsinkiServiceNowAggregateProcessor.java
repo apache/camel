@@ -69,6 +69,7 @@ class HelsinkiServiceNowAggregateProcessor extends AbstractServiceNowProcessor {
             .query(ServiceNowParams.SYSPARM_ORDER_BY, in)
             .query(ServiceNowParams.SYSPARM_HAVING, in)
             .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
+            .query(responseModel)
             .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(in, responseModel, response);
