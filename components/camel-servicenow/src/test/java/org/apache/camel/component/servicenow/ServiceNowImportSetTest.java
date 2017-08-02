@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.servicenow;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -25,24 +27,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.servicenow.model.ImportSetResult;
+import org.apache.camel.component.servicenow.model.Incident;
 import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * To set-up ServiceNow for this tests:
  *
- * 1. Create a new table with
- *   - id has to be set to u_imp_incidents (name does not matter)
- *   - inherit from sys_import_set_row
- *
- * 2. Add a new field to u_imp_incidents
- *   - name short_description
- *   - id should be automatically set to u_short_description
- *
- * 3. Create a new Transform Map
- *   - source table u_imp_incidents
- *   - target table incidents
- *   - Perform auto mapping, if it does not work map each field one by one
+ * 1. Create a new web service named u_test_imp_incident targeting incident table
+ * 2. Create a mapping (automatic)
  */
 @Ignore
 public class ServiceNowImportSetTest extends ServiceNowTestSupport {
@@ -53,10 +47,11 @@ public class ServiceNowImportSetTest extends ServiceNowTestSupport {
 
         mock.reset();
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(ServiceNowConstants.RESPONSE_TYPE, List.class);
+        mock.expectedHeaderReceived(ServiceNowConstants.RESPONSE_TYPE, ArrayList.class);
 
         IncidentImportRequest incident = new IncidentImportRequest();
-        incident.shortDescription = "test";
+        incident.description = UUID.randomUUID().toString();
+        incident.correlationId = UUID.randomUUID().toString();
 
         template().sendBodyAndHeaders(
             "direct:servicenow",
@@ -65,8 +60,8 @@ public class ServiceNowImportSetTest extends ServiceNowTestSupport {
                 .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_IMPORT)
                 .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
                 .put(ServiceNowConstants.REQUEST_MODEL, IncidentImportRequest.class)
-                .put(ServiceNowConstants.RESPONSE_MODEL, IncidentImportResponse.class)
-                .put(ServiceNowParams.PARAM_TABLE_NAME, "u_imp_incident")
+                .put(ServiceNowConstants.RESPONSE_MODEL, ImportSetResult.class)
+                .put(ServiceNowParams.PARAM_TABLE_NAME, "u_test_imp_incident")
                 .build()
         );
 
@@ -77,15 +72,48 @@ public class ServiceNowImportSetTest extends ServiceNowTestSupport {
         // Meta data
         Map<String, String> meta = in.getHeader(ServiceNowConstants.RESPONSE_META, Map.class);
         assertNotNull(meta);
-        assertEquals("u_imp_incident", meta.get("staging_table"));
+        assertEquals("u_test_imp_incident", meta.get("staging_table"));
 
         // Incidents
-        List<IncidentImportResponse> responses = in.getBody(List.class);
+        List<ImportSetResult> responses = in.getBody(List.class);
         assertNotNull(responses);
         assertEquals(1, responses.size());
-        assertEquals("inserted", responses.get(0).status);
-        assertEquals("imp_incidents", responses.get(0).transformMap);
-        assertEquals("incident", responses.get(0).table);
+        assertEquals("inserted", responses.get(0).getStatus());
+        assertEquals("test_imp_incident", responses.get(0).getTransformMap());
+        assertEquals("incident", responses.get(0).getTable());
+    }
+
+    @Test
+    public void testIncidentImportWithRetrieve() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:servicenow");
+
+        mock.reset();
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(ServiceNowConstants.RESPONSE_TYPE, Incident.class);
+
+        IncidentImportRequest incident = new IncidentImportRequest();
+        incident.description = UUID.randomUUID().toString();
+
+        template().sendBodyAndHeaders(
+            "direct:servicenow",
+            incident,
+            kvBuilder()
+                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_IMPORT)
+                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
+                .put(ServiceNowConstants.REQUEST_MODEL, IncidentImportRequest.class)
+                .put(ServiceNowConstants.RESPONSE_MODEL, Incident.class)
+                .put(ServiceNowConstants.RETRIEVE_TARGET_RECORD, true)
+                .put(ServiceNowParams.PARAM_TABLE_NAME, "u_test_imp_incident")
+                .build()
+        );
+
+        mock.assertIsSatisfied();
+
+        Incident response = mock.getExchanges().get(0).getIn().getBody(Incident.class);
+        assertNotNull(response);
+        assertEquals(incident.description, response.getDescription());
+        assertNotNull(response.getNumber());
+        assertNotNull(response.getId());
     }
 
     // *************************************************************************
@@ -111,26 +139,9 @@ public class ServiceNowImportSetTest extends ServiceNowTestSupport {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private static final class IncidentImportRequest {
-        @JsonProperty("u_short_description")
-        public String shortDescription;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private static final class IncidentImportResponse {
-        @JsonProperty("transform_map")
-        public String transformMap;
-        @JsonProperty("table")
-        public String table;
-        @JsonProperty("display_name")
-        public String displayName;
-        @JsonProperty("display_value")
-        public String displayValue;
-        @JsonProperty("record_link")
-        public String recordLink;
-        @JsonProperty("status")
-        public String status;
-        @JsonProperty("sys_id")
-        public String sysId;
+        @JsonProperty("description")
+        public String description;
+        @JsonProperty("correlation_id")
+        public String correlationId;
     }
 }

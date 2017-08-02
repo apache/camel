@@ -68,7 +68,12 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
      * https://instance.service-now.com/api/now/import/{tableName}
      */
     private Response createRecord(Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName) throws Exception {
+        if (in.getHeader(ServiceNowConstants.RETRIEVE_TARGET_RECORD, config::getRetrieveTargetRecordOnImport, Boolean.class)) {
+            throw new UnsupportedOperationException("RetrieveTargetRecordOnImport is supported from Helsinky");
+        }
+
         validateBody(in, requestModel);
+
         return client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")

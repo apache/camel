@@ -81,6 +81,8 @@ public class ServiceNowConfiguration implements Cloneable {
     private Boolean topLevelOnly;
     @UriParam
     private Boolean favorites;
+    @UriParam(label = "advanced", defaultValue = "false")
+    private Boolean retrieveTargetRecordOnImport = false;
     @UriParam
     private Boolean key;
     @UriParam
@@ -354,6 +356,18 @@ public class ServiceNowConfiguration implements Cloneable {
      */
     public void setFavorites(Boolean favorites) {
         this.favorites = favorites;
+    }
+
+    public Boolean getRetrieveTargetRecordOnImport() {
+        return retrieveTargetRecordOnImport;
+    }
+
+    /**
+     * Set this parameter to true to retrieve the target record when using import
+     * set api. The import set result is then replaced by the target record
+     */
+    public void setRetrieveTargetRecordOnImport(Boolean retrieveTargetRecordOnImport) {
+        this.retrieveTargetRecordOnImport = retrieveTargetRecordOnImport;
     }
 
     public Boolean getKey() {

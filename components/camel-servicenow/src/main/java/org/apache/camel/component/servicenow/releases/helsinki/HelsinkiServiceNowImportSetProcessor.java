@@ -17,13 +17,18 @@
 package org.apache.camel.component.servicenow.releases.helsinki;
 
 import javax.ws.rs.HttpMethod;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.servicenow.AbstractServiceNowProcessor;
+import org.apache.camel.component.servicenow.ServiceNowConstants;
 import org.apache.camel.component.servicenow.ServiceNowEndpoint;
+import org.apache.camel.component.servicenow.ServiceNowParams;
+import org.apache.camel.component.servicenow.model.ImportSetResponse;
+import org.apache.camel.component.servicenow.model.ImportSetResult;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_CREATE;
@@ -71,17 +76,67 @@ class HelsinkiServiceNowImportSetProcessor extends AbstractServiceNowProcessor {
         final String tableName = getTableName(in);
         final String apiVersion = getApiVersion(in);
         final Class<?> requestModel = getRequestModel(in, tableName);
-        final Class<?> responseModel = getResponseModel(in, tableName);
+        final boolean retrieve = in.getHeader(ServiceNowConstants.RETRIEVE_TARGET_RECORD, config::getRetrieveTargetRecordOnImport, Boolean.class);
+
+        Class<?> responseModel = getResponseModel(in, tableName);
+        Response response;
 
         validateBody(in, requestModel);
-        Response response = client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("now")
-            .path(apiVersion)
-            .path("import")
-            .path(tableName)
-            .query(responseModel)
-            .invoke(HttpMethod.POST, in.getMandatoryBody());
+
+        if (retrieve) {
+            // If the endpoint is configured to retrieve the target record, the
+            // import response model is ignored and the response is ImportSetResponse
+
+            response = client.reset()
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(apiVersion)
+                .path("import")
+                .path(tableName)
+                .invoke(HttpMethod.POST, in.getMandatoryBody());
+
+            if (ObjectHelper.isNotEmpty(response.getHeaderString(HttpHeaders.CONTENT_TYPE))) {
+                for (ImportSetResult result : response.readEntity(ImportSetResponse.class).getResults()) {
+                    final String status = result.getStatus();
+                    final String table = result.getTable();
+                    final String sysId = result.getSysId();
+
+                    if (ObjectHelper.equalIgnoreCase("inserted", status)) {
+
+                        // If the endpoint is configured to retrieve the target
+                        // record, the response model is related to the target
+                        // table
+                        responseModel = getResponseModel(in, table);
+
+                        // Do get the record
+                        response = client.reset()
+                            .types(MediaType.APPLICATION_JSON_TYPE)
+                            .path("now")
+                            .path(apiVersion)
+                            .path("table")
+                            .path(ObjectHelper.notNull(table, "table"))
+                            .path(ObjectHelper.notNull(sysId, "sys_id"))
+                            .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
+                            .query(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, in)
+                            .query(ServiceNowParams.SYSPARM_FIELDS, in)
+                            .query(ServiceNowParams.SYSPARM_VIEW, in)
+                            .query(responseModel)
+                            .invoke(HttpMethod.GET);
+
+                        break;
+                    }
+                }
+            }
+        } else {
+            response = client.reset()
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(apiVersion)
+                .path("import")
+                .path(tableName)
+                .query(responseModel)
+                .invoke(HttpMethod.POST, in.getMandatoryBody());
+        }
 
         setBodyAndHeaders(in, responseModel, response);
     }
