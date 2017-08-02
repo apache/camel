@@ -20,6 +20,9 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+import org.apache.camel.impl.RouteService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.mvc.ActuatorMediaTypes;
 import org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter;
 import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
@@ -44,7 +47,7 @@ public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
      * Default path
      */
     public static final String PATH = "/camel/routes";
-
+    private Logger logger = LoggerFactory.getLogger(RouteService.class);
     private final CamelRoutesEndpoint delegate;
 
     public CamelRoutesMvcEndpoint(CamelRoutesEndpoint delegate) {
@@ -108,7 +111,10 @@ public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
 
         return doIfEnabled(() -> {
             try {
-                delegate.resetRoute(id);
+                String result = delegate.resetRoute(id);
+                if (result != null) {
+                    logger.info(result);
+                }
             } catch (Exception e) {
                 throw new GenericException("Error resetting route stats " + id, e);
             }

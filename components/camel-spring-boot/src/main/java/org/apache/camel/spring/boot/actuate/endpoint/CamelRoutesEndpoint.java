@@ -83,8 +83,8 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
         if (resetRoute != null) {
             resetRoute.reset(true);
         } else {
-            String description = "The provided route id does not exists";
-            ResponseEntity<?> objectResponseEntity = ResponseEntity.status(HttpStatus.NO_CONTENT).body(description);
+            String description = "The provided route id does not exists : " + camelContext.getRoute(id);
+            ResponseEntity<?> objectResponseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(description);
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.writeValueAsString(objectResponseEntity);
         }
