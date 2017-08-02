@@ -155,6 +155,8 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                             target = new File(dir, "camel-salesforce-component/target/classes");
                         } else if ("camel-linkedin".equals(dir.getName())) {
                             target = new File(dir, "camel-linkedin-component/target/classes");
+                        } else if ("camel-servicenow".equals(dir.getName())) {
+                            target = new File(dir, "camel-servicenow-component/target/classes");
                         }
 
 
@@ -414,6 +416,7 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                     boolean special2 = "camel-linkedin".equals(dir.getName())
                         || "camel-olingo2".equals(dir.getName())
                         || "camel-olingo4".equals(dir.getName())
+                        || "camel-servicenow".equals(dir.getName())
                         || "camel-salesforce".equals(dir.getName());
                     if (special || special2) {
                         continue;
