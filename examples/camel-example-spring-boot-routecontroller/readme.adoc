@@ -16,6 +16,13 @@ Beside JMX you can use Spring Boot Endpoints to interact with the routes:
 ----
 curl -XGET -s http://localhost:8080/camel/routes
 ----
++
++* To get details about a route
+++
++[source]
++----
++curl -XGET -s http://localhost:8080/camel/routes/{id}/detail
++----
 
 * To get info about a route
 +
