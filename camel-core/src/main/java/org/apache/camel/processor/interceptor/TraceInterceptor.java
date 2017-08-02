@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
+@Deprecated
 public class TraceInterceptor extends DelegateAsyncProcessor implements ExchangeFormatter {
     private static final Logger LOG = LoggerFactory.getLogger(TraceInterceptor.class);
 
@@ -126,28 +127,29 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
                 // traced holds the information about the current traced route path
                 if (exchange.getUnitOfWork() != null) {
                     TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
-
-                    if (node instanceof OnCompletionDefinition || node instanceof OnExceptionDefinition) {
-                        // skip any of these as its just a marker definition
-                        trace = false;
-                    } else if (ProcessorDefinitionHelper.isFirstChildOfType(OnCompletionDefinition.class, node)) {
-                        // special for on completion tracing
-                        traceOnCompletion(traced, exchange);
-                    } else if (ProcessorDefinitionHelper.isFirstChildOfType(OnExceptionDefinition.class, node)) {
-                        // special for on exception
-                        traceOnException(traced, exchange);
-                    } else if (ProcessorDefinitionHelper.isFirstChildOfType(CatchDefinition.class, node)) {
-                        // special for do catch
-                        traceDoCatch(traced, exchange);
-                    } else if (ProcessorDefinitionHelper.isFirstChildOfType(FinallyDefinition.class, node)) {
-                        // special for do finally
-                        traceDoFinally(traced, exchange);
-                    } else if (ProcessorDefinitionHelper.isFirstChildOfType(AggregateDefinition.class, node)) {
-                        // special for aggregate
-                        traceAggregate(traced, exchange);
-                    } else {
-                        // regular so just add it
-                        traced.addTraced(new DefaultRouteNode(node, super.getProcessor()));
+                    if (traced != null) {
+                        if (node instanceof OnCompletionDefinition || node instanceof OnExceptionDefinition) {
+                            // skip any of these as its just a marker definition
+                            trace = false;
+                        } else if (ProcessorDefinitionHelper.isFirstChildOfType(OnCompletionDefinition.class, node)) {
+                            // special for on completion tracing
+                            traceOnCompletion(traced, exchange);
+                        } else if (ProcessorDefinitionHelper.isFirstChildOfType(OnExceptionDefinition.class, node)) {
+                            // special for on exception
+                            traceOnException(traced, exchange);
+                        } else if (ProcessorDefinitionHelper.isFirstChildOfType(CatchDefinition.class, node)) {
+                            // special for do catch
+                            traceDoCatch(traced, exchange);
+                        } else if (ProcessorDefinitionHelper.isFirstChildOfType(FinallyDefinition.class, node)) {
+                            // special for do finally
+                            traceDoFinally(traced, exchange);
+                        } else if (ProcessorDefinitionHelper.isFirstChildOfType(AggregateDefinition.class, node)) {
+                            // special for aggregate
+                            traceAggregate(traced, exchange);
+                        } else {
+                            // regular so just add it
+                            traced.addTraced(new DefaultRouteNode(node, super.getProcessor()));
+                        }
                     }
                 } else {
                     LOG.trace("Cannot trace as this Exchange does not have an UnitOfWork: {}", exchange);
@@ -170,7 +172,9 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
             // special for interceptor where we need to keep booking how far we have routed in the intercepted processors
             if (node.getParent() instanceof InterceptDefinition && exchange.getUnitOfWork() != null) {
                 TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
-                traceIntercept((InterceptDefinition) node.getParent(), traced, exchange);
+                if (traced != null) {
+                    traceIntercept((InterceptDefinition) node.getParent(), traced, exchange);
+                }
             }
 
             // process the exchange

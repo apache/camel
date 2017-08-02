@@ -16,13 +16,11 @@
  */
 package org.apache.camel.spring.config;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- *
- */
 public class SpringRouteNoFromTest extends SpringTestSupport {
 
     @Override
@@ -40,7 +38,7 @@ public class SpringRouteNoFromTest extends SpringTestSupport {
         try {
             answer = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringRouteNoFromTest.xml");
             fail("Should have thrown exception");
-        } catch (Exception e) {
+        } catch (RuntimeCamelException e) {
             IllegalArgumentException iae = (IllegalArgumentException) e.getCause();
             assertEquals("Route myRoute has no inputs: Route(myRoute)[[] -> [To[mock:result]]]", iae.getMessage());
             return null;

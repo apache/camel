@@ -25,6 +25,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
+import org.junit.Ignore;
 
 /**
  * @version 
@@ -494,8 +495,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertTrue(thread.getName().contains("Cool"));
     }
 
-    // this is a manual test, by looking at the logs
-    public void xxxTestLongShutdownOfThreadPool() throws Exception {
+    @Ignore("This is a manual test, by looking at the logs")
+    public void xxxtestLongShutdownOfThreadPool() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ExecutorService pool = context.getExecutorServiceManager().newSingleThreadExecutor(this, "Cool");
 

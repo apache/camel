@@ -19,13 +19,14 @@ package org.apache.camel.component.twitter.consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.twitter.TwitterEndpoint;
-import org.apache.camel.component.twitter.consumer.streaming.AbstractStreamingConsumer;
+import org.apache.camel.component.twitter.streaming.AbstractStreamingConsumerHandler;
 import org.apache.camel.impl.DefaultConsumer;
 
+@Deprecated
 public class TwitterConsumerEvent extends DefaultConsumer implements TwitterEventListener {
-    private final TwitterConsumer twitter4jConsumer;
+    private final AbstractTwitterConsumerHandler twitter4jConsumer;
 
-    public TwitterConsumerEvent(TwitterEndpoint endpoint, Processor processor, TwitterConsumer twitter4jConsumer) {
+    public TwitterConsumerEvent(TwitterEndpoint endpoint, Processor processor, AbstractTwitterConsumerHandler twitter4jConsumer) {
         super(endpoint, processor);
         this.twitter4jConsumer = twitter4jConsumer;
     }
@@ -34,17 +35,17 @@ public class TwitterConsumerEvent extends DefaultConsumer implements TwitterEven
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (twitter4jConsumer instanceof AbstractStreamingConsumer) {
-            ((AbstractStreamingConsumer) twitter4jConsumer).setEventListener(this);
-            ((AbstractStreamingConsumer) twitter4jConsumer).start();
+        if (twitter4jConsumer instanceof AbstractStreamingConsumerHandler) {
+            ((AbstractStreamingConsumerHandler) twitter4jConsumer).setEventListener(this);
+            ((AbstractStreamingConsumerHandler) twitter4jConsumer).start();
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (twitter4jConsumer instanceof AbstractStreamingConsumer) {
-            ((AbstractStreamingConsumer) twitter4jConsumer).removeEventListener(this);
-            ((AbstractStreamingConsumer) twitter4jConsumer).stop();
+        if (twitter4jConsumer instanceof AbstractStreamingConsumerHandler) {
+            ((AbstractStreamingConsumerHandler) twitter4jConsumer).removeEventListener(this);
+            ((AbstractStreamingConsumerHandler) twitter4jConsumer).stop();
         }
 
         super.doStop();

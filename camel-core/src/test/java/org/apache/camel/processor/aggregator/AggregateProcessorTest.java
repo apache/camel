@@ -199,8 +199,9 @@ public class AggregateProcessorTest extends ContextTestSupport {
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
         AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService, true);
-        ap.setCompletionTimeout(3000);
+        ap.setCompletionTimeout(100);
         ap.setEagerCheckCompletion(eager);
+        ap.setCompletionTimeoutCheckerInterval(10);
         ap.start();
 
         Exchange e1 = new DefaultExchange(context);
@@ -220,14 +221,12 @@ public class AggregateProcessorTest extends ContextTestSupport {
         e4.getIn().setHeader("id", 123);
 
         ap.process(e1);
-
-        Thread.sleep(250);
+        Thread.sleep(5);
         ap.process(e2);
-
-        Thread.sleep(500);
+        Thread.sleep(10);
         ap.process(e3);
 
-        Thread.sleep(5000);
+        Thread.sleep(150);
         ap.process(e4);
 
         assertMockEndpointsSatisfied();
@@ -248,7 +247,8 @@ public class AggregateProcessorTest extends ContextTestSupport {
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
         AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService, true);
-        ap.setCompletionInterval(3000);
+        ap.setCompletionInterval(100);
+        ap.setCompletionTimeoutCheckerInterval(10);
         ap.start();
 
         Exchange e1 = new DefaultExchange(context);
@@ -271,7 +271,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.process(e2);
         ap.process(e3);
 
-        Thread.sleep(5000);
+        Thread.sleep(250);
         ap.process(e4);
 
         assertMockEndpointsSatisfied();

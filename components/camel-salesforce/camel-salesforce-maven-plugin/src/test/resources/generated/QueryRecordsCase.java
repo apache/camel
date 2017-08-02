@@ -8,10 +8,12 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 
 import java.util.List;
+import javax.annotation.Generated;
 
 /**
  * Salesforce QueryRecords DTO for type Case
  */
+@Generated("org.apache.camel.maven.CamelSalesforceMojo")
 public class QueryRecordsCase extends AbstractQueryRecordsBase {
 
     @XStreamImplicit

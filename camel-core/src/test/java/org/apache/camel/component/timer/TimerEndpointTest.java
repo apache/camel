@@ -39,6 +39,8 @@ public class TimerEndpointTest extends ContextTestSupport {
         te.setCamelContext(context);
         te.setTimer(new Timer(true));
         te.setEndpointUriIfNotSpecified("timer://foo");
+        te.setPeriod(10);
+        te.setDelay(10);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -57,6 +59,8 @@ public class TimerEndpointTest extends ContextTestSupport {
     public void testTimerEndpointYetAgain() throws Exception {
         final TimerEndpoint te = new TimerEndpoint("timer://foo", context.getComponent("timer"), "foo");
         te.setTimer(new Timer(true));
+        te.setPeriod(10);
+        te.setDelay(10);
 
         context.addRoutes(new RouteBuilder() {
             @Override

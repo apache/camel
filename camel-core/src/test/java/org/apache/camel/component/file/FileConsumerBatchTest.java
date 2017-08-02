@@ -30,15 +30,14 @@ public class FileConsumerBatchTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/file-batch");
         super.setUp();
-        template.sendBodyAndHeader("file://target/file-batch/", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/file-batch/", "Bye World", Exchange.FILE_NAME, "bye.txt");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/file-batch?initialDelay=2000").convertBodyTo(String.class).to("mock:result");
+                from("file://target/file-batch?initialDelay=0&delay=10").noAutoStartup()
+                    .convertBodyTo(String.class).to("mock:result");
             }
         };
     }
@@ -47,10 +46,16 @@ public class FileConsumerBatchTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
+        template.sendBodyAndHeader("file://target/file-batch/", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/file-batch/", "Bye World", Exchange.FILE_NAME, "bye.txt");
+
         // test header keys
         mock.message(0).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(2);
         mock.message(0).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(0);
         mock.message(1).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(1);
+
+        // start routes
+        context.startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }

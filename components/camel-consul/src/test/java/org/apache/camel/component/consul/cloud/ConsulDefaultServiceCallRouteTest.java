@@ -96,6 +96,7 @@ public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
                 from("direct:start")
                     .serviceCall()
                         .name(SERVICE_NAME)
+                        .component("jetty")
                         .defaultLoadBalancer()
                         .consulServiceDiscovery()
                         .endParent()

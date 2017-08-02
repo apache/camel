@@ -24,7 +24,8 @@ Using multiple shells:
  - start consul:
 
   $ cd services
-  $ src/main/bash/consul-run.sh
+  $ src/main/bash/consul-run-linux.sh    (for linux)
+  $ src/main/bash/consul-run-osx.sh      (for mac osx)
 
  - start the service:
 
@@ -46,6 +47,14 @@ In a new shell:
   Hi!, I'm service-1 on camel-1/route2
 
 If you keep calling the http endpoint you'll notice they are consumed using a round robin policy and that only the services matching specific tags are consumed.
+
+## Web console
+
+You can open the Consul web console
+
+     http://localhost:8500/ui
+
+Where you can find information about the services and its state.
 
 ## More information
 

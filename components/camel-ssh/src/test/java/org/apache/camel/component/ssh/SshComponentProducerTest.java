@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -79,6 +82,25 @@ public class SshComponentProducerTest extends SshComponentTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+    
+    @Test
+    public void testCredentialsAsHeaders() throws Exception {
+        final String msg = "test\n";
+
+        MockEndpoint mock = getMockEndpoint("mock:password");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived(msg);
+        mock.expectedHeaderReceived(SshResult.EXIT_VALUE, 0);
+        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test\n");
+        
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(SshConstants.USERNAME_HEADER, "smx");
+        headers.put(SshConstants.PASSWORD_HEADER, "smx");
+
+        template.sendBodyAndHeaders("direct:sshCredentialsWithHeaders", msg, headers);
+
+        assertMockEndpointsSatisfied();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -91,6 +113,10 @@ public class SshComponentProducerTest extends SshComponentTestSupport {
 
                 from("direct:ssh")
                         .to("ssh://smx:smx@localhost:" + port + "?timeout=3000")
+                        .to("mock:password");
+                
+                from("direct:sshCredentialsWithHeaders")
+                        .to("ssh://localhost:" + port + "?timeout=3000")
                         .to("mock:password");
             }
         };

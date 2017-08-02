@@ -37,7 +37,7 @@ import org.apache.camel.util.StringHelper;
 @UriParams
 public class DefaultExchangeFormatter implements ExchangeFormatter {
 
-    protected static final String LS = System.getProperty("line.separator");
+    protected static final String LS = System.lineSeparator();
     private static final String SEPARATOR = "###REPLACE_ME###";
 
     public enum OutputStyle { Default, Tab, Fixed }

@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultHeadersMapFactory;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -47,12 +48,14 @@ public class KafkaProducerTest {
 
     private KafkaProducer producer;
     private KafkaEndpoint endpoint;
+    private KafkaEndpoint fromEndpoint;
 
     private TypeConverter converter = Mockito.mock(TypeConverter.class);
     private CamelContext context = Mockito.mock(CamelContext.class);
     private Exchange exchange = Mockito.mock(Exchange.class);
-    private Message in = new DefaultMessage();
-    private Message out = new DefaultMessage();
+    private CamelContext camelContext = Mockito.mock(CamelContext.class);
+    private Message in = new DefaultMessage(camelContext);
+    private Message out = new DefaultMessage(camelContext);
     private AsyncCallback callback = Mockito.mock(AsyncCallback.class);
 
     @SuppressWarnings({"unchecked"})
@@ -63,7 +66,9 @@ public class KafkaProducerTest {
         endpoint = kafka.createEndpoint("kafka:sometopic", "sometopic", new HashMap());
         producer = new KafkaProducer(endpoint);
 
-        RecordMetadata rm = new RecordMetadata(null, 1, 1);
+        fromEndpoint = kafka.createEndpoint("kafka:fromtopic", "fromtopic", new HashMap());
+
+        RecordMetadata rm = new RecordMetadata(null, 0, 0, 0, new Long(0), 0, 0);
         Future future = Mockito.mock(Future.class);
         Mockito.when(future.get()).thenReturn(rm);
         org.apache.kafka.clients.producer.KafkaProducer kp = Mockito.mock(org.apache.kafka.clients.producer.KafkaProducer.class);
@@ -72,6 +77,7 @@ public class KafkaProducerTest {
         Mockito.when(exchange.getContext()).thenReturn(context);
         Mockito.when(context.getTypeConverter()).thenReturn(converter);
         Mockito.when(converter.tryConvertTo(String.class, exchange, null)).thenReturn(null);
+        Mockito.when(camelContext.getHeadersMapFactory()).thenReturn(new DefaultHeadersMapFactory());
 
         producer.setKafkaProducer(kp);
         producer.setWorkerPool(Executors.newFixedThreadPool(1));
@@ -125,7 +131,7 @@ public class KafkaProducerTest {
         ArgumentCaptor<Callback> callBackCaptor = ArgumentCaptor.forClass(Callback.class);
         Mockito.verify(producer.getKafkaProducer()).send(Matchers.any(ProducerRecord.class), callBackCaptor.capture());
         Callback kafkaCallback = callBackCaptor.getValue();
-        kafkaCallback.onCompletion(new RecordMetadata(null, 1, 1), null);
+        kafkaCallback.onCompletion(new RecordMetadata(null, 0, 0, 0, new Long(0), 0, 0), null);
         assertRecordMetadataExists();
     }
 
@@ -148,7 +154,7 @@ public class KafkaProducerTest {
         Mockito.verify(exchange).setException(Matchers.isA(ApiException.class));
         Mockito.verify(callback).done(Matchers.eq(true));
         Callback kafkaCallback = callBackCaptor.getValue();
-        kafkaCallback.onCompletion(new RecordMetadata(null, 1, 1), null);
+        kafkaCallback.onCompletion(new RecordMetadata(null, 0, 0, 0, new Long(0), 0, 0), null);
         assertRecordMetadataExists();
     }
 
@@ -204,7 +210,7 @@ public class KafkaProducerTest {
     }
 
     @Test
-    public void processSendsMesssageWithPartitionKeyHeader() throws Exception {
+    public void processSendsMessageWithPartitionKeyHeader() throws Exception {
         endpoint.getConfiguration().setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);
@@ -218,7 +224,7 @@ public class KafkaProducerTest {
     }
 
     @Test
-    public void processSendsMesssageWithMessageKeyHeader() throws Exception {
+    public void processSendsMessageWithMessageKeyHeader() throws Exception {
         endpoint.getConfiguration().setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);
@@ -233,7 +239,7 @@ public class KafkaProducerTest {
     @Test
     public void processSendMessageWithBridgeEndpoint() throws Exception {
         endpoint.getConfiguration().setTopic("someTopic");
-        endpoint.setBridgeEndpoint(true);
+        endpoint.getConfiguration().setBridgeEndpoint(true);
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);
         in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
@@ -246,8 +252,43 @@ public class KafkaProducerTest {
         assertRecordMetadataExists();
     }
 
+    @Test
+    public void processSendMessageWithCircularDetected() throws Exception {
+        endpoint.getConfiguration().setTopic("sometopic");
+        endpoint.getConfiguration().setCircularTopicDetection(true);
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
+        Mockito.when(exchange.getFromEndpoint()).thenReturn(fromEndpoint);
+        // this is the from topic that are from the fromEndpoint
+        in.setHeader(KafkaConstants.TOPIC, "fromtopic");
+        in.setHeader(KafkaConstants.KEY, "somekey");
+
+        producer.process(exchange);
+
+        verifySendMessage("sometopic", "somekey");
+        assertRecordMetadataExists();
+    }
+
+    @Test
+    public void processSendMessageWithNoCircularDetected() throws Exception {
+        endpoint.getConfiguration().setTopic("sometopic");
+        endpoint.getConfiguration().setCircularTopicDetection(false);
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
+        Mockito.when(exchange.getFromEndpoint()).thenReturn(fromEndpoint);
+        // this is the from topic that are from the fromEndpoint
+        in.setHeader(KafkaConstants.TOPIC, "fromtopic");
+        in.setHeader(KafkaConstants.KEY, "somekey");
+
+        producer.process(exchange);
+
+        // will end up sending back to itself at fromtopic
+        verifySendMessage("fromtopic", "somekey");
+        assertRecordMetadataExists();
+    }
+
     @Test // Message and Topic Name alone
-    public void processSendsMesssageWithMessageTopicName() throws Exception {
+    public void processSendsMessageWithMessageTopicName() throws Exception {
         endpoint.getConfiguration().setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);

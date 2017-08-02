@@ -18,6 +18,7 @@ package org.apache.camel.spring.placeholder;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -27,6 +28,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.awaitility.Awaitility.await;
 
 @ContextConfiguration
 public class SimpleLanguageWithSprinPropertyPlaceholderRouteTest extends SpringRunWithTestSupport {
@@ -45,9 +48,7 @@ public class SimpleLanguageWithSprinPropertyPlaceholderRouteTest extends SpringR
     public void replaceSimpleExpression() throws Exception {
         template.sendBody("Test");
 
-        Thread.sleep(500);
-        
-        assertFileExists("target/outBoxSimple/");
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertFileExists("target/outBoxSimple/"));
     }
     
     @Ignore(value = "disabled because of https://jira.springsource.org/browse/SPR-7593")
@@ -56,9 +57,7 @@ public class SimpleLanguageWithSprinPropertyPlaceholderRouteTest extends SpringR
     public void replaceExpression() throws Exception {
         template.sendBody("direct:start", "Test");
 
-        Thread.sleep(500);
-        
-        assertFileExists("target/outBox/" + getTestFileName());
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertFileExists("target/outBox/" + getTestFileName()));
     }
 
     private String getTestFileName() {

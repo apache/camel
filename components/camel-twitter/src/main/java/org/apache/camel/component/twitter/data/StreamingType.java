@@ -23,7 +23,7 @@ public enum StreamingType {
 
     private static final StreamingType[] VALUES = values();
 
-    public static StreamingType fromUri(String uri) {
+    public static StreamingType fromString(String uri) {
         return TwitterHelper.enumFromString(VALUES, uri, StreamingType.UNKNOWN);
     }
 }

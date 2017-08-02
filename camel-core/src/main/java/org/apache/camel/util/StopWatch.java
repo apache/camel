@@ -28,13 +28,12 @@ import java.util.Date;
 public final class StopWatch {
 
     private long start;
-    private long stop;
 
     /**
      * Starts the stop watch
      */
     public StopWatch() {
-        this(true);
+        this.start = System.currentTimeMillis();
     }
 
     /**
@@ -47,11 +46,11 @@ public final class StopWatch {
     /**
      * Creates the stop watch
      *
-     * @param started whether it should start immediately
+     * @param start whether it should start immediately
      */
-    public StopWatch(boolean started) {
-        if (started) {
-            restart();
+    public StopWatch(boolean start) {
+        if (start) {
+            this.start = System.currentTimeMillis();
         }
     }
 
@@ -60,28 +59,26 @@ public final class StopWatch {
      */
     public void restart() {
         start = System.currentTimeMillis();
-        stop = 0;
     }
 
     /**
-     * Stops the stop watch
+     * Reports the time taken (does not stop the stop watch)
      *
      * @return the time taken in millis.
+     * @deprecated use {@link #taken()}
      */
+    @Deprecated
     public long stop() {
-        stop = System.currentTimeMillis();
         return taken();
     }
 
     /**
      * Returns the time taken in millis.
      *
-     * @return time in millis
+     * @return time in millis, or <tt>0</tt> if not started yet.
      */
     public long taken() {
-        if (start > 0 && stop > 0) {
-            return stop - start;
-        } else if (start > 0) {
+        if (start > 0) {
             return System.currentTimeMillis() - start;
         } else {
             return 0;

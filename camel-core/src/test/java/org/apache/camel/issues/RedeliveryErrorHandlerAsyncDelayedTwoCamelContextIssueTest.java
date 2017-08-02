@@ -64,7 +64,7 @@ public class RedeliveryErrorHandlerAsyncDelayedTwoCamelContextIssueTest {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class)
-                    .redeliveryDelay(100)
+                    .redeliveryDelay(10)
                     .maximumRedeliveries(5)
                     .maximumRedeliveryDelay(1000)
                     .backOffMultiplier(1)

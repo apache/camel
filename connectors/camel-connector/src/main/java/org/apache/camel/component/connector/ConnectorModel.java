@@ -44,6 +44,7 @@ final class ConnectorModel {
     private static final Pattern JAVA_TYPE_PATTERN = Pattern.compile("\"javaType\"\\s?:\\s?\"([\\w|.]+)\".*");
     private static final Pattern BASE_JAVA_TYPE_PATTERN = Pattern.compile("\"baseJavaType\"\\s?:\\s?\"([\\w|.]+)\".*");
     private static final Pattern BASE_SCHEME_PATTERN = Pattern.compile("\"baseScheme\"\\s?:\\s?\"([\\w|.-]+)\".*");
+    private static final Pattern SCHEDULER_PATTERN = Pattern.compile("\"scheduler\"\\s?:\\s?\"([\\w|.-]+)\".*");
     private static final Pattern INPUT_DATA_TYPE_PATTERN = Pattern.compile("\"inputDataType\"\\s?:\\s?\"(\\*|[\\w|.:*]+)\".*");
     private static final Pattern OUTPUT_DATA_TYPE_PATTERN = Pattern.compile("\"outputDataType\"\\s?:\\s?\"([\\w|.:*]+)\".*");
 
@@ -53,12 +54,15 @@ final class ConnectorModel {
 
     private String baseScheme;
     private String baseJavaType;
+    private String scheduler;
     private String connectorJSon;
     private String connectorName;
     private DataType inputDataType;
     private DataType outputDataType;
     private Map<String, String> defaultComponentOptions;
     private Map<String, String> defaultEndpointOptions;
+    private List<String> endpointOptions;
+    private List<String> componentOptions;
 
     ConnectorModel(String componentName, String className) {
         this.componentName = componentName;
@@ -88,6 +92,14 @@ final class ConnectorModel {
         }
 
         return baseJavaType;
+    }
+
+    public String getScheduler() {
+        if (scheduler == null) {
+            scheduler = extractScheduler(lines.get());
+        }
+
+        return scheduler;
     }
 
     public String getConnectorName() {
@@ -120,6 +132,22 @@ final class ConnectorModel {
         }
 
         return defaultEndpointOptions;
+    }
+
+    public List<String> getEndpointOptions() {
+        if (endpointOptions == null) {
+            endpointOptions = Collections.unmodifiableList(extractEndpointOptions(lines.get()));
+        }
+
+        return endpointOptions;
+    }
+
+    public List<String> getComponentOptions() {
+        if (endpointOptions == null) {
+            endpointOptions = Collections.unmodifiableList(extractComponentOptions(lines.get()));
+        }
+
+        return endpointOptions;
     }
 
     public DataType getInputDataType() {
@@ -223,6 +251,17 @@ final class ConnectorModel {
         return null;
     }
 
+    private static String extractScheduler(List<String> json) {
+        for (String line : json) {
+            line = line.trim();
+            Matcher matcher = SCHEDULER_PATTERN.matcher(line);
+            if (matcher.matches()) {
+                return matcher.group(1);
+            }
+        }
+        return null;
+    }
+
     private static String extractBaseScheme(List<String> json) {
         for (String line : json) {
             line = line.trim();
@@ -271,6 +310,8 @@ final class ConnectorModel {
                 int pos = line.indexOf(':');
                 String key = line.substring(0, pos);
                 String value = line.substring(pos + 1);
+                value = value.trim();
+                key = key.trim();
                 if (value.endsWith(",")) {
                     value = value.substring(0, value.length() - 1);
                 }
@@ -298,12 +339,72 @@ final class ConnectorModel {
                 int pos = line.indexOf(':');
                 String key = line.substring(0, pos);
                 String value = line.substring(pos + 1);
+                value = value.trim();
+                key = key.trim();
                 if (value.endsWith(",")) {
                     value = value.substring(0, value.length() - 1);
                 }
                 key = StringHelper.removeLeadingAndEndingQuotes(key);
                 value = StringHelper.removeLeadingAndEndingQuotes(value);
                 answer.put(key, value);
+            }
+        }
+
+        return answer;
+    }
+
+    private List<String> extractComponentOptions(List<String> lines) {
+        List<String> answer = new ArrayList<>();
+
+        // extract the default options
+        for (String line : lines) {
+            line = line.trim();
+            if (line.startsWith("\"componentOptions\"")) {
+                int start = line.indexOf('[');
+                if (start == -1) {
+                    throw new IllegalStateException("Malformed camel-connector.json");
+                }
+
+                int end = line.indexOf(']', start);
+                if (end == -1) {
+                    throw new IllegalStateException("Malformed camel-connector.json");
+                }
+
+                line = line.substring(start + 1, end).trim();
+                for (String option : line.split(",")) {
+                    answer.add(StringHelper.removeLeadingAndEndingQuotes(option));
+                }
+
+                break;
+            }
+        }
+
+        return answer;
+    }
+
+    private List<String> extractEndpointOptions(List<String> lines) {
+        List<String> answer = new ArrayList<>();
+
+        // extract the default options
+        for (String line : lines) {
+            line = line.trim();
+            if (line.startsWith("\"endpointOptions\"")) {
+                int start = line.indexOf('[');
+                if (start == -1) {
+                    throw new IllegalStateException("Malformed camel-connector.json");
+                }
+
+                int end = line.indexOf(']', start);
+                if (end == -1) {
+                    throw new IllegalStateException("Malformed camel-connector.json");
+                }
+
+                line = line.substring(start + 1, end).trim();
+                for (String option : line.split(",")) {
+                    answer.add(StringHelper.removeLeadingAndEndingQuotes(option));
+                }
+
+                break;
             }
         }
 

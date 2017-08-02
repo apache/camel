@@ -22,9 +22,11 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiCollection;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiComponent;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -36,7 +38,10 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 /**
  * Represents the component that manages {@link Olingo2Endpoint}.
  */
-public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Olingo2Configuration, Olingo2ApiCollection> {
+public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Olingo2Configuration, Olingo2ApiCollection> implements SSLContextParametersAware {
+
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     // component level shared proxy
     private Olingo2AppWrapper apiProxy;
@@ -123,6 +128,19 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
         return result;
     }
 
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
     private Olingo2AppWrapper createOlingo2App(Olingo2Configuration configuration) {
 
         Object clientBuilder = configuration.getHttpAsyncClientBuilder();
@@ -143,6 +161,10 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
             asyncClientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
 
             SSLContextParameters sslContextParameters = configuration.getSslContextParameters();
+            if (sslContextParameters == null) {
+                // use global ssl config
+                sslContextParameters = retrieveGlobalSslContextParameters();
+            }
             if (sslContextParameters == null) {
                 // use defaults if not specified
                 sslContextParameters = new SSLContextParameters();

@@ -23,7 +23,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.zendesk.internal.ZendeskApiCollection;
 import org.apache.camel.component.zendesk.internal.ZendeskApiName;
 import org.apache.camel.component.zendesk.internal.ZendeskHelper;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.component.AbstractApiComponent;

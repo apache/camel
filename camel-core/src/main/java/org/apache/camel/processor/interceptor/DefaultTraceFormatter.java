@@ -28,9 +28,10 @@ import org.apache.camel.util.MessageHelper;
 /**
  * @version 
  */
+@Deprecated
 public class DefaultTraceFormatter implements TraceFormatter {
     
-    protected static final String LS = System.getProperty("line.separator");
+    protected static final String LS = System.lineSeparator();
     private static final String SEPARATOR = "###REPLACE_ME###";
     
     private int breadCrumbLength;
@@ -351,24 +352,25 @@ public class DefaultTraceFormatter implements TraceFormatter {
         if (showNode || showRouteId) {
             if (exchange.getUnitOfWork() != null) {
                 TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
-
-                RouteNode traceFrom = traced.getSecondLastNode();
-                if (traceFrom != null) {
-                    from = getNodeMessage(traceFrom, exchange);
-                } else if (exchange.getFromEndpoint() != null) {
-                    from = "from(" + exchange.getFromEndpoint().getEndpointUri() + ")";
-                }
-
-                RouteNode traceTo = traced.getLastNode();
-                if (traceTo != null) {
-                    to = getNodeMessage(traceTo, exchange);
-                    // if its an abstract dummy holder then we have to get the 2nd last so we can get the real node that has
-                    // information which route it belongs to
-                    if (traceTo.isAbstract() && traceTo.getProcessorDefinition() == null) {
-                        traceTo = traced.getSecondLastNode();
+                if (traced != null) {
+                    RouteNode traceFrom = traced.getSecondLastNode();
+                    if (traceFrom != null) {
+                        from = getNodeMessage(traceFrom, exchange);
+                    } else if (exchange.getFromEndpoint() != null) {
+                        from = "from(" + exchange.getFromEndpoint().getEndpointUri() + ")";
                     }
+
+                    RouteNode traceTo = traced.getLastNode();
                     if (traceTo != null) {
-                        route = extractRoute(traceTo.getProcessorDefinition());
+                        to = getNodeMessage(traceTo, exchange);
+                        // if its an abstract dummy holder then we have to get the 2nd last so we can get the real node that has
+                        // information which route it belongs to
+                        if (traceTo.isAbstract() && traceTo.getProcessorDefinition() == null) {
+                            traceTo = traced.getSecondLastNode();
+                        }
+                        if (traceTo != null) {
+                            route = extractRoute(traceTo.getProcessorDefinition());
+                        }
                     }
                 }
             }

@@ -54,7 +54,7 @@ public class GzipDataFormatFileDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/gzip?delete=true")
+                from("file:target/gzip?initialDelay=0&delay=10&delete=true")
                     .marshal().gzip()
                     .to("file:target/gzip/out?fileName=${file:name}.gz")
                     .to("mock:result");

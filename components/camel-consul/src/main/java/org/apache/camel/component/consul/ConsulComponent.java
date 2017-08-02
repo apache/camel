@@ -21,11 +21,18 @@ import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.consul.enpoint.ConsulAgentProducer;
+import org.apache.camel.component.consul.enpoint.ConsulCatalogProducer;
+import org.apache.camel.component.consul.enpoint.ConsulCoordinatesProducer;
 import org.apache.camel.component.consul.enpoint.ConsulEventConsumer;
 import org.apache.camel.component.consul.enpoint.ConsulEventProducer;
+import org.apache.camel.component.consul.enpoint.ConsulHealthProducer;
 import org.apache.camel.component.consul.enpoint.ConsulKeyValueConsumer;
 import org.apache.camel.component.consul.enpoint.ConsulKeyValueProducer;
+import org.apache.camel.component.consul.enpoint.ConsulPreparedQueryProducer;
+import org.apache.camel.component.consul.enpoint.ConsulSessionProducer;
+import org.apache.camel.component.consul.enpoint.ConsulStatusProducer;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -33,10 +40,12 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 /**
  * Represents the component that manages {@link ConsulEndpoint}.
  */
-public class ConsulComponent extends DefaultComponent {
+public class ConsulComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private ConsulConfiguration configuration = new ConsulConfiguration();
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
     
     public ConsulComponent() {
         super();
@@ -85,6 +94,19 @@ public class ConsulComponent extends DefaultComponent {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         configuration.setSslContextParameters(sslContextParameters);
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public String getAclToken() {
@@ -140,33 +162,52 @@ public class ConsulComponent extends DefaultComponent {
         ConsulConfiguration configuration = Optional.ofNullable(this.configuration).orElseGet(ConsulConfiguration::new).copy();
         configuration.setCamelContext(getCamelContext());
 
-        setProperties(configuration, parameters);
-
-        return ConsulApiEndpoint.valueOf(remaining).create(remaining, uri, this, configuration);
-    }
-
-    // Consul Api Enpoints (see https://www.consul.io/docs/agent/http.html)
-    private enum ConsulApiEndpoint {
-        kv(ConsulKeyValueProducer::new, ConsulKeyValueConsumer::new),
-        event(ConsulEventProducer::new, ConsulEventConsumer::new),
-        agent(ConsulAgentProducer::new, null);
-
-        private final Optional<ConsulEndpoint.ProducerFactory> producerFactory;
-        private final Optional<ConsulEndpoint.ConsumerFactory> consumerFactory;
-
-        ConsulApiEndpoint(ConsulEndpoint.ProducerFactory producerFactory, ConsulEndpoint.ConsumerFactory consumerFactory) {
-            this.producerFactory = Optional.ofNullable(producerFactory);
-            this.consumerFactory = Optional.ofNullable(consumerFactory);
+        // using global ssl context parameters if set
+        if (configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
-        public Endpoint create(String apiEndpoint, String uri, ConsulComponent component, ConsulConfiguration configuration) throws Exception {
+        setProperties(configuration, parameters);
+
+        switch (remaining) {
+        case "kv":
             return new ConsulEndpoint(
-                apiEndpoint,
-                uri,
-                component,
-                configuration,
-                producerFactory,
-                consumerFactory);
+                remaining, uri, this, configuration, Optional.of(ConsulKeyValueProducer::new), Optional.of(ConsulKeyValueConsumer::new)
+            );
+        case "event":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulEventProducer::new), Optional.of(ConsulEventConsumer::new)
+            );
+        case "agent":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulAgentProducer::new), Optional.empty()
+            );
+        case "coordinates":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulCoordinatesProducer::new), Optional.empty()
+            );
+        case "health":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulHealthProducer::new), Optional.empty()
+            );
+        case "status":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulStatusProducer::new), Optional.empty()
+            );
+        case "preparedQuery":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulPreparedQueryProducer::new), Optional.empty()
+            );
+        case "catalog":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulCatalogProducer::new), Optional.empty()
+            );
+        case "session":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulSessionProducer::new), Optional.empty()
+            );
+        default:
+            throw new IllegalArgumentException("Unknown apiEndpoint: " + remaining);
         }
     }
 }

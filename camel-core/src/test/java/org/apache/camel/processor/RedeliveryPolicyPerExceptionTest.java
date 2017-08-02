@@ -91,7 +91,7 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                onException(IllegalArgumentException.class).maximumRedeliveries(2).to("mock:a");
+                onException(IllegalArgumentException.class).redeliveryDelay(0).maximumRedeliveries(2).to("mock:a");
                 onException(NullPointerException.class).to("mock:b");
 
                 from("direct:start").process(processor);

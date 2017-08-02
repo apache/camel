@@ -10,7 +10,7 @@ The Throttle EIP supports 5 options which are listed below:
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
 | Name | Java Type | Description
-| executorServiceRef | String | Sets the ExecutorService which could be used by throttle definition
+| executorServiceRef | String | To use a custom thread pool (ScheduledExecutorService) by the throttler.
 | timePeriodMillis | Long | Sets the time period during which the maximum request count is valid for
 | asyncDelayed | Boolean | Enables asynchronous delay which means the thread will not block while delaying.
 | callerRunsWhenRejected | Boolean | Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true

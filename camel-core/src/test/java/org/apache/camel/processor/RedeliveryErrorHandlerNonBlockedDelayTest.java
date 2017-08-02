@@ -53,7 +53,7 @@ public class RedeliveryErrorHandlerNonBlockedDelayTest extends ContextTestSuppor
             @Override
             public void configure() throws Exception {
                 // use async delayed which means non blocking
-                errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(2000).asyncDelayedRedelivery());
+                errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(10).asyncDelayedRedelivery());
 
                 from("seda:start")
                     .to("log:before")

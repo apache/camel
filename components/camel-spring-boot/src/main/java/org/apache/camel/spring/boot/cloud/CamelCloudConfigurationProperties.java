@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Expression;
-import org.apache.camel.model.cloud.ServiceCallConstants;
+import org.apache.camel.cloud.ServiceLoadBalancer;
+import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "camel.cloud")
@@ -75,7 +76,7 @@ public class CamelCloudConfigurationProperties {
         /**
          * The component to use.
          */
-        private String component = ServiceCallConstants.DEFAULT_COMPONENT;
+        private String component = ServiceCallDefinitionConstants.DEFAULT_COMPONENT;
 
         /**
          * A reference to the {@link org.apache.camel.cloud.ServiceDiscovery} to use.
@@ -93,14 +94,19 @@ public class CamelCloudConfigurationProperties {
         private String serviceChooser;
 
         /**
-         * A reference to the {@link org.apache.camel.cloud.LoadBalancer} to use.
+         * A reference to the {@link ServiceLoadBalancer} to use.
          */
         private String loadBalancer;
 
         /**
-         * Set a custom {@link Expression} using the {@link org.apache.camel.language.simple.SimpleLanguage}
+         * The {@link Expression} to use.
          */
         private String expression;
+
+        /**
+         * The {@link Expression} language to use, default is ref
+         */
+        private String expressionLanguage = "ref";
 
         public String getUri() {
             return uri;
@@ -156,6 +162,14 @@ public class CamelCloudConfigurationProperties {
 
         public void setExpression(String expression) {
             this.expression = expression;
+        }
+
+        public String getExpressionLanguage() {
+            return expressionLanguage;
+        }
+
+        public void setExpressionLanguage(String expressionLanguage) {
+            this.expressionLanguage = expressionLanguage;
         }
     }
 

@@ -100,7 +100,7 @@ public class WireTapStreamCachingTest extends ContextTestSupport {
 
                 from("direct:x").process(processor).to("mock:x");
                 // even if a process takes more time then the others the wire tap shall work
-                from("direct:y").delay(2000).process(processor).to("mock:y");
+                from("direct:y").delay(500).process(processor).to("mock:y");
                 from("direct:z").process(processor).to("mock:z");
             }
         };

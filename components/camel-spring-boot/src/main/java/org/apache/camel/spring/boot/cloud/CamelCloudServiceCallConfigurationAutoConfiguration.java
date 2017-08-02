@@ -18,7 +18,8 @@ package org.apache.camel.spring.boot.cloud;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
-import org.apache.camel.model.cloud.ServiceCallConstants;
+import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +42,8 @@ public class CamelCloudServiceCallConfigurationAutoConfiguration {
     private CamelCloudConfigurationProperties configurationProperties;
 
     @Lazy
-    @Bean(name = ServiceCallConstants.DEFAULT_SERVICE_CALL_CONFIG_ID)
-    @ConditionalOnMissingBean(name = ServiceCallConstants.DEFAULT_SERVICE_CALL_CONFIG_ID)
+    @Bean(name = ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_CONFIG_ID)
+    @ConditionalOnMissingBean(name = ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_CONFIG_ID)
     public ServiceCallConfigurationDefinition serviceCallConfiguration() throws Exception {
         ServiceCallConfigurationDefinition definition = new ServiceCallConfigurationDefinition();
         ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getComponent(), definition::setComponent);
@@ -51,7 +52,18 @@ public class CamelCloudServiceCallConfigurationAutoConfiguration {
         ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getServiceFilter(), definition::setServiceFilterRef);
         ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getServiceChooser(), definition::setServiceChooserRef);
         ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getLoadBalancer(), definition::setLoadBalancerRef);
-        ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getExpression(), definition::setSimpleExpression);
+
+        String expression = configurationProperties.getServiceCall().getExpression();
+        String expressionLanguage = configurationProperties.getServiceCall().getExpressionLanguage();
+
+        if (ObjectHelper.isNotEmpty(expression) && ObjectHelper.isNotEmpty(expressionLanguage)) {
+            Language language = camelContext.resolveLanguage(expressionLanguage);
+            if (language == null) {
+                throw new IllegalArgumentException("Unable to resolve language: " + expressionLanguage);
+            }
+
+            definition.setExpression(language.createExpression(expression));
+        }
 
         return definition;
     }

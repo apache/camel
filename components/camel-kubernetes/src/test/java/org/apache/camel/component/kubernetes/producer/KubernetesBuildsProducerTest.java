@@ -21,52 +21,56 @@ import java.util.List;
 import java.util.Map;
 
 import io.fabric8.openshift.api.model.Build;
+import io.fabric8.openshift.api.model.BuildListBuilder;
+import io.fabric8.openshift.client.server.mock.OpenShiftServer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.impl.JndiRegistry;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class KubernetesBuildsProducerTest extends KubernetesTestSupport {
 
+    @Rule
+    public OpenShiftServer server = new OpenShiftServer();
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind("client", server.getKubernetesClient());
+        return registry;
+    }
+
     @Test
     public void listTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
-        List<Build> result = template.requestBody("direct:list", "",
-                List.class);
+        server.expect().withPath("/oapi/v1/builds").andReturn(200, new BuildListBuilder().addNewItem().and().addNewItem().and().build()).once();
+        List<Build> result = template.requestBody("direct:list", "", List.class);
 
-        assertTrue(result.size() == 0);
+        assertEquals(2, result.size());
     }
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
+        server.expect().withPath("/oapi/v1/builds?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
+            .andReturn(200, new BuildListBuilder().addNewItem().and().addNewItem().and().build()).once();
         Exchange ex = template.request("direct:listByLabels", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "default");
                 Map<String, String> labels = new HashMap<String, String>();
-                labels.put("component", "elasticsearch");
-                exchange.getIn()
-                        .setHeader(
-                                KubernetesConstants.KUBERNETES_BUILDS_LABELS,
-                                labels);
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_BUILDS_LABELS, labels);
             }
         });
 
         List<Build> result = ex.getOut().getBody(List.class);
-        
-        assertTrue(result.size() == 0);
+
+        assertEquals(2, result.size());
     }
 
     @Override
@@ -74,12 +78,8 @@ public class KubernetesBuildsProducerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=builds&operation=listBuilds",
-                                host, authToken);
-                from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=builds&operation=listBuildsByLabels",
-                                host, authToken);
+                from("direct:list").to("kubernetes-builds:///?operation=listBuilds&kubernetesClient=#client");
+                from("direct:listByLabels").to("kubernetes-builds:///?operation=listBuildsByLabels&kubernetesClient=#client");
             }
         };
     }

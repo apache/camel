@@ -18,16 +18,26 @@ package org.apache.camel.component.sql.stored.template;
 
 import java.io.StringReader;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.sql.stored.template.ast.ParseRuntimeException;
 import org.apache.camel.component.sql.stored.template.ast.Template;
 import org.apache.camel.component.sql.stored.template.generated.ParseException;
 import org.apache.camel.component.sql.stored.template.generated.SSPTParser;
+import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.util.ObjectHelper;
 
 public class TemplateParser {
 
+    private final ClassResolver classResolver;
+
+    public TemplateParser(ClassResolver classResolver) {
+        ObjectHelper.notNull(classResolver, "classResolver");
+        this.classResolver = classResolver;
+    }
+
     public Template parseTemplate(String template) {
         try {
-            SSPTParser parser = new SSPTParser(new StringReader(template));
+            SSPTParser parser = new SSPTParser(new StringReader(template), classResolver);
             Template ret = validate(parser.parse());
 
             return ret;

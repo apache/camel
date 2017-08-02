@@ -45,28 +45,25 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
 
     private static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER = new InfinispanQueryBuilder() {
         @Override
-        public Query build(QueryFactory<Query> queryFactory) {
+        public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("CQ%")
-                .toBuilder().build();
+                .having("name").like("CQ%").build();
         }
     };
 
     private static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER_NO_MATCH = new InfinispanQueryBuilder() {
         @Override
-        public Query build(QueryFactory<Query> queryFactory) {
+        public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("%TEST%")
-                .toBuilder().build();
+                .having("name").like("%TEST%").build();
         }
     };
 
     private static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER_ALL = new InfinispanQueryBuilder() {
         @Override
-        public Query build(QueryFactory<Query> queryFactory) {
+        public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("%Q0%")
-                .toBuilder().build();
+                .having("name").like("%Q0%").build();
         }
     };
 
@@ -126,7 +123,6 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
         for (int i = 0; i < 4; i++) {
             continuousQuery.message(i).outHeader(InfinispanConstants.KEY).isEqualTo(createKey(CQ_USERS[i % 2]));
             continuousQuery.message(i).outHeader(InfinispanConstants.CACHE_NAME).isEqualTo(cache.getName());
-
             if (i >= 2) {
                 continuousQuery.message(i).outHeader(InfinispanConstants.EVENT_TYPE).isEqualTo(InfinispanConstants.CACHE_ENTRY_LEAVING);
                 continuousQuery.message(i).outHeader(InfinispanConstants.EVENT_DATA).isNull();
@@ -159,11 +155,11 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query&queryBuilder=#continuousQueryBuilder")
+                from("infinispan:remote_query?cacheContainer=#myCustomContainer&queryBuilder=#continuousQueryBuilder")
                     .to("mock:continuousQuery");
-                from("infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query&queryBuilder=#continuousQueryBuilderNoMatch")
+                from("infinispan:remote_query?cacheContainer=#myCustomContainer&queryBuilder=#continuousQueryBuilderNoMatch")
                     .to("mock:continuousQueryNoMatch");
-                from("infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query&queryBuilder=#continuousQueryBuilderAll")
+                from("infinispan:remote_query?cacheContainer=#myCustomContainer&queryBuilder=#continuousQueryBuilderAll")
                     .to("mock:continuousQueryAll");
             }
         };

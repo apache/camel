@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -36,16 +36,19 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * If this cache stores {@link org.apache.camel.Service} then this implementation will on eviction
  * invoke the {@link org.apache.camel.Service#stop()} method, to auto-stop the service.
+ * <p/>
+ * Use {@link LRUCacheFactory} to create a new instance (do not use the constructor).
  *
+ * @see LRUCacheFactory
  * @see LRUSoftCache
  * @see LRUWeakCache
  */
 public class LRUCache<K, V> implements Map<K, V>, RemovalListener<K, V>, Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(LRUCache.class);
 
-    protected final AtomicLong hits = new AtomicLong();
-    protected final AtomicLong misses = new AtomicLong();
-    protected final AtomicLong evicted = new AtomicLong();
+    protected final LongAdder hits = new LongAdder();
+    protected final LongAdder misses = new LongAdder();
+    protected final LongAdder evicted = new LongAdder();
 
     private int maxCacheSize = 10000;
     private boolean stopOnEviction;
@@ -72,7 +75,8 @@ public class LRUCache<K, V> implements Map<K, V>, RemovalListener<K, V>, Seriali
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     public LRUCache(int initialCapacity, int maximumCacheSize) {
-        this(initialCapacity, maximumCacheSize, true);
+        //Do not stop service if ConcurrentLinkedHashMap try to evict entry when its max capacity is zero.
+        this(initialCapacity, maximumCacheSize, maximumCacheSize > 0);
     }
 
     /**
@@ -127,9 +131,9 @@ public class LRUCache<K, V> implements Map<K, V>, RemovalListener<K, V>, Seriali
     public V get(Object o) {
         V answer = map.get(o);
         if (answer != null) {
-            hits.incrementAndGet();
+            hits.increment();
         } else {
-            misses.incrementAndGet();
+            misses.increment();
         }
         return answer;
     }
@@ -192,7 +196,7 @@ public class LRUCache<K, V> implements Map<K, V>, RemovalListener<K, V>, Seriali
     @Override
     public void onRemoval(K key, V value, RemovalCause cause) {
         if (cause.wasEvicted()) {
-            evicted.incrementAndGet();
+            evicted.increment();
             LOG.trace("onRemoval {} -> {}", key, value);
             if (stopOnEviction) {
                 try {
@@ -209,21 +213,21 @@ public class LRUCache<K, V> implements Map<K, V>, RemovalListener<K, V>, Seriali
      * Gets the number of cache hits
      */
     public long getHits() {
-        return hits.get();
+        return hits.longValue();
     }
 
     /**
      * Gets the number of cache misses.
      */
     public long getMisses() {
-        return misses.get();
+        return misses.longValue();
     }
 
     /**
      * Gets the number of evicted entries.
      */
     public long getEvicted() {
-        return evicted.get();
+        return evicted.longValue();
     }
 
     /**
@@ -237,9 +241,9 @@ public class LRUCache<K, V> implements Map<K, V>, RemovalListener<K, V>, Seriali
      * Rest the cache statistics such as hits and misses.
      */
     public void resetStatistics() {
-        hits.set(0);
-        misses.set(0);
-        evicted.set(0);
+        hits.reset();
+        misses.reset();
+        evicted.reset();
     }
 
     public void cleanUp() {

@@ -39,17 +39,17 @@ public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
 
         StopWatch watch = new StopWatch();
         assertMockEndpointsSatisfied();
-        long interval = watch.stop();
+        long interval = watch.taken();
         
-        LOG.trace("Should take approx 2000 milliseconds, was: {}", interval);
-        assertTrue("Should take approx 2000 milliseconds, was: " + interval, interval >= 1700);
+        LOG.trace("Should take approx 50 milliseconds, was: {}", interval);
+        assertTrue("Should take approx 50 milliseconds, was: " + interval, interval >= 40);
     }
     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("timer://foo?fixedRate=true&delay=0&period=2s").to("mock:result");
+                from("timer://foo?fixedRate=true&delay=0&period=50").to("mock:result");
             }
         };
     } 

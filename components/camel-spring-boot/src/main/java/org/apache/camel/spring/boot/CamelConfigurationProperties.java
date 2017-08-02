@@ -87,6 +87,45 @@ public class CamelConfigurationProperties {
     private boolean typeConversion = true;
 
     /**
+     * Sets whether to load custom type converters by scanning classpath.
+     * This can be turned off if you are only using Camel components
+     * that does not provide type converters which is needed at runtime.
+     * In such situations setting this option to false, can speedup starting
+     * Camel.
+     */
+    private boolean loadTypeConverters = true;
+
+    /**
+     * Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation.
+     * The exclusive filtering takes precedence over inclusive filtering.
+     * The pattern is using Ant-path style pattern.
+     * <p/>
+     * Multiple patterns can be specified separated by comma.
+     * For example to include all classes starting with Foo use <tt>&#42;&#42;/Foo*</tt>.
+     * To include all routes form a specific package use, <tt>com/mycompany/foo/*</tt>
+     * To include all routes form a specific package and its sub-packages use double wildcards, <tt>com/mycompany/foo/**</tt>
+     * And to include all routes from two specific packages use, <tt>com/mycompany/foo/*,com/mycompany/stuff/*</tt>
+     *
+     * @see org.springframework.util.AntPathMatcher
+     */
+    private String javaRoutesIncludePattern;
+
+    /**
+     * Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation.
+     * The exclusive filtering takes precedence over inclusive filtering.
+     * The pattern is using Ant-path style pattern.
+     * Multiple patterns can be specified separated by comma.
+     * <p/>
+     * For example to exclude all classes starting with Bar use <tt>&#42;&#42;/Bar*</tt>.
+     * To exclude all routes form a specific package use, <tt>com/mycompany/bar/*</tt>
+     * To exclude all routes form a specific package and its sub-packages use double wildcards, <tt>com/mycompany/bar/**</tt>
+     * And to exclude all routes from two specific packages use, <tt>com/mycompany/bar/*,com/mycompany/stuff/*</tt>
+     *
+     * @see org.springframework.util.AntPathMatcher
+     */
+    private String javaRoutesExcludePattern;
+
+    /**
      * Directory to scan for adding additional XML routes.
      * You can turn this off by setting the value to false.
      */
@@ -256,7 +295,7 @@ public class CamelConfigurationProperties {
      *
      * Default is false.
      */
-    private boolean logMask = false;
+    private boolean logMask;
 
     /**
      * Sets whether to log exhausted message body with message history.
@@ -289,16 +328,29 @@ public class CamelConfigurationProperties {
      * or from org.apache.camel.spi.UnitOfWork.getOriginalInMessage().
      * Turning this off can optimize performance, as defensive copy of the original message is not needed.
      *
-     * Default is true.
+     * Default is false.
      */
-    private boolean allowUseOriginalMessage = true;
+    private boolean allowUseOriginalMessage;
 
     /**
      * Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints).
      *
-     * The default value is true.
+     * The default value is false.
      */
-    private boolean endpointRuntimeStatisticsEnabled = true;
+    private boolean endpointRuntimeStatisticsEnabled;
+
+    /**
+     * Whether to enable using data type on Camel messages.
+     * <p/>
+     * Data type are automatic turned on if one ore more routes has been explicit configured with input and output types.
+     * Otherwise data type is default off.
+     */
+    private boolean useDataType;
+
+    /**
+     * Set whether breadcrumb is enabled.
+     */
+    private boolean useBreadcrumb = true;
 
     /**
      * Sets the JMX statistics level
@@ -391,6 +443,11 @@ public class CamelConfigurationProperties {
      * Tracer maximum characters in total
      */
     private Integer tracerFormatterMaxChars = 10000;
+    
+    /**
+     * To turn on MDC logging
+     */
+    private boolean useMDCLogging;
 
     // Getters & setters
 
@@ -472,6 +529,30 @@ public class CamelConfigurationProperties {
 
     public void setTypeConversion(boolean typeConversion) {
         this.typeConversion = typeConversion;
+    }
+
+    public boolean isLoadTypeConverters() {
+        return loadTypeConverters;
+    }
+
+    public void setLoadTypeConverters(boolean loadTypeConverters) {
+        this.loadTypeConverters = loadTypeConverters;
+    }
+
+    public String getJavaRoutesIncludePattern() {
+        return javaRoutesIncludePattern;
+    }
+
+    public void setJavaRoutesIncludePattern(String javaRoutesIncludePattern) {
+        this.javaRoutesIncludePattern = javaRoutesIncludePattern;
+    }
+
+    public String getJavaRoutesExcludePattern() {
+        return javaRoutesExcludePattern;
+    }
+
+    public void setJavaRoutesExcludePattern(String javaRoutesExcludePattern) {
+        this.javaRoutesExcludePattern = javaRoutesExcludePattern;
     }
 
     public String getXmlRoutes() {
@@ -692,6 +773,22 @@ public class CamelConfigurationProperties {
         this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
     }
 
+    public boolean isUseDataType() {
+        return useDataType;
+    }
+
+    public void setUseDataType(boolean useDataType) {
+        this.useDataType = useDataType;
+    }
+
+    public boolean isUseBreadcrumb() {
+        return useBreadcrumb;
+    }
+
+    public void setUseBreadcrumb(boolean useBreadcrumb) {
+        this.useBreadcrumb = useBreadcrumb;
+    }
+
     public ManagementStatisticsLevel getJmxManagementStatisticsLevel() {
         return jmxManagementStatisticsLevel;
     }
@@ -842,5 +939,13 @@ public class CamelConfigurationProperties {
 
     public void setIncludeNonSingletons(boolean includeNonSingletons) {
         this.includeNonSingletons = includeNonSingletons;
+    }
+    
+    public boolean isUseMDCLogging() {
+        return useMDCLogging;
+    }
+    
+    public void setUseMDCLogging(boolean useMDCLogging) {
+        this.useMDCLogging = useMDCLogging;
     }
 }

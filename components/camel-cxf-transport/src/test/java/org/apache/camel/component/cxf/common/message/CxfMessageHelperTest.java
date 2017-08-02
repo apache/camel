@@ -108,7 +108,7 @@ public class CxfMessageHelperTest extends Assert {
         IOHelper.copy(is, os);
         is.close();
         os.writeCacheTo(out);
-        return out.toString();
+        return out.toString().replaceAll("(?s)<\\?.*\\?>", "").replaceAll("(?s)<!--.*-->", "").replaceAll("\\n", "");
 
     }
 

@@ -4,7 +4,7 @@
 
 The Zendesk component provides access to all of the zendesk.com APIs accessible
 using https://github.com/cloudbees/zendesk-java-client[zendesk-java-client]. It
-allows producing messages to manage Zendesk ticket, user, organization and etc.
+allows producing messages to manage Zendesk ticket, user, organization, etc.
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:

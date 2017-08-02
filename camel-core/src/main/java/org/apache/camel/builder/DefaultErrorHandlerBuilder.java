@@ -226,7 +226,8 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
-     * Will allow asynchronous delayed redeliveries.
+     * Will allow asynchronous delayed redeliveries. The route, in particular the consumer's component,
+     * must support the Asynchronous Routing Engine (e.g. seda)
      *
      * @see org.apache.camel.processor.RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
      * @return the builder

@@ -9,9 +9,7 @@ outgoing Camel messages using http://opentracing.io/[OpenTracing].
 Events (spans) are captured for incoming and outgoing messages being sent
 to/from Camel.
 
-The component uses the https://github.com/opentracing-contrib/java-globaltracer[Global Tracer]
-project to obtain an OpenTracing provider. See the http://opentracing.io/[OpenTracing]
-website for a list of supported tracers.
+See the http://opentracing.io/[OpenTracing] website for a list of supported tracers.
 
 
 ### Configuration
@@ -24,12 +22,12 @@ Include the `camel-opentracing` component in your POM, along with any specific d
 
 To explicitly configure OpenTracing support, instantiate the `OpenTracingTracer` and initialize the camel
 context. You can optionally specify a `Tracer`, or alternatively it can be implicitly discovered using the
-`GlobalTracer`.
+`Registry` or `ServiceLoader`.
 
 [source,java]
 --------------------------------------------------------------------------------------------------
 OpenTracingTracer ottracer = new OpenTracingTracer();
-// By default it uses the Global Tracer, but you can override it with a specific OpenTracing implementation.
+// By default it uses a Noop Tracer, but you can override it with a specific OpenTracing implementation.
 ottracer.setTracer(...);
 // And then initialize the context
 ottracer.init(camelContext);
@@ -52,6 +50,9 @@ If you are using link:spring-boot.html[Spring Boot] then you can add
 the `camel-opentracing-starter` dependency, and turn on OpenTracing by annotating
 the main class with `@CamelOpenTracing`.
 
+The `Tracer` will be implicitly obtained from the camel context's `Registry`, or the `ServiceLoader`, unless
+a `Tracer` bean has been defined by the application.
+
 #### Java Agent
 
 The third approach is to use a Java Agent to automatically configure the OpenTracing support.
@@ -68,8 +69,9 @@ The OpenTracing Java Agent is associated with the following dependency:
     </dependency>
 ---------------------------------------------------------------------------------------------------------
 
-How this agent is used will be specific to how you execute your application. _Service2_ in the https://github.com/apache/camel/tree/master/examples/camel-example-opentracing[camel-example-opentracing] downloads the agent into a local folder and then uses the `exec-maven-plugin` to launch the service with the `-javaagent` command line option. 
+The `Tracer` used will be implicitly loaded from the camel context `Registry` or using the `ServiceLoader`.
 
+How this agent is used will be specific to how you execute your application. _Service2_ in the https://github.com/apache/camel/tree/master/examples/camel-example-opentracing[camel-example-opentracing] downloads the agent into a local folder and then uses the `exec-maven-plugin` to launch the service with the `-javaagent` command line option. 
 
 ### Example
 

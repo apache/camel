@@ -31,7 +31,6 @@ public class AggregateMultipleSourceTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         mock.expectsNoDuplicates(body());
-        mock.setResultWaitTime(20000);
 
         for (int i = 0; i < 40; i++) {
             if (i % 2 == 0) {
@@ -56,7 +55,7 @@ public class AggregateMultipleSourceTest extends ContextTestSupport {
                 from("seda:baz").to("direct:aggregate");
 
                 from("direct:aggregate")
-                    .aggregate(header("type"), new MyAggregationStrategy()).completionSize(25).completionTimeout(5000)
+                    .aggregate(header("type"), new MyAggregationStrategy()).completionSize(25).completionTimeout(500).completionTimeoutCheckerInterval(10)
                         .to("mock:result")
                     .end();
             }

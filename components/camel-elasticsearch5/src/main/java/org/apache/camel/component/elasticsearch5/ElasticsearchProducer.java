@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.elasticsearch5;
 
+import java.lang.reflect.Constructor;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
@@ -46,15 +48,16 @@ import org.slf4j.LoggerFactory;
  * Represents an Elasticsearch producer.
  */
 public class ElasticsearchProducer extends DefaultProducer {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchProducer.class);
-    
+
     protected final ElasticsearchConfiguration configuration;
     private TransportClient client;
-    
+
     public ElasticsearchProducer(ElasticsearchEndpoint endpoint, ElasticsearchConfiguration configuration) {
         super(endpoint);
         this.configuration = configuration;
+        this.client = endpoint.getClient();
     }
 
     private ElasticsearchOperation resolveOperation(Exchange exchange) {
@@ -79,9 +82,9 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (request instanceof BulkRequest) {
             // do we want bulk or bulk_index?
             if (configuration.getOperation() == ElasticsearchOperation.BULK_INDEX) {
-                return configuration.getOperation().BULK_INDEX;
+                return ElasticsearchOperation.BULK_INDEX;
             } else {
-                return configuration.getOperation().BULK;
+                return ElasticsearchOperation.BULK;
             }
         } else if (request instanceof DeleteRequest) {
             return ElasticsearchOperation.DELETE;
@@ -176,7 +179,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             }
         } else if (operation == ElasticsearchOperation.SEARCH) {
             SearchRequest searchRequest = message.getBody(SearchRequest.class);
-            message.setBody(client.search(searchRequest).actionGet());            
+            message.setBody(client.search(searchRequest).actionGet());
         } else if (operation == ElasticsearchOperation.MULTISEARCH) {
             MultiSearchRequest multiSearchRequest = message.getBody(MultiSearchRequest.class);
             message.setBody(client.multiSearch(multiSearchRequest));
@@ -208,37 +211,51 @@ public class ElasticsearchProducer extends DefaultProducer {
         }
 
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         super.doStart();
 
         if (client == null) {
-            LOG.info("Connecting to the ElasticSearch cluster: " + configuration.getClusterName());
-            
+            LOG.info("Connecting to the ElasticSearch cluster: {}", configuration.getClusterName());
             if (configuration.getIp() != null) {
-                client = new PreBuiltTransportClient(getSettings())
-                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(configuration.getIp()), configuration.getPort()));
-            } else if (configuration.getTransportAddressesList() != null
-                    && !configuration.getTransportAddressesList().isEmpty()) {
+                client = createClient().addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(configuration.getIp()), configuration.getPort()));
+            } else if (configuration.getTransportAddressesList() != null && !configuration.getTransportAddressesList().isEmpty()) {
                 List<TransportAddress> addresses = new ArrayList<TransportAddress>(configuration.getTransportAddressesList().size());
-                for (TransportAddress address : configuration.getTransportAddressesList()) {
-                    addresses.add(address);
-                }
-                client = new PreBuiltTransportClient(getSettings()).addTransportAddresses(addresses.toArray(new TransportAddress[addresses.size()]));
+                addresses.addAll(configuration.getTransportAddressesList());
+                client = createClient().addTransportAddresses(addresses.toArray(new TransportAddress[addresses.size()]));
             } else {
                 LOG.info("Incorrect ip address and port parameters settings for ElasticSearch cluster");
             }
         }
     }
 
-    private Settings getSettings() {
-        return Settings.builder()
-                .put("cluster.name", configuration.getClusterName())
-                .put("client.transport.ignore_cluster_name", false)
-                .put("client.transport.sniff", configuration.getClientTransportSniff())
-                .build();
+    private TransportClient createClient() throws Exception {
+        final Settings.Builder settings = getSettings();
+        final CamelContext camelContext = getEndpoint().getCamelContext();
+        final Class<?> clazz = camelContext.getClassResolver().resolveClass("org.elasticsearch.xpack.client.PreBuiltXPackTransportClient");
+        if (clazz != null) {
+            Constructor<?> ctor = clazz.getConstructor(Settings.class, Class[].class);
+            settings.put("xpack.security.user", configuration.getUser() + ":" + configuration.getPassword())
+                .put("xpack.security.transport.ssl.enabled", configuration.getEnableSSL());
+            LOG.info("XPack Client was found on the classpath");
+            return (TransportClient) ctor.newInstance(new Object[]{settings.build(), new Class[0]});
+        } else {
+            LOG.debug("XPack Client was not found on the classpath, using the standard client.");
+            return new PreBuiltTransportClient(settings.build());
+        }
+    }
+
+    private Settings.Builder getSettings() {
+        final Settings.Builder settings = Settings.builder()
+            .put("cluster.name", configuration.getClusterName())
+            .put("client.transport.sniff", configuration.getClientTransportSniff())
+            .put("transport.ping_schedule", configuration.getPingSchedule())
+            .put("client.transport.ping_timeout", configuration.getPingTimeout())
+            .put("client.transport.sniff", configuration.getClientTransportSniff())
+            .put("request.headers.X-Found-Cluster", configuration.getClusterName());
+        return settings;
     }
 
     @Override
@@ -249,5 +266,9 @@ public class ElasticsearchProducer extends DefaultProducer {
             client = null;
         }
         super.doStop();
+    }
+
+    public TransportClient getClient() {
+        return client;
     }
 }

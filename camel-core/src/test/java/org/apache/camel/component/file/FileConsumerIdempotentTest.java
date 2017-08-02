@@ -29,7 +29,7 @@ import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
  */
 public class FileConsumerIdempotentTest extends ContextTestSupport {
 
-    private String uri = "file://target/idempotent/?idempotent=true&move=done/${file:name}&delay=10";
+    private String uri = "file://target/idempotent/?idempotent=true&move=done/${file:name}&initialDelay=0&delay=10";
 
     @Override
     protected void setUp() throws Exception {

@@ -126,6 +126,15 @@ public interface InflightRepository extends StaticService {
     int size(Endpoint endpoint);
 
     /**
+     * Adds the route from the in flight registry.
+     * <p/>
+     * Is used for initializing up resources
+     *
+     * @param routeId the id of the route
+     */
+    void addRoute(String routeId);
+
+    /**
      * Removes the route from the in flight registry.
      * <p/>
      * Is used for cleaning up resources to avoid leaking.
@@ -174,5 +183,13 @@ public interface InflightRepository extends StaticService {
      *                              set to <tt>false</tt> to sort by exchange id
      */
     Collection<InflightExchange> browse(String fromRouteId, int limit, boolean sortByLongestDuration);
+
+    /**
+     * Gets the oldest {@link InflightExchange} that are currently inflight that started from the given route.
+     *
+     * @param fromRouteId  the route id, or <tt>null</tt> for all routes.
+     * @return the oldest, or <tt>null</tt> if none inflight
+     */
+    InflightExchange oldest(String fromRouteId);
 
 }

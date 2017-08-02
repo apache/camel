@@ -44,7 +44,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
 
     private final FileRenameExclusiveReadLockStrategy rename;
     private GenericFileEndpoint<File> endpoint;
-    private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
+    private LoggingLevel readLockLoggingLevel = LoggingLevel.DEBUG;
     private CamelContext camelContext;
     private IdempotentRepository<String> idempotentRepository;
     private boolean removeOnRollback = true;

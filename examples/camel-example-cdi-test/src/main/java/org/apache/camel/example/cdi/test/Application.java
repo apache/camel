@@ -40,7 +40,7 @@ public class Application {
         public void configure() {
             from("direct:message")
                 .routeId("route")
-                .log("${body} from ${camelContext.name} at ${date:now:hh:mm:ss a}!");
+                .log("${body} from ${camelContext.name}");
 
             from("direct:in").routeId("in»out").bean("bean").to("direct:out");
         }

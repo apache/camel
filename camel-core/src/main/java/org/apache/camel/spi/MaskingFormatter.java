@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.Exchange;
-
 /**
  * A plugin used to mask a log String, for example security information
  * like password or passphrase.

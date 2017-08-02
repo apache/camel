@@ -21,7 +21,6 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.NoSuchOptionException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
@@ -62,13 +61,13 @@ public class SalesforceComponentVerifier extends DefaultComponentVerifier {
         // - OAuth JWT Flow
         //
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-            .errors(ResultErrorHelper.requiresAny(
-                parameters,
-                OptionsGroup.withName(AuthenticationType.USERNAME_PASSWORD).options("clientId", "clientSecret", "userName", "password"),
-                OptionsGroup.withName(AuthenticationType.REFRESH_TOKEN).options("clientId", "clientSecret", "refreshToken"),
-                OptionsGroup.withName(AuthenticationType.JWT).options("clientId", "userName", "keystore")
-            )
-        );
+            .errors(ResultErrorHelper.requiresAny(parameters,
+                OptionsGroup.withName(AuthenticationType.USERNAME_PASSWORD)
+                    .options("clientId", "clientSecret", "userName", "password", "!refreshToken", "!keystore"),
+                OptionsGroup.withName(AuthenticationType.REFRESH_TOKEN)
+                    .options("clientId", "clientSecret", "refreshToken", "!password", "!keystore"),
+                OptionsGroup.withName(AuthenticationType.JWT)
+                    .options("clientId", "userName", "keystore", "!password", "!refreshToken")));
 
         // Validate using the catalog
         super.verifyParametersAgainstCatalog(builder, parameters);
@@ -129,8 +128,6 @@ public class SalesforceComponentVerifier extends DefaultComponentVerifier {
             builder.error(
                 ResultErrorBuilder.withException(e).build()
             );
-
-            throw new RuntimeException(e);
         }
 
         return builder.build();
@@ -144,16 +141,16 @@ public class SalesforceComponentVerifier extends DefaultComponentVerifier {
         exception.ifPresent(e -> {
             builder.error(
                 ResultErrorBuilder.withException(e)
-                    .attribute(ComponentVerifier.HTTP_CODE, e.getStatusCode())
+                    .detail(VerificationError.HttpAttribute.HTTP_CODE, e.getStatusCode())
                     .build()
             );
 
             for (RestError error : e.getErrors()) {
                 builder.error(
-                    ResultErrorBuilder.withCode(error.getErrorCode())
+                    ResultErrorBuilder.withCode(VerificationError.StandardCode.GENERIC)
                         .description(error.getMessage())
-                        .attribute(ComponentVerifier.ERROR_TYPE_ATTRIBUTE, "salesforce")
-                        .parameters(error.getFields())
+                        .parameterKeys(error.getFields())
+                        .detail("salesforce_code", error.getErrorCode())
                         .build()
                 );
             }

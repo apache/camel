@@ -54,7 +54,7 @@ public class RedeliveryOnExceptionBlockedDelayTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // will by default block
                 onException(IllegalArgumentException.class)
-                    .maximumRedeliveries(5).redeliveryDelay(2000);
+                    .maximumRedeliveries(5).redeliveryDelay(0);
 
                 from("seda:start")
                     .to("log:before")

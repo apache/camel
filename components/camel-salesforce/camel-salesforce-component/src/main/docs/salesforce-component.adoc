@@ -57,11 +57,19 @@ must contain only single certificate-private key entry.
 
 ### URI format
 
-The URI scheme for a salesforce component is as follows
+When used as a consumer, receiving streaming events, the URI scheme is:
 
 [source,java]
 ------------------------
 salesforce:topic?options
+------------------------
+
+When used as a producer, invoking the Salesforce RSET APIs, the URI
+scheme is:
+
+[source,java]
+------------------------
+salesforce:operationName?options
 ------------------------
 
 You can append query options to the URI in the following format,
@@ -75,6 +83,8 @@ Producer endpoints can use the following APIs. Most of the APIs process
 one record at a time, the Query API can retrieve multiple Records.
 
 #### Rest API
+
+You can use the following for `operationName`:
 
 * getVersions - Gets supported Salesforce REST API versions
 * getResources - Gets available Salesforce REST Resource endpoints
@@ -112,7 +122,7 @@ list of errors while creating the new object.
 
 [source,java]
 -----------------------------------------------------------
-    ...to("salesforce:upsertSObject?sObjectIdName=Name")...
+...to("salesforce:upsertSObject?sObjectIdName=Name")...
 -----------------------------------------------------------
 
 #### Rest Bulk API
@@ -124,6 +134,8 @@ route. Usually the request will be some stream source like a CSV file,
  +
  and the response may also be saved to a file to be correlated with the
 request.
+
+You can use the following for `operationName`:
 
 * createJob - Creates a Salesforce Bulk Job
 * getJob - Gets a Job using its Salesforce Id
@@ -148,7 +160,7 @@ error.
 
 [source,java]
 ----------------------------------------
-    ...to("salesforce:createBatchJob")..
+...to("salesforce:createBatchJob")..
 ----------------------------------------
 
 #### Rest Streaming API
@@ -160,14 +172,14 @@ To create and subscribe to a topic
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&sObjectName=Merchandise__c&updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")...
+from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&sObjectName=Merchandise__c&updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")...
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 To subscribe to an existing topic
 
 [source,java]
 -------------------------------------------------------------------
-    from("salesforce:CamelTestTopic&sObjectName=Merchandise__c")...
+from("salesforce:CamelTestTopic&sObjectName=Merchandise__c")...
 -------------------------------------------------------------------
 
 ### Examples
@@ -206,10 +218,10 @@ Give the output from the processor to the Salesforce component:
 
 [source,java]
 -----------------------------------------------------------------------------------------------------
-    from("file:///home/camel/library")
-        .to(new ContentProcessor())     // convert bytes from the file into a ContentVersion SObject 
-                                        // for the salesforce component
-        .to("salesforce:createSObject"); 
+from("file:///home/camel/library")
+    .to(new ContentProcessor())     // convert bytes from the file into a ContentVersion SObject 
+                                    // for the salesforce component
+    .to("salesforce:createSObject"); 
 -----------------------------------------------------------------------------------------------------
 
 ### Using Salesforce Limits API
@@ -458,7 +470,7 @@ link:salesforce.html[Salesforce].
 
 
 // component options: START
-The Salesforce component supports 26 options which are listed below.
+The Salesforce component supports 28 options which are listed below.
 
 
 
@@ -467,7 +479,8 @@ The Salesforce component supports 26 options which are listed below.
 | Name | Description | Default | Type
 | **authenticationType** (security) | Explicit authentication method to be used one of USERNAME_PASSWORD REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set set this property to eliminate any ambiguity. |  | AuthenticationType
 | **loginConfig** (security) | All authentication configuration in one nested bean all properties set there can be set directly on the component as well |  | SalesforceLoginConfig
-| **loginUrl** (security) | *Required* URL of the Salesforce instance by default set to https://login.salesforce.com | https://login.salesforce.com | String
+| **instanceUrl** (security) | URL of the Salesforce instance used after authantication by default received from Salesforce on successful authentication |  | String
+| **loginUrl** (security) | *Required* URL of the Salesforce instance used for authentication by default set to https://login.salesforce.com | https://login.salesforce.com | String
 | **clientId** (security) | *Required* OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package. |  | String
 | **clientSecret** (security) | OAuth Consumer Secret of the connected app configured in the Salesforce instance setup. |  | String
 | **keystore** (security) | KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry with private key and certificate. Salesforce does not verify the certificate chain so this can easily be a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app. |  | KeyStoreParameters
@@ -478,6 +491,7 @@ The Salesforce component supports 26 options which are listed below.
 | **config** (common) | Global endpoint configuration - use to set values that are common to all endpoints |  | SalesforceEndpoint Config
 | **httpClientProperties** (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
 | **sslContextParameters** (security) | SSL parameters to use see SSLContextParameters class for all available options. |  | SSLContextParameters
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters | false | boolean
 | **httpProxyHost** (proxy) | Hostname of the HTTP proxy server to use. |  | String
 | **httpProxyPort** (proxy) | Port number of the HTTP proxy server to use. |  | Integer
 | **httpProxyUsername** (security) | Username to use to authenticate against the HTTP proxy server. |  | String

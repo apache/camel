@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.util.Map;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -54,9 +56,11 @@ public class SshProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         String command = in.getMandatoryBody(String.class);
+        
+        final Map<String, Object> headers = exchange.getIn().getHeaders();
 
         try {
-            SshResult result = SshHelper.sendExecCommand(command, endpoint, client);
+            SshResult result = SshHelper.sendExecCommand(headers, command, endpoint, client);
             exchange.getOut().setBody(result.getStdout());
             exchange.getOut().setHeader(SshResult.EXIT_VALUE, result.getExitValue());
             exchange.getOut().setHeader(SshResult.STDERR, result.getStderr());

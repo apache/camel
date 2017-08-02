@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -39,8 +40,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Language;
-
-import static org.apache.camel.TestSupport.getJavaMajorVersion;
 /**
  * @version
  */
@@ -515,6 +514,11 @@ public class SimpleTest extends LanguageTestSupport {
 
         assertExpression("date-with-timezone:header.birthday:GMT+8:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T08:55:47:123");
         assertExpression("date-with-timezone:header.birthday:GMT:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T00:55:47:123");
+    }
+
+    public void testDateNow() throws Exception {
+        Object out = evaluateExpression("${date:now:hh:mm:ss a}", null);
+        assertNotNull(out);
     }
 
     public void testDatePredicates() throws Exception {

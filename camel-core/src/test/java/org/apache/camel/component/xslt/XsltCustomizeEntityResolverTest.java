@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.xslt;
 
-
 import java.io.IOException;
 import java.io.StringReader;
 import org.xml.sax.EntityResolver;
@@ -28,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 
-/**
- *
- */
 public class XsltCustomizeEntityResolverTest extends ContextTestSupport {
 
     private static final String EXPECTED_XML_CONSTANT = "<A>1</A>";
@@ -49,7 +45,7 @@ public class XsltCustomizeEntityResolverTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:src/test/data/?fileName=xml_with_entity.xml&noop=true").
+                from("file:src/test/data/?fileName=xml_with_entity.xml&noop=true&initialDelay=0&delay=10").
                 to("xslt:xslt/common/copy.xsl?allowStAX=false&output=string&entityResolver=#customEntityResolver").
                     to("mock:resultURIResolverDirect");
             }
@@ -60,10 +56,7 @@ public class XsltCustomizeEntityResolverTest extends ContextTestSupport {
         return new EntityResolver() {
             @Override
             public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-
-                System.out.println("publicId:" + publicId + ",systeMdi:" + systemId);
                 return new InputSource(new StringReader("<!ELEMENT A (#PCDATA)>"));
-
             }
         };
     }

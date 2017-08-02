@@ -30,13 +30,14 @@ public class FileConsumerProducerRouteTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/file-test");
         super.setUp();
-        template.sendBodyAndHeader("file://target/file-test/a", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/file-test/a", "Bye World", Exchange.FILE_NAME, "bye.txt");
     }
 
     public void testFileRoute() throws Exception {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedMessageCount(2);
+
+        template.sendBodyAndHeader("file://target/file-test/a", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/file-test/a", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         result.assertIsSatisfied();
     }
@@ -45,8 +46,8 @@ public class FileConsumerProducerRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file:target/file-test/a").to("file:target/file-test/b");
-                from("file:target/file-test/b").to("mock:result");
+                from("file:target/file-test/a?initialDelay=0&delay=10").to("file:target/file-test/b");
+                from("file:target/file-test/b?initialDelay=0&delay=10").to("mock:result");
             }
         };
     }

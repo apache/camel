@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class HomeTimeLinePollingTest extends CamelTwitterConsumerTestSupport {
     @Override
     protected String getUri() {
-        return "twitter://timeline/home?type=polling&";
+        return "twitter-timeline://home?type=polling&";
     }
 
     @Override

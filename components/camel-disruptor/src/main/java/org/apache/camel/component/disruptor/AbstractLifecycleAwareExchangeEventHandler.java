@@ -31,7 +31,7 @@ abstract class AbstractLifecycleAwareExchangeEventHandler implements LifecycleAw
     private volatile CountDownLatch stoppedLatch = new CountDownLatch(1);
 
     @Override
-    public abstract void onEvent(final ExchangeEvent event, long sequence, boolean endOfBatch)
+    public abstract void onEvent(ExchangeEvent event, long sequence, boolean endOfBatch)
         throws Exception;
 
     @Override

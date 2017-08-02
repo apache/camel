@@ -340,15 +340,15 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("elasticsearch5://elasticsearch?operation=INDEX&ip=localhost&port=9300");
-                from("direct:index").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
-                from("direct:get").to("elasticsearch5://elasticsearch?operation=GET_BY_ID&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
-                from("direct:multiget").to("elasticsearch5://elasticsearch?operation=MULTIGET&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
-                from("direct:delete").to("elasticsearch5://elasticsearch?operation=DELETE&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
-                from("direct:search").to("elasticsearch5://elasticsearch?operation=SEARCH&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
-                from("direct:update").to("elasticsearch5://elasticsearch?operation=UPDATE&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
-                from("direct:exists").to("elasticsearch5://elasticsearch?operation=EXISTS&ip=localhost&port=9300");
-                from("direct:multisearch").to("elasticsearch5://elasticsearch?operation=MULTISEARCH&indexName=test&ip=localhost&port=9300");
+                from("direct:start").to("elasticsearch5://elasticsearch?operation=INDEX&ip=localhost&port=" + ES_TRANSPORT_PORT);
+                from("direct:index").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=" + ES_TRANSPORT_PORT);
+                from("direct:get").to("elasticsearch5://elasticsearch?operation=GET_BY_ID&indexName=twitter&indexType=tweet&ip=localhost&port=" + ES_TRANSPORT_PORT);
+                from("direct:multiget").to("elasticsearch5://elasticsearch?operation=MULTIGET&indexName=twitter&indexType=tweet&ip=localhost&port=" + ES_TRANSPORT_PORT);
+                from("direct:delete").to("elasticsearch5://elasticsearch?operation=DELETE&indexName=twitter&indexType=tweet&ip=localhost&port=" + ES_TRANSPORT_PORT);
+                from("direct:search").to("elasticsearch5://elasticsearch?operation=SEARCH&indexName=twitter&indexType=tweet&ip=localhost&port=" + ES_TRANSPORT_PORT);
+                from("direct:update").to("elasticsearch5://elasticsearch?operation=UPDATE&indexName=twitter&indexType=tweet&ip=localhost&port=" + ES_TRANSPORT_PORT);
+                from("direct:exists").to("elasticsearch5://elasticsearch?operation=EXISTS&ip=localhost&port=" + ES_TRANSPORT_PORT);
+                from("direct:multisearch").to("elasticsearch5://elasticsearch?operation=MULTISEARCH&indexName=test&ip=localhost&port=" + ES_TRANSPORT_PORT);
             }
         };
     }

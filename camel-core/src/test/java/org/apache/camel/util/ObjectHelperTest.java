@@ -38,6 +38,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.bean.MyOtherFooBean;
+import org.apache.camel.component.bean.MyOtherFooBean.AbstractClassSize;
+import org.apache.camel.component.bean.MyOtherFooBean.Clazz;
+import org.apache.camel.component.bean.MyOtherFooBean.InterfaceSize;
 import org.apache.camel.component.bean.MyStaticClass;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
@@ -738,7 +741,7 @@ public class ObjectHelperTest extends TestCase {
     }
 
     public void testIteratorWithMessage() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(new DefaultCamelContext());
         msg.setBody("a,b,c");
 
         Iterator<?> it = ObjectHelper.createIterator(msg);
@@ -755,7 +758,7 @@ public class ObjectHelperTest extends TestCase {
     }
 
     public void testIteratorWithEmptyMessage() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(new DefaultCamelContext());
         msg.setBody("");
 
         Iterator<Object> it = ObjectHelper.createIterator(msg);
@@ -770,7 +773,7 @@ public class ObjectHelperTest extends TestCase {
     }
 
     public void testIteratorWithNullMessage() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(new DefaultCamelContext());
         msg.setBody(null);
 
         Iterator<Object> it = ObjectHelper.createIterator(msg);
@@ -889,5 +892,17 @@ public class ObjectHelperTest extends TestCase {
         Method m1 = Double.class.getMethod("intValue");
         Method m2 = Number.class.getMethod("intValue");
         assertTrue(ObjectHelper.isOverridingMethod(m2, m1, false));
+    }
+
+    public void testInheritedMethodCanOverrideInterfaceMethod() throws Exception {
+        Method m1 = AbstractClassSize.class.getMethod("size");
+        Method m2 = InterfaceSize.class.getMethod("size");
+        assertTrue(ObjectHelper.isOverridingMethod(Clazz.class, m2, m1, false));
+    }
+
+    public void testNonInheritedMethodCantOverrideInterfaceMethod() throws Exception {
+        Method m1 = AbstractClassSize.class.getMethod("size");
+        Method m2 = InterfaceSize.class.getMethod("size");
+        assertFalse(ObjectHelper.isOverridingMethod(InterfaceSize.class, m2, m1, false));
     }
 }

@@ -36,7 +36,7 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/multicast")
+                from("file://target/multicast?initialDelay=0&delay=10")
                     .multicast()
                         .pipeline()
                             .transform(body().prepend("HEADER:"))
@@ -75,7 +75,7 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/multicast")
+                from("file://target/multicast?initialDelay=0&delay=10")
                     .multicast().parallelProcessing()
                         .pipeline()
                             .transform(body().prepend("HEADER:"))

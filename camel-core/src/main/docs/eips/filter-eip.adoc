@@ -11,6 +11,13 @@ The following example shows how to create a Message Filter route
 consuming messages from an endpoint called *queue:a*, which if the
 link:predicate.html[Predicate] is true will be dispatched to *queue:b*
 
+### EIP options
+
+// eip options: START
+The Filter EIP supports 0 options which are listed below:
+// eip options: END
+
+
 *Using the link:fluent-builders.html[Fluent Builders]*
 
 [source,java]

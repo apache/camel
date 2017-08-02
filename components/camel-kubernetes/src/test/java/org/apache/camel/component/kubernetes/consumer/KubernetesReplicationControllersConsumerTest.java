@@ -33,8 +33,10 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Requires a running Kubernetes Cluster")
 public class KubernetesReplicationControllersConsumerTest extends KubernetesTestSupport {
 
     @EndpointInject(uri = "mock:result")
@@ -100,21 +102,21 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
             @Override
             public void configure() throws Exception {
                 from("direct:list").toF(
-                        "kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=listReplicationControllers",
+                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllers",
                         host, authToken);
                 from("direct:listByLabels").toF(
-                        "kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=listReplicationControllersByLabels",
+                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllersByLabels",
                         host, authToken);
                 from("direct:getReplicationController").toF(
-                        "kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=getReplicationController",
+                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=getReplicationController",
                         host, authToken);
                 from("direct:createReplicationController").toF(
-                        "kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=createReplicationController",
+                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=createReplicationController",
                         host, authToken);
                 from("direct:deleteReplicationController").toF(
-                        "kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=deleteReplicationController",
+                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=deleteReplicationController",
                         host, authToken);
-                fromF("kubernetes://%s?oauthToken=%s&category=replicationControllers&resourceName=wildfly", host, authToken)
+                fromF("kubernetes-replication-controllers://%s?oauthToken=%s&resourceName=wildfly", host, authToken)
                         .process(new KubernertesProcessor()).to(mockResultEndpoint);
             }
         };

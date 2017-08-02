@@ -53,6 +53,7 @@ public class ServiceNowImportSetTest extends ServiceNowTestSupport {
 
         mock.reset();
         mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(ServiceNowConstants.RESPONSE_TYPE, List.class);
 
         IncidentImportRequest incident = new IncidentImportRequest();
         incident.shortDescription = "test";

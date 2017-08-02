@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,6 +31,8 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
 
+    private String url = "file:target/seda?initialDelay=0&delay=10";
+
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/seda");
@@ -34,15 +40,14 @@ public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
     }
 
     public void testShutdownCompleteAllTasks() throws Exception {
-        final String url = "file:target/seda";
+        // prepare 5 files to begin with
         template.sendBodyAndHeader(url, "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(url, "B", Exchange.FILE_NAME, "b.txt");
         template.sendBodyAndHeader(url, "C", Exchange.FILE_NAME, "c.txt");
         template.sendBodyAndHeader(url, "D", Exchange.FILE_NAME, "d.txt");
         template.sendBodyAndHeader(url, "E", Exchange.FILE_NAME, "e.txt");
         
-        // give it 20 seconds to shutdown
-        context.getShutdownStrategy().setTimeout(20);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -51,11 +56,23 @@ public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
                     // let it complete all tasks during shutdown
                     .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
                     .to("log:delay")
-                    .delay(1000).to("seda:foo");
+                    .to("seda:foo");
 
                 from("seda:foo").routeId("route2")
                     .to("log:bar")
-                    .to("mock:bar");
+                    .to("mock:bar")
+                    .process(new Processor() {
+                        boolean first = true;
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            latch.countDown();
+                            if (first) {
+                                // only sleep on first
+                                Thread.sleep(100);
+                            }
+                            first = false;
+                        }
+                    });
             }
         });
         context.start();
@@ -64,6 +81,8 @@ public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
         bar.expectedMinimumMessageCount(1);
 
         assertMockEndpointsSatisfied();
+
+        latch.await(5, TimeUnit.SECONDS);
 
         // shutdown during processing
         context.stop();

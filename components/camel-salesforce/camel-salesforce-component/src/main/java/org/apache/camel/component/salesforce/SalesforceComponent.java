@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
@@ -56,7 +57,7 @@ import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAUL
  * Represents the component that manages {@link SalesforceEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class SalesforceComponent extends DefaultComponent implements VerifiableComponent {
+public class SalesforceComponent extends DefaultComponent implements VerifiableComponent, SSLContextParametersAware {
 
     static final int CONNECTION_TIMEOUT = 60000;
     static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
@@ -68,14 +69,18 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         + " directly on the component as well", label = "common,security")
     private SalesforceLoginConfig loginConfig;
 
+    @Metadata(description = "URL of the Salesforce instance used after authantication, by default received from"
+        + " Salesforce on successful authentication", label = "common,security")
+    private String instanceUrl;
+
     // allow fine grained login as well
-    @Metadata(description = "URL of the Salesforce instance, by default set to " + DEFAULT_LOGIN_URL,
-        label = "common,security", defaultValue = DEFAULT_LOGIN_URL, required = "true")
+    @Metadata(description = "URL of the Salesforce instance used for authentication, by default set to "
+    + DEFAULT_LOGIN_URL, label = "common,security", defaultValue = DEFAULT_LOGIN_URL, required = "true")
     private String loginUrl;
 
     @Metadata(description = "OAuth Consumer Key of the connected app configured in the Salesforce instance setup."
         + " Typically a connected app needs to be configured but one can be provided by installing a package.",
-        label = "common,security", secret = true, required = "true")
+        label = "common,security", required = "true")
     private String clientId;
 
     @Metadata(description = "OAuth Consumer Secret of the connected app configured in the Salesforce instance setup.",
@@ -93,8 +98,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
     @Metadata(description = "Username used in OAuth flow to gain access to access token. It's easy to get started with" 
         + " password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows.",
-        label = "common,security",
-        secret = true)
+        label = "common,security")
     private String userName;
 
     @Metadata(description = "Password used in OAuth flow to gain access to access token. It's easy to get started with"
@@ -112,7 +116,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     @Metadata(description = "Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT."
         + " Salesforce component can auto-determine the authentication method to use from the properties set, set this "
         + " property to eliminate any ambiguity.",
-        label = "common,security", secret = false, enums = "USERNAME_PASSWORD,REFRESH_TOKEN,JWT")
+        label = "common,security", enums = "USERNAME_PASSWORD,REFRESH_TOKEN,JWT")
     private AuthenticationType authenticationType;
 
     @Metadata(description = "If set to true prevents the component from authenticating to Salesforce with the start of"
@@ -132,6 +136,8 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     @Metadata(description = "SSL parameters to use, see SSLContextParameters class for all available options.",
         label = "common,security")
     private SSLContextParameters sslContextParameters;
+    @Metadata(description = "Enable usage of global SSL context parameters", label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     // Proxy host and port
     @Metadata(description = "Hostname of the HTTP proxy server to use.", label = "common,proxy")
@@ -157,7 +163,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
     // Proxy basic authentication
     @Metadata(description = "Username to use to authenticate against the HTTP proxy server.",
-        label = "common,proxy,security", secret = true)
+        label = "common,proxy,security")
     private String httpProxyUsername;
 
     @Metadata(description = "Password to use to authenticate against the HTTP proxy server.",
@@ -273,6 +279,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     protected void doStart() throws Exception {
         if (loginConfig == null) {
             loginConfig = new SalesforceLoginConfig();
+            loginConfig.setInstanceUrl(instanceUrl);
             loginConfig.setClientId(clientId);
             loginConfig.setClientSecret(clientSecret);
             loginConfig.setKeystore(keystore);
@@ -294,8 +301,13 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
                 httpClient = config.getHttpClient();
             } else {
                 // set ssl context parameters if set
-                final SSLContextParameters contextParameters = sslContextParameters != null
-                    ? sslContextParameters : new SSLContextParameters();
+                SSLContextParameters contextParameters = sslContextParameters;
+                if (contextParameters == null) {
+                    contextParameters = retrieveGlobalSslContextParameters();
+                }
+                if (contextParameters == null) {
+                    contextParameters = new SSLContextParameters();
+                }
                 final SslContextFactory sslContextFactory = new SslContextFactory();
                 sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
 
@@ -434,6 +446,10 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         this.loginConfig = loginConfig;
     }
 
+    public void setInstanceUrl(String instanceUrl) {
+        this.instanceUrl = instanceUrl;
+    }
+
     public void setLoginUrl(String loginUrl) {
         this.loginUrl = loginUrl;
     }
@@ -517,6 +533,16 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public String getHttpProxyHost() {

@@ -141,7 +141,7 @@ public class LogEndpoint extends ProcessorEndpoint {
             Long groupDelay = getGroupDelay();
             answer = new ThroughputLogger(camelLogger, this.getCamelContext(), getGroupInterval(), groupDelay, groupActiveOnly);
         } else {
-            answer = new CamelLogProcessor(camelLogger, localFormatter, getMaskingFormatter());
+            answer = new CamelLogProcessor(camelLogger, localFormatter, getMaskingFormatter(), getCamelContext().getLogListeners());
         }
         // the logger is the processor
         setProcessor(answer);

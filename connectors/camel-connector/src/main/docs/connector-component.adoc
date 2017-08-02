@@ -42,6 +42,7 @@ You can also copy the existing examples from the `connectors` directory where th
 - `foo-connector` - A connector that is based on the Timer component from `camel-core`.
 - `bar-connector` - A connector that is based on the 3rd party `beverage-component`.
 - `wine-connector` - Another connector that is based on the 3rd party `beverage-component`.
+- 'twitter-search' - A connector based on twitter to search for keywords.
 
 You can find an example using these connectors in the `foo-bar-wine-example` in the `connectors` directory.
 
@@ -111,13 +112,17 @@ And these following Maven plugins:
 
 ### Spring Boot compliant
 
-A Camel connector works great with Spring Boot. If a connector has been configured to allow configuration
-  on the component level which is done in the `camel-connector.json` file, such as
+A Camel connector works great with Spring Boot. If a connector has been configured to allow configuration on the component and/por endpoint level which is done in the `camel-connector.json` file, such as
 
-      "componentOptions" : [ "loginUrl", "clientId", "clientSecret", "refreshToken" ],
+      "componentOptions" : [ "consumerKey", "consumerSecret", "accessToken", "accessTokenSecret" ],
+      "endpointOptions" : [ "keywords" ],
 
 Then the `camel-connector-maven-plugin` will be able to generate Spring Boot auto configuration for these options.
 This allows users to essily configure these options if using Spring Boot with the connector.
+
+NOTE: There's no disctinction between component/endpoint options on spring-boot auto configuration side so all the options are flattered to a single namespace thus they appear as connector options and then the conenctor figures out where they should be applied.
+
+TIP: The options configured through spring-boot auto configuration classes can be overridden by standard endpoint options.
 
 To enable Spring Boot generation you need to enable this in the `camel-connector-maven-plugin` by adding
 an `<execution>` with the `prepare-spring-boot-auto-configuration` goal:
@@ -157,6 +162,50 @@ You will also need to add the `spring-boot-configuration-processor` in the Maven
     </dependency>
 ------------
 
+An example on how to configure a component in spring boot can be taken from the twitter-search connector:
+
+[source]
+------------
+    camel.connector.twitter-search.consumer-key = ...
+    camel.connector.twitter-search.consumer-secret = ...
+    camel.connector.twitter-search.access-token = ...
+    camel.connector.twitter-search.access-token-secret = ...
+    camel.connector.twitter-search.keywords = apache-camel
+------------
+
+You may need to instantiate multiple instance of the connector i.e. to use different logins and this is now possible through the 'configurations' parameters:
+
+[source]
+------------
+    camel.connector.twitter-search.configurations.tw-search1.consumer-key = ...
+    camel.connector.twitter-search.configurations.tw-search1.consumer-secret = ...
+    camel.connector.twitter-search.configurations.tw-search1.access-token = ...
+    camel.connector.twitter-search.configurations.tw-search1.access-token-secret = ...
+    camel.connector.twitter-search.configurations.tw-search1.keywords = apache-camel
+
+    camel.connector.twitter-search.configurations.tw-search2.consumer-key = ...
+    camel.connector.twitter-search.configurations.tw-search2.consumer-secret = ...
+    camel.connector.twitter-search.configurations.tw-search2.access-token = ...
+    camel.connector.twitter-search.configurations.tw-search2.access-token-secret = ...
+    camel.connector.twitter-search.configurations.tw-search2.keywords = apache-karaf
+------------
+
+This would create two instances of the twitter-search connector each one configured with its own list o options.
+You can no use the nre connector as standard components like:
+
+[source,java]
+------------
+    @Component
+    public class MyRouteBuilder implements RouteBuilder{
+        public void configure() throws Exception {
+            from("tw-search1")
+                .log("On account 1 I got:  ${body}")
+            from("tw-search2")
+                .log("On account 2 I got: ${body}")
+        }
+    }
+------------
+
 
 ### Input and Output Data Type
 
@@ -192,4 +241,3 @@ The options the connector can provide is a limited set of all the existing optio
 its based upon. Each option can then also be pre-configured with a default-value.
 
 To understand this schema file, its easier to study those existing connectors from the `connectors` directory.
-

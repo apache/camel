@@ -57,7 +57,7 @@ public class XsltIncludeClasspathDotInDirectoryTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:src/test/data/?fileName=staff.xml&noop=true")
+                from("file:src/test/data/?fileName=staff.xml&noop=true&initialDelay=0&delay=10")
                     .to("xslt:com.mycompany/staff_include_classpath2.xsl")
                     .to("log:foo")
                     .to("mock:result");

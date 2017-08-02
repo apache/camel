@@ -65,14 +65,13 @@ public class PojoDualCamelContextConsumerTest extends TestSupport {
         // seda:foo has no consumer in camel-1 so we should not expect any messages to be routed to result/foo
         MockEndpoint result = camel1.getEndpoint("mock:result", MockEndpoint.class);
         result.expectedMessageCount(0);
+        result.setResultMinimumWaitTime(50);
 
         ProducerTemplate template = camel1.createProducerTemplate();
         template.start();
         template.sendBody("seda:foo", body);
         template.stop();
 
-        Thread.sleep(200);
-        
         result.assertIsSatisfied();
     }
 

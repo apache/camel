@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -72,6 +73,7 @@ public interface Exchange {
 
     String AUTHENTICATION                   = "CamelAuthentication";
     String AUTHENTICATION_FAILURE_POLICY_ID = "CamelAuthenticationFailurePolicyId";
+    @Deprecated
     String ACCEPT_CONTENT_TYPE              = "CamelAcceptContentType";
     String AGGREGATED_SIZE                  = "CamelAggregatedSize";
     String AGGREGATED_TIMEOUT               = "CamelAggregatedTimeout";
@@ -88,6 +90,7 @@ public interface Exchange {
     String BATCH_SIZE                 = "CamelBatchSize";
     String BATCH_COMPLETE             = "CamelBatchComplete";
     String BEAN_METHOD_NAME           = "CamelBeanMethodName";
+    @Deprecated
     String BEAN_MULTI_PARAMETER_ARRAY = "CamelBeanMultiParameterArray";
     String BINDING                    = "CamelBinding";
     // do not prefix with Camel and use lower-case starting letter as its a shared key
@@ -111,15 +114,17 @@ public interface Exchange {
     
     String DOCUMENT_BUILDER_FACTORY = "CamelDocumentBuilderFactory";
 
-    String EXCEPTION_CAUGHT           = "CamelExceptionCaught";
-    String EXCEPTION_HANDLED          = "CamelExceptionHandled";
-    String EVALUATE_EXPRESSION_RESULT = "CamelEvaluateExpressionResult";
-    String ERRORHANDLER_HANDLED       = "CamelErrorHandlerHandled";
-    String EXTERNAL_REDELIVERED       = "CamelExternalRedelivered";
+    String EXCEPTION_CAUGHT              = "CamelExceptionCaught";
+    String EXCEPTION_HANDLED             = "CamelExceptionHandled";
+    String EVALUATE_EXPRESSION_RESULT    = "CamelEvaluateExpressionResult";
+    String ERRORHANDLER_CIRCUIT_DETECTED = "CamelFErrorHandlerCircuitDetected";
+    String ERRORHANDLER_HANDLED          = "CamelErrorHandlerHandled";
+    String EXTERNAL_REDELIVERED          = "CamelExternalRedelivered";
 
     String FAILURE_HANDLED      = "CamelFailureHandled";
     String FAILURE_ENDPOINT     = "CamelFailureEndpoint";
     String FAILURE_ROUTE_ID     = "CamelFailureRouteId";
+    String FATAL_FALLBACK_ERROR_HANDLER  = "CamelFatalFallbackErrorHandler";
     String FILE_CONTENT_TYPE    = "CamelFileContentType";
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
     String FILE_NAME            = "CamelFileName";
@@ -156,6 +161,7 @@ public interface Exchange {
 
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
     String INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED = "CamelInterceptSendToEndpointWhenMatched";
+    String INTERRUPTED = "CamelInterrupted";
 
     String LANGUAGE_SCRIPT          = "CamelLanguageScript";
     String LOG_DEBUG_BODY_MAX_CHARS = "CamelLogDebugBodyMaxChars";
@@ -166,9 +172,12 @@ public interface Exchange {
 
     String MAXIMUM_CACHE_POOL_SIZE     = "CamelMaximumCachePoolSize";
     String MAXIMUM_ENDPOINT_CACHE_SIZE = "CamelMaximumEndpointCacheSize";
+    String MAXIMUM_SIMPLE_CACHE_SIZE = "CamelMaximumSimpleCacheSize";
     String MAXIMUM_TRANSFORMER_CACHE_SIZE = "CamelMaximumTransformerCacheSize";
     String MAXIMUM_VALIDATOR_CACHE_SIZE = "CamelMaximumValidatorCacheSize";
     String MESSAGE_HISTORY             = "CamelMessageHistory";
+    String MESSAGE_HISTORY_HEADER_FORMAT      = "CamelMessageHistoryHeaderFormat";
+    String MESSAGE_HISTORY_OUTPUT_FORMAT      = "CamelMessageHistoryOutputFormat";
     String MULTICAST_INDEX             = "CamelMulticastIndex";
     String MULTICAST_COMPLETE          = "CamelMulticastComplete";
 
@@ -579,5 +588,10 @@ public interface Exchange {
      * @return the on completions
      */
     List<Synchronization> handoverCompletions();
+
+    /**
+     * Gets the timestamp when this exchange was created.
+     */
+    Date getCreated();
 
 }

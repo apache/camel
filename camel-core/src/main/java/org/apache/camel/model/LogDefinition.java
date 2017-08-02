@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -125,7 +126,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         LoggingLevel level = getLoggingLevel() != null ? getLoggingLevel() : LoggingLevel.INFO;
         CamelLogger camelLogger = new CamelLogger(logger, level, getMarker());
 
-        return new LogProcessor(exp, camelLogger, getMaskingFormatter(routeContext));
+        return new LogProcessor(exp, camelLogger, getMaskingFormatter(routeContext), routeContext.getCamelContext().getLogListeners());
     }
 
     private MaskingFormatter getMaskingFormatter(RouteContext routeContext) {

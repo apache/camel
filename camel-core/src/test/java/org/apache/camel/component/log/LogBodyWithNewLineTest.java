@@ -57,8 +57,7 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
     }
 
     public void testNoSkip() throws Exception {
-        final String ls = System.getProperty("line.separator");
-        String body = "1" + ls + "2" + ls + "3";
+        String body = "1" + LS + "2" + LS + "3";
 
         template.sendBody("direct:start", body);
 
@@ -68,8 +67,7 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
     }
 
     public void testSkip() throws Exception {
-        final String ls = System.getProperty("line.separator");
-        String body = "1" + ls + "2" + ls + "3";
+        String body = "1" + LS + "2" + LS + "3";
 
         template.sendBody("direct:skip", body);
 

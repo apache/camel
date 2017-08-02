@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,7 +33,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static org.apache.camel.catalog.CatalogHelper.after;
 import static org.apache.camel.catalog.JSonSchemaHelper.getNames;
@@ -69,6 +67,7 @@ public abstract class AbstractCamelCatalog {
     // CHECKSTYLE:OFF
 
     private static final Pattern SYNTAX_PATTERN = Pattern.compile("(\\w+)");
+    private static final Pattern COMPONENT_SYNTAX_PARSER = Pattern.compile("([^\\w-]*)([\\w-]+)");
 
     private SuggestionStrategy suggestionStrategy;
     private JSonSchemaResolver jsonSchemaResolver;
@@ -874,22 +873,22 @@ public abstract class AbstractCamelCatalog {
         return doAsEndpointUri(scheme, properties, "&amp;", encode);
     }
 
-    private String doAsEndpointUri(String scheme, Map<String, String> properties, String ampersand, boolean encode) throws URISyntaxException {
+    String doAsEndpointUri(String scheme, Map<String, String> properties, String ampersand, boolean encode) throws URISyntaxException {
         String json = jsonSchemaResolver.getComponentJSonSchema(scheme);
         if (json == null) {
             throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
         }
 
         // grab the syntax
-        String syntax = null;
+        String originalSyntax = null;
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
         for (Map<String, String> row : rows) {
             if (row.containsKey("syntax")) {
-                syntax = row.get("syntax");
+                originalSyntax = row.get("syntax");
                 break;
             }
         }
-        if (syntax == null) {
+        if (originalSyntax == null) {
             throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
         }
 
@@ -899,108 +898,195 @@ public abstract class AbstractCamelCatalog {
         rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
         // clip the scheme from the syntax
-        syntax = after(syntax, ":");
-
-        String originalSyntax = syntax;
+        String syntax = "";
+        if (originalSyntax.contains(":")) {
+            originalSyntax = after(originalSyntax, ":");
+        }
 
         // build at first according to syntax (use a tree map as we want the uri options sorted)
-        Map<String, String> copy = new TreeMap<String, String>();
-        for (Map.Entry<String, String> entry : properties.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue() != null ? entry.getValue() : "";
-            if (syntax != null && syntax.contains(key)) {
-                syntax = syntax.replace(key, value);
-            } else {
-                copy.put(key, value);
-            }
+        Map<String, String> copy = new TreeMap<>(properties);
+        Matcher syntaxMatcher = COMPONENT_SYNTAX_PARSER.matcher(originalSyntax);
+        while (syntaxMatcher.find()) {
+            syntax += syntaxMatcher.group(1);
+            String propertyName = syntaxMatcher.group(2);
+            String propertyValue = copy.remove(propertyName);
+            syntax += propertyValue != null ? propertyValue : propertyName;
         }
 
-        // the tokens between the options in the path
-        String[] tokens = syntax.split("\\w+");
+        // do we have all the options the original syntax needs (easy way)
+        String[] keys = syntaxKeys(originalSyntax);
+        boolean hasAllKeys = properties.keySet().containsAll(Arrays.asList(keys));
 
-        // parse the syntax into each options
-        Matcher matcher = SYNTAX_PATTERN.matcher(originalSyntax);
-        List<String> options = new ArrayList<String>();
-        while (matcher.find()) {
-            String s = matcher.group(1);
-            options.add(s);
-        }
-
-        // need to preserve {{ and }} from the syntax
-        // (we need to use words only as its provisional placeholders)
-        syntax = syntax.replaceAll("\\{\\{", "BEGINCAMELPLACEHOLDER");
-        syntax = syntax.replaceAll("\\}\\}", "ENDCAMELPLACEHOLDER");
-
-        // parse the syntax into each options
-        Matcher matcher2 = SYNTAX_PATTERN.matcher(syntax);
-        List<String> options2 = new ArrayList<String>();
-        while (matcher2.find()) {
-            String s = matcher2.group(1);
-            s = s.replaceAll("BEGINCAMELPLACEHOLDER", "\\{\\{");
-            s = s.replaceAll("ENDCAMELPLACEHOLDER", "\\}\\}");
-            options2.add(s);
-        }
-
-        // build the endpoint
+        // build endpoint uri
         StringBuilder sb = new StringBuilder();
-        sb.append(scheme);
-        sb.append(":");
+        // add scheme later as we need to take care if there is any context-path or query parameters which
+        // affect how the URI should be constructed
 
-        int range = 0;
-        boolean first = true;
-        boolean hasQuestionmark = false;
-        for (int i = 0; i < options.size(); i++) {
-            String key = options.get(i);
-            String key2 = options2.get(i);
-            String token = null;
-            if (tokens.length > i) {
-                token = tokens[i];
+        if (hasAllKeys) {
+            // we have all the keys for the syntax so we can build the uri the easy way
+            sb.append(syntax);
+
+            if (!copy.isEmpty()) {
+                boolean hasQuestionmark = sb.toString().contains("?");
+                // the last option may already contain a ? char, if so we should use & instead of ?
+                sb.append(hasQuestionmark ? ampersand : '?');
+                String query = createQueryString(copy, ampersand, encode);
+                sb.append(query);
+            }
+        } else {
+            // TODO: revisit this and see if we can do this in another way
+            // oh darn some options is missing, so we need a complex way of building the uri
+
+            // the tokens between the options in the path
+            String[] tokens = syntax.split("\\w+");
+
+            // parse the syntax into each options
+            Matcher matcher = SYNTAX_PATTERN.matcher(originalSyntax);
+            List<String> options = new ArrayList<String>();
+            while (matcher.find()) {
+                String s = matcher.group(1);
+                options.add(s);
             }
 
-            boolean contains = properties.containsKey(key);
-            if (!contains) {
-                // if the key are similar we have no explicit value and can try to find a default value if the option is required
-                if (isPropertyRequired(rows, key)) {
-                    String value = getPropertyDefaultValue(rows, key);
-                    if (value != null) {
-                        properties.put(key, value);
-                        key2 = value;
+            // need to preserve {{ and }} from the syntax
+            // (we need to use words only as its provisional placeholders)
+            syntax = syntax.replaceAll("\\{\\{", "BEGINCAMELPLACEHOLDER");
+            syntax = syntax.replaceAll("\\}\\}", "ENDCAMELPLACEHOLDER");
+
+            // parse the syntax into each options
+            Matcher matcher2 = SYNTAX_PATTERN.matcher(syntax);
+            List<String> options2 = new ArrayList<String>();
+            while (matcher2.find()) {
+                String s = matcher2.group(1);
+                s = s.replaceAll("BEGINCAMELPLACEHOLDER", "\\{\\{");
+                s = s.replaceAll("ENDCAMELPLACEHOLDER", "\\}\\}");
+                options2.add(s);
+            }
+
+            // build the endpoint
+            int range = 0;
+            boolean first = true;
+            boolean hasQuestionmark = false;
+            for (int i = 0; i < options.size(); i++) {
+                String key = options.get(i);
+                String key2 = options2.get(i);
+                String token = null;
+                if (tokens.length > i) {
+                    token = tokens[i];
+                }
+
+                boolean contains = properties.containsKey(key);
+                if (!contains) {
+                    // if the key are similar we have no explicit value and can try to find a default value if the option is required
+                    if (isPropertyRequired(rows, key)) {
+                        String value = getPropertyDefaultValue(rows, key);
+                        if (value != null) {
+                            properties.put(key, value);
+                            key2 = value;
+                        }
+                    }
+                }
+
+                // was the option provided?
+                if (properties.containsKey(key)) {
+                    if (!first && token != null) {
+                        sb.append(token);
+                    }
+                    hasQuestionmark |= key.contains("?") || (token != null && token.contains("?"));
+                    sb.append(key2);
+                    first = false;
+                }
+                range++;
+            }
+            // append any extra options that was in surplus for the last
+            while (range < options2.size()) {
+                String token = null;
+                if (tokens.length > range) {
+                    token = tokens[range];
+                }
+                String key2 = options2.get(range);
+                sb.append(token);
+                sb.append(key2);
+                hasQuestionmark |= key2.contains("?") || (token != null && token.contains("?"));
+                range++;
+            }
+
+
+            if (!copy.isEmpty()) {
+                // the last option may already contain a ? char, if so we should use & instead of ?
+                sb.append(hasQuestionmark ? ampersand : '?');
+                String query = createQueryString(copy, ampersand, encode);
+                sb.append(query);
+            }
+        }
+
+        String remainder = sb.toString();
+        boolean queryOnly = remainder.startsWith("?");
+        if (queryOnly) {
+            // it has only query parameters
+            return scheme + remainder;
+        } else if (!remainder.isEmpty()) {
+            // it has context path and possible query parameters
+            return scheme + ":" + remainder;
+        } else {
+            // its empty without anything
+            return scheme;
+        }
+    }
+
+    @Deprecated
+    private static String[] syntaxTokens(String syntax) {
+        // build tokens between the words
+        List<String> tokens = new ArrayList<>();
+        // preserve backwards behavior which had an empty token first
+        tokens.add("");
+
+        String current = "";
+        for (int i = 0; i < syntax.length(); i++) {
+            char ch = syntax.charAt(i);
+            if (Character.isLetterOrDigit(ch)) {
+                // reset for new current tokens
+                if (current.length() > 0) {
+                    tokens.add(current);
+                    current = "";
+                }
+            } else {
+                current += ch;
+            }
+        }
+        // anything left over?
+        if (current.length() > 0) {
+            tokens.add(current);
+        }
+
+        return tokens.toArray(new String[tokens.size()]);
+    }
+
+    private static String[] syntaxKeys(String syntax) {
+        // build tokens between the separators
+        List<String> tokens = new ArrayList<>();
+
+        if (syntax != null) {
+            String current = "";
+            for (int i = 0; i < syntax.length(); i++) {
+                char ch = syntax.charAt(i);
+                if (Character.isLetterOrDigit(ch)) {
+                    current += ch;
+                } else {
+                    // reset for new current tokens
+                    if (current.length() > 0) {
+                        tokens.add(current);
+                        current = "";
                     }
                 }
             }
-
-            // was the option provided?
-            if (properties.containsKey(key)) {
-                if (!first && token != null) {
-                    sb.append(token);
-                }
-                hasQuestionmark |= key.contains("?") || (token != null && token.contains("?"));
-                sb.append(key2);
-                first = false;
+            // anything left over?
+            if (current.length() > 0) {
+                tokens.add(current);
             }
-            range++;
-        }
-        // append any extra options that was in surplus for the last
-        while (range < options2.size()) {
-            String token = null;
-            if (tokens.length > range) {
-                token = tokens[range];
-            }
-            String key2 = options2.get(range);
-            sb.append(token);
-            sb.append(key2);
-            hasQuestionmark |= key2.contains("?") || (token != null && token.contains("?"));
-            range++;
         }
 
-        if (!copy.isEmpty()) {
-            // the last option may already contain a ? char, if so we should use & instead of ?
-            sb.append(hasQuestionmark ? ampersand : '?');
-            String query = createQueryString(copy, ampersand, encode);
-            sb.append(query);
-        }
-
-        return sb.toString();
+        return tokens.toArray(new String[tokens.size()]);
     }
 
     public SimpleValidationResult validateSimpleExpression(String simple) {

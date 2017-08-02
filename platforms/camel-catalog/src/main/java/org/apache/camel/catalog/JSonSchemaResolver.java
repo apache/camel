@@ -17,7 +17,7 @@
 package org.apache.camel.catalog;
 
 /**
- * Pluggable resolver to load JSon schmea files for components, data formats, languages etc.
+ * Pluggable resolver to load JSon schema files for components, data formats, languages etc.
  */
 public interface JSonSchemaResolver {
 

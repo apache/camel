@@ -28,21 +28,22 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumeMultipleDirectoriesTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/multidir/?recursive=true&delete=true&initialDelay=2000&delay=5000&sortBy=file:path";
+    private String fileUrl = "file://target/multidir/?initialDelay=0&delay=10&recursive=true&delete=true&sortBy=file:path";
 
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/multidir");
         super.setUp();
-        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
-        template.sendBodyAndHeader(fileUrl, "Godday World", Exchange.FILE_NAME, "sub/sub2/godday.txt");
     }
 
     @SuppressWarnings("unchecked")
     public void testMultiDir() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World", "Hello World", "Godday World");
+
+        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
+        template.sendBodyAndHeader(fileUrl, "Godday World", Exchange.FILE_NAME, "sub/sub2/godday.txt");
 
         assertMockEndpointsSatisfied();
 

@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
@@ -57,7 +58,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     protected static final String DEFAULT_STRATEGYFACTORY_CLASS = "org.apache.camel.component.file.strategy.GenericFileProcessStrategyFactory";
     protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
-    
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     // common options
@@ -165,8 +166,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected boolean readLockMarkerFile = true;
     @UriParam(label = "consumer,lock", defaultValue = "true")
     protected boolean readLockDeleteOrphanLockFiles = true;
-    @UriParam(label = "consumer,lock", defaultValue = "WARN")
-    protected LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
+    @UriParam(label = "consumer,lock", defaultValue = "DEBUG")
+    protected LoggingLevel readLockLoggingLevel = LoggingLevel.DEBUG;
     @UriParam(label = "consumer,lock", defaultValue = "1")
     protected long readLockMinLength = 1;
     @UriParam(label = "consumer,lock", defaultValue = "0")
@@ -593,7 +594,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      * Either you can specify a fixed name. Or you can use dynamic placeholders.
      * The done file will always be written in the same folder as the original file.
      * <p/>
-     * Consumer: If provided, Camel will only consume files if a done file exists. 
+     * Consumer: If provided, Camel will only consume files if a done file exists.
      * This option configures what file name to use. Either you can specify a fixed name.
      * Or you can use dynamic placeholders.The done file is always expected in the same folder
      * as the original file.
@@ -903,7 +904,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      * Logging level used when a read lock could not be acquired.
      * By default a WARN is logged.
      * You can change this level, for example to OFF to not have any logging.
-     * This option is only applicable for readLock of types: changed, fileLock, rename.
+     * This option is only applicable for readLock of types: changed, fileLock, idempotent, idempotent-changed, idempotent-rename, rename.
      */
     public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
         this.readLockLoggingLevel = readLockLoggingLevel;
@@ -1316,7 +1317,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
         // we only support ${file:name} or ${file:name.noext} as dynamic placeholders for done files
         String path = FileUtil.onlyPath(fileName);
-        String onlyName = FileUtil.stripPath(fileName);
+        String onlyName = Matcher.quoteReplacement(FileUtil.stripPath(fileName));
 
         pattern = pattern.replaceFirst("\\$\\{file:name\\}", onlyName);
         pattern = pattern.replaceFirst("\\$simple\\{file:name\\}", onlyName);

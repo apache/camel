@@ -185,8 +185,12 @@ public class ValueBuilder implements Expression, Predicate {
     }
 
     public ValueBuilder tokenize(String token, int group, boolean skipFirst) {
+        return tokenize(token, "" + group, skipFirst);
+    }
+
+    public ValueBuilder tokenize(String token, String group, boolean skipFirst) {
         Expression newExp = ExpressionBuilder.tokenizeExpression(expression, token);
-        if (group == 0 && skipFirst) {
+        if (group == null && skipFirst) {
             // wrap in skip first (if group then it has its own skip first logic)
             newExp = ExpressionBuilder.skipFirstExpression(newExp);
         }

@@ -36,7 +36,7 @@ public class DefaultExchangeFormatterTest {
     @Before
     public void setUp() {
         camelContext = new DefaultCamelContext();
-        Message message = new DefaultMessage();
+        Message message = new DefaultMessage(camelContext);
         message.setBody("This is the message body");
         exchange = new DefaultExchange(camelContext);
         exchange.setIn(message);

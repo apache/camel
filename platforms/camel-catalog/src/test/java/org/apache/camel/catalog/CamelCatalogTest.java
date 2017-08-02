@@ -18,6 +18,7 @@ package org.apache.camel.catalog;
 
 import java.io.FileInputStream;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -299,6 +300,17 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testAsEndpointUriRestUriTemplate() throws Exception {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("method", "get");
+        map.put("path", "api");
+        map.put("uriTemplate", "user/{id}");
+        String uri = catalog.asEndpointUri("rest", map, true);
+
+        assertEquals("rest:get:api:user/{id}", uri);
+    }
+
+    @Test
     public void testAsEndpointUriJson() throws Exception {
         String json = loadText(CamelCatalogTest.class.getClassLoader().getResourceAsStream("sample.json"));
         String uri = catalog.asEndpointUri("ftp", json, true);
@@ -446,6 +458,15 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testAsEndpointUriStream() throws Exception {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("kind", "url");
+        map.put("url", "http://camel.apache.org");
+
+        assertEquals("stream:url?url=http://camel.apache.org", catalog.asEndpointUri("stream", map, false));
+    }
+
+    @Test
     public void testEndpointPropertiesJms() throws Exception {
         Map<String, String> map = catalog.endpointProperties("jms:queue:foo");
         assertNotNull(map);
@@ -545,13 +566,13 @@ public class CamelCatalogTest {
         catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
 
         // activemq
-        EndpointValidationResult result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes");
+        EndpointValidationResult result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes");
         assertTrue(result.isSuccess());
-        result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes");
+        result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes");
         assertTrue(result.isSuccess());
-        result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes", false, true, false);
+        result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes", false, true, false);
         assertTrue(result.isSuccess());
-        result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes", false, false, true);
+        result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes", false, false, true);
         assertTrue(result.isSuccess());
     }
 

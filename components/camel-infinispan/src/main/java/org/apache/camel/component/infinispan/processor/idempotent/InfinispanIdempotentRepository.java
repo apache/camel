@@ -50,8 +50,7 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
         this(null);
     }
 
-    public static InfinispanIdempotentRepository infinispanIdempotentRepository(
-            BasicCacheContainer cacheContainer, String processorName) {
+    public static InfinispanIdempotentRepository infinispanIdempotentRepository(BasicCacheContainer cacheContainer, String processorName) {
         return new InfinispanIdempotentRepository(cacheContainer, processorName);
     }
 

@@ -42,8 +42,8 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
 
-        // wait about 4 seconds so that the timeout kicks in but it was discarded
-        mock.assertIsSatisfied(4000);
+        // wait about 0.2 second so that the timeout kicks in but it was discarded
+        mock.assertIsSatisfied(200);
 
         // should invoke the timeout method
         assertEquals(1, invoked.get());
@@ -52,7 +52,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         assertEquals("AB", receivedExchange.getIn().getBody());
         assertEquals(-1, receivedIndex);
         assertEquals(-1, receivedTotal);
-        assertEquals(2000, receivedTimeout);
+        assertEquals(100, receivedTimeout);
 
         mock.reset();
         mock.expectedBodiesReceived("ABC");
@@ -63,7 +63,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "C", "id", 123);
 
         // should complete before timeout
-        mock.assertIsSatisfied(1500);
+        mock.assertIsSatisfied(150);
 
         // should have not invoked the timeout method anymore
         assertEquals(1, invoked.get());
@@ -78,8 +78,8 @@ public class AggregateTimeoutTest extends ContextTestSupport {
                     .aggregate(header("id"), new MyAggregationStrategy())
                         .discardOnCompletionTimeout()
                         .completionSize(3)
-                        // use a 2 second timeout
-                        .completionTimeout(2000)
+                        // use a 0.1 second timeout
+                        .completionTimeout(100).completionTimeoutCheckerInterval(10)
                         .to("mock:aggregated");
             }
         };

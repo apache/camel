@@ -73,8 +73,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of the exchange
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T exchange(final Function<Exchange, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -93,8 +91,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an inbound message
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T message(final Function<Message, Object> function) {
         return inMessage(function);
@@ -109,8 +105,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an inbound message
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T inMessage(final Function<Message, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -129,8 +123,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an outbound message
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T outMessage(final Function<Message, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -149,8 +141,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an inbound message body
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T body(final Function<Object, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -162,8 +152,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an inbound message body and headers
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T body(final BiFunction<Object, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -184,8 +172,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an inbound message body converted to the expected type
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public <B> T body(Class<B> expectedType, final Function<B, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -197,8 +183,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an inbound message body converted to the expected type and headers
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public <B> T body(Class<B> expectedType, final BiFunction<B, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -219,8 +203,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an outbound message body
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T outBody(final Function<Object, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -232,8 +214,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an outbound message body and headers
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T outBody(final BiFunction<Object, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -254,8 +234,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an outbound message body converted to the expected type
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public <B> T outBody(Class<B> expectedType, final Function<B, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -267,8 +245,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an outbound message body converted to the expected type and headers
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public <B> T outBody(Class<B> expectedType, final BiFunction<B, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -521,6 +497,31 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
+     * Evaluates a <a
+     * href="http://camel.apache.org/jsonpath.html">Json Path
+     * expression</a> with writeAsString enabled.
+     *
+     * @param text the expression to be evaluated
+     * @return the builder to continue processing the DSL
+     */
+    public T jsonpathWriteAsString(String text) {
+        return delegate.jsonpathWriteAsString(text);
+    }
+
+    /**
+     * Evaluates a <a
+     * href="http://camel.apache.org/jsonpath.html">Json Path
+     * expression</a> with writeAsString enabled.
+     *
+     * @param text the expression to be evaluated
+     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @return the builder to continue processing the DSL
+     */
+    public T jsonpathWriteAsString(String text, boolean suppressExceptions) {
+        return delegate.jsonpathWriteAsString(text, suppressExceptions);
+    }
+
+    /**
      * Evaluates a <a href="http://commons.apache.org/jxpath/">JXPath expression</a>
      * 
      * @param text the expression to be evaluated
@@ -703,10 +704,35 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param token the token
      * @param regex whether the token is a regular expression or not
      * @param group to group by the given number
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, boolean regex, String group) {
+        return tokenize(token, regex, group, false);
+    }
+
+    /**
+     * Evaluates a token expression on the message body
+     *
+     * @param token the token
+     * @param regex whether the token is a regular expression or not
+     * @param group to group by the given number
      * @param skipFirst whether to skip the first element
      * @return the builder to continue processing the DSL
      */
     public T tokenize(String token, boolean regex, int group, boolean skipFirst) {
+        return delegate.tokenize(token, null, regex, group, skipFirst);
+    }
+
+    /**
+     * Evaluates a token expression on the message body
+     *
+     * @param token the token
+     * @param regex whether the token is a regular expression or not
+     * @param group to group by the given number
+     * @param skipFirst whether to skip the first element
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, boolean regex, String group, boolean skipFirst) {
         return delegate.tokenize(token, null, regex, group, skipFirst);
     }
 

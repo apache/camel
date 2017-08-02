@@ -17,6 +17,7 @@
 package org.apache.camel.swagger;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 
 import io.swagger.jaxrs.config.BeanConfig;
@@ -56,7 +57,7 @@ public class RestSwaggerProcessor implements Processor {
 
         String contextId = exchange.getContext().getName();
         String route = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
-        String accept = exchange.getIn().getHeader(Exchange.ACCEPT_CONTENT_TYPE, String.class);
+        String accept = exchange.getIn().getHeader("Accept", String.class);
 
         RestApiResponseAdapter adapter = new ExchangeRestApiResponseAdapter(exchange);
 
@@ -71,8 +72,8 @@ public class RestSwaggerProcessor implements Processor {
             route = route.substring(0, route.length() - 13);
         }
         if (accept != null && !json && !yaml) {
-            json = accept.contains("json");
-            yaml = accept.contains("yaml");
+            json = accept.toLowerCase(Locale.US).contains("json");
+            yaml = accept.toLowerCase(Locale.US).contains("yaml");
         }
         if (!json && !yaml) {
             // json is default

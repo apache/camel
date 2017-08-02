@@ -19,7 +19,12 @@ package org.apache.camel.component.dropbox.core;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.dropbox.core.DbxClient;
 import com.dropbox.core.DbxEntry;
@@ -31,6 +36,7 @@ import org.apache.camel.component.dropbox.dto.DropboxFileDownloadResult;
 import org.apache.camel.component.dropbox.dto.DropboxFileUploadResult;
 import org.apache.camel.component.dropbox.dto.DropboxMoveResult;
 import org.apache.camel.component.dropbox.dto.DropboxSearchResult;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxResultCode;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
@@ -38,10 +44,6 @@ import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-import static org.apache.camel.component.dropbox.util.DropboxConstants.DROPBOX_FILE_SEPARATOR;
-
 
 public final class DropboxAPIFacade {
 
@@ -91,7 +93,7 @@ public final class DropboxAPIFacade {
             }
             //in case the entry not exists on dropbox check if the filename should be appended
             if (entry == null) {
-                if (dropboxPath.endsWith(DROPBOX_FILE_SEPARATOR)) {
+                if (dropboxPath.endsWith(DropboxConstants.DROPBOX_FILE_SEPARATOR)) {
                     dropboxPath = dropboxPath + fileLocalPath.getName();
                 }
             }
@@ -114,8 +116,8 @@ public final class DropboxAPIFacade {
             if (entry != null && !entry.isFolder()) {
                 throw new DropboxException(dropboxPath + " exists on dropbox and is not a folder!");
             }
-            if (!dropboxPath.endsWith(DROPBOX_FILE_SEPARATOR)) {
-                dropboxPath = dropboxPath + DROPBOX_FILE_SEPARATOR;
+            if (!dropboxPath.endsWith(DropboxConstants.DROPBOX_FILE_SEPARATOR)) {
+                dropboxPath = dropboxPath + DropboxConstants.DROPBOX_FILE_SEPARATOR;
             }
             //revert to old path
             String oldDropboxPath = dropboxPath;

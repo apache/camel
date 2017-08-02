@@ -18,22 +18,25 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.FileUtil;
 
 public class GenericFileMessageTest extends ContextTestSupport {
 
+    private CamelContext camelContext = new DefaultCamelContext();
+
     public void testGenericMessageToStringConversion() throws Exception {
-        GenericFileMessage<File> message = new GenericFileMessage<File>(); 
+        GenericFileMessage<File> message = new GenericFileMessage<File>(camelContext);
         assertStringContains(message.toString(), "org.apache.camel.component.file.GenericFileMessage@");
         
         GenericFile<File> file = new GenericFile<File>(true);
         file.setFileName("target/test.txt");
         file.setFile(new File("target/test.txt"));
-        message = new GenericFileMessage<File>(file); 
+        message = new GenericFileMessage<File>(camelContext, file);
         assertEquals(FileUtil.isWindows() ? "target\\test.txt" : "target/test.txt", message.toString());
-        
     }
     
     public void testGenericFileContentType() throws Exception {
@@ -41,8 +44,8 @@ public class GenericFileMessageTest extends ContextTestSupport {
         file.setEndpointPath("target");
         file.setFileName("target");
         file.setFile(new File("target/camel-core-test.log"));
-        GenericFileMessage<File> message = new GenericFileMessage<File>(file);
-        file.populateHeaders(message);
+        GenericFileMessage<File> message = new GenericFileMessage<File>(camelContext, file);
+        file.populateHeaders(message, false);
         assertEquals("Get a wrong file content type", "txt", message.getHeader(Exchange.FILE_CONTENT_TYPE));
     }
 }

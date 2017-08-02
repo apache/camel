@@ -46,7 +46,7 @@ public class DataSetTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // start this first to make sure the "direct:foo" consumer is ready
                 from("direct:foo").to("dataset:foo?minRate=50");
-                from("dataset:foo?minRate=50").to("direct:foo");
+                from("dataset:foo?initialDelay=0&minRate=50").to("direct:foo");
             }
         };
     }

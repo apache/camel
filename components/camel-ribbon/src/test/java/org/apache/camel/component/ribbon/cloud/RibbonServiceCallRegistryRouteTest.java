@@ -35,7 +35,7 @@ public class RibbonServiceCallRegistryRouteTest extends RibbonServiceCallRouteTe
                 servers.addServer("localhost", 9091);
 
                 RibbonConfiguration configuration = new RibbonConfiguration();
-                RibbonLoadBalancer loadBalancer = new RibbonLoadBalancer(configuration);
+                RibbonServiceLoadBalancer loadBalancer = new RibbonServiceLoadBalancer(configuration);
 
                 // configure camel service call
                 ServiceCallConfigurationDefinition config = new ServiceCallConfigurationDefinition();
@@ -46,7 +46,10 @@ public class RibbonServiceCallRegistryRouteTest extends RibbonServiceCallRouteTe
                 context.setServiceCallConfiguration(config);
 
                 from("direct:start")
-                    .serviceCall("myService")
+                    .serviceCall()
+                        .name("myService")
+                        .component("jetty")
+                        .end()
                     .to("mock:result");
                 from("jetty:http://localhost:9090")
                     .to("mock:9090")

@@ -40,8 +40,8 @@ public class DelayerWhileShutdownTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:a").delay(5000).to("mock:result");
-                from("seda:b").delay(10).to("mock:result");
+                from("seda:a").delay(500).to("mock:result");
+                from("seda:b").delay(1).to("mock:result");
             }
         };
     }

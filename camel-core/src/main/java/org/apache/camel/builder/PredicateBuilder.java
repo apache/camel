@@ -330,6 +330,27 @@ public final class PredicateBuilder {
             }
         };
     }
+    
+    public static Predicate containsIgnoreCase(final Expression left, final Expression right) {
+        return new BinaryPredicateSupport(left, right) {
+
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
+                if (leftValue == null && rightValue == null) {
+                    // they are equal
+                    return true;
+                } else if (leftValue == null || rightValue == null) {
+                    // only one of them is null so they are not equal
+                    return false;
+                }
+
+                return ObjectHelper.containsIgnoreCase(leftValue, rightValue);
+            }
+
+            protected String getOperationText() {
+                return "~~";
+            }
+        };
+    }
 
     public static Predicate isNull(final Expression expression) {
         return new BinaryPredicateSupport(expression, ExpressionBuilder.constantExpression(null)) {

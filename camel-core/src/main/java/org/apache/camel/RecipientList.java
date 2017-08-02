@@ -50,7 +50,9 @@ public @interface RecipientList {
     String context() default "";
 
     /**
-     * Sets the uri delimiter to use
+     * Delimiter used if the Expression returned multiple endpoints. Can be turned off using the value <tt>false</tt>.
+     * <p/>
+     * The default value is ,
      */
     String delimiter() default ",";
 

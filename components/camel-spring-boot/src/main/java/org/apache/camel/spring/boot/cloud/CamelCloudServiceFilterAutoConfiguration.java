@@ -77,12 +77,7 @@ public class CamelCloudServiceFilterAutoConfiguration implements BeanFactoryAwar
         final ConfigurableBeanFactory factory = (ConfigurableBeanFactory) beanFactory;
 
         configurationProperties.getServiceFilter().getConfigurations().entrySet().stream()
-            .forEach(
-                entry -> factory.registerSingleton(
-                    entry.getKey(),
-                    createServiceFilter(entry.getValue())
-                )
-            );
+            .forEach(entry -> registerBean(factory, entry.getKey(), entry.getValue()));
     }
 
     // *******************************
@@ -101,6 +96,13 @@ public class CamelCloudServiceFilterAutoConfiguration implements BeanFactoryAwar
     // *******************************
     // Helper
     // *******************************
+
+    private void registerBean(ConfigurableBeanFactory factory, String name, CamelCloudConfigurationProperties.ServiceFilterConfiguration configuration) {
+        factory.registerSingleton(
+            name,
+            createServiceFilter(configuration)
+        );
+    }
 
     private CamelCloudServiceFilter createServiceFilter(CamelCloudConfigurationProperties.ServiceFilterConfiguration configuration) {
         BlacklistServiceFilter blacklist = new BlacklistServiceFilter();

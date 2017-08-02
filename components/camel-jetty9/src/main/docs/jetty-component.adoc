@@ -52,7 +52,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Jetty 9 component supports 32 options which are listed below.
+The Jetty 9 component supports 33 options which are listed below.
 
 
 
@@ -80,6 +80,7 @@ The Jetty 9 component supports 32 options which are listed below.
 | **continuationTimeout** (consumer) | Allows to set a timeout in millis when using Jetty as consumer (server). By default Jetty uses 30000. You can use a value of = 0 to never expire. If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client. This option is only in use when using Jetty with the Asynchronous Routing Engine. | 30000 | Long
 | **useContinuation** (consumer) | Whether or not to use Jetty continuations for the Jetty Server. | true | boolean
 | **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters | false | boolean
 | **responseBufferSize** (common) | Allows to configure a custom value of the response buffer size on the Jetty connectors. |  | Integer
 | **requestBufferSize** (common) | Allows to configure a custom value of the request buffer size on the Jetty connectors. |  | Integer
 | **requestHeaderSize** (common) | Allows to configure a custom value of the request header size on the Jetty connectors. |  | Integer
@@ -117,7 +118,7 @@ with the following path and query parameters:
 | **httpUri** | *Required* The url of the HTTP endpoint to call. |  | URI
 |=======================================================================
 
-#### Query Parameters (55 parameters):
+#### Query Parameters (54 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -146,9 +147,9 @@ with the following path and query parameters:
 | **filterInitParameters** (consumer) | Configuration of the filter init parameters. These parameters will be applied to the filter list before starting the jetty server. |  | Map
 | **filtersRef** (consumer) | Allows using a custom filters which is putted into a list and can be find in the Registry. Multiple values can be separated by comma. |  | String
 | **handlers** (consumer) | Specifies a comma-delimited set of Handler instances to lookup in your Registry. These handlers are added to the Jetty servlet context (for example to add security). Important: You can not use different handlers with different Jetty endpoints using the same port number. The handlers is associated to the port number. If you need different handlers then use different port numbers. |  | String
-| **httpBindingRef** (consumer) | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. |  | String
+| **httpBindingRef** (consumer) | *Deprecated* Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. |  | String
 | **multipartFilter** (consumer) | Allows using a custom multipart filter. Note: setting multipartFilterRef forces the value of enableMultipartFilter to true. |  | Filter
-| **multipartFilterRef** (consumer) | Allows using a custom multipart filter. Note: setting multipartFilterRef forces the value of enableMultipartFilter to true. |  | String
+| **multipartFilterRef** (consumer) | *Deprecated* Allows using a custom multipart filter. Note: setting multipartFilterRef forces the value of enableMultipartFilter to true. |  | String
 | **optionsEnabled** (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
 | **traceEnabled** (consumer) | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off. | false | boolean
 | **bridgeEndpoint** (producer) | If the option is true HttpProducer will ignore the Exchange.HTTP_URI header and use the endpoint's URI for request. You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back. | false | boolean
@@ -164,9 +165,9 @@ with the following path and query parameters:
 | **httpClient** (producer) | Sets a shared HttpClient to use for all producers created by this endpoint. By default each producer will use a new http client and not share. Important: Make sure to handle the lifecycle of the shared client such as stopping the client when it is no longer in use. Camel will call the start method on the client to ensure its started when this endpoint creates a producer. This options should only be used in special circumstances. |  | HttpClient
 | **httpClientParameters** (producer) | Configuration of Jetty's HttpClient. For example setting httpClient.idleTimeout=30000 sets the idle timeout to 30 seconds. And httpClient.timeout=30000 sets the request timeout to 30 seconds in case you want to timeout sooner if you have long running request/response calls. |  | Map
 | **jettyBinding** (producer) | To use a custom JettyHttpBinding which be used to customize how a response should be written for the producer. |  | JettyHttpBinding
-| **jettyBindingRef** (producer) | To use a custom JettyHttpBinding which be used to customize how a response should be written for the producer. |  | String
+| **jettyBindingRef** (producer) | *Deprecated* To use a custom JettyHttpBinding which be used to customize how a response should be written for the producer. |  | String
 | **okStatusCodeRange** (producer) | The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included. | 200-299 | String
-| **urlRewrite** (producer) | Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at http://camel.apache.org/urlrewrite.html |  | UrlRewrite
+| **urlRewrite** (producer) | *Deprecated* Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at http://camel.apache.org/urlrewrite.html |  | UrlRewrite
 | **mapHttpMessageBody** (advanced) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
 | **mapHttpMessageFormUrl EncodedBody** (advanced) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
 | **mapHttpMessageHeaders** (advanced) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
@@ -176,7 +177,6 @@ with the following path and query parameters:
 | **proxyPort** (proxy) | Proxy port to use |  | int
 | **authHost** (security) | Authentication host to use with NTML |  | String
 | **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
-| **sslContextParametersRef** (security) | To configure security using SSLContextParameters |  | String
 |=======================================================================
 // endpoint options: END
 
@@ -354,7 +354,7 @@ Spring DSL based configuration of endpoint
     </camel:keyManagers>
   </camel:sslContextParameters>...
 ...
-  <to uri="jetty:https://127.0.0.1/mail/?sslContextParametersRef=sslContextParameters"/>
+  <to uri="jetty:https://127.0.0.1/mail/?sslContextParameters=#sslContextParameters"/>
 ...
 ----------------------------------------------------------------------------------------
 

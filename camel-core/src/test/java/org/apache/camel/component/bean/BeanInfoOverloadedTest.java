@@ -32,7 +32,7 @@ public class BeanInfoOverloadedTest extends ContextTestSupport {
     public void testBeanInfoOverloaded() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
 
-        Message message = new DefaultMessage();
+        Message message = new DefaultMessage(context);
         message.setBody(new RequestB());
         Exchange exchange = new DefaultExchange(context);
         exchange.setIn(message);

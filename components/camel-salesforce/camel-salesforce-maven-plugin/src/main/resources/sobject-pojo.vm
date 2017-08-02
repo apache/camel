@@ -24,6 +24,8 @@ package $packageName;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Generated;
+
 ## add imports for XStreamConverter and PicklistEnumConverter if needed
 #set ( $hasPicklists = $utility.hasPicklists($desc) )
 #set ( $hasMultiSelectPicklists = $utility.hasMultiSelectPicklists($desc) )
@@ -66,6 +68,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 /**
  * Salesforce DTO for SObject $desc.Name
  */
+@Generated("org.apache.camel.maven.CamelSalesforceMojo")
 @XStreamAlias("$desc.Name")
 public class $desc.Name extends AbstractDescribedSObjectBase {
 
@@ -153,11 +156,16 @@ ${utility.pop()}
 #else
 #foreach ( $i in ${p.value} )## BEAN LIST LOOP
 #set ( $var = ${utility.variableName(${i.class.simpleName})} )
+#if ( ${i.class.simpleName} == "SObjectField" )
+        final ${i.class.simpleName} $var = createField("${i.name}", "${i.label}", "${i.type}", "${i.soapType}", ${i.length}, ${i.unique}, ${i.nillable}, ${i.nameField}, ${i.externalId}, ${i.custom}, ${i.caseSensitive}, ${i.idLookup});
+        ${utility.current()}.add(${var});
+#else
         final ${i.class.simpleName} $var = new ${i.class.simpleName}();
         ${utility.current()}.add(${var});
 ${utility.push($var)}
 #generateSource( ${i} )
 ${utility.pop()}
+#end## SObjectField CONDITION
 #end## END BEAN LIST LOOP
 ${utility.pop()}
 #end## END STRING LIST ELEMENTS

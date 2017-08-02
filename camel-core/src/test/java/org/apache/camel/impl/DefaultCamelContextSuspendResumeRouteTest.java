@@ -44,7 +44,7 @@ public class DefaultCamelContextSuspendResumeRouteTest extends ContextTestSuppor
         context.suspend();
 
         // need to give seda consumer thread time to idle
-        Thread.sleep(500);
+        Thread.sleep(100);
 
         template.sendBody("seda:foo", "B");
 

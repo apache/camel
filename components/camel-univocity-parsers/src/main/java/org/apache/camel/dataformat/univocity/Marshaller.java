@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.univocity.parsers.common.AbstractWriter;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 
@@ -29,8 +30,8 @@ import static org.apache.camel.util.ExchangeHelper.convertToMandatoryType;
 import static org.apache.camel.util.ExchangeHelper.convertToType;
 
 /**
- * This class marshalls the exchange body using an uniVocity writer. It can automatically generates headers and keep
- * their order in memory.
+ * This class marshalls the exchange body using an uniVocity writer. It can
+ * automatically generates headers and keep their order in memory.
  *
  * @param <W> Writer class
  */
@@ -41,8 +42,9 @@ final class Marshaller<W extends AbstractWriter<?>> {
     /**
      * Creates a new instance.
      *
-     * @param headers      the base headers to use
-     * @param adaptHeaders whether or not we can add headers on the fly depending on the data
+     * @param headers the base headers to use
+     * @param adaptHeaders whether or not we can add headers on the fly
+     *            depending on the data
      */
     Marshaller(String[] headers, boolean adaptHeaders) {
         if (headers != null) {
@@ -55,9 +57,10 @@ final class Marshaller<W extends AbstractWriter<?>> {
      * Marshals the given body.
      *
      * @param exchange exchange to use (for type conversion)
-     * @param body     body to marshal
-     * @param writer   uniVocity writer to use
-     * @throws NoTypeConversionAvailableException when it's not possible to convert the body as list and maps.
+     * @param body body to marshal
+     * @param writer uniVocity writer to use
+     * @throws NoTypeConversionAvailableException when it's not possible to
+     *             convert the body as list and maps.
      */
     public void marshal(Exchange exchange, Object body, W writer) throws NoTypeConversionAvailableException {
         try {
@@ -78,18 +81,32 @@ final class Marshaller<W extends AbstractWriter<?>> {
      * Writes the given row.
      *
      * @param exchange exchange to use (for type conversion)
-     * @param row      row to write
-     * @param writer   uniVocity writer to use
-     * @throws NoTypeConversionAvailableException when it's not possible to convert the row as map.
+     * @param row row to write
+     * @param writer uniVocity writer to use
+     * @throws NoTypeConversionAvailableException when it's not possible to
+     *             convert the row as map.
      */
     private void writeRow(Exchange exchange, Object row, W writer) throws NoTypeConversionAvailableException {
         Map<?, ?> map = convertToMandatoryType(exchange, Map.class, row);
         if (adaptHeaders) {
-            for (Object key : map.keySet()) {
-                headers.add(convertToMandatoryType(exchange, String.class, key));
+            synchronized (headers) {
+                for (Object key : map.keySet()) {
+                    headers.add(convertToMandatoryType(exchange, String.class, key));
+                }
+                writeRow(map, writer);
             }
+        } else {
+            writeRow(map, writer);
         }
+    }
 
+    /**
+     * Writes the given map as row.
+     * 
+     * @param map row values by header
+     * @param writer uniVocity writer to use
+     */
+    private void writeRow(Map<?, ?> map, W writer) {
         Object[] values = new Object[headers.size()];
         int index = 0;
         for (String header : headers) {

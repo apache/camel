@@ -126,10 +126,6 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
     @UriParam(label = "security",
             description = "To configure security using SSLContextParameters")
     private SSLContextParameters sslContextParameters;
-    @UriParam(label = "security",
-            description = "To configure security using SSLContextParameters")
-    @Deprecated
-    private String sslContextParametersRef;
     @UriParam(label = "producer", description = "Configure a cookie handler to maintain a HTTP session")
     private CookieHandler cookieHandler;
 
@@ -365,19 +361,6 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
-    }
-
-    @Deprecated
-    public String getSslContextParametersRef() {
-        return sslContextParametersRef;
-    }
-
-    /**
-     * To configure security using SSLContextParameters
-     */
-    @Deprecated
-    public void setSslContextParametersRef(String sslContextParametersRef) {
-        this.sslContextParametersRef = sslContextParametersRef;
     }
 
     public Integer getHttpClientMinThreads() {

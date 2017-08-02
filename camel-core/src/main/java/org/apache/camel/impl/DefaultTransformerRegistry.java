@@ -26,11 +26,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.spi.DataType;
-import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.util.CamelContextHelper;
@@ -120,7 +118,7 @@ public class DefaultTransformerRegistry extends LRUCache<TransformerKey, Transfo
         if (answer == null) {
             answer = super.get(o);
         } else {
-            hits.incrementAndGet();
+            hits.increment();
         }
         return answer;
     }

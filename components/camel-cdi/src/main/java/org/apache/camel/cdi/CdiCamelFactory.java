@@ -215,7 +215,7 @@ final class CdiCamelFactory {
         if (qualifiers.isEmpty() && !instance.select(DEFAULT).isUnsatisfied()) {
             return instance.select(DEFAULT).get();
         }
-        return instance.select(qualifiers.stream().toArray(Annotation[]::new)).get();
+        return instance.select(qualifiers.toArray(new Annotation[0])).get();
     }
 
     private static <T extends Annotation> Optional<T> getQualifierByType(InjectionPoint ip, Class<T> type) {

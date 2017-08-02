@@ -18,7 +18,6 @@ package org.apache.camel.opentracing.agent;
 
 import java.util.List;
 
-import io.opentracing.contrib.global.GlobalTracer;
 import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockTracer;
 import io.opentracing.mock.MockTracer.Propagator;
@@ -29,9 +28,9 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class InstallOpenTracingTracerRuleTest extends CamelTestSupport {
@@ -44,11 +43,6 @@ public class InstallOpenTracingTracerRuleTest extends CamelTestSupport {
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
 
-    @BeforeClass
-    public static void initClass() throws Exception {
-        GlobalTracer.register(tracer);
-    }
-
     @Before
     public void init() {
         tracer.reset();
@@ -56,6 +50,16 @@ public class InstallOpenTracingTracerRuleTest extends CamelTestSupport {
 
     public static MockTracer getTracer() {
         return tracer;
+    }
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+
+        // Add the mock tracer to the registry
+        registry.bind("tracer", tracer);
+
+        return registry;
     }
 
     @Override

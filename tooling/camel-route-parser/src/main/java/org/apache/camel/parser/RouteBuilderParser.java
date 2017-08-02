@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.camel.parser.helper.CamelJavaParserHelper;
 import org.apache.camel.parser.model.CamelEndpointDetails;
+import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Expression;
@@ -265,6 +266,44 @@ public final class RouteBuilderParser {
                     detail.setExpression(expression);
 
                     simpleExpressions.add(detail);
+                }
+            }
+        }
+    }
+
+    /**
+     * Parses the java source class to discover Camel routes with id's assigned.
+     *
+     * @param clazz                   the java source class
+     * @param baseDir                 the base of the source code
+     * @param fullyQualifiedFileName  the fully qualified source code file name
+     * @param routes                  list to add discovered and parsed routes
+     */
+    public static void parseRouteBuilderRouteIds(JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
+                                                 List<CamelRouteDetails> routes) {
+
+        MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
+        if (method != null) {
+            List<ParserResult> expressions = CamelJavaParserHelper.parseCamelConsumerUris(method, true, false);
+            for (ParserResult result : expressions) {
+                // route ids is assigned in java dsl using the routeId method
+                if (result.isParsed() && "routeId".equals(result.getNode())) {
+                    String fileName = fullyQualifiedFileName;
+                    if (fileName.startsWith(baseDir)) {
+                        fileName = fileName.substring(baseDir.length() + 1);
+                    }
+
+                    CamelRouteDetails detail = new CamelRouteDetails();
+                    detail.setFileName(fileName);
+                    detail.setClassName(clazz.getQualifiedName());
+                    detail.setMethodName("configure");
+                    int line = findLineNumber(fullyQualifiedFileName, result.getPosition());
+                    if (line > -1) {
+                        detail.setLineNumber("" + line);
+                    }
+                    detail.setRouteId(result.getElement());
+
+                    routes.add(detail);
                 }
             }
         }

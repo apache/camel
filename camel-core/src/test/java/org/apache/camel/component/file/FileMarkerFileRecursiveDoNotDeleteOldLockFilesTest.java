@@ -28,19 +28,20 @@ public class FileMarkerFileRecursiveDoNotDeleteOldLockFilesTest extends ContextT
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/oldlock");
+        super.setUp();
+    }
+
+    public void testDeleteOldLockOnStartup() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("New World");
+
         template.sendBodyAndHeader("file:target/oldlock", "locked", Exchange.FILE_NAME, "hello.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
         template.sendBodyAndHeader("file:target/oldlock", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file:target/oldlock/foo", "locked", Exchange.FILE_NAME, "gooday.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
         template.sendBodyAndHeader("file:target/oldlock/foo", "Goodday World", Exchange.FILE_NAME, "gooday.txt");
         // and a new file that has no lock
         template.sendBodyAndHeader("file:target/oldlock", "New World", Exchange.FILE_NAME, "new.txt");
-    }
-
-    public void testDeleteOldLockOnStartup() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("New World");
 
         // start the route
         context.startRoute("foo");
@@ -53,7 +54,7 @@ public class FileMarkerFileRecursiveDoNotDeleteOldLockFilesTest extends ContextT
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/oldlock?readLockDeleteOrphanLockFiles=false&recursive=true").routeId("foo").noAutoStartup()
+                from("file:target/oldlock?initialDelay=0&delay=10&readLockDeleteOrphanLockFiles=false&recursive=true").routeId("foo").noAutoStartup()
                         .convertBodyTo(String.class).to("log:result", "mock:result");
             }
         };

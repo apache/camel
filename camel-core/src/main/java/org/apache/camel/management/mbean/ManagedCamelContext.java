@@ -276,6 +276,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return context.isUseMDCLogging();
     }
 
+    public boolean isUseDataType() {
+        return context.isUseDataType();
+    }
+
     public void onTimer() {
         load.update(getInflightExchanges());
     }

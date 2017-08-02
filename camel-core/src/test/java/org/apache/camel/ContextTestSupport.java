@@ -154,6 +154,14 @@ public abstract class ContextTestSupport extends TestSupport {
         return false;
     }
 
+    /**
+     * Whether to load additional type converters by scanning the classpath.
+     * This should only be enabled for tests that uses custom type converters.
+     */
+    protected boolean isLoadTypeConverters() {
+        return false;
+    }
+
     protected void stopCamelContext() throws Exception {
         if (camelContextService != null) {
             camelContextService.stop();
@@ -183,6 +191,7 @@ public abstract class ContextTestSupport extends TestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(createRegistry());
         context.setLazyLoadTypeConverters(isLazyLoadingTypeConverter());
+        context.setLoadTypeConverters(isLoadTypeConverters());
         return context;
     }
 

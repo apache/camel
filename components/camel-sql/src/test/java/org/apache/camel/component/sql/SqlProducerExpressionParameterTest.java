@@ -37,6 +37,9 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:result")
     MockEndpoint result;
 
+    @EndpointInject(uri = "mock:result-simple")
+    MockEndpoint resultSimple;
+
     private EmbeddedDatabase db;
 
     @Before
@@ -69,6 +72,20 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
         assertEquals("AMQ", row.get("PROJECT"));
     }
 
+    @Test
+    public void testNamedParameterFromSimpleExpression() throws Exception {
+        resultSimple.expectedMessageCount(1);
+
+        template.sendBodyAndProperty("direct:start-simple", "This is a dummy body", "license", "XXX");
+
+        resultSimple.assertIsSatisfied();
+
+        List<?> received = assertIsInstanceOf(List.class, resultSimple.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(1, received.size());
+        Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals("Linux", row.get("PROJECT"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -76,6 +93,8 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:start").to("sql:select * from projects where license = :#${property.license} order by id").to("mock:result");
+
+                from("direct:start-simple").to("sql:select * from projects where license = :#$simple{property.license} order by id").to("mock:result-simple");
             }
         };
     }

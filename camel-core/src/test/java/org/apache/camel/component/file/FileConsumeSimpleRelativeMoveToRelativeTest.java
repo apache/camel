@@ -32,9 +32,6 @@ public class FileConsumeSimpleRelativeMoveToRelativeTest extends ContextTestSupp
     protected void setUp() throws Exception {
         deleteDirectory("target/move");
         super.setUp();
-        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
-        template.sendBodyAndHeader(fileUrl, "Goodday World", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
     }
 
     public void testMoveToSubDir() throws Exception {
@@ -44,6 +41,10 @@ public class FileConsumeSimpleRelativeMoveToRelativeTest extends ContextTestSupp
         mock.expectedFileExists("target/move/sub/.done/hello.txt");
         mock.expectedFileExists("target/move/sub/sub2/.done/goodday.txt");
 
+        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
+        template.sendBodyAndHeader(fileUrl, "Goodday World", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
+
         assertMockEndpointsSatisfied();
     }
 
@@ -52,7 +53,7 @@ public class FileConsumeSimpleRelativeMoveToRelativeTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/move?recursive=true&move=.done")
+                from("file://target/move?recursive=true&move=.done&initialDelay=0&delay=10")
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

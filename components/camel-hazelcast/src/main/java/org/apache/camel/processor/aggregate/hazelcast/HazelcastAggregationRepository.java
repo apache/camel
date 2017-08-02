@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * Hazelcast settings are given to an end-user and can be controlled with repositoryName and persistentRespositoryName,
  * both are {@link com.hazelcast.core.IMap} &lt;String, Exchange&gt;. However HazelcastAggregationRepository
  * can run it's own Hazelcast instance, but obviously no benefits of Hazelcast clustering are gained this way.
- * If the {@link HazelcastAggregationRepository} uses it's own local {@link HazelcastInstance} it will destroy this
+ * If the {@link HazelcastAggregationRepository} uses it's own local {@link HazelcastInstance} it will DESTROY this
  * instance on {@link #doStop()}. You should control {@link HazelcastInstance} lifecycle yourself whenever you instantiate
  * {@link HazelcastAggregationRepository} passing a reference to the instance.
  *

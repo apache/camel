@@ -18,10 +18,16 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.StaticService;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PredicateToExpressionAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/simple.html">simple language</a>
@@ -86,14 +92,19 @@ import org.apache.camel.util.PredicateToExpressionAdapter;
  * return the full path including the starting directory.
  * <br/>
  * The <b>only</b> file is the filename only with all paths clipped.
- *
  */
-public class SimpleLanguage extends LanguageSupport {
+public class SimpleLanguage extends LanguageSupport implements StaticService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleLanguage.class);
 
     // singleton for expressions without a result type
     private static final SimpleLanguage SIMPLE = new SimpleLanguage();
 
-    protected boolean allowEscape = true;
+    boolean allowEscape = true;
+
+    // use caches to avoid re-parsing the same expressions over and over again
+    private LRUCache<String, Expression> cacheExpression;
+    private LRUCache<String, Predicate> cachePredicate;
 
     /**
      * Default constructor.
@@ -101,35 +112,83 @@ public class SimpleLanguage extends LanguageSupport {
     public SimpleLanguage() {
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public void start() throws Exception {
+        // setup cache which requires CamelContext to be set first
+        if (cacheExpression == null && cachePredicate == null && getCamelContext() != null) {
+            int maxSize = CamelContextHelper.getMaximumSimpleCacheSize(getCamelContext());
+            if (maxSize > 0) {
+                cacheExpression = LRUCacheFactory.newLRUCache(16, maxSize, false);
+                cachePredicate = LRUCacheFactory.newLRUCache(16, maxSize, false);
+                LOG.debug("Simple language predicate/expression cache size: {}", maxSize);
+            } else {
+                LOG.debug("Simple language disabled predicate/expression cache");
+            }
+        }
+    }
+
+    @Override
+    public void stop() throws Exception {
+        if (cachePredicate != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Clearing simple language predicate cache[size={}, hits={}, misses={}, evicted={}]",
+                    cachePredicate.size(), cachePredicate.getHits(), cachePredicate.getMisses(), cachePredicate.getEvicted());
+            }
+        }
+        if (cacheExpression != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Clearing simple language expression cache[size={}, hits={}, misses={}, evicted={}]",
+                    cacheExpression.size(), cacheExpression.getHits(), cacheExpression.getMisses(), cacheExpression.getEvicted());
+            }
+        }
+    }
+
+    @SuppressWarnings("deprecation")
     public Predicate createPredicate(String expression) {
         ObjectHelper.notNull(expression, "expression");
 
-        expression = loadResource(expression);
-
-        // support old simple language syntax
-        @SuppressWarnings("deprecation")
-        Predicate answer = SimpleBackwardsCompatibleParser.parsePredicate(expression, allowEscape);
+        Predicate answer = cachePredicate != null ? cachePredicate.get(expression) : null;
         if (answer == null) {
-            // use the new parser
-            SimplePredicateParser parser = new SimplePredicateParser(expression, allowEscape);
-            answer = parser.parsePredicate();
+
+            expression = loadResource(expression);
+
+            // support old simple language syntax
+            answer = SimpleBackwardsCompatibleParser.parsePredicate(expression, allowEscape);
+            if (answer == null) {
+                // use the new parser
+                SimplePredicateParser parser = new SimplePredicateParser(expression, allowEscape, cacheExpression);
+                answer = parser.parsePredicate();
+            }
+            if (cachePredicate != null && answer != null) {
+                cachePredicate.put(expression, answer);
+            }
         }
+
         return answer;
     }
 
+    @SuppressWarnings("deprecation")
     public Expression createExpression(String expression) {
         ObjectHelper.notNull(expression, "expression");
 
-        expression = loadResource(expression);
-
-        // support old simple language syntax
-        @SuppressWarnings("deprecation")
-        Expression answer = SimpleBackwardsCompatibleParser.parseExpression(expression, allowEscape);
+        Expression answer = cacheExpression != null ? cacheExpression.get(expression) : null;
         if (answer == null) {
-            // use the new parser
-            SimpleExpressionParser parser = new SimpleExpressionParser(expression, allowEscape);
-            answer = parser.parseExpression();
+
+            expression = loadResource(expression);
+
+            // support old simple language syntax
+            answer = SimpleBackwardsCompatibleParser.parseExpression(expression, allowEscape);
+            if (answer == null) {
+                // use the new parser
+                SimpleExpressionParser parser = new SimpleExpressionParser(expression, allowEscape, cacheExpression);
+                answer = parser.parseExpression();
+            }
+            if (cacheExpression != null && answer != null) {
+                cacheExpression.put(expression, answer);
+            }
         }
+
         return answer;
     }
 
@@ -247,4 +306,5 @@ public class SimpleLanguage extends LanguageSupport {
     public void setFunctionEndToken(String endToken) {
         changeFunctionEndToken(endToken);
     }
+
 }

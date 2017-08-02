@@ -76,11 +76,13 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
 
                 onException(MyPolicyException.class)
                     .maximumRedeliveries(1)
+                    .redeliveryDelay(0)
                     .setHeader(MESSAGE_INFO, constant("Damm my policy exception"))
                     .to(ERROR_QUEUE);
 
                 onException(CamelException.class)
                     .maximumRedeliveries(3)
+                    .redeliveryDelay(0)
                     .setHeader(MESSAGE_INFO, constant("Damm a Camel exception"))
                     .to(ERROR_QUEUE);
                 // END SNIPPET e1

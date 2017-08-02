@@ -36,32 +36,19 @@ import org.slf4j.LoggerFactory;
 public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceCallExpression.class);
 
+    public DefaultServiceCallExpression() {
+    }
+
+    public DefaultServiceCallExpression(String hostHeader, String portHeader) {
+        super(hostHeader, portHeader);
+    }
+
     @Override
     protected String buildCamelEndpointUri(String name, String host, Integer port, String uri, String contextPath, String scheme) {
         // build basic uri if none provided
         String answer = uri;
         if (answer == null) {
-            if (scheme == null) {
-                // use http/https by default if no scheme or port have been configured
-                if (port == null) {
-                    scheme = "http4";
-                } else if (port == 443) {
-                    scheme = "https4";
-                } else {
-                    scheme = "http4";
-                }
-            }
-            answer = scheme + "://" + host;
-            if (port != null) {
-                answer = answer + ":" + port;
-            }
-            if (contextPath != null) {
-                if (!contextPath.startsWith("/")) {
-                    contextPath = "/" + contextPath;
-                }
-
-                answer += contextPath;
-            }
+            answer = doBuildCamelEndpointUri(host, port, contextPath, scheme);
         } else {
             // we have existing uri, then replace the serviceName with ip:port
             if (answer.contains(name + ".host")) {
@@ -79,6 +66,33 @@ public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {
         }
 
         LOGGER.debug("Camel endpoint uri: {} for calling service: {} on server {}:{}", answer, name, host, port);
+        return answer;
+    }
+
+    protected String doBuildCamelEndpointUri(String host, Integer port, String contextPath, String scheme) {
+        if (scheme == null) {
+            // use http/https by default if no scheme or port have been configured
+            if (port == null) {
+                scheme = "http4";
+            } else if (port == 443) {
+                scheme = "https4";
+            } else {
+                scheme = "http4";
+            }
+        }
+
+        String answer = scheme + "://" + host;
+        if (port != null) {
+            answer = answer + ":" + port;
+        }
+        if (contextPath != null) {
+            if (!contextPath.startsWith("/")) {
+                contextPath = "/" + contextPath;
+            }
+
+            answer += contextPath;
+        }
+
         return answer;
     }
 }

@@ -17,10 +17,13 @@
 package org.apache.camel.management;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version 
@@ -45,44 +48,38 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
         template.asyncSendBody("direct:start", "Hello World");
 
         // cater for slow boxes
-        Integer inFlight = null;
-        for (int i = 0; i < 10; i++) {
-            Thread.sleep(500);
-            inFlight = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
-            if (inFlight.longValue() == 1) {
-                break;
-            }
-        }
-        assertNotNull("too slow server", inFlight);
-        assertEquals(1, inFlight.longValue());
+        await().atMost(5, TimeUnit.SECONDS).until(() -> {
+            Integer num = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
+            return num == 1;
+        });
 
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(3000);
-
-        Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
-        assertEquals(1, completed.longValue());
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
+            assertEquals(1, completed.longValue());
+        });
 
         delta = (Long) mbeanServer.getAttribute(on, "DeltaProcessingTime");
         Long last = (Long) mbeanServer.getAttribute(on, "LastProcessingTime");
         Long total = (Long) mbeanServer.getAttribute(on, "TotalProcessingTime");
 
         assertNotNull(delta);
-        assertTrue("Should take around 3 sec: was " + last, last > 2900);
-        assertTrue("Should take around 3 sec: was " + total, total > 2900);
+        assertTrue("Should take around 1 sec: was " + last, last > 900);
+        assertTrue("Should take around 1 sec: was " + total, total > 900);
 
         // send in another message
         template.sendBody("direct:start", "Bye World");
 
-        completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
+        Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(2, completed.longValue());
         delta = (Long) mbeanServer.getAttribute(on, "DeltaProcessingTime");
         last = (Long) mbeanServer.getAttribute(on, "LastProcessingTime");
         total = (Long) mbeanServer.getAttribute(on, "TotalProcessingTime");
 
         assertNotNull(delta);
-        assertTrue("Should take around 3 sec: was " + last, last > 2900);
-        assertTrue("Should be around 5 sec now: was " + total, total > 4900);
+        assertTrue("Should take around 1 sec: was " + last, last > 900);
+        assertTrue("Should be around 2 sec now: was " + total, total > 1900);
 
         Date reset = (Date) mbeanServer.getAttribute(on, "ResetTimestamp");
         assertNotNull(reset);
@@ -92,7 +89,7 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
         assertNull(lastFailed);
         assertNull(firstFailed);
 
-        inFlight = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
+        Integer inFlight = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
         assertEquals(0, inFlight.longValue());
     }
 
@@ -101,7 +98,7 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:foo").delay(3000).to("mock:result");
+                from("direct:start").to("log:foo").delay(1000).to("mock:result");
             }
         };
     }

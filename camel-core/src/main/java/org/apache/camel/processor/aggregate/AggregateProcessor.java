@@ -61,7 +61,7 @@ import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
@@ -209,6 +209,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private boolean discardOnCompletionTimeout;
     private boolean forceCompletionOnStop;
     private boolean completeAllOnStop;
+    private long completionTimeoutCheckerInterval = 1000;
 
     private ProducerTemplate deadLetterProducerTemplate;
 
@@ -804,7 +805,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
         // log duration of this task so end user can see how long it takes to pre-check this upon starting
         LOG.info("Restored {} CompletionTimeout conditions in the AggregationTimeoutChecker in {}",
-                timeoutMap.size(), TimeUtils.printDuration(watch.stop()));
+                timeoutMap.size(), TimeUtils.printDuration(watch.taken()));
     }
 
     /**
@@ -930,6 +931,14 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
     public boolean isCompleteAllOnStop() {
         return completeAllOnStop;
+    }
+
+    public long getCompletionTimeoutCheckerInterval() {
+        return completionTimeoutCheckerInterval;
+    }
+
+    public void setCompletionTimeoutCheckerInterval(long completionTimeoutCheckerInterval) {
+        this.completionTimeoutCheckerInterval = completionTimeoutCheckerInterval;
     }
 
     public ExceptionHandler getExceptionHandler() {
@@ -1283,6 +1292,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         AggregationStrategy strategy = aggregationStrategy;
         if (strategy instanceof DelegateAggregationStrategy) {
@@ -1306,7 +1316,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         if (getCloseCorrelationKeyOnCompletion() != null) {
             if (getCloseCorrelationKeyOnCompletion() > 0) {
                 LOG.info("Using ClosedCorrelationKeys with a LRUCache with a capacity of " + getCloseCorrelationKeyOnCompletion());
-                closedCorrelationKeys = new LRUCache<String, String>(getCloseCorrelationKeyOnCompletion());
+                closedCorrelationKeys = LRUCacheFactory.newLRUCache(getCloseCorrelationKeyOnCompletion());
             } else {
                 LOG.info("Using ClosedCorrelationKeys with unbounded capacity");
                 closedCorrelationKeys = new ConcurrentHashMap<String, String>();
@@ -1381,7 +1391,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                 shutdownTimeoutCheckerExecutorService = true;
             }
             // check for timed out aggregated messages once every second
-            timeoutMap = new AggregationTimeoutMap(getTimeoutCheckerExecutorService(), 1000L);
+            timeoutMap = new AggregationTimeoutMap(getTimeoutCheckerExecutorService(), getCompletionTimeoutCheckerInterval());
             // fill in existing timeout values from the aggregation repository, for example if a restart occurred, then we
             // need to re-establish the timeout map so timeout can trigger
             restoreTimeoutMapFromAggregationRepository();
@@ -1462,7 +1472,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         }
 
         if (expected > 0) {
-            LOG.info("Forcing completion of all groups with {} exchanges completed in {}", expected, TimeUtils.printDuration(watch.stop()));
+            LOG.info("Forcing completion of all groups with {} exchanges completed in {}", expected, TimeUtils.printDuration(watch.taken()));
         }
     }
 

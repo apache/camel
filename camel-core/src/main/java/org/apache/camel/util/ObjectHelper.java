@@ -195,6 +195,13 @@ public final class ObjectHelper {
     public static boolean equal(Object a, Object b) {
         return equal(a, b, false);
     }
+    
+    /**
+     * A helper method for comparing objects for equality while handling case insensitivity
+     */
+    public static boolean equalIgnoreCase(Object a, Object b) {
+        return equal(a, b, true);
+    }
 
     /**
      * A helper method for comparing objects for equality while handling nulls
@@ -396,6 +403,38 @@ public final class ObjectHelper {
         } else {
             return true;
         }
+    }
+
+
+    /**
+     * Returns the first non null object <tt>null</tt>.
+     *
+     * @param values the values
+     * @return an Optional
+     */
+    public static Optional<Object> firstNotNull(Object... values) {
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] != null) {
+                return Optional.of(values[i]);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Tests whether the value is  <tt>null</tt>, an empty string, an empty collection or a map
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @param supplier  the supplier, the supplier to be used to get a value if value is null
+     */
+    public static <T> T supplyIfEmpty(T value, Supplier<T> supplier) {
+        ObjectHelper.notNull(supplier, "Supplier");
+        if (isNotEmpty(value)) {
+            return value;
+        }
+
+        return supplier.get();
     }
 
     /**
@@ -624,6 +663,36 @@ public final class ObjectHelper {
             Iterator<Object> iter = createIterator(collectionOrArray);
             while (iter.hasNext()) {
                 if (equal(value, iter.next())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Returns true if the collection contains the specified value by considering case insensitivity
+     */
+    public static boolean containsIgnoreCase(Object collectionOrArray, Object value) {
+        // favor String types
+        if (collectionOrArray != null && (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder)) {
+            collectionOrArray = collectionOrArray.toString();
+        }
+        if (value != null && (value instanceof StringBuffer || value instanceof StringBuilder)) {
+            value = value.toString();
+        }
+
+        if (collectionOrArray instanceof Collection) {
+            Collection<?> collection = (Collection<?>)collectionOrArray;
+            return collection.contains(value);
+        } else if (collectionOrArray instanceof String && value instanceof String) {
+            String str = (String)collectionOrArray;
+            String subStr = (String)value;
+            return StringHelper.containsIgnoreCase(str, subStr);
+        } else {
+            Iterator<Object> iter = createIterator(collectionOrArray);
+            while (iter.hasNext()) {
+                if (equalIgnoreCase(value, iter.next())) {
                     return true;
                 }
             }
@@ -1363,12 +1432,30 @@ public final class ObjectHelper {
      * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
      */
     public static boolean isOverridingMethod(Method source, Method target, boolean exact) {
+        return isOverridingMethod(target.getDeclaringClass(), source, target, exact);
+    }
+
+    /**
+     * Tests whether the target method overrides the source method from the
+     * inheriting class.
+     * <p/>
+     * Tests whether they have the same name, return type, and parameter list.
+     *
+     * @param inheritingClass the class inheriting the target method overriding
+     *            the source method
+     * @param source the source method
+     * @param target the target method
+     * @param exact <tt>true</tt> if the override must be exact same types,
+     *            <tt>false</tt> if the types should be assignable
+     * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
+     */
+    public static boolean isOverridingMethod(Class<?> inheritingClass, Method source, Method target, boolean exact) {
 
         if (source.equals(target)) {
             return true;
-        } else if (source.getDeclaringClass() == target.getDeclaringClass()) {
+        } else if (target.getDeclaringClass().isAssignableFrom(source.getDeclaringClass())) {
             return false;
-        } else if (!source.getDeclaringClass().isAssignableFrom(target.getDeclaringClass())) {
+        } else if (!source.getDeclaringClass().isAssignableFrom(inheritingClass) || !target.getDeclaringClass().isAssignableFrom(inheritingClass)) {
             return false;
         }
 
@@ -1392,18 +1479,20 @@ public final class ObjectHelper {
         }
 
         // must have same number of parameter types
-        if (source.getParameterTypes().length != target.getParameterTypes().length) {
+        if (source.getParameterCount() != target.getParameterCount()) {
             return false;
         }
 
+        Class<?>[] sourceTypes = source.getParameterTypes();
+        Class<?>[] targetTypes = target.getParameterTypes();
         // test if parameter types is the same as well
-        for (int i = 0; i < source.getParameterTypes().length; i++) {
+        for (int i = 0; i < source.getParameterCount(); i++) {
             if (exact) {
-                if (!(source.getParameterTypes()[i].equals(target.getParameterTypes()[i]))) {
+                if (!(sourceTypes[i].equals(targetTypes[i]))) {
                     return false;
                 }
             } else {
-                if (!(source.getParameterTypes()[i].isAssignableFrom(target.getParameterTypes()[i]))) {
+                if (!(sourceTypes[i].isAssignableFrom(targetTypes[i]))) {
                     boolean b1 = source.isBridge();
                     boolean b2 = target.isBridge();
                     // must not be bridge methods
@@ -1573,7 +1662,7 @@ public final class ObjectHelper {
      */
     public static String getPropertyName(Method method) {
         String propertyName = method.getName();
-        if (propertyName.startsWith("set") && method.getParameterTypes().length == 1) {
+        if (propertyName.startsWith("set") && method.getParameterCount() == 1) {
             propertyName = propertyName.substring(3, 4).toLowerCase(Locale.ENGLISH) + propertyName.substring(4);
         }
         return propertyName;
@@ -1673,7 +1762,7 @@ public final class ObjectHelper {
     public static boolean hasDefaultPublicNoArgConstructor(Class<?> type) {
         // getConstructors() returns only public constructors
         for (Constructor<?> ctr : type.getConstructors()) {
-            if (ctr.getParameterTypes().length == 0) {
+            if (ctr.getParameterCount() == 0) {
                 return true;
             }
         }

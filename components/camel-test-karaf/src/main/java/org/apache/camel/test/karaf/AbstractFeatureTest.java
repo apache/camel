@@ -107,7 +107,7 @@ public abstract class AbstractFeatureTest {
     }
 
     protected Bundle installBlueprintAsBundle(String name, URL url, boolean start) throws BundleException {
-        return installBlueprintAsBundle(name, url, start, bundle -> {});
+        return installBlueprintAsBundle(name, url, start, bundle -> { });
     }
 
     protected Bundle installBlueprintAsBundle(String name, URL url, boolean start, Consumer<Object> consumer) throws BundleException {
@@ -128,7 +128,7 @@ public abstract class AbstractFeatureTest {
     }
 
     protected Bundle installSpringAsBundle(String name, URL url, boolean start) throws BundleException {
-        return installSpringAsBundle(name, url, start, bundle -> {});
+        return installSpringAsBundle(name, url, start, bundle -> { });
     }
 
     protected Bundle installSpringAsBundle(String name, URL url, boolean start, Consumer<Object> consumer) throws BundleException {
@@ -172,7 +172,7 @@ public abstract class AbstractFeatureTest {
         if (currentProperties == null) {
             currentProperties = newProps;
         }
-        for (Enumeration<String> ek = currentProperties.keys(); ek.hasMoreElements(); ) {
+        for (Enumeration<String> ek = currentProperties.keys(); ek.hasMoreElements();) {
             String k = ek.nextElement();
             newProps.put(k, currentProperties.get(k));
         }

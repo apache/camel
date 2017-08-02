@@ -31,6 +31,11 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class InstanceFallbackConverterTest extends ContextTestSupport {
 
+    @Override
+    protected boolean isLoadTypeConverters() {
+        return true;
+    }
+
     public void testInstanceFallbackConverter() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Currency cur = Currency.getInstance(Locale.US);

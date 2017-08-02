@@ -38,7 +38,7 @@ public class EhcacheIdempotentRepository extends ServiceSupport implements Idemp
 
     public EhcacheIdempotentRepository(CacheManager cacheManager, String repositoryName) {
         this.cacheName = repositoryName;
-        this.cacheManager = new EhcacheManager(cacheManager);
+        this.cacheManager = new EhcacheManager(cacheManager, false, null);
     }
 
     @ManagedAttribute(description = "The processor name")

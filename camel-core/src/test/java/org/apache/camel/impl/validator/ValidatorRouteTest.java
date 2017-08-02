@@ -16,35 +16,24 @@
  */
 package org.apache.camel.impl.validator;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Converter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.TypeConverters;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

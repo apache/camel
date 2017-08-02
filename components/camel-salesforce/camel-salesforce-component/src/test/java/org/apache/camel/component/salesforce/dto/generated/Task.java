@@ -26,6 +26,7 @@ import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 /**
  * Salesforce DTO for SObject Task
  */
+//CHECKSTYLE:OFF
 @XStreamAlias("Task")
 public class Task extends AbstractSObjectBase {
 
@@ -53,3 +54,4 @@ public class Task extends AbstractSObjectBase {
         Description = description;
     }
 }
+//CHECKSTYLE:ON

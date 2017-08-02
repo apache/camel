@@ -1,0 +1,20 @@
+## Hystrix Component
+
+*Available as of Camel version 2.18*
+
+The hystrix component integrates Netflix Hystrix circuit breaker in Camel routes.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-hystrix</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+For more information see the http://camel.apache.org/hystrix-eip.html[Hystrix EIP]

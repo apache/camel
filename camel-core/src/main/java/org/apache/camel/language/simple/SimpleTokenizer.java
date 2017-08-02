@@ -32,6 +32,9 @@ public final class SimpleTokenizer {
     // use CopyOnWriteArrayList so we can modify it in the for loop when changing function start/end tokens
     private static final List<SimpleTokenType> KNOWN_TOKENS = new CopyOnWriteArrayList<SimpleTokenType>();
 
+    // optimise to be able to quick check for start functions
+    private static final String[] FUNCTION_START = new String[]{"${", "$simple{"};
+
     static {
         // add known tokens
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "${"));
@@ -60,6 +63,7 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "is"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not contains"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "contains"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "~~"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not regex"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "regex"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not in"));
@@ -79,6 +83,11 @@ public final class SimpleTokenizer {
         // TODO: @deprecated logical operators, to be removed in Camel 3.0
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.logicalOperator, "and"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.logicalOperator, "or"));
+        
+        //binary operator 
+        // it is added as the last item because unary -- has the priority
+        // if unary not found it is highly possible - operator is run into.
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.minusValue, "-"));
     }
 
     private SimpleTokenizer() {
@@ -93,16 +102,7 @@ public final class SimpleTokenizer {
      */
     public static boolean hasFunctionStartToken(String expression) {
         if (expression != null) {
-            for (SimpleTokenType type : KNOWN_TOKENS) {
-                if (type.getType() == TokenType.functionStart) {
-                    if (expression.contains(type.getValue())) {
-                        return true;
-                    }
-                } else {
-                    // function start are always first
-                    return false;
-                }
-            }
+            return expression.contains(FUNCTION_START[0]) || expression.contains(FUNCTION_START[1]);
         }
         return false;
     }
@@ -117,8 +117,18 @@ public final class SimpleTokenizer {
             }
         }
 
+        if (startToken.length > 2) {
+            throw new IllegalArgumentException("At most 2 start tokens is allowed");
+        }
+
+        // reset
+        FUNCTION_START[0] = "";
+        FUNCTION_START[1] = "";
+
         // add in start of list as its a more common token to be used
-        for (String token : startToken) {
+        for (int i = 0; i < startToken.length; i++) {
+            String token = startToken[i];
+            FUNCTION_START[i] = token;
             KNOWN_TOKENS.add(0, new SimpleTokenType(TokenType.functionStart, token));
         }
     }

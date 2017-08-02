@@ -16,20 +16,20 @@
  */
 package org.apache.camel.component.consul.enpoint;
 
+import com.orbitz.consul.Consul;
 import com.orbitz.consul.KeyValueClient;
 import com.orbitz.consul.option.PutOptions;
 import com.orbitz.consul.option.QueryOptions;
 import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
-import org.apache.camel.component.consul.AbstractConsulProducer;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
 
-public class ConsulKeyValueProducer extends AbstractConsulProducer<KeyValueClient> {
+public final class ConsulKeyValueProducer extends AbstractConsulProducer<KeyValueClient> {
 
     public ConsulKeyValueProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
-        super(endpoint, configuration, c -> c.keyValueClient());
+        super(endpoint, configuration, Consul::keyValueClient);
     }
 
     @InvokeOnHeader(ConsulKeyValueActions.PUT)
@@ -37,10 +37,10 @@ public class ConsulKeyValueProducer extends AbstractConsulProducer<KeyValueClien
         message.setHeader(
             ConsulConstants.CONSUL_RESULT,
             getClient().putValue(
-                getMandatoryKey(message),
+                getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class),
                 message.getBody(String.class),
                 message.getHeader(ConsulConstants.CONSUL_FLAGS, 0L, Long.class),
-                getOption(message, PutOptions.BLANK, PutOptions.class)
+                message.getHeader(ConsulConstants.CONSUL_OPTIONS, PutOptions.BLANK, PutOptions.class)
             )
         );
     }
@@ -49,14 +49,15 @@ public class ConsulKeyValueProducer extends AbstractConsulProducer<KeyValueClien
     protected void getValue(Message message) throws Exception {
         Object result;
 
-        if (isValueAsString(message)) {
+        Boolean asString = message.getHeader(ConsulConstants.CONSUL_VALUE_AS_STRING, getConfiguration().isValueAsString(), Boolean.class);
+        if (asString) {
             result = getClient().getValueAsString(
-                getMandatoryKey(message)
+                getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class)
             ).orNull();
         } else {
             result = getClient().getValue(
-                getMandatoryKey(message),
-                getOption(message, QueryOptions.BLANK, QueryOptions.class)
+                getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class),
+                message.getHeader(ConsulConstants.CONSUL_OPTIONS, QueryOptions.BLANK, QueryOptions.class)
             ).orNull();
         }
 
@@ -67,14 +68,15 @@ public class ConsulKeyValueProducer extends AbstractConsulProducer<KeyValueClien
     protected void getValues(Message message) throws Exception {
         Object result;
 
-        if (isValueAsString(message)) {
+        Boolean asString = message.getHeader(ConsulConstants.CONSUL_VALUE_AS_STRING, getConfiguration().isValueAsString(), Boolean.class);
+        if (asString) {
             result = getClient().getValuesAsString(
-                getMandatoryKey(message)
+                getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class)
             );
         } else {
             result = getClient().getValues(
-                getMandatoryKey(message),
-                getOption(message, QueryOptions.BLANK, QueryOptions.class)
+                getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class),
+                message.getHeader(ConsulConstants.CONSUL_OPTIONS, QueryOptions.BLANK, QueryOptions.class)
             );
         }
 
@@ -83,23 +85,39 @@ public class ConsulKeyValueProducer extends AbstractConsulProducer<KeyValueClien
 
     @InvokeOnHeader(ConsulKeyValueActions.GET_KEYS)
     protected void getKeys(Message message) throws Exception {
-        setBodyAndResult(message, getClient().getKeys(getMandatoryKey(message)));
+        setBodyAndResult(
+            message,
+            getClient().getKeys(
+                getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class)
+            )
+        );
     }
 
     @InvokeOnHeader(ConsulKeyValueActions.GET_SESSIONS)
     protected void getSessions(Message message) throws Exception {
-        setBodyAndResult(message, getClient().getSession(getMandatoryKey(message)));
+        setBodyAndResult(
+            message,
+            getClient().getSession(
+                getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class)
+            )
+        );
     }
 
     @InvokeOnHeader(ConsulKeyValueActions.DELETE_KEY)
     protected void deleteKey(Message message) throws Exception {
-        getClient().deleteKey(getMandatoryKey(message));
+        getClient().deleteKey(
+            getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class)
+        );
+
         message.setHeader(ConsulConstants.CONSUL_RESULT, true);
     }
 
     @InvokeOnHeader(ConsulKeyValueActions.DELETE_KEYS)
     protected void deleteKeys(Message message) throws Exception {
-        getClient().deleteKeys(getMandatoryKey(message));
+        getClient().deleteKeys(
+            getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class)
+        );
+
         message.setHeader(ConsulConstants.CONSUL_RESULT, true);
     }
 
@@ -107,8 +125,8 @@ public class ConsulKeyValueProducer extends AbstractConsulProducer<KeyValueClien
     protected void lock(Message message) throws Exception {
         message.setHeader(ConsulConstants.CONSUL_RESULT,
             getClient().acquireLock(
-                getMandatoryKey(message),
-                getBody(message, null, String.class),
+                getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class),
+                message.getBody(String.class),
                 message.getHeader(ConsulConstants.CONSUL_SESSION, "", String.class)
             )
         );
@@ -118,7 +136,7 @@ public class ConsulKeyValueProducer extends AbstractConsulProducer<KeyValueClien
     protected void unlock(Message message) throws Exception {
         message.setHeader(ConsulConstants.CONSUL_RESULT,
             getClient().releaseLock(
-                getMandatoryKey(message),
+                getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class),
                 getMandatoryHeader(message, ConsulConstants.CONSUL_SESSION, String.class)
             )
         );

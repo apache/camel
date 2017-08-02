@@ -65,8 +65,8 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
 
         mock.reset();
         mock.expectedBodiesReceived("Bye World");
-        // wait 3 seconds while route is stopped to verify that file was not consumed
-        mock.setResultWaitTime(3000);
+        // wait a little bit while route is stopped to verify that file was not consumed
+        mock.setResultWaitTime(250);
 
         template.sendBodyAndHeader("file://target/managed", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
@@ -104,7 +104,7 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/managed").routeId("foo").to("mock:result");
+                from("file://target/managed?initialDelay=0&delay=10").routeId("foo").to("mock:result");
             }
         };
     }

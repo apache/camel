@@ -26,12 +26,12 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
-import org.apache.camel.cloud.LoadBalancer;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceFilter;
+import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.model.IdentifiedType;
-import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -43,7 +43,7 @@ import org.apache.camel.spi.Metadata;
 public class ServiceCallConfigurationDefinition extends IdentifiedType {
     @XmlAttribute
     private String uri;
-    @XmlAttribute @Metadata(defaultValue = ServiceCallConstants.DEFAULT_COMPONENT)
+    @XmlAttribute @Metadata(defaultValue = ServiceCallDefinitionConstants.DEFAULT_COMPONENT)
     private String component;
     @XmlAttribute
     private ExchangePattern pattern;
@@ -62,19 +62,20 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     @XmlAttribute
     private String loadBalancerRef;
     @XmlTransient
-    private LoadBalancer loadBalancer;
+    private ServiceLoadBalancer loadBalancer;
     @XmlAttribute
     private String expressionRef;
     @XmlTransient
     private Expression expression;
     @XmlElements({
         @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "chainedServiceDiscovery", type = ChainedServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "aggregatingServiceDiscovery", type = AggregatingServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class)}
+        @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "zookeeperServiceDiscovery", type = ZooKeeperServiceCallServiceDiscoveryConfiguration.class)}
     )
     private ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration;
 
@@ -88,10 +89,10 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     private ServiceCallServiceFilterConfiguration serviceFilterConfiguration;
 
     @XmlElements({
-        @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallLoadBalancerConfiguration.class),
-        @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallLoadBalancerConfiguration.class) }
+        @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallServiceLoadBalancerConfiguration.class),
+        @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallServiceLoadBalancerConfiguration.class) }
     )
-    private ServiceCallLoadBalancerConfiguration loadBalancerConfiguration;
+    private ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration;
 
     @XmlElements({
         @XmlElement(name = "expression", type = ServiceCallExpressionConfiguration.class)}
@@ -207,20 +208,20 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     /**
-     * Sets a reference to a custom {@link LoadBalancer} to use.
+     * Sets a reference to a custom {@link ServiceLoadBalancer} to use.
      */
     public void setLoadBalancerRef(String loadBalancerRef) {
         this.loadBalancerRef = loadBalancerRef;
     }
 
-    public LoadBalancer getLoadBalancer() {
+    public ServiceLoadBalancer getLoadBalancer() {
         return loadBalancer;
     }
 
     /**
-     * Sets a custom {@link LoadBalancer} to use.
+     * Sets a custom {@link ServiceLoadBalancer} to use.
      */
-    public void setLoadBalancer(LoadBalancer loadBalancer) {
+    public void setLoadBalancer(ServiceLoadBalancer loadBalancer) {
         this.loadBalancer = loadBalancer;
     }
 
@@ -246,13 +247,6 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         this.expression = expression;
     }
 
-    /**
-     * Set a custom {@link Expression} using the {@link org.apache.camel.language.simple.SimpleLanguage}
-     */
-    public void setSimpleExpression(String expression) {
-        setExpression(new SimpleExpression(expression));
-    }
-
     public ServiceCallServiceDiscoveryConfiguration getServiceDiscoveryConfiguration() {
         return serviceDiscoveryConfiguration;
     }
@@ -275,14 +269,14 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         this.serviceFilterConfiguration = serviceFilterConfiguration;
     }
 
-    public ServiceCallLoadBalancerConfiguration getLoadBalancerConfiguration() {
+    public ServiceCallServiceLoadBalancerConfiguration getLoadBalancerConfiguration() {
         return loadBalancerConfiguration;
     }
 
     /**
      * Configures theL oadBalancer using the given configuration.
      */
-    public void setLoadBalancerConfiguration(ServiceCallLoadBalancerConfiguration loadBalancerConfiguration) {
+    public void setLoadBalancerConfiguration(ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration) {
         this.loadBalancerConfiguration = loadBalancerConfiguration;
     }
 
@@ -381,7 +375,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     /**
-     * Sets a reference to a custom {@link LoadBalancer} to use.
+     * Sets a reference to a custom {@link ServiceLoadBalancer} to use.
      */
     public ServiceCallConfigurationDefinition loadBalancer(String loadBalancerRef) {
         setLoadBalancerRef(loadBalancerRef);
@@ -389,9 +383,9 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     /**
-     * Sets a custom {@link LoadBalancer} to use.
+     * Sets a custom {@link ServiceLoadBalancer} to use.
      */
-    public ServiceCallConfigurationDefinition loadBalancer(LoadBalancer loadBalancer) {
+    public ServiceCallConfigurationDefinition loadBalancer(ServiceLoadBalancer loadBalancer) {
         setLoadBalancer(loadBalancer);
         return this;
     }
@@ -413,11 +407,15 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     /**
-     * Set a custom {@link Expression} using the {@link org.apache.camel.language.simple.SimpleLanguage}
+     * Sets a custom {@link Expression} to use through an expression builder clause.
+     *
+     * @return a expression builder clause to set the body
      */
-    public ServiceCallConfigurationDefinition simpleExpression(String expression) {
-        setExpression(new SimpleExpression(expression));
-        return this;
+    public ExpressionClause<ServiceCallConfigurationDefinition> expression() {
+        ExpressionClause<ServiceCallConfigurationDefinition> clause = new ExpressionClause<>(this);
+        setExpression(clause);
+
+        return clause;
     }
 
     /**
@@ -439,7 +437,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     /**
      * Configures the LoadBalancer using the given configuration.
      */
-    public ServiceCallConfigurationDefinition loadBalancerConfiguration(ServiceCallLoadBalancerConfiguration loadBalancerConfiguration) {
+    public ServiceCallConfigurationDefinition loadBalancerConfiguration(ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration) {
         setLoadBalancerConfiguration(loadBalancerConfiguration);
         return this;
     }
@@ -539,14 +537,14 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         return this;
     }
 
-    public ChainedServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
-        ChainedServiceCallServiceDiscoveryConfiguration conf = new ChainedServiceCallServiceDiscoveryConfiguration();
+    public AggregatingServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
+        AggregatingServiceCallServiceDiscoveryConfiguration conf = new AggregatingServiceCallServiceDiscoveryConfiguration();
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
     }
 
-    public ServiceCallConfigurationDefinition multiServiceDiscovery(ChainedServiceCallServiceDiscoveryConfiguration conf) {
+    public ServiceCallConfigurationDefinition multiServiceDiscovery(AggregatingServiceCallServiceDiscoveryConfiguration conf) {
         setServiceDiscoveryConfiguration(conf);
 
         return this;
@@ -560,6 +558,23 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     public ServiceCallConfigurationDefinition staticServiceDiscovery(StaticServiceCallServiceDiscoveryConfiguration conf) {
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
+    public ZooKeeperServiceCallServiceDiscoveryConfiguration zookeeperServiceDiscovery() {
+        ZooKeeperServiceCallServiceDiscoveryConfiguration conf = new ZooKeeperServiceCallServiceDiscoveryConfiguration();
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+
+    public ServiceCallConfigurationDefinition zookeeperServiceDiscovery(String nodes, String basePath) {
+        ZooKeeperServiceCallServiceDiscoveryConfiguration conf = new ZooKeeperServiceCallServiceDiscoveryConfiguration();
+        conf.setNodes(nodes);
+        conf.setBasePath(basePath);
+
         setServiceDiscoveryConfiguration(conf);
 
         return this;
@@ -590,6 +605,13 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         return conf;
     }
 
+    public BlacklistServiceCallServiceFilterConfiguration blacklistFilter() {
+        BlacklistServiceCallServiceFilterConfiguration conf = new BlacklistServiceCallServiceFilterConfiguration();
+        setServiceFilterConfiguration(conf);
+
+        return conf;
+    }
+
     public ServiceCallConfigurationDefinition customFilter(String serviceFilter) {
         CustomServiceCallServiceFilterConfiguration conf = new CustomServiceCallServiceFilterConfiguration();
         conf.setServiceFilterRef(serviceFilter);
@@ -613,21 +635,21 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     // *****************************
 
     public ServiceCallConfigurationDefinition defaultLoadBalancer() {
-        DefaultServiceCallLoadBalancerConfiguration conf = new DefaultServiceCallLoadBalancerConfiguration();
+        DefaultServiceCallServiceLoadBalancerConfiguration conf = new DefaultServiceCallServiceLoadBalancerConfiguration();
         setLoadBalancerConfiguration(conf);
 
         return this;
     }
 
     public ServiceCallConfigurationDefinition ribbonLoadBalancer() {
-        RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration();
+        RibbonServiceCallServiceLoadBalancerConfiguration conf = new RibbonServiceCallServiceLoadBalancerConfiguration();
         setLoadBalancerConfiguration(conf);
 
         return this;
     }
 
     public ServiceCallConfigurationDefinition ribbonLoadBalancer(String clientName) {
-        RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration();
+        RibbonServiceCallServiceLoadBalancerConfiguration conf = new RibbonServiceCallServiceLoadBalancerConfiguration();
         conf.setClientName(clientName);
 
         setLoadBalancerConfiguration(conf);

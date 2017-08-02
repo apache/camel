@@ -19,6 +19,8 @@ package org.apache.camel.component.smpp;
 import java.nio.charset.Charset;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
@@ -38,10 +40,12 @@ import static org.junit.Assert.assertTrue;
 public class SmppMessageTest {
     
     private SmppMessage message;
+    private CamelContext camelContext = new DefaultCamelContext();
 
     @Test
     public void emptyConstructorShouldReturnAnInstanceWithoutACommand() {
         message = new SmppMessage(new SmppConfiguration());
+        message.setCamelContext(camelContext);
         
         assertNull(message.getCommand());
         assertTrue(message.getHeaders().isEmpty());
@@ -51,6 +55,7 @@ public class SmppMessageTest {
     public void alertNotificationConstructorShouldReturnAnInstanceWithACommandAndHeaderAttributes() {
         AlertNotification command = new AlertNotification();
         message = new SmppMessage(command, new SmppConfiguration());
+        message.setCamelContext(camelContext);
         
         assertTrue(message.getCommand() instanceof AlertNotification);
         assertTrue(message.getHeaders().isEmpty());
@@ -61,6 +66,7 @@ public class SmppMessageTest {
     public void testSmppMessageDataSm() {
         DataSm command = new DataSm();
         message = new SmppMessage(command, new SmppConfiguration());
+        message.setCamelContext(camelContext);
         
         assertTrue(message.getCommand() instanceof DataSm);
         assertTrue(message.getHeaders().isEmpty());
@@ -71,6 +77,7 @@ public class SmppMessageTest {
     public void testSmppMessageDeliverSm() {
         DeliverSm command = new DeliverSm();
         message = new SmppMessage(command, new SmppConfiguration());
+        message.setCamelContext(camelContext);
         
         assertTrue(message.getCommand() instanceof DeliverSm);
         assertTrue(message.getHeaders().isEmpty());
@@ -83,6 +90,7 @@ public class SmppMessageTest {
         command.setSmscDeliveryReceipt();
         command.setShortMessage("id:2 sub:001 dlvrd:001 submit date:0908312310 done date:0908312311 stat:DELIVRD err:xxx Text:Hello SMPP world!".getBytes());
         message = new SmppMessage(command, new SmppConfiguration());
+        message.setCamelContext(camelContext);
         
         assertTrue(message.getCommand() instanceof DeliverSm);
         assertTrue(message.getHeaders().isEmpty());
@@ -92,8 +100,9 @@ public class SmppMessageTest {
     @Test
     public void newInstanceShouldReturnAnInstanceWithoutACommand() {
         message = new SmppMessage(new SmppConfiguration());
+        message.setCamelContext(camelContext);
         SmppMessage msg = message.newInstance();
-        
+
         assertNotNull(msg);
         assertNull(msg.getCommand());
         assertTrue(msg.getHeaders().isEmpty());
@@ -137,7 +146,9 @@ public class SmppMessageTest {
     @Test
     public void createBodyShouldReturnNullIfTheCommandIsNull() {
         message = new SmppMessage(new SmppConfiguration());
-        
+        message.setCamelContext(camelContext);
+
+
         assertNull(message.createBody());
     }
     
@@ -145,7 +156,8 @@ public class SmppMessageTest {
     public void createBodyShouldReturnNullIfTheCommandIsNotAMessageRequest() {
         AlertNotification command = new AlertNotification();
         message = new SmppMessage(command, new SmppConfiguration());
-        
+        message.setCamelContext(camelContext);
+
         assertNull(message.createBody());
     }
     
@@ -154,14 +166,16 @@ public class SmppMessageTest {
         DeliverSm command = new DeliverSm();
         command.setShortMessage("Hello SMPP world!".getBytes());
         message = new SmppMessage(command, new SmppConfiguration());
-        
+        message.setCamelContext(camelContext);
+
         assertEquals("Hello SMPP world!", message.createBody());
     }
     
     @Test
     public void toStringShouldReturnTheBodyIfTheCommandIsNull() {
         message = new SmppMessage(new SmppConfiguration());
-        
+        message.setCamelContext(camelContext);
+
         assertEquals("SmppMessage: null", message.toString());
     }
     
@@ -170,7 +184,8 @@ public class SmppMessageTest {
         DeliverSm command = new DeliverSm();
         command.setShortMessage("Hello SMPP world!".getBytes());
         message = new SmppMessage(command, new SmppConfiguration());
-        
+        message.setCamelContext(camelContext);
+
         assertEquals("SmppMessage: PDUHeader(0, 00000000, 00000000, 0)", message.toString());
     }
 }

@@ -124,7 +124,8 @@ public class HystrixProcessorCommand extends HystrixCommand {
         }
 
         // remember any hystrix execution exception which for example can be triggered by a hystrix timeout
-        Throwable cause = getExecutionException();
+        Throwable hystrixExecutionException = getExecutionException();
+        Exception camelExchangeException = copy.getException();
 
         synchronized (lock) {
 
@@ -138,24 +139,17 @@ public class HystrixProcessorCommand extends HystrixCommand {
             // and copy the result
             ExchangeHelper.copyResults(exchange, copy);
 
-            // is fallback enabled
-            Boolean fallbackEnabled = getProperties().fallbackEnabled().get();
-
             // execution exception must take precedence over exchange exception
             // because hystrix may have caused this command to fail due timeout or something else
-            if (cause != null) {
-                exchange.setException(new CamelExchangeException("Hystrix execution exception occurred while processing Exchange", exchange, cause));
+            if (hystrixExecutionException != null) {
+                exchange.setException(new CamelExchangeException("Hystrix execution exception occurred while processing Exchange", exchange, hystrixExecutionException));
             }
 
-            // if we have a fallback that can process the exchange in case of an exception
-            // then we need to trigger this by throwing an exception so Hystrix will execute the fallback
-            // if we don't have a fallback and an exception was thrown then its stored on the exchange
-            // and Camel will detect the exception anyway
-            if (fallback != null || fallbackCommand != null) {
-                if (fallbackEnabled == null || fallbackEnabled && exchange.getException() != null) {
-                    // throwing exception will cause hystrix to execute fallback
-                    throw exchange.getException();
-                }
+            // in case of an exception in the exchange
+            // we need to trigger this by throwing the exception so hystrix will execute the fallback
+            // or open the circuit
+            if (hystrixExecutionException == null && camelExchangeException != null) {
+                throw camelExchangeException;
             }
 
             LOG.debug("Running processor: {} with exchange: {} done", processor, exchange);

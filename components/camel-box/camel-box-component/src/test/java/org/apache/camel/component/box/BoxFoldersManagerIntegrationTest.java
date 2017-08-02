@@ -53,8 +53,6 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
     private static final String CAMEL_TEST_ROOT_FOLDER_ID = "0";
     private static final String CAMEL_TEST_DESTINATION_FOLDER_ID = "0";
 
-    private BoxFolder testFolder;
-
     @Test
     public void testCreateFolder() throws Exception {
 
@@ -294,16 +292,6 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
     private void createTestFolder() {
         BoxFolder rootFolder = BoxFolder.getRootFolder(getConnection());
         testFolder = rootFolder.createFolder(CAMEL_TEST_FOLDER).getResource();
-    }
-
-    private void deleteTestFolder() {
-        if (testFolder != null) {
-            try {
-                testFolder.delete(true);
-            } catch (Throwable t) {
-            }
-            testFolder = null;
-        }
     }
 
     private int sizeOfIterable(Iterable<?> it) {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,26 +8,29 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
+    <version>2.20.0-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
   <artifactId>examples</artifactId>
   <name>Camel :: Example</name>
+  <groupId>org.apache.camel.example</groupId>
   <description>Camel Examples</description>
   <packaging>pom</packaging>
 
@@ -34,7 +38,6 @@
     <module>camel-example-activemq-tomcat</module>
     <module>camel-example-aggregate</module>
     <module>camel-example-bam</module>
-    <module>camel-example-box-osgi</module>
     <module>camel-example-cafe</module>
     <module>camel-example-cassandra-kubernetes</module>
     <module>camel-example-cdi</module>
@@ -55,6 +58,7 @@
     <module>camel-example-console</module>
     <module>camel-example-etl</module>
     <module>camel-example-ftp</module>
+    <module>camel-example-google-pubsub</module>
     <module>camel-example-guice-jms</module>
     <module>camel-example-groovy</module>
     <module>camel-example-hazelcast-kubernetes</module>
@@ -65,6 +69,7 @@
     <module>camel-example-jmx</module>
     <module>camel-example-jms-file</module>
     <module>camel-example-kafka</module>
+    <module>camel-example-kotlin</module>
     <module>camel-example-loadbalancing</module>
     <module>camel-example-loan-broker-cxf</module>
     <module>camel-example-loan-broker-jms</module>
@@ -72,12 +77,13 @@
     <module>camel-example-mybatis</module>
     <module>camel-example-netty-http</module>
     <module>camel-example-opentracing</module>
-    <module>camel-example-osgi-rmi</module>
     <module>camel-example-pojo-messaging</module>
     <module>camel-example-reactive-streams</module>
     <module>camel-example-reload</module>
     <module>camel-example-reportincident</module>
     <module>camel-example-reportincident-wssecurity</module>
+    <module>camel-example-rest-producer</module>
+    <module>camel-example-rest-swagger</module>
     <module>camel-example-restlet-jdbc</module>
     <module>camel-example-route-throttling</module>
     <module>camel-example-scala</module>
@@ -89,13 +95,17 @@
     <module>camel-example-splunk</module>
     <module>camel-example-spring</module>
     <module>camel-example-spring-boot</module>
+    <module>camel-example-spring-boot-activemq</module>
+    <module>camel-example-spring-boot-geocoder</module>
+    <module>camel-example-spring-boot-infinispan</module>
     <module>camel-example-spring-boot-live-reload</module>
     <module>camel-example-spring-boot-metrics</module>
+    <module>camel-example-spring-boot-pojo</module>
     <module>camel-example-spring-boot-rest-jpa</module>
     <module>camel-example-spring-boot-rest-swagger</module>
+    <module>camel-example-spring-boot-routecontroller</module>
     <module>camel-example-spring-boot-servicecall</module>
     <module>camel-example-spring-cloud-servicecall</module>
-    <module>camel-example-spring-dm</module>
     <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>
     <module>camel-example-spring-ws</module>
@@ -138,6 +148,14 @@
       </resource>
     </resources>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>

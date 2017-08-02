@@ -33,8 +33,8 @@ import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferencesByType;
-import static org.apache.camel.util.ObjectHelper.notEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
+import static org.apache.camel.util.StringHelper.notEmpty;
 
 /**
  * The {@link Registry} used by Camel to perform lookup into the CDI {@link BeanManager}.

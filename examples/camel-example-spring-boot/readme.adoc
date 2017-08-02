@@ -21,6 +21,21 @@ You can run this example using
 
     mvn spring-boot:run
 
+## To get info about the routes
+
+To show a summary of all the routes
+
+----
+curl -XGET -s http://localhost:8080/camel/routes
+----
+
+To show detailed information for a specific route
+
+----
+curl -XGET -s http://localhost:8080/camel/routes/{id}/info
+----
+
+
 ## More information
 
 You can find more information about Apache Camel at the website: http://camel.apache.org/

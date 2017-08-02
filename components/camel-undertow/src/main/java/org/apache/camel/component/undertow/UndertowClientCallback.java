@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import io.undertow.client.ClientCallback;
 import io.undertow.client.ClientConnection;
@@ -40,6 +41,8 @@ import io.undertow.util.HttpString;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +57,7 @@ import org.xnio.channels.StreamSinkChannel;
  * connection is ready or when the client failed to connect. It will also handle
  * writing the request and reading the response in
  * {@link #writeRequest(ClientExchange, ByteBuffer)} and
- * {@link #setupResponseListner(ClientExchange)}. The main entry point is
+ * {@link #setupResponseListener(ClientExchange)}. The main entry point is
  * {@link #completed(ClientConnection)} or {@link #failed(IOException)} in case
  * of errors, every error condition that should terminate Camel {@link Exchange}
  * should go to {@link #hasFailedWith(Exception)} and successful execution of
@@ -175,7 +178,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
         callback.done(false);
     }
 
-    void hasFailedWith(final Exception e) {
+    void hasFailedWith(final Throwable e) {
         LOG.trace("Exchange has failed with", e);
         if (Boolean.TRUE.equals(throwExceptionOnFailure)) {
             exchange.setException(e);
@@ -191,14 +194,14 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
     void performClientExchange(final ClientExchange clientExchange) {
         // add response listener to the exchange, we could receive the response
         // at any time (async)
-        setupResponseListner(clientExchange);
+        setupResponseListener(clientExchange);
 
         // write the request
         writeRequest(clientExchange, body);
     }
 
-    void setupResponseListner(final ClientExchange clientExchange) {
-        clientExchange.setResponseListener(on(response -> {
+    void setupResponseListener(final ClientExchange clientExchange) {
+        clientExchange.setResponseListener(on((ClientExchange response) -> {
             LOG.trace("completed: {}", clientExchange);
 
             try {
@@ -207,9 +210,40 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
                 final UndertowHttpBinding binding = endpoint.getUndertowHttpBinding();
                 final Message result = binding.toCamelMessage(clientExchange, exchange);
 
-                // we end Camel exchange here
-                finish(result);
-            } catch (final Exception e) {
+                // if there was a http error code then check if we should throw an exception
+                final int code = clientExchange.getResponse().getResponseCode();
+                LOG.debug("Http responseCode: {}", code);
+
+                final boolean ok = HttpHelper.isStatusCodeOk(code, "200-299");
+                if (!ok && throwExceptionOnFailure) {
+                    // operation failed so populate exception to throw
+                    final String uri = endpoint.getHttpURI().toString();
+                    final String statusText = clientExchange.getResponse().getStatus();
+
+                    // Convert Message headers (Map<String, Object>) to Map<String, String> as expected by HttpOperationsFailedException
+                    // using Message versus clientExchange as its header values have extra formatting
+                    final Map<String, String> headers = result.getHeaders().entrySet()
+                            .stream()
+                            .collect(Collectors.toMap(Map.Entry::getKey, (entry) -> entry.getValue().toString()));
+
+                    // Since result (Message) isn't associated with an Exchange yet, you can not use result.getBody(String.class)
+                    final String bodyText = ExchangeHelper.convertToType(exchange, String.class, result.getBody());
+
+                    final Exception cause = new HttpOperationFailedException(uri, code, statusText, null, headers, bodyText);
+
+                    if (ExchangeHelper.isOutCapable(exchange)) {
+                        exchange.setOut(result);
+                    } else {
+                        exchange.setIn(result);
+                    }
+
+                    // make sure to fail with HttpOperationFailedException
+                    hasFailedWith(cause);
+                } else {
+                    // we end Camel exchange here
+                    finish(result);
+                }
+            } catch (Throwable e) {
                 hasFailedWith(e);
             }
         }));

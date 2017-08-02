@@ -324,6 +324,7 @@ public final class ArquillianPackager {
         ignore.add("net.sourceforge.htmlunit:htmlunit-core-js"); // v 2.21 does not exist
         ignore.add("org.springframework.data");
         ignore.add("org.springframework.security:spring-security-jwt");
+        ignore.add("org.springframework.security:spring-security-rsa");
         ignore.add("org.springframework.social");
         ignore.add("org.webjars"); // No problem
         ignore.add("stax:stax-api");

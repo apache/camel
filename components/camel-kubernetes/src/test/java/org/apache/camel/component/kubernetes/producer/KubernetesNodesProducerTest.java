@@ -21,38 +21,50 @@ import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.Node;
+import io.fabric8.kubernetes.api.model.NodeListBuilder;
+import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.impl.JndiRegistry;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class KubernetesNodesProducerTest extends KubernetesTestSupport {
 
+    @Rule
+    public KubernetesServer server = new KubernetesServer();
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind("kubernetesClient", server.getClient());
+        return registry;
+    }
+    
     @Test
     public void listTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
+        server.expect().withPath("/api/v1/nodes").andReturn(200, new NodeListBuilder().addNewItem().and().build()).once();
         List<Node> result = template.requestBody("direct:list", "",
                 List.class);
 
-        assertTrue(result.size() == 1);
+        assertEquals(1, result.size());
     }
 
     @Test
     public void listByLabelsTest() throws Exception {
-        if (ObjectHelper.isEmpty(authToken)) {
-            return;
-        }
+        server.expect().withPath("/api/v1/nodes?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
+        .andReturn(200, new NodeListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         Exchange ex = template.request("direct:listByLabels", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
                 Map<String, String> labels = new HashMap<String, String>();
-                labels.put("kubernetes.io/hostname", "172.28.128.4");
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
                 exchange.getIn()
                         .setHeader(
                                 KubernetesConstants.KUBERNETES_NODES_LABELS,
@@ -62,9 +74,7 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
 
         List<Node> result = ex.getOut().getBody(List.class);
         
-        Node node = result.get(0);
-        
-        assertTrue(node.getStatus().getCapacity().get("pods").getAmount().equals("110"));
+        assertEquals(3, result.size());
     }
 
     @Override
@@ -73,11 +83,9 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=nodes&operation=listNodes",
-                                host, authToken);
+                        .toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodes");
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=nodes&operation=listNodesByLabels",
-                                host, authToken);
+                        .toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodesByLabels");
             }
         };
     }

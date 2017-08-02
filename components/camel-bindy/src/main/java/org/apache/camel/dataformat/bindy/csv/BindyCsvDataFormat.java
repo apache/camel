@@ -238,54 +238,63 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         // if the separator char is also inside a quoted token, therefore we need
         // to fix this afterwards
         StringBuilder current = new StringBuilder();
-
+        boolean inProgress = false;
         List<String> answer = new ArrayList<String>();
+
+        //parsing assumes matching close and end quotes
         for (String s : result) {
-            boolean startQuote = false;
-            boolean endQuote = false;
+            boolean canStart = false;
+            boolean canClose = false;
+            boolean cutStart = false;
+            boolean cutEnd = false;
             if (s.startsWith(quote)) {
-                s = s.substring(1);
-                startQuote = true;
-            }
-            if (s.endsWith(quote)) {
-                s = s.substring(0, s.length() - 1);
-                endQuote = true;
-            }
-
-            // are we in progress of rebuilding a broken token
-            boolean currentInProgress = current.length() > 0;
-
-            // situation when field ending with a separator symbol.
-            if (currentInProgress && startQuote && s.isEmpty()) {
-                // Add separator, append current and reset it
-                current.append(separator);
-                answer.add(current.toString());
-                current.setLength(0);
-                continue;
-            }
-
-            // if we hit a start token then rebuild a broken token
-            if (currentInProgress || startQuote) {
-                // append to current if we are in the middle of a start quote
-                if (currentInProgress) {
-                    // must append separator back as this is a quoted token that was broken
-                    // but a separator inside the quotes
-                    current.append(separator);
+                //token is just a quote
+                if (s.length() == 1) {
+                    s = "";
+                    //if token is a quote then it can only close processing if it has begun
+                    if (inProgress) {
+                        canClose = true;
+                    } else {
+                        canStart = true;
+                    }
+                } else {
+                    //quote+"not empty"
+                    cutStart = true;
+                    canStart = true;
                 }
-                current.append(s);
+            }
+
+            //"not empty"+quote
+            if (s.endsWith(quote)) {
+                cutEnd = true;
+                canClose = true;
+            }
+
+            //optimize to only substring once
+            if (cutEnd || cutStart) {
+                s = s.substring(cutStart ? 1 : 0, cutEnd ? s.length() - 1 : s.length());
             }
 
             // are we in progress of rebuilding a broken token
-            currentInProgress = current.length() > 0;
+            if (inProgress) {
+                current.append(separator);
+                current.append(s);
 
-            if (endQuote) {
-                // we hit end quote so append current and reset it
-                answer.add(current.toString());
-                current.setLength(0);
-            } else if (!currentInProgress) {
-                // not rebuilding so add directly as is
-                answer.add(s);
+                if (canClose) {
+                    answer.add(current.toString());
+                    current.setLength(0);
+                    inProgress = false;
+                }
+            } else {
+                if (canStart && !canClose) {
+                    current.append(s);
+                    inProgress = true;
+                } else {
+                    //case where no quotes
+                    answer.add(s);
+                }
             }
+
         }
 
         // any left over from current?

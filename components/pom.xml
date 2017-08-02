@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -22,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
+    <version>2.20.0-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -43,7 +45,6 @@
     <module>camel-core-xml</module>
     <module>camel-blueprint</module>
     <module>camel-spring</module>
-    <module>camel-spring-dm</module>
     <module>camel-bam</module>
     <module>camel-groovy</module>
     <module>camel-groovy-dsl</module>
@@ -71,6 +72,7 @@
     <module>camel-atmos</module>
     <module>camel-atmosphere-websocket</module>
     <module>camel-atom</module>
+    <module>camel-atomix</module>
     <module>camel-avro</module>
     <module>camel-aws</module>
     <module>camel-azure</module>
@@ -85,6 +87,7 @@
     <module>camel-box</module>
     <module>camel-braintree</module>
     <module>camel-cache</module>
+    <module>camel-caffeine</module>
     <module>camel-cassandraql</module>
     <module>camel-castor</module>
     <module>camel-cdi</module>
@@ -99,6 +102,7 @@
     <module>camel-couchbase</module>
     <module>camel-couchdb</module>
     <module>camel-crypto</module>
+    <module>camel-crypto-cms</module>
     <module>camel-csv</module>
     <module>camel-digitalocean</module>
     <module>camel-disruptor</module>
@@ -117,6 +121,7 @@
     <module>camel-eventadmin</module>
     <module>camel-exec</module>
     <module>camel-facebook</module>
+    <module>camel-fastjson</module>
     <module>camel-flatpack</module>
     <module>camel-flink</module>
     <module>camel-fop</module>
@@ -132,6 +137,7 @@
     <module>camel-google-pubsub</module>
     <module>camel-gora</module>
     <module>camel-grape</module>
+    <module>camel-grpc</module>
     <module>camel-gson</module>
     <module>camel-guava-eventbus</module>
     <module>camel-guice</module>
@@ -140,6 +146,7 @@
     <module>camel-hbase</module>
     <module>camel-hdfs</module>
     <module>camel-hdfs2</module>
+    <module>camel-headersmap</module>
     <module>camel-hessian</module>
     <module>camel-hipchat</module>
     <module>camel-hl7</module>
@@ -188,6 +195,7 @@
     <module>camel-lzf</module>
     <module>camel-mail</module>
     <module>camel-metrics</module>
+    <module>camel-milo</module>
     <module>camel-mina</module>
     <module>camel-mina2</module>
     <module>camel-mllp</module>
@@ -218,11 +226,13 @@
     <module>camel-pgevent</module>
     <module>camel-printer</module>
     <module>camel-protobuf</module>
+    <module>camel-pubnub</module>
     <module>camel-quartz</module>
     <module>camel-quartz2</module>
     <module>camel-quickfix</module>
     <module>camel-rabbitmq</module>
     <module>camel-reactive-streams</module>
+    <module>camel-reactor</module>
     <module>camel-rest-swagger</module>
     <module>camel-restlet</module>
     <module>camel-rmi</module>
@@ -275,6 +285,8 @@
     <module>camel-tarfile</module>
     <module>camel-telegram</module>
     <module>camel-tika</module>
+    <module>camel-thrift</module>
+    <module>camel-twilio</module>
     <module>camel-twitter</module>
     <module>camel-undertow</module>
     <module>camel-univocity-parsers</module>

@@ -23,8 +23,6 @@ import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceFilter;
 
 public class HealthyServiceFilter implements ServiceFilter {
-    public static final ServiceFilter INSTANCE = new HealthyServiceFilter();
-
     @Override
     public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
         return services.stream().filter(s -> s.getHealth().isHealthy()).collect(Collectors.toList());

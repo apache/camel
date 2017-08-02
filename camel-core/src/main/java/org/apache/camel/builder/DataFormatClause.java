@@ -52,6 +52,7 @@ import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
+import org.apache.camel.model.dataformat.ThriftDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
@@ -714,9 +715,20 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         dataFormat.setDefaultInstance(defaultInstance);
         return dataFormat(dataFormat);
     }
+    
+    public T protobuf(Object defaultInstance, String contentTypeFormat) {
+        ProtobufDataFormat dataFormat = new ProtobufDataFormat();
+        dataFormat.setDefaultInstance(defaultInstance);
+        dataFormat.setContentTypeFormat(contentTypeFormat);
+        return dataFormat(dataFormat);
+    }
 
     public T protobuf(String instanceClassName) {
         return dataFormat(new ProtobufDataFormat(instanceClassName));
+    }
+    
+    public T protobuf(String instanceClassName, String contentTypeFormat) {
+        return dataFormat(new ProtobufDataFormat(instanceClassName, contentTypeFormat));
     }
 
     /**
@@ -818,6 +830,34 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T syslog() {
         return dataFormat(new SyslogDataFormat());
+    }
+    
+    /**
+     * Uses the Thrift data format
+     */
+    public T thrift() {
+        return dataFormat(new ThriftDataFormat());
+    }
+
+    public T thrift(Object defaultInstance) {
+        ThriftDataFormat dataFormat = new ThriftDataFormat();
+        dataFormat.setDefaultInstance(defaultInstance);
+        return dataFormat(dataFormat);
+    }
+    
+    public T thrift(Object defaultInstance, String contentTypeFormat) {
+        ThriftDataFormat dataFormat = new ThriftDataFormat();
+        dataFormat.setDefaultInstance(defaultInstance);
+        dataFormat.setContentTypeFormat(contentTypeFormat);
+        return dataFormat(dataFormat);
+    }
+
+    public T thrift(String instanceClassName) {
+        return dataFormat(new ThriftDataFormat(instanceClassName));
+    }
+    
+    public T thrift(String instanceClassName, String contentTypeFormat) {
+        return dataFormat(new ThriftDataFormat(instanceClassName, contentTypeFormat));
     }
 
     /**

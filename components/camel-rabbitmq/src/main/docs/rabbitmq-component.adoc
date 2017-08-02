@@ -103,14 +103,14 @@ with the following path and query parameters:
 | **addresses** (advanced) | If this option is set camel-rabbitmq will try to create connection based on the setting of option addresses. The addresses value is a string which looks like server1:12345 server2:12345 |  | Address[]
 | **args** (advanced) | Specify arguments for configuring the different RabbitMQ concepts a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
 | **automaticRecoveryEnabled** (advanced) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
-| **bindingArgs** (advanced) | Key/value args for configuring the queue binding parameters when declare=true |  | Map
+| **bindingArgs** (advanced) | *Deprecated* Key/value args for configuring the queue binding parameters when declare=true |  | Map
 | **clientProperties** (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
 | **connectionFactory** (advanced) | To use a custom RabbitMQ connection factory. When this option is set all connection options (connectionTimeout requestedChannelMax...) set on URI are not used |  | ConnectionFactory
-| **exchangeArgs** (advanced) | Key/value args for configuring the exchange parameters when declare=true |  | Map
-| **exchangeArgsConfigurer** (advanced) | Set the configurer for setting the exchange args in Channel.exchangeDeclare |  | ArgsConfigurer
+| **exchangeArgs** (advanced) | *Deprecated* Key/value args for configuring the exchange parameters when declare=true |  | Map
+| **exchangeArgsConfigurer** (advanced) | *Deprecated* Set the configurer for setting the exchange args in Channel.exchangeDeclare |  | ArgsConfigurer
 | **networkRecoveryInterval** (advanced) | Network recovery interval in milliseconds (interval used when recovering from network failure) |  | Integer
-| **queueArgs** (advanced) | Key/value args for configuring the queue parameters when declare=true |  | Map
-| **queueArgsConfigurer** (advanced) | Set the configurer for setting the queue args in Channel.queueDeclare |  | ArgsConfigurer
+| **queueArgs** (advanced) | *Deprecated* Key/value args for configuring the queue parameters when declare=true |  | Map
+| **queueArgsConfigurer** (advanced) | *Deprecated* Set the configurer for setting the queue args in Channel.queueDeclare |  | ArgsConfigurer
 | **requestedChannelMax** (advanced) | Connection requested channel max (max number of channels offered) | 0 | int
 | **requestedFrameMax** (advanced) | Connection requested frame max (max size of frame offered) | 0 | int
 | **requestedHeartbeat** (advanced) | Connection requested heartbeat (heart-beat in seconds offered) | 60 | int

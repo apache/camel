@@ -18,12 +18,11 @@ package org.apache.camel.component.reactive.streams.support;
 
 import java.util.function.Function;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsCamelSubscriber;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
-import org.apache.camel.component.reactive.streams.api.DispatchCallback;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -32,13 +31,10 @@ import org.reactivestreams.Subscriber;
  */
 public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
 
-    private String name;
-
-    public ReactiveStreamsTestService() {
-    }
+    private final String id;
 
     public ReactiveStreamsTestService(String name) {
-        this.name = name;
+        this.id = name;
     }
 
     @Override
@@ -47,18 +43,8 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
     }
 
     @Override
-    public void setCamelContext(CamelContext camelContext) {
-
-    }
-
-    @Override
     public void stop() throws Exception {
 
-    }
-
-    @Override
-    public CamelContext getCamelContext() {
-        return null;
     }
 
     @Override
@@ -82,13 +68,13 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
     }
 
     @Override
-    public void sendCamelExchange(String name, Exchange exchange, DispatchCallback<Exchange> callback) {
+    public void sendCamelExchange(String name, Exchange exchange) {
 
     }
 
     @Override
-    public void attachCamelConsumer(String name, ReactiveStreamsConsumer consumer) {
-
+    public ReactiveStreamsCamelSubscriber attachCamelConsumer(String name, ReactiveStreamsConsumer consumer) {
+        return null;
     }
 
     @Override
@@ -176,11 +162,8 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
         return null;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public String getId() {
+        return id;
     }
 }

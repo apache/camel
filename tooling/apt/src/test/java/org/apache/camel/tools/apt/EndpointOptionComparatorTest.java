@@ -39,10 +39,14 @@ public class EndpointOptionComparatorTest {
         String group3 = EndpointHelper.labelAsGroupName(label3, false, false);
         String group4 = EndpointHelper.labelAsGroupName(label4, false, false);
 
-        EndpointOption op1 = new EndpointOption("first", "First", "string", "true", "", "", "blah", null, null, false, false, false, group1, label1, false, null);
-        EndpointOption op2 = new EndpointOption("synchronous", "Synchronous", "string", "true", "", "", "blah", null, null, false, false, false, group2, label2, false, null);
-        EndpointOption op3 = new EndpointOption("second", "Second", "string", "true", "", "", "blah", null, null, false, false, false, group3, label3, false, null);
-        EndpointOption op4 = new EndpointOption("country", "Country", "string", "true", "", "", "blah", null, null, false, false, false, group4, label4, false, null);
+        EndpointOption op1 = new EndpointOption("first", "First", "string", "true", "", "", "blah", null, null, false,
+            false, null, false, group1, label1, false, null);
+        EndpointOption op2 = new EndpointOption("synchronous", "Synchronous", "string", "true", "", "", "blah", null, null, false,
+            false, null, false, group2, label2, false, null);
+        EndpointOption op3 = new EndpointOption("second", "Second", "string", "true", "", "", "blah", null, null, false,
+            false, null, false, group3, label3, false, null);
+        EndpointOption op4 = new EndpointOption("country", "Country", "string", "true", "", "", "blah", null, null, false,
+            false, null, false, group4, label4, false, null);
 
         List<EndpointOption> list = new ArrayList<EndpointOption>();
         list.add(op1);

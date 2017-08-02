@@ -176,8 +176,11 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             // add cookies to the cookie store
             if (endpoint.getCookieHandler() != null) {
                 try {
-                    Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>)cxfExchange.getInMessage().get(Message.PROTOCOL_HEADERS));
-                    endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);
+                    Message inMessage = cxfExchange.getInMessage();
+                    if (inMessage != null) {
+                        Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>)inMessage.get(Message.PROTOCOL_HEADERS));
+                        endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);
+                    }
                 } catch (IOException e) {
                     LOG.error("Cannot store cookies", e);
                 }

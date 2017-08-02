@@ -237,6 +237,12 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals(expected, URISupport.sanitizeUri(uri));
     }
 
+    public void testSanitizeUriRawUnsafePassword() {
+        String uri = "sftp://localhost/target?password=RAW(beforeAmp&afterAmp)&username=jrandom";
+        String expected = "sftp://localhost/target?password=xxxxxx&username=jrandom";
+        assertEquals(expected, URISupport.sanitizeUri(uri));
+    }
+
     public void testNormalizeEndpointUriWithUserInfoSpecialSign() throws Exception {
         String out1 = URISupport.normalizeUri("ftp://us%40r:t%st@localhost:21000/tmp3/camel?foo=us@r");
         assertEquals("ftp://us%40r:t%25st@localhost:21000/tmp3/camel?foo=us%40r", out1);

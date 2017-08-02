@@ -26,6 +26,7 @@ import java.util.Map;
 import groovy.grape.Grape;
 import groovy.lang.GroovyClassLoader;
 import org.apache.camel.catalog.VersionManager;
+import org.apache.ivy.util.url.URLHandlerRegistry;
 
 /**
  * A {@link VersionManager} that can load the resources using Maven to download needed artifacts from
@@ -36,9 +37,11 @@ import org.apache.camel.catalog.VersionManager;
 public class MavenVersionManager implements VersionManager {
 
     private final ClassLoader classLoader = new GroovyClassLoader();
+    private final TimeoutHttpClientHandler httpClient = new TimeoutHttpClientHandler();
     private String version;
     private String runtimeProviderVersion;
     private String cacheDirectory;
+    private boolean log;
 
     /**
      * Configures the directory for the download cache.
@@ -49,6 +52,23 @@ public class MavenVersionManager implements VersionManager {
      */
     public void setCacheDirectory(String directory) {
         this.cacheDirectory = directory;
+    }
+
+    /**
+     * Sets whether to log errors and warnings to System.out.
+     * By default nothing is logged.
+     */
+    public void setLog(boolean log) {
+        this.log = log;
+    }
+
+    /**
+     * Sets the timeout in millis (http.socket.timeout) when downloading via http/https protocols.
+     * <p/>
+     * The default value is 10000
+     */
+    public void setHttpClientTimeout(int timeout) {
+        httpClient.setTimeout(timeout);
     }
 
     /**
@@ -72,6 +92,8 @@ public class MavenVersionManager implements VersionManager {
     @Override
     public boolean loadVersion(String version) {
         try {
+            URLHandlerRegistry.setDefault(httpClient);
+
             if (cacheDirectory != null) {
                 System.setProperty("grape.root", cacheDirectory);
             }
@@ -89,6 +111,9 @@ public class MavenVersionManager implements VersionManager {
             this.version = version;
             return true;
         } catch (Exception e) {
+            if (log) {
+                System.out.print("WARN: Cannot load version " + version + " due " + e.getMessage());
+            }
             return false;
         }
     }
@@ -101,6 +126,8 @@ public class MavenVersionManager implements VersionManager {
     @Override
     public boolean loadRuntimeProviderVersion(String groupId, String artifactId, String version) {
         try {
+            URLHandlerRegistry.setDefault(httpClient);
+
             Grape.setEnableAutoDownload(true);
 
             Map<String, Object> param = new HashMap<>();
@@ -114,6 +141,9 @@ public class MavenVersionManager implements VersionManager {
             this.runtimeProviderVersion = version;
             return true;
         } catch (Exception e) {
+            if (log) {
+                System.out.print("WARN: Cannot load runtime provider version " + version + " due " + e.getMessage());
+            }
             return false;
         }
     }
@@ -151,7 +181,9 @@ public class MavenVersionManager implements VersionManager {
                 return found.openStream();
             }
         } catch (IOException e) {
-            // ignore
+            if (log) {
+                System.out.print("WARN: Cannot open resource " + name + " and version " + version + " due " + e.getMessage());
+            }
         }
 
         return null;

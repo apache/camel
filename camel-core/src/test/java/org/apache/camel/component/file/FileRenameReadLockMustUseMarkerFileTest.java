@@ -31,9 +31,8 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/rename");
-        template.sendBodyAndHeader("file:target/rename", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        super.setUp();
     }
 
     public void testCamelLockFile() throws Exception {
@@ -41,6 +40,8 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Bye World");
         mock.message(0).header(Exchange.FILE_NAME).isEqualTo("bye.txt");
+
+        template.sendBodyAndHeader("file:target/rename", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // start the route
         context.startRoute("foo");
@@ -59,7 +60,7 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/rename?readLock=rename").routeId("foo").noAutoStartup()
+                from("file:target/rename?readLock=rename&initialDelay=0&delay=10").routeId("foo").noAutoStartup()
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {

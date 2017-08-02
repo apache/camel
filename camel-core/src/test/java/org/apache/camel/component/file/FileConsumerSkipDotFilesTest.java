@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumerSkipDotFilesTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/dotfiles/";
+    private String fileUrl = "file://target/dotfiles/?initialDelay=0&delay=10";
 
     @Override
     protected void setUp() throws Exception {
@@ -37,17 +37,16 @@ public class FileConsumerSkipDotFilesTest extends ContextTestSupport {
     public void testSkipDotFiles() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
+        mock.setResultWaitTime(100);
 
         template.sendBodyAndHeader("file:target/dotfiles/", "This is a dot file",
             Exchange.FILE_NAME, ".skipme");
 
-        mock.setResultWaitTime(2000);
         mock.assertIsSatisfied();
     }
 
     public void testSkipDotFilesWithARegularFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader("file:target/dotfiles/", "This is a dot file",

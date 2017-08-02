@@ -11,15 +11,11 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 92 (10 deprecated)
+Number of Examples: 95 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |=======================================================================
 | Example | Category | Description
-
-| link:camel-example-spring-boot-servicecall/README.adoc[Spring Boot Servicecall] (camel-example-spring-boot-servicecall) |  | An example showing how to work with Camel ServiceCall EIP and Spring Boot
-
-| link:camel-example-spring-cloud-servicecall/README.adoc[Spring Cloud Servicecall] (camel-example-spring-cloud-servicecall) |  | An example showing how to work with Camel ServiceCall EIP and Spring Cloud
 
 | link:camel-example-cdi/README.md[CDI] (camel-example-cdi) | Beginner | An example showing how to work with Camel and CDI for dependency injection
 
@@ -50,6 +46,10 @@ Number of Examples: 92 (10 deprecated)
 
 | link:camel-example-spring-boot-live-reload/readme.adoc[Spring Boot Live Reload] (camel-example-spring-boot-live-reload) | Beginner | An example showing how to use the live reload feature of Spring Boot with Camel
 
+| link:camel-example-spring-boot-pojo/README.adoc[Spring Boot Pojo] (camel-example-spring-boot-pojo) | Beginner | An example showing how to work with Camel POJO routing with Spring Boot
+
+| link:camel-example-spring-boot-routecontroller/readme.adoc[Spring Boot Routecontroller] (camel-example-spring-boot-routecontroller) | Beginner | An example showing how to work with Camel Route Controller and Spring Boot
+
 | link:camel-example-spring-javaconfig/README.md[Spring Java Config] (camel-example-spring-javaconfig) | Beginner | An example showing how to work with Camel and Spring Java Config
 
 | link:camel-example-spring-xquery/README.md[Spring XQuery] (camel-example-spring-xquery) | Beginner | An example using Spring XML to transform a message using XQuery
@@ -67,6 +67,12 @@ Number of Examples: 92 (10 deprecated)
 | link:camel-example-cdi-kubernetes/README.md[CDI Kubernetes] (camel-example-cdi-kubernetes) | Cloud | An example running Camel CDI on Kubernetes
 
 | link:camel-example-hazelcast-kubernetes/ReadMe.md[Hazelcast Kubernetes] (camel-example-hazelcast-kubernetes) | Cloud | An example with Camel and Hazelcast running on Kubernetes
+
+| link:camel-example-spring-boot-infinispan/README.adoc[Spring Boot Infinispan] (camel-example-spring-boot-infinispan) | Cloud | An example showing the Camel Infinispan component with Spring Boot
+
+| link:camel-example-spring-boot-servicecall/README.adoc[Spring Boot Servicecall] (camel-example-spring-boot-servicecall) | Cloud | An example showing how to work with Camel ServiceCall EIP and Spring Boot
+
+| link:camel-example-spring-cloud-servicecall/README.adoc[Spring Cloud Servicecall] (camel-example-spring-cloud-servicecall) | Cloud | An example showing how to work with Camel ServiceCall EIP and Spring Cloud
 
 | link:camel-example-cdi-cassandraql/README.md[CDI Cassandra] (camel-example-cdi-cassandraql) | Database | Cassandraql CDI example
 
@@ -125,15 +131,17 @@ Number of Examples: 92 (10 deprecated)
 
 | link:camel-example-activemq-tomcat/README.md[ActiveMQ Tomcat] (camel-example-activemq-tomcat) | Messaging | An example using ActiveMQ Broker and Camel with Apache Tomcat
 
+| link:camel-example-google-pubsub/README.adoc[Google Pubsub] (camel-example-google-pubsub) | Messaging | An example for Google Pubsub
+
 | link:camel-example-guice-jms/README.md[Guice JMS] (camel-example-guice-jms) | Messaging | *deprecated* An example showing how to work with Camel, Guice and JMS
 
 | link:camel-example-jms-file/README.md[JMS-File] (camel-example-jms-file) | Messaging | An example that persists messages from JMS to files
 
 | link:camel-example-kafka/README.adoc[Kafka] (camel-example-kafka) | Messaging | An example for Kafka
 
-| link:camel-example-spring-jms/README.md[Spring JMS] (camel-example-spring-jms) | Messaging | An example using Spring XML to talk to the JMS server from different kind of client techniques
+| link:camel-example-spring-boot-activemq/readme.adoc[Spring Boot Activemq] (camel-example-spring-boot-activemq) | Messaging | An example showing how to work with Camel, ActiveMQ and Spring Boot
 
-| link:camel-example-box-osgi/README.md[Box OSGi] (camel-example-box-osgi) | OSGi | An example which use a Box Endpoint in OSGi
+| link:camel-example-spring-jms/README.md[Spring JMS] (camel-example-spring-jms) | Messaging | An example using Spring XML to talk to the JMS server from different kind of client techniques
 
 | link:camel-example-cdi-osgi/README.md[CDI OSGi] (camel-example-cdi-osgi) | OSGi | *deprecated* PAX CDI example
 
@@ -143,11 +151,7 @@ Number of Examples: 92 (10 deprecated)
 
 | link:camel-example-netty-http/README.md[Netty HTTP] (camel-example-netty-http) | OSGi | An example showing how to use a shared Netty HTTP server with multiple Camel applications in OSGi container
 
-| link:camel-example-osgi-rmi/README.md[OSGi RMI] (camel-example-osgi-rmi) | OSGi | *deprecated* A OSGi example which exposes a RMI service.
-
 | link:camel-example-servlet-rest-blueprint/README.md[Servlet REST Blueprint] (camel-example-servlet-rest-blueprint) | OSGi | An example using Servlet REST with OSGi Blueprint
-
-| link:camel-example-spring-dm/README.md[Spring DM] (camel-example-spring-dm) | OSGi | *deprecated* A simple OSGi Spring DM example which creates a bundle that can be dropped into any OSGi container
 
 | link:camel-example-sql-blueprint/README.md[SQL Blueprint] (camel-example-sql-blueprint) | OSGi | An example for showing Camel using SQL component with blueprint
 
@@ -175,6 +179,8 @@ Number of Examples: 92 (10 deprecated)
 | link:camel-example-restlet-jdbc/README.md[Restlet JDBC] (camel-example-restlet-jdbc) | Rest | An example showing how to create REST API with Camel Restlet and JDBC components
 
 | link:camel-example-spark-rest/README.md[Spark REST] (camel-example-spark-rest) | Rest | An example using Spark REST
+
+| link:camel-example-spring-boot-geocoder/README.adoc[Spring Boot Geocoder] (camel-example-spring-boot-geocoder) | Rest | An example showing the Camel Geocoder component via REST DSL with Spring Boot
 
 | link:camel-example-spring-boot-rest-swagger/README.adoc[Spring Boot Rest Swagger] (camel-example-spring-boot-rest-swagger) | Rest | An example showing Camel REST DSL and Swagger with Spring Boot
 

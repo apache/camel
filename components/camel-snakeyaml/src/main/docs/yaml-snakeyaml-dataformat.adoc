@@ -24,7 +24,7 @@ The YAML SnakeYAML dataformat supports 11 options which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
-| library | SnakeYAML | YAMLLibrary | Which yaml library to use such. Is by default SnakeYAML
+| library | SnakeYAML | YAMLLibrary | Which yaml library to use. By default it is SnakeYAML
 | unmarshalTypeName |  | String | Class name of the java type to use when unarmshalling
 | constructor |  | String | BaseConstructor to construct incoming documents.
 | representer |  | String | Representer to emit outgoing objects.

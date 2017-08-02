@@ -16,8 +16,12 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+
+import static org.awaitility.Awaitility.await;
 
 public class DurationRoutePolicyMaxSecondsTest extends ContextTestSupport {
 
@@ -30,16 +34,10 @@ public class DurationRoutePolicyMaxSecondsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // need a little time to stop async
-        for (int i = 0; i < 10; i++) {
-            Thread.sleep(100);
-            boolean started = context.getRouteStatus("foo").isStarted();
-            boolean stopped = context.getRouteStatus("foo").isStopped();
-            if (!started && stopped) {
-                break;
-            }
-        }
-        assertFalse(context.getRouteStatus("foo").isStarted());
-        assertTrue(context.getRouteStatus("foo").isStopped());
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertFalse(context.getRouteStatus("foo").isStarted());
+            assertTrue(context.getRouteStatus("foo").isStopped());
+        });
     }
 
     @Override

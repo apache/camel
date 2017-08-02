@@ -560,6 +560,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         component.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         component.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         component.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        component.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
         component.setConsumerOnly(JSonSchemaHelper.getSafeValue("consumerOnly", rows));
         component.setProducerOnly(JSonSchemaHelper.getSafeValue("producerOnly", rows));
         component.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
@@ -580,6 +581,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         other.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         other.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         other.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        other.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
         other.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
         other.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
         other.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
@@ -598,6 +600,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         dataFormat.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         dataFormat.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         dataFormat.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        dataFormat.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
         dataFormat.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
         dataFormat.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
         dataFormat.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
@@ -617,6 +620,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         language.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         language.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         language.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        language.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
         language.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
         language.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
         language.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));

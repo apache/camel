@@ -31,10 +31,10 @@ public class DataSetConsumerTest extends ContextTestSupport {
     protected SimpleDataSet dataSet = new SimpleDataSet(5);
 
     final String dataSetName = "foo";
-    final String dataSetUri = "dataset://" + dataSetName;
-    final String dataSetUriWithDataSetIndexSetToOff = dataSetUri + "?dataSetIndex=off";
-    final String dataSetUriWithDataSetIndexSetToLenient = dataSetUri + "?dataSetIndex=lenient";
-    final String dataSetUriWithDataSetIndexSetToStrict = dataSetUri + "?dataSetIndex=strict";
+    final String dataSetUri = "dataset://" + dataSetName + "?initialDelay=0";
+    final String dataSetUriWithDataSetIndexSetToOff = dataSetUri + "&dataSetIndex=off";
+    final String dataSetUriWithDataSetIndexSetToLenient = dataSetUri + "&dataSetIndex=lenient";
+    final String dataSetUriWithDataSetIndexSetToStrict = dataSetUri + "&dataSetIndex=strict";
     final String resultUri = "mock://result";
 
     @Override
@@ -57,13 +57,14 @@ public class DataSetConsumerTest extends ContextTestSupport {
                         .to(resultUri);
             }
         });
-        context.start();
 
         assertEquals("expectedMessageCount should be unset(i.e. -1) for a consumer-only endpoint", -1, getMockEndpoint(dataSetUri).getExpectedCount());
 
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMessageCount((int) dataSet.getSize());
         result.assertMessagesAscending(header(Exchange.DATASET_INDEX));
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
@@ -81,13 +82,14 @@ public class DataSetConsumerTest extends ContextTestSupport {
                         .to(resultUri);
             }
         });
-        context.start();
 
         assertEquals("expectedMessageCount should be the same as the DataSet size for a consumer-producer endpoint", dataSet.getSize(), getMockEndpoint(dataSetUri).getExpectedCount());
 
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMessageCount((int) dataSet.getSize());
         result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
@@ -101,12 +103,13 @@ public class DataSetConsumerTest extends ContextTestSupport {
                         .to(resultUri);
             }
         });
-        context.start();
 
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMessageCount((int) dataSet.getSize());
         result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
         result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
@@ -120,11 +123,12 @@ public class DataSetConsumerTest extends ContextTestSupport {
                         .to(resultUri);
             }
         });
-        context.start();
 
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMessageCount((int) dataSet.getSize());
         result.allMessages().header(Exchange.DATASET_INDEX).isNull();
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
@@ -138,12 +142,13 @@ public class DataSetConsumerTest extends ContextTestSupport {
                         .to(resultUri);
             }
         });
-        context.start();
 
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMessageCount((int) dataSet.getSize());
         result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
         result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
@@ -157,14 +162,14 @@ public class DataSetConsumerTest extends ContextTestSupport {
                         .to(resultUri);
             }
         });
-        context.start();
 
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMessageCount((int) dataSet.getSize());
         result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
         result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
 
-        Thread.sleep(100);
+        context.start();
+
         assertMockEndpointsSatisfied();
     }
 }

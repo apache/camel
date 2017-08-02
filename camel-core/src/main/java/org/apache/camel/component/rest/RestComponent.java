@@ -18,12 +18,15 @@ package org.apache.camel.component.rest;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.VerifiableComponent;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.model.rest.RestConstants;
 import org.apache.camel.spi.Metadata;
@@ -32,11 +35,13 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * Rest component.
  */
-public class RestComponent extends DefaultComponent {
+@Metadata(label = "verifiers", enums = "parameters,connectivity")
+public class RestComponent extends DefaultComponent implements VerifiableComponent {
 
     @Metadata(label = "common")
     private String componentName;
@@ -58,8 +63,8 @@ public class RestComponent extends DefaultComponent {
         mergeConfigurations(config, getCamelContext().getRestConfiguration(restConfigurationName, true));
 
         // if no explicit host was given, then fallback and use default configured host
-        String h = resolveAndRemoveReferenceParameter(parameters, "host", String.class, host);
-        if (h == null && config != null) {
+        String h = getAndRemoveOrResolveReferenceParameter(parameters, "host", String.class, host);
+        if (h == null) {
             h = config.getHost();
             int port = config.getPort();
             // is there a custom port number
@@ -73,12 +78,18 @@ public class RestComponent extends DefaultComponent {
         }
         answer.setHost(h);
 
-        String query = ObjectHelper.after(uri, "?");
-        if (query != null) {
-            answer.setQueryParameters(query);
+        setProperties(answer, parameters);
+        if (!parameters.isEmpty()) {
+            // use only what remains and at this point parameters that have been used have been removed
+            // without overwriting any query parameters set via queryParameters endpoint option
+            final Map<String, Object> queryParameters = new LinkedHashMap<>(parameters);
+            final Map<String, Object> existingQueryParameters = URISupport.parseQuery(answer.getQueryParameters());
+            queryParameters.putAll(existingQueryParameters);
+
+            final String remainingParameters = URISupport.createQueryString(queryParameters);
+            answer.setQueryParameters(remainingParameters);
         }
 
-        setProperties(answer, parameters);
         answer.setParameters(parameters);
 
         if (!remaining.contains(":")) {
@@ -107,7 +118,7 @@ public class RestComponent extends DefaultComponent {
         answer.setUriTemplate(uriTemplate);
 
         // if no explicit component name was given, then fallback and use default configured component name
-        if (answer.getComponentName() == null && config != null) {
+        if (answer.getComponentName() == null) {
             String name = config.getProducerComponent();
             if (name == null) {
                 // fallback and use the consumer name
@@ -116,7 +127,7 @@ public class RestComponent extends DefaultComponent {
             answer.setComponentName(name);
         }
         // if no explicit producer api was given, then fallback and use default configured
-        if (answer.getApiDoc() == null && config != null) {
+        if (answer.getApiDoc() == null) {
             answer.setApiDoc(config.getProducerApiDoc());
         }
 
@@ -177,6 +188,9 @@ public class RestComponent extends DefaultComponent {
     }
 
     private RestConfiguration mergeConfigurations(RestConfiguration conf, RestConfiguration from) throws Exception {
+        if (conf == from) {
+            return conf;
+        }
         if (from != null) {
             Map<String, Object> map = IntrospectionSupport.getNonNullProperties(from);
 
@@ -221,4 +235,13 @@ public class RestComponent extends DefaultComponent {
         }
     }
 
+    /**
+     * Get the {@link ComponentVerifier}
+     *
+     * @return the Component Verifier
+     */
+    @Override
+    public ComponentVerifier getVerifier() {
+        return new RestComponentVerifier(this);
+    }
 }

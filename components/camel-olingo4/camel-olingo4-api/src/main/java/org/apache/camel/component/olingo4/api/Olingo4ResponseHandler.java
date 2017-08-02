@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.olingo4.api;
 
+import java.util.Map;
+
 /**
  * Callback interface to asynchronously process Olingo4 response.
  */
@@ -24,8 +26,9 @@ public interface Olingo4ResponseHandler<T> {
     /**
      * Handle response data on successful completion of Olingo4 request.
      * @param response response data from Olingo4, may be NULL for Olingo4 operations with no response data.
+     * @param responseHeaders the response HTTP headers received from the endpoint.
      */
-    void onResponse(T response);
+    void onResponse(T response, Map<String, String> responseHeaders);
 
     /**
      * Handle exception raised from Olingo4 request.

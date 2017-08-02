@@ -16,18 +16,14 @@
  */
 package org.apache.camel.util;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.camel.CamelContext;
@@ -40,16 +36,12 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
-import org.apache.camel.catalog.DefaultRuntimeCamelCatalog;
-import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.runtimecatalog.DefaultRuntimeCamelCatalog;
+import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.JsonSchemaHelper.getPropertyDefaultValue;
-import static org.apache.camel.util.JsonSchemaHelper.getPropertyPrefix;
-import static org.apache.camel.util.JsonSchemaHelper.isPropertyMultiValue;
-import static org.apache.camel.util.JsonSchemaHelper.isPropertyRequired;
 import static org.apache.camel.util.ObjectHelper.after;
 
 /**
@@ -59,7 +51,6 @@ public final class EndpointHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointHelper.class);
     private static final AtomicLong ENDPOINT_COUNTER = new AtomicLong(0);
-    private static final Pattern SYNTAX_PATTERN = Pattern.compile("(\\w+)");
 
     private EndpointHelper() {
         //Utility Class
@@ -364,7 +355,9 @@ public final class EndpointHelper {
                 return (List) bean;
             } else {
                 // The bean is a list element
-                return Arrays.asList(elementType.cast(bean));
+                List<T> singleElementList = new ArrayList<T>();
+                singleElementList.add(elementType.cast(bean));
+                return singleElementList;
             }
         } else { // more than one list element
             List<T> result = new ArrayList<T>(elements.size());
@@ -528,7 +521,7 @@ public final class EndpointHelper {
      * @param uri          the endpoint uri
      * @return a map for each option in the uri with the corresponding information from the json
      * @throws Exception is thrown in case of error
-     * @deprecated use {@link org.apache.camel.catalog.RuntimeCamelCatalog#endpointProperties(String)}
+     * @deprecated use {@link org.apache.camel.runtimecatalog.RuntimeCamelCatalog#endpointProperties(String)}
      */
     @Deprecated
     public static Map<String, Object> endpointProperties(CamelContext camelContext, String uri) throws Exception {

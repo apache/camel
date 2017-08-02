@@ -24,25 +24,38 @@ package org.apache.camel.spi;
  * in a DataTypeAware message carries that missing data type information even if it's
  * marshaled, and whatever the Java class of the body is. This type information is used
  * to detect required {@link Transformer} and {@link Validator}.
- * 
- * @see {@link DataType} {@link Transformer} {@link Validator}
+ * <p/>
+ * Data type are automatic turned on if one ore more routes has been explicit configured with input and output types.
+ * Otherwise data type is default off.
+ *
+ * @see DataType
+ * @see Transformer
+ * @see Validator
  */
 public interface DataTypeAware {
 
     /**
      * Set the data type of the message.
+     *
      * @param type data type
      */
     void setDataType(DataType type);
 
     /**
      * Get the data type of the message.
+     *
      * @return data type
      */
     DataType getDataType();
 
     /**
+     * Whether any data type has been configured
+     */
+    boolean hasDataType();
+
+    /**
      * Set the message body with data type.
+     *
      * @param body message body
      * @param type data type
      */

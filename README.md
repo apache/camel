@@ -3,6 +3,8 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.camel/apache-camel/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/org.apache.camel/apache-camel)
 [![Javadocs](http://www.javadoc.io/badge/org.apache.camel/apache-camel.svg?color=brightgreen)](http://www.javadoc.io/doc/org.apache.camel/camel-core)
 [![Stack Overflow](https://img.shields.io/:stack%20overflow-apache--camel-brightgreen.svg)](http://stackoverflow.com/questions/tagged/apache-camel)
+[![Gitter](https://img.shields.io/gitter/room/apache/apache-camel.js.svg)](https://gitter.im/apache/apache-camel)
+
 
 [Apache Camel](http://camel.apache.org/) is a powerful open source integration framework based on known
 Enterprise Integration Patterns with powerful Bean Integration.
@@ -36,6 +38,12 @@ The up to date list is available online at:
 
 <https://github.com/apache/camel/tree/master/components#components>
 
+## Examples
+
+Apache Camel comes with many examples.
+
+<https://github.com/apache/camel/tree/master/examples#examples>
+
 ## Getting Started
 
 To help you get started, try the following links:
@@ -55,15 +63,18 @@ We welcome contributions of all kinds, for details of how you can help
 <http://camel.apache.org/contributing.html>
 
 Please refer to the website for details of finding the issue tracker, 
-email lists, wiki or IRC channel
+email lists, IRC and Gitter chat
   
-Wiki: <http://camel.apache.org/>
+Website: <http://camel.apache.org/>
 
-IRC: <http://camel.apache.org/irc-room.html>
+Github: <https://github.com/apache/camel>
 
 Mailing list: <http://camel.apache.org/mailing-lists.html>
 
-Github: <https://github.com/apache/camel>
+IRC chat: <http://camel.apache.org/irc-room.html>
+
+Gitter chat: <https://gitter.im/apache/apache-camel>
+
 
 **Support**
 

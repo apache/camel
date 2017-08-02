@@ -19,7 +19,6 @@ package org.apache.camel.component.netty.http.springboot;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +27,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.apache.camel.component.netty.http.springboot.NettyStarterTestHelper.getPort;
@@ -38,10 +36,10 @@ import static org.junit.Assert.assertEquals;
  * Testing the servlet mapping
  */
 @RunWith(SpringRunner.class)
-@SpringBootApplication
 @DirtiesContext
-@ContextConfiguration(classes = {NettyHttpComponentAutoConfiguration.class, CamelAutoConfiguration.class})
-@SpringBootTest(properties = {
+@SpringBootApplication
+@SpringBootTest(
+    properties = {
         "camel.component.netty-http.configuration.compression=true"
 })
 public class NettyHttpAutoConfigurationTest {

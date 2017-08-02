@@ -16,22 +16,25 @@
  */
 package org.apache.camel.component.dataset;
 
+import java.util.concurrent.TimeUnit;
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Ignore;
 
 /**
  * @version 
  */
+@Ignore("Manual test")
 public class BigDataSetTest extends ContextTestSupport {
     protected SimpleDataSet dataSet = new SimpleDataSet(20000);
 
     public void testDataSet() throws Exception {
         // data set will itself set its assertions so we should just
         // assert that all mocks is ok
-        // TODO: For testing with bigger number of messages that takes a longer time
-        // MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.MINUTES);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override

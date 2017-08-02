@@ -747,7 +747,10 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             }
             
             if (dataFormat == DataFormat.POJO) {
-                answer = message.getContent(List.class);  
+                List<?> pojoMessageList = message.getContent(List.class);  
+                if (pojoMessageList != null && !pojoMessageList.isEmpty()) {
+                    answer = pojoMessageList;
+                }
                 if (answer == null) {
                     answer = message.getContent(Object.class);
                     if (answer != null) {
@@ -962,7 +965,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     }
     public static Method findMethod(Class<?> cls,
                                     String name,
-                                    Class<?> ... params) {
+                                    Class<?>... params) {
         if (cls == null) {
             return null;
         }

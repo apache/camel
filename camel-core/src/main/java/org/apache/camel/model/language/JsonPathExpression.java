@@ -48,6 +48,8 @@ public class JsonPathExpression extends ExpressionDefinition {
     private Boolean allowSimple;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean allowEasyPredicate;
+    @XmlAttribute @Metadata(defaultValue = "false")
+    private Boolean writeAsString;
 
     public JsonPathExpression() {
     }
@@ -111,6 +113,17 @@ public class JsonPathExpression extends ExpressionDefinition {
         this.suppressExceptions = suppressExceptions;
     }
 
+    public Boolean getWriteAsString() {
+        return writeAsString;
+    }
+
+    /**
+     * Whether to write the output of each row/element as a JSon String value instead of a Map/POJO value.
+     */
+    public void setWriteAsString(Boolean writeAsString) {
+        this.writeAsString = writeAsString;
+    }
+
     public String getLanguage() {
         return "jsonpath";
     }
@@ -141,6 +154,9 @@ public class JsonPathExpression extends ExpressionDefinition {
         if (allowEasyPredicate != null) {
             setProperty(expression, "allowEasyPredicate", allowEasyPredicate);
         }
+        if (writeAsString != null) {
+            setProperty(expression, "writeAsString", writeAsString);
+        }
         super.configureExpression(camelContext, expression);
     }
 
@@ -157,6 +173,9 @@ public class JsonPathExpression extends ExpressionDefinition {
         }
         if (allowEasyPredicate != null) {
             setProperty(predicate, "allowEasyPredicate", allowEasyPredicate);
+        }
+        if (writeAsString != null) {
+            setProperty(predicate, "writeAsString", writeAsString);
         }
         super.configurePredicate(camelContext, predicate);
     }

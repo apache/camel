@@ -43,7 +43,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).maximumRedeliveries(2);
+                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start")
                     .to("mock:a")
@@ -70,7 +70,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .onException(Exception.class).maximumRedeliveries(3).end()
+                    .onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(3).end()
                     .to("mock:a")
                     .recipientList(header("foo"))
                         .aggregationStrategy(new MyAggregationStrategy())
@@ -101,7 +101,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).maximumRedeliveries(2);
+                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start")
                     .to("mock:a")
@@ -135,7 +135,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
             public void configure() throws Exception {
                 context.setTracing(true);
 
-                onException(Exception.class).maximumRedeliveries(2);
+                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start")
                     .to("mock:a")

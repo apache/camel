@@ -17,7 +17,6 @@
 package org.apache.camel.itest.springboot;
 
 import org.apache.camel.itest.springboot.util.ArquillianPackager;
-import org.apache.camel.itest.springboot.util.DependencyResolver;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -36,11 +35,8 @@ public class CamelHbaseTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelHbaseTest.class))
-                // Because HBase uses Hadoop 2.5.1 in test scope
-                .dependency("org.apache.hadoop:hadoop-common:" + DependencyResolver.resolveParentProperty("${hadoop2-version}"))
-                .dependency("org.apache.hadoop:hadoop-auth:" + DependencyResolver.resolveParentProperty("${hadoop2-version}"))
-                .dependency("org.apache.hadoop:hadoop-mapreduce-client-core:" + DependencyResolver.resolveParentProperty("${hadoop2-version}"))
-                .dependency("org.apache.hadoop:hadoop-yarn-common:" + DependencyResolver.resolveParentProperty("${hadoop2-version}"))
+                .unitTestsEnabled(false)
+                .includeTestDependencies(false)
                 .build();
     }
 

@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +30,6 @@ import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -40,6 +40,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -52,11 +53,13 @@ import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
@@ -69,6 +72,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -83,6 +87,7 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.util.LoadPropertiesException;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
  * Interface used to represent the CamelContext used to configure routes and the
@@ -301,6 +306,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     <T> T hasService(Class<T> type);
 
     /**
+     * Has the given service type already been added to this CamelContext?
+     *
+     * @param type the class type
+     * @return the services instance or empty set.
+     */
+    <T> Set<T> hasServices(Class<T> type);
+
+    /**
      * Defers starting the service until {@link CamelContext} is (almost started) or started and has initialized all its prior services and routes.
      * <p/>
      * If {@link CamelContext} is already started then the service is started immediately.
@@ -500,6 +513,20 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     // Route Management Methods
     //-----------------------------------------------------------------------
+
+    /**
+     * NOTE: experimental api
+     *
+     * @param routeController the route controller
+     */
+    void setRouteController(RouteController routeController);
+
+    /**
+     * NOTE: experimental api
+     *
+     * @return the route controller or null if not set.
+     */
+    RouteController getRouteController();
 
     /**
      * Method to signal to {@link CamelContext} that the process to initialize setup routes is in progress.
@@ -1710,6 +1737,26 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters);
 
     /**
+     * Sets whether to load custom type converters by scanning classpath.
+     * This can be turned off if you are only using Camel components
+     * that does not provide type converters which is needed at runtime.
+     * In such situations setting this option to false, can speedup starting
+     * Camel.
+     */
+    Boolean isLoadTypeConverters();
+
+    /**
+     * Sets whether to load custom type converters by scanning classpath.
+     * This can be turned off if you are only using Camel components
+     * that does not provide type converters which is needed at runtime.
+     * In such situations setting this option to false, can speedup starting
+     * Camel.
+     *
+     * @param loadTypeConverters whether to load custom type converters.
+     */
+    void setLoadTypeConverters(Boolean loadTypeConverters);
+
+    /**
      * Whether or not type converter statistics is enabled.
      * <p/>
      * By default the type converter utilization statistics is disabled.
@@ -1746,6 +1793,26 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param useMDCLogging <tt>true</tt> to enable MDC logging, <tt>false</tt> to disable
      */
     void setUseMDCLogging(Boolean useMDCLogging);
+
+    /**
+     * Whether to enable using data type on Camel messages.
+     * <p/>
+     * Data type are automatic turned on if one ore more routes has been explicit configured with input and output types.
+     * Otherwise data type is default off.
+     *
+     * @return <tt>true</tt> if data type is enabled
+     */
+    Boolean isUseDataType();
+
+    /**
+     * Whether to enable using data type on Camel messages.
+     * <p/>
+     * Data type are automatic turned on if one ore more routes has been explicit configured with input and output types.
+     * Otherwise data type is default off.
+     *
+     * @param  useDataType <tt>true</tt> to enable data type on Camel messages.
+     */
+    void setUseDataType(Boolean useDataType);
 
     /**
      * Whether or not breadcrumb is enabled.
@@ -1964,5 +2031,35 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Gets the associated {@link RuntimeCamelCatalog} for this CamelContext.
      */
     RuntimeCamelCatalog getRuntimeCamelCatalog();
+
+    /**
+     * Gets a list of {@link LogListener}.
+     */
+    Set<LogListener> getLogListeners();
+
+    /**
+     * Adds a {@link LogListener}.
+     */
+    void addLogListener(LogListener listener);
+
+    /**
+     * Sets the global SSL context parameters.
+     */
+    void setSSLContextParameters(SSLContextParameters sslContextParameters);
+
+    /**
+     * Gets the global SSL context parameters if configured.
+     */
+    SSLContextParameters getSSLContextParameters();
+
+    /**
+     * Gets the {@link HeadersMapFactory} to use.
+     */
+    HeadersMapFactory getHeadersMapFactory();
+
+    /**
+     * Sets a custom {@link HeadersMapFactory} to be used.
+     */
+    void setHeadersMapFactory(HeadersMapFactory factory);
 
 }

@@ -23,15 +23,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
-import org.apache.camel.VerifiableComponent;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.VerifiableComponent;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpHelper;
@@ -70,7 +70,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, VerifiableComponent {
+public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, VerifiableComponent, SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
 
@@ -101,6 +101,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     // It's MILLISECONDS, the default value is always keep alive
     @Metadata(label = "advanced", description = "The time for connection to live, the time unit is millisecond, the default value is always keep alive.")
     protected long connectionTimeToLive = -1;
+    @Metadata(label = "security", defaultValue = "false", description = "Enable usage of global SSL context parameters.")
+    private boolean useGlobalSslContextParameters;
 
     public HttpComponent() {
         super(HttpEndpoint.class);
@@ -184,6 +186,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
         if (sslContextParameters == null) {
             sslContextParameters = getSslContextParameters();
+        }
+        if (sslContextParameters == null) {
+            sslContextParameters = retrieveGlobalSslContextParameters();
         }
         
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
@@ -453,6 +458,19 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public HostnameVerifier getX509HostnameVerifier() {

@@ -44,7 +44,7 @@ public class FileConsumeRunLoggingLevelTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/files?runLoggingLevel=INFO")
+                from("file:target/files?runLoggingLevel=INFO&initialDelay=0&delay=10")
                     .to("mock:result");
             }
         };

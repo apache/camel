@@ -19,8 +19,11 @@ package org.apache.camel.processor.resequencer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.TestSupport;
+
+import static org.awaitility.Awaitility.await;
 
 public class ResequencerEngineTest extends TestSupport {
 
@@ -149,12 +152,8 @@ public class ResequencerEngineTest extends TestSupport {
         runner = new ResequencerRunner<Integer>(resequencer, 50);
         runner.start();
 
-        // give the runner time to start
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            // ignore
-        }
+        // wait for runner to run
+        await().atMost(1, TimeUnit.SECONDS).until(runner::isRunning);
     }
     
 }

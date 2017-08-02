@@ -66,12 +66,12 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
         // now download the new artifact JARs and look inside to find more details
         for (NexusArtifactDto dto : newArtifacts) {
             try {
-                log.debug("Processing new artifact: {}:{}:{}", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
+                logger.debug("Processing new artifact: {}:{}:{}", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
                 String url = createArtifactURL(dto);
                 URL jarUrl = new URL(url);
                 addCustomCamelConnectorFromArtifact(dto, jarUrl);
             } catch (Throwable e) {
-                log.warn("Error downloading connector JAR " + dto.getArtifactLink() + ". This exception is ignored. " + e.getMessage());
+                logger.warn("Error downloading connector JAR " + dto.getArtifactLink() + ". This exception is ignored. " + e.getMessage());
             }
         }
     }
@@ -97,7 +97,7 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
         String version = dto.getVersion();
 
         camelConnectorCatalog.addConnector(groupId, artifactId, version, name, scheme, javaType, description, labels, connectorJson, connectorSchemaJson, componentSchemaJson);
-        log.info("Added connector: {}:{}:{}", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
+        logger.info("Added connector: {}:{}:{}", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
     }
 
     /**
@@ -125,7 +125,7 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
                 addConnector(dto, name, scheme, javaType, description, csb.toString(), json[0], json[1], json[2]);
             }
         } catch (IOException e) {
-            log.warn("Error scanning JAR for custom Camel components", e);
+            logger.warn("Error scanning JAR for custom Camel components", e);
         }
     }
 
@@ -139,7 +139,7 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
                 answer[0] = loadText(is);
             }
         } catch (Throwable e) {
-            log.warn("Error loading " + path + " file", e);
+            logger.warn("Error loading " + path + " file", e);
         }
 
         path = "camel-connector-schema.json";
@@ -149,7 +149,7 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
                 answer[1] = loadText(is);
             }
         } catch (Throwable e) {
-            log.warn("Error loading " + path + " file", e);
+            logger.warn("Error loading " + path + " file", e);
         }
 
         path = "camel-component-schema.json";
@@ -159,7 +159,7 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
                 answer[2] = loadText(is);
             }
         } catch (Throwable e) {
-            log.warn("Error loading " + path + " file", e);
+            logger.warn("Error loading " + path + " file", e);
         }
 
         return answer;

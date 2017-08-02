@@ -21,6 +21,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.util.ExchangeHelper;
 
 public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
 
@@ -105,7 +106,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
             // moved the failed file if specifying the moveFailed option
             if (failureRenamer != null) {
                 // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
-                Exchange copy = exchange.copy();
+                Exchange copy = ExchangeHelper.createCopy(exchange, true);
                 file.bindToExchange(copy);
                 // must preserve message id
                 copy.getIn().setMessageId(exchange.getIn().getMessageId());

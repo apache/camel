@@ -65,7 +65,7 @@ public class FileChangedReadLockTest extends ContextTestSupport {
         for (int i = 0; i < 20; i++) {
             fos.write(("Line " + i + LS).getBytes());
             LOG.debug("Writing line " + i);
-            Thread.sleep(200);
+            Thread.sleep(50);
         }
 
         fos.flush();
@@ -86,7 +86,8 @@ public class FileChangedReadLockTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?readLock=changed").to("file:target/changed/out", "mock:result");
+                from("file:target/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100")
+                    .to("file:target/changed/out", "mock:result");
             }
         };
     }

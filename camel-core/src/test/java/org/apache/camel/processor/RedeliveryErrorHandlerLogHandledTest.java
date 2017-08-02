@@ -38,6 +38,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class)
                     .maximumRedeliveries(3)
+                    .redeliveryDelay(0)
                     .handled(true)
                     .to("mock:handled");
 
@@ -60,6 +61,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class)
                     .maximumRedeliveries(3)
+                    .redeliveryDelay(0)
                     .logHandled(true)
                     .handled(true)
                     .to("mock:handled");
@@ -83,6 +85,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class)
                     .maximumRedeliveries(3)
+                    .redeliveryDelay(0)
                     .logHandled(true)
                     .logRetryAttempted(true)
                     .handled(true)
@@ -156,6 +159,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 errorHandler(defaultErrorHandler()
+                        .redeliveryDelay(0)
                         .maximumRedeliveries(3)
                         .logExhausted(true).logHandled(true).logRetryStackTrace(true).logStackTrace(true)
                         .retryAttemptedLogLevel(LoggingLevel.WARN).retriesExhaustedLogLevel(LoggingLevel.ERROR));
@@ -184,6 +188,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(3)
                     .logHandled(true)
                     .logRetryAttempted(true)

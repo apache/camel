@@ -25,7 +25,6 @@ import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
@@ -48,7 +47,7 @@ public class DefaultSparkBinding implements SparkBinding {
     public Message toCamelMessage(Request request, Exchange exchange, SparkConfiguration configuration) throws Exception {
         LOG.trace("toCamelMessage: {}", request);
 
-        SparkMessage answer = new SparkMessage(request, null);
+        SparkMessage answer = new SparkMessage(exchange.getContext(), request, null);
         answer.setExchange(exchange);
         if (configuration.isMapHeaders()) {
             populateCamelHeaders(request, answer.getHeaders(), exchange, configuration);
@@ -108,6 +107,15 @@ public class DefaultSparkBinding implements SparkBinding {
             String value = entry.getValue();
             Object decoded = shouldUrlDecodeHeader(configuration, key, value, "UTF-8");
             if (headerFilterStrategy != null
+                    && !headerFilterStrategy.applyFilterToExternalHeaders(key, decoded, exchange)) {
+                SparkHelper.appendHeader(headers, key, decoded);
+            }
+        }
+
+        for (String key : request.queryParams()) {
+            String value = request.queryParams(key);
+            Object decoded = shouldUrlDecodeHeader(configuration, key, value, "UTF-8");
+            if (headerFilterStrategy != null 
                     && !headerFilterStrategy.applyFilterToExternalHeaders(key, decoded, exchange)) {
                 SparkHelper.appendHeader(headers, key, decoded);
             }

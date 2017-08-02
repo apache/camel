@@ -25,14 +25,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import org.apache.camel.ComponentVerifier;
+import org.apache.camel.ComponentVerifier.VerificationError;
 import org.apache.camel.util.ObjectHelper;
 
 public final class ResultErrorBuilder {
-    private String code;
+    private VerificationError.Code code;
     private String description;
     private Set<String> parameters;
-    private Map<String, Object> attributes;
+    private Map<VerificationError.Attribute, Object> attributes;
 
     public ResultErrorBuilder() {
     }
@@ -41,8 +41,13 @@ public final class ResultErrorBuilder {
     // Accessors
     // **********************************
 
-    public ResultErrorBuilder code(String code) {
+    public ResultErrorBuilder code(VerificationError.Code code) {
         this.code = code;
+        return this;
+    }
+
+    public ResultErrorBuilder code(String code) {
+        code(VerificationError.asCode(code));
         return this;
     }
 
@@ -51,7 +56,7 @@ public final class ResultErrorBuilder {
         return this;
     }
 
-    public ResultErrorBuilder parameter(String parameter) {
+    public ResultErrorBuilder parameterKey(String parameter) {
         if (parameter != null) {
             if (this.parameters == null) {
                 this.parameters = new HashSet<>();
@@ -62,15 +67,20 @@ public final class ResultErrorBuilder {
         return this;
     }
 
-    public ResultErrorBuilder parameters(Collection<String> parameterList) {
+    public ResultErrorBuilder parameterKeys(Collection<String> parameterList) {
         if (parameterList != null) {
-            parameterList.forEach(this::parameter);
+            parameterList.forEach(this::parameterKey);
         }
 
         return this;
     }
 
-    public ResultErrorBuilder attribute(String key, Object value) {
+    public ResultErrorBuilder detail(String key, Object value) {
+        detail(VerificationError.asAttribute(key), value);
+        return this;
+    }
+
+    public ResultErrorBuilder detail(VerificationError.Attribute key, Object value) {
         if (value != null) {
             if (this.attributes == null) {
                 this.attributes = new HashMap<>();
@@ -81,8 +91,21 @@ public final class ResultErrorBuilder {
         return this;
     }
 
-    public <T> ResultErrorBuilder attribute(String key, Supplier<Optional<T>> supplier) {
-        supplier.get().ifPresent(value -> attribute(key, value));
+    public <T> ResultErrorBuilder detail(String key, Supplier<Optional<T>> supplier) {
+        detail(VerificationError.asAttribute(key), supplier);
+        return this;
+    }
+
+    public <T> ResultErrorBuilder detail(VerificationError.Attribute key, Supplier<Optional<T>> supplier) {
+        supplier.get().ifPresent(value -> detail(key, value));
+        return this;
+    }
+
+    public ResultErrorBuilder details(Map<VerificationError.Attribute, Object> details) {
+        for (Map.Entry<VerificationError.Attribute, Object> entry : details.entrySet()) {
+            detail(entry.getKey(), entry.getValue());
+        }
+
         return this;
     }
 
@@ -90,8 +113,8 @@ public final class ResultErrorBuilder {
     // Build
     // **********************************
 
-    public ComponentVerifier.Error build() {
-        return new DefaultResultError(
+    public VerificationError build() {
+        return new DefaultResultVerificationError(
             code,
             description,
             parameters != null ? Collections.unmodifiableSet(parameters) : Collections.emptySet(),
@@ -103,69 +126,88 @@ public final class ResultErrorBuilder {
     // Helpers
     // **********************************
 
+    public static ResultErrorBuilder fromError(VerificationError error) {
+        return new ResultErrorBuilder()
+            .code(error.getCode())
+            .description(error.getDescription())
+            .parameterKeys(error.getParameterKeys())
+            .details(error.getDetails());
+    }
+
+    public static ResultErrorBuilder withCode(VerificationError.Code code) {
+        return new ResultErrorBuilder().code(code);
+    }
+
     public static ResultErrorBuilder withCode(String code) {
         return new ResultErrorBuilder().code(code);
     }
 
     public static ResultErrorBuilder withHttpCode(int code) {
-        return withCode(Integer.toString(code))
-            .attribute(ComponentVerifier.ERROR_TYPE_ATTRIBUTE, ComponentVerifier.ERROR_TYPE_HTTP)
-            .attribute(ComponentVerifier.HTTP_CODE, code);
+        return withCode(convertHttpCodeToErrorCode(code))
+            .detail(VerificationError.HttpAttribute.HTTP_CODE, code);
     }
 
     public static ResultErrorBuilder withHttpCodeAndText(int code, String text) {
-        return withCodeAndDescription(Integer.toString(code), text)
-            .attribute(ComponentVerifier.ERROR_TYPE_ATTRIBUTE, ComponentVerifier.ERROR_TYPE_HTTP)
-            .attribute(ComponentVerifier.HTTP_CODE, code)
-            .attribute(ComponentVerifier.HTTP_TEXT, text);
+        return withCodeAndDescription(convertHttpCodeToErrorCode(code), text)
+            .detail(VerificationError.HttpAttribute.HTTP_CODE, code)
+            .detail(VerificationError.HttpAttribute.HTTP_TEXT, text);
     }
 
-    public static ResultErrorBuilder withCodeAndDescription(String code, String description) {
+    private static VerificationError.StandardCode convertHttpCodeToErrorCode(int code) {
+        return code >= 400 && code < 500 ? VerificationError.StandardCode.AUTHENTICATION : VerificationError.StandardCode.GENERIC;
+    }
+
+    public static ResultErrorBuilder withCodeAndDescription(VerificationError.Code code, String description) {
         return new ResultErrorBuilder().code(code).description(description);
     }
 
     public static ResultErrorBuilder withUnsupportedScope(String scope) {
         return new ResultErrorBuilder()
-            .code(ComponentVerifier.CODE_UNSUPPORTED_SCOPE)
+            .code(VerificationError.StandardCode.UNSUPPORTED_SCOPE)
             .description("Unsupported scope: " + scope);
+    }
+
+    public static ResultErrorBuilder withUnsupportedComponent(String component) {
+        return new ResultErrorBuilder()
+            .code(VerificationError.StandardCode.UNSUPPORTED_COMPONENT)
+            .description("Unsupported component: " + component);
     }
 
     public static ResultErrorBuilder withException(Exception exception) {
         return new ResultErrorBuilder()
-            .code(ComponentVerifier.CODE_EXCEPTION)
+            .code(VerificationError.StandardCode.EXCEPTION)
             .description(exception.getMessage())
-            .attribute(ComponentVerifier.ERROR_TYPE_ATTRIBUTE, ComponentVerifier.ERROR_TYPE_EXCEPTION)
-            .attribute(ComponentVerifier.EXCEPTION_INSTANCE, exception)
-            .attribute(ComponentVerifier.EXCEPTION_CLASS, exception.getClass().getName());
+            .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, exception)
+            .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, exception.getClass().getName());
     }
 
     public static ResultErrorBuilder withMissingOption(String optionName) {
         return new ResultErrorBuilder()
-            .code(ComponentVerifier.CODE_MISSING_OPTION)
+            .code(VerificationError.StandardCode.MISSING_PARAMETER)
             .description(optionName + " should be set")
-            .parameter(optionName);
+            .parameterKey(optionName);
     }
 
     public static ResultErrorBuilder withUnknownOption(String optionName) {
         return new ResultErrorBuilder()
-            .code(ComponentVerifier.CODE_UNKNOWN_OPTION)
+            .code(VerificationError.StandardCode.UNKNOWN_PARAMETER)
             .description("Unknown option " + optionName)
-            .parameter(optionName);
+            .parameterKey(optionName);
     }
 
     public static ResultErrorBuilder withIllegalOption(String optionName) {
         return new ResultErrorBuilder()
-            .code(ComponentVerifier.CODE_ILLEGAL_OPTION)
+            .code(VerificationError.StandardCode.ILLEGAL_PARAMETER)
             .description("Illegal option " + optionName)
-            .parameter(optionName);
+            .parameterKey(optionName);
     }
 
     public static ResultErrorBuilder withIllegalOption(String optionName, String optionValue) {
         return ObjectHelper.isNotEmpty(optionValue)
             ? new ResultErrorBuilder()
-                .code(ComponentVerifier.CODE_ILLEGAL_OPTION_VALUE)
+                .code(VerificationError.StandardCode.ILLEGAL_PARAMETER_VALUE)
                 .description(optionName + " has wrong value (" + optionValue + ")")
-                .parameter(optionName)
+                .parameterKey(optionName)
             : withIllegalOption(optionName);
     }
 }

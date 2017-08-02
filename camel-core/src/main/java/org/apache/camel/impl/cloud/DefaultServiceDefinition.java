@@ -24,6 +24,7 @@ import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceHealth;
 
 public class DefaultServiceDefinition implements ServiceDefinition {
+    private static final ServiceHealth DEFAULT_SERVICE_HEALTH = new DefaultServiceHealth();
 
     private final String name;
     private final String host;
@@ -36,7 +37,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
         this.host = host;
         this.port = port;
         this.meta = Collections.emptyMap();
-        this.health = DefaultServiceHealth.INSTANCE;
+        this.health = DEFAULT_SERVICE_HEALTH;
     }
 
     public DefaultServiceDefinition(String name, String host, int port, ServiceHealth health) {
@@ -52,7 +53,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
         this.host = host;
         this.port = port;
         this.meta = meta != null ? Collections.unmodifiableMap(new HashMap<>(meta)) : Collections.emptyMap();
-        this.health = DefaultServiceHealth.INSTANCE;
+        this.health = DEFAULT_SERVICE_HEALTH;
     }
 
     public DefaultServiceDefinition(String name, String host, int port, Map<String, String> meta, ServiceHealth health) {

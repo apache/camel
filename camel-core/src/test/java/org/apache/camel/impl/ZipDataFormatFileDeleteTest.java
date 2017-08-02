@@ -53,7 +53,7 @@ public class ZipDataFormatFileDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/zip?delete=true")
+                from("file:target/zip?initialDelay=0&delay=10&delete=true")
                     .marshal().zip()
                     .to("file:target/zip/out?fileName=${file:name}.zip")
                     .to("mock:result");

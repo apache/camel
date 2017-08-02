@@ -35,6 +35,7 @@ public final class EndpointOption {
     private String prefix;
     private boolean multiValue;
     private boolean deprecated;
+    private String deprecationNote;
     private boolean secret;
     private String group;
     private String label;
@@ -43,7 +44,7 @@ public final class EndpointOption {
 
     public EndpointOption(String name, String displayName, String type, String required, String defaultValue, String defaultValueNote,
                           String documentation, String optionalPrefix, String prefix, boolean multiValue,
-                          boolean deprecated, boolean secret, String group, String label,
+                          boolean deprecated, String deprecationNote, boolean secret, String group, String label,
                           boolean enumType, Set<String> enums) {
         this.name = name;
         this.displayName = displayName;
@@ -56,6 +57,7 @@ public final class EndpointOption {
         this.prefix = prefix;
         this.multiValue = multiValue;
         this.deprecated = deprecated;
+        this.deprecationNote = deprecationNote;
         this.secret = secret;
         this.group = group;
         this.label = label;
@@ -103,6 +105,10 @@ public final class EndpointOption {
         return deprecated;
     }
 
+    public String getDeprecationNote() {
+        return deprecationNote;
+    }
+
     public boolean isSecret() {
         return secret;
     }
@@ -113,6 +119,9 @@ public final class EndpointOption {
 
         if (!isNullOrEmpty(defaultValueNote)) {
             sb.append(". Default value notice: ").append(defaultValueNote);
+        }
+        if (!isNullOrEmpty(deprecationNote)) {
+            sb.append(". Deprecation note: ").append(deprecationNote);
         }
 
         return sb.toString();

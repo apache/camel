@@ -84,9 +84,11 @@ public class DelayedMonoPublisherTest {
         CountDownLatch latch = new CountDownLatch(1);
 
         Flowable.fromPublisher(pub)
-                .doOnError(exceptions::add)
-                .doOnError(e -> latch.countDown())
-                .subscribe();
+                .subscribe(item -> {
+                }, e -> {
+                    exceptions.add(e);
+                    latch.countDown();
+                });
 
         assertTrue(latch.await(1, TimeUnit.SECONDS));
 
@@ -207,17 +209,21 @@ public class DelayedMonoPublisherTest {
         CountDownLatch latch = new CountDownLatch(2);
 
         Flowable.fromPublisher(pub)
-                .doOnError(exceptions::add)
-                .doOnError(e -> latch.countDown())
-                .subscribe();
+                .subscribe(item -> {
+                }, e -> {
+                    exceptions.add(e);
+                    latch.countDown();
+                });
 
         Thread.sleep(200);
         pub.setException(ex);
 
         Flowable.fromPublisher(pub)
-                .doOnError(exceptions::add)
-                .doOnError(e -> latch.countDown())
-                .subscribe();
+                .subscribe(item -> {
+                }, e -> {
+                    exceptions.add(e);
+                    latch.countDown();
+                });
 
         assertTrue(latch.await(1, TimeUnit.SECONDS));
 

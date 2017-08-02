@@ -19,6 +19,7 @@ package org.apache.camel.component.metrics;
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
 import org.junit.Before;
 import org.junit.Test;
@@ -171,7 +172,7 @@ public class AbstractMetricsProducerTest {
 
     @Test
     public void testClearRealHeaders() throws Exception {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(new DefaultCamelContext());
         Object val = new Object();
         msg.setHeader(HEADER_HISTOGRAM_VALUE, 109L);
         msg.setHeader(HEADER_METRIC_NAME, "the metric");

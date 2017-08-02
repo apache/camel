@@ -66,7 +66,7 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
 
                 // this is the file route that pickup files, notice how we bridge the consumer to use the Camel routing error handler
                 // the exclusiveReadLockStrategy is only configured because this is from an unit test, so we use that to simulate exceptions
-                from("file:target/nospace?exclusiveReadLockStrategy=#myReadLockStrategy&consumer.bridgeErrorHandler=true")
+                from("file:target/nospace?exclusiveReadLockStrategy=#myReadLockStrategy&consumer.bridgeErrorHandler=true&initialDelay=0&delay=10")
                     .convertBodyTo(String.class)
                     .to("mock:result");
             }

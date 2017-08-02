@@ -23,6 +23,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringFromRestGetTest extends FromRestGetTest {
 
     protected CamelContext createCamelContext() throws Exception {
+        System.setProperty("CamelSedaPollTimeout", "10");
         return createSpringCamelContext(this, "org/apache/camel/component/rest/SpringFromRestGetTest.xml");
     }
 

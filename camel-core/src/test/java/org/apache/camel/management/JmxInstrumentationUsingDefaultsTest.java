@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
@@ -29,6 +30,8 @@ import javax.management.ObjectName;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * This test verifies JMX is enabled by default and it uses local mbean
@@ -40,7 +43,6 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
     protected String domainName = DefaultManagementAgent.DEFAULT_DOMAIN;
     protected MBeanServerConnection mbsc;
-    protected long sleepForConnection;
 
     @Override
     protected boolean useJmx() {
@@ -177,8 +179,11 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         releaseMBeanServers();
         super.setUp();
-        Thread.sleep(sleepForConnection);
-        mbsc = getMBeanConnection();
+
+        await().atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() -> {
+            mbsc = getMBeanConnection();
+            return true;
+        });
     }
 
     @Override

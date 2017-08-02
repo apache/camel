@@ -87,6 +87,7 @@ public class EmbeddedKafkaBroker extends ExternalResource {
         properties.setProperty("auto.create.topics.enable", String.valueOf(Boolean.TRUE));
         log.info("log directory: " + logDir.getAbsolutePath());
         properties.setProperty("log.flush.interval.messages", String.valueOf(1));
+        properties.setProperty("offsets.topic.replication.factor", String.valueOf(1));
 
         kafkaServer = startBroker(properties);
     }

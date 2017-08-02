@@ -34,7 +34,7 @@ public class RestRoute extends RouteBuilder {
 
         from("timer:hello?period={{timer.period}}")
             .setHeader("id", simple("${random(1,3)}"))
-            .to("rest:get:petById/{id}")
+            .to("rest:get:pets/{id}")
             .log("${body}");
     }
 

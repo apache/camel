@@ -39,6 +39,7 @@ public final class MongoDbConstants {
     public static final String FROM_TAILABLE = "CamelMongoDbTailable";
     public static final String WRITERESULT = "CamelMongoWriteResult";
     public static final String OID = "CamelMongoOid";
+    public static final String DISTINCT_QUERY_FIELD = "CamelMongoDbDistinctQueryField";
 
     public static final String MONGO_ID = "_id"; // default id field
 

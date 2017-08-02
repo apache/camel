@@ -41,7 +41,6 @@ public class HdfsEndpoint extends ScheduledPollEndpoint {
         super(endpointUri, context);
         this.config = new HdfsConfiguration();
         this.config.parseURI(new URI(endpointUri));
-        setInitialDelay(HdfsConsumer.DEFAULT_CONSUMER_INITIAL_DELAY);
     }
 
     @Override

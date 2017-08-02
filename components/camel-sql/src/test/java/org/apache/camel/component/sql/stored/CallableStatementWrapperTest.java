@@ -44,15 +44,18 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
         db = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.DERBY).addScript("sql/storedProcedureTest.sql").build();
         jdbcTemplate = new JdbcTemplate(db);
-        templateParser = new TemplateParser();
-        this.factory = new CallableStatementWrapperFactory(jdbcTemplate, templateParser);
         super.setUp();
     }
 
+    @Override
+    protected void startCamelContext() throws Exception {
+        super.startCamelContext();
+        templateParser = new TemplateParser(context().getClassResolver());
+        this.factory = new CallableStatementWrapperFactory(jdbcTemplate, templateParser, false);
+    }
 
     @Test
     public void shouldExecuteStoredProcedure() throws Exception {
-
         CallableStatementWrapper wrapper = new CallableStatementWrapper("SUBNUMBERS"
                 + "(INTEGER ${header.v1},INTEGER ${header.v2},OUT INTEGER resultofsub)", factory);
 
@@ -74,7 +77,6 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
     @Test
     public void shouldExecuteNilacidProcedure() throws Exception {
         CallableStatementWrapper wrapper = new CallableStatementWrapper("NILADIC()", factory);
-
 
         wrapper.call(new WrapperExecuteCallback() {
             @Override

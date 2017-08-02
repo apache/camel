@@ -37,7 +37,7 @@ public class SedaInOutChainedTimeoutTest extends ContextTestSupport {
             ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
             assertEquals(2000, cause.getTimeout());
         }
-        long delta = watch.stop();
+        long delta = watch.taken();
 
         assertTrue("Should be faster than 4000 millis, was: " + delta, delta < 4000);
     }

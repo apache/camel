@@ -88,10 +88,24 @@ generated code does not have @XmlRootElement annotation, sometimes you
 need unmarshall only part of tree. +
  In that case you can use partial unmarshalling. To enable this
 behaviours you need set property `partClass`. Camel will pass this class
-to JAXB's unmarshaler.
+to JAXB's unmarshaler. If `JaxbConstants.JAXB_PART_CLASS` is set as
+one of headers, (even if partClass property is set on DataFormat), the property
+on DataFormat is surpassed and the one set in the headers is used.
 
 For marshalling you have to add `partNamespace` attribute with QName of
-destination namespace. Example of Spring DSL you can find above.
+destination namespace. Example of Spring DSL you can find above. 
+If `JaxbConstants.JAXB_PART_NAMESPACE` is set as
+one of headers, (even if partNamespace property is set on DataFormat), the property
+on DataFormat is surpassed and the one set in the headers is used. While setting 
+`partNamespace` through `JaxbConstants.JAXB_PART_NAMESPACE`, please 
+note that you need to specify its value {[namespaceUri]}[localPart]
+
+[source,java]
+--------------------------------------------------------------------------------------
+   ...
+   .setHeader(JaxbConstants.JAXB_PART_NAMESPACE, simple("{http://www.camel.apache.org/jaxb/example/address/1}address"));
+   ...
+--------------------------------------------------------------------------------------
 
 ### Fragment
 

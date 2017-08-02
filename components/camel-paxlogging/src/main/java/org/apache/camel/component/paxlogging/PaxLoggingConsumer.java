@@ -55,19 +55,10 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
     public void doAppend(final PaxLoggingEvent paxLoggingEvent) {
         // in order to "force" the copy of properties (especially the MDC ones) in the local thread
         paxLoggingEvent.getProperties();
-        executor.execute(new Runnable() {
-            public void run() {
-                sendExchange(paxLoggingEvent);
-            }
-        });
+        sendExchange(paxLoggingEvent);
     }
 
-    protected void sendExchange(PaxLoggingEvent paxLoggingEvent) {
-        MDC.put(PaxLoggingConsumer.class.getName(), endpoint.getAppender());
-        if (paxLoggingEvent.getProperties().containsKey(PaxLoggingConsumer.class.getName())) {
-            return;
-        }
-
+    protected void sendExchange(final PaxLoggingEvent paxLoggingEvent) {
         Exchange exchange = endpoint.createExchange();
         // TODO: populate exchange headers
         exchange.getIn().setBody(paxLoggingEvent);

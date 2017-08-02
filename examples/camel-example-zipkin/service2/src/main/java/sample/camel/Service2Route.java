@@ -25,7 +25,7 @@ public class Service2Route extends RouteBuilder {
     public void configure() throws Exception {
         // create zipkin
         ZipkinTracer zipkin = new ZipkinTracer();
-        zipkin.setHostName("192.168.99.100");
+        zipkin.setHostName("localhost");
         zipkin.setPort(9410);
         // set the service name
         zipkin.setServiceName("service2");

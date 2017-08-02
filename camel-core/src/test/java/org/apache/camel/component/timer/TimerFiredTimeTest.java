@@ -43,7 +43,7 @@ public class TimerFiredTimeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("timer://hello").to("mock:result");
+                from("timer://hello?period=10&delay=10").to("mock:result");
             }
         };
     }

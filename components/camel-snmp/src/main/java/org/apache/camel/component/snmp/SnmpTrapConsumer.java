@@ -140,7 +140,10 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            getExceptionHandler().handleException(e);
+            exchange.setException(e);
+        }
+        if (exchange.getException() != null) {
+            getExceptionHandler().handleException(exchange.getException());
         }
     }
 }

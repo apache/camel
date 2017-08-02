@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -34,7 +32,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.processor.CamelInternalProcessor;
-import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.SharedCamelInternalProcessor;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.support.ServiceSupport;
@@ -42,6 +40,7 @@ import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -59,6 +58,7 @@ public class ProducerCache extends ServiceSupport {
     private final ServicePool<Endpoint, Producer> pool;
     private final Map<String, Producer> producers;
     private final Object source;
+    private final SharedCamelInternalProcessor internalProcessor;
 
     private EndpointUtilizationStatistics statistics;
     private boolean eventNotifierEnabled = true;
@@ -100,6 +100,9 @@ public class ProducerCache extends ServiceSupport {
         } else {
             this.extendedStatistics = false;
         }
+
+        // internal processor used for sending
+        internalProcessor = new SharedCamelInternalProcessor(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));
     }
 
     public boolean isEventNotifierEnabled() {
@@ -132,12 +135,13 @@ public class ProducerCache extends ServiceSupport {
      * @param cacheSize the cache size
      * @return the cache
      */
+    @SuppressWarnings("unchecked")
     protected static LRUCache<String, Producer> createLRUCache(int cacheSize) {
         // Use a regular cache as we want to ensure that the lifecycle of the producers
         // being cache is properly handled, such as they are stopped when being evicted
         // or when this cache is stopped. This is needed as some producers requires to
         // be stopped so they can shutdown internal resources that otherwise may cause leaks
-        return new LRUCache<String, Producer>(cacheSize);
+        return LRUCacheFactory.newLRUCache(cacheSize);
     }
 
     public CamelContext getCamelContext() {
@@ -320,7 +324,7 @@ public class ProducerCache extends ServiceSupport {
                             doneSync -> asyncDispatchExchange(endpoint, producer, resultProcessor,
                                     finalExchange, producerCallback));
                         return false;
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         // populate failed so return
                         innerExchange.setException(e);
                         producerCallback.done(true);
@@ -424,19 +428,25 @@ public class ProducerCache extends ServiceSupport {
 
         final Producer producer = target;
 
-        // record timing for sending the exchange using the producer
-        final StopWatch watch = eventNotifierEnabled && exchange != null ? new StopWatch() : null;
 
         try {
+            StopWatch sw = null;
             if (eventNotifierEnabled && exchange != null) {
-                EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
+                boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
+                if (sending) {
+                    sw = new StopWatch();
+                }
             }
+
+            // record timing for sending the exchange using the producer
+            final StopWatch watch = sw;
+
             // invoke the callback
             AsyncProcessor asyncProcessor = AsyncProcessorConverterHelper.convert(producer);
             return producerCallback.doInAsyncProducer(producer, asyncProcessor, exchange, pattern, doneSync -> {
                 try {
                     if (eventNotifierEnabled && watch != null) {
-                        long timeTaken = watch.stop();
+                        long timeTaken = watch.taken();
                         // emit event that the exchange was sent to the endpoint
                         EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
                     }
@@ -480,9 +490,9 @@ public class ProducerCache extends ServiceSupport {
             if (eventNotifierEnabled) {
                 callback = new EventNotifierCallback(callback, exchange, endpoint);
             }
-            CamelInternalProcessor internal = prepareInternalProcessor(producer, resultProcessor);
-
-            return internal.process(exchange, callback);
+            AsyncProcessor target = prepareProducer(producer);
+            // invoke the asynchronous method
+            return internalProcessor.process(exchange, callback, target, resultProcessor);
         } catch (Throwable e) {
             // ensure exceptions is caught and set on the exchange
             exchange.setException(e);
@@ -504,7 +514,7 @@ public class ProducerCache extends ServiceSupport {
                     // lets populate using the processor callback
                     try {
                         processor.process(exchange);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         // populate failed so return
                         exchange.setException(e);
                         return exchange;
@@ -521,19 +531,23 @@ public class ProducerCache extends ServiceSupport {
                 StopWatch watch = null;
                 try {
                     if (eventNotifierEnabled) {
-                        watch = new StopWatch();
-                        EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
+                        boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
+                        if (sending) {
+                            watch = new StopWatch();
+                        }
                     }
 
-                    CamelInternalProcessor internal = prepareInternalProcessor(producer, resultProcessor);
-                    internal.process(exchange);
+                    AsyncProcessor target = prepareProducer(producer);
+                    // invoke the synchronous method
+                    internalProcessor.process(exchange, target, resultProcessor);
+
                 } catch (Throwable e) {
                     // ensure exceptions is caught and set on the exchange
                     exchange.setException(e);
                 } finally {
                     // emit event that the exchange was sent to the endpoint
                     if (eventNotifierEnabled && watch != null) {
-                        long timeTaken = watch.stop();
+                        long timeTaken = watch.taken();
                         EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
                     }
                 }
@@ -542,22 +556,8 @@ public class ProducerCache extends ServiceSupport {
         });
     }
 
-    protected CamelInternalProcessor prepareInternalProcessor(Producer producer, Processor resultProcessor) {
-        // if we have a result processor then wrap in pipeline to execute both of them in sequence
-        Processor target;
-        if (resultProcessor != null) {
-            List<Processor> processors = new ArrayList<Processor>(2);
-            processors.add(producer);
-            processors.add(resultProcessor);
-            target = Pipeline.newInstance(getCamelContext(), processors);
-        } else {
-            target = producer;
-        }
-
-        // wrap in unit of work
-        CamelInternalProcessor internal = new CamelInternalProcessor(target);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));
-        return internal;
+    protected AsyncProcessor prepareProducer(Producer producer) {
+        return AsyncProcessorConverterHelper.convert(producer);
     }
 
     protected synchronized Producer doGetProducer(Endpoint endpoint, boolean pooled) {
@@ -575,7 +575,7 @@ public class ProducerCache extends ServiceSupport {
                 // add as service which will also start the service
                 // (false => we and handling the lifecycle of the producer in this cache)
                 getCamelContext().addService(answer, false);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 throw new FailedToCreateProducerException(endpoint, e);
             }
 

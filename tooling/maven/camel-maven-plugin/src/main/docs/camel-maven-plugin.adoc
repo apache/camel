@@ -112,7 +112,11 @@ You cannot change Spring or OSGi Blueprint `<bean>` elements.
 
 == camel:validate
 
-For validating Camel endpoints in the source code:
+For validating the source code for mis configured Camel:
+
+- endpoint uris
+- simple expressions or predicates
+- duplicate route ids
 
 Then you can run the validate goal from the command line or from within your Java editor such as IDEA or Eclipse.
 
@@ -229,7 +233,8 @@ The maven plugin supports the following options which can be configured from the
 | excludes | | To filter the names of java and xml files to exclude files matching any of the given list of patterns (wildcard and regular expression). Multiple values can be separated by comma.
 | ignoreUnknownComponent | true | Whether to ignore unknown components.
 | ignoreIncapable | true | Whether to ignore incapable of parsing the endpoint uri or simple expression.
-| ignoreLenientProperties | true |  Whether to ignore components that uses lenient properties. When this is true, then the uri validation is stricter but would fail on properties that are not part of the component but in the uri because of using lenient properties. For example using the HTTP components to provide query parameters in the endpoint uri.
+| ignoreLenientProperties | true | Whether to ignore components that uses lenient properties. When this is true, then the uri validation is stricter but would fail on properties that are not part of the component but in the uri because of using lenient properties. For example using the HTTP components to provide query parameters in the endpoint uri.
+| duplicateRouteId | true | *Camel 2.20* Whether to validate for duplicate route ids. Route ids should be unique and if there are duplicates then Camel will fail to startup.
 | showAll | false | Whether to show all endpoints and simple expressions (both invalid and valid).
 |========================================
 

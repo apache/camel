@@ -22,11 +22,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for  the filter file option
+ * Unit test for the filter file option
  */
 public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filefilter/?recursive=true&filterDirectory=${header.CamelFileNameOnly.length()} > 4";
+    private String fileUrl = "file://target/filefilter/?initialDelay=0&delay=10&recursive=true&filterDirectory=${header.CamelFileNameOnly.length()} > 4";
 
     @Override
     protected void setUp() throws Exception {
@@ -43,7 +43,7 @@ public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/filefilter/foo", "This is a file to be filtered",
             Exchange.FILE_NAME, "skipme.txt");
 
-        mock.setResultWaitTime(2000);
+        mock.setResultWaitTime(100);
         mock.assertIsSatisfied();
     }
 

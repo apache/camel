@@ -19,12 +19,10 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.RuntimeCamelException;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
 
     @Override
@@ -32,7 +30,7 @@ public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSup
         try {
             super.setUp();
             fail("Should have thrown exception");
-        } catch (Exception e) {
+        } catch (RuntimeCamelException e) {
             FailedToCreateRouteException fe = assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
             IllegalArgumentException ie = assertIsInstanceOf(IllegalArgumentException.class, fe.getCause());
             assertTrue(ie.getMessage().startsWith("Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: LoadBalanceType[RoundRobinLoadBalancer"));
@@ -43,6 +41,7 @@ public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSup
         // noop
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/DoubleLoadBalancerMisconfigurationTest.xml");
     }

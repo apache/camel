@@ -277,9 +277,12 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             if (checkException && exception != null) {
                 camelExchange.setException(exception);
             }
-
-            CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
-            camelExchange.getOut().setBody(outputStream.getInputStream());
+            OutputStream outputStream = outMessage.getContent(OutputStream.class);
+            if (outputStream instanceof CachedOutputStream) {
+                camelExchange.getOut().setBody(((CachedOutputStream)outputStream).getInputStream());
+            } else {
+                camelExchange.getOut().setBody(outputStream);
+            }
             LOG.debug("send the response message: {}", outputStream);
         }
 

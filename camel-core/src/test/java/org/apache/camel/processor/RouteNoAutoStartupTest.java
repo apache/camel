@@ -28,10 +28,9 @@ public class RouteNoAutoStartupTest extends ContextTestSupport {
     public void testRouteNotAutoStarted() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
+        mock.setAssertPeriod(50);
 
         template.sendBody("direct:start", "Hello World");
-
-        Thread.sleep(100);
 
         assertMockEndpointsSatisfied();
     }
@@ -39,10 +38,9 @@ public class RouteNoAutoStartupTest extends ContextTestSupport {
     public void testRouteNotAutoStartedThenStarted() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
+        mock.setAssertPeriod(50);
 
         template.sendBody("direct:start", "Hello World");
-
-        Thread.sleep(100);
 
         assertMockEndpointsSatisfied();
 

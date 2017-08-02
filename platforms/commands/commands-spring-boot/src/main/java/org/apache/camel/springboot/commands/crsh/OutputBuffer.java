@@ -37,7 +37,7 @@ class OutputBuffer {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(baos.toByteArray())));
         StringBuffer sb = new StringBuffer();
         String line;
-        String lineSeparator = System.getProperty("line.separator");
+        String lineSeparator = System.lineSeparator();
         try {
             while ((line = bufferedReader.readLine()) != null) {
                 sb.append(line);

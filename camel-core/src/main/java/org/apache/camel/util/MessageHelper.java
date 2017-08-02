@@ -546,7 +546,10 @@ public final class MessageHelper {
         sb.append("\n");
         sb.append("Message History\n");
         sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
-        sb.append(String.format(MESSAGE_HISTORY_HEADER, "RouteId", "ProcessorId", "Processor", "Elapsed (ms)"));
+        String goMessageHistoryHeaeder = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER_FORMAT);
+        sb.append(String.format(
+                         goMessageHistoryHeaeder == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeaeder,
+                         "RouteId", "ProcessorId", "Processor", "Elapsed (ms)"));
         sb.append("\n");
 
         // add incoming origin of message on the top
@@ -557,12 +560,15 @@ public final class MessageHelper {
             label = URISupport.sanitizeUri(exchange.getFromEndpoint().getEndpointUri());
         }
         long elapsed = 0;
-        Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
+        Date created = exchange.getCreated();
         if (created != null) {
-            elapsed = new StopWatch(created).stop();
+            elapsed = new StopWatch(created).taken();
         }
 
-        sb.append(String.format(MESSAGE_HISTORY_OUTPUT, routeId, id, label, elapsed));
+        String goMessageHistoryOutput = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_OUTPUT_FORMAT);
+        sb.append(String.format(
+                        goMessageHistoryOutput == null ? MESSAGE_HISTORY_OUTPUT : goMessageHistoryOutput,
+                        routeId, id, label, elapsed));
         sb.append("\n");
 
         // and then each history

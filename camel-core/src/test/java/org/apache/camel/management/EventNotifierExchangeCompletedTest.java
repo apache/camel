@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
@@ -85,7 +84,7 @@ public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
         assertEquals("direct://start", event.getExchange().getFromEndpoint().getEndpointUri());
 
         // grab the created timestamp
-        Date created = event.getExchange().getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
+        Date created = event.getExchange().getCreated();
         assertNotNull(created);
 
         // calculate elapsed time

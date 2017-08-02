@@ -21,10 +21,13 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version 
@@ -249,13 +252,9 @@ public class DefaultTimeoutMapTest extends TestCase {
         map.start();
 
         // start and wait for scheduler to purge
-        Thread.sleep(250);
-        if (map.size() > 0) {
-            LOG.warn("Waiting extra due slow CI box");
-            Thread.sleep(1000);
-        }
-        // now it should be gone
-        assertEquals(0, map.size());
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() ->
+            // now it should be gone
+            assertEquals(0, map.size()));
 
         map.stop();
     }

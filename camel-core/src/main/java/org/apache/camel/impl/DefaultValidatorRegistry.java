@@ -26,11 +26,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.DataType;
-import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.util.CamelContextHelper;
@@ -84,7 +82,7 @@ public class DefaultValidatorRegistry extends LRUCache<ValidatorKey, Validator> 
         if (answer == null) {
             answer = super.get(o);
         } else {
-            hits.incrementAndGet();
+            hits.increment();
         }
         return answer;
     }

@@ -24,10 +24,12 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class TimerNameTest extends ContextTestSupport {
 
-    private String uri = "timer://foo?delay=2000&timerName=bar";
+    private String uri = "timer://foo?delay=0&period=10&timerName=bar";
 
     public void testTimerName() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
+
+        context.startAllRoutes();
 
         assertMockEndpointsSatisfied();
 
@@ -40,7 +42,8 @@ public class TimerNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(uri).to("mock:result");
+                from(uri).noAutoStartup()
+                    .to("mock:result");
             }
         };
     }

@@ -100,7 +100,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     public void addAdvice(CamelInternalProcessorAdvice advice) {
         advices.add(advice);
         // ensure advices are sorted so they are in the order we want
-        advices.sort(new OrderedComparator());
+        advices.sort(OrderedComparator.get());
     }
 
     /**
@@ -140,11 +140,14 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             return true;
         }
 
-        final List<Object> states = new ArrayList<Object>(advices.size());
-        for (CamelInternalProcessorAdvice task : advices) {
+        // optimise to use object array for states
+        final Object[] states = new Object[advices.size()];
+        // optimise for loop using index access to avoid creating iterator object
+        for (int i = 0; i < advices.size(); i++) {
+            CamelInternalProcessorAdvice task = advices.get(i);
             try {
                 Object state = task.before(exchange);
-                states.add(state);
+                states[i] = state;
             } catch (Throwable e) {
                 exchange.setException(e);
                 callback.done(true);
@@ -223,17 +226,18 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      */
     private final class InternalCallback implements AsyncCallback {
 
-        private final List<Object> states;
+        private final Object[] states;
         private final Exchange exchange;
         private final AsyncCallback callback;
 
-        private InternalCallback(List<Object> states, Exchange exchange, AsyncCallback callback) {
+        private InternalCallback(Object[] states, Exchange exchange, AsyncCallback callback) {
             this.states = states;
             this.exchange = exchange;
             this.callback = callback;
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void done(boolean doneSync) {
             // NOTE: if you are debugging Camel routes, then all the code in the for loop below is internal only
             // so you can step straight to the finally block and invoke the callback
@@ -242,10 +246,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             try {
                 for (int i = advices.size() - 1; i >= 0; i--) {
                     CamelInternalProcessorAdvice task = advices.get(i);
-                    Object state = states.get(i);
+                    Object state = states[i];
                     try {
                         task.after(exchange, state);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         exchange.setException(e);
                         // allow all advices to complete even if there was an exception
                     }
@@ -390,7 +394,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         public void after(Exchange exchange, StopWatch watch) throws Exception {
             // record end time
             if (watch != null) {
-                recordTime(exchange, watch.stop());
+                recordTime(exchange, watch.taken());
             }
         }
     }
@@ -612,7 +616,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public void after(Exchange exchange, StopWatch stopWatch) throws Exception {
             if (stopWatch != null) {
-                backlogDebugger.afterProcess(exchange, target, definition, stopWatch.stop());
+                backlogDebugger.afterProcess(exchange, target, definition, stopWatch.taken());
             }
         }
 
@@ -630,9 +634,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     public static class UnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
 
         private final RouteContext routeContext;
+        private String routeId;
 
         public UnitOfWorkProcessorAdvice(RouteContext routeContext) {
             this.routeContext = routeContext;
+            if (routeContext != null) {
+                this.routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+            }
         }
 
         @Override
@@ -640,7 +648,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             // if the exchange doesn't have from route id set, then set it if it originated
             // from this unit of work
             if (routeContext != null && exchange.getFromRouteId() == null) {
-                String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+                if (routeId == null) {
+                    routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+                }
                 exchange.setFromRouteId(routeId);
             }
 
@@ -760,7 +770,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 }
             }
 
-            MessageHistory history = factory.newMessageHistory(targetRouteId, definition, new Date());
+            MessageHistory history = factory.newMessageHistory(targetRouteId, definition, System.currentTimeMillis());
             list.add(history);
             return history;
         }

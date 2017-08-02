@@ -41,6 +41,12 @@ public class LumberjackConsumer extends DefaultConsumer {
     }
 
     @Override
+    protected void doStop() throws Exception {
+        lumberjackServer.stop();
+        super.doStop();
+    }
+
+    @Override
     protected void doResume() throws Exception {
         super.doResume();
         lumberjackServer.start();

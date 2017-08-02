@@ -130,7 +130,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
      */
     public Exchange createExchange(PDU pdu) {
         Exchange exchange = super.createExchange();
-        exchange.setIn(new SnmpMessage(pdu));
+        exchange.setIn(new SnmpMessage(getCamelContext(), pdu));
         return exchange;
     }
 
@@ -143,7 +143,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
      */
     public Exchange createExchange(PDU pdu, CommandResponderEvent event) {
         Exchange exchange = super.createExchange();
-        exchange.setIn(new SnmpMessage(pdu, event));
+        exchange.setIn(new SnmpMessage(getCamelContext(), pdu, event));
         return exchange;
     }
 

@@ -27,13 +27,21 @@ import org.apache.camel.component.sql.stored.template.generated.Token;
 public class InputParameter {
 
     private final String name;
+    private final String typeName;
     private final int sqlType;
+    private final Integer scale;
     private ValueExtractor valueExtractor;
 
-    public InputParameter(String name, int sqlType, Token valueSrcToken) {
+    public InputParameter(String name, int sqlType, Token valueSrcToken, Integer scale, String typeName) {
         this.name = name;
         this.sqlType = sqlType;
         parseValueExpression(valueSrcToken);
+        this.scale = scale;
+        this.typeName = typeName;
+
+        if (this.scale != null && this.typeName != null) {
+            throw new ParseRuntimeException(String.format("Both scale=%s and typeName=%s cannot be set", this.scale, this.typeName));
+        }
     }
 
     private void parseValueExpression(Token valueSrcToken) {
@@ -59,8 +67,16 @@ public class InputParameter {
         }
     }
 
+    public Integer getScale() {
+        return scale;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public String getTypeName() {
+        return typeName;
     }
 
     public int getSqlType() {

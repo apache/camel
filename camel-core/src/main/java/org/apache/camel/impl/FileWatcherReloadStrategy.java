@@ -19,11 +19,17 @@ package org.apache.camel.impl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -49,23 +55,49 @@ import org.apache.camel.util.ObjectHelper;
 public class FileWatcherReloadStrategy extends ReloadStrategySupport {
 
     private String folder;
+    private boolean isRecursive;
     private ExecutorService executorService;
     private WatchFileChangesTask task;
+    private Map<WatchKey, Path> folderKeys;
+    private long pollTimeout = 2000;
 
     public FileWatcherReloadStrategy() {
+        setRecursive(false);
     }
 
     public FileWatcherReloadStrategy(String directory) {
         setFolder(directory);
+        setRecursive(false);
+    }
+    
+    public FileWatcherReloadStrategy(String directory, boolean isRecursive) {
+        setFolder(directory);
+        setRecursive(isRecursive);
     }
 
     public void setFolder(String folder) {
         this.folder = folder;
     }
+    
+    public void setRecursive(boolean isRecursive) {
+        this.isRecursive = isRecursive;
+    }
+
+    /**
+     * Sets the poll timeout in millis. The default value is 2000.
+     */
+    public void setPollTimeout(long pollTimeout) {
+        this.pollTimeout = pollTimeout;
+    }
 
     @ManagedAttribute(description = "Folder being watched")
     public String getFolder() {
         return folder;
+    }
+    
+    @ManagedAttribute(description = "Whether the reload strategy watches directory recursively")
+    public boolean isRecursive() {
+        return isRecursive;
     }
 
     @ManagedAttribute(description = "Whether the watcher is running")
@@ -113,11 +145,12 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
                 Path path = dir.toPath();
                 WatchService watcher = path.getFileSystem().newWatchService();
                 // we cannot support deleting files as we don't know which routes that would be
-                if (modifier != null) {
-                    path.register(watcher, new WatchEvent.Kind<?>[]{ENTRY_CREATE, ENTRY_MODIFY}, modifier);
+                if (isRecursive) {
+                    this.folderKeys = new HashMap<WatchKey, Path>();
+                    registerRecursive(watcher, path, modifier);
                 } else {
-                    path.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
-                }
+                    registerPathToWatcher(modifier, path, watcher);
+                }                
 
                 task = new WatchFileChangesTask(watcher, path);
 
@@ -127,6 +160,27 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
         }
+    }
+
+    private WatchKey registerPathToWatcher(WatchEvent.Modifier modifier, Path path, WatchService watcher) throws IOException {
+        WatchKey key;
+        if (modifier != null) {
+            key = path.register(watcher, new WatchEvent.Kind<?>[]{ENTRY_CREATE, ENTRY_MODIFY}, modifier);
+        } else {
+            key = path.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
+        }
+        return key;
+    }
+    
+    private void registerRecursive(final WatchService watcher, final Path root, final WatchEvent.Modifier modifier) throws IOException {
+        Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                WatchKey key = registerPathToWatcher(modifier, dir, watcher);
+                folderKeys.put(key, dir);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 
     @Override
@@ -168,16 +222,23 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
                 try {
                     log.trace("ReloadStrategy is polling for file changes in directory: {}", folder);
                     // wait for a key to be available
-                    key = watcher.poll(2, TimeUnit.SECONDS);
+                    key = watcher.poll(pollTimeout, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException ex) {
                     break;
                 }
 
                 if (key != null) {
+                    Path pathToReload = null;
+                    if (isRecursive) {
+                        pathToReload = folderKeys.get(key);
+                    } else {
+                        pathToReload = folder;
+                    }
+                    
                     for (WatchEvent<?> event : key.pollEvents()) {
                         WatchEvent<Path> we = (WatchEvent<Path>) event;
                         Path path = we.context();
-                        String name = folder.resolve(path).toAbsolutePath().toFile().getAbsolutePath();
+                        String name = pathToReload.resolve(path).toAbsolutePath().toFile().getAbsolutePath();
                         log.trace("Modified/Created file: {}", name);
 
                         // must be an .xml file

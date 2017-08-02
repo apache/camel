@@ -68,6 +68,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private boolean quoting;
     private boolean autospanLine;
     private boolean allowEmptyStream;
+    private boolean quotingEscaped;
 
     public BindyCsvFactory(Class<?> type) throws Exception {
         super(type);
@@ -207,7 +208,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
             if (!data.equals("")) {
                 try {
-                    value = format.parse(data);
+                    if (quoting && quote != null && (data.contains("\\" + quote) || data.contains(quote)) && quotingEscaped) {
+                        value = format.parse(data.replaceAll("\\\\" + quote,  "\\" + quote));
+                    } else {
+                        value = format.parse(data);
+                    }
                 } catch (FormatException ie) {
                     throw new IllegalArgumentException(ie.getMessage() + ", position: " + pos + ", line: " + line, ie);
                 } catch (Exception e) {
@@ -311,7 +316,12 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                         if (quoting && quote != null) {
                             buffer.append(quote);
                         }
-                        buffer.append(res);
+                        // CAMEL-7519 - improvoment escape the token itself by prepending escape char
+                        if (quoting && quote != null && (res.contains("\\" + quote) || res.contains(quote))  && quotingEscaped) {
+                            buffer.append(res.replaceAll("\\" + quote, "\\\\" + quote));
+                        } else {
+                            buffer.append(res);
+                        }
                         if (quoting && quote != null) {
                             buffer.append(quote);
                         }
@@ -577,9 +587,13 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     autospanLine = record.autospanLine();
                     LOG.debug("Autospan line in last record: {}", autospanLine);
                     
-                    // Get skipFirstLine parameter
+                    // Get allowEmptyStream parameter
                     allowEmptyStream = record.allowEmptyStream();
-                    LOG.debug("Allo empty stream parameter of the CSV: {}" + allowEmptyStream);
+                    LOG.debug("Allow empty stream parameter of the CSV: {}" + allowEmptyStream);
+                    
+                    // Get quotingEscaped parameter
+                    quotingEscaped = record.quotingEscaped();
+                    LOG.debug("Escape quote character flag of the CSV: {}" + quotingEscaped);
                 }
 
                 if (section != null) {

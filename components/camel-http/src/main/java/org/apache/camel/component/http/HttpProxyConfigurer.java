@@ -38,7 +38,8 @@ public class HttpProxyConfigurer implements HttpClientConfigurer {
     public void configureHttpClient(HttpClient client) {
         if (proxyHost.isPresent() && proxyPort.isPresent()) {
             client.getHostConfiguration().setProxyHost(new ProxyHost(proxyHost.get(), proxyPort.get()));
-        } if (proxyHost.isPresent()) {
+        } 
+        if (proxyHost.isPresent()) {
             client.getHostConfiguration().setProxyHost(new ProxyHost(proxyHost.get()));
         }
     }

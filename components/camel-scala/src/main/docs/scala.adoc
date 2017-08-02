@@ -1,0 +1,78 @@
+[[ScalaDSL-AbouttheScalaDSL]]
+About the Scala DSL
+^^^^^^^^^^^^^^^^^^^
+
+**Deprecated**
+
+http://www.scala-lang.org/[Scala] is a general purpose programming
+language designed to express common programming patterns in a concise,
+elegant, and type-safe way. It integrates very well with the Java
+platform. Our Scala DSL implementation is built on top of the existing
+Java-based link:dsl.html[DSL], but it adds Scala syntax sugar to make
+building routes even more convenient.
+
+[[ScalaDSL-Documentation]]
+Documentation
+^^^^^^^^^^^^^
+
+* link:scala-dsl-getting-started.html[Scala DSL - Getting Started] gives
+you basic information on how to use the Scala DSL.
+* link:scala-dsl-eip.html[Scala DSL - EIP] shows you the Scala DSL
+syntax for every EIP supported. link:scala-dsl.html[Scala DSL] supports
+every EIP from the link:dsl.html[Java DSL].
+* link:scala-dsl-supported-languages.html[Scala DSL - Supported
+languages] explains the usage of traits to add support for other
+languages (e.g. XPath)
+
+[[ScalaDSL-References]]
+References
+^^^^^^^^^^
+
+* At http://www.eu.apachecon.com[ApacheCon Europe 2008] there was a Fast
+Feather talk that introduced some of the basic Scala language concepts
+that are being used for building the Scala DSL.
+http://www.anova.be/files/camel-scala.pdf[Here are the presentation
+slides] .
+* Here's a
+http://davsclaus.blogspot.se/2011/12/apache-camel-little-scala-dsl-example.html[blog
+post] demonstrating the link:message-filter.html[Message Filter] EIP
+within the link:scala-dsl.html[Scala DSL], as well as how to use
+link:camel-test.html[Camel's test kit] to test the example.
+
+[[ScalaDSL-Dependencies]]
+Dependencies
+^^^^^^^^^^^^
+
+To use the Scala DSL in your camel routes you need to add the a
+dependency on *camel-scala* which implements the Scala DSL.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-scala</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------
+
+Starting from version 2.11 Camel Scala DSL is compiled against Scala
+2.10. If you plan to use Scala 2.9 with Camel 2.11, add the following to
+your pom.xml file instead.
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-scala_2.9</artifactId>
+  <version>2.11.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------
+
+Support for Scala 2.9 is deprecated and will be removed starting from
+the Camel 2.12 and 3.0.

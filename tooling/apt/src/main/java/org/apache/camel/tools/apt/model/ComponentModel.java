@@ -34,6 +34,7 @@ public final class ComponentModel {
     private boolean consumerOnly;
     private boolean producerOnly;
     private boolean deprecated;
+    private String deprecationNode;
     private boolean lenientProperties;
     private boolean async;
 
@@ -163,6 +164,14 @@ public final class ComponentModel {
 
     public void setDeprecated(boolean deprecated) {
         this.deprecated = deprecated;
+    }
+
+    public String getDeprecationNode() {
+        return deprecationNode;
+    }
+
+    public void setDeprecationNode(String deprecationNode) {
+        this.deprecationNode = deprecationNode;
     }
 
     public boolean isLenientProperties() {

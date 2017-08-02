@@ -29,7 +29,7 @@ public class ResequenceBatchNotIgnoreInvalidExchangesTest extends ResequenceStre
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .resequence(header("seqno")).batch().timeout(1000)
+                    .resequence(header("seqno")).batch().timeout(50)
                     .to("mock:result");
             }
         };

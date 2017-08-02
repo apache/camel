@@ -44,8 +44,8 @@ public class BeanEndpoint extends DefaultEndpoint {
             + " Cache can be enabled if the bean in the Registry is defined as a singleton scope.")
     private boolean cache;
     @UriParam(label = "advanced", description = "How to treat the parameters which are passed from the message body."
-            + "true means the message body should be an array of parameters. Note: This option is used internally by Camel, and is not intended for end users to use.")
-    @Deprecated
+            + "true means the message body should be an array of parameters.")
+    @Deprecated @Metadata(deprecationNode = "This option is used internally by Camel, and is not intended for end users to use.")
     private boolean multiParameterArray;
     @UriParam(prefix = "bean.", label = "advanced", description = "Used for configuring additional properties on the bean", multiValue = true)
     private Map<String, Object> parameters;

@@ -16,8 +16,11 @@
  */
 package sample.camel;
 
+import java.util.Collections;
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -28,15 +31,14 @@ public class PetController {
 
     private static final String[] PETS = new String[]{"Snoopy", "Fido", "Tony the Tiger"};
 
-    @RequestMapping(value = "/petById/{id}", produces = "application/json")
-    public String petById(@PathVariable("id") Integer id) {
+    @GetMapping(value = "/pets/{id}")
+    public Map<String, String> petById(@PathVariable("id") Integer id) {
         if (id != null && id > 0 && id <= PETS.length + 1) {
             int index = id - 1;
             String pet = PETS[index];
-            return String.format("{ \"name\": \"%s\" }", pet);
+            return Collections.singletonMap("name", pet);
         } else {
-            // empty pet
-            return "{ }";
+            return Collections.emptyMap();
         }
     }
 

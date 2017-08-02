@@ -37,22 +37,22 @@ public class EhcacheEndpoint extends DefaultEndpoint {
     private final EhcacheConfiguration configuration;
     private final EhcacheManager cacheManager;
 
-    EhcacheEndpoint(String uri, EhcacheComponent component, EhcacheConfiguration configuration) throws Exception {
+    EhcacheEndpoint(String uri, EhcacheComponent component,  String cacheName, EhcacheManager cacheManager, EhcacheConfiguration configuration) throws Exception {
         super(uri, component);
 
-        this.cacheName = configuration.getCacheName();
+        this.cacheName = cacheName;
         this.configuration = configuration;
-        this.cacheManager = new EhcacheManager(configuration);
+        this.cacheManager = cacheManager;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new EhcacheProducer(this, configuration);
+        return new EhcacheProducer(this, this.cacheName, configuration);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new EhcacheConsumer(this, configuration, processor);
+        return new EhcacheConsumer(this, this.cacheName, configuration, processor);
     }
 
     @Override
@@ -70,11 +70,6 @@ public class EhcacheEndpoint extends DefaultEndpoint {
     protected void doStop() throws Exception {
         super.doStop();
         cacheManager.stop();
-    }
-
-    @Override
-    public EhcacheComponent getComponent() {
-        return (EhcacheComponent) super.getComponent();
     }
 
     EhcacheManager getManager() {

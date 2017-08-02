@@ -247,16 +247,6 @@ public class RestSwaggerEndpointTest {
     }
 
     @Test
-    public void shouldHaveADefaultSpecificationPathProperty() throws Exception {
-        final RestSwaggerComponent component = new RestSwaggerComponent();
-
-        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:getPetById", "getPetById",
-            component);
-
-        assertThat(endpoint.getSpecificationUri()).isEqualTo(RestSwaggerComponent.DEFAULT_SPECIFICATION_URI);
-    }
-
-    @Test
     public void shouldHonourComponentSpecificationPathProperty() throws Exception {
         final RestSwaggerComponent component = new RestSwaggerComponent();
         component.setSpecificationUri(componentJsonUri);
@@ -353,6 +343,26 @@ public class RestSwaggerEndpointTest {
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
         RestSwaggerEndpoint.loadSpecificationFrom(camelContext, URI.create("non-existant.json"));
+    }
+
+    @Test
+    public void shouldUseDefaultSpecificationUri() throws Exception {
+        final RestSwaggerComponent component = new RestSwaggerComponent();
+
+        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:getPetById", "getPetById",
+            component);
+
+        assertThat(endpoint.getSpecificationUri()).isEqualTo(RestSwaggerComponent.DEFAULT_SPECIFICATION_URI);
+    }
+
+    @Test
+    public void shouldUseDefaultSpecificationUriEvenIfHashIsPresent() throws Exception {
+        final RestSwaggerComponent component = new RestSwaggerComponent();
+
+        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:#getPetById", "#getPetById",
+            component);
+
+        assertThat(endpoint.getSpecificationUri()).isEqualTo(RestSwaggerComponent.DEFAULT_SPECIFICATION_URI);
     }
 
 }

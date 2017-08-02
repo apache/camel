@@ -35,8 +35,6 @@ public class ShutdownSedaAndDirectEndpointTest extends ContextTestSupport {
         template.sendBody("seda:foo", "D");
         template.sendBody("seda:foo", "E");
 
-        Thread.sleep(10);
-
         context.stop();
 
         assertMockEndpointsSatisfied();

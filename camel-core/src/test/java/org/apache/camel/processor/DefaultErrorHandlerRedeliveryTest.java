@@ -72,7 +72,7 @@ public class DefaultErrorHandlerRedeliveryTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .errorHandler(defaultErrorHandler().maximumRedeliveries(2))
+                    .errorHandler(defaultErrorHandler().redeliveryDelay(0).maximumRedeliveries(2))
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             counter++;
@@ -89,7 +89,7 @@ public class DefaultErrorHandlerRedeliveryTest extends ContextTestSupport {
                     });
 
                 from("direct:one")
-                    .errorHandler(defaultErrorHandler().maximumRedeliveries(1))
+                    .errorHandler(defaultErrorHandler().redeliveryDelay(0).maximumRedeliveries(1))
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             counter++;

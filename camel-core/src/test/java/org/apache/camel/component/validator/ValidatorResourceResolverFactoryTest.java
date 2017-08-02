@@ -18,6 +18,7 @@ package org.apache.camel.component.validator;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
@@ -29,9 +30,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.SimpleExpression;
-
 import org.junit.Assert;
 
+import static org.awaitility.Awaitility.await;
 
 public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
 
@@ -80,17 +81,13 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
 
         template.sendBody(directStart, body);
 
-        // fetch dynamic endpoint
-        ValidatorEndpoint validatorEndpoint = null;
-        for (int i = 0; i < 5; i++) {
-            validatorEndpoint = resolveMandatoryEndpoint(endpointUri, ValidatorEndpoint.class);
-            if (validatorEndpoint != null) {
-                break;
-            }
-            // wait until endpoint is resolved
-            Thread.sleep(50);
-        }
+
+        // wait until endpoint is resolved
+        await().atMost(1, TimeUnit.SECONDS).until(() -> resolveMandatoryEndpoint(endpointUri, ValidatorEndpoint.class) != null);
+
         MockEndpoint.assertIsSatisfied(endEndpoint);
+
+        ValidatorEndpoint validatorEndpoint = resolveMandatoryEndpoint(endpointUri, ValidatorEndpoint.class);
         Assert.assertNotNull(validatorEndpoint);
         CustomResourceResolver resolver = (CustomResourceResolver)validatorEndpoint.getResourceResolver();
 

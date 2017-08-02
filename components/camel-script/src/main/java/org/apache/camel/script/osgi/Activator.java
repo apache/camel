@@ -17,6 +17,7 @@
 package org.apache.camel.script.osgi;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,13 +174,14 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
     }
 
     protected void registerScriptEngines(Bundle bundle, List<BundleScriptEngineResolver> resolvers) {
-        URL configURL = null;
-        for (Enumeration<?> e = bundle.findEntries(META_INF_SERVICES_DIR, SCRIPT_ENGINE_SERVICE_FILE, false); e != null && e.hasMoreElements();) {
-            configURL = (URL) e.nextElement();
-        }
-        if (configURL != null) {
-            LOG.info("Found ScriptEngineFactory in bundle: {}", bundle.getSymbolicName());
-            resolvers.add(new BundleScriptEngineResolver(bundle, configURL));
+        try {
+            for (Enumeration<?> e = bundle.adapt(BundleWiring.class).getClassLoader().getResources(META_INF_SERVICES_DIR + "/" + SCRIPT_ENGINE_SERVICE_FILE); e != null && e.hasMoreElements();) {
+                URL configURL = (URL) e.nextElement();
+                LOG.info("Found ScriptEngineFactory in bundle: {}", bundle.getSymbolicName());
+                resolvers.add(new BundleScriptEngineResolver(bundle, configURL));
+            }
+        } catch (IOException e) {
+            LOG.info("Error loading script engine factory", e);
         }
     }
 

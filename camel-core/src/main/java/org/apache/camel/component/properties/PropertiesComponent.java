@@ -31,6 +31,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.FilePathResolver;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -90,7 +91,8 @@ public class PropertiesComponent extends UriEndpointComponent {
     public static final String OVERRIDE_PROPERTIES = PropertiesComponent.class.getName() + ".OverrideProperties";
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
-    private final Map<CacheKey, Properties> cacheMap = new LRUSoftCache<CacheKey, Properties>(1000);
+    @SuppressWarnings("unchecked")
+    private final Map<CacheKey, Properties> cacheMap = LRUCacheFactory.newLRUSoftCache(1000);
     private final Map<String, PropertiesFunction> functions = new HashMap<String, PropertiesFunction>();
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
@@ -185,7 +187,7 @@ public class PropertiesComponent extends UriEndpointComponent {
         Properties prop = new Properties();
 
         // use initial properties
-        if (null != initialProperties) {
+        if (initialProperties != null) {
             prop.putAll(initialProperties);
         }
 
@@ -590,7 +592,7 @@ public class PropertiesComponent extends UriEndpointComponent {
 
         @Override
         public int hashCode() {
-            return locations != null ? locations.hashCode() : 0;
+            return locations.hashCode();
         }
 
         @Override

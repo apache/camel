@@ -50,7 +50,6 @@ public class BoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSupp
     private static final String CAMEL_TEST_COLLABORATOR_EMAIL = "cameltest@example.com";
     private static final String CAMEL_TEST_COLLABORATOR_NAME = "cameltest";
 
-    private BoxFolder testFolder;
     private BoxCollaboration testCollaboration;
 
     @Test
@@ -210,11 +209,6 @@ public class BoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSupp
     private void createTestFolder() throws FileNotFoundException {
         BoxFolder rootFolder = BoxFolder.getRootFolder(getConnection());
         testFolder = rootFolder.createFolder(CAMEL_TEST_FOLDER).getResource();
-    }
-
-    private void deleteTestFolder() {
-        testFolder.delete(true);
-        testFolder = null;
     }
 
     private void createTestCollaborator() {

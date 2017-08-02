@@ -19,9 +19,9 @@ package org.apache.camel.impl;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
 
@@ -31,9 +31,9 @@ import org.apache.camel.model.RouteDefinition;
  * @version 
  */
 public class StartAndStopRoutesTest extends ContextTestSupport {
-    protected SedaEndpoint endpointA;
-    protected SedaEndpoint endpointB;
-    protected SedaEndpoint endpointC;
+    protected Endpoint endpointA;
+    protected Endpoint endpointB;
+    protected Endpoint endpointC;
     protected Object expectedBody = "<hello>world!</hello>";
 
     public void testStartRouteThenStopMutateAndStartRouteAgain() throws Exception {
@@ -41,9 +41,9 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
         assertCollectionSize("Route", routes, 1);
         RouteDefinition route = routes.get(0);
 
-        endpointA = getMandatoryEndpoint("seda:test.a", SedaEndpoint.class);
-        endpointB = getMandatoryEndpoint("seda:test.b", SedaEndpoint.class);
-        endpointC = getMandatoryEndpoint("seda:test.C", SedaEndpoint.class);
+        endpointA = getMandatoryEndpoint("direct:test.a");
+        endpointB = getMandatoryEndpoint("seda:test.b");
+        endpointC = getMandatoryEndpoint("direct:test.C");
 
         // send from A over B to results
         MockEndpoint results = getMockEndpoint("mock:results");
@@ -58,7 +58,7 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
 
         // lets mutate the route...
         FromDefinition fromType = assertOneElement(route.getInputs());
-        fromType.setUri("seda:test.C");
+        fromType.setUri("direct:test.C");
         context.startRoute(route);
 
         // now lets check it works
@@ -77,7 +77,7 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:test.a").
+                from("direct:test.a").
                         to("seda:test.b").
                         to("mock:results");
             }

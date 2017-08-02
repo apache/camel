@@ -2,7 +2,7 @@
 Dozer Type Conversion
 ----------------------
 
-http://dozer.sourceforge.net/documentation/about.html[Dozer] is a fast
+https://github.com/DozerMapper/dozer/blob/master/docs/asciidoc/about/about.adoc[Dozer] is a fast
 and flexible framework for mapping back and forth between Java Beans.
 Coupled with Camel's automatic type conversion, it's a formidable tool
 for dealing object to object mapping headaches that crop up in
@@ -105,9 +105,8 @@ Configuring Dozer
 ~~~~~~~~~~~~~~~~~
 
 Dozer's configuration is extremely flexible and many mapping scenarios
-are covered
-http://dozer.sourceforge.net/documentation/mappings.html[here]. For our
-simple example, the configuration looks like the following.
+are covered https://github.com/DozerMapper/dozer/blob/master/docs/asciidoc/documentation/mappings.adoc[here].
+For our simple example, the configuration looks like the following.
 
 *mapping.xml*
 
@@ -143,7 +142,7 @@ be searched for suitable instances. The loader will query the Dozer
 Mapper for the the types it converts and a register them with Camel's
 type conversion framework to be handled by the mapper.
 
-[Info]
+[NOTE]
 ====
 *Limitation*
 
@@ -165,7 +164,7 @@ Or in Spring
 ----------------------------------------------------------------------------------------------------
 <!-- the registry will be scanned and 'mapper' below will be found and installed -->
 <bean id="dozerConverterLoader" class="org.apache.camel.converter.dozer.DozerTypeConverterLoader" />
-  
+
 <bean id="mapper" class="org.dozer.DozerBeanMapper">
   <property name="mappingFiles">
     <list>
@@ -177,7 +176,7 @@ Or in Spring
 
 [[DozerTypeConversion-ConfiguringinOSGiblueprint]]
 Configuring in OSGi blueprint
-+++++++++++++++++++++++++++++
+-----------------------------
 
 *Available as of Camel 2.12*
 
@@ -192,7 +191,7 @@ of `org.dozer.DozerBeanMapper`, as shown below:
   <argument index="0" ref="myCamel"/>
   <argument index="1" ref="mapper"/>
 </bean>
-  
+
 <bean id="mapper" class="org.apache.camel.converter.dozer.DozerBeanMapperConfiguration">
   <property name="mappingFiles">
     <list>

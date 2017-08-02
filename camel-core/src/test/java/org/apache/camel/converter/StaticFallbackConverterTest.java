@@ -30,6 +30,11 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class StaticFallbackConverterTest extends ContextTestSupport {
 
+    @Override
+    protected boolean isLoadTypeConverters() {
+        return true;
+    }
+
     public void testStaticFallbackConverter() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         TimeZone tz = TimeZone.getDefault();

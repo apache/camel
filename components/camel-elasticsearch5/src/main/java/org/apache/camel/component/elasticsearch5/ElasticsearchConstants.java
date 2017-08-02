@@ -32,6 +32,9 @@ public interface ElasticsearchConstants {
     String PORT = "port";
     int    DEFAULT_PORT = 9300;
     int    DEFAULT_FOR_WAIT_ACTIVE_SHARDS = 1; // Meaning only wait for the primary shard
+    String DEFAULT_PING_SCHEDULE = "5s"; // Meaning how often it should ping the cluster
+    String DEFAULT_PING_TIMEOUT = "5s"; // Meaning how long to wait for ping before timeout
+    String DEFAULT_TCP_CONNECT_TIMEOUT = "30s"; // Meaning how many seconds before it timeout when establish connection
     String TRANSPORT_ADDRESSES_SEPARATOR_REGEX = ",";
     String IP_PORT_SEPARATOR_REGEX = ":";
     String ES_QUERY_DSL_PREFIX = "query";

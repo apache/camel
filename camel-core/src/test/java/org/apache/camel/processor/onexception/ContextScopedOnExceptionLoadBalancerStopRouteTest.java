@@ -16,10 +16,14 @@
  */
 package org.apache.camel.processor.onexception;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaEndpoint;
+
+import static org.awaitility.Awaitility.await;
 
 public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTestSupport {
 
@@ -67,8 +71,8 @@ public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTe
         template.sendBody("direct:start", "World");
 
         // give time for route to stop
-        Thread.sleep(1000);
-        assertEquals(ServiceStatus.Stopped, context.getRouteStatus("errorRoute"));
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() ->
+            assertEquals(ServiceStatus.Stopped, context.getRouteStatus("errorRoute")));
 
         template.sendBody("direct:start", "Kaboom");
 

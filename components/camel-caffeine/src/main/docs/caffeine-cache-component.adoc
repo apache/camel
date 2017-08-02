@@ -1,0 +1,87 @@
+## Caffeine Cache Component
+
+*Available as of Camel version 2.20*
+
+The *caffeine-cache* component enables you to perform caching operations using
+The simple cache from Caffeine.
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-caffeine</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+-----------------------------
+caffeine-cache://cacheName[?options]
+-----------------------------
+
+You can append query options to the URI in the following
+format, `?option=value&option=#beanRef&...`
+
+### Options
+
+
+// component options: START
+The Caffeine Cache component supports 2 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **configuration** (advanced) | Sets the global component configuration |  | CaffeineConfiguration
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|=======================================================================
+// component options: END
+
+
+
+// endpoint options: START
+The Caffeine Cache endpoint is configured using URI syntax:
+
+    caffeine-cache:cacheName
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **cacheName** | *Required* the cache name |  | String
+|=======================================================================
+
+#### Query Parameters (17 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **createCacheIfNotExist** (common) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **action** (producer) | To configure the default cache action. If an action is set in the message header then the operation from the header takes precedence. |  | String
+| **cache** (producer) | To configure the default an already instantianted cache to be used |  | Cache
+| **cacheLoader** (producer) | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
+| **evictionType** (producer) | Set the eviction Type for this cache | SIZE_BASED | EvictionType
+| **expireAfterAccessTime** (producer) | Set the expire After Access Time in case of time based Eviction (in seconds) | 300 | int
+| **expireAfterWriteTime** (producer) | Set the expire After Access Write in case of time based Eviction (in seconds) | 300 | int
+| **initialCapacity** (producer) | Set the initial Capacity for the cache | 10000 | int
+| **key** (producer) | To configure the default action key. If a key is set in the message header then the key from the header takes precedence. |  | Object
+| **maximumSize** (producer) | Set the maximum size for the cache | 10000 | int
+| **statsEnabled** (producer) | To enable stats on the cache | false | boolean
+| **keyType** (advanced) | The cache key type default java.lang.Object | java.lang.Object | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **valueType** (advanced) | The cache value type default java.lang.Object | java.lang.Object | String
+|=======================================================================
+// endpoint options: END

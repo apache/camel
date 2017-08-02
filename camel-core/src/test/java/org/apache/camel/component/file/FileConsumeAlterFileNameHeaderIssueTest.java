@@ -43,7 +43,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/files?delete=true")
+                from("file://target/files?initialDelay=0&delay=10&delete=true")
                     // remove all headers
                     .removeHeaders("*")
                     .to("mock:result");
@@ -70,7 +70,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/files?delete=true")
+                from("file://target/files?initialDelay=0&delay=10&delete=true")
                     // change file header
                     .setHeader(Exchange.FILE_NAME, constant("bye.txt"))
                     .to("mock:result");
@@ -96,7 +96,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/files")
+                from("file://target/files?initialDelay=0&delay=10")
                     // remove all headers
                     .removeHeaders("*")
                     .to("mock:result");
@@ -123,7 +123,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/files")
+                from("file://target/files?initialDelay=0&delay=10")
                     // change file header
                     .setHeader(Exchange.FILE_NAME, constant("bye.txt"))
                     .to("mock:result");

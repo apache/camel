@@ -23,7 +23,7 @@ public enum TimelineType {
 
     private static final TimelineType[] VALUES = values();
 
-    public static TimelineType fromUri(String uri) {
+    public static TimelineType fromString(String uri) {
         return TwitterHelper.enumFromString(VALUES, uri, TimelineType.UNKNOWN);
     }
 }

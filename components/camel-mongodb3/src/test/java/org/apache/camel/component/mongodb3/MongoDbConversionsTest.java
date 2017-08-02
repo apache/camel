@@ -49,7 +49,6 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
         template.requestBody("direct:insertMap", m1);
         Document b = testCollection.find(eq(MONGO_ID, "testInsertMap")).first();
         assertNotNull("No record with 'testInsertMap' _id", b);
-
     }
 
     @Test

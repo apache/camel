@@ -40,8 +40,9 @@ public class TemplateStoredProcedure extends StoredProcedure {
 
     private List<InputParameter> inputParameterList = new ArrayList<>();
 
-    public TemplateStoredProcedure(JdbcTemplate jdbcTemplate, Template template) {
+    public TemplateStoredProcedure(JdbcTemplate jdbcTemplate, Template template, boolean function) {
         this.template = template;
+        setFunction(function);
         setDataSource(jdbcTemplate.getDataSource());
 
         setSql(template.getProcedureName());
@@ -49,12 +50,30 @@ public class TemplateStoredProcedure extends StoredProcedure {
         for (Object parameter : template.getParameterList()) {
             if (parameter instanceof InputParameter) {
                 InputParameter inputParameter = (InputParameter) parameter;
-                declareParameter(new SqlParameter(inputParameter.getName(), inputParameter.getSqlType()));
+                SqlParameter sqlParameter;
+                if (inputParameter.getScale() != null) {
+                    sqlParameter = new SqlParameter(inputParameter.getName(), inputParameter.getSqlType(), inputParameter.getScale());
+                } else if (inputParameter.getTypeName() != null) {
+                    sqlParameter = new SqlParameter(inputParameter.getName(), inputParameter.getSqlType(), inputParameter.getTypeName());
+                } else {
+                    sqlParameter = new SqlParameter(inputParameter.getName(), inputParameter.getSqlType());
+                }
+
+                declareParameter(sqlParameter);
                 inputParameterList.add(inputParameter);
 
             } else if (parameter instanceof OutParameter) {
                 OutParameter outParameter = (OutParameter) parameter;
-                declareParameter(new SqlOutParameter(outParameter.getOutValueMapKey(), outParameter.getSqlType()));
+                SqlOutParameter sqlOutParameter;
+                if (outParameter.getScale() != null) {
+                    sqlOutParameter = new SqlOutParameter(outParameter.getOutValueMapKey(), outParameter.getSqlType(), outParameter.getScale());
+                } else if (outParameter.getTypeName() != null) {
+                    sqlOutParameter = new SqlOutParameter(outParameter.getOutValueMapKey(), outParameter.getSqlType(), outParameter.getTypeName());
+                } else {
+                    sqlOutParameter = new SqlOutParameter(outParameter.getOutValueMapKey(), outParameter.getSqlType());
+                }
+
+                declareParameter(sqlOutParameter);
                 setFunction(false);
             }
         }

@@ -30,7 +30,7 @@ public class LoadBalancerTest extends ContextTestSupport {
         serviceDiscovery.addServer("no-name", "127.0.0.1", 1001);
         serviceDiscovery.addServer("no-name", "127.0.0.1", 1002);
 
-        DefaultLoadBalancer loadBalancer = new DefaultLoadBalancer();
+        DefaultServiceLoadBalancer loadBalancer = new DefaultServiceLoadBalancer();
         loadBalancer.setCamelContext(context);
         loadBalancer.setServiceDiscovery(serviceDiscovery);
         loadBalancer.setServiceFilter(services -> services.stream().filter(s -> s.getPort() < 2000).collect(Collectors.toList()));

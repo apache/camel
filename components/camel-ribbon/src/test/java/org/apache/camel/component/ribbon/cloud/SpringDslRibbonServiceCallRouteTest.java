@@ -17,6 +17,10 @@
 
 package org.apache.camel.component.ribbon.cloud;
 
+import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
+import org.apache.camel.impl.cloud.StaticServiceDiscovery;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
@@ -26,6 +30,17 @@ public class SpringDslRibbonServiceCallRouteTest extends SpringRibbonServiceCall
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/ribbon/cloud/SpringDslRibbonServiceCallRouteTest.xml");
+    }
+
+    @Test
+    public void testServiceCallConfiguration() throws Exception {
+        DefaultServiceCallProcessor processor = findServiceCallProcessor();
+
+        Assert.assertNotNull(processor.getLoadBalancer());
+        Assert.assertTrue(processor.getLoadBalancer() instanceof RibbonServiceLoadBalancer);
+
+        RibbonServiceLoadBalancer loadBalancer = (RibbonServiceLoadBalancer)processor.getLoadBalancer();
+        Assert.assertTrue(loadBalancer.getServiceDiscovery() instanceof StaticServiceDiscovery);
     }
 }
 

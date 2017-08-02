@@ -36,7 +36,7 @@ public class RedeliveryErrorHandlerNoRedeliveryOnShutdownTest extends ContextTes
         // should not take long to stop the route
         StopWatch watch = new StopWatch();
         context.stopRoute("foo");
-        watch.stop();
+        watch.taken();
 
         assertTrue("Should stop route faster, was " + watch.taken(), watch.taken() < 4000);
     }

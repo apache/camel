@@ -34,6 +34,11 @@ import org.apache.camel.util.URISupport;
 public abstract class AbstractSpanDecorator implements SpanDecorator {
 
     @Override
+    public boolean newSpan() {
+        return true;
+    }
+
+    @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
         // OpenTracing aims to use low cardinality operation names. Ideally a specific
         // span decorator should be defined for all relevant Camel components that

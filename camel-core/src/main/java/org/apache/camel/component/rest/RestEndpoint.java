@@ -27,6 +27,7 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
@@ -79,6 +80,8 @@ public class RestEndpoint extends DefaultEndpoint {
     private String host;
     @UriParam(label = "producer", multiValue = true)
     private String queryParameters;
+    @UriParam(label = "producer")
+    private RestBindingMode bindingMode;
 
     private Map<String, Object> parameters;
 
@@ -251,8 +254,28 @@ public class RestEndpoint extends DefaultEndpoint {
         this.queryParameters = queryParameters;
     }
 
+    public RestBindingMode getBindingMode() {
+        return bindingMode;
+    }
+
+    /**
+     * Configures the binding mode for the producer. If set to anything
+     * other than 'off' the producer will try to convert the body of
+     * the incoming message from inType to the json or xml, and the
+     * response from json or xml to outType.
+     */
+    public void setBindingMode(final RestBindingMode bindingMode) {
+        this.bindingMode = bindingMode;
+    }
+
     @Override
     public Producer createProducer() throws Exception {
+        if (ObjectHelper.isEmpty(host)) {
+            // hostname must be provided
+            throw new IllegalArgumentException("Hostname must be configured on either restConfiguration"
+                + " or in the rest endpoint uri as a query parameter with name host, eg rest:" + method + ":" + path + "?host=someserver");
+        }
+
         RestProducerFactory apiDocFactory = null;
         RestProducerFactory factory = null;
 
@@ -353,6 +376,7 @@ public class RestEndpoint extends DefaultEndpoint {
             RestProducer answer = new RestProducer(this, producer, config);
             answer.setOutType(outType);
             answer.setType(inType);
+            answer.setBindingMode(bindingMode);
 
             return answer;
         } else {

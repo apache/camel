@@ -17,14 +17,14 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.IOHelper;
 
 /**
  *
@@ -54,7 +54,7 @@ public class FileProducerCharsetUTFtoISOTest extends ContextTestSupport {
         }
 
         // write the byte array to a file using plain API
-        FileOutputStream fos = new FileOutputStream("target/charset/input/input.txt");
+        OutputStream fos = Files.newOutputStream(Paths.get("target/charset/input/input.txt"));
         fos.write(utf);
         fos.close();
 
@@ -67,7 +67,7 @@ public class FileProducerCharsetUTFtoISOTest extends ContextTestSupport {
         File file = new File("target/charset/output.txt");
         assertTrue("File should exist", file.exists());
 
-        InputStream fis = IOHelper.buffered(new FileInputStream(file));
+        InputStream fis = Files.newInputStream(Paths.get(file.getAbsolutePath()));
         byte[] buffer = new byte[100];
 
         int len = fis.read(buffer);
@@ -89,7 +89,7 @@ public class FileProducerCharsetUTFtoISOTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/charset/input?noop=true")
+                from("file:target/charset/input?initialDelay=0&delay=10&noop=true")
                     .to("file:target/charset/?fileName=output.txt&charset=iso-8859-1");
             }
         };

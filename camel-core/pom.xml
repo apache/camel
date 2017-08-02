@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -23,7 +25,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
+    <version>2.20.0-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -158,8 +160,13 @@
       <version>${hamcrest-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-    <!-- logging -->         
+    <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
@@ -187,6 +194,11 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <scope>test</scope>
     </dependency>
 
     <!-- validator -->
@@ -406,12 +418,12 @@
               <packages>org.apache.camel.builder:org.apache.camel.builder.*</packages>
             </group>
             <group>
-              <title>The routing model for EIP rule definitions</title>
+              <title>EIP model</title>
               <packages>org.apache.camel.model:org.apache.camel.model.*</packages>
             </group>
             <group>
-              <title>Strategy APIs for implementors extending Camel</title>
-              <packages>org.apache.camel.spi</packages>
+              <title>Camel Components</title>
+              <packages>org.apache.camel.component:org.apache.camel.component.*</packages>
             </group>
             <group>
               <title>Language APIs and plugins for Expressions and Predicates</title>
@@ -422,20 +434,24 @@
               <packages>org.apache.camel.processor:org.apache.camel.processor.*</packages>
             </group>
             <group>
-              <title>Camel Components</title>
-              <packages>org.apache.camel.component.*</packages>
+              <title>Strategy APIs for implementors extending Camel</title>
+              <packages>org.apache.camel.spi</packages>
             </group>
             <group>
               <title>Support APIs for implementors</title>
-              <packages>org.apache.camel.support.*</packages>
+              <packages>org.apache.camel.support:org.apache.camel.support.*</packages>
             </group>
             <group>
-              <title>Main class for running Camel standalone</title>
-              <packages>org.apache.camel.main.*</packages>
+              <title>Management (JMX) API</title>
+              <packages>org.apache.camel.management:org.apache.camel.management.*:org.apache.camel.api.management.mbean</packages>
             </group>
             <group>
               <title>Camel Runtime</title>
               <packages>org.apache.camel.impl:org.apache.camel.impl.*</packages>
+            </group>
+            <group>
+              <title>Camel Main to run Camel standalone</title>
+              <packages>org.apache.camel.main</packages>
             </group>
             <group>
               <title>Type conversion helper classes</title>
@@ -503,12 +519,12 @@
                   <packages>org.apache.camel.builder:org.apache.camel.builder.*</packages>
                 </group>
                 <group>
-                  <title>The bean and JAXB2 model for EIP rule definitions</title>
+                  <title>EIP model</title>
                   <packages>org.apache.camel.model:org.apache.camel.model.*</packages>
                 </group>
                 <group>
-                  <title>Strategy APIs for implementors extending Camel</title>
-                  <packages>org.apache.camel.spi</packages>
+                  <title>Camel Components</title>
+                  <packages>org.apache.camel.component:org.apache.camel.component.*</packages>
                 </group>
                 <group>
                   <title>Language APIs and plugins for Expressions and Predicates</title>
@@ -519,27 +535,23 @@
                   <packages>org.apache.camel.processor:org.apache.camel.processor.*</packages>
                 </group>
                 <group>
-                  <title>Camel Components</title>
-                  <packages>org.apache.camel.component.*</packages>
-                </group>
-                <group>
-                  <title>Camel Support having base classes to extend</title>
-                  <packages>org.apache.camel.support</packages>
+                  <title>Strategy APIs for implementors extending Camel</title>
+                  <packages>org.apache.camel.spi</packages>
                 </group>
                 <group>
                   <title>Support APIs for implementors</title>
-                  <packages>org.apache.camel.support.*</packages>
+                  <packages>org.apache.camel.support:org.apache.camel.support.*</packages>
                 </group>
                 <group>
-                  <title>Main class for running Camel standalone</title>
-                  <packages>org.apache.camel.main.*</packages>
+                  <title>Management (JMX) API</title>
+                  <packages>org.apache.camel.management:org.apache.camel.management.*:org.apache.camel.api.management.mbean</packages>
                 </group>
                 <group>
                   <title>Camel Runtime</title>
                   <packages>org.apache.camel.impl:org.apache.camel.impl.*</packages>
                 </group>
                 <group>
-                  <title>Camel Starters</title>
+                  <title>Camel Main to run Camel standalone</title>
                   <packages>org.apache.camel.main</packages>
                 </group>
                 <group>
@@ -682,5 +694,5 @@
       </build>
     </profile>
   </profiles>
-  
+
 </project>

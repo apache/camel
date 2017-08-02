@@ -107,7 +107,7 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
     }
 
     private Message extractAttachment(Message inMessage, String attachmentName) throws Exception {
-        final Message outMessage = new DefaultMessage();
+        final Message outMessage = new DefaultMessage(inMessage.getExchange().getContext());
         outMessage.setHeader(HEADER_NAME, attachmentName);
         Object attachment = inMessage.getAttachment(attachmentName).getContent();
         if (attachment instanceof InputStream) {

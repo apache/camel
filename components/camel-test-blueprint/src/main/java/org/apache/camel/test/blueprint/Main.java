@@ -140,11 +140,11 @@ public class Main extends MainSupport {
         return createBundleContext(getClass().getSimpleName());
     }
 
-    protected BundleContext createBundleContext(String name, String[] ... configAdminPidFiles) throws Exception {
+    protected BundleContext createBundleContext(String name, String[]... configAdminPidFiles) throws Exception {
         return createBundleContext(name, loader, configAdminPidFiles);
     }
 
-    protected BundleContext createBundleContext(String name, ClassLoader loader, String[] ... configAdminPidFiles) throws Exception {
+    protected BundleContext createBundleContext(String name, ClassLoader loader, String[]... configAdminPidFiles) throws Exception {
         return CamelBlueprintHelper.createBundleContext(name, descriptors, isIncludeSelfAsBundle(),
                 CamelBlueprintHelper.BUNDLE_FILTER, CamelBlueprintHelper.BUNDLE_VERSION, null,
                 loader, configAdminPidFiles);

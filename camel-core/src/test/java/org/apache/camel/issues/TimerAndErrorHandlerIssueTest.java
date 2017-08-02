@@ -45,7 +45,8 @@ public class TimerAndErrorHandlerIssueTest extends ContextTestSupport {
                 String executionTriggerUri = "timer:executionTimer"
                         + "?fixedRate=true"
                         + "&daemon=true"
-                        + "&period=500";
+                        + "&delay=0"
+                        + "&period=10";
 
                 from(executionTriggerUri).to("mock:result");
             }

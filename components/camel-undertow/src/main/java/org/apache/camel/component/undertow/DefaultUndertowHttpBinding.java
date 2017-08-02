@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Deque;
@@ -29,7 +28,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.activation.FileDataSource;
 
@@ -101,7 +99,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
     @Override
     public Message toCamelMessage(HttpServerExchange httpExchange, Exchange exchange) throws Exception {
-        Message result = new DefaultMessage();
+        Message result = new DefaultMessage(exchange.getContext());
 
         populateCamelHeaders(httpExchange, result.getHeaders(), exchange);
 
@@ -137,7 +135,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
     @Override
     public Message toCamelMessage(ClientExchange clientExchange, Exchange exchange) throws Exception {
-        Message result = new DefaultMessage();
+        Message result = new DefaultMessage(exchange.getContext());
 
         //retrieve response headers
         populateCamelHeaders(clientExchange.getResponse(), result.getHeaders(), exchange);
@@ -285,7 +283,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
         int code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, defaultCode, int.class);
 
-        httpExchange.setResponseCode(code);
+        httpExchange.setStatusCode(code);
 
         TypeConverter tc = message.getExchange().getContext().getTypeConverter();
 
@@ -325,7 +323,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 // we failed due an exception so print it as plain text
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
-                exception.getCause().printStackTrace(pw);
+                exception.printStackTrace(pw);
 
                 // the body should then be the stacktrace
                 body = ByteBuffer.wrap(sw.toString().getBytes());

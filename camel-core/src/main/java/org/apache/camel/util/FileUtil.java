@@ -17,14 +17,14 @@
 package org.apache.camel.util;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Random;
-import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -302,7 +302,7 @@ public final class FileUtil {
         // preserve starting slash if given in input path
         boolean startsWithSlash = path.startsWith("/") || path.startsWith("\\");
         
-        Stack<String> stack = new Stack<String>();
+        Deque<String> stack = new ArrayDeque<>();
 
         // separator can either be windows or unix style
         String separatorRegex = "\\\\|/";
@@ -324,8 +324,9 @@ public final class FileUtil {
         if (startsWithSlash) {
             sb.append(separator);
         }
-        
-        for (Iterator<String> it = stack.iterator(); it.hasNext();) {
+
+        // now we build back using FIFO so need to use descending
+        for (Iterator<String> it = stack.descendingIterator(); it.hasNext();) {
             sb.append(it.next());
             if (it.hasNext()) {
                 sb.append(separator);
@@ -530,24 +531,7 @@ public final class FileUtil {
      * @throws IOException If an I/O error occurs during copy operation
      */
     public static void copyFile(File from, File to) throws IOException {
-        FileChannel in = null;
-        FileChannel out = null;
-        try {
-            in = new FileInputStream(from).getChannel();
-            out = new FileOutputStream(to).getChannel();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Using FileChannel to copy from: " + in + " to: " + out);
-            }
-
-            long size = in.size();
-            long position = 0;
-            while (position < size) {
-                position += in.transferTo(position, BUFFER_SIZE, out);
-            }
-        } finally {
-            IOHelper.close(in, from.getName(), LOG);
-            IOHelper.close(out, to.getName(), LOG);
-        }
+        Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
     /**

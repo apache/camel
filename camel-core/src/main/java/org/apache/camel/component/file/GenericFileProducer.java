@@ -26,6 +26,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
@@ -40,14 +41,14 @@ public class GenericFileProducer<T> extends DefaultProducer {
     protected final GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
     // assume writing to 100 different files concurrently at most for the same file producer
-    private final LRUCache<String, Lock> locks = new LRUCache<String, Lock>(100);
+    private final LRUCache<String, Lock> locks = LRUCacheFactory.newLRUCache(100);
 
     protected GenericFileProducer(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations) {
         super(endpoint);
         this.endpoint = endpoint;
         this.operations = operations;
     }
-    
+
     public String getFileSeparator() {
         return File.separator;
     }
@@ -396,14 +397,15 @@ public class GenericFileProducer<T> extends DefaultProducer {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
-        super.doStart();
         ServiceHelper.startService(locks);
+        super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(locks);
         super.doStop();
+        ServiceHelper.stopService(locks);
     }
 }

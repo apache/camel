@@ -36,7 +36,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootApplication
 @SpringBootTest(
     classes = {
-        EtcdServiceDiscoveryEnabledTest.TestConfiguration.class
+        EtcdServiceDiscoveryDisabledTest.TestConfiguration.class
     },
     properties = {
         "debug=false",

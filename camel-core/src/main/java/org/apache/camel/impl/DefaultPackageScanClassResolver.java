@@ -47,7 +47,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,8 +59,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final Set<ClassLoader> classLoaders = new LinkedHashSet<ClassLoader>();
-    // use a JAR cache to speed up scanning JARs, but let it be soft referenced so it can claim the data when memory is needed
-    private final Map<String, List<String>> jarCache = new LRUSoftCache<String, List<String>>(1000);
+    private Map<String, List<String>> jarCache;
     private Set<PackageScanFilter> scanFilters;
     private String[] acceptableSchemes = {};
 
@@ -394,7 +393,6 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
     private void loadImplementationsInJar(PackageScanFilter test, String parent, InputStream stream,
                                                        String urlPath, Set<Class<?>> classes, Map<String, List<String>> jarCache) {
         ObjectHelper.notNull(classes, "classes");
-        ObjectHelper.notNull(jarCache, "jarCache");
 
         List<String> entries = jarCache != null ? jarCache.get(urlPath) : null;
         if (entries == null) {
@@ -508,8 +506,12 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
-        // noop
+        if (jarCache == null) {
+            // use a JAR cache to speed up scanning JARs, but let it be soft referenced so it can claim the data when memory is needed
+            jarCache = LRUCacheFactory.newLRUCache(1000);
+        }
     }
 
     protected void doStop() throws Exception {

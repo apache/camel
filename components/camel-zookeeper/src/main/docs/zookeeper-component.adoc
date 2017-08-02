@@ -74,7 +74,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
-| **awaitExistence** (common) | Not in use | true | boolean
+| **awaitExistence** (common) | *Deprecated* Not in use | true | boolean
 | **listChildren** (common) | Whether the children of the node should be listed | false | boolean
 | **timeout** (common) | The time interval to wait on connection before timing out. | 5000 | int
 | **backoff** (consumer) | The time interval to backoff for after an error before retrying. | 5000 | long

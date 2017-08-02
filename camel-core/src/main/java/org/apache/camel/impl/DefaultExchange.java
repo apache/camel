@@ -17,10 +17,13 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -30,7 +33,6 @@ import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
-import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -85,6 +87,15 @@ public final class DefaultExchange implements Exchange {
         return String.format("Exchange[%s]", exchangeId == null ? "" : exchangeId);
     }
 
+    @Override
+    public Date getCreated() {
+        if (hasProperties()) {
+            return getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
+        } else {
+            return null;
+        }
+    }
+
     public Exchange copy() {
         // to be backwards compatible as today
         return copy(false);
@@ -128,24 +139,21 @@ public final class DefaultExchange implements Exchange {
         return exchange;
     }
 
-    private static Map<String, Object> safeCopyHeaders(Map<String, Object> headers) {
+    private Map<String, Object> safeCopyHeaders(Map<String, Object> headers) {
         if (headers == null) {
             return null;
         }
 
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.putAll(headers);
-        return answer;
+        return context.getHeadersMapFactory().newMap(headers);
     }
 
     @SuppressWarnings("unchecked")
-    private static Map<String, Object> safeCopyProperties(Map<String, Object> properties) {
+    private Map<String, Object> safeCopyProperties(Map<String, Object> properties) {
         if (properties == null) {
             return null;
         }
 
-        // TODO: properties should use same map kind as headers
-        Map<String, Object> answer = new ConcurrentHashMap<String, Object>(properties);
+        Map<String, Object> answer = createProperties(properties);
 
         // safe copy message history using a defensive copy
         List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
@@ -177,7 +185,7 @@ public final class DefaultExchange implements Exchange {
         Object value = getProperty(name);
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class.isAssignableFrom(type)) {
+            if (boolean.class == type) {
                 return (T) Boolean.FALSE;
             }
             return null;
@@ -186,7 +194,7 @@ public final class DefaultExchange implements Exchange {
         // eager same instance type test to avoid the overhead of invoking the type converter
         // if already same type
         if (type.isInstance(value)) {
-            return type.cast(value);
+            return (T) value;
         }
 
         return ExchangeHelper.convertToType(this, type, value);
@@ -197,7 +205,7 @@ public final class DefaultExchange implements Exchange {
         Object value = getProperty(name, defaultValue);
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class.isAssignableFrom(type)) {
+            if (boolean.class == type) {
                 return (T) Boolean.FALSE;
             }
             return null;
@@ -206,7 +214,7 @@ public final class DefaultExchange implements Exchange {
         // eager same instance type test to avoid the overhead of invoking the type converter
         // if already same type
         if (type.isInstance(value)) {
-            return type.cast(value);
+            return (T) value;
         }
 
         return ExchangeHelper.convertToType(this, type, value);
@@ -240,24 +248,34 @@ public final class DefaultExchange implements Exchange {
             return false;
         }
 
+        // store keys to be removed as we cannot loop and remove at the same time in implementations such as HashMap
+        Set<String> toBeRemoved = new HashSet<>();
         boolean matches = false;
-        for (Map.Entry<String, Object> entry : properties.entrySet()) {
-            String key = entry.getKey();
+        for (String key : properties.keySet()) {
             if (EndpointHelper.matchPattern(key, pattern)) {
                 if (excludePatterns != null && isExcludePatternMatch(key, excludePatterns)) {
                     continue;
                 }
                 matches = true;
-                properties.remove(entry.getKey());
+                toBeRemoved.add(key);
             }
-
         }
+
+        if (!toBeRemoved.isEmpty()) {
+            if (toBeRemoved.size() == properties.size()) {
+                // special optimization when all should be removed
+                properties.clear();
+            } else {
+                toBeRemoved.forEach(k -> properties.remove(k));
+            }
+        }
+
         return matches;
     }
 
     public Map<String, Object> getProperties() {
         if (properties == null) {
-            properties = new ConcurrentHashMap<String, Object>();
+            properties = createProperties();
         }
         return properties;
     }
@@ -272,7 +290,7 @@ public final class DefaultExchange implements Exchange {
 
     public Message getIn() {
         if (in == null) {
-            in = new DefaultMessage();
+            in = new DefaultMessage(getContext());
             configureMessage(in);
         }
         return in;
@@ -300,7 +318,7 @@ public final class DefaultExchange implements Exchange {
         // lazy create
         if (out == null) {
             out = (in != null && in instanceof MessageSupport)
-                ? ((MessageSupport)in).newInstance() : new DefaultMessage();
+                ? ((MessageSupport)in).newInstance() : new DefaultMessage(getContext());
             configureMessage(out);
         }
         return out;
@@ -348,6 +366,10 @@ public final class DefaultExchange implements Exchange {
         } else {
             // wrap throwable into an exception
             this.exception = ObjectHelper.wrapCamelExecutionException(this, t);
+        }
+        if (t instanceof InterruptedException) {
+            // mark the exchange as interrupted due to the interrupt exception
+            setProperty(Exchange.INTERRUPTED, Boolean.TRUE);
         }
     }
 
@@ -418,11 +440,9 @@ public final class DefaultExchange implements Exchange {
             // lets avoid adding methods to the Message API, so we use the
             // DefaultMessage to allow component specific messages to extend
             // and implement the isExternalRedelivered method.
-            DefaultMessage msg = getIn(DefaultMessage.class);
-            if (msg != null) {
-                answer = msg.isTransactedRedelivered();
-                // store as property to keep around
-                setProperty(Exchange.EXTERNAL_REDELIVERED, answer);
+            Message msg = getIn();
+            if (msg instanceof DefaultMessage) {
+                answer = ((DefaultMessage) msg).isTransactedRedelivered();
             }
         }
 
@@ -506,6 +526,7 @@ public final class DefaultExchange implements Exchange {
         if (message instanceof MessageSupport) {
             MessageSupport messageSupport = (MessageSupport)message;
             messageSupport.setExchange(this);
+            messageSupport.setCamelContext(getContext());
         }
     }
 
@@ -520,7 +541,15 @@ public final class DefaultExchange implements Exchange {
         }
         return answer;
     }
-    
+
+    protected Map<String, Object> createProperties() {
+        return new HashMap<>();
+    }
+
+    protected Map<String, Object> createProperties(Map<String, Object> properties) {
+        return new HashMap<>(properties);
+    }
+
     private static boolean isExcludePatternMatch(String key, String... excludePatterns) {
         for (String pattern : excludePatterns) {
             if (EndpointHelper.matchPattern(key, pattern)) {

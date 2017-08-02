@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.StartupListener;
+import org.apache.camel.Suspendable;
 import org.apache.camel.impl.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class TimerConsumer extends DefaultConsumer implements StartupListener {
+public class TimerConsumer extends DefaultConsumer implements StartupListener, Suspendable {
     private static final Logger LOG = LoggerFactory.getLogger(TimerConsumer.class);
     private final TimerEndpoint endpoint;
     private volatile TimerTask task;
@@ -55,7 +56,9 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener {
 
     @Override
     protected void doStart() throws Exception {
-        if (endpoint.getDelay() >= 0) { 
+        super.doStart();
+
+        if (endpoint.getDelay() >= 0) {
             task = new TimerTask() {
                 // counter
                 private final AtomicLong counter = new AtomicLong();
@@ -128,6 +131,8 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(executorService);
             executorService = null;
         }
+
+        super.doStop();
     }
 
     @Override

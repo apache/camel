@@ -1252,8 +1252,8 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
             endpoint.setMessageListenerContainerFactory(messageListenerContainerFactory);
         }
 
-        setProperties(endpoint.getConfiguration(), parameters);
         endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
+        setProperties(endpoint.getConfiguration(), parameters);
 
         return endpoint;
     }

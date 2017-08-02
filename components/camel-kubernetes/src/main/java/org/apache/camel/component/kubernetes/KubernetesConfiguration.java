@@ -17,6 +17,7 @@
 package org.apache.camel.component.kubernetes;
 
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClient;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -30,12 +31,11 @@ public class KubernetesConfiguration {
     @Metadata(required = "true")
     private String masterUrl;
 
-    @UriParam(enums = "namespaces,services,replicationControllers,pods,persistentVolumes,persistentVolumesClaims,secrets,resourcesQuota,serviceAccounts,nodes,configMaps,builds,buildConfigs")
-    @Metadata(required = "true")
+    @Deprecated
     private String category;
 
     @UriParam
-    private DefaultKubernetesClient kubernetesClient;
+    private KubernetesClient kubernetesClient;
 
     @UriParam(label = "security", secret = true)
     private String username;
@@ -139,11 +139,11 @@ public class KubernetesConfiguration {
     /**
      * Default KubernetesClient to use if provided
      */
-    public DefaultKubernetesClient getKubernetesClient() {
+    public KubernetesClient getKubernetesClient() {
         return kubernetesClient;
     }
 
-    public void setKubernetesClient(DefaultKubernetesClient kubernetesClient) {
+    public void setKubernetesClient(KubernetesClient kubernetesClient) {
         this.kubernetesClient = kubernetesClient;
     }
 
