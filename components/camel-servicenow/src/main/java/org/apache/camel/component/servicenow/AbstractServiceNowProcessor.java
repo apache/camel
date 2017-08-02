@@ -235,9 +235,13 @@ public abstract class AbstractServiceNowProcessor implements Processor {
     }
 
     protected Class<?> getRequestModel(Message message, String modelName) {
-        Class<?> model = message.getHeader(ServiceNowConstants.REQUEST_MODEL, Class.class);
-        if (model == null) {
-            model = message.getHeader(ServiceNowConstants.MODEL, Class.class);
+        Class<?> model = null;
+
+        if (message != null) {
+            model = message.getHeader(ServiceNowConstants.REQUEST_MODEL, Class.class);
+            if (model == null) {
+                model = message.getHeader(ServiceNowConstants.MODEL, Class.class);
+            }
         }
 
         return model != null
@@ -250,9 +254,13 @@ public abstract class AbstractServiceNowProcessor implements Processor {
     }
 
     protected Class<?> getResponseModel(Message message, String modelName) {
-        Class<?> model = message.getHeader(ServiceNowConstants.RESPONSE_MODEL, Class.class);
-        if (model == null) {
-            model = message.getHeader(ServiceNowConstants.MODEL, Class.class);
+        Class<?> model = null;
+
+        if (message != null) {
+            model = message.getHeader(ServiceNowConstants.RESPONSE_MODEL, Class.class);
+            if (model == null) {
+                model = message.getHeader(ServiceNowConstants.MODEL, Class.class);
+            }
         }
 
         return model != null

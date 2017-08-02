@@ -257,6 +257,12 @@ public class ServiceNowComponentConfiguration
          */
         private Boolean favorites;
         /**
+         * Set this parameter to true to retrieve the target record when using
+         * import set api. The import set result is then replaced by the target
+         * record
+         */
+        private Boolean retrieveTargetRecordOnImport = false;
+        /**
          * Set this parameter to true to return only scorecards for key
          * indicators.
          */
@@ -498,6 +504,15 @@ public class ServiceNowComponentConfiguration
 
         public void setFavorites(Boolean favorites) {
             this.favorites = favorites;
+        }
+
+        public Boolean getRetrieveTargetRecordOnImport() {
+            return retrieveTargetRecordOnImport;
+        }
+
+        public void setRetrieveTargetRecordOnImport(
+                Boolean retrieveTargetRecordOnImport) {
+            this.retrieveTargetRecordOnImport = retrieveTargetRecordOnImport;
         }
 
         public Boolean getKey() {

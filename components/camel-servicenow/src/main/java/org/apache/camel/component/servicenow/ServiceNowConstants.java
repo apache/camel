@@ -35,6 +35,7 @@ public final class ServiceNowConstants {
     public static final String RESPONSE_META = "CamelServiceNowResponseMeta";
     public static final String API_VERSION = "CamelServiceNowApiVersion";
     public static final String RESPONSE_TYPE = "CamelServiceNowResponseType";
+    public static final String RETRIEVE_TARGET_RECORD = "CamelServiceNowRetrieveTargetRecord";
 
     public static final String ATTACHMENT_META_HEADER = "X-Attachment-Metadata";
 
