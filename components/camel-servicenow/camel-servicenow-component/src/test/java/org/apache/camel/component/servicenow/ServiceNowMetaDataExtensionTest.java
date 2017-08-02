@@ -19,6 +19,7 @@ package org.apache.camel.component.servicenow;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.extension.MetaDataExtension;
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,7 +43,7 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
     }
 
     protected MetaDataExtension getExtension() {
-        return getComponent().getExtension(MetaDataExtension.class).orElseThrow(IllegalStateException::new);
+        return getComponent().getExtension(MetaDataExtension.class).orElseThrow(UnsupportedOperationException::new);
     }
 
     // *********************************
@@ -59,7 +60,7 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
         //parameters.put("object.incident.fields", "^sys_.*$");
         //parameters.put("object.task.fields", "");
 
-        MetaDataExtension.MetaData result = getExtension().meta(parameters).orElseThrow(IllegalStateException::new);
+        MetaDataExtension.MetaData result = getExtension().meta(parameters).orElseThrow(RuntimeException::new);
 
         Assert.assertEquals("application/schema+json", result.getAttribute(MetaDataExtension.MetaData.CONTENT_TYPE));
         Assert.assertEquals(JsonNode.class, result.getAttribute(MetaDataExtension.MetaData.JAVA_TYPE));
@@ -70,14 +71,13 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
         Assert.assertTrue(result.getPayload(JsonNode.class).get("definitions").hasNonNull("date-time"));
         Assert.assertTrue(result.getPayload(JsonNode.class).hasNonNull("properties"));
 
-        //LOGGER.info(
-        //    new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload())
-        //);
+        LOGGER.debug(
+            new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload())
+        );
     }
 
-
     @Test(expected = UnsupportedOperationException.class)
-    public void testMInvalidObjectType() throws Exception {
+    public void testInvalidObjectType() throws Exception {
         Map<String, Object> parameters = getParameters();
         parameters.put("objectType", "test");
         parameters.put("objectName", "incident");

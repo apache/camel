@@ -238,6 +238,8 @@ public class ComponentModel {
             return "camel-olingo4/camel-olingo4-component/src/main/docs";
         } else if ("camel-salesforce".equals(artifactId)) {
             return "camel-salesforce/camel-salesforce-component/src/main/docs";
+        } else if ("camel-servicenow".equals(artifactId)) {
+            return "camel-servicenow/camel-servicenow-component/src/main/docs";
         }
 
         if ("camel-core".equals(artifactId)) {

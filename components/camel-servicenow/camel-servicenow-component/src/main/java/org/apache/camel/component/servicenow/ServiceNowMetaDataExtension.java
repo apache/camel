@@ -49,6 +49,11 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * An implementation of the MetaData extension {@link MetaDataExtension} that
+ * retrieve information about ServiceNow objects as Json Schema as per draft-04
+ * specs.
+ */
 final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowMetaDataExtension.class);
     private final ConcurrentMap<String, String> properties;
@@ -79,20 +84,25 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         try {
             final List<String> names = getObjectHierarchy(context);
             final ObjectNode root = context.getConfiguration().getMapper().createObjectNode();
+            final String baseUrn = (String)context.getParameters().getOrDefault("baseUrn", "org:apache:camel:component:servicenow");
 
             if (names.isEmpty()) {
                 return Optional.empty();
             }
 
-            loadProperties(context);
-            registerDefinitions(context, root);
-
-            root.putObject("properties");
-            root.put("$schema", "http://json-schema.org/schema#");
-            root.put("id", "http://camel.apache.org/schemas/servicenow/" + context.getObjectName() + ".json");
+            // Schema
+            root.put("$schema", "http://json-schema.org/draft-04/schema#");
+            root.put("id", String.format("urn:jsonschema:%s:%s)", baseUrn, context.getObjectName()));
             root.put("type", "object");
             root.put("additionalProperties", false);
+
+            // Schema sections
+            root.putObject("properties");
             root.putArray("required");
+            root.putObject("definitions");
+
+            loadProperties(context);
+            registerDefinitions(context, root);
 
             for (String name : names) {
                 context.getStack().push(name);
@@ -165,7 +175,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
     // ********************************
 
     private void registerDefinitions(MetaContext context, ObjectNode root) {
-        final ObjectNode definitions = root.putObject("definitions");
+        final ObjectNode definitions = (ObjectNode)root.get("definitions");
 
         // Global Unique ID
         definitions.putObject("guid")
@@ -224,21 +234,29 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
             final String id = node.get("element").asText();
 
             if (ObjectHelper.isNotEmpty(id)) {
-                String parent = context.getStack().peek();
-                String includeKey = "object." + parent + ".fields";
+                String includeKey = "object." + context.getObjectName() + ".fields";
+                String excludeKey = "object." + context.getObjectName() + ".fields.exclude.pattern";
                 String fields = (String)context.getParameters().get(includeKey);
+                String exclude = (String)context.getParameters().get(excludeKey);
 
-                boolean included = false;
+                boolean included = true;
 
-                if (ObjectHelper.isNotEmpty(fields)) {
-                    if (Stream.of(fields.split(",")).map(StringHelper::trimToNull).filter(Objects::nonNull).map(Pattern::compile).anyMatch(p -> p.matcher(id).matches())) {
-                        included = true;
-                    }
-                    if (Stream.of(fields.split(",")).map(StringHelper::trimToNull).filter(Objects::nonNull).anyMatch(id::equalsIgnoreCase)) {
-                        included = true;
-                    }
-                } else {
-                    included = !context.getParameters().containsKey(includeKey);
+                if (ObjectHelper.isNotEmpty(fields) && ObjectHelper.isNotEmpty(exclude)) {
+                    boolean isIncluded = Stream.of(fields.split(",")).map(StringHelper::trimToNull).filter(Objects::nonNull).anyMatch(id::equalsIgnoreCase);
+                    boolean isExcluded = Pattern.compile(exclude).matcher(id).matches();
+
+                    // if both include/exclude list is provided check if the
+                    // fields ie either explicit included or not excluded.
+                    //
+                    // This is useful if you want to exclude all the i.e. sys_
+                    // fields but want some i.e. the sys_id to be included
+                    included = isIncluded || !isExcluded;
+                } else if (ObjectHelper.isNotEmpty(fields)) {
+                    // Only include fields that are explicit included
+                    included = Stream.of(fields.split(",")).map(StringHelper::trimToNull).filter(Objects::nonNull).anyMatch(id::equalsIgnoreCase);
+                } else if (ObjectHelper.isNotEmpty(exclude)) {
+                    // Only include fields non excluded
+                    included = !Pattern.compile(exclude).matcher(id).matches();
                 }
 
                 if (!included) {
@@ -261,6 +279,9 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
 
                     switch (entry.getInternalType().getValue()) {
                     case "integer":
+                        property.put("type", "integer");
+                        break;
+                    case "float":
                         property.put("type", "number");
                         break;
                     case "boolean":

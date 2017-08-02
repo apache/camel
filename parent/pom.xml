@@ -160,6 +160,7 @@
     <commons-net-version>3.6</commons-net-version>
     <commons-pool-version>1.6</commons-pool-version>
     <commons-pool2-version>2.4.2</commons-pool2-version>
+    <commons-text-version>1.1</commons-text-version>
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <compress-lzf-version>1.0.4</compress-lzf-version>
     <consul-client-version>0.16.2</consul-client-version>
@@ -468,6 +469,8 @@
     <maven-jboss-as-maven-plugin-version>7.7.Final</maven-jboss-as-maven-plugin-version>
     <!-- plugin-plugin 3.5 does not work -->
     <maven-plugin-plugin-version>3.4</maven-plugin-plugin-version>
+    <maven-plugin-annotations-version>3.5</maven-plugin-annotations-version>
+    <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
     <maven-remote-resources-plugin-version>1.5</maven-remote-resources-plugin-version>
     <!-- resources plugin needed by Camel maven archetypes -->
     <maven-resources-plugin-version>3.0.2</maven-resources-plugin-version>

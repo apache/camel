@@ -353,6 +353,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-olingo4-component/target/classes");
                         } else if ("camel-box".equals(dir.getName())) {
                             target = new File(dir, "camel-box-component/target/classes");
+                        } else if ("camel-servicenow".equals(dir.getName())) {
+                            target = new File(dir, "camel-servicenow-component/target/classes");
                         }
 
                         int before = componentFiles.size();
@@ -795,6 +797,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     boolean special2 = "camel-linkedin".equals(dir.getName())
                         || "camel-olingo2".equals(dir.getName())
                         || "camel-olingo4".equals(dir.getName())
+                        || "camel-servicenow".equals(dir.getName())
                         || "camel-salesforce".equals(dir.getName());
                     if (special || special2) {
                         continue;
@@ -971,6 +974,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-olingo4-component/src/main/docs");
                         } else if ("camel-box".equals(dir.getName())) {
                             target = new File(dir, "camel-box-component/src/main/docs");
+                        } else if ("camel-servicenow".equals(dir.getName())) {
+                            target = new File(dir, "camel-servicenow-component/src/main/docs");
                         }
 
                         int before = adocFiles.size();
@@ -1096,7 +1101,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 component = "ftp";
             } 
             String name = component + "-component";
-            if (!docs.contains(name) && (!component.equalsIgnoreCase("linkedin") && !component.equalsIgnoreCase("salesforce"))) {
+            if (!docs.contains(name) && (!component.equalsIgnoreCase("linkedin") && !component.equalsIgnoreCase("salesforce") && !component.equalsIgnoreCase("servicenow"))) {
                 missing.add(name);
             }
         }
