@@ -247,7 +247,7 @@ public class SalesforceSession implements Service {
                 // don't log token or instance URL for security reasons
                 LOG.info("Login successful");
                 accessToken = token.getAccessToken();
-                instanceUrl = Optional.ofNullable(config.getInstanceUrl()).orElse(token.getInstanceUrl());
+                instanceUrl = token.getInstanceUrl();
                 // strip trailing '/'
                 int lastChar = instanceUrl.length() - 1;
                 if (instanceUrl.charAt(lastChar) == '/') {
