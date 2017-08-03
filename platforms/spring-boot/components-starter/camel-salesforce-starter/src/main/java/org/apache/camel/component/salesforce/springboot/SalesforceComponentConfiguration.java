@@ -427,6 +427,12 @@ public class SalesforceComponentConfiguration {
          */
         private PayloadFormat format;
         /**
+         * Use raw payload {@link String} for request and response (either JSON
+         * or XML depending on {@code format} ), instead of DTOs, false by
+         * default
+         */
+        private Boolean rawPayload = false;
+        /**
          * Salesforce API version, defaults to
          * SalesforceEndpointConfig.DEFAULT_VERSION
          */
@@ -652,6 +658,14 @@ public class SalesforceComponentConfiguration {
 
         public void setFormat(PayloadFormat format) {
             this.format = format;
+        }
+
+        public Boolean getRawPayload() {
+            return rawPayload;
+        }
+
+        public void setRawPayload(Boolean rawPayload) {
+            this.rawPayload = rawPayload;
         }
 
         public String getApiVersion() {
