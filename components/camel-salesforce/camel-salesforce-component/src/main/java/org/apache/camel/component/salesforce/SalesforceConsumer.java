@@ -174,7 +174,10 @@ public class SalesforceConsumer extends DefaultConsumer {
             final String sObjectString = objectMapper.writeValueAsString(sObject);
             log.debug("Received SObject: {}", sObjectString);
 
-            if (sObjectClass == null) {
+            if (endpoint.getConfiguration().getRawPayload()) {
+                // return sobject string as exchange body
+                in.setBody(sObjectString);
+            } else if (sObjectClass == null) {
                 // return sobject map as exchange body
                 in.setBody(sObject);
             } else {
