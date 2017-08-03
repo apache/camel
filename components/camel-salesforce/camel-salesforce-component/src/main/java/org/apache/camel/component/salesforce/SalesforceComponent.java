@@ -373,7 +373,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
             LOG.info("Found {} generated classes in packages: {}", classMap.size(), Arrays.asList(packages));
         } else {
             // use an empty map to avoid NPEs later
-            LOG.warn("Missing property packages, getSObject* operations will NOT work");
+            LOG.warn("Missing property packages, getSObject* operations will NOT work without property rawPayload=true");
             classMap = new HashMap<String, Class<?>>(0);
         }
 

@@ -49,6 +49,8 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     // parameters for Rest API
     public static final String FORMAT = "format";
+    public static final String RAW_PAYLOAD = "rawPayload";
+
     public static final String SOBJECT_NAME = "sObjectName";
     public static final String SOBJECT_ID = "sObjectId";
     public static final String SOBJECT_FIELDS = "sObjectFields";
@@ -100,6 +102,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     // Rest API properties
     @UriParam
     private PayloadFormat format = PayloadFormat.JSON;
+    @UriParam
+    private boolean rawPayload;
     @UriParam(displayName = "SObject Name")
     private String sObjectName;
     @UriParam(displayName = "SObject Id")
@@ -211,6 +215,18 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setFormat(PayloadFormat format) {
         this.format = format;
+    }
+
+    public boolean getRawPayload() {
+        return rawPayload;
+    }
+
+    /**
+     * Use raw payload {@link String} for request and response (either JSON or XML depending on {@code format}),
+     * instead of DTOs, false by default
+     */
+    public void setRawPayload(boolean rawPayload) {
+        this.rawPayload = rawPayload;
     }
 
     public String getApiVersion() {
