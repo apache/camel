@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.boot.cloud;
 
+import java.util.Properties;
+
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
@@ -27,6 +29,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -36,25 +42,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(
     classes = {
         CamelAutoConfiguration.class,
-        CamelCloudServiceCallGlobalConfigurationTest.TestConfiguration.class
-    },
-    properties = {
-        "service.name=custom-svc-list",
-        "camel.cloud.load-balancer.enabled=false",
-        "camel.cloud.service-call.uri=jetty:http://${service.name}/hello",
-        "camel.cloud.service-call.service-discovery=sd",
-        "camel.cloud.service-call.service-filter=sf",
-        // this should not be taken into account
-        "camel.cloud.service-discovery.services[custom-svc-list]=localhost:8090,localhost:8091,localhost:8092",
-        // this should be used
-        "camel.cloud.service-discovery.configurations[sd].services[custom-svc-list]=localhost:9090,localhost:9091,localhost:9092",
-        // this should not be taken into account
-        "camel.cloud.service-filter.blacklist[custom-svc-list]=localhost:9090",
-        // this should be used
-        "camel.cloud.service-filter.configurations[sf].blacklist[custom-svc-list]=localhost:9091",
-        "ribbon.enabled=false",
-        "debug=true"
+        CamelCloudServiceCallGlobalConfigurationTest.TestConfiguration.class,
+        CamelCloudServiceCallGlobalConfigurationTest.SpringBootPropertySourceConfig.class,
     }
+   
 )
 public class CamelCloudServiceCallGlobalConfigurationTest {
     @Autowired
@@ -62,8 +53,8 @@ public class CamelCloudServiceCallGlobalConfigurationTest {
 
     @Test
     public void testServiceCall() throws Exception {
-        Assert.assertEquals("9090", template.requestBody("direct:start", null, String.class));
-        Assert.assertEquals("9092", template.requestBody("direct:start", null, String.class));
+        Assert.assertEquals(String.valueOf(SpringBootPropertyUtil.PORT1), template.requestBody("direct:start", null, String.class));
+        Assert.assertEquals(String.valueOf(SpringBootPropertyUtil.PORT3), template.requestBody("direct:start", null, String.class));
     }
 
     // *************************************
@@ -80,18 +71,57 @@ public class CamelCloudServiceCallGlobalConfigurationTest {
                     from("direct:start")
                         .serviceCall("{{service.name}}");
 
-                    from("jetty:http://localhost:9090/hello")
+                    fromF("jetty:http://localhost:%d/hello", SpringBootPropertyUtil.PORT1)
                         .transform()
-                        .constant("9090");
-                    from("jetty:http://localhost:9091/hello")
+                        .constant(SpringBootPropertyUtil.PORT1);
+                    fromF("jetty:http://localhost:%d/hello", SpringBootPropertyUtil.PORT2)
                         .transform()
-                        .constant("9091");
-                    from("jetty:http://localhost:9092/hello")
+                        .constant(SpringBootPropertyUtil.PORT2);
+                    fromF("jetty:http://localhost:%d/hello", SpringBootPropertyUtil.PORT3)
                         .transform()
-                        .constant("9092");
+                        .constant(SpringBootPropertyUtil.PORT3);
                 }
             };
         }
     }
+    
+    private static Properties getAllProperties() {
+        
+        Properties prop = new Properties();
+        prop.put("service.name", "custom-svc-list");
+        prop.put("camel.cloud.load-balancer.enabled", false);
+        prop.put("camel.cloud.service-call.uri", "jetty:http://${service.name}/hello");
+        prop.put("camel.cloud.service-call.service-discovery", "sd");
+        prop.put("camel.cloud.service-call.service-filter", "sf");
+        prop.put("camel.cloud.service-discovery.configurations[sd].services[custom-svc-list]", SpringBootPropertyUtil.getDiscoveryServices());
+        prop.put("camel.cloud.service-filter.configurations[sf].blacklist[custom-svc-list]", SpringBootPropertyUtil.getServiceFilterBlacklist());
+        prop.put("ribbon.enabled", false);
+        prop.put("debug", false);
+        return prop;
+    }
+    
+   
+   
+    // *************************************
+    // Config
+    // 
+    
+    @Configuration
+    public static class SpringBootPropertySourceConfig {
+
+        @Autowired
+        private ConfigurableEnvironment env;
+
+        @Bean
+        @Lazy(false)
+        public MutablePropertySources springBootPropertySource() {
+
+            MutablePropertySources sources = env.getPropertySources();
+            sources.addFirst(new PropertiesPropertySource("boot-test-property", CamelCloudServiceCallGlobalConfigurationTest.getAllProperties()));
+            return sources;
+
+        }
+    }
+    
 }
 
