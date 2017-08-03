@@ -21,7 +21,7 @@ import java.time.ZonedDateTime;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 //CHECKSTYLE:OFF
-public class AbstractSObjectBase extends AbstractDTOBase {
+public abstract class AbstractSObjectBase extends AbstractDTOBase {
 
     // WARNING: these fields have case sensitive names,
     // the field name MUST match the field name used by Salesforce
