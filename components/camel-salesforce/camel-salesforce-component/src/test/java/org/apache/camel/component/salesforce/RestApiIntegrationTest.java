@@ -134,6 +134,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         merchandise.setName("Test Merchandise");
         merchandise.setPrice__c(10.0);
         merchandise.setTotal_Inventory__c(100.0);
+        merchandise.setDescription__c("Test Merchandise!");
         final CreateSObjectResult result = template().requestBody("salesforce:createSObject", merchandise,
             CreateSObjectResult.class);
 

@@ -183,13 +183,13 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                 }
             } else if (responseEntity != null) {
                 // do we need to un-marshal a response
-                Object response = null;
+                final Object response;
                 Class<?> responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
-                if (responseClass != null) {
+                if (!rawPayload && responseClass != null) {
                     response = objectMapper.readValue(responseEntity, responseClass);
                 } else {
                     TypeReference<?> responseType = exchange.getProperty(RESPONSE_TYPE, TypeReference.class);
-                    if (responseType != null) {
+                    if (!rawPayload && responseType != null) {
                         response = objectMapper.readValue(responseEntity, responseType);
                     } else {
                         // return the response as a stream, for getBlobField
