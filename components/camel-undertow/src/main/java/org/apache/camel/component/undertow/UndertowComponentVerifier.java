@@ -195,7 +195,7 @@ public final class UndertowComponentVerifier extends DefaultComponentVerifier {
         private UndertowClientWrapper() throws IOException, URISyntaxException {
             this.worker = Xnio.getInstance().createWorker(OptionMap.EMPTY);
             this.pool = new DefaultByteBufferPool(true, 17 * 1024);
-            this.client = UndertowClient.getInstance(getCamelContext().getApplicationContextClassLoader());
+            this.client = UndertowClient.getInstance();
         }
 
         public ClientResponse send(String httpUri, Optional<String> httpMethod) throws Exception {

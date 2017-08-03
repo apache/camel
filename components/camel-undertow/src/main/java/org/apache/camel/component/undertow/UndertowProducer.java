@@ -172,8 +172,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
             ssl = new UndertowXnioSsl(xnio, options, sslContext);
         }
 
-        final CamelContext camelContext = getEndpoint().getCamelContext();
-        client = UndertowClient.getInstance(camelContext.getApplicationContextClassLoader());
+        client = UndertowClient.getInstance();
 
         LOG.debug("Created worker: {} with options: {}", worker, options);
     }
