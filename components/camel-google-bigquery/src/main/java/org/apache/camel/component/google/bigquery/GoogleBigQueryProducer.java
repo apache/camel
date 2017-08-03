@@ -115,7 +115,7 @@ public class GoogleBigQueryProducer extends DefaultAsyncProducer {
                 processGroup.clear();
                 partitionDecorator = tmpPartitionDecorator;
                 suffix = tmpSuffix;
-                tableId = tmpTableId.isEmpty() ? tableId : tmpTableId;
+                tableId = tmpTableId;
             }
             processGroup.add(ex);
         }

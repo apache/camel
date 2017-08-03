@@ -113,7 +113,6 @@ public class BigQueryTestSupport extends CamelTestSupport {
         queryRequest.setQuery(query);
         QueryResponse queryResponse = getConnectionFactory()
                 .getDefaultClient()
-
                 .jobs()
                 .query(PROJECT_ID, queryRequest)
                 .execute();

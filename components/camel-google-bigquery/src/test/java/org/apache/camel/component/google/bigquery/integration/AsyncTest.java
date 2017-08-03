@@ -62,8 +62,6 @@ public class AsyncTest extends BigQueryTestSupport {
                         .to("seda:seda");
                 from("seda:seda")
                         .routeId("Async")
-                        //.threads(10)
-
                         .inOnly(bigqueryEndpoint)
                         .log(LoggingLevel.INFO, "To sendresult")
                         .to(sendResult);

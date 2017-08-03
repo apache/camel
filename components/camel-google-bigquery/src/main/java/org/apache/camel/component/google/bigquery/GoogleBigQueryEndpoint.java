@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.google.bigquery;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
 import com.google.api.services.bigquery.Bigquery;
@@ -50,7 +48,6 @@ public class GoogleBigQueryEndpoint extends DefaultEndpoint {
     private final Bigquery bigquery;
     private final String uri;
 
-    private final Map<String, Boolean> verifiedTables = new ConcurrentHashMap<>();
     private ExecutorService executorService;
 
     protected GoogleBigQueryEndpoint(String uri, Bigquery bigquery, GoogleBigQueryConfiguration configuration) {
