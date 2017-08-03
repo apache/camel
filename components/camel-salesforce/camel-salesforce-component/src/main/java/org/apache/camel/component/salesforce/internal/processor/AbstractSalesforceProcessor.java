@@ -46,6 +46,7 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
     protected final OperationName operationName;
     protected final SalesforceSession session;
     protected final SalesforceHttpClient httpClient;
+    protected final boolean rawPayload;
 
     public AbstractSalesforceProcessor(SalesforceEndpoint endpoint) {
         this.endpoint = endpoint;
@@ -55,6 +56,7 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
         final SalesforceComponent component = endpoint.getComponent();
         this.session = component.getSession();
         this.httpClient = endpoint.getConfiguration().getHttpClient();
+        this.rawPayload = endpoint.getConfiguration().getRawPayload();
     }
 
     @Override
