@@ -16,14 +16,9 @@
  */
 package org.apache.camel.example.springboot.infinispan;
 
-import java.io.IOException;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanOperation;
-import org.infinispan.client.hotrod.RemoteCacheManager;
-import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -38,19 +33,10 @@ public class CamelInfinispanRoute extends RouteBuilder {
         .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.PUT)
         .setHeader(InfinispanConstants.KEY).constant("1")
         .setHeader(InfinispanConstants.VALUE).constant("test")
-        .to("infinispan://default?cacheContainer=#cacheContainer")
+        .to("infinispan://default")
         .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.GET)
         .setHeader(InfinispanConstants.KEY).constant("1")
-        .to("infinispan://default?cacheContainer=#cacheContainer").log("Received body: ${body}");
-
-    }
-    
-    @Bean(name = "cacheContainer")
-    public RemoteCacheManager remoteCacheManager() throws IOException {
-        ConfigurationBuilder builder = new ConfigurationBuilder();
-        builder.addServer().host("localhost")
-              .port(11222);
-        return new RemoteCacheManager(builder.build());
+        .to("infinispan://default").log("Received body: ${body}");
     }
 
 }
