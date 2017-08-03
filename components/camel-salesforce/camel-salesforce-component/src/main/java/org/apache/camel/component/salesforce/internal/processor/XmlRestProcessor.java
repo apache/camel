@@ -33,6 +33,7 @@ import com.thoughtworks.xstream.io.xml.CompactWriter;
 import com.thoughtworks.xstream.io.xml.XppDriver;
 import com.thoughtworks.xstream.mapper.CachingMapper;
 import com.thoughtworks.xstream.mapper.CannotResolveClassException;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -236,7 +237,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                 // do we need to un-marshal a response
                 final Class<?> responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
                 Object response;
-                if (responseClass != null) {
+                if (!rawPayload && responseClass != null) {
                     // its ok to call this multiple times, as xstream ignores duplicate calls
                     localXStream.processAnnotations(responseClass);
                     final String responseAlias = exchange.getProperty(RESPONSE_ALIAS, String.class);

@@ -810,6 +810,12 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     protected abstract InputStream getRequestStream(Object object) throws SalesforceException;
 
     private void setResponseClass(Exchange exchange, String sObjectName) throws SalesforceException {
+
+        // nothing to do if using rawPayload
+        if (rawPayload) {
+            return;
+        }
+
         Class<?> sObjectClass;
 
         if (sObjectName != null) {
