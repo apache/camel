@@ -24,6 +24,8 @@ import java.io.Writer;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -272,6 +274,24 @@ public class CamelSalesforceMojo extends AbstractMojo {
     @Parameter(property = "camelSalesforce.useStringsForPicklists", defaultValue = "false")
     protected Boolean useStringsForPicklists;
 
+    /**
+     * Generate JSON Schema for DTOs, instead of Java Objects.
+     */
+    @Parameter(property = "camelSalesforce.jsonSchema")
+    protected boolean jsonSchema;
+
+    /**
+     * Schema ID for JSON Schema for DTOs.
+     */
+    @Parameter(property = "camelSalesforce.jsonSchemaId", defaultValue = JsonUtils.DEFAULT_ID_PREFIX)
+    protected String jsonSchemaId;
+
+    /**
+     * Schema ID for JSON Schema for DTOs.
+     */
+    @Parameter(property = "camelSalesforce.jsonSchemaFilename", defaultValue = "salesforce-dto-schema.json")
+    protected String jsonSchemaFilename;
+
     VelocityEngine engine;
 
     private long responseTimeout;
@@ -402,22 +422,52 @@ public class CamelSalesforceMojo extends AbstractMojo {
                 }
             }
 
-            getLog().info("Generating Java Classes...");
-            // generate POJOs for every object description
-            final GeneratorUtility utility = new GeneratorUtility(useStringsForPicklists);
-            // should we provide a flag to control timestamp generation?
-            final String generatedDate = new Date().toString();
-            for (SObjectDescription description : descriptions) {
-                if (IGNORED_OBJECTS.contains(description.getName())) {
-                    continue;
+            if (!jsonSchema) {
+
+                getLog().info("Generating Java Classes...");
+                // generate POJOs for every object description
+                final GeneratorUtility utility = new GeneratorUtility(useStringsForPicklists);
+                // should we provide a flag to control timestamp generation?
+                final String generatedDate = new Date().toString();
+                for (SObjectDescription description : descriptions) {
+                    if (IGNORED_OBJECTS.contains(description.getName())) {
+                        continue;
+                    }
+                    try {
+                        processDescription(pkgDir, description, utility, generatedDate);
+                    } catch (IOException e) {
+                        throw new MojoExecutionException("Unable to generate source files for: " + description.getName(), e);
+                    }
                 }
+
+                getLog().info(String.format("Successfully generated %s Java Classes", descriptions.size() * 2));
+
+            } else {
+
+                getLog().info("Generating JSON Schema...");
+                // generate JSON schema for every object description
+                final ObjectMapper schemaObjectMapper = JsonUtils.createSchemaObjectMapper();
+                final Set<Object> allSchemas = new HashSet<>();
+                for (SObjectDescription description : descriptions) {
+                    if (IGNORED_OBJECTS.contains(description.getName())) {
+                        continue;
+                    }
+                    try {
+                        allSchemas.add(JsonUtils.getSObjectJsonSchema(schemaObjectMapper, description, jsonSchemaId, true));
+                    } catch (IOException e) {
+                        throw new MojoExecutionException("Unable to generate JSON Schema types for: " + description.getName(), e);
+                    }
+                }
+
+                final Path schemaFilePath = outputDirectory.toPath().resolve(jsonSchemaFilename);
                 try {
-                    processDescription(pkgDir, description, utility, generatedDate);
+                    Files.write(schemaFilePath, JsonUtils.getJsonSchemaString(schemaObjectMapper, allSchemas, jsonSchemaId).getBytes("UTF-8"));
                 } catch (IOException e) {
-                    throw new MojoExecutionException("Unable to generate source files for: " + description.getName(), e);
+                    throw new MojoExecutionException("Unable to generate JSON Schema source file: " + schemaFilePath, e);
                 }
+
+                getLog().info(String.format("Successfully generated %s JSON Types in file %s", descriptions.size() * 2, schemaFilePath));
             }
-            getLog().info(String.format("Successfully generated %s Java Classes", descriptions.size() * 2));
 
         } finally {
             // remember to stop the client
