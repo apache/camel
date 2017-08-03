@@ -56,7 +56,7 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
     public List<RouteEndpointInfo> invoke() {
         return getRoutesInfo();
     }
-    
+
     public RouteEndpointInfo getRouteInfo(String id) {
         Route route = camelContext.getRoute(id);
         if (route != null) {
@@ -68,8 +68,8 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
 
     public List<RouteEndpointInfo> getRoutesInfo() {
         return camelContext.getRoutes().stream()
-            .map(RouteEndpointInfo::new)
-            .collect(Collectors.toList());
+                .map(RouteEndpointInfo::new)
+                .collect(Collectors.toList());
     }
 
     public RouteDetailsEndpointInfo getRouteDetailsInfo(String id) {
@@ -83,6 +83,13 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
 
     public void startRoute(String id) throws Exception {
         camelContext.getRouteController().startRoute(id);
+    }
+
+    public void resetRoute(String id) throws Exception {
+        ManagedRouteMBean managedRouteMBean = camelContext.getManagedRoute(id, ManagedRouteMBean.class);
+        if (managedRouteMBean != null) {
+            managedRouteMBean.reset(true);
+        } 
     }
 
     public void stopRoute(String id, Optional<Long> timeout, Optional<TimeUnit> timeUnit, Optional<Boolean> abortAfterTimeout) throws Exception {
