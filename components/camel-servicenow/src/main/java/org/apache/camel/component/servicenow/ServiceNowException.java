@@ -36,7 +36,7 @@ public class ServiceNowException extends CamelException {
     }
 
     public ServiceNowException(Integer code, Map<Object, Object> attributes) {
-        super(String.format("Status (%d)"));
+        super(String.format("Status (%d)", code));
         this.code = code;
         this.status = null;
         this.detail = null;
