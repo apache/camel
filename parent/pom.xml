@@ -622,6 +622,7 @@
     <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.12.0</spymemcached-version>
     <squareup-okhttp-version>2.7.5</squareup-okhttp-version>
+    <squareup-okhttp3-version>3.8.1</squareup-okhttp3-version>
     <squareup-okhttp-bundle-version>2.7.5_1</squareup-okhttp-bundle-version>
     <squareup-okio-version>1.11.0</squareup-okio-version>
     <squareup-okio-bundle-version>1.11.0_1</squareup-okio-bundle-version>
@@ -3455,6 +3456,11 @@
       <dependency>
         <groupId>com.fasterxml.jackson.module</groupId>
         <artifactId>jackson-module-jaxb-annotations</artifactId>
+        <version>${jackson2-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.module</groupId>
+        <artifactId>jackson-module-jsonSchema</artifactId>
         <version>${jackson2-version}</version>
       </dependency>
 
