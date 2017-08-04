@@ -157,6 +157,7 @@
 	* [Azure Storage Queue Service](azure-queue-component.adoc)
 	* [Bean Validator](bean-validator-component.adoc)
 	* [Beanstalk](beanstalk-component.adoc)
+	* [BigQuery](bigquery-component.adoc)
 	* [Bonita](bonita-component.adoc)
 	* [Box](box-component.adoc)
 	* [Braintree](braintree-component.adoc)
