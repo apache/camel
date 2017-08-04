@@ -26,7 +26,7 @@
         <feature version="${project.version}">camel-sql</feature>
         <bundle>mvn:org.apache.derby/derby/${derby-version}</bundle>
         <bundle>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
-        <bundle>mvn:commons-dbcp/commons-dbcp/${commons-dbcp-version}</bundle>
+        <bundle>mvn:org.apache.commons/commons-dbcp2/${commons-dbcp2-version}</bundle>
         <bundle>mvn:org.apache.camel/camel-example-sql/${project.version}</bundle>
     </feature>
 
