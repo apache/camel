@@ -20,14 +20,14 @@
 <features>
     <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
 
-    <feature name="camel-example-sql" version="${project.version}">
+    <feature name="camel-example-sql-blueprint" version="${project.version}">
         <feature version="${project.version}">camel</feature>
         <feature version="${project.version}">camel-blueprint</feature>
         <feature version="${project.version}">camel-sql</feature>
         <bundle>mvn:org.apache.derby/derby/${derby-version}</bundle>
-        <bundle>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
-        <bundle>mvn:commons-dbcp/commons-dbcp/${commons-dbcp-version}</bundle>
-        <bundle>mvn:org.apache.camel/camel-example-sql-blueprint/${project.version}</bundle>
+        <bundle>mvn:org.apache.commons/commons-pool2/${commons-pool2-version}</bundle>
+        <bundle>wrap:mvn:org.apache.commons/commons-dbcp2/2.1.1$overwrite=merge&amp;DynamicImport-Package=*</bundle>
+        <bundle>mvn:org.apache.camel.example/camel-example-sql-blueprint/${project.version}</bundle>
     </feature>
 
 </features>

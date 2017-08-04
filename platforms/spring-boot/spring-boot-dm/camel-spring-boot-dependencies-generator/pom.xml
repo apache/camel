@@ -230,6 +230,7 @@
               <exclude>commons-codec:*</exclude>
               <exclude>commons-collections:*</exclude>
               <exclude>commons-dbcp:*</exclude>
+              <exclude>org.apache.commons:commons-dbcp2</exclude>
               <exclude>commons-pool:*</exclude>
 
               <exclude>com.github.ben-manes.caffeine:caffeine</exclude>
