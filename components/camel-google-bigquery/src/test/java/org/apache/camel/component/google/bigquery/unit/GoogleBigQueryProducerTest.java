@@ -84,37 +84,4 @@ public class GoogleBigQueryProducerTest extends BaseBigQueryTest {
         assertEquals(1, requests.size());
         assertEquals(2, requests.get(0).getRows().size());
     }
-
-    @Test
-    public void groupExchange() throws Exception {
-        Exchange exchange1 = createExchangeWithBody(new HashMap<>());
-        Exchange exchange2 = createExchangeWithBody(new HashMap<>());
-        Exchange exchange = createExchangeWithBody(null);
-        exchange.setProperty(Exchange.GROUPED_EXCHANGE, Lists.newArrayList(exchange1, exchange2));
-
-        producer.process(exchange);
-        ArgumentCaptor<TableDataInsertAllRequest> dataCaptor = ArgumentCaptor.forClass(TableDataInsertAllRequest.class);
-        verify(tabledataMock).insertAll(eq(projectId), eq(datasetId), eq(tableId), dataCaptor.capture());
-        List<TableDataInsertAllRequest> requests = dataCaptor.getAllValues();
-        assertEquals(1, requests.size());
-        assertEquals(2, requests.get(0).getRows().size());
-    }
-
-    @Test
-    public void groupExchangeDifferentTableSuffix() throws Exception {
-        Exchange exchange1 = createExchangeWithBody(new HashMap<>());
-        exchange1.getIn().setHeader(GoogleBigQueryConstants.TABLE_SUFFIX, "_SUFFIX1");
-        Exchange exchange2 = createExchangeWithBody(new HashMap<>());
-        exchange2.getIn().setHeader(GoogleBigQueryConstants.TABLE_SUFFIX, "_SUFFIX2");
-        Exchange exchange = createExchangeWithBody(null);
-        exchange.setProperty(Exchange.GROUPED_EXCHANGE, Lists.newArrayList(exchange1, exchange2));
-
-        producer.process(exchange);
-        ArgumentCaptor<TableDataInsertAllRequest> dataCaptor = ArgumentCaptor.forClass(TableDataInsertAllRequest.class);
-        verify(tabledataMock, times(2)).insertAll(eq(projectId), eq(datasetId), eq(tableId), dataCaptor.capture());
-        List<TableDataInsertAllRequest> requests = dataCaptor.getAllValues();
-        assertEquals(2, requests.size());
-        assertEquals(1, requests.get(0).getRows().size());
-        assertEquals(1, requests.get(1).getRows().size());
-    }
 }
