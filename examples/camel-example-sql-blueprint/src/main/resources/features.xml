@@ -26,7 +26,7 @@
         <feature version="${project.version}">camel-sql</feature>
         <bundle>mvn:org.apache.derby/derby/${derby-version}</bundle>
         <bundle>mvn:org.apache.commons/commons-pool2/${commons-pool2-version}</bundle>
-        <bundle>wrap:mvn:org.apache.commons/commons-dbcp2/2.1.1$overwrite=merge&amp;DynamicImport-Package=*</bundle>
+        <bundle>wrap:mvn:org.apache.commons/commons-dbcp2/${commons-dbcp2-version}$overwrite=merge&amp;DynamicImport-Package=*</bundle>
         <bundle>mvn:org.apache.camel.example/camel-example-sql-blueprint/${project.version}</bundle>
     </feature>
 
