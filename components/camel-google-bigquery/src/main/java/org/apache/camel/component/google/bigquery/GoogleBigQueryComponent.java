@@ -24,23 +24,23 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.bigquery.Bigquery;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 public class GoogleBigQueryComponent extends DefaultComponent {
-    private Bigquery bigQuery;
     private String projectId;
     private String datasetId;
 
     private GoogleBigQueryConnectionFactory connectionFactory;
 
-    private final HttpTransport transport = new NetHttpTransport();
-    private final JsonFactory jsonFactory = new JacksonFactory();
-
-    private Bigquery getConnection() throws Exception {
-        return getConnectionFactory().getDefaultClient();
+    public GoogleBigQueryComponent() {
+        super();
     }
 
+    public GoogleBigQueryComponent(CamelContext camelContext) {
+        super(camelContext);
+    }
 
     // Endpoint represents a single table
     @Override
@@ -59,11 +59,7 @@ public class GoogleBigQueryComponent extends DefaultComponent {
             configuration.setConnectionFactory(getConnectionFactory());
         }
 
-        if (bigQuery == null) {
-            bigQuery = getConnection();
-        }
-
-        return new GoogleBigQueryEndpoint(uri, bigQuery, configuration);
+        return new GoogleBigQueryEndpoint(uri, this, configuration);
     }
 
     public void setProjectId(String projectId) {
