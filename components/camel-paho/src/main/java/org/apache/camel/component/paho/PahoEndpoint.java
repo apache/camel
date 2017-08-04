@@ -61,6 +61,8 @@ public class PahoEndpoint extends DefaultEndpoint {
     private PahoPersistence persistence = PahoPersistence.MEMORY;
     @UriParam(description = "Base directory used by file persistence. Will by default use current directory.")
     private String filePersistenceDirectory;
+    @UriParam(defaultValue = "true")
+    private boolean autoReconnect = true; 
 
     // Collaboration members
     @UriParam
@@ -111,7 +113,6 @@ public class PahoEndpoint extends DefaultEndpoint {
     }
 
     // Resolvers
-
     protected MqttClientPersistence resolvePersistence() {
         if (persistence ==  PahoPersistence.MEMORY) {
             return new MemoryPersistence();
@@ -136,7 +137,10 @@ public class PahoEndpoint extends DefaultEndpoint {
             LOG.warn("Found {} instances of the MqttConnectOptions in the registry. None of these will be used by the endpoint. "
                      + "Please use 'connectOptions' endpoint option to select one.", connectOptions.size());
         }
-        return new MqttConnectOptions();
+        
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setAutomaticReconnect(autoReconnect);
+        return options;
     }
 
     public Exchange createExchange(MqttMessage mqttMessage, String topic) {
@@ -253,6 +257,18 @@ public class PahoEndpoint extends DefaultEndpoint {
      */
     public void setConnectOptions(MqttConnectOptions connOpts) {
         this.connectOptions = connOpts;
+    }
+
+    public synchronized boolean isAutoReconnect() {
+        return autoReconnect;
+    }
+    
+    /**
+     * Client will automatically attempt to reconnect to the server if the connection is lost 
+     * @param autoReconnect
+     */
+    public synchronized void setAutoReconnect(boolean autoReconnect) {
+        this.autoReconnect = autoReconnect;
     }
 
 }
