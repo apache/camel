@@ -3170,7 +3170,22 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         started++;
                     }
                 }
-                log.info("Total " + getRoutes().size() + " routes, of which " + started + " are started.");
+
+                final List<Route> controlledRoutes = getRouteController().getControlledRoutes();
+
+                if (controlledRoutes.isEmpty()) {
+                    log.info("Total {} routes, of which {} are started",
+                        getRoutes().size(),
+                        started);
+                } else {
+                    log.info("Total {} routes, of which {} are started and {} are managed by the route controller ({})",
+                        getRoutes().size(),
+                        started,
+                        controlledRoutes.size(),
+                        getRouteController().getClass().getName()
+                    );
+                }
+
                 log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") started in " + TimeUtils.printDuration(stopWatch.taken()));
             }
             EventHelper.notifyCamelContextStarted(this);

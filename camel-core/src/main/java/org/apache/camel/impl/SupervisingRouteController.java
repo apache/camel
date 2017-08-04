@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.Collection;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
@@ -252,6 +251,13 @@ public class SupervisingRouteController extends DefaultRouteController {
         }
     }
 
+    @Override
+    public List<Route> getControlledRoutes() {
+        return routes.stream()
+            .map(RouteHolder::get)
+            .collect(Collectors.toList());
+    }
+
     // *********************************
     // Helpers
     // *********************************
@@ -432,14 +438,6 @@ public class SupervisingRouteController extends DefaultRouteController {
             routes.forEach((k, v) -> v.cancel(true));
             routes.clear();
         }
-
-        boolean isSupervising(RouteHolder route) {
-            return routes.containsKey(route);
-        }
-
-        Collection<RouteHolder> routes() {
-            return routes.keySet();
-        }
     }
 
     // *********************************
@@ -533,6 +531,11 @@ public class SupervisingRouteController extends DefaultRouteController {
     private class ManagedRoutePolicy implements RoutePolicy {
         @Override
         public void onInit(Route route) {
+            if ("false".equals(route.getRouteContext().getRoute().getAutoStartup())) {
+                LOGGER.info("Route {} has explicit auto-startup flag set to false, ignore it", route.getId());
+                return;
+            }
+
             RouteHolder holder = new RouteHolder(route, routeCount.incrementAndGet());
             if (routes.add(holder)) {
                 holder.getContext().setRouteController(SupervisingRouteController.this);
