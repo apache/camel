@@ -389,6 +389,7 @@
         <include>org.apache.camel:camel-geocoder-starter</include>
         <include>org.apache.camel:camel-github-starter</include>
         <include>org.apache.camel:camel-git-starter</include>
+        <include>org.apache.camel:camel-google-bigquery-starter</include>
         <include>org.apache.camel:camel-google-calendar-starter</include>
         <include>org.apache.camel:camel-google-drive-starter</include>
         <include>org.apache.camel:camel-google-mail-starter</include>
