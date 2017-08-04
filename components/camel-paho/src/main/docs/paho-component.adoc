@@ -149,11 +149,12 @@ with the following path and query parameters:
 | **topic** | *Required* Name of the topic |  | String
 |=======================================================================
 
-#### Query Parameters (11 parameters):
+#### Query Parameters (12 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
+| **autoReconnect** (common) | Client will automatically attempt to reconnect to the server if the connection is lost | true | boolean
 | **brokerUrl** (common) | The URL of the MQTT broker. | tcp://localhost:1883 | String
 | **clientId** (common) | MQTT client identifier. |  | String
 | **connectOptions** (common) | Client connection options |  | MqttConnectOptions
