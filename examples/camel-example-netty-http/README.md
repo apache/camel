@@ -23,7 +23,7 @@ $ mvn install
 This example runs in Apache Karaf / ServiceMix. To install Apache Camel in Karaf you type in the shell:
 
 ```sh
-karaf@root()> repo-add camel 2.17.0
+karaf@root()> repo-add camel ${version}
 karaf@root()> feature:install camel
 ```
 
@@ -41,14 +41,14 @@ The port number can be changed by editing the following source file:
 In the Apache Karaf / ServiceMix shell type:
 
 ```sh
-karaf@root()> install -s mvn:org.apache.camel/camel-example-netty-http-shared/2.17.0
+karaf@root()> install -s mvn:org.apache.camel.example/camel-example-netty-http-shared/${version}
 ```
 
 Then you can install the Camel applications:
 
 ```sh
-karaf@root()> install -s mvn:org.apache.camel/camel-example-netty-myapp-one/2.17.0
-karaf@root()> install -s mvn:org.apache.camel/camel-example-netty-myapp-two/2.17.0
+karaf@root()> install -s mvn:org.apache.camel.example/camel-example-netty-myapp-one/${version}
+karaf@root()> install -s mvn:org.apache.camel.example/camel-example-netty-myapp-two/${version}
 ```
 
 From a web browser you can then try the example by accessing the followign URLs:

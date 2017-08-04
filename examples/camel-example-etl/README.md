@@ -41,7 +41,7 @@ from the shell using this example's "features.xml" for easy provisioning.
 
 	feature:repo-add camel ${version}
 	feature:install camel
-	feature:repo-add mvn:org.apache.camel/camel-example-etl/${version}/xml/features
+	feature:repo-add mvn:org.apache.camel.example/camel-example-etl/${version}/xml/features
 	feature:install camel-example-etl
 
 The example outputs logs into the console. When you're done just hit <kbd>ctrl</kbd>+<kbd>d</kbd>
