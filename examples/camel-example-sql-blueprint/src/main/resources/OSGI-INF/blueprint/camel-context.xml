@@ -27,7 +27,7 @@
 
   <!-- START SNIPPET: e1 -->
   <!-- this is the JDBC data source which uses an in-memory only Apache Derby database -->
-  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+  <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
     <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
     <property name="url" value="jdbc:derby:memory:orders;create=true"/>
     <property name="username" value=""/>
