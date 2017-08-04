@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -104,4 +105,8 @@ public class DefaultRouteController extends org.apache.camel.support.ServiceSupp
         camelContext.resumeRoute(routeId);
     }
 
+    @Override
+    public List<Route> getControlledRoutes() {
+        return Collections.emptyList();
+    }
 }

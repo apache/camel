@@ -16,10 +16,12 @@
  */
 package org.apache.camel.spi;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Experimental;
+import org.apache.camel.Route;
 import org.apache.camel.Service;
 
 @Experimental
@@ -38,4 +40,11 @@ public interface RouteController extends CamelContextAware, Service {
     void suspendRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception;
 
     void resumeRoute(String routeId) throws Exception;
+
+    /**
+     * Return the list of routes controlled by this controller.
+     *
+     * @return the list of controlled routes;
+     */
+    List<Route> getControlledRoutes();
 }
