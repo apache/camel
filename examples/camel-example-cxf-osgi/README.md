@@ -43,7 +43,7 @@ To run the example on Apache Karaf 4.x or newer
 
 #### Step 3: Deploy the example
 
-	install -s mvn:org.apache.camel/camel-example-cxf-osgi/${version}
+	install -s mvn:org.apache.camel.example/camel-example-cxf-osgi/${version}
 
 #### Step 4: Verify that your service is available using the following url in the browser.
 We assume you're using Karaf's default PAX Web configuration which uses

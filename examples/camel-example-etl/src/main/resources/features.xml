@@ -28,7 +28,7 @@
         <feature version="${project.version}">camel-spring</feature>
         <bundle>mvn:org.apache.derby/derby/${derby-version}</bundle>
         <bundle>mvn:org.apache.openjpa/openjpa/${openjpa-version}</bundle>
-        <bundle>mvn:org.apache.camel/camel-example-etl/${project.version}</bundle>
+        <bundle>mvn:org.apache.camel.example/camel-example-etl/${project.version}</bundle>
     </feature>
 
 </features>

@@ -26,7 +26,7 @@ for easy provisioning.
 
 	feature:repo-add camel ${version}
 	feature:install camel
-	feature:repo-add mvn:org.apache.camel/camel-example-mybatis/${version}/xml/features
+	feature:repo-add mvn:org.apache.camel.example/camel-example-mybatis/${version}/xml/features
 	feature:install camel-example-mybatis
 
 And you can see the application running by tailing the logs
