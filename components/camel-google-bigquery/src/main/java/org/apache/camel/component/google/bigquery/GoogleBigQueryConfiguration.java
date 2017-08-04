@@ -24,14 +24,8 @@ import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class GoogleBigQueryConfiguration {
-    @UriParam(name = "concurrentProducers", description = "Maximum number of simultaneous consumers when using async processing")
-    private int concurrentProducers;
-
     @UriParam(name = "connectionFactory", description = "ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used")
     private GoogleBigQueryConnectionFactory connectionFactory;
-
-    @UriParam(name = "loggerId", description = "Logger ID to use when a match to the parent route required")
-    private String loggerId;
 
     @UriParam(name = "useAsInsertId", description = "Field name to use as insert id")
     private String useAsInsertId;
@@ -58,14 +52,6 @@ public class GoogleBigQueryConfiguration {
         }
     }
 
-    public String getLoggerId() {
-        return loggerId;
-    }
-
-    public GoogleBigQueryConfiguration setLoggerId(String loggerId) {
-        this.loggerId = loggerId;
-        return this;
-    }
     /**
      * ConnectionFactory to obtain connection to Bigquery Service. If non provided the default will be used.
      */
@@ -75,15 +61,6 @@ public class GoogleBigQueryConfiguration {
 
     public void setConnectionFactory(GoogleBigQueryConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
-    }
-
-    public int getConcurrentProducers() {
-        return concurrentProducers;
-    }
-
-    public GoogleBigQueryConfiguration setConcurrentProducers(int concurrentProducers) {
-        this.concurrentProducers = concurrentProducers;
-        return this;
     }
 
     public String getUseAsInsertId() {

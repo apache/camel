@@ -87,12 +87,11 @@ with the following path and query parameters:
 | **tableId** | Table Id. If not supplied a table name need to be set in the exchange header |  | String
 |=======================================================================
 
-#### Query Parameters (9 parameters):
+#### Query Parameters (8 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
-| **concurrentProducers** (producer) | The maximum number of simultaneous requests when running in async mode |  | Integer
 | **connectionFactory** (common) | ConnectionFactory to obtain connection to BigQuery Service. If non provided the default will be used. |  | GoogleBigQueryConnection Factory
 | **loggerId** (common) | Logger ID to use when a match to the parent route required |  | String
 | **useAsInsertId** (producer) | Field in message to use as insert id. |  | String

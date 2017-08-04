@@ -45,55 +45,29 @@ public class GoogleBigQueryEndpoint extends DefaultEndpoint {
     @UriParam
     protected final GoogleBigQueryConfiguration configuration;
 
-    private final Bigquery bigquery;
-    private final String uri;
 
-    private ExecutorService executorService;
-
-    protected GoogleBigQueryEndpoint(String uri, Bigquery bigquery, GoogleBigQueryConfiguration configuration) {
-        this.bigquery = bigquery;
-        this.uri = uri;
+    protected GoogleBigQueryEndpoint(String endpointUri, GoogleBigQueryComponent component, GoogleBigQueryConfiguration configuration) {
+        super(endpointUri, component);
         this.configuration = configuration;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
-        GoogleBigQueryProducer producer = new GoogleBigQueryProducer(this, configuration);
-        if (configuration.getConcurrentProducers() > 0) {
-            executorService = getCamelContext()
-                    .getExecutorServiceManager()
-                    .newFixedThreadPool(
-                            this,
-                            "camel-google-bigquery",
-                            configuration.getConcurrentProducers()
-                    );
-        } else {
-            executorService = getCamelContext()
-                    .getExecutorServiceManager()
-                    .newDefaultThreadPool(this, "camel-google-bigquery");
-        }
+        Bigquery bigquery = getConfiguration().getConnectionFactory().getDefaultClient();
+        GoogleBigQueryProducer producer = new GoogleBigQueryProducer(bigquery, this, configuration);
         return producer;
     }
-
 
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Cannot consume from the BigQuery endpoint: " + getEndpointUri());
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
-    public Bigquery getBigquery() {
-        return bigquery;
-    }
-
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    @Override
-    protected String createEndpointUri() {
-        return uri;
+    public GoogleBigQueryConfiguration getConfiguration() {
+        return configuration;
     }
 
     @Override

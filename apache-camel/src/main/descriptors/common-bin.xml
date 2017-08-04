@@ -102,6 +102,7 @@
         <include>org.apache.camel:camel-google-calendar</include>
         <include>org.apache.camel:camel-google-drive</include>
         <include>org.apache.camel:camel-google-mail</include>
+        <include>org.apache.camel:camel-google-bigquery</include>
         <include>org.apache.camel:camel-google-pubsub</include>
         <include>org.apache.camel:camel-gora</include>
         <include>org.apache.camel:camel-groovy</include>

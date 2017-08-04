@@ -18,6 +18,7 @@ package org.apache.camel.component.google.bigquery.unit;
 
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.TableDataInsertAllResponse;
+import org.apache.camel.component.google.bigquery.GoogleBigQueryComponent;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConfiguration;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryEndpoint;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryProducer;
@@ -39,11 +40,13 @@ public class BaseBigQueryTest extends CamelTestSupport {
     protected String datasetId = "testDatasetId";
     protected String projectId = "testProjectId";
     protected GoogleBigQueryConfiguration configuration = new GoogleBigQueryConfiguration();
+    protected Bigquery bigquery;
 
     @Before
     public void init() throws Exception {
-        producer = createProducer();
         setupBigqueryMock();
+        producer = createProducer();
+
     }
 
     protected GoogleBigQueryProducer createProducer() throws Exception {
@@ -52,11 +55,11 @@ public class BaseBigQueryTest extends CamelTestSupport {
         configuration.setDatasetId(datasetId);
         configuration.setTableId("testTableId");
 
-        return new GoogleBigQueryProducer(endpoint, configuration);
+        return new GoogleBigQueryProducer(bigquery, endpoint, configuration);
     }
 
     protected void setupBigqueryMock() throws Exception {
-        Bigquery bigquery = mock(Bigquery.class);
+        bigquery = mock(Bigquery.class);
 
         tabledataMock = mock(Bigquery.Tabledata.class);
         when(bigquery.tabledata()).thenReturn(tabledataMock);
@@ -64,7 +67,5 @@ public class BaseBigQueryTest extends CamelTestSupport {
 
         TableDataInsertAllResponse mockResponse = new TableDataInsertAllResponse();
         when(mockInsertall.execute()).thenReturn(mockResponse);
-
-        when(endpoint.getBigquery()).thenReturn(bigquery);
     }
 }

@@ -25,31 +25,21 @@ import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.TableDataInsertAllRequest;
 import com.google.api.services.bigquery.model.TableDataInsertAllResponse;
 import com.google.api.services.bigquery.model.TableRow;
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultAsyncProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.impl.DefaultProducer;
 
 /**
  * Generic BigQuery Producer
  */
-public class GoogleBigQueryProducer extends DefaultAsyncProducer {
+public class GoogleBigQueryProducer extends DefaultProducer {
 
-    private final Logger logger;
     private final GoogleBigQueryConfiguration configuration;
+    private Bigquery bigquery;
 
-    public GoogleBigQueryProducer(GoogleBigQueryEndpoint endpoint, GoogleBigQueryConfiguration configuration) {
+    public GoogleBigQueryProducer(Bigquery bigquery, GoogleBigQueryEndpoint endpoint, GoogleBigQueryConfiguration configuration) {
         super(endpoint);
-
+        this.bigquery = bigquery;
         this.configuration = configuration;
-
-        String loggerId = configuration.getLoggerId();
-        if (loggerId == null || loggerId.trim().isEmpty()) {
-            loggerId = this.getClass().getName();
-        }
-
-        logger = LoggerFactory.getLogger(loggerId);
     }
 
     /**
@@ -124,7 +114,7 @@ public class GoogleBigQueryProducer extends DefaultAsyncProducer {
         }
 
         if (totalProcessed == 0) {
-            logger.debug("The incoming message is either null or empty for exchange {}", exchange.getExchangeId());
+            log.debug("The incoming message is either null or empty for exchange {}", exchange.getExchangeId());
         }
     }
 
@@ -155,7 +145,7 @@ public class GoogleBigQueryProducer extends DefaultAsyncProducer {
 
         TableDataInsertAllRequest apiRequestData = new TableDataInsertAllRequest().setRows(apiRequestRows);
 
-        Bigquery.Tabledata.InsertAll apiRequest = endpoint.getBigquery()
+        Bigquery.Tabledata.InsertAll apiRequest = bigquery
                 .tabledata()
                 .insertAll(configuration.getProjectId(),
                         configuration.getDatasetId(),
@@ -165,7 +155,10 @@ public class GoogleBigQueryProducer extends DefaultAsyncProducer {
             apiRequest.set("template_suffix", suffix);
         }
 
-        logger.trace("uploader thread/id: {} / {} . calling google api", Thread.currentThread(), exchangeId);
+        if (log.isDebugEnabled()) {
+            log.trace("Sending {} messages to bigquery table {}, suffix, partition",
+                    apiRequestRows.size(), tableId, suffix, partitionDecorator);
+        }
 
         TableDataInsertAllResponse apiResponse = apiRequest.execute();
 
@@ -173,7 +166,11 @@ public class GoogleBigQueryProducer extends DefaultAsyncProducer {
             throw new Exception("InsertAll into " + tableId + " failed: " + apiResponse.getInsertErrors());
         }
 
-        logger.debug("uploader thread/id: {} / {} . api call completed.", Thread.currentThread().getId(), exchangeId);
+        if (log.isDebugEnabled()) {
+            log.trace("Sent {} messages to bigquery table {}, suffix, partition",
+                    apiRequestRows.size(), tableId, suffix, partitionDecorator);
+        }
+        log.debug("uploader thread/id: {} / {} . api call completed.", Thread.currentThread().getId(), exchangeId);
         return apiRequestData.size();
     }
 
@@ -204,16 +201,4 @@ public class GoogleBigQueryProducer extends DefaultAsyncProducer {
         return (GoogleBigQueryEndpoint) super.getEndpoint();
     }
 
-    @Override
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        getEndpoint().getExecutorService().submit(() -> {
-            try {
-                process(exchange);
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
-            callback.done(false);
-        });
-        return false;
-    }
 }
