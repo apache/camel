@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.springboot;
+package org.apache.camel.spring.boot;
 
 import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.converter.TimePatternConverter;
 import org.apache.camel.impl.SupervisingRouteController;
-import org.apache.camel.impl.springboot.SupervisingRouteControllerConfiguration.BackOffConfiguration;
-import org.apache.camel.impl.springboot.SupervisingRouteControllerConfiguration.RouteConfiguration;
 import org.apache.camel.spi.RouteController;
-import org.apache.camel.spring.boot.CamelAutoConfiguration;
+import org.apache.camel.spring.boot.SupervisingRouteControllerConfiguration.BackOffConfiguration;
+import org.apache.camel.spring.boot.SupervisingRouteControllerConfiguration.RouteConfiguration;
 import org.apache.camel.util.backoff.BackOff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
