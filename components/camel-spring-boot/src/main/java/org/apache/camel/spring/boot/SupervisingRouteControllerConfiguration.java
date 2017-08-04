@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.springboot;
+package org.apache.camel.spring.boot;
 
 import java.util.HashMap;
 import java.util.Map;
