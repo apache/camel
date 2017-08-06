@@ -83,7 +83,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
     private Optional<MetaDataExtension.MetaData> tableMeta(MetaContext context) {
         try {
             final List<String> names = getObjectHierarchy(context);
-            final ObjectNode root = context.getConfiguration().getMapper().createObjectNode();
+            final ObjectNode root = context.getConfiguration().getOrCreateMapper().createObjectNode();
             final String baseUrn = (String)context.getParameters().getOrDefault("baseUrn", "org:apache:camel:component:servicenow");
 
             if (names.isEmpty()) {
@@ -99,10 +99,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
             // Schema sections
             root.putObject("properties");
             root.putArray("required");
-            root.putObject("definitions");
 
             loadProperties(context);
-            registerDefinitions(context, root);
 
             for (String name : names) {
                 context.getStack().push(name);
@@ -112,10 +110,16 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 context.getStack().pop();
             }
 
+            final String dateFormat = properties.getOrDefault("glide.sys.date_format", "yyyy-MM-dd");
+            final String timeFormat = properties.getOrDefault("glide.sys.time_format", "HH:mm:ss");
+
             return Optional.of(
                 MetaDataBuilder.on(getCamelContext())
                     .withAttribute(MetaData.CONTENT_TYPE, "application/schema+json")
                     .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
+                    .withAttribute("date.format", dateFormat)
+                    .withAttribute("time.format", timeFormat)
+                    .withAttribute("date-time.format", dateFormat + " " + timeFormat)
                     .withPayload(root)
                     .build()
             );
@@ -168,33 +172,6 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    // ********************************
-    // Definitions
-    // ********************************
-
-    private void registerDefinitions(MetaContext context, ObjectNode root) {
-        final ObjectNode definitions = (ObjectNode)root.get("definitions");
-
-        // Global Unique ID
-        definitions.putObject("guid")
-            .put("type", "string")
-            .put("pattern", "^[a-fA-F0-9]{32}");
-
-        // Date/Time
-        String dateFormat = properties.getOrDefault("glide.sys.date_format", "yyyy-MM-dd");
-        String timeFormat = properties.getOrDefault("glide.sys.time_format", "HH:mm:ss");
-
-        definitions.putObject("date")
-            .put("type", "string")
-            .put("format", dateFormat);
-        definitions.putObject("time")
-            .put("type", "string")
-            .put("format", timeFormat);
-        definitions.putObject("date-time")
-            .put("type", "string")
-            .put("format", dateFormat + " " + timeFormat);
     }
 
     // ********************************
@@ -267,7 +244,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 LOGGER.debug("Load dictionary element <{}>", context.getStack());
 
                 try {
-                    final DictionaryEntry entry = context.getConfiguration().getMapper().treeToValue(node, DictionaryEntry.class);
+                    final DictionaryEntry entry = context.getConfiguration().getOrCreateMapper().treeToValue(node, DictionaryEntry.class);
                     final ObjectNode property = ((ObjectNode)root.get("properties")).putObject(id);
 
                     // Add custom fields for code generation, json schema
@@ -289,19 +266,23 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                         break;
                     case "guid":
                     case "GUID":
-                        property.put("$ref", "#/definitions/guid");
+                        property.put("type", "string");
+                        property.put("pattern", "^[a-fA-F0-9]{32}");
                         break;
                     case "glide_date":
-                        property.put("$ref", "#/definitions/date");
+                        property.put("type", "string");
+                        property.put("format", "date");
                         break;
                     case "due_date":
                     case "glide_date_time":
                     case "glide_time":
                     case "glide_duration":
-                        property.put("$ref", "#/definitions/date-time");
+                        property.put("type", "string");
+                        property.put("format", "date-time");
                         break;
                     case "reference":
-                        property.put("$ref", "#/definitions/guid");
+                        property.put("type", "string");
+                        property.put("pattern", "^[a-fA-F0-9]{32}");
 
                         if (entry.getReference().getValue() != null) {
                             // the referenced object type

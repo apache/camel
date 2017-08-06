@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.servicenow;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -63,12 +67,10 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
         MetaDataExtension.MetaData result = getExtension().meta(parameters).orElseThrow(RuntimeException::new);
 
         Assert.assertEquals("application/schema+json", result.getAttribute(MetaDataExtension.MetaData.CONTENT_TYPE));
+        Assert.assertNotNull(result.getAttribute("date.format"));
+        Assert.assertNotNull(result.getAttribute("time.format"));
+        Assert.assertNotNull(result.getAttribute("date-time.format"));
         Assert.assertEquals(JsonNode.class, result.getAttribute(MetaDataExtension.MetaData.JAVA_TYPE));
-        Assert.assertTrue(result.getPayload(JsonNode.class).hasNonNull("definitions"));
-        Assert.assertTrue(result.getPayload(JsonNode.class).get("definitions").hasNonNull("guid"));
-        Assert.assertTrue(result.getPayload(JsonNode.class).get("definitions").hasNonNull("date"));
-        Assert.assertTrue(result.getPayload(JsonNode.class).get("definitions").hasNonNull("time"));
-        Assert.assertTrue(result.getPayload(JsonNode.class).get("definitions").hasNonNull("date-time"));
         Assert.assertTrue(result.getPayload(JsonNode.class).hasNonNull("properties"));
 
         LOGGER.debug(
@@ -83,5 +85,81 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
         parameters.put("objectName", "incident");
 
         getExtension().meta(parameters);
+    }
+
+    // *********************************
+    // Date/Time
+    // *********************************
+
+    @Test
+    public void testDateTimeWithDefaults() throws Exception {
+        final ServiceNowConfiguration configuration = new ServiceNowConfiguration();
+
+        ObjectMapper mapper = configuration.getOrCreateMapper();
+        DateTimeBean bean = new DateTimeBean();
+        String serialized = mapper.writeValueAsString(bean);
+
+        LOGGER.debug(serialized);
+
+        DateTimeBean deserialized = mapper.readValue(serialized, DateTimeBean.class);
+
+        Assert.assertEquals(bean.dateTime, deserialized.dateTime);
+        Assert.assertEquals(bean.date, deserialized.date);
+        Assert.assertEquals(bean.time, deserialized.time);
+    }
+
+    @Test
+    public void testDateTimeWithCustomFormats() throws Exception {
+        final ServiceNowConfiguration configuration = new ServiceNowConfiguration();
+        configuration.setDateFormat("yyyyMMdd");
+        configuration.setTimeFormat("HHmmss");
+
+        ObjectMapper mapper = configuration.getOrCreateMapper();
+        DateTimeBean bean = new DateTimeBean();
+        String serialized = mapper.writeValueAsString(bean);
+
+        LOGGER.debug(serialized);
+
+        DateTimeBean deserialized = mapper.readValue(serialized, DateTimeBean.class);
+
+        Assert.assertEquals(bean.dateTime, deserialized.dateTime);
+        Assert.assertEquals(bean.date, deserialized.date);
+        Assert.assertEquals(bean.time, deserialized.time);
+    }
+
+    public static class DateTimeBean {
+        LocalDateTime dateTime;
+        LocalDate date;
+        LocalTime time;
+
+        public DateTimeBean() {
+            dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+            date = dateTime.toLocalDate();
+            time = dateTime.toLocalTime();
+        }
+
+        public LocalDateTime getDateTime() {
+            return dateTime;
+        }
+
+        public void setDateTime(LocalDateTime dateTime) {
+            this.dateTime = dateTime;
+        }
+
+        public LocalDate getDate() {
+            return date;
+        }
+
+        public void setDate(LocalDate date) {
+            this.date = date;
+        }
+
+        public LocalTime getTime() {
+            return time;
+        }
+
+        public void setTime(LocalTime time) {
+            this.time = time;
+        }
     }
 }

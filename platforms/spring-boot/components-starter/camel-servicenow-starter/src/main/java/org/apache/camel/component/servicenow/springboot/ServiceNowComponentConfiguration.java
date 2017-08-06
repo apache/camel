@@ -354,6 +354,18 @@ public class ServiceNowComponentConfiguration
          * Password for proxy authentication
          */
         private String proxyPassword;
+        /**
+         * The date format used for Json serialization/deserialization
+         */
+        private String dateFormat = "yyyy-MM-dd";
+        /**
+         * The time format used for Json serialization/deserialization
+         */
+        private String timeFormat = "HH:mm:ss";
+        /**
+         * The date-time format used for Json serialization/deserialization
+         */
+        private String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
         private Map models;
         /**
          * Defines the response model
@@ -667,6 +679,30 @@ public class ServiceNowComponentConfiguration
 
         public void setProxyPassword(String proxyPassword) {
             this.proxyPassword = proxyPassword;
+        }
+
+        public String getDateFormat() {
+            return dateFormat;
+        }
+
+        public void setDateFormat(String dateFormat) {
+            this.dateFormat = dateFormat;
+        }
+
+        public String getTimeFormat() {
+            return timeFormat;
+        }
+
+        public void setTimeFormat(String timeFormat) {
+            this.timeFormat = timeFormat;
+        }
+
+        public String getDateTimeFormat() {
+            return dateTimeFormat;
+        }
+
+        public void setDateTimeFormat(String dateTimeFormat) {
+            this.dateTimeFormat = dateTimeFormat;
         }
 
         public Map getModels() {

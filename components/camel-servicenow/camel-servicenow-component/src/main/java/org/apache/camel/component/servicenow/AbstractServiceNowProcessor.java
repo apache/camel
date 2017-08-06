@@ -48,7 +48,7 @@ public abstract class AbstractServiceNowProcessor implements Processor {
         this.javaTypeCache = new JavaTypeCache();
         this.endpoint = endpoint;
         this.config = endpoint.getConfiguration();
-        this.mapper = ObjectHelper.notNull(config.getMapper(), "mapper");
+        this.mapper = config.getOrCreateMapper();
         this.client = new ServiceNowClient(endpoint.getCamelContext(), config);
         this.dispatchers = new ArrayList<>();
     }

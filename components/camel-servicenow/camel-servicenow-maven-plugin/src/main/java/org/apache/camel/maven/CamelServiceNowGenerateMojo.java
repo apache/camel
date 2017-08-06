@@ -18,8 +18,10 @@ package org.apache.camel.maven;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,13 +31,11 @@ import java.util.stream.Stream;
 import javax.annotation.Generated;
 import javax.lang.model.element.Modifier;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
@@ -208,14 +208,13 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
 
     private void generateBeanProperty(TypeSpec.Builder typeBuilder, JsonNode schema, String name, JsonNode definition) {
         final ArrayNode required = (ArrayNode)schema.get("required");
-        final ObjectNode definitions = (ObjectNode)schema.get("definitions");
         final String fieldName = toCamelCase(name, true);
         final String methodName = toCamelCase(name, false);
+        final JsonNode type = definition.get("type");
+        final JsonNode format = definition.get("format");
 
         Class<?> javaType = String.class;
-        Optional<String> format = Optional.empty();
 
-        JsonNode type = definition.get("type");
         if (type != null) {
             if ("boolean".equalsIgnoreCase(type.textValue())) {
                 javaType = boolean.class;
@@ -226,55 +225,47 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
             if ("number".equalsIgnoreCase(type.textValue())) {
                 javaType = Double.class;
             }
-        }
-
-        JsonNode ref = definition.get("$ref");
-        if (ref != null) {
-            if ("#/definitions/guid".equalsIgnoreCase(ref.textValue())) {
+            if ("string".equalsIgnoreCase(type.textValue())) {
                 javaType = String.class;
             }
-            if ("#/definitions/date".equalsIgnoreCase(ref.textValue())) {
-                javaType = Date.class;
-                format = getNodeTextValue(definitions, "date", "format");
+        }
+
+        if (javaType == String.class && format != null) {
+            if ("date".equalsIgnoreCase(format.textValue())) {
+                javaType = LocalDate.class;
             }
-            if ("#/definitions/time".equalsIgnoreCase(ref.textValue())) {
-                javaType = Date.class;
-                format = getNodeTextValue(definitions, "time", "format");
+            if ("time".equalsIgnoreCase(format.textValue())) {
+                javaType = LocalTime.class;
             }
-            if ("#/definitions/date-time".equalsIgnoreCase(ref.textValue())) {
-                javaType = Date.class;
-                format = getNodeTextValue(definitions, "date-time", "format");
+            if ("date-time".equalsIgnoreCase(format.textValue())) {
+                javaType = LocalDateTime.class;
             }
         }
 
-        FieldSpec.Builder field = FieldSpec.builder(javaType, toCamelCase(name, true))
+        FieldSpec field = FieldSpec.builder(javaType, toCamelCase(name, true))
             .addModifiers(Modifier.PRIVATE)
             .addAnnotation(AnnotationSpec.builder(JsonProperty.class)
                 .addMember("value", "$S", name)
                 .addMember("required", "$L", required.has(name))
-                .build());
-
-        format.ifPresent(f ->
-            field.addAnnotation(AnnotationSpec.builder(JsonFormat.class)
-                .addMember("shape", "$L","JsonFormat.Shape.STRING")
-                .addMember("pattern", "$S", f)
                 .build())
-        );
+            .build();
 
-        MethodSpec.Builder getter = MethodSpec.methodBuilder("get" + methodName)
+        MethodSpec getter = MethodSpec.methodBuilder("get" + methodName)
             .addModifiers(Modifier.PUBLIC)
             .returns(javaType)
-            .addStatement("return this.$L", fieldName);
+            .addStatement("return this.$L", fieldName)
+            .build();
 
-        MethodSpec.Builder setter = MethodSpec.methodBuilder("set" + methodName)
+        MethodSpec setter = MethodSpec.methodBuilder("set" + methodName)
             .addModifiers(Modifier.PUBLIC)
             .returns(void.class)
             .addParameter(javaType, fieldName)
-            .addStatement("this.$L = $L", fieldName, fieldName);
+            .addStatement("this.$L = $L", fieldName, fieldName)
+            .build();
 
-        typeBuilder.addField(field.build());
-        typeBuilder.addMethod(getter.build());
-        typeBuilder.addMethod(setter.build());
+        typeBuilder.addField(field);
+        typeBuilder.addMethod(getter);
+        typeBuilder.addMethod(setter);
     }
 
     // ************************************
@@ -312,13 +303,5 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
     private void validateSchema(JsonNode schema) throws MojoExecutionException {
         getNode(schema, "required")
             .orElseThrow(() -> new MojoExecutionException("Invalid JsonSchema: 'required' element not found"));
-        getNode(schema, "definitions")
-            .orElseThrow(() -> new MojoExecutionException("Invalid JsonSchema: 'definitions' element not found"));
-        getNode(schema, "definitions", "date", "format")
-            .orElseThrow(() -> new MojoExecutionException("Invalid JsonSchema: '#/definitions/date' element not found"));
-        getNode(schema, "definitions", "time", "format")
-            .orElseThrow(() -> new MojoExecutionException("Invalid JsonSchema: '#/definitions/time' element not found"));
-        getNode(schema, "definitions", "date-time", "format")
-            .orElseThrow(() -> new MojoExecutionException("Invalid JsonSchema: '#/definitions/date-time' element not found"));
     }
 }
