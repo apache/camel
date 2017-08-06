@@ -91,7 +91,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
             }
 
             // Schema
-            root.put("$schema", "http://json-schema.org/draft-04/schema#");
+            root.put("$schema", "http://json-schema.org/schema#");
             root.put("id", String.format("urn:jsonschema:%s:%s)", baseUrn, context.getObjectName()));
             root.put("type", "object");
             root.put("additionalProperties", false);

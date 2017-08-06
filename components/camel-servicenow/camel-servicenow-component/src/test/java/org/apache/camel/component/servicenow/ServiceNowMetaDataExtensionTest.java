@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.servicenow;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -71,7 +67,12 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
         Assert.assertNotNull(result.getAttribute("time.format"));
         Assert.assertNotNull(result.getAttribute("date-time.format"));
         Assert.assertEquals(JsonNode.class, result.getAttribute(MetaDataExtension.MetaData.JAVA_TYPE));
-        Assert.assertTrue(result.getPayload(JsonNode.class).hasNonNull("properties"));
+        Assert.assertNotNull(result.getPayload(JsonNode.class));
+        Assert.assertNotNull(result.getPayload(JsonNode.class).get("properties"));
+        Assert.assertNotNull(result.getPayload(JsonNode.class).get("$schema"));
+        Assert.assertEquals("http://json-schema.org/schema#", result.getPayload(JsonNode.class).get("$schema").asText());
+        Assert.assertNotNull(result.getPayload(JsonNode.class).get("id"));
+        Assert.assertNotNull(result.getPayload(JsonNode.class).get("type"));
 
         LOGGER.debug(
             new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload())
@@ -85,81 +86,5 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
         parameters.put("objectName", "incident");
 
         getExtension().meta(parameters);
-    }
-
-    // *********************************
-    // Date/Time
-    // *********************************
-
-    @Test
-    public void testDateTimeWithDefaults() throws Exception {
-        final ServiceNowConfiguration configuration = new ServiceNowConfiguration();
-
-        ObjectMapper mapper = configuration.getOrCreateMapper();
-        DateTimeBean bean = new DateTimeBean();
-        String serialized = mapper.writeValueAsString(bean);
-
-        LOGGER.debug(serialized);
-
-        DateTimeBean deserialized = mapper.readValue(serialized, DateTimeBean.class);
-
-        Assert.assertEquals(bean.dateTime, deserialized.dateTime);
-        Assert.assertEquals(bean.date, deserialized.date);
-        Assert.assertEquals(bean.time, deserialized.time);
-    }
-
-    @Test
-    public void testDateTimeWithCustomFormats() throws Exception {
-        final ServiceNowConfiguration configuration = new ServiceNowConfiguration();
-        configuration.setDateFormat("yyyyMMdd");
-        configuration.setTimeFormat("HHmmss");
-
-        ObjectMapper mapper = configuration.getOrCreateMapper();
-        DateTimeBean bean = new DateTimeBean();
-        String serialized = mapper.writeValueAsString(bean);
-
-        LOGGER.debug(serialized);
-
-        DateTimeBean deserialized = mapper.readValue(serialized, DateTimeBean.class);
-
-        Assert.assertEquals(bean.dateTime, deserialized.dateTime);
-        Assert.assertEquals(bean.date, deserialized.date);
-        Assert.assertEquals(bean.time, deserialized.time);
-    }
-
-    public static class DateTimeBean {
-        LocalDateTime dateTime;
-        LocalDate date;
-        LocalTime time;
-
-        public DateTimeBean() {
-            dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-            date = dateTime.toLocalDate();
-            time = dateTime.toLocalTime();
-        }
-
-        public LocalDateTime getDateTime() {
-            return dateTime;
-        }
-
-        public void setDateTime(LocalDateTime dateTime) {
-            this.dateTime = dateTime;
-        }
-
-        public LocalDate getDate() {
-            return date;
-        }
-
-        public void setDate(LocalDate date) {
-            this.date = date;
-        }
-
-        public LocalTime getTime() {
-            return time;
-        }
-
-        public void setTime(LocalTime time) {
-            this.time = time;
-        }
     }
 }
