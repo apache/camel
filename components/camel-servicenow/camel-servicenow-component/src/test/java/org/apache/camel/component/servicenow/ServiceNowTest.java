@@ -16,13 +16,19 @@
  */
 package org.apache.camel.component.servicenow;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servicenow.model.Incident;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class ServiceNowTest extends ServiceNowTestSupport {
@@ -154,6 +160,82 @@ public class ServiceNowTest extends ServiceNowTestSupport {
         Object body = mock.getExchanges().get(0).getIn().getBody();
         assertNotNull(body);
         assertTrue(body instanceof JsonNode);
+    }
+
+    // *********************************
+    // Date/Time
+    // *********************************
+
+    @Test
+    public void testDateTimeWithDefaults() throws Exception {
+        final ServiceNowConfiguration configuration = new ServiceNowConfiguration();
+
+        ObjectMapper mapper = configuration.getOrCreateMapper();
+        DateTimeBean bean = new DateTimeBean();
+        String serialized = mapper.writeValueAsString(bean);
+
+        LOGGER.debug(serialized);
+
+        DateTimeBean deserialized = mapper.readValue(serialized, DateTimeBean.class);
+
+        Assert.assertEquals(bean.dateTime, deserialized.dateTime);
+        Assert.assertEquals(bean.date, deserialized.date);
+        Assert.assertEquals(bean.time, deserialized.time);
+    }
+
+    @Test
+    public void testDateTimeWithCustomFormats() throws Exception {
+        final ServiceNowConfiguration configuration = new ServiceNowConfiguration();
+        configuration.setDateFormat("yyyyMMdd");
+        configuration.setTimeFormat("HHmmss");
+
+        ObjectMapper mapper = configuration.getOrCreateMapper();
+        DateTimeBean bean = new DateTimeBean();
+        String serialized = mapper.writeValueAsString(bean);
+
+        LOGGER.debug(serialized);
+
+        DateTimeBean deserialized = mapper.readValue(serialized, DateTimeBean.class);
+
+        Assert.assertEquals(bean.dateTime, deserialized.dateTime);
+        Assert.assertEquals(bean.date, deserialized.date);
+        Assert.assertEquals(bean.time, deserialized.time);
+    }
+
+    public static class DateTimeBean {
+        LocalDateTime dateTime;
+        LocalDate date;
+        LocalTime time;
+
+        public DateTimeBean() {
+            dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+            date = dateTime.toLocalDate();
+            time = dateTime.toLocalTime();
+        }
+
+        public LocalDateTime getDateTime() {
+            return dateTime;
+        }
+
+        public void setDateTime(LocalDateTime dateTime) {
+            this.dateTime = dateTime;
+        }
+
+        public LocalDate getDate() {
+            return date;
+        }
+
+        public void setDate(LocalDate date) {
+            this.date = date;
+        }
+
+        public LocalTime getTime() {
+            return time;
+        }
+
+        public void setTime(LocalTime time) {
+            this.time = time;
+        }
     }
 
     // *************************************************************************
