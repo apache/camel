@@ -37,6 +37,10 @@ public final class ServiceNowConstants {
     public static final String RESPONSE_TYPE = "CamelServiceNowResponseType";
     public static final String RETRIEVE_TARGET_RECORD = "CamelServiceNowRetrieveTargetRecord";
 
+    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
+    public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
     public static final String ATTACHMENT_META_HEADER = "X-Attachment-Metadata";
 
     public static final String RESOURCE_TABLE = "table";

@@ -19,3 +19,4 @@
 File sourceDir = new File(basedir, "target/generated-sources/camel-servicenow")
 
 assert sourceDir.isDirectory()
+assert sourceDir.listFiles().length == 1

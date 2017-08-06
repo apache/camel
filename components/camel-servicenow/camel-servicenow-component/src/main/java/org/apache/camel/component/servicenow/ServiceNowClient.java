@@ -52,7 +52,7 @@ public final class ServiceNowClient {
             configuration.getApiUrl(),
             Arrays.asList(
                 new AuthenticationRequestFilter(configuration),
-                new JacksonJsonProvider(configuration.getMapper())
+                new JacksonJsonProvider(configuration.getOrCreateMapper())
             ),
             true
         );

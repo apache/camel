@@ -16,13 +16,25 @@
  */
 package org.apache.camel.component.servicenow;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -34,15 +46,6 @@ import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 
 @UriParams
 public class ServiceNowConfiguration implements Cloneable {
-
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .configure(
-            DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-            false)
-        .setSerializationInclusion(
-            JsonInclude.Include.NON_NULL
-        );
-
     @UriParam(label = "security", secret = true)
     @Metadata(required = "true")
     private String userName;
@@ -108,7 +111,7 @@ public class ServiceNowConfiguration implements Cloneable {
     @UriParam(prefix = "response-model.", multiValue = true, javaType = "java.lang.String")
     private Map<String, Class<?>> responseModels;
     @UriParam(label = "advanced")
-    private ObjectMapper mapper = MAPPER;
+    private ObjectMapper mapper;
     @UriParam(defaultValue = "HELSINKI", enums = "FUJI,GENEVA,HELSINKI")
     private ServiceNowRelease release = ServiceNowRelease.HELSINKI;
     @UriParam(label = "security")
@@ -125,6 +128,12 @@ public class ServiceNowConfiguration implements Cloneable {
     private String proxyUserName;
     @UriParam(label = "proxy,security")
     private String proxyPassword;
+    @UriParam(label = "advanced", defaultValue = ServiceNowConstants.DEFAULT_DATE_FORMAT)
+    private String dateFormat = ServiceNowConstants.DEFAULT_DATE_FORMAT;
+    @UriParam(label = "advanced", defaultValue = ServiceNowConstants.DEFAULT_TIME_FORMAT)
+    private String timeFormat = ServiceNowConstants.DEFAULT_TIME_FORMAT;
+    @UriParam(label = "advanced", defaultValue = ServiceNowConstants.DEFAULT_DATE_TIME_FORMAT)
+    private String dateTimeFormat = ServiceNowConstants.DEFAULT_DATE_TIME_FORMAT;
 
     public String getUserName() {
         return userName;
@@ -480,6 +489,36 @@ public class ServiceNowConfiguration implements Cloneable {
         return mapper;
     }
 
+    public ObjectMapper getOrCreateMapper() {
+        if (mapper == null) {
+            final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(getDateFormat());
+            final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern(getTimeFormat());
+            final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern(getDateTimeFormat());
+
+            this.mapper = new ObjectMapper()
+                .registerModule(new Jdk8Module())
+                .registerModule(new JavaTimeModule()
+                    .addSerializer(LocalDate.class, new LocalDateSerializer(dateFormat))
+                    .addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormat))
+                    .addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormat))
+                    .addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormat))
+                    .addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormat))
+                    .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormat))
+                )
+                .configure(
+                    SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
+                    false)
+                .configure(
+                    DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+                    false)
+                .setSerializationInclusion(
+                    JsonInclude.Include.NON_NULL
+                );
+        }
+
+        return mapper;
+    }
+
     public boolean hasMapper() {
         return mapper != null;
     }
@@ -583,6 +622,39 @@ public class ServiceNowConfiguration implements Cloneable {
      */
     public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
+    }
+
+    public String getDateFormat() {
+        return dateFormat;
+    }
+
+    /**
+     * The date format used for Json serialization/deserialization
+     */
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
+    }
+
+    public String getTimeFormat() {
+        return timeFormat;
+    }
+
+    /**
+     * The time format used for Json serialization/deserialization
+     */
+    public void setTimeFormat(String timeFormat) {
+        this.timeFormat = timeFormat;
+    }
+
+    public String getDateTimeFormat() {
+        return dateTimeFormat;
+    }
+
+    /**
+     * The date-time format used for Json serialization/deserialization
+     */
+    public void setDateTimeFormat(String dateTimeFormat) {
+        this.dateTimeFormat = dateTimeFormat;
     }
 
     // *************************************************
