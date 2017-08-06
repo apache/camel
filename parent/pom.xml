@@ -622,7 +622,8 @@
     <spring-cloud-commons-version>1.2.3.RELEASE</spring-cloud-commons-version>
     <spring-cloud-netflix-version>1.2.7.RELEASE</spring-cloud-netflix-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
-    <spring-data-commons-version>1.11.6.RELEASE</spring-data-commons-version>
+    <spring-data-commons-version>1.13.6.RELEASE</spring-data-commons-version>
+    <spring-data-keyvalue-version>1.2.6.RELEASE</spring-data-keyvalue-version>
     <spring-data-redis-version>1.8.6.RELEASE</spring-data-redis-version>
     <spring-integration-version>4.3.11.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
