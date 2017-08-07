@@ -23,8 +23,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "camel.supervising.controller")
 public class SupervisingRouteControllerConfiguration {
+    /**
+     * Global option to enable/disable this ${@link org.apache.camel.spi.RouteController}, default is false.
+     */
     private boolean enabled;
+
+    /**
+     * The default back-off configuration, back-off configuration for routes inherits from this default.
+     */
     private BackOffConfiguration backOff = new BackOffConfiguration();
+
+    /**
+     * Routes configuration.
+     */
     private Map<String, RouteConfiguration> routes = new HashMap<>();
 
     public boolean isEnabled() {
@@ -48,6 +59,9 @@ public class SupervisingRouteControllerConfiguration {
     // *****************************************
 
     public static class RouteConfiguration {
+        /**
+         * The back-off configuration from this route, inherits from default back-off
+         */
         private BackOffConfiguration backOff;
 
         public BackOffConfiguration getBackOff() {
@@ -60,10 +74,38 @@ public class SupervisingRouteControllerConfiguration {
     }
 
     public static class BackOffConfiguration {
+        /**
+         * The delay to wait before retry the operation.
+         *
+         * You can also specify time values using units, such as 60s (60 seconds),
+         * 5m30s (5 minutes and 30 seconds), and 1h (1 hour).
+         */
         private String delay;
+
+        /**
+         * The maximum back-off time.
+         *
+         * You can also specify time values using units, such as 60s (60 seconds),
+         * 5m30s (5 minutes and 30 seconds), and 1h (1 hour).
+         */
         private String maxDelay;
+
+        /**
+         * The maximum elapsed time after which the back-off is exhausted.
+         *
+         * You can also specify time values using units, such as 60s (60 seconds),
+         * 5m30s (5 minutes and 30 seconds), and 1h (1 hour).
+         */
         private String maxElapsedTime;
+
+        /**
+         * Teh maximum number of attempts after which the back-off is exhausted.
+         */
         private Long maxAttempts;
+
+        /**
+         * The value to multiply the current interval by for each retry attempt.
+         */
         private Double multiplier;
 
         public String getDelay() {
