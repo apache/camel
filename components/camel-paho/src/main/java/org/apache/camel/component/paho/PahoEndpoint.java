@@ -63,6 +63,11 @@ public class PahoEndpoint extends DefaultEndpoint {
     private String filePersistenceDirectory;
     @UriParam(defaultValue = "true")
     private boolean autoReconnect = true; 
+    @UriParam @Metadata(secret = true)
+    private String userName; 
+    @UriParam @Metadata(secret = true)
+    private String password; 
+    
 
     // Collaboration members
     @UriParam
@@ -140,6 +145,11 @@ public class PahoEndpoint extends DefaultEndpoint {
         
         MqttConnectOptions options = new MqttConnectOptions();
         options.setAutomaticReconnect(autoReconnect);
+        
+        if(!"".equals(userName) && !"".equals(password)) {
+            options.setUserName(userName);
+            options.setPassword(password.toCharArray());
+        }
         return options;
     }
 
@@ -269,6 +279,30 @@ public class PahoEndpoint extends DefaultEndpoint {
      */
     public synchronized void setAutoReconnect(boolean autoReconnect) {
         this.autoReconnect = autoReconnect;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * Username to be used for authentication against the MQTT broker
+     * @param userName
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Password to be used for authentication against the MQTT broker
+     * @param password
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 }
