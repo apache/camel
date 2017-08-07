@@ -70,6 +70,7 @@ import org.apache.camel.management.mbean.ManagedResequencer;
 import org.apache.camel.management.mbean.ManagedRollback;
 import org.apache.camel.management.mbean.ManagedRoundRobinLoadBalancer;
 import org.apache.camel.management.mbean.ManagedRoute;
+import org.apache.camel.management.mbean.ManagedRouteController;
 import org.apache.camel.management.mbean.ManagedRoutingSlip;
 import org.apache.camel.management.mbean.ManagedSamplingThrottler;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
@@ -218,6 +219,12 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         ManagedErrorHandler me = new ManagedErrorHandler(routeContext, errorHandler, errorHandlerBuilder);
         me.init(context.getManagementStrategy());
         return me;
+    }
+
+    public Object getManagedObjectForRouteController(CamelContext context) {
+        ManagedRouteController mrc = new ManagedRouteController((ModelCamelContext)context);
+        mrc.init(context.getManagementStrategy());
+        return mrc;
     }
 
     public Object getManagedObjectForRoute(CamelContext context, Route route) {
