@@ -59,7 +59,9 @@ public class GridFsProducer extends DefaultProducer {
             }
             String metaData = exchange.getIn().getHeader(GridFsEndpoint.GRIDFS_METADATA, String.class);
             DBObject dbObject = (DBObject) JSON.parse(metaData);
-            gfsFile.setMetaData(dbObject);
+            if (dbObject != null) {
+                gfsFile.setMetaData(dbObject);
+            }
             gfsFile.save();
             //add headers with the id and file name produced by the driver.
             exchange.getIn().setHeader(Exchange.FILE_NAME_PRODUCED, gfsFile.getFilename());
