@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
@@ -721,6 +722,16 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 route = new RouteDefinition();
                 ProcessorDefinition def = verb.getTo() != null ? verb.getTo() : verb.getToD();
                 route.getOutputs().add(def);
+            }
+
+            // ensure property placeholders is resolved on the verb
+            try {
+                ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, verb);
+                for (RestOperationParamDefinition param : verb.getParams()) {
+                    ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, param);
+                }
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
             }
 
             // add the binding
