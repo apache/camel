@@ -219,6 +219,17 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         // register any pre registered now that we are initialized
         enlistPreRegisteredServices();
+
+        try {
+            Object me = getManagementObjectStrategy().getManagedObjectForRouteController(camelContext);
+            if (me == null) {
+                // endpoint should not be managed
+                return;
+            }
+            manageObject(me);
+        } catch (Exception e) {
+            LOG.warn("Could not register RouteController MBean. This exception will be ignored.", e);
+        }
     }
 
     private String findFreeName(Object mc, ManagementNameStrategy strategy, String name) throws MalformedObjectNameException {
@@ -276,6 +287,17 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         if (!initialized) {
             return;
         }
+
+        try {
+            Object mc = getManagementObjectStrategy().getManagedObjectForRouteController(context);
+            // the context could have been removed already
+            if (getManagementStrategy().isManaged(mc, null)) {
+                unmanageObject(mc);
+            }
+        } catch (Exception e) {
+            LOG.warn("Could not unregister RouteController MBean", e);
+        }
+
         try {
             Object mc = getManagementObjectStrategy().getManagedObjectForCamelContext(context);
             // the context could have been removed already

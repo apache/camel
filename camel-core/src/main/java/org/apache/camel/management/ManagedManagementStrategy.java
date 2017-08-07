@@ -32,6 +32,7 @@ import org.apache.camel.management.mbean.ManagedEventNotifier;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRoute;
+import org.apache.camel.management.mbean.ManagedRouteController;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedTracer;
@@ -89,6 +90,9 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
         if (managedObject instanceof ManagedCamelContext) {
             ManagedCamelContext mcc = (ManagedCamelContext) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForCamelContext(mcc.getContext());
+        } else if (managedObject instanceof ManagedRouteController) {
+            ManagedRouteController mrc = (ManagedRouteController) managedObject;
+            objectName = getManagementNamingStrategy().getObjectNameForRouteController(mrc.getContext());
         } else if (managedObject instanceof ManagedComponent) {
             ManagedComponent mc = (ManagedComponent) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForComponent(mc.getComponent(), mc.getComponentName());
