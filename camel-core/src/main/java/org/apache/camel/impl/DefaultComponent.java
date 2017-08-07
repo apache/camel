@@ -486,11 +486,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         return null;
     }
 
-    protected final void registerExtension(ComponentExtension extension) {
+    protected void registerExtension(ComponentExtension extension) {
         extensions.add(() -> extension);
     }
 
-    protected final void registerExtension(Supplier<ComponentExtension> supplier) {
+    protected void registerExtension(Supplier<ComponentExtension> supplier) {
         extensions.add(Suppliers.memorize(supplier));
     }
 
