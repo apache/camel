@@ -29,6 +29,9 @@
 
   <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
 
+    <!-- property placeholder file -->
+    <propertyPlaceholder id="properties" location="rest.properties"/>
+
     <!-- configure rest to use the camel-servlet component, and use json binding mode -->
     <!-- and tell to output json in pretty print mode -->
     <!-- setup context path and port number that Apache Tomcat will deploy this application with,
@@ -97,9 +100,10 @@
 
       <get uri="/ping">
         <description>A ping service</description>
+        <param name="name" type="query" description="You can provide a name" dataType="string" defaultValue="{{defaultName}}"/>
         <route>
           <transform>
-            <constant>pong</constant>
+            <simple>pong ${header.name}</simple>
           </transform>
         </route>
       </get>
