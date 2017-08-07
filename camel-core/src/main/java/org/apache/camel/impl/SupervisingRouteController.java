@@ -335,6 +335,12 @@ public class SupervisingRouteController extends DefaultRouteController {
                 // ignored, exception handled by startRoute
             }
         }
+
+        LOGGER.info("Total managed routes: {} of which {} successfully started and {} re-starting",
+            routes.size(),
+            routes.stream().filter(r -> r.getStatus() == ServiceStatus.Started).count(),
+            routeManager.routes.size()
+        );
     }
 
     private synchronized void stopRoutes() {
@@ -542,7 +548,7 @@ public class SupervisingRouteController extends DefaultRouteController {
                 holder.getDefinition().setAutoStartup("false");
 
                 if (contextStarted.get()) {
-                    LOGGER.debug("Context is started: attempt to start route {}", route.getId());
+                    LOGGER.info("Context is already started: attempt to start route {}", route.getId());
                     try {
                         SupervisingRouteController.this.doStartRoute(
                             holder,
@@ -553,7 +559,7 @@ public class SupervisingRouteController extends DefaultRouteController {
                         throw new RuntimeCamelException(e);
                     }
                 } else {
-                    LOGGER.debug("Context is not started: add route {} to stopped routes", holder.getId());
+                    LOGGER.info("Context is not yet started: defer route {} start", holder.getId());
                 }
             }
         }
