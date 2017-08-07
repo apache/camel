@@ -19,20 +19,14 @@ package org.apache.camel.spring.boot.issues;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.apache.camel.model.rest.RestDefinition;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,10 +40,10 @@ import org.springframework.util.SocketUtils;
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
 @SpringBootTest(classes = { RestDslPostTest.class })
-public class RestDslPostTest extends Assert{
-	
-	final static int port = SocketUtils.findAvailableTcpPort(20000);
-	
+public class RestDslPostTest extends Assert {
+
+    static final int PORT = SocketUtils.findAvailableTcpPort(20000);
+
     @EndpointInject(uri = "mock:user")
     protected MockEndpoint resultEndpointUser;
     @EndpointInject(uri = "mock:country")
@@ -60,35 +54,34 @@ public class RestDslPostTest extends Assert{
 
     @Autowired
     CamelContext context;
-    
+
     @Test
     public void testMultiplePostTypes() throws Exception {
-    	
-    	UserPojo user = new UserPojo();
-    	user.setId(1);
-    	user.setName("My Name");
-    	resultEndpointUser.expectedBodiesReceived(user);
-    	resultEndpointUser.expectedMessageCount(1);
-    	
-    	CountryPojo country = new CountryPojo();
-    	country.setCountry("England");
-    	country.setIso("EN");
-    	resultEndpointCountry.expectedBodiesReceived(country);
-    	resultEndpointCountry.expectedMessageCount(1);
-    	
-    	ExchangeBuilder builder = ExchangeBuilder.anExchange(context)
-    			 .withHeader(Exchange.HTTP_METHOD, HttpMethod.POST)
-    			 .withHeader(Exchange.ACCEPT_CONTENT_TYPE, MediaType.APPLICATION_JSON)
-    			 ;
-    	Exchange outExchangeUser = builder.withBody("{\"id\": 1, \"name\": \"My Name\"}").build();
-    	Exchange outExchangeCountry = builder.withBody("{\"iso\": \"EN\", \"country\": \"England\"}").build();
-    
-    	template.send("jetty:http://localhost:"+port+"/user", outExchangeUser);
-    	template.send("jetty:http://localhost:"+port+"/country", outExchangeCountry);
-    	        
+
+        UserPojo user = new UserPojo();
+        user.setId(1);
+        user.setName("My Name");
+        resultEndpointUser.expectedBodiesReceived(user);
+        resultEndpointUser.expectedMessageCount(1);
+
+        CountryPojo country = new CountryPojo();
+        country.setCountry("England");
+        country.setIso("EN");
+        resultEndpointCountry.expectedBodiesReceived(country);
+        resultEndpointCountry.expectedMessageCount(1);
+
+        ExchangeBuilder builder = ExchangeBuilder.anExchange(context)
+                .withHeader(Exchange.HTTP_METHOD, HttpMethod.POST)
+                .withHeader(Exchange.ACCEPT_CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        Exchange outExchangeUser = builder.withBody("{\"id\": 1, \"name\": \"My Name\"}").build();
+        Exchange outExchangeCountry = builder.withBody("{\"iso\": \"EN\", \"country\": \"England\"}").build();
+
+        template.send("jetty:http://localhost:" + PORT + "/user", outExchangeUser);
+        template.send("jetty:http://localhost:" + PORT + "/country", outExchangeCountry);
+
         resultEndpointCountry.assertIsSatisfied();
         resultEndpointUser.assertIsSatisfied();
-        
+
     }
 
     @Configuration
@@ -97,24 +90,11 @@ public class RestDslPostTest extends Assert{
         public RouteBuilder route() {
             return new RouteBuilder() {
                 public void configure() {
-                	restConfiguration()
-                	.host("localhost")
-                	.port(port)
-                	.bindingMode(RestBindingMode.json)
-                	;
-                	
-                    rest("/")
-                    .post("/user")
-                    	.type(UserPojo.class)
-	                    .route()
-	                    .to("mock:user")
-	                    .endRest()
-                    .post("/country")
-                    	.type(CountryPojo.class)
-	                    .route()
-	                    .to("mock:country")
-	                    .endRest();
-                    
+                    restConfiguration().host("localhost").port(PORT).bindingMode(RestBindingMode.json);
+
+                    rest("/").post("/user").type(UserPojo.class).route().to("mock:user").endRest().post("/country")
+                            .type(CountryPojo.class).route().to("mock:country").endRest();
+
                 }
             };
         }
