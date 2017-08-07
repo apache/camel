@@ -75,9 +75,22 @@ public class SupervisingRouteControllerConfiguration {
 
     public static class RouteConfiguration {
         /**
+         * Control if the route should be supervised or not, default is true.
+         */
+        private boolean supervise = true;
+
+        /**
          * The back-off configuration from this route, inherits from default back-off
          */
         private BackOffConfiguration backOff;
+
+        public boolean isSupervised() {
+            return supervise;
+        }
+
+        public void setSupervise(boolean supervise) {
+            this.supervise = supervise;
+        }
 
         public BackOffConfiguration getBackOff() {
             return backOff;

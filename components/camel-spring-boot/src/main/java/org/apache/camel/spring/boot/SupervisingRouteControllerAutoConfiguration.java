@@ -16,11 +16,14 @@
  */
 package org.apache.camel.spring.boot;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.converter.TimePatternConverter;
 import org.apache.camel.impl.SupervisingRouteController;
+import org.apache.camel.impl.SupervisingRouteControllerFilters;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spring.boot.SupervisingRouteControllerConfiguration.BackOffConfiguration;
 import org.apache.camel.spring.boot.SupervisingRouteControllerConfiguration.RouteConfiguration;
@@ -42,6 +45,8 @@ import org.springframework.context.annotation.Scope;
 public class SupervisingRouteControllerAutoConfiguration {
     @Autowired
     private SupervisingRouteControllerConfiguration configuration;
+    @Autowired(required = false)
+    private List<SupervisingRouteController.Filter> filters = Collections.emptyList();
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -52,17 +57,23 @@ public class SupervisingRouteControllerAutoConfiguration {
         // Initial delay
         Optional.ofNullable(configuration.getInitialDelay()).map(TimePatternConverter::toMilliSeconds).ifPresent(controller::setInitialDelay);
 
+        // Filter list
+        controller.setFilters(filters);
+
         // Back off
         controller.setDefaultBackOff(configureBackOff(Optional.empty(), configuration.getDefaultBackOff()));
 
         for (Map.Entry<String, RouteConfiguration> entry: configuration.getRoutes().entrySet()) {
-            controller.setBackOff(
-                entry.getKey(),
-                configureBackOff(
-                    Optional.ofNullable(controller.getDefaultBackOff()),
-                    entry.getValue().getBackOff()
-                )
-            );
+            final RouteConfiguration cfg = entry.getValue();
+            final Optional<BackOff> defaultBackOff = Optional.ofNullable(controller.getDefaultBackOff());
+
+            if (!cfg.isSupervised()) {
+                // Mark this route as excluded from supervisor
+                controller.addFilter(new SupervisingRouteControllerFilters.BlackList(entry.getKey()));
+            } else {
+                // configure teh route
+                controller.setBackOff(entry.getKey(), configureBackOff(defaultBackOff, cfg.getBackOff()));
+            }
         }
 
         return controller;

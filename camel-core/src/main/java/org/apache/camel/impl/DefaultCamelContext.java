@@ -3171,7 +3171,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     }
                 }
 
-                final List<Route> controlledRoutes = getRouteController().getControlledRoutes();
+                final Collection<Route> controlledRoutes = getRouteController().getControlledRoutes();
 
                 if (controlledRoutes.isEmpty()) {
                     log.info("Total {} routes, of which {} are started",

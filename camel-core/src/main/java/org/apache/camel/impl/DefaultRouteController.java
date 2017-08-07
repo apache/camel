@@ -16,9 +16,8 @@
  */
 package org.apache.camel.impl;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -28,16 +27,13 @@ import org.apache.camel.spi.RouteController;
 
 @Experimental
 public class DefaultRouteController extends org.apache.camel.support.ServiceSupport implements RouteController  {
-    private final List<Route> routes;
     private CamelContext camelContext;
-
     public DefaultRouteController() {
         this(null);
     }
 
     public DefaultRouteController(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.routes = new ArrayList<>();
     }
 
     // ***************************************************
@@ -105,8 +101,12 @@ public class DefaultRouteController extends org.apache.camel.support.ServiceSupp
         camelContext.resumeRoute(routeId);
     }
 
+    // ***************************************************
+    //
+    // ***************************************************
+
     @Override
-    public List<Route> getControlledRoutes() {
+    public Collection<Route> getControlledRoutes() {
         return Collections.emptyList();
     }
 }
