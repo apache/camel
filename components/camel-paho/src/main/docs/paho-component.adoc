@@ -127,8 +127,6 @@ The Paho component supports 4 options which are listed below.
 | **brokerUrl** (common) | The URL of the MQTT broker. |  | String
 | **clientId** (common) | MQTT client identifier. |  | String
 | **connectOptions** (advanced) | Client connection options |  | MqttConnectOptions
-| **userName** (common) | UserName used for authentication again the MQTT broker. |  | String
-| **password** (common) | Password used for authentication again the MQTT broker. |  | String
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
@@ -149,7 +147,7 @@ with the following path and query parameters:
 | **topic** | *Required* Name of the topic |  | String
 |=======================================================================
 
-#### Query Parameters (12 parameters):
+#### Query Parameters (14 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -159,9 +157,11 @@ with the following path and query parameters:
 | **clientId** (common) | MQTT client identifier. |  | String
 | **connectOptions** (common) | Client connection options |  | MqttConnectOptions
 | **filePersistenceDirectory** (common) | Base directory used by the file persistence provider. |  | String
+| **password** (common) | Password to be used for authentication against the MQTT broker |  | String
 | **persistence** (common) | Client persistence to be used - memory or file. | MEMORY | PahoPersistence
 | **qos** (common) | Client quality of service level (0-2). | 2 | int
 | **retained** (common) | Retain option | false | boolean
+| **userName** (common) | Username to be used for authentication against the MQTT broker |  | String
 | **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern

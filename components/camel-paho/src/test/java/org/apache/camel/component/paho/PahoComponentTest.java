@@ -217,7 +217,7 @@ public class PahoComponentTest extends CamelTestSupport {
         mock.expectedMessageCount(0);
 
         // When
-        template.sendBody("paho:someRandomQueue?brokerUrl=tcp://localhost:" + mqttPort+"&userName=test&password=test", "msg");
+        template.sendBody("paho:someRandomQueue?brokerUrl=tcp://localhost:" + mqttPort + "&userName=test&password=test", "msg");
 
         // Then
         mock.assertIsSatisfied();
