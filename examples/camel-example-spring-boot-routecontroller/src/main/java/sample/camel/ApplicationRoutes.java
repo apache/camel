@@ -41,8 +41,12 @@ public class ApplicationRoutes extends RouteBuilder {
             .log("From undertow ...");
 
         from("undertow:http://localhost:9012")
-            .id("undertow-2")
+            .id("undertow2")
             .autoStartup(false)
-            .log("From undertow ...");
+            .log("From undertow 2...");
+
+        from("undertow:http://localhost:9013")
+            .id("undertow3")
+            .log("From undertow 3...");
     }
 }

@@ -17,6 +17,9 @@
 package org.apache.camel.impl;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +34,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
@@ -48,6 +52,7 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.backoff.BackOff;
 import org.apache.camel.util.backoff.BackOffContext;
@@ -68,6 +73,7 @@ public class SupervisingRouteController extends DefaultRouteController {
     private final Object lock;
     private final AtomicBoolean contextStarted;
     private final AtomicInteger routeCount;
+    private final List<Filter> filters;
     private final Set<RouteHolder> routes;
     private final CamelContextStartupListener listener;
     private final RouteManager routeManager;
@@ -80,6 +86,7 @@ public class SupervisingRouteController extends DefaultRouteController {
     public SupervisingRouteController() {
         this.lock = new Object();
         this.contextStarted = new AtomicBoolean(false);
+        this.filters = new ArrayList<>();
         this.routeCount = new AtomicInteger(0);
         this.routes = new TreeSet<>();
         this.routeManager = new RouteManager();
@@ -164,6 +171,25 @@ public class SupervisingRouteController extends DefaultRouteController {
      */
     public void setInitialDelay(long initialDelay) {
         this.initialDelay = Duration.ofMillis(initialDelay);
+    }
+
+    /**
+     * Add a filter used to determine the routes to supervise.
+     */
+    public void addFilter(Filter filter) {
+        this.filters.add(filter);
+    }
+
+    /**
+     * Sets the filters user to determine the routes to supervise.
+     */
+    public void setFilters(Collection<Filter> filters) {
+        this.filters.clear();
+        this.filters.addAll(filters);
+    }
+
+    public Collection<Filter> getFilters() {
+        return Collections.unmodifiableList(filters);
     }
 
     // *********************************
@@ -298,7 +324,7 @@ public class SupervisingRouteController extends DefaultRouteController {
     }
 
     @Override
-    public List<Route> getControlledRoutes() {
+    public Collection<Route> getControlledRoutes() {
         return routes.stream()
             .map(RouteHolder::get)
             .collect(Collectors.toList());
@@ -596,9 +622,19 @@ public class SupervisingRouteController extends DefaultRouteController {
 
         @Override
         public void onInit(Route route) {
-            if ("false".equals(route.getRouteContext().getRoute().getAutoStartup())) {
-                LOGGER.info("Route {} has explicit auto-startup flag set to false, ignore it", route.getId());
+            final String autoStartup = route.getRouteContext().getRoute().getAutoStartup();
+            if (ObjectHelper.equalIgnoreCase("false", autoStartup)) {
+                LOGGER.info("Route {} won't be supervised (reason: has explicit auto-startup flag set to false)", route.getId());
                 return;
+            }
+
+            for (Filter filter : filters) {
+                FilterResult result = filter.apply(route);
+
+                if (!result.supervised()) {
+                    LOGGER.info("Route {} won't be supervised (reason: {})", route.getId(), result.reason());
+                    return;
+                }
             }
 
             RouteHolder holder = new RouteHolder(route, routeCount.incrementAndGet());
@@ -701,5 +737,38 @@ public class SupervisingRouteController extends DefaultRouteController {
                 }
             }
         }
+    }
+
+    // *********************************
+    // Filter
+    // *********************************
+
+    @Experimental
+    public static class FilterResult {
+        public static final FilterResult SUPERVISED = new FilterResult(true, null);
+
+        private final boolean controlled;
+        private final String reason;
+
+        public FilterResult(boolean controlled, String reason) {
+            this.controlled = controlled;
+            this.reason = reason;
+        }
+
+        public FilterResult(boolean controlled, String format, Object... args) {
+            this(controlled, String.format(format, args));
+        }
+
+        public boolean supervised() {
+            return controlled;
+        }
+
+        public String reason() {
+            return reason;
+        }
+    }
+
+    @Experimental
+    public interface Filter extends Function<Route, FilterResult> {
     }
 }
