@@ -31,7 +31,7 @@ public class SupervisingRouteControllerConfiguration {
     /**
      * The default back-off configuration, back-off configuration for routes inherits from this default.
      */
-    private BackOffConfiguration backOff = new BackOffConfiguration();
+    private BackOffConfiguration defaultBackOff = new BackOffConfiguration();
 
     /**
      * Routes configuration.
@@ -46,8 +46,8 @@ public class SupervisingRouteControllerConfiguration {
         this.enabled = enabled;
     }
 
-    public BackOffConfiguration getBackOff() {
-        return backOff;
+    public BackOffConfiguration getDefaultBackOff() {
+        return defaultBackOff;
     }
 
     public Map<String, RouteConfiguration> getRoutes() {
