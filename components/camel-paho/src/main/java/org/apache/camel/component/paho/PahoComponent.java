@@ -32,7 +32,7 @@ public class PahoComponent extends UriEndpointComponent {
     private String clientId;
     @Metadata(label = "advanced")
     private MqttConnectOptions connectOptions;
-
+    
     public PahoComponent() {
         super(PahoEndpoint.class);
     }
