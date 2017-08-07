@@ -133,6 +133,10 @@ public final class BackOff {
         return new Builder();
     }
 
+    public static Builder builder(BackOff template) {
+        return new Builder().read(template);
+    }
+
     /**
      * A builder for {@link BackOff}
      */

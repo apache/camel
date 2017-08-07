@@ -49,7 +49,7 @@ public class SupervisingRouteControllerAutoConfiguration {
     public RouteController routeController() {
         SupervisingRouteController controller = new SupervisingRouteController();
 
-        controller.setDefaultBackOff(configureBackOff(Optional.empty(), configuration.getBackOff()));
+        controller.setDefaultBackOff(configureBackOff(Optional.empty(), configuration.getDefaultBackOff()));
 
         for (Map.Entry<String, RouteConfiguration> entry: configuration.getRoutes().entrySet()) {
             controller.setBackOff(
@@ -65,7 +65,7 @@ public class SupervisingRouteControllerAutoConfiguration {
     }
 
     private BackOff configureBackOff(Optional<BackOff> template, BackOffConfiguration conf) {
-        final BackOff.Builder builder = template.map(t -> BackOff.builder().read(t)).orElseGet(BackOff::builder);
+        final BackOff.Builder builder = template.map(BackOff::builder).orElseGet(BackOff::builder);
 
         Optional.ofNullable(conf.getDelay()).map(TimePatternConverter::toMilliSeconds).ifPresent(builder::delay);
         Optional.ofNullable(conf.getMaxDelay()).map(TimePatternConverter::toMilliSeconds).ifPresent(builder::maxDelay);
