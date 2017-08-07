@@ -99,7 +99,7 @@ public class SupervisingRouteControllerConfiguration {
         private String maxElapsedTime;
 
         /**
-         * Teh maximum number of attempts after which the back-off is exhausted.
+         * The maximum number of attempts after which the back-off is exhausted.
          */
         private Long maxAttempts;
 

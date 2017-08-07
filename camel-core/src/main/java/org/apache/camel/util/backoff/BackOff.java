@@ -21,6 +21,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * A back-off policy.
+ */
 public final class BackOff {
     public static final long NEVER = -1L;
     public static final Duration MAX_DURATION = Duration.ofMillis(Long.MAX_VALUE);
@@ -49,10 +52,16 @@ public final class BackOff {
     // Properties
     // *************************************
 
+    /**
+     * @return the delay to wait before retry the operation.
+     */
     public Duration getDelay() {
         return delay;
     }
 
+    /**
+     * The delay to wait before retry the operation.
+     */
     public void setDelay(Duration delay) {
         this.delay = delay;
     }
@@ -61,6 +70,9 @@ public final class BackOff {
         return maxDelay;
     }
 
+    /**
+     * The maximum back-off time after which the delay is not more increased.
+     */
     public void setMaxDelay(Duration maxDelay) {
         this.maxDelay = maxDelay;
     }
@@ -69,6 +81,10 @@ public final class BackOff {
         return maxElapsedTime;
     }
 
+    /**
+     * The maximum elapsed time after which the back-off should be considered
+     * exhausted and no more attempts should be made.
+     */
     public void setMaxElapsedTime(Duration maxElapsedTime) {
         this.maxElapsedTime = maxElapsedTime;
     }
@@ -77,6 +93,12 @@ public final class BackOff {
         return maxAttempts;
     }
 
+    /**
+     * The maximum number of attempts after which the back-off should be considered
+     * exhausted and no more attempts should be made.
+     *
+     * @param maxAttempts
+     */
     public void setMaxAttempts(Long maxAttempts) {
         this.maxAttempts = maxAttempts;
     }
@@ -85,6 +107,9 @@ public final class BackOff {
         return multiplier;
     }
 
+    /**
+     * The value to multiply the current interval by for each retry attempt.
+     */
     public void setMultiplier(Double multiplier) {
         this.multiplier = multiplier;
     }
@@ -108,6 +133,9 @@ public final class BackOff {
         return new Builder();
     }
 
+    /**
+     * A builder for {@link BackOff}
+     */
     public static final class Builder {
         private Duration delay = BackOff.DEFAULT_DELAY;
         private Duration maxDelay = BackOff.MAX_DURATION;
@@ -115,6 +143,9 @@ public final class BackOff {
         private Long maxAttempts = Long.MAX_VALUE;
         private Double multiplier = BackOff.DEFAULT_MULTIPLIER;
 
+        /**
+         * Read values from the given {@link BackOff}
+         */
         public Builder read(BackOff template) {
             delay = template.delay;
             maxDelay = template.maxDelay;
@@ -174,6 +205,9 @@ public final class BackOff {
             return this;
         }
 
+        /**
+         * Build a new instance of {@link BackOff}
+         */
         public BackOff build() {
             return new BackOff(delay, maxDelay, maxElapsedTime, maxAttempts, multiplier);
         }

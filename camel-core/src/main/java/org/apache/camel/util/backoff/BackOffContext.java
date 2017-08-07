@@ -16,7 +16,9 @@
  */
 package org.apache.camel.util.backoff;
 
-
+/**
+ * The context associated to a back-off operation.
+ */
 public final class BackOffContext {
     private final BackOff backOff;
 
@@ -35,22 +37,37 @@ public final class BackOffContext {
     // Properties
     // *************************************
 
+    /**
+     * The back-off associated with this context.
+     */
     public BackOff backOff() {
         return backOff;
     }
 
+    /**
+     * The number of attempts so far.
+     */
     public long getCurrentAttempts() {
         return currentAttempts;
     }
 
+    /**
+     * The current computed delay.
+     */
     public long getCurrentDelay() {
         return currentDelay;
     }
 
+    /**
+     * The current elapsed time.
+     */
     public long getCurrentElapsedTime() {
         return currentElapsedTime;
     }
 
+    /**
+     * Inform if the context is exhausted thus not more attempts should be made.
+     */
     public boolean isExhausted() {
         return currentDelay == BackOff.NEVER;
     }
@@ -59,6 +76,11 @@ public final class BackOffContext {
     // Impl
     // *************************************
 
+    /**
+     * Return the number of milliseconds to wait before retrying the operation
+     * or ${@link BackOff#NEVER} to indicate that no further attempt should be
+     * made.
+     */
     public long next() {
         // A call to next when currentDelay is set to NEVER has no effects
         // as this means that either the timer is exhausted or it has explicit
@@ -83,6 +105,9 @@ public final class BackOffContext {
         return currentDelay;
     }
 
+    /**
+     * Reset the context.
+     */
     public BackOffContext reset() {
         this.currentAttempts = 0;
         this.currentDelay = 0;
@@ -91,6 +116,10 @@ public final class BackOffContext {
         return this;
     }
 
+    /**
+     * Mark the context as exhausted to indicate that no further attempt should
+     * be made.
+     */
     public BackOffContext stop() {
         this.currentAttempts = 0;
         this.currentDelay = BackOff.NEVER;

@@ -22,7 +22,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.util.function.ThrowingFunction;
 
-
+/**
+ * A simple timer utility that use a linked {@link BackOff} to determine when
+ * a task should be executed.
+ */
 public class BackOffTimer {
     private final ScheduledExecutorService scheduler;
 
@@ -30,6 +33,10 @@ public class BackOffTimer {
         this.scheduler = scheduler;
     }
 
+    /**
+     * Schedule the given function/task to be executed some time in the future
+     * according to the given backOff.
+     */
     public CompletableFuture<BackOffContext> schedule(BackOff backOff, ThrowingFunction<BackOffContext, Boolean, Exception> function) {
         final BackOffContext context = new BackOffContext(backOff);
         final Task task = new Task(context, function);
