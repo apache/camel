@@ -29,6 +29,13 @@ public class SupervisingRouteControllerConfiguration {
     private boolean enabled;
 
     /**
+     * Set the amount of time the route controller should wait before to start
+     * the routes after the camel context is started or after the route is
+     * initialized if the route is created after the camel context is started.
+     */
+    private String initialDelay;
+
+    /**
      * The default back-off configuration, back-off configuration for routes inherits from this default.
      */
     private BackOffConfiguration defaultBackOff = new BackOffConfiguration();
@@ -44,6 +51,14 @@ public class SupervisingRouteControllerConfiguration {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getInitialDelay() {
+        return initialDelay;
+    }
+
+    public void setInitialDelay(String initialDelay) {
+        this.initialDelay = initialDelay;
     }
 
     public BackOffConfiguration getDefaultBackOff() {

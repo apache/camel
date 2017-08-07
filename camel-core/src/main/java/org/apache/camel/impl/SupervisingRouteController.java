@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.time.Duration;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
@@ -74,6 +75,7 @@ public class SupervisingRouteController extends DefaultRouteController {
     private ScheduledExecutorService executorService;
     private BackOff defaultBackOff;
     private Map<String, BackOff> backOffConfigurations;
+    private Duration initialDelay;
 
     public SupervisingRouteController() {
         this.lock = new Object();
@@ -83,6 +85,7 @@ public class SupervisingRouteController extends DefaultRouteController {
         this.routeManager = new RouteManager();
         this.defaultBackOff = BackOff.builder().build();
         this.backOffConfigurations = new HashMap<>();
+        this.initialDelay = Duration.ofMillis(0);
 
         try {
             this.listener = new CamelContextStartupListener();
@@ -100,6 +103,9 @@ public class SupervisingRouteController extends DefaultRouteController {
         return defaultBackOff;
     }
 
+    /**
+     * Sets the default back-off.
+     */
     public void setDefaultBackOff(BackOff defaultBackOff) {
         this.defaultBackOff = defaultBackOff;
     }
@@ -108,6 +114,9 @@ public class SupervisingRouteController extends DefaultRouteController {
         return backOffConfigurations;
     }
 
+    /**
+     * Set the back-off for the given IDs.
+     */
     public void setBackOffConfigurations(Map<String, BackOff> backOffConfigurations) {
         this.backOffConfigurations = backOffConfigurations;
     }
@@ -116,8 +125,45 @@ public class SupervisingRouteController extends DefaultRouteController {
         return backOffConfigurations.getOrDefault(id, defaultBackOff);
     }
 
+    /**
+     * Sets the back-off to be applied to the given <code>id</code>.
+     */
     public void setBackOff(String id, BackOff backOff) {
         backOffConfigurations.put(id, backOff);
+    }
+
+    public Duration getInitialDelay() {
+        return initialDelay;
+    }
+
+    /**
+     * Set the amount of time the route controller should wait before to start
+     * the routes after the camel context is started or after the route is
+     * initialized if the route is created after the camel context is started.
+     *
+     * @param initialDelay the initial delay.
+     */
+    public void setInitialDelay(Duration initialDelay) {
+        this.initialDelay = initialDelay;
+    }
+
+    /**
+     * #see {@link this#setInitialDelay(Duration)}
+     *
+     * @param initialDelay the initial delay amount.
+     * @param initialDelay the initial delay time unit.
+     */
+    public void setInitialDelay(long initialDelay, TimeUnit initialDelayUnit) {
+        this.initialDelay = Duration.ofMillis(initialDelayUnit.toMillis(initialDelay));
+    }
+
+    /**
+     * #see {@link this#setInitialDelay(Duration)}
+     *
+     * @param initialDelay the initial delay in milliseconds.
+     */
+    public void setInitialDelay(long initialDelay) {
+        this.initialDelay = Duration.ofMillis(initialDelay);
     }
 
     // *********************************
@@ -535,6 +581,19 @@ public class SupervisingRouteController extends DefaultRouteController {
     }
 
     private class ManagedRoutePolicy implements RoutePolicy {
+
+        private void startRoute(RouteHolder holder) {
+            try {
+                SupervisingRouteController.this.doStartRoute(
+                    holder,
+                    true,
+                    r -> SupervisingRouteController.super.startRoute(r.getId())
+                );
+            } catch (Exception e) {
+                throw new RuntimeCamelException(e);
+            }
+        }
+
         @Override
         public void onInit(Route route) {
             if ("false".equals(route.getRouteContext().getRoute().getAutoStartup())) {
@@ -549,14 +608,13 @@ public class SupervisingRouteController extends DefaultRouteController {
 
                 if (contextStarted.get()) {
                     LOGGER.info("Context is already started: attempt to start route {}", route.getId());
-                    try {
-                        SupervisingRouteController.this.doStartRoute(
-                            holder,
-                            true,
-                            r -> SupervisingRouteController.super.startRoute(r.getId())
-                        );
-                    } catch (Exception e) {
-                        throw new RuntimeCamelException(e);
+
+                    // Eventually delay the startup of the route a later time
+                    if (initialDelay.toMillis() > 0) {
+                        LOGGER.debug("Route {} will be started in {}", holder.getId(), initialDelay);
+                        executorService.schedule(() -> startRoute(holder), initialDelay.toMillis(), TimeUnit.MILLISECONDS);
+                    } else {
+                        startRoute(holder);
                     }
                 } else {
                     LOGGER.info("Context is not yet started: defer route {} start", holder.getId());
@@ -633,7 +691,14 @@ public class SupervisingRouteController extends DefaultRouteController {
             // so start/stop of managed routes do not clash with CamelContext
             // startup
             if (contextStarted.compareAndSet(false, true)) {
-                startRoutes();
+
+                // Eventually delay the startup of the routes a later time
+                if (initialDelay.toMillis() > 0) {
+                    LOGGER.debug("Routes will be started in {}", initialDelay);
+                    executorService.schedule(SupervisingRouteController.this::startRoutes, initialDelay.toMillis(), TimeUnit.MILLISECONDS);
+                } else {
+                    startRoutes();
+                }
             }
         }
     }

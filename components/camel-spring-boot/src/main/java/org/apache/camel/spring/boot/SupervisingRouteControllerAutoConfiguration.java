@@ -49,6 +49,10 @@ public class SupervisingRouteControllerAutoConfiguration {
     public RouteController routeController() {
         SupervisingRouteController controller = new SupervisingRouteController();
 
+        // Initial delay
+        Optional.ofNullable(configuration.getInitialDelay()).map(TimePatternConverter::toMilliSeconds).ifPresent(controller::setInitialDelay);
+
+        // Back off
         controller.setDefaultBackOff(configureBackOff(Optional.empty(), configuration.getDefaultBackOff()));
 
         for (Map.Entry<String, RouteConfiguration> entry: configuration.getRoutes().entrySet()) {
