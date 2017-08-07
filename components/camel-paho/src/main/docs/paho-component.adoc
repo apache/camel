@@ -134,8 +134,6 @@ The Paho component supports 4 options which are listed below.
 // component options: END
 
 
-
-
 // endpoint options: START
 The Paho endpoint is configured using URI syntax:
 
