@@ -25,12 +25,12 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -128,11 +128,11 @@ public class DefaultAhcBinding implements AhcBinding {
                 Map<String, List<String>> cookieHeaders = endpoint.getCookieHandler().loadCookies(exchange, uri);
                 for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
                     String key = entry.getKey();
-                    if (entry.getValue().size() > 0) {
-                        // use the default toString of a ArrayList to create in the form [xxx, yyy]
-                        // if multi valued, for a single value, then just output the value as is
-                        String s =  entry.getValue().size() > 1 ? entry.getValue().toString() : entry.getValue().get(0);
-                        builder.addHeader(key, s);
+                    for (String value : entry.getValue()) {
+                        if (log.isTraceEnabled()) {
+                            log.trace("Adding header {} = {}", key, value);
+                        }
+                        builder.addHeader(key, value);                        
                     }
                 }
             } catch (IOException e) {
@@ -233,13 +233,15 @@ public class DefaultAhcBinding implements AhcBinding {
 
     @Override
     public void onHeadersReceived(AhcEndpoint endpoint, Exchange exchange, HttpResponseHeaders headers) throws Exception {
-        List<Entry<String, String>> l = headers.getHeaders().entries();
-        Map<String, List<String>> m = new HashMap<String, List<String>>();
+        Map<String, List<String>> m = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
         for (Entry<String, String> entry : headers.getHeaders().entries()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            m.put(key, Collections.singletonList(value));
-            exchange.getOut().getHeaders().put(key, value);
+            if (!m.containsKey(key)) {
+                m.put(key, new LinkedList<String>());
+                exchange.getOut().getHeaders().put(key, value);
+            }
+            m.get(key).add(value);
         }
         // handle cookies
         if (endpoint.getCookieHandler() != null) {
