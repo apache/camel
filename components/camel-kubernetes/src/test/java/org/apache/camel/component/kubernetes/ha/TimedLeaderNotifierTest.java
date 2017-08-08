@@ -22,8 +22,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.kubernetes.ha.lock.KubernetesClusterEvent;
 import org.apache.camel.component.kubernetes.ha.lock.TimedLeaderNotifier;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +37,8 @@ import static org.junit.Assert.assertEquals;
  */
 public class TimedLeaderNotifierTest {
 
+    private CamelContext context;
+
     private TimedLeaderNotifier notifier;
 
     private volatile Optional<String> currentLeader;
@@ -43,7 +47,10 @@ public class TimedLeaderNotifierTest {
 
     @Before
     public void init() throws Exception {
-        this.notifier = new TimedLeaderNotifier(e -> {
+        this.context = new DefaultCamelContext();
+        this.context.start();
+
+        this.notifier = new TimedLeaderNotifier(context, e -> {
             if (e instanceof KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent) {
                 currentLeader = ((KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent) e).getData();
             } else if (e instanceof KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent) {
@@ -56,6 +63,7 @@ public class TimedLeaderNotifierTest {
     @After
     public void destroy() throws Exception {
         this.notifier.stop();
+        this.context.stop();
     }
 
     @Test

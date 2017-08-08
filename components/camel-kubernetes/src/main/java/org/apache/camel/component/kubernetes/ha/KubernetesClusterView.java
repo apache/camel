@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.ha.lock.KubernetesClusterEvent;
@@ -41,6 +42,8 @@ import org.apache.camel.util.ObjectHelper;
  * Namespaces are represented as keys in a Kubernetes ConfigMap (values are the current leader pods).
  */
 public class KubernetesClusterView extends AbstractCamelClusterView {
+
+    private CamelContext camelContext;
 
     private KubernetesClient kubernetesClient;
 
@@ -58,10 +61,11 @@ public class KubernetesClusterView extends AbstractCamelClusterView {
 
     private KubernetesLeadershipController controller;
 
-    public KubernetesClusterView(KubernetesClusterService cluster, KubernetesConfiguration configuration, KubernetesLockConfiguration lockConfiguration) {
+    public KubernetesClusterView(CamelContext camelContext, KubernetesClusterService cluster, KubernetesConfiguration configuration, KubernetesLockConfiguration lockConfiguration) {
         super(cluster, lockConfiguration.getGroupName());
-        this.configuration = configuration;
-        this.lockConfiguration = lockConfiguration;
+        this.camelContext = ObjectHelper.notNull(camelContext, "camelContext");
+        this.configuration = ObjectHelper.notNull(configuration, "configuration");
+        this.lockConfiguration = ObjectHelper.notNull(lockConfiguration, "lockConfiguration");
         this.localMember = new KubernetesClusterMember(lockConfiguration.getPodName());
         this.memberCache = new HashMap<>();
     }
@@ -86,7 +90,7 @@ public class KubernetesClusterView extends AbstractCamelClusterView {
         if (controller == null) {
             this.kubernetesClient = KubernetesHelper.getKubernetesClient(configuration);
 
-            controller = new KubernetesLeadershipController(kubernetesClient, this.lockConfiguration, event -> {
+            controller = new KubernetesLeadershipController(camelContext, kubernetesClient, this.lockConfiguration, event -> {
                 if (event instanceof KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent) {
                     // New leader
                     Optional<String> leader = KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent.class.cast(event).getData();

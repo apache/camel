@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -31,6 +30,7 @@ import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +49,8 @@ public class KubernetesLeadershipController implements Service {
         LEADER
     }
 
+    private CamelContext camelContext;
+
     private KubernetesClient kubernetesClient;
 
     private KubernetesLockConfiguration lockConfiguration;
@@ -65,7 +67,8 @@ public class KubernetesLeadershipController implements Service {
     private volatile ConfigMap latestConfigMap;
     private volatile Set<String> latestMembers;
 
-    public KubernetesLeadershipController(KubernetesClient kubernetesClient, KubernetesLockConfiguration lockConfiguration, KubernetesClusterEventHandler eventHandler) {
+    public KubernetesLeadershipController(CamelContext camelContext, KubernetesClient kubernetesClient, KubernetesLockConfiguration lockConfiguration, KubernetesClusterEventHandler eventHandler) {
+        this.camelContext = camelContext;
         this.kubernetesClient = kubernetesClient;
         this.lockConfiguration = lockConfiguration;
         this.eventHandler = eventHandler;
@@ -75,8 +78,8 @@ public class KubernetesLeadershipController implements Service {
     public void start() throws Exception {
         if (serializedExecutor == null) {
             LOG.debug("{} Starting leadership controller...", logPrefix());
-            serializedExecutor = Executors.newSingleThreadScheduledExecutor();
-            leaderNotifier = new TimedLeaderNotifier(this.eventHandler);
+            serializedExecutor = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "CamelKubernetesLeadershipController");
+            leaderNotifier = new TimedLeaderNotifier(this.camelContext, this.eventHandler);
 
             leaderNotifier.start();
             serializedExecutor.execute(this::refreshStatus);
