@@ -115,6 +115,9 @@ public class KubernetesConfiguration implements Cloneable {
     @UriParam(label = "consumer", defaultValue = "1")
     private int poolSize = 1;
 
+    @UriParam(label = "advanced")
+    private Integer connectionTimeout;
+
     /**
      * Kubernetes Master url
      */
@@ -396,6 +399,17 @@ public class KubernetesConfiguration implements Cloneable {
         this.resourceName = resourceName;
     }
 
+    public Integer getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    /**
+     * Connection timeout in milliseconds to use when making requests to the Kubernetes API server.
+     */
+    public void setConnectionTimeout(Integer connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
     // ****************************************
     // Copy
     // ****************************************
@@ -418,7 +432,7 @@ public class KubernetesConfiguration implements Cloneable {
                 + ", clientKeyPassphrase=" + clientKeyPassphrase + ", oauthToken=" + oauthToken + ", trustCerts="
                 + trustCerts + ", namespace=" + namespace + ", labelKey=" + labelKey + ", labelValue=" + labelValue
                 + ", resourceName=" + resourceName + ", portName=" + portName + ", dnsDomain=" + dnsDomain
-                + ", poolSize=" + poolSize + "]";
+                + ", poolSize=" + poolSize + ", connectionTimeout=" + connectionTimeout + "]";
     }
 
 }
