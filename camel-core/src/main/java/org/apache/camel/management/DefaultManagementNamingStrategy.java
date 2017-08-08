@@ -52,7 +52,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     public static final String KEY_TYPE = "type";
     public static final String KEY_CONTEXT = "context";
     public static final String TYPE_CONTEXT = "context";
-    public static final String TYPE_ROUTE_CONTROLLER= "routecontroller";
+    public static final String TYPE_ROUTE_CONTROLLER = "routecontroller";
     public static final String TYPE_ENDPOINT = "endpoints";
     public static final String TYPE_DATAFORMAT = "dataformats";
     public static final String TYPE_PROCESSOR = "processors";
