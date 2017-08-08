@@ -38,10 +38,9 @@ public class BackOffTimer {
      * according to the given backOff.
      */
     public CompletableFuture<BackOffContext> schedule(BackOff backOff, ThrowingFunction<BackOffContext, Boolean, Exception> function) {
-        final BackOffContext context = new BackOffContext(backOff);
-        final Task task = new Task(context, function);
+        final Task task = new Task(backOff, function);
 
-        long delay = context.next();
+        long delay = task.getContext().next();
         if (delay != BackOff.NEVER) {
             scheduler.schedule(task, delay, TimeUnit.MILLISECONDS);
         } else {
@@ -59,8 +58,8 @@ public class BackOffTimer {
         private final BackOffContext context;
         private final ThrowingFunction<BackOffContext, Boolean, Exception> function;
 
-        Task(BackOffContext context, ThrowingFunction<BackOffContext, Boolean, Exception> function) {
-            this.context = context;
+        Task(BackOff backOff, ThrowingFunction<BackOffContext, Boolean, Exception> function) {
+            this.context = new BackOffContext(backOff);
             this.function = function;
         }
 
@@ -99,6 +98,10 @@ public class BackOffTimer {
 
         boolean complete() {
             return super.complete(context);
+        }
+
+        BackOffContext getContext() {
+            return context;
         }
     }
 }
