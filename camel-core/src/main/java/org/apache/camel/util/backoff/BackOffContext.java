@@ -28,6 +28,7 @@ public final class BackOffContext {
 
     public BackOffContext(BackOff backOff) {
         this.backOff = backOff;
+
         this.currentAttempts = 0;
         this.currentDelay = backOff.getDelay().toMillis();
         this.currentElapsedTime = 0;
@@ -40,7 +41,7 @@ public final class BackOffContext {
     /**
      * The back-off associated with this context.
      */
-    public BackOff backOff() {
+    public BackOff getBackOff() {
         return backOff;
     }
 
@@ -81,7 +82,7 @@ public final class BackOffContext {
      * or ${@link BackOff#NEVER} to indicate that no further attempt should be
      * made.
      */
-    public long next() {
+    long next() {
         // A call to next when currentDelay is set to NEVER has no effects
         // as this means that either the timer is exhausted or it has explicit
         // stopped
@@ -95,7 +96,7 @@ public final class BackOffContext {
                 currentDelay = BackOff.NEVER;
             } else {
                 if (currentDelay <= backOff.getMaxDelay().toMillis()) {
-                    currentDelay = (long) (currentDelay * backOff().getMultiplier());
+                    currentDelay = (long) (currentDelay * backOff.getMultiplier());
                 }
 
                 currentElapsedTime += currentDelay;
