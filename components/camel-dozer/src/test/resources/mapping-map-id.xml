@@ -17,8 +17,10 @@
     limitations under the License.
 
 -->
-<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://dozer.sourceforge.net  http://dozer.sourceforge.net/schema/beanmapping.xsd">
+<mappings xmlns="http://dozermapper.github.io/schema/bean-mapping"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping http://dozermapper.github.io/schema/bean-mapping.xsd">
+
   <mapping map-id="foo">
     <class-a>org.apache.camel.converter.dozer.service.Customer</class-a>
     <class-b>org.apache.camel.converter.dozer.model.Customer</class-b>

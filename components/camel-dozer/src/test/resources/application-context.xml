@@ -33,11 +33,19 @@
     <bean id="customer-processor" class="org.apache.camel.converter.dozer.CustomerProcessor"/>
     <bean id="dozerConverterLoader" class="org.apache.camel.converter.dozer.DozerTypeConverterLoader"/>
 
-    <bean id="mapper" class="org.dozer.DozerBeanMapper">
-        <property name="mappingFiles">
-            <list>
-                <value>mapping.xml</value>
-            </list>
-        </property>
+    <bean id="mapConfig" class="org.apache.camel.converter.dozer.DozerBeanMapperConfiguration">
+      <property name="mappingFiles">
+        <list>
+          <value>mapping.xml</value>
+        </list>
+      </property>
     </bean>
+
+    <bean id="mapperFactory" class="org.apache.camel.converter.dozer.MapperFactory">
+        <constructor-arg index="0" ref="camel"/>
+        <constructor-arg index="1" ref="mapConfig"/>
+    </bean>
+
+    <bean id="mapper" class="org.dozer.Mapper" factory-bean="mapperFactory" factory-method="create"/>
+
 </beans>
