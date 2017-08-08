@@ -16,16 +16,16 @@
  */
 package org.apache.camel.converter.dozer;
 
+import java.util.Arrays;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.dozer.dto.CustomerDTO;
 import org.apache.camel.converter.dozer.model.Customer;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.dozer.DozerBeanMapper;
 import org.dozer.loader.api.BeanMappingBuilder;
 import org.junit.Test;
 
-import static org.apache.camel.converter.dozer.DozerTestArtifactsFactory.createCleanMapper;
 import static org.apache.camel.converter.dozer.DozerTestArtifactsFactory.createDtoCustomer;
 
 public class DozerTypeConverterDTOTest extends CamelTestSupport {
@@ -33,14 +33,18 @@ public class DozerTypeConverterDTOTest extends CamelTestSupport {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        DozerBeanMapper mapper = createCleanMapper();
-        DozerTypeConverterLoader loader = new DozerTypeConverterLoader(context, mapper);
-        loader.addMapping(new BeanMappingBuilder() {
+
+        BeanMappingBuilder beanMappingBuilder = new BeanMappingBuilder() {
             @Override
             protected void configure() {
                 mapping(CustomerDTO.class, Customer.class);
             }
-        });
+        };
+
+        DozerBeanMapperConfiguration config = new DozerBeanMapperConfiguration();
+        config.setBeanMappingBuilders(Arrays.asList(beanMappingBuilder));
+
+        new DozerTypeConverterLoader(context, config);
     }
 
     @Override

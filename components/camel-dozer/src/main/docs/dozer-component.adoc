@@ -164,9 +164,9 @@ class into your target field of choice:
 
 [source,xml]
 --------------------------------------------------------------------------------------------------------
-<mappings xmlns="http://dozer.sourceforge.net" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+<mappings xmlns="http://dozermapper.github.io/schema/bean-mapping"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping http://dozermapper.github.io/schema/bean-mapping.xsd">
   <configuration>
     <variables>
       <variable name="CUST_ID">ACME-SALES</variable>
@@ -219,9 +219,9 @@ public class CustomMapper {
 
 [source,xml]
 --------------------------------------------------------------------------------------------------------
-<mappings xmlns="http://dozer.sourceforge.net" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+<mappings xmlns="http://dozermapper.github.io/schema/bean-mapping"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping http://dozermapper.github.io/schema/bean-mapping.xsd">
   <mapping>
     <class-a>org.example.A</class-a>
     <class-b>org.example.B</class-b>
@@ -254,9 +254,9 @@ An example of mapping a message header into a target field:
 
 [source,xml]
 --------------------------------------------------------------------------------------------------------------
-<mappings xmlns="http://dozer.sourceforge.net" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+<mappings xmlns="http://dozermapper.github.io/schema/bean-mapping"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping http://dozermapper.github.io/schema/bean-mapping.xsd">
   <mapping>
     <class-a>org.apache.camel.component.dozer.ExpressionMapper</class-a>
     <class-b>org.example.B</class-b>
