@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter.dozer;
 
+import java.util.Arrays;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.dozer.service.Customer;
@@ -31,7 +33,11 @@ public class DozerTypeConverterTest extends CamelTestSupport {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        new DozerTypeConverterLoader(context, createMapper());
+
+        DozerBeanMapperConfiguration config = new DozerBeanMapperConfiguration();
+        config.setMappingFiles(Arrays.asList("mapping.xml"));
+
+        new DozerTypeConverterLoader(context, config);
     }
 
     @Override
@@ -56,7 +62,7 @@ public class DozerTypeConverterTest extends CamelTestSupport {
 
     @Test
     public void verifyCustomerMapping() throws Exception {
-        Mapper mapper = DozerTestArtifactsFactory.createMapper();
+        Mapper mapper = DozerTestArtifactsFactory.createMapper(context);
         Customer service = createServiceCustomer();
         org.apache.camel.converter.dozer.model.Customer model = mapper.map(service, org.apache.camel.converter.dozer.model.Customer.class);
         Customer roundTrip = mapper.map(model, Customer.class);
