@@ -55,11 +55,24 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
 
     @Override
     protected KubernetesClusterView createView(String namespace) throws Exception {
-        KubernetesLockConfiguration lockConfig = configWithGroupNameAndDefaults(namespace);
-        return new KubernetesClusterView(this, configuration, lockConfig);
+        KubernetesLockConfiguration lockConfig = lockConfigWithGroupNameAndDefaults(namespace);
+        KubernetesConfiguration config = setConfigDefaults(this.configuration.copy(), lockConfig);
+        return new KubernetesClusterView(this, config, lockConfig);
     }
 
-    protected KubernetesLockConfiguration configWithGroupNameAndDefaults(String groupName) {
+    protected KubernetesConfiguration setConfigDefaults(KubernetesConfiguration configuration, KubernetesLockConfiguration lockConfiguration) {
+        if (configuration.getConnectionTimeout() == null) {
+            // Set the connection timeout to be much lower than the renewal deadline,
+            // to avoid losing the leadership in case of stale connections
+            int timeout = (int) (lockConfiguration.getRenewDeadlineMillis() / 3);
+            timeout = Math.max(timeout, 3000);
+            timeout = Math.min(timeout, 30000);
+            configuration.setConnectionTimeout(timeout);
+        }
+        return configuration;
+    }
+
+    protected KubernetesLockConfiguration lockConfigWithGroupNameAndDefaults(String groupName) {
         KubernetesLockConfiguration config = this.lockConfiguration.copy();
 
         config.setGroupName(ObjectHelper.notNull(groupName, "groupName"));
@@ -112,6 +125,17 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
      */
     public void setMasterUrl(String masterUrl) {
         configuration.setMasterUrl(masterUrl);
+    }
+
+    public Integer getConnectionTimeout() {
+        return configuration.getConnectionTimeout();
+    }
+
+    /**
+     * Connection timeout in milliseconds to use when making requests to the Kubernetes API server.
+     */
+    public void setConnectionTimeout(Integer connectionTimeout) {
+        configuration.setConnectionTimeout(connectionTimeout);
     }
 
     public String getKubernetesNamespace() {

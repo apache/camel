@@ -90,6 +90,9 @@ public final class KubernetesHelper {
         if (ObjectHelper.isNotEmpty(configuration.getTrustCerts())) {
             builder.withTrustCerts(configuration.getTrustCerts());
         }
+        if (ObjectHelper.isNotEmpty(configuration.getConnectionTimeout())) {
+            builder.withConnectionTimeout(configuration.getConnectionTimeout());
+        }
 
         Config conf = builder.build();
         return new DefaultKubernetesClient(conf);
