@@ -17,16 +17,39 @@
 package org.apache.camel.ha;
 
 /**
- * Marker interface
+ * Marker interface for cluster events
  */
 public interface CamelClusterEventListener {
 
     interface Leadership extends CamelClusterEventListener {
+
+        /**
+         * Notify a change in the leadership for a particular cluster.
+         *
+         * @param view the cluster view
+         * @param leader the new leader or null (when there are no active leaders)
+         */
         void leadershipChanged(CamelClusterView view, CamelClusterMember leader);
+
     }
 
     interface Membership extends CamelClusterEventListener {
-        void memberAdded(CamelClusterView view, CamelClusterMember leader);
-        void memberRemoved(CamelClusterView view, CamelClusterMember leader);
+
+        /**
+         * Notify a change (addition) in the cluster composition.
+         *
+         * @param view the cluster view
+         * @param member the member that has been added
+         */
+        void memberAdded(CamelClusterView view, CamelClusterMember member);
+
+        /**
+         * Notify a change (removal) in the cluster composition.
+         *
+         * @param view the cluster view
+         * @param member the member that has been removed
+         */
+        void memberRemoved(CamelClusterView view, CamelClusterMember member);
+
     }
 }

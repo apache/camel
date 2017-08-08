@@ -19,13 +19,14 @@ package org.apache.camel.component.kubernetes;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class KubernetesConfiguration {
+public class KubernetesConfiguration implements Cloneable {
 
     @UriPath
     @Metadata(required = "true")
@@ -113,6 +114,9 @@ public class KubernetesConfiguration {
     
     @UriParam(label = "consumer", defaultValue = "1")
     private int poolSize = 1;
+
+    @UriParam(label = "advanced")
+    private Integer connectionTimeout;
 
     /**
      * Kubernetes Master url
@@ -395,6 +399,29 @@ public class KubernetesConfiguration {
         this.resourceName = resourceName;
     }
 
+    public Integer getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    /**
+     * Connection timeout in milliseconds to use when making requests to the Kubernetes API server.
+     */
+    public void setConnectionTimeout(Integer connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    // ****************************************
+    // Copy
+    // ****************************************
+
+    public KubernetesConfiguration copy() {
+        try {
+            return (KubernetesConfiguration) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
     @Override
     public String toString() {
         return "KubernetesConfiguration [masterUrl=" + masterUrl + ", category=" + category + ", kubernetesClient="
@@ -405,7 +432,7 @@ public class KubernetesConfiguration {
                 + ", clientKeyPassphrase=" + clientKeyPassphrase + ", oauthToken=" + oauthToken + ", trustCerts="
                 + trustCerts + ", namespace=" + namespace + ", labelKey=" + labelKey + ", labelValue=" + labelValue
                 + ", resourceName=" + resourceName + ", portName=" + portName + ", dnsDomain=" + dnsDomain
-                + ", poolSize=" + poolSize + "]";
+                + ", poolSize=" + poolSize + ", connectionTimeout=" + connectionTimeout + "]";
     }
 
 }

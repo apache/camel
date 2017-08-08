@@ -78,7 +78,7 @@ with the following path and query parameters:
 | **masterUrl** | *Required* Kubernetes Master url |  | String
 |=======================================================================
 
-#### Query Parameters (27 parameters):
+#### Query Parameters (28 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -97,6 +97,7 @@ with the following path and query parameters:
 | **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | **operation** (producer) | Producer operation to do on Kubernetes |  | String
+| **connectionTimeout** (advanced) | Connection timeout in milliseconds to use when making requests to the Kubernetes API server. |  | Integer
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | **caCertData** (security) | The CA Cert Data |  | String
 | **caCertFile** (security) | The CA Cert File |  | String
