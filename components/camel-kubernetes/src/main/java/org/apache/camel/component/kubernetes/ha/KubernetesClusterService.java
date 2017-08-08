@@ -57,7 +57,7 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
     protected KubernetesClusterView createView(String namespace) throws Exception {
         KubernetesLockConfiguration lockConfig = lockConfigWithGroupNameAndDefaults(namespace);
         KubernetesConfiguration config = setConfigDefaults(this.configuration.copy(), lockConfig);
-        return new KubernetesClusterView(this, config, lockConfig);
+        return new KubernetesClusterView(getCamelContext(), this, config, lockConfig);
     }
 
     protected KubernetesConfiguration setConfigDefaults(KubernetesConfiguration configuration, KubernetesLockConfiguration lockConfiguration) {

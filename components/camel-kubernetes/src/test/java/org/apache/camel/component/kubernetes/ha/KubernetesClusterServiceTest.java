@@ -285,8 +285,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
 
         LeaderRecorder recorder = new LeaderRecorder();
         try {
-            member.getView(namespace).addEventListener(recorder);
             context().addService(member);
+            member.getView(namespace).addEventListener(recorder);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

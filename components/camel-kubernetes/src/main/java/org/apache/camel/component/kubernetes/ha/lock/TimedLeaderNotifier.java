@@ -20,12 +20,12 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +38,8 @@ public class TimedLeaderNotifier implements Service {
     private static final Logger LOG = LoggerFactory.getLogger(TimedLeaderNotifier.class);
 
     private static final long FIXED_DELAY = 10;
+
+    private CamelContext camelContext;
 
     private KubernetesClusterEventHandler handler;
 
@@ -58,7 +60,8 @@ public class TimedLeaderNotifier implements Service {
 
     private long changeCounter;
 
-    public TimedLeaderNotifier(KubernetesClusterEventHandler handler) {
+    public TimedLeaderNotifier(CamelContext camelContext, KubernetesClusterEventHandler handler) {
+        this.camelContext = Objects.requireNonNull(camelContext, "Camel context must be present");
         this.handler = Objects.requireNonNull(handler, "Handler must be present");
     }
 
@@ -91,7 +94,7 @@ public class TimedLeaderNotifier implements Service {
     @Override
     public void start() throws Exception {
         if (this.executor == null) {
-            this.executor = Executors.newSingleThreadScheduledExecutor();
+            this.executor = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "CamelKubernetesLeaderNotifier");
         }
     }
 
