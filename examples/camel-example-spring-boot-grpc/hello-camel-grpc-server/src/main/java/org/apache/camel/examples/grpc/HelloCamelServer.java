@@ -19,19 +19,19 @@ package org.apache.camel.examples.grpc;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import org.apache.camel.examples.CamelHelloGrpc;
-import org.apache.camel.examples.CamelHelloReply;
-import org.apache.camel.examples.CamelHelloRequest;
-
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
+
+import org.apache.camel.examples.CamelHelloGrpc;
+import org.apache.camel.examples.CamelHelloReply;
+import org.apache.camel.examples.CamelHelloRequest;
 
 /**
  * Server that manages startup/shutdown of a server.
  */
 public class HelloCamelServer {
-    private static final Logger logger = Logger.getLogger(HelloCamelServer.class.getName());
+    private static final Logger LOG = Logger.getLogger(HelloCamelServer.class.getName());
 
     private Server server;
 
@@ -39,7 +39,7 @@ public class HelloCamelServer {
         /* The port on which the server should run */
         int port = 50051;
         server = ServerBuilder.forPort(port).addService(new HelloCamelImpl()).build().start();
-        logger.info("Server started. I'm listening on " + port);
+        LOG.info("Server started. I'm listening on " + port);
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
