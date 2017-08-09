@@ -79,6 +79,7 @@
     <module>camel-ahc-ws-starter</module>
     <module>camel-amqp-starter</module>
     <module>camel-apns-starter</module>
+    <module>camel-asn1-starter</module>
     <module>camel-asterisk-starter</module>
     <module>camel-atmos-starter</module>
     <module>camel-atmosphere-websocket-starter</module>
@@ -169,6 +170,7 @@
     <module>camel-http4-starter</module>
     <module>camel-hystrix-starter</module>
     <module>camel-ical-starter</module>
+    <module>camel-iec60870-starter</module>
     <module>camel-ignite-starter</module>
     <module>camel-infinispan-starter</module>
     <module>camel-influxdb-starter</module>

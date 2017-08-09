@@ -16,18 +16,19 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.atomix.client.map.springboot.AtomixClientMapComponentAutoConfiguration,\
-org.apache.camel.component.atomix.client.multimap.springboot.AtomixClientMultiMapComponentAutoConfiguration,\
-org.apache.camel.component.atomix.client.set.springboot.AtomixClientSetComponentAutoConfiguration,\
-org.apache.camel.component.atomix.client.value.springboot.AtomixClientValueComponentAutoConfiguration,\
-org.apache.camel.component.atomix.client.queue.springboot.AtomixClientQueueComponentAutoConfiguration,\
-org.apache.camel.component.atomix.client.messaging.springboot.AtomixClientMessagingComponentAutoConfiguration,\
+org.apache.camel.component.atomix.client.map.springboot.AtomixMapComponentAutoConfiguration,\
+org.apache.camel.component.atomix.client.multimap.springboot.AtomixMultiMapComponentAutoConfiguration,\
+org.apache.camel.component.atomix.client.set.springboot.AtomixSetComponentAutoConfiguration,\
+org.apache.camel.component.atomix.client.value.springboot.AtomixValueComponentAutoConfiguration,\
+org.apache.camel.component.atomix.client.queue.springboot.AtomixQueueComponentAutoConfiguration,\
+org.apache.camel.component.atomix.client.messaging.springboot.AtomixMessagingComponentAutoConfiguration,\
 org.apache.camel.component.atomix.client.set.springboot.AtomixSetComponentAutoConfiguration,\
 org.apache.camel.component.atomix.client.queue.springboot.AtomixQueueComponentAutoConfiguration,\
 org.apache.camel.component.atomix.client.map.springboot.AtomixMapComponentAutoConfiguration,\
 org.apache.camel.component.atomix.client.multimap.springboot.AtomixMultiMapComponentAutoConfiguration,\
 org.apache.camel.component.atomix.client.value.springboot.AtomixValueComponentAutoConfiguration,\
-org.apache.camel.component.atomix.client.messaging.springboot.AtomixMessagingComponentAutoConfiguration
+org.apache.camel.component.atomix.client.messaging.springboot.AtomixMessagingComponentAutoConfiguration,\
+org.apache.camel.component.atomix.ha.springboot.AtomixClusterServiceAutoConfiguration
 
 
 

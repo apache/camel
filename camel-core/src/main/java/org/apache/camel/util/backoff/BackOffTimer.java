@@ -16,9 +16,9 @@
  */
 package org.apache.camel.util.backoff;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 
 import org.apache.camel.util.function.ThrowingFunction;
 
@@ -37,14 +37,14 @@ public class BackOffTimer {
      * Schedule the given function/task to be executed some time in the future
      * according to the given backOff.
      */
-    public CompletableFuture<BackOffContext> schedule(BackOff backOff, ThrowingFunction<BackOffContext, Boolean, Exception> function) {
-        final Task task = new Task(backOff, function);
+    public Task schedule(BackOff backOff, ThrowingFunction<Task, Boolean, Exception> function) {
+        final BackOffTimerTask task = new BackOffTimerTask(backOff, scheduler, function);
 
-        long delay = task.getContext().next();
+        long delay = task.next();
         if (delay != BackOff.NEVER) {
             scheduler.schedule(task, delay, TimeUnit.MILLISECONDS);
         } else {
-            task.complete();
+            task.cancel();
         }
 
         return task;
@@ -54,54 +54,64 @@ public class BackOffTimer {
     // TimerTask
     // ****************************************
 
-    private final class Task extends CompletableFuture<BackOffContext> implements Runnable {
-        private final BackOffContext context;
-        private final ThrowingFunction<BackOffContext, Boolean, Exception> function;
-
-        Task(BackOff backOff, ThrowingFunction<BackOffContext, Boolean, Exception> function) {
-            this.context = new BackOffContext(backOff);
-            this.function = function;
+    public interface Task {
+        enum Status {
+            Active,
+            Inactive,
+            Exhausted
         }
 
-        @Override
-        public void run() {
-            if (context.isExhausted() || isDone() || isCancelled()) {
-                if (!isDone()) {
-                    complete();
-                }
+        /**
+         * The back-off associated with this task.
+         */
+        BackOff getBackOff();
 
-                return;
-            }
+        /**
+         * Gets the task status.
+         */
+        Status getStatus();
 
-            try {
-                if (function.apply(context)) {
-                    long delay = context.next();
-                    if (context.isExhausted()) {
-                        complete();
-                    } else if (!context.isExhausted() && !isDone() && !isCancelled()) {
-                        scheduler.schedule(this, delay, TimeUnit.MILLISECONDS);
-                    }
-                } else {
-                    complete();
-                }
-            } catch (Exception e) {
-                completeExceptionally(e);
-            }
-        }
+        /**
+         * The number of attempts so far.
+         */
+        long getCurrentAttempts();
 
-        @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            context.stop();
+        /**
+         * The current computed delay.
+         */
+        long getCurrentDelay();
 
-            return super.cancel(mayInterruptIfRunning);
-        }
+        /**
+         * The current elapsed time.
+         */
+        long getCurrentElapsedTime();
 
-        boolean complete() {
-            return super.complete(context);
-        }
+        /**
+         * The time the last attempt has been performed.
+         */
+        long getLastAttemptTime();
 
-        BackOffContext getContext() {
-            return context;
-        }
+
+        /**
+         * An indication about the time the next attempt will be made.
+         */
+        long getNextAttemptTime();
+
+        /**
+         * Reset the task.
+         */
+        void reset();
+
+        /**
+         * Cancel the task.
+         */
+        void cancel();
+
+        /**
+         * Action to execute when the context is completed (cancelled or exhausted)
+         *
+         * @param whenCompleted the consumer.
+         */
+        void whenComplete(BiConsumer<Task, Throwable> whenCompleted);
     }
 }

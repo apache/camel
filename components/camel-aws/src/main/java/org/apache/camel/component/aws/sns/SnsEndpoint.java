@@ -19,9 +19,12 @@ package org.apache.camel.component.aws.sns;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sns.model.CreateTopicRequest;
 import com.amazonaws.services.sns.model.CreateTopicResult;
 import com.amazonaws.services.sns.model.ListTopicsResult;
@@ -189,16 +192,17 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                client = new AmazonSNSClient(credentials, clientConfiguration);
+                client = AmazonSNSClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider).build();
             } else {
-                client = new AmazonSNSClient(credentials);
+                client = AmazonSNSClientBuilder.standard().withCredentials(credentialsProvider).build();
             }
         } else {
             if (isClientConfigFound) {
-                client = new AmazonSNSClient();
+                client = AmazonSNSClientBuilder.standard().build();
             } else {
-                client = new AmazonSNSClient(clientConfiguration);
+                client = AmazonSNSClientBuilder.standard().withClientConfiguration(clientConfiguration).build();
             }
         }
         return client;

@@ -18,7 +18,7 @@ package org.apache.camel.component.hazelcast.queue;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.logging.Logger;
+import java.util.function.Predicate;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
@@ -85,8 +85,24 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
             this.remainingCapacity(exchange);
             break;
             
+        case REMOVE_ALL:
+            this.removeAll(exchange);
+            break;
+            
+        case REMOVE_IF:
+            this.removeIf(exchange);
+            break;
+            
         case DRAIN_TO:
             this.drainTo((Collection) drainToCollection, exchange);
+            break;
+            
+        case TAKE:
+            this.take(exchange);
+            break;
+            
+        case RETAIN_ALL:
+            this.retainAll(exchange);
             break;
 
         default:
@@ -137,5 +153,24 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
     private void drainTo(Collection c, Exchange exchange) {
         exchange.getOut().setBody(this.queue.drainTo(c));
         exchange.getOut().setHeader(HazelcastConstants.DRAIN_TO_COLLECTION, c);
+    }
+    
+    private void removeAll(Exchange exchange) {
+        Collection body = exchange.getIn().getBody(Collection.class);
+        this.queue.removeAll(body);
+    }
+    
+    private void removeIf(Exchange exchange) {
+        Predicate filter = exchange.getIn().getBody(Predicate.class);
+        exchange.getOut().setBody(this.queue.removeIf(filter));
+    }
+    
+    private void take(Exchange exchange) throws InterruptedException {
+        exchange.getOut().setBody(this.queue.take());
+    }
+    
+    private void retainAll(Exchange exchange) {
+        Collection body = exchange.getIn().getBody(Collection.class);
+        this.queue.retainAll(body);
     }
 }

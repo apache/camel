@@ -21,6 +21,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.hazelcast.queue.HazelcastQueueConfiguration;
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaConfiguration;
 import org.apache.camel.component.hazelcast.topic.HazelcastTopicConfiguration;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -46,6 +47,8 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
     private HazelcastSedaConfiguration hazelcastSedaConfiguration; // to include component schema docs
     @UriParam
     private HazelcastTopicConfiguration hazelcastTopicConfiguration; 
+    @UriParam
+    private HazelcastQueueConfiguration hazelcastQueueConfiguration; 
 
     public HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component) {
         this(hazelcastInstance, endpointUri, component, null);

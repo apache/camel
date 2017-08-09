@@ -18,9 +18,11 @@ package org.apache.camel.component.aws.cw;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
-import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
+import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -105,16 +107,17 @@ public class CwEndpoint extends DefaultEndpoint {
         }
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                client = new AmazonCloudWatchClient(credentials, clientConfiguration);
+                client = AmazonCloudWatchClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider).build();
             } else {
-                client = new AmazonCloudWatchClient(credentials);
+                client = AmazonCloudWatchClientBuilder.standard().withCredentials(credentialsProvider).build();
             }
         } else {
             if (isClientConfigFound) {
-                client = new AmazonCloudWatchClient();
+                client = AmazonCloudWatchClientBuilder.standard().build();
             } else {
-                client = new AmazonCloudWatchClient(clientConfiguration);
+                client = AmazonCloudWatchClientBuilder.standard().withClientConfiguration(clientConfiguration).build();
             }
         }
         return client;

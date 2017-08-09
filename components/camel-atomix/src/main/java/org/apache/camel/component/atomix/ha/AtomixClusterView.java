@@ -93,13 +93,25 @@ final class AtomixClusterView extends AbstractCamelClusterView {
             ).get();
 
             LOGGER.debug("Listen election events");
-            group.election().onElection(term -> fireLeadershipChangedEvent(new AtomixClusterMember(term.leader())));
+            group.election().onElection(term -> {
+                if (isRunAllowed()) {
+                    fireLeadershipChangedEvent(new AtomixClusterMember(term.leader()));
+                }
+            });
 
             LOGGER.debug("Listen join events");
-            group.onJoin(member -> fireMemberAddedEvent(new AtomixClusterMember(member)));
+            group.onJoin(member -> {
+                if (isRunAllowed()) {
+                    fireMemberAddedEvent(new AtomixClusterMember(member));
+                }
+            });
 
             LOGGER.debug("Listen leave events");
-            group.onLeave(member -> fireMemberRemovedEvent(new AtomixClusterMember(member)));
+            group.onLeave(member -> {
+                if (isRunAllowed()) {
+                    fireMemberRemovedEvent(new AtomixClusterMember(member));
+                }
+            });
 
             LOGGER.debug("Join group {}", getNamespace());
             localMember.join();

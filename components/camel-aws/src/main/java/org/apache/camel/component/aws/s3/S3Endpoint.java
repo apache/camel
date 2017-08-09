@@ -21,9 +21,11 @@ import java.io.IOException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.S3ClientOptions;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
@@ -67,6 +69,8 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     private S3Configuration configuration;
     @UriParam(label = "consumer", defaultValue = "10")
     private int maxMessagesPerPoll = 10;
+    @UriParam(label = "consumer", defaultValue = "60")
+    private int maxConnections = 50 + maxMessagesPerPoll;
 
     @Deprecated
     public S3Endpoint(String uri, CamelContext context, S3Configuration configuration) {
@@ -233,27 +237,33 @@ public class S3Endpoint extends ScheduledPollEndpoint {
      */
     AmazonS3 createS3Client() {
     
-        AmazonS3Client client = null;
+        AmazonS3 client = null;
         ClientConfiguration clientConfiguration = null;
         boolean isClientConfigFound = false;
         if (configuration.hasProxyConfiguration()) {
             clientConfiguration = new ClientConfiguration();
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
+            clientConfiguration.setMaxConnections(getMaxConnections());
+            isClientConfigFound = true;
+        } else {
+            clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setMaxConnections(getMaxConnections());
             isClientConfigFound = true;
         }
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                client = new AmazonS3Client(credentials, clientConfiguration);
+                client = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider).build();
             } else {
-                client = new AmazonS3Client(credentials);
+                client = AmazonS3ClientBuilder.standard().withCredentials(credentialsProvider).build();
             }
         } else {
             if (isClientConfigFound) {
-                client = new AmazonS3Client();
+                client = AmazonS3ClientBuilder.standard().build();
             } else {
-                client = new AmazonS3Client(clientConfiguration);
+                client = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration).build();
             }
         }
 
@@ -276,5 +286,16 @@ public class S3Endpoint extends ScheduledPollEndpoint {
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+    
+    public int getMaxConnections() {
+        return maxConnections;
+    }
+
+    /**
+     * Set the maxConnections parameter in the S3 client configuration
+     */
+    public void setMaxConnections(int maxConnections) {
+        this.maxConnections = maxConnections;
     }
 }

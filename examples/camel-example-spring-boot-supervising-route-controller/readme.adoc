@@ -1,0 +1,51 @@
+# Camel Supervising Route Controller Example Spring Boot
+
+This example shows how to work with a simple Apache Camel application using Spring Boot and a Supervising Route Controller.
+
+## How to run
+
+You can run this example using
+
+    mvn spring-boot:run
+
+Beside JMX you can use Spring Boot Endpoints to interact with the routes:
+
+* To get info about the routes
++
+[source]
+----
+curl -XGET -s http://localhost:8080/camel/routes
+----
++
++* To get details about a route
+++
++[source]
++----
++curl -XGET -s http://localhost:8080/camel/routes/{id}/detail
++----
+
+* To get info about a route
++
+[source]
+----
+curl -XGET -s http://localhost:8080/camel/routes/{id}/info
+----
+
+* To stop a route
++
+[source]
+----
+curl -XPOST -s http://localhost:8080/camel/routes/{id}/stop
+----
+
+* To start a route
++
+[source]
+----
+curl -XPOST -s http://localhost:8080/camel/routes/{id}/stop
+----
+
+
+## More information
+
+You can find more information about Apache Camel at the website: http://camel.apache.org/

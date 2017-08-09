@@ -16,17 +16,19 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.nio.file.Paths;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.sshd.common.KeyPairProvider;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
+import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.junit.Test;
 
 public class SshComponentSecurityTest extends SshComponentTestSupport {
 
     @Test
     public void testRsa() throws Exception {
-        final String msg = "test\n";
+        final String msg = "test";
 
         MockEndpoint mock = getMockEndpoint("mock:rsa");
         mock.expectedMinimumMessageCount(1);
@@ -39,7 +41,7 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
 
     @Test
     public void testRsaFile() throws Exception {
-        final String msg = "test\n";
+        final String msg = "test";
 
         MockEndpoint mock = getMockEndpoint("mock:rsaFile");
         mock.expectedMinimumMessageCount(1);
@@ -63,7 +65,7 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
                 sshComponent.setHost("localhost");
                 sshComponent.setPort(port);
                 sshComponent.setUsername("smx");
-                sshComponent.setKeyPairProvider(new FileKeyPairProvider(new String[]{"src/test/resources/hostkey.pem"}));
+                sshComponent.setKeyPairProvider(new FileKeyPairProvider(Paths.get("src/test/resources/hostkey.pem")));
                 sshComponent.setKeyType(KeyPairProvider.SSH_RSA);
 
                 getContext().addComponent("ssh-rsa", sshComponent);

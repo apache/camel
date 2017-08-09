@@ -35,6 +35,7 @@ import org.apache.camel.component.hazelcast.instance.HazelcastInstanceEndpoint;
 import org.apache.camel.component.hazelcast.list.HazelcastListEndpoint;
 import org.apache.camel.component.hazelcast.map.HazelcastMapEndpoint;
 import org.apache.camel.component.hazelcast.multimap.HazelcastMultimapEndpoint;
+import org.apache.camel.component.hazelcast.queue.HazelcastQueueConfiguration;
 import org.apache.camel.component.hazelcast.queue.HazelcastQueueEndpoint;
 import org.apache.camel.component.hazelcast.replicatedmap.HazelcastReplicatedmapEndpoint;
 import org.apache.camel.component.hazelcast.ringbuffer.HazelcastRingbufferEndpoint;
@@ -112,7 +113,9 @@ public class HazelcastComponent extends HazelcastDefaultComponent {
         if (remaining.startsWith(HazelcastConstants.QUEUE_PREFIX)) {
             // remaining is anything (name it foo ;)
             remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.QUEUE_PREFIX.length()), '/');
-            endpoint = new HazelcastQueueEndpoint(hzInstance, uri, this, remaining);
+            final HazelcastQueueConfiguration config = new HazelcastQueueConfiguration();
+            setProperties(config, parameters);
+            endpoint = new HazelcastQueueEndpoint(hzInstance, uri, this, remaining, config);
             endpoint.setCommand(HazelcastCommand.queue);
         }
 

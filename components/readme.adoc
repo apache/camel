@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 278 in 191 JAR artifacts (17 deprecated)
+Number of Components: 280 in 192 JAR artifacts (17 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -111,7 +111,7 @@ Number of Components: 278 in 191 JAR artifacts (17 deprecated)
 `beanstalk:connectionSettings` | 2.15 | The beanstalk component is used for job retrieval and post-processing of Beanstalk jobs.
 
 | link:camel-google-bigquery/src/main/docs/bigquery-component.adoc[BigQuery] (camel-google-bigquery) +
-`bigquery:projectId:datasetId[:tableName]` |  | BigQuery Endpoint Definition Represents a table within a BigQuery dataset Contains configuration details for a single table and the utility methods (such as check create) to ease operations URI Parameters: Logger ID - To ensure that logging is unified under Route Logger the logger ID can be passed on via an endpoint URI parameter Partitioned - to indicate that the table needs to be partitioned - every UTC day to be written into a timestamped separate table side effect: Australian operational day is always split between two UTC days and therefore tables
+`bigquery:projectId:datasetId:tableName` | 2.20 | Google BigQuery data warehouse for analytics.
 
 | link:../camel-core/src/main/docs/binding-component.adoc[Binding] (camel-core) +
 `binding:bindingName:delegateUri` | 2.11 | *deprecated* The binding component is used for as a of wrapping an Endpoint in a contract with a data format.
@@ -177,7 +177,7 @@ Number of Components: 278 in 191 JAR artifacts (17 deprecated)
 `crypto:cryptoOperation:name` | 2.3 | The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
 
 | link:camel-crypto-cms/src/main/docs/crypto-cms-component.adoc[Crypto CMS] (camel-crypto-cms) +
-`crypto-cms:cryptoOperation:name` | 2.20 | Camel Cryptographic Message Syntax Support
+`crypto-cms:cryptoOperation:name` | 2.20 | The crypto cms component is used for encrypting data in CMS Enveloped Data format decrypting CMS Enveloped Data signing data in CMS Signed Data format and verifying CMS Signed Data.
 
 | link:camel-cxf/src/main/docs/cxf-component.adoc[CXF] (camel-cxf) +
 `cxf:beanId:address` | 1.0 | The cxf component is used for SOAP WebServices using Apache CXF.
@@ -352,6 +352,12 @@ Number of Components: 278 in 191 JAR artifacts (17 deprecated)
 
 | link:camel-ibatis/src/main/docs/ibatis-component.adoc[iBatis] (camel-ibatis) +
 `ibatis:statement` | 1.2 | *deprecated* Performs a query poll insert update or delete in a relational database using Apache iBATIS.
+
+| link:camel-iec60870/src/main/docs/iec60870-client-component.adoc[IEC 60870 Client] (camel-iec60870) +
+`iec60870-client:endpointUri` | 2.20 | Camel IEC 60870-5-104 support
+
+| link:camel-iec60870/src/main/docs/iec60870-server-component.adoc[IEC 60870-5-104 server] (camel-iec60870) +
+`iec60870-server:endpointUri` | 2.20 | Camel IEC 60870-5-104 support
 
 | link:camel-ignite/src/main/docs/ignite-cache-component.adoc[Ignite Cache] (camel-ignite) +
 `ignite-cache:cacheName` | 2.17 | The Ignite Cache endpoint is one of camel-ignite endpoints which allows you to interact with an Ignite Cache.

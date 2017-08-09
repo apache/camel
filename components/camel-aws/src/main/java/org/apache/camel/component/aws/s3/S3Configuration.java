@@ -314,6 +314,4 @@ public class S3Configuration implements Cloneable {
     boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
     }
-    
-    
 }

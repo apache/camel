@@ -16,14 +16,19 @@
  */
 package org.apache.camel.impl.ha;
 
+import java.time.Duration;
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Route;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.StartupListener;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
@@ -39,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Clustered Route policy using")
-public final class ClusteredRoutePolicy extends RoutePolicySupport implements CamelContextAware {
+public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClusteredRoutePolicy.class);
 
     private final AtomicBoolean leader;
@@ -50,6 +55,8 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private final CamelClusterEventListener.Leadership leadershipEventListener;
     private final CamelContextStartupListener listener;
     private final AtomicBoolean contextStarted;
+    private Duration initialDelay;
+    private ScheduledExecutorService executorService;
 
     private CamelContext camelContext;
 
@@ -61,6 +68,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         this.startedRoutes = new HashSet<>();
         this.leader = new AtomicBoolean(false);
         this.contextStarted = new AtomicBoolean(false);
+        this.initialDelay = Duration.ofMillis(0);
 
         try {
             this.listener = new CamelContextStartupListener();
@@ -74,6 +82,9 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         this.refCount = ReferenceCount.onRelease(() -> {
             if (camelContext != null) {
                 camelContext.getManagementStrategy().removeEventNotifier(listener);
+                if (executorService != null) {
+                    camelContext.getExecutorServiceManager().shutdownNow(executorService);
+                }
             }
 
             clusterView.removeEventListener(leadershipEventListener);
@@ -102,10 +113,23 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             this.camelContext = camelContext;
             this.camelContext.addStartupListener(this.listener);
             this.camelContext.getManagementStrategy().addEventNotifier(this.listener);
+            this.executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ClusteredRoutePolicy");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
+    public Duration getInitialDelay() {
+        return initialDelay;
+    }
+
+    public void setInitialDelay(Duration initialDelay) {
+        this.initialDelay = initialDelay;
+    }
+
+    // ****************************************************
+    // life-cycle
+    // ****************************************************
 
     @Override
     public void onInit(Route route) {
@@ -121,7 +145,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     }
 
     @Override
-    public void doShutdown() {
+    public void doShutdown() throws Exception {
         this.refCount.release();
     }
 
@@ -159,11 +183,19 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     }
 
     private void doStartManagedRoutes() {
+        if (!isRunAllowed()) {
+            return;
+        }
+
         try {
             for (Route route : stoppedRoutes) {
-                LOGGER.debug("Starting route {}", route.getId());
-                camelContext.startRoute(route.getId());
-                startedRoutes.add(route);
+                ServiceStatus status = route.getRouteContext().getRoute().getStatus(getCamelContext());
+                if (status.isStartable()) {
+                    LOGGER.debug("Starting route '{}'", route.getId());
+                    camelContext.startRoute(route.getId());
+
+                    startedRoutes.add(route);
+                }
             }
 
             stoppedRoutes.removeAll(startedRoutes);
@@ -183,17 +215,35 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     }
 
     private void doStopManagedRoutes() {
+        if (!isRunAllowed()) {
+            return;
+        }
+
         try {
             for (Route route : startedRoutes) {
-                LOGGER.debug("Stopping route {}", route.getId());
-                stopRoute(route);
-                stoppedRoutes.add(route);
+                ServiceStatus status = route.getRouteContext().getRoute().getStatus(getCamelContext());
+                if (status.isStoppable()) {
+                    LOGGER.debug("Stopping route '{}'", route.getId());
+                    stopRoute(route);
+
+                    stoppedRoutes.add(route);
+                }
             }
 
             startedRoutes.removeAll(stoppedRoutes);
         } catch (Exception e) {
             handleException(e);
         }
+    }
+
+    private void onCamelContextStarted() {
+        LOGGER.debug("Apply cluster policy (stopped-routes='{}', started-routes='{}')",
+            stoppedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")),
+            startedRoutes.stream().map(Route::getId).collect(Collectors.joining(","))
+        );
+
+        clusterView.addEventListener(leadershipEventListener);
+        setLeader(clusterView.getLocalMember().isMaster());
     }
 
     // ****************************************************
@@ -240,8 +290,14 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             // so start/stop of managed routes do not clash with CamelContext
             // startup
             if (contextStarted.compareAndSet(false, true)) {
-                clusterView.addEventListener(leadershipEventListener);
-                setLeader(clusterView.getLocalMember().isMaster());
+
+                // Eventually delay the startup of the routes a later time
+                if (initialDelay.toMillis() > 0) {
+                    LOGGER.debug("Policy will be effective in {}", initialDelay);
+                    executorService.schedule(ClusteredRoutePolicy.this::onCamelContextStarted, initialDelay.toMillis(), TimeUnit.MILLISECONDS);
+                } else {
+                    ClusteredRoutePolicy.this.onCamelContextStarted();
+                }
             }
         }
     }

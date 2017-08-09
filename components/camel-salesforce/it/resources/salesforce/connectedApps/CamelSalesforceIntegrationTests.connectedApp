@@ -21,7 +21,8 @@
     <oauthConfig>
         <callbackUrl>https://login.salesforce.com/services/oauth2/success</callbackUrl>
         <certificate>MIIC1TCCAb2gAwIBAgIEM3ZMGjANBgkqhkiG9w0BAQsFADAaMRgwFgYDVQQDEw9TYWxlc2ZvcmNlIHRlc3QwIBcNMTcwMzE0MjIxMjU0WhgPMjExNzAyMTgyMjEyNTRaMBoxGDAWBgNVBAMTD1NhbGVzZm9yY2UgdGVzdDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMbZinVCZerzZvyyQlfE6nMpEQRfVsjpcfT01UTG/bwzWorP7YRpGkDW7Q4eu6IPrHtohkhM3JtsSVka5jfS1iEguMXLdNkEyMjMiBrWJeyGfcISF1yazgqLxxwcwGjMn3C9xV5tBxiRSqtMrV1iRx3fxmLue1UnZjSyUaG+Vi+FcKxqre5ixApeDCZHLONxBy3mjWK4GIeBBbUqQqy3LNrT6B34WdNX8vTslpTKOlmLyycEI/Rx+A4lNaultrJHdnRhGBrPwYinlV/wdramaQFL+ltqxQw6A5FBg9VjDEEd8JGv6OZ7aA/3mvjTbX5MaLj+aLJQyT2+XzDSAtDgOhMCAwEAAaMhMB8wHQYDVR0OBBYEFDM0jGtarY5uTVLThBEnXMUqDlyDMA0GCSqGSIb3DQEBCwUAA4IBAQCJtIsP5foO84sNwVMGwPiaoQUPE+cN73Tg63FSef36FEei6B3UnsFZnlcz9WGIL0G4PUjQro5z7/gMAHGehPQjoUEzKihdoNncbvKa9Yfuw4eO98YIp2t5OnOGQpDQWN9JO0On0tu+4rsgkJn8fZtzTPViS2Vhssi65DpWYydKWvEbbYw6oiPMH9T2mQy11lxSwNBngBy4ZF4hCyEVpvSe6Mr2q+jxgjCwMAqX+XofmEpfHaJXGy8lgtzow0oT8X4ymsV1JR0erw0dsbch9pTsG7YXcNFIEm50DctQEikoWxkAvIsZIHgujWkrjQlEsXZp/MS4OuNj6yWWlCaK/QM3</certificate>
-        <consumerKey>3MVG9HxRZv05HarQ5D2to.ylPaUg7uaFqGqE2wN6_RRaHM9PTa3SWT8UwKJzXAyCujHrfObkUy7oZqiBUyfGl</consumerKey>
+        <consumerKey>3MVG9szVa2RxsqBZXHfqsW3hf9HQp_N6qdSmpjKMzSJaEL4UP161JlDkE32EigL82ra_jM1WuQgF4rYDgzL3u</consumerKey>
+        <consumerSecret>1039611643161946846</consumerSecret>
         <scopes>Api</scopes>
         <scopes>RefreshToken</scopes>
     </oauthConfig>

@@ -19,7 +19,9 @@ package org.apache.camel.component.hazelcast;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
@@ -130,6 +132,35 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
     }
     
     @Test
+    public void removeAll() throws InterruptedException {
+        Collection c = new HashSet<>();
+        c.add("foo2");
+        template.sendBody("direct:removeAll", c);
+        verify(queue).removeAll(c);
+    }
+    
+    @Test
+    public void removeIf() throws InterruptedException {
+        Predicate<String> i  = (s)-> s.length() > 5;
+        template.sendBody("direct:removeIf", i);
+        verify(queue).removeIf(i);
+    }
+    
+    @Test
+    public void take() throws InterruptedException {
+        template.sendBody("direct:take", "foo");
+        verify(queue).take();
+    }
+    
+    @Test
+    public void retainAll() throws InterruptedException {
+        Collection c = new HashSet<>();
+        c.add("foo2");
+        template.sendBody("direct:retainAll", c);
+        verify(queue).retainAll(c);
+    }
+    
+    @Test
     public void drainTo() throws InterruptedException {
         Map<String, Object> headers = new HashMap<String, Object>();
         Collection l = new ArrayList<>();
@@ -161,8 +192,20 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
 
                 from("direct:removeValue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMOVE_VALUE)).to(
                         String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
+                
+                from("direct:removeAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMOVE_ALL)).to(
+                        String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
+                
+                from("direct:removeIf").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMOVE_IF)).to(
+                        String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 
                 from("direct:REMAINING_CAPACITY").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMAINING_CAPACITY)).to(
+                        String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
+                
+                from("direct:take").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.TAKE)).to(
+                        String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
+                
+                from("direct:retainAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.RETAIN_ALL)).to(
                         String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
                 
                 from("direct:drainTo").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DRAIN_TO)).to(

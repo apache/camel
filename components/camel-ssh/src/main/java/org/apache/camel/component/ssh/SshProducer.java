@@ -22,30 +22,30 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.sshd.SshClient;
+import org.apache.sshd.client.SshClient;
 
 public class SshProducer extends DefaultProducer {
     private SshEndpoint endpoint;
-    
+
     private SshClient client;
 
     public SshProducer(SshEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         client = SshClient.setUpDefaultClient();
         client.start();
-        
+
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        
+
         if (client != null) {
             client.stop();
             client = null;
@@ -56,10 +56,15 @@ public class SshProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         String command = in.getMandatoryBody(String.class);
-        
+
         final Map<String, Object> headers = exchange.getIn().getHeaders();
 
         try {
+            String knownHostResource = endpoint.getKnownHostsResource();
+            if (knownHostResource != null) {
+                client.setServerKeyVerifier(new ResourceBasedSSHKeyVerifier(exchange.getContext(), knownHostResource,
+                        endpoint.isFailOnUnknownHost()));
+            }
             SshResult result = SshHelper.sendExecCommand(headers, command, endpoint, client);
             exchange.getOut().setBody(result.getStdout());
             exchange.getOut().setHeader(SshResult.EXIT_VALUE, result.getExitValue());
