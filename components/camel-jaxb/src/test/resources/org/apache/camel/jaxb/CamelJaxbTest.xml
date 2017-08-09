@@ -50,6 +50,13 @@
       <to uri="mock:result"/>
     </route>
     <route>
+      <from uri="direct:marshalWithoutContentType"/>
+      <marshal>
+        <jaxb contextPath="org.apache.camel.foo.bar" contentTypeHeader="false"/>
+      </marshal>
+      <to uri="mock:result"/>
+    </route>
+    <route>
       <from uri="direct:unmarshalFilteringEnabled"/>
       <unmarshal>
         <jaxb filterNonXmlChars="true" contextPath="org.apache.camel.foo.bar"/>
