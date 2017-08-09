@@ -20,18 +20,30 @@ package org.apache.camel.util.backoff;
  * The context associated to a back-off operation.
  */
 public final class BackOffContext {
+    public enum Status {
+        Active,
+        Inactive,
+        Exhausted
+    }
+
     private final BackOff backOff;
 
+    private Status status;
     private long currentAttempts;
     private long currentDelay;
     private long currentElapsedTime;
+    private long lastAttemptTime;
+    private long nextAttemptTime;
 
     public BackOffContext(BackOff backOff) {
         this.backOff = backOff;
+        this.status = Status.Active;
 
         this.currentAttempts = 0;
         this.currentDelay = backOff.getDelay().toMillis();
         this.currentElapsedTime = 0;
+        this.lastAttemptTime = BackOff.NEVER;
+        this.nextAttemptTime = BackOff.NEVER;
     }
 
     // *************************************
@@ -43,6 +55,13 @@ public final class BackOffContext {
      */
     public BackOff getBackOff() {
         return backOff;
+    }
+
+    /**
+     * Gets the context status.
+     */
+    public Status getStatus() {
+        return status;
     }
 
     /**
@@ -67,10 +86,31 @@ public final class BackOffContext {
     }
 
     /**
-     * Inform if the context is exhausted thus not more attempts should be made.
+     * The time the last attempt has been performed.
      */
-    public boolean isExhausted() {
-        return currentDelay == BackOff.NEVER;
+    public long getLastAttemptTime() {
+        return lastAttemptTime;
+    }
+
+    /**
+     * Used by BackOffTimer
+     */
+    void setLastAttemptTime(long lastAttemptTime) {
+        this.lastAttemptTime = lastAttemptTime;
+    }
+
+    /**
+     * An indication about the time the next attempt will be made.
+     */
+    public long getNextAttemptTime() {
+        return nextAttemptTime;
+    }
+
+    /**
+     * Used by BackOffTimer
+     */
+    void setNextAttemptTime(long nextAttemptTime) {
+        this.nextAttemptTime = nextAttemptTime;
     }
 
     // *************************************
@@ -86,14 +126,16 @@ public final class BackOffContext {
         // A call to next when currentDelay is set to NEVER has no effects
         // as this means that either the timer is exhausted or it has explicit
         // stopped
-        if (currentDelay != BackOff.NEVER) {
+        if (status == Status.Active) {
 
             currentAttempts++;
 
             if (currentAttempts > backOff.getMaxAttempts()) {
                 currentDelay = BackOff.NEVER;
+                status = Status.Exhausted;
             } else if (currentElapsedTime > backOff.getMaxElapsedTime().toMillis()) {
                 currentDelay = BackOff.NEVER;
+                status = Status.Exhausted;
             } else {
                 if (currentDelay <= backOff.getMaxDelay().toMillis()) {
                     currentDelay = (long) (currentDelay * backOff.getMultiplier());
@@ -113,6 +155,9 @@ public final class BackOffContext {
         this.currentAttempts = 0;
         this.currentDelay = 0;
         this.currentElapsedTime = 0;
+        this.lastAttemptTime = BackOff.NEVER;
+        this.nextAttemptTime = BackOff.NEVER;
+        this.status = Status.Active;
 
         return this;
     }
@@ -125,6 +170,9 @@ public final class BackOffContext {
         this.currentAttempts = 0;
         this.currentDelay = BackOff.NEVER;
         this.currentElapsedTime = 0;
+        this.lastAttemptTime = BackOff.NEVER;
+        this.nextAttemptTime = BackOff.NEVER;
+        this.status = Status.Inactive;
 
         return this;
     }

@@ -16,9 +16,11 @@
  */
 package org.apache.camel.util.backoff;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Assert;
@@ -27,12 +29,13 @@ import org.junit.Test;
 public class BackOffTimerTest {
     @Test
     public void testBackOffTimer() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
         final AtomicInteger counter = new AtomicInteger(0);
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
         final BackOff backOff = BackOff.builder().delay(100).build();
         final BackOffTimer timer = new BackOffTimer(executor);
 
-        timer.schedule(
+        BackOffTimer.Task task = timer.schedule(
             backOff,
             context -> {
                 Assert.assertEquals(counter.incrementAndGet(), context.getCurrentAttempts());
@@ -42,23 +45,28 @@ public class BackOffTimerTest {
 
                 return counter.get() < 5;
             }
-        ).thenAccept(
-            context -> {
-                Assert.assertEquals(5, counter.get());
-            }
-        ).get(5, TimeUnit.SECONDS);
+        );
 
+        task.whenComplete(
+            (context, throwable) -> {
+                Assert.assertEquals(5, counter.get());
+                latch.countDown();
+            }
+        );
+
+        latch.await(5, TimeUnit.SECONDS);
         executor.shutdownNow();
     }
 
     @Test
     public void testBackOffTimerWithMaxAttempts() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
         final AtomicInteger counter = new AtomicInteger(0);
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
         final BackOff backOff = BackOff.builder().delay(100).maxAttempts(5L).build();
         final BackOffTimer timer = new BackOffTimer(executor);
 
-        timer.schedule(
+        BackOffTimer.Task task = timer.schedule(
             backOff,
             context -> {
                 Assert.assertEquals(counter.incrementAndGet(), context.getCurrentAttempts());
@@ -68,23 +76,29 @@ public class BackOffTimerTest {
 
                 return true;
             }
-        ).thenAccept(
-            context -> {
-                Assert.assertEquals(5, counter.get());
-            }
-        ).get(5, TimeUnit.SECONDS);
+        );
 
+        task.whenComplete(
+            (context, throwable) -> {
+                Assert.assertEquals(5, counter.get());
+                Assert.assertEquals(BackOffContext.Status.Exhausted, context.getStatus());
+                latch.countDown();
+            }
+        );
+
+        latch.await(5, TimeUnit.SECONDS);
         executor.shutdownNow();
     }
 
     @Test
     public void testBackOffTimerWithMaxElapsedTime() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
         final AtomicInteger counter = new AtomicInteger(0);
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
         final BackOff backOff = BackOff.builder().delay(100).maxElapsedTime(400).build();
         final BackOffTimer timer = new BackOffTimer(executor);
 
-        timer.schedule(
+        BackOffTimer.Task task = timer.schedule(
             backOff,
             context -> {
                 Assert.assertEquals(counter.incrementAndGet(), context.getCurrentAttempts());
@@ -94,11 +108,49 @@ public class BackOffTimerTest {
 
                 return true;
             }
-        ).thenAccept(
-            context -> {
+        );
+
+        task.whenComplete(
+            (context, throwable) -> {
                 Assert.assertTrue(counter.get() <= 5);
+                Assert.assertEquals(BackOffContext.Status.Exhausted, context.getStatus());
+                latch.countDown();
             }
-        ).get(5, TimeUnit.SECONDS);
+        );
+
+        latch.await(5, TimeUnit.SECONDS);
+        executor.shutdownNow();
+    }
+
+    @Test
+    public void testBackOffTimerStop() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(5);
+        final AtomicBoolean done = new AtomicBoolean(false);
+        final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
+        final BackOff backOff = BackOff.builder().delay(100).build();
+        final BackOffTimer timer = new BackOffTimer(executor);
+
+        BackOffTimer.Task task = timer.schedule(
+            backOff,
+            context -> {
+                Assert.assertEquals(BackOffContext.Status.Active, context.getStatus());
+
+                latch.countDown();
+
+                return false;
+            }
+        );
+
+        task.whenComplete(
+            (context, throwable) -> {
+                Assert.assertEquals(BackOffContext.Status.Inactive, context.getStatus());
+                done.set(true);
+            }
+        );
+
+        latch.await(2, TimeUnit.SECONDS);
+        task.cancel();
+        Assert.assertTrue(done.get());
 
         executor.shutdownNow();
     }
