@@ -26,7 +26,7 @@ public class BackOffTest {
     @Test
     public void testSimpleBackOff() {
         final BackOff backOff = BackOff.builder().build();
-        final BackOffContext context = new BackOffContext(backOff);
+        final BackOffTimerTask context = new BackOffTimerTask(backOff, null, t -> true);
 
         long delay;
 
@@ -42,7 +42,7 @@ public class BackOffTest {
     @Test
     public void testBackOffWithMultiplier() {
         final BackOff backOff = BackOff.builder().multiplier(1.5).build();
-        final BackOffContext context = new BackOffContext(backOff);
+        final BackOffTimerTask context = new BackOffTimerTask(backOff, null, t -> true);
 
         long delay = BackOff.DEFAULT_DELAY.toMillis();
         long oldDelay;
@@ -63,7 +63,7 @@ public class BackOffTest {
     @Test
     public void testBackOffWithMaxAttempts() {
         final BackOff backOff = BackOff.builder().maxAttempts(5L).build();
-        final BackOffContext context = new BackOffContext(backOff);
+        final BackOffTimerTask context = new BackOffTimerTask(backOff, null, t -> true);
 
         long delay;
 
@@ -83,7 +83,7 @@ public class BackOffTest {
     @Test
     public void testBackOffWithMaxTime() {
         final BackOff backOff = BackOff.builder().maxElapsedTime(9, TimeUnit.SECONDS).build();
-        final BackOffContext context = new BackOffContext(backOff);
+        final BackOffTimerTask context = new BackOffTimerTask(backOff, null, t -> true);
 
         long delay;
 
