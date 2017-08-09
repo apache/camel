@@ -94,6 +94,14 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "mock:end", 1);
     }
 
+    public void testParseSagaXml() throws Exception {
+        RouteDefinition route = assertOneRoute("saga.xml");
+        assertFrom(route, "direct:start");
+        SagaDefinition node = assertNthProcessorInstanceOf(SagaDefinition.class, route, 0);
+        assertNotNull(node.getCompensation());
+        assertChildTo(route, "mock:end", 2);
+    }
+
     public void testParseScriptXml() throws Exception {
         RouteDefinition route = assertOneRoute("script.xml");
         assertFrom(route, "direct:start");

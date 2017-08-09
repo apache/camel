@@ -215,6 +215,7 @@
     <module>camel-ldif-starter</module>
     <module>camel-leveldb-starter</module>
     <module>camel-linkedin-starter</module>
+    <module>camel-lra-starter</module>
     <module>camel-lucene-starter</module>
     <module>camel-lumberjack-starter</module>
     <module>camel-lzf-starter</module>

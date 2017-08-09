@@ -112,6 +112,11 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
         return true;
     }
 
+    @Override
+    public boolean isWrappingEntireOutput() {
+        return true;
+    }
+
     public String getRef() {
         return ref;
     }

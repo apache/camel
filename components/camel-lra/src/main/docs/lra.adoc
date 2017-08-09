@@ -1,0 +1,18 @@
+## LRA Component
+
+*Available as of Camel version 2.21.0*
+
+The LRA module provides bindings of the Saga EIP with any https://github.com/eclipse/microprofile-sandbox/tree/master/proposals/0009-LRA[Microprofile compatible LRA Coordinator (sandbox)].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-lra</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------

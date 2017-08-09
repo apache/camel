@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 286 in 197 JAR artifacts (19 deprecated)
+Number of Components: 287 in 197 JAR artifacts (19 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -686,6 +686,9 @@ Number of Components: 286 in 197 JAR artifacts (19 deprecated)
 | link:camel-rss/src/main/docs/rss-component.adoc[RSS] (camel-rss) +
 `rss:feedUri` | 2.0 | The rss component is used for consuming RSS feeds.
 
+| link:../camel-core/src/main/docs/saga-component.adoc[Saga] (camel-core) +
+`saga:action` | 2.21 | The default saga endpoint.
+
 | link:camel-salesforce/camel-salesforce-component/src/main/docs/salesforce-component.adoc[Salesforce] (camel-salesforce) +
 `salesforce:operationName:topicName` | 2.12 | The salesforce component is used for integrating Camel with the massive Salesforce API.
 
@@ -1044,7 +1047,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 38 in 38 JAR artifacts (13 deprecated)
+Number of Miscellaneous Components: 39 in 39 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1075,6 +1078,8 @@ Number of Miscellaneous Components: 38 in 38 JAR artifacts (13 deprecated)
 | link:camel-kura/src/main/docs/kura.adoc[Kura] (camel-kura) | 2.15 | Using Camel with Eclipse Kura (OSGi)
 
 | link:camel-leveldb/src/main/docs/leveldb.adoc[LevelDB] (camel-leveldb) | 2.10 | Using LevelDB as persistent EIP store
+
+| link:camel-lra/src/main/docs/lra.adoc[Lra] (camel-lra) | 2.21 | Camel saga binding for Long-Running-Action framework
 
 | link:camel-opentracing/src/main/docs/opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 

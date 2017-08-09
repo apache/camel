@@ -158,6 +158,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Whether this definition is wrapping the entire output.
+     * <p/>
+     * When a definition is wrapping the entire output, the check to ensure
+     * that a route definition is empty should be done on the wrapped output.
+     *
+     * @return <tt>true</tt> when wrapping the entire output.
+     */
+    public boolean isWrappingEntireOutput() {
+        return false;
+    }
+
+    /**
      * Override this in definition class and implement logic to create the processor
      * based on the definition model.
      */
@@ -2692,6 +2704,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public TransactedDefinition transacted(String ref) {
         TransactedDefinition answer = new TransactedDefinition();
         answer.setRef(ref);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Marks this route as participating to a saga.
+     *
+     * @return the saga definition
+     */
+    public SagaDefinition saga() {
+        SagaDefinition answer = new SagaDefinition();
         addOutput(answer);
         return answer;
     }
