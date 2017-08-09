@@ -169,6 +169,7 @@
     <module>camel-http4-starter</module>
     <module>camel-hystrix-starter</module>
     <module>camel-ical-starter</module>
+    <module>camel-iec60870-starter</module>
     <module>camel-ignite-starter</module>
     <module>camel-infinispan-starter</module>
     <module>camel-influxdb-starter</module>
