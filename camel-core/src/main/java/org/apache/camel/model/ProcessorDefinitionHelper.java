@@ -355,7 +355,7 @@ public final class ProcessorDefinitionHelper {
             return !outputs.isEmpty();
         }
         for (ProcessorDefinition output : outputs) {
-            if (output instanceof TransactedDefinition || output instanceof PolicyDefinition) {
+            if (output.isWrappingEntireOutput()) {
                 // special for those as they wrap entire output, so we should just check its output
                 return hasOutputs(output.getOutputs(), excludeAbstract);
             }

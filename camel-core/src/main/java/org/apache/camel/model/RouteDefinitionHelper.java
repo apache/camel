@@ -316,6 +316,8 @@ public final class RouteDefinitionHelper {
         initInterceptors(context, route, abstracts, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
         // then on completion
         initOnCompletions(abstracts, upper, onCompletions);
+        // then sagas
+        initSagas(abstracts, lower);
         // then transactions
         initTransacted(abstracts, lower);
         // then on exception
@@ -577,6 +579,29 @@ public final class RouteDefinitionHelper {
         }
 
         upper.addAll(completions);
+    }
+
+    private static void initSagas(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> lower) {
+        SagaDefinition saga = null;
+
+        // add to correct type
+        for (ProcessorDefinition<?> type : abstracts) {
+            if (type instanceof SagaDefinition) {
+                if (saga == null) {
+                    saga = (SagaDefinition) type;
+                } else {
+                    throw new IllegalArgumentException("The route can only have one saga defined");
+                }
+            }
+        }
+
+        if (saga != null) {
+            // the outputs should be moved to the transacted policy
+            saga.getOutputs().addAll(lower);
+            // and add it as the single output
+            lower.clear();
+            lower.add(saga);
+        }
     }
 
     private static void initTransacted(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> lower) {

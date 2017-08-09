@@ -76,6 +76,7 @@ RouteDefinition
 RouteContextRefDefinition
 RoutesDefinition
 RoutingSlipDefinition
+SagaDefinition
 SamplingDefinition
 ScriptDefinition
 SetBodyDefinition
