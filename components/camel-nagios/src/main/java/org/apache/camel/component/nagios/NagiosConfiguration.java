@@ -18,15 +18,15 @@ package org.apache.camel.component.nagios;
 
 import java.net.URI;
 
+import com.googlecode.jsendnsca.NagiosSettings;
+import com.googlecode.jsendnsca.encryption.Encryption;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
-
-import com.googlecode.jsendnsca.NagiosSettings;
-import com.googlecode.jsendnsca.encryption.Encryption;
+import org.apache.camel.util.StringHelper;
 
 /**
  * @version 
@@ -76,7 +76,7 @@ public class NagiosConfiguration implements Cloneable {
         if (nagiosSettings == null) {
 
             // validate parameters
-            ObjectHelper.notEmpty(host, "host", this);
+            StringHelper.notEmpty(host, "host", this);
             if (port <= 0) {
                 throw new IllegalArgumentException("Port must be a positive number on " + this);
             }

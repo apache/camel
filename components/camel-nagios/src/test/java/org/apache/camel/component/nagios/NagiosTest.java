@@ -19,6 +19,11 @@ package org.apache.camel.component.nagios;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.googlecode.jsendnsca.Level;
+import com.googlecode.jsendnsca.MessagePayload;
+import com.googlecode.jsendnsca.NagiosPassiveCheckSender;
+import com.googlecode.jsendnsca.PassiveCheckSender;
+
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -28,11 +33,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import com.googlecode.jsendnsca.Level;
-import com.googlecode.jsendnsca.MessagePayload;
-import com.googlecode.jsendnsca.NagiosPassiveCheckSender;
-import com.googlecode.jsendnsca.PassiveCheckSender;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

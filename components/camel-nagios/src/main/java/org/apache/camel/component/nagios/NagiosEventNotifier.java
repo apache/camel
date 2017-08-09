@@ -18,6 +18,12 @@ package org.apache.camel.component.nagios;
 
 import java.util.EventObject;
 
+import com.googlecode.jsendnsca.Level;
+import com.googlecode.jsendnsca.MessagePayload;
+import com.googlecode.jsendnsca.NagiosPassiveCheckSender;
+import com.googlecode.jsendnsca.NagiosSettings;
+import com.googlecode.jsendnsca.PassiveCheckSender;
+
 import org.apache.camel.management.event.CamelContextStartupFailureEvent;
 import org.apache.camel.management.event.CamelContextStopFailureEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
@@ -26,12 +32,6 @@ import org.apache.camel.management.event.ExchangeRedeliveryEvent;
 import org.apache.camel.management.event.ServiceStartupFailureEvent;
 import org.apache.camel.management.event.ServiceStopFailureEvent;
 import org.apache.camel.support.EventNotifierSupport;
-
-import com.googlecode.jsendnsca.Level;
-import com.googlecode.jsendnsca.MessagePayload;
-import com.googlecode.jsendnsca.NagiosPassiveCheckSender;
-import com.googlecode.jsendnsca.NagiosSettings;
-import com.googlecode.jsendnsca.PassiveCheckSender;
 
 /**
  * An {@link org.apache.camel.spi.EventNotifier} which sends alters to Nagios.
