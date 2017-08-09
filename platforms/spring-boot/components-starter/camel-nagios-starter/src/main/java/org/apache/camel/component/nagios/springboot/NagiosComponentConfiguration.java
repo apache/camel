@@ -17,7 +17,7 @@
 package org.apache.camel.component.nagios.springboot;
 
 import javax.annotation.Generated;
-import com.googlecode.jsendnsca.core.NagiosSettings;
+import com.googlecode.jsendnsca.NagiosSettings;
 import org.apache.camel.component.nagios.NagiosEncryptionMethod;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;

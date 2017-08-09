@@ -60,8 +60,8 @@
     </dependency>
 
     <dependency>
-      <groupId>com.googlecode</groupId>
-      <artifactId>jsendnsca-core</artifactId>
+      <groupId>com.github.jsendnsca</groupId>
+      <artifactId>jsendnsca</artifactId>
       <version>${jsendnsca-version}</version>
     </dependency>
 

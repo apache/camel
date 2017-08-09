@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.nagios;
 
-import com.googlecode.jsendnsca.core.Level;
-import com.googlecode.jsendnsca.core.MessagePayload;
-import com.googlecode.jsendnsca.core.NagiosPassiveCheckSender;
+
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,6 +25,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import com.googlecode.jsendnsca.Level;
+import com.googlecode.jsendnsca.MessagePayload;
+import com.googlecode.jsendnsca.NagiosPassiveCheckSender;
+import com.googlecode.jsendnsca.PassiveCheckSender;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,7 +41,7 @@ public class NagiosXorEncryptionTest extends CamelTestSupport {
     protected boolean canRun;
 
     @Mock
-    private NagiosPassiveCheckSender nagiosPassiveCheckSender = Mockito.mock(NagiosPassiveCheckSender.class);
+    private PassiveCheckSender nagiosPassiveCheckSender = Mockito.mock(NagiosPassiveCheckSender.class);
 
     @Before
     @Override
@@ -53,7 +56,7 @@ public class NagiosXorEncryptionTest extends CamelTestSupport {
             return;
         }
 
-        MessagePayload expectedPayload = new MessagePayload("localhost", Level.OK.ordinal(), context.getName(),  "Hello Nagios");
+        MessagePayload expectedPayload = new MessagePayload("localhost", Level.OK, context.getName(),  "Hello Nagios");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.allMessages().body().isInstanceOf(String.class);
