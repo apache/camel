@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
@@ -52,7 +51,6 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.backoff.BackOff;
 import org.apache.camel.util.backoff.BackOffContext;
@@ -190,6 +188,10 @@ public class SupervisingRouteController extends DefaultRouteController {
 
     public Collection<Filter> getFilters() {
         return Collections.unmodifiableList(filters);
+    }
+
+    public Optional<BackOffContext> getBackOffContext(String id) {
+        return routeManager.getBackOffContext(id);
     }
 
     // *********************************
@@ -337,40 +339,33 @@ public class SupervisingRouteController extends DefaultRouteController {
     private void doStopRoute(RouteHolder route,  boolean checker, ThrowingConsumer<RouteHolder, Exception> consumer) throws Exception {
         synchronized (lock) {
             if (checker) {
-                // remove them from checked routes so they don't get started by the
-                // routes check task as a manual operation on the routes indicates that
-                // the route is then managed manually
+                // remove it from checked routes so the route don't get started
+                // by the routes manager task as a manual operation on the routes
+                // indicates that the route is then managed manually
                 routeManager.release(route);
             }
 
-            ServiceStatus status = route.getStatus();
-            if (!status.isStoppable()) {
-                LOGGER.debug("Route {} status is {}, skipping", route.getId(), status);
-                return;
-            }
-
-            consumer.accept(route);
+            LOGGER.info("Route {} has been requested to stop: stop supervising it", route.getId());
 
             // Mark the route as un-managed
             route.getContext().setRouteController(null);
+
+            consumer.accept(route);
         }
     }
 
     private void doStartRoute(RouteHolder route, boolean checker, ThrowingConsumer<RouteHolder, Exception> consumer) throws Exception {
         synchronized (lock) {
-            ServiceStatus status = route.getStatus();
-            if (!status.isStartable()) {
-                LOGGER.debug("Route {} status is {}, skipping", route.getId(), status);
-                return;
-            }
+            // If a manual start is triggered, then the controller should take
+            // care that the route is started
+            route.getContext().setRouteController(this);
 
             try {
                 if (checker) {
+                    // remove it from checked routes as a manual start may trigger
+                    // a new back off task if start fails
                     routeManager.release(route);
                 }
-
-                // Mark the route as managed
-                route.getContext().setRouteController(this);
 
                 consumer.accept(route);
             } catch (Exception e) {
@@ -444,7 +439,7 @@ public class SupervisingRouteController extends DefaultRouteController {
 
     private class RouteManager {
         private final Logger logger;
-        private final ConcurrentMap<RouteHolder, CompletableFuture<BackOffContext>> routes;
+        private final ConcurrentMap<RouteHolder, BackOffTimer.Task> routes;
 
         RouteManager() {
             this.logger = LoggerFactory.getLogger(RouteManager.class);
@@ -461,9 +456,7 @@ public class SupervisingRouteController extends DefaultRouteController {
 
                     logger.info("Start supervising route: {} with back-off: {}", r.getId(), backOff);
 
-                    // Return this future as cancel does not have effect on the
-                    // computation (future chain)
-                    CompletableFuture<BackOffContext> future = timer.schedule(backOff, context -> {
+                    BackOffTimer.Task task = timer.schedule(backOff, context -> {
                         try {
                             logger.info("Try to restart route: {}", r.getId());
 
@@ -474,22 +467,19 @@ public class SupervisingRouteController extends DefaultRouteController {
                         }
                     });
 
-                    future.whenComplete((context, throwable) -> {
-                        if (context == null || context.isExhausted()) {
-                            // This indicates that the future has been cancelled
+                    task.whenComplete((context, throwable) -> {
+                        if (context == null || context.getStatus() != BackOffContext.Status.Active) {
+                            // This indicates that the task has been cancelled
                             // or that back-off retry is exhausted thus if the
-                            // route is not started it is moved out of the supervisor.
-
-                            if (context != null && context.isExhausted()) {
-                                LOGGER.info("Back-off for route {} is exhausted, no more attempts will be made", route.getId());
-                            }
+                            // route is not started it is moved out of the
+                            // supervisor control.
 
                             synchronized (lock) {
                                 final ServiceStatus status = route.getStatus();
+                                final boolean stopped = status.isStopped() || status.isStopping();
 
-                                if (status.isStopped() || status.isStopping()) {
-                                    LOGGER.info("Route {} has status {}, stop supervising it", route.getId(), status);
-
+                                if (context != null && context.getStatus() == BackOffContext.Status.Exhausted && stopped) {
+                                    LOGGER.info("Back-off for route {} is exhausted, no more attempts will be made and stop supervising it", route.getId());
                                     r.getContext().setRouteController(null);
                                 }
                             }
@@ -498,23 +488,32 @@ public class SupervisingRouteController extends DefaultRouteController {
                         routes.remove(r);
                     });
 
-                    return future;
+                    return task;
                 }
             );
         }
 
         boolean release(RouteHolder route) {
-            CompletableFuture<BackOffContext> future = routes.remove(route);
-            if (future != null) {
-                future.cancel(true);
+            BackOffTimer.Task task = routes.remove(route);
+            if (task != null) {
+                LOGGER.info("Cancel restart task for route {}", route.getId());
+                task.cancel();
             }
 
-            return future != null;
+            return task != null;
         }
 
         void clear() {
-            routes.forEach((k, v) -> v.cancel(true));
+            routes.values().forEach(BackOffTimer.Task::cancel);
             routes.clear();
+        }
+
+        public Optional<BackOffContext> getBackOffContext(String id) {
+            return routes.entrySet().stream()
+                .filter(e -> ObjectHelper.equal(e.getKey().getId(), id))
+                .findFirst()
+                .map(Map.Entry::getValue)
+                .map(BackOffTimer.Task::getContext);
         }
     }
 

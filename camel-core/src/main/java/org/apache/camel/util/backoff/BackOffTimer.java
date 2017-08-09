@@ -16,17 +16,25 @@
  */
 package org.apache.camel.util.backoff;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 
 import org.apache.camel.util.function.ThrowingFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A simple timer utility that use a linked {@link BackOff} to determine when
  * a task should be executed.
  */
 public class BackOffTimer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BackOffTimer.class);
+
     private final ScheduledExecutorService scheduler;
 
     public BackOffTimer(ScheduledExecutorService scheduler) {
@@ -37,8 +45,8 @@ public class BackOffTimer {
      * Schedule the given function/task to be executed some time in the future
      * according to the given backOff.
      */
-    public CompletableFuture<BackOffContext> schedule(BackOff backOff, ThrowingFunction<BackOffContext, Boolean, Exception> function) {
-        final Task task = new Task(backOff, function);
+    public Task schedule(BackOff backOff, ThrowingFunction<BackOffContext, Boolean, Exception> function) {
+        final TaskImpl task = new TaskImpl(backOff, function);
 
         long delay = task.getContext().next();
         if (delay != BackOff.NEVER) {
@@ -54,54 +62,107 @@ public class BackOffTimer {
     // TimerTask
     // ****************************************
 
-    private final class Task extends CompletableFuture<BackOffContext> implements Runnable {
+    public interface Task {
+        /**
+         * Gets the {@link BackOffContext} associated with this task.
+         */
+        BackOffContext getContext();
+
+        /**
+         * Cancel the task.
+         */
+        void cancel();
+
+        /**
+         * Action to execute when the context is completed (cancelled or exhausted)
+         *
+         * @param whenCompleted the consumer.
+         */
+        void whenComplete(BiConsumer<BackOffContext, Throwable> whenCompleted);
+    }
+
+    // ****************************************
+    // TimerTask
+    // ****************************************
+
+    private final class TaskImpl implements Task, Runnable {
         private final BackOffContext context;
         private final ThrowingFunction<BackOffContext, Boolean, Exception> function;
+        private final AtomicReference<ScheduledFuture<?>> futureRef;
+        private final List<BiConsumer<BackOffContext, Throwable>> consumers;
 
-        Task(BackOff backOff, ThrowingFunction<BackOffContext, Boolean, Exception> function) {
+        TaskImpl(BackOff backOff, ThrowingFunction<BackOffContext, Boolean, Exception> function) {
             this.context = new BackOffContext(backOff);
             this.function = function;
+            this.consumers = new ArrayList<>();
+            this.futureRef = new AtomicReference<>();
         }
 
         @Override
         public void run() {
-            if (context.isExhausted() || isDone() || isCancelled()) {
-                if (!isDone()) {
-                    complete();
-                }
+            if (context.getStatus() == BackOffContext.Status.Active) {
+                try {
+                    final long currentTime = System.currentTimeMillis();
 
-                return;
-            }
+                    context.setLastAttemptTime(currentTime);
 
-            try {
-                if (function.apply(context)) {
-                    long delay = context.next();
-                    if (context.isExhausted()) {
+                    if (function.apply(context)) {
+                        long delay = context.next();
+                        if (context.getStatus() != BackOffContext.Status.Active) {
+                            // if the call to next makes the context not more
+                            // active, signal task completion.
+                            complete();
+                        } else {
+                            context.setNextAttemptTime(currentTime + delay);
+
+                            // Cache the scheduled future so it can be cancelled
+                            // later by Task.cancel()
+                            futureRef.lazySet(scheduler.schedule(this, delay, TimeUnit.MILLISECONDS));
+                        }
+                    } else {
+                        // if the function return false no more attempts should
+                        // be made so stop the context.
+                        context.stop();
+
+                        // and signal the task as completed.
                         complete();
-                    } else if (!context.isExhausted() && !isDone() && !isCancelled()) {
-                        scheduler.schedule(this, delay, TimeUnit.MILLISECONDS);
                     }
-                } else {
-                    complete();
+                } catch (Exception e) {
+                    context.stop();
+                    consumers.forEach(c -> c.accept(context, e));
                 }
-            } catch (Exception e) {
-                completeExceptionally(e);
             }
         }
 
         @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
+        public BackOffContext getContext() {
+            return context;
+        }
+
+        @Override
+        public void cancel() {
             context.stop();
 
-            return super.cancel(mayInterruptIfRunning);
+            ScheduledFuture<?> future = futureRef.get();
+            if (future != null) {
+                future.cancel(true);
+            }
+
+            // signal task completion on cancel.
+            complete();
         }
 
-        boolean complete() {
-            return super.complete(context);
+        @Override
+        public void whenComplete(BiConsumer<BackOffContext, Throwable> whenCompleted) {
+            synchronized (this.consumers) {
+                consumers.add(whenCompleted);
+            }
         }
 
-        BackOffContext getContext() {
-            return context;
+        void complete() {
+            synchronized (this.consumers) {
+                consumers.forEach(c -> c.accept(context, null));
+            }
         }
     }
 }

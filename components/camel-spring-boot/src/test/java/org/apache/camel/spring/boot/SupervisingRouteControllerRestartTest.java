@@ -24,6 +24,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.SupervisingRouteController;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.util.backoff.BackOffContext;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -94,6 +95,10 @@ public class SupervisingRouteControllerRestartTest {
         // Wait for at lest one restart attempt.
         Thread.sleep(2000);
 
+        Assert.assertTrue(controller.getBackOffContext("jetty").isPresent());
+        Assert.assertEquals(BackOffContext.Status.Active, controller.getBackOffContext("jetty").get().getStatus());
+        Assert.assertTrue(controller.getBackOffContext("jetty").get().getCurrentAttempts() > 0);
+
         try {
             socket.close();
         } catch (Exception e) {
@@ -105,6 +110,7 @@ public class SupervisingRouteControllerRestartTest {
 
         Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("jetty"));
         Assert.assertNotNull(context.getRoute("jetty").getRouteContext().getRouteController());
+        Assert.assertFalse(controller.getBackOffContext("jetty").isPresent());
     }
 
     // *************************************
