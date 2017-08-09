@@ -106,12 +106,11 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
                 dataFormat = createDataFormat(routeContext);
                 if (dataFormat != null) {
                     // is enabled by default so assume true if null
-                    if (contentTypeHeader == null || contentTypeHeader) {
-                        try {
-                            setProperty(routeContext.getCamelContext(), dataFormat, "contentTypeHeader", Boolean.TRUE);
-                        } catch (Exception e) {
-                            // ignore as this option is optional and not all data formats support this
-                        }
+                    final boolean contentTypeHeader = this.contentTypeHeader == null || this.contentTypeHeader;
+                    try {
+                        setProperty(routeContext.getCamelContext(), dataFormat, "contentTypeHeader", contentTypeHeader);
+                    } catch (Exception e) {
+                        // ignore as this option is optional and not all data formats support this
                     }
                     // configure the rest of the options
                     configureDataFormat(dataFormat, routeContext.getCamelContext());
