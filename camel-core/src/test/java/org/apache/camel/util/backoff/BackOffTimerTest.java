@@ -81,7 +81,7 @@ public class BackOffTimerTest {
         task.whenComplete(
             (context, throwable) -> {
                 Assert.assertEquals(5, counter.get());
-                Assert.assertEquals(BackOffContext.Status.Exhausted, context.getStatus());
+                Assert.assertEquals(BackOffTimer.Task.Status.Exhausted, context.getStatus());
                 latch.countDown();
             }
         );
@@ -113,7 +113,7 @@ public class BackOffTimerTest {
         task.whenComplete(
             (context, throwable) -> {
                 Assert.assertTrue(counter.get() <= 5);
-                Assert.assertEquals(BackOffContext.Status.Exhausted, context.getStatus());
+                Assert.assertEquals(BackOffTimer.Task.Status.Exhausted, context.getStatus());
                 latch.countDown();
             }
         );
@@ -133,7 +133,7 @@ public class BackOffTimerTest {
         BackOffTimer.Task task = timer.schedule(
             backOff,
             context -> {
-                Assert.assertEquals(BackOffContext.Status.Active, context.getStatus());
+                Assert.assertEquals(BackOffTimer.Task.Status.Active, context.getStatus());
 
                 latch.countDown();
 
@@ -143,7 +143,7 @@ public class BackOffTimerTest {
 
         task.whenComplete(
             (context, throwable) -> {
-                Assert.assertEquals(BackOffContext.Status.Inactive, context.getStatus());
+                Assert.assertEquals(BackOffTimer.Task.Status.Inactive, context.getStatus());
                 done.set(true);
             }
         );

@@ -53,7 +53,6 @@ import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.backoff.BackOff;
-import org.apache.camel.util.backoff.BackOffContext;
 import org.apache.camel.util.backoff.BackOffTimer;
 import org.apache.camel.util.function.ThrowingConsumer;
 import org.slf4j.Logger;
@@ -190,7 +189,7 @@ public class SupervisingRouteController extends DefaultRouteController {
         return Collections.unmodifiableList(filters);
     }
 
-    public Optional<BackOffContext> getBackOffContext(String id) {
+    public Optional<BackOffTimer.Task> getBackOffContext(String id) {
         return routeManager.getBackOffContext(id);
     }
 
@@ -467,8 +466,8 @@ public class SupervisingRouteController extends DefaultRouteController {
                         }
                     });
 
-                    task.whenComplete((context, throwable) -> {
-                        if (context == null || context.getStatus() != BackOffContext.Status.Active) {
+                    task.whenComplete((backOffTask, throwable) -> {
+                        if (backOffTask == null || backOffTask.getStatus() != BackOffTimer.Task.Status.Active) {
                             // This indicates that the task has been cancelled
                             // or that back-off retry is exhausted thus if the
                             // route is not started it is moved out of the
@@ -478,7 +477,7 @@ public class SupervisingRouteController extends DefaultRouteController {
                                 final ServiceStatus status = route.getStatus();
                                 final boolean stopped = status.isStopped() || status.isStopping();
 
-                                if (context != null && context.getStatus() == BackOffContext.Status.Exhausted && stopped) {
+                                if (backOffTask != null && backOffTask.getStatus() == BackOffTimer.Task.Status.Exhausted && stopped) {
                                     LOGGER.info("Back-off for route {} is exhausted, no more attempts will be made and stop supervising it", route.getId());
                                     r.getContext().setRouteController(null);
                                 }
@@ -508,12 +507,11 @@ public class SupervisingRouteController extends DefaultRouteController {
             routes.clear();
         }
 
-        public Optional<BackOffContext> getBackOffContext(String id) {
+        public Optional<BackOffTimer.Task> getBackOffContext(String id) {
             return routes.entrySet().stream()
                 .filter(e -> ObjectHelper.equal(e.getKey().getId(), id))
                 .findFirst()
-                .map(Map.Entry::getValue)
-                .map(BackOffTimer.Task::getContext);
+                .map(Map.Entry::getValue);
         }
     }
 
