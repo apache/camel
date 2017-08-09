@@ -72,7 +72,7 @@ public class NagiosXorEncryptionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String uri = "nagios:127.0.0.1:25664?password=secret&encryptionMethod=Xor";
+                String uri = "nagios:127.0.0.1:25664?password=secret&encryption=Xor";
 
                 NagiosComponent nagiosComponent = new NagiosComponent();
                 nagiosComponent.setCamelContext(context);

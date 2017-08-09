@@ -18,7 +18,7 @@ package org.apache.camel.component.nagios.springboot;
 
 import javax.annotation.Generated;
 import com.googlecode.jsendnsca.NagiosSettings;
-import org.apache.camel.component.nagios.NagiosEncryptionMethod;
+import com.googlecode.jsendnsca.encryption.Encryption;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -90,7 +90,7 @@ public class NagiosComponentConfiguration
         /**
          * To specify an encryption method.
          */
-        private NagiosEncryptionMethod encryptionMethod;
+        private Encryption encryption;
 
         public NagiosSettings getNagiosSettings() {
             return nagiosSettings;
@@ -140,12 +140,12 @@ public class NagiosComponentConfiguration
             this.password = password;
         }
 
-        public NagiosEncryptionMethod getEncryptionMethod() {
-            return encryptionMethod;
+        public Encryption getEncryption() {
+            return encryption;
         }
 
-        public void setEncryptionMethod(NagiosEncryptionMethod encryptionMethod) {
-            this.encryptionMethod = encryptionMethod;
+        public void setEncryption(Encryption encryption) {
+            this.encryption = encryption;
         }
     }
 }
