@@ -18,14 +18,15 @@ package org.apache.camel.component.nagios;
 
 import java.net.URI;
 
-import com.googlecode.jsendnsca.core.Encryption;
-import com.googlecode.jsendnsca.core.NagiosSettings;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
+
+import com.googlecode.jsendnsca.NagiosSettings;
+import com.googlecode.jsendnsca.encryption.Encryption;
 
 /**
  * @version 
@@ -90,11 +91,11 @@ public class NagiosConfiguration implements Cloneable {
 
             if (encryptionMethod != null) {
                 if (NagiosEncryptionMethod.No == encryptionMethod) {
-                    nagiosSettings.setEncryptionMethod(Encryption.NO_ENCRYPTION);
+                    nagiosSettings.setEncryption(Encryption.NONE);
                 } else if (NagiosEncryptionMethod.Xor == encryptionMethod) {
-                    nagiosSettings.setEncryptionMethod(Encryption.XOR_ENCRYPTION);
+                    nagiosSettings.setEncryption(Encryption.XOR);
                 } else if (NagiosEncryptionMethod.TripleDes == encryptionMethod) {
-                    nagiosSettings.setEncryptionMethod(Encryption.TRIPLE_DES_ENCRYPTION);
+                    nagiosSettings.setEncryption(Encryption.TRIPLE_DES);
                 } else {
                     throw new IllegalArgumentException("Unknown encryption method: " + encryptionMethod);
                 }

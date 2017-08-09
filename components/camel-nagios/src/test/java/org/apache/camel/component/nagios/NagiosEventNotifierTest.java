@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.nagios;
 
-import com.googlecode.jsendnsca.core.MessagePayload;
-import com.googlecode.jsendnsca.core.NagiosPassiveCheckSender;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -25,6 +23,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import com.googlecode.jsendnsca.MessagePayload;
+import com.googlecode.jsendnsca.NagiosPassiveCheckSender;
+import com.googlecode.jsendnsca.PassiveCheckSender;
 
 import static org.mockito.Mockito.*;
 /**
@@ -34,7 +36,7 @@ public class NagiosEventNotifierTest extends CamelTestSupport {
     protected boolean canRun;
 
     @Mock
-    private NagiosPassiveCheckSender nagiosPassiveCheckSender = Mockito.mock(NagiosPassiveCheckSender.class);
+    private PassiveCheckSender nagiosPassiveCheckSender = Mockito.mock(NagiosPassiveCheckSender.class);
 
 
     @Override
