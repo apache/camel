@@ -29,7 +29,7 @@ public class ConnectionId {
         Objects.requireNonNull(host);
 
         if (port <= 0) {
-            throw new IllegalArgumentException(String.format("Port must be greater than 0"));
+            throw new IllegalArgumentException("Port must be greater than 0");
         }
 
         this.host = host;
