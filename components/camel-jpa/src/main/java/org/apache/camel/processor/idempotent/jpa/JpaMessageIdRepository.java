@@ -104,6 +104,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
                     processed.setCreatedAt(new Date());
                     entityManager.persist(processed);
                     entityManager.flush();
+                    entityManager.close();
                     return Boolean.TRUE;
                 } else {
                     return Boolean.FALSE;
@@ -166,6 +167,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
                     MessageProcessed processed = (MessageProcessed) list.get(0);
                     entityManager.remove(processed);
                     entityManager.flush();
+                    entityManager.close();
                     return Boolean.TRUE;
                 }
             }
@@ -204,6 +206,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
                         entityManager.remove(item);
                     }
                     entityManager.flush();
+                    entityManager.close();
                 }
                 return Boolean.TRUE;
             }
