@@ -113,6 +113,16 @@ public final class AtomixClusterClientService extends AbstractCamelClusterServic
     }
 
     @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        if (atomix != null) {
+            LOGGER.debug("Shutdown atomix client {}", atomix);
+            atomix.close().join();
+        }
+    }
+
+    @Override
     protected AtomixClusterView createView(String namespace) throws Exception {
         return new AtomixClusterView(this, namespace, getOrCreateClient(), configuration);
     }

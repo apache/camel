@@ -1,6 +1,6 @@
-# Camel Route Controller Example Spring Boot
+# Camel Supervising Route Controller Example Spring Boot
 
-This example shows how to work with a simple Apache Camel application using Spring Boot and a Route Controller.
+This example shows how to work with a simple Apache Camel application using Spring Boot and a Supervising Route Controller.
 
 ## How to run
 
