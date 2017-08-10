@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 96 (8 deprecated)
+Number of Examples: 97 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |=======================================================================
@@ -44,11 +44,13 @@ Number of Examples: 96 (8 deprecated)
 
 | link:camel-example-spring-boot/readme.adoc[Spring Boot] (camel-example-spring-boot) | Beginner | An example showing how to work with Camel and Spring Boot
 
+| link:camel-example-spring-boot-clustered-route-controller/readme.adoc[Spring Boot Clustered Route Controller] (camel-example-spring-boot-clustered-route-controller) | Beginner | An example showing how to work with Camel's Clustered Route Controller and Spring Boot
+
 | link:camel-example-spring-boot-live-reload/readme.adoc[Spring Boot Live Reload] (camel-example-spring-boot-live-reload) | Beginner | An example showing how to use the live reload feature of Spring Boot with Camel
 
 | link:camel-example-spring-boot-pojo/README.adoc[Spring Boot Pojo] (camel-example-spring-boot-pojo) | Beginner | An example showing how to work with Camel POJO routing with Spring Boot
 
-| link:camel-example-spring-boot-routecontroller/readme.adoc[Spring Boot Routecontroller] (camel-example-spring-boot-routecontroller) | Beginner | An example showing how to work with Camel Route Controller and Spring Boot
+| link:camel-example-spring-boot-supervising-route-controller/readme.adoc[Spring Boot Supervising Route Controller] (camel-example-spring-boot-supervising-route-controller) | Beginner | An example showing how to work with Camel's Supervising Route Controller and Spring Boot
 
 | link:camel-example-spring-javaconfig/README.md[Spring Java Config] (camel-example-spring-javaconfig) | Beginner | An example showing how to work with Camel and Spring Java Config
 
