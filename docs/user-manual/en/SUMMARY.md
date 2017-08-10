@@ -229,6 +229,8 @@
 	* [HTTP](http-component.adoc)
 	* [HTTP4](http4-component.adoc)
 	* [iBatis](ibatis-component.adoc)
+	* [IEC 60870 Client](iec60870-client-component.adoc)
+	* [IEC 60870-5-104 server](iec60870-server-component.adoc)
 	* [Ignite Cache](ignite-cache-component.adoc)
 	* [Ignite Compute](ignite-compute-component.adoc)
 	* [Ignite Events](ignite-events-component.adoc)
