@@ -125,6 +125,7 @@
         <include>org.apache.camel:camel-http4</include>
         <include>org.apache.camel:camel-ibatis</include>
         <include>org.apache.camel:camel-ical</include>
+        <include>org.apache.camel:camel-iec60870</include>
         <include>org.apache.camel:camel-infinispan</include>
         <include>org.apache.camel:camel-influxdb</include>
         <include>org.apache.camel:camel-ignite</include>
@@ -415,6 +416,7 @@
         <include>org.apache.camel:camel-http-starter</include>
         <include>org.apache.camel:camel-hystrix-starter</include>
         <include>org.apache.camel:camel-ical-starter</include>
+        <include>org.apache.camel:camel-iec60870-starter</include>
         <include>org.apache.camel:camel-ignite-starter</include>
         <include>org.apache.camel:camel-infinispan-starter</include>
         <include>org.apache.camel:camel-influxdb-starter</include>
