@@ -10,7 +10,7 @@ This example shows how to work with a simple Apache Camel application using Spri
 
 2. in a shell, run the cluster node
 +
-    mvn -pl cluster-bootstrap exec:java
+    mvn -pl cluster-bootstrap spring-boot:run
 
 3. in a separate shell, run the first camel node
 +
