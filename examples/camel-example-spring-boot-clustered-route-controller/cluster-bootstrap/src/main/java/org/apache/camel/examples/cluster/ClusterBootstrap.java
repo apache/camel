@@ -16,26 +16,21 @@
  */
 package org.apache.camel.examples.cluster;
 
-import io.atomix.AtomixReplica;
-import io.atomix.catalyst.transport.Address;
-import io.atomix.catalyst.transport.netty.NettyTransport;
-import io.atomix.copycat.server.storage.Storage;
-import io.atomix.copycat.server.storage.StorageLevel;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-public final class ClusterBootstrap {
-    private ClusterBootstrap() {
-    }
+//CHECKSTYLE:OFF
+/**
+ * A sample Spring Boot application that starts the Atomix boostsrap node.
+ */
+@SpringBootApplication
+public class ClusterBootstrap {
 
+    /**
+     * A main method to start this application.
+     */
     public static void main(String[] args) {
-        String address = System.getProperty("cluster.address", "127.0.0.1:8700");
-
-        AtomixReplica.builder(new Address(address))
-            .withTransport(new NettyTransport())
-            .withStorage(Storage.builder()
-                .withStorageLevel(StorageLevel.MEMORY)
-                .build())
-            .build()
-            .bootstrap()
-            .join();
+        SpringApplication.run(ClusterBootstrap.class, args);
     }
 }
+//CHECKSTYLE:ON
