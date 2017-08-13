@@ -38,7 +38,13 @@ public class SalesforceEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);
 
-    @UriPath(label = "producer", description = "The operation to use")
+    @UriPath(label = "producer", description = "The operation to use", enums = "getVersions,getResources,"
+        + "getGlobalObjects,getBasicInfo,getDescription,getSObject,createSObject,updateSObject,deleteSObject,"
+        + "getSObjectWithId,upsertSObject,deleteSObjectWithId,getBlobField,query,queryMore,queryAll,search,apexCall,"
+        + "recent,createJob,getJob,closeJob,abortJob,createBatch,getBatch,getAllBatches,getRequest,getResults,"
+        + "createBatchQuery,getQueryResultIds,getQueryResult,getRecentReports,getReportDescription,executeSyncReport,"
+        + "executeAsyncReport,getReportInstances,getReportResults,limits,approval,approvals,composite-tree,"
+        + "composite-batch")
     private final OperationName operationName;
     @UriPath(label = "consumer", description = "The name of the topic to use")
     private final String topicName;

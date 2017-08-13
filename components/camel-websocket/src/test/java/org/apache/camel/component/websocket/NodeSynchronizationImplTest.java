@@ -55,10 +55,10 @@ public class NodeSynchronizationImplTest {
 
         store1 = new MemoryWebsocketStore();
 
-        websocket1 = new DefaultWebsocket(sync, consumer);
+        websocket1 = new DefaultWebsocket(sync, null, consumer);
         websocket1.setConnectionKey(KEY_1);
 
-        websocket2 = new DefaultWebsocket(sync, consumer);
+        websocket2 = new DefaultWebsocket(sync, null, consumer);
         websocket2.setConnectionKey(KEY_2);
 
         // when(websocket1.getConnectionKey()).thenReturn(KEY_1);

@@ -101,6 +101,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String trace;
     @XmlAttribute @Metadata(defaultValue = "true")
     private String messageHistory;
+    @XmlAttribute @Metadata(defaultValue = "false")
+    private String logMask;
     @XmlAttribute
     private String logExhaustedMessageBody;
     @XmlAttribute
@@ -633,6 +635,17 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public String getLogMask() {
+        return logMask;
+    }
+
+    /**
+     * Sets whether security mask for Logging is enabled or not.
+     */
+    public void setLogMask(String logMask) {
+        this.logMask = logMask;
     }
 
     public String getLogExhaustedMessageBody() {

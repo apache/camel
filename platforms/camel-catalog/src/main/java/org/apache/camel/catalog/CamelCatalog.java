@@ -118,6 +118,9 @@ public interface CamelCatalog {
      * Maven repository to avoid internet access for offline environments.
      * <p/>
      * When loading a new version the cache will be invalidated.
+     * <p/>
+     * <b>Important:</b> When loading a new runtime provider version, then its strongly advised to
+     * load the same/corresponding version first using {@link #loadVersion(String)}.
      *
      * @param version  the Camel version such as <tt>2.17.1</tt>
      * @return <tt>true</tt> if the version was loaded, <tt>false</tt> if not.
@@ -140,6 +143,9 @@ public interface CamelCatalog {
      * Loading the runtime provider JAR of the given version of choice may require internet access
      * to download the JAR from Maven central. You can pre download the JAR and install in a local
      * Maven repository to avoid internet access for offline environments.
+     * <p/>
+     * <b>Important:</b> When loading a new runtime provider version, then its strongly advised to
+     * load the same/corresponding version first using {@link #loadVersion(String)}.
      *
      * @param groupId  the runtime provider Maven groupId
      * @param artifactId  the runtime provider Maven artifactId

@@ -252,6 +252,13 @@ public class CamelConfigurationProperties {
     private boolean messageHistory = true;
 
     /**
+     * Sets whether log mask is enabled or not.
+     *
+     * Default is false.
+     */
+    private boolean logMask = false;
+
+    /**
      * Sets whether to log exhausted message body with message history.
      *
      * Default is false.
@@ -635,6 +642,14 @@ public class CamelConfigurationProperties {
 
     public void setMessageHistory(boolean messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public boolean isLogMask() {
+        return logMask;
+    }
+
+    public void setLogMask(boolean logMask) {
+        this.logMask = logMask;
     }
 
     public boolean isLogExhaustedMessageBody() {

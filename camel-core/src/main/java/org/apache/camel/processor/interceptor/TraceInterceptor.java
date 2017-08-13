@@ -30,6 +30,7 @@ import org.apache.camel.impl.OnCompletionRouteNode;
 import org.apache.camel.impl.OnExceptionRouteNode;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.CatchDefinition;
+import org.apache.camel.model.Constants;
 import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
@@ -37,9 +38,11 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.processor.CamelLogProcessor;
+import org.apache.camel.processor.DefaultMaskingFormatter;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.util.ServiceHelper;
@@ -82,6 +85,17 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
 
     public void setRouteContext(RouteContext routeContext) {
         this.routeContext = routeContext;
+        prepareMaskingFormatter(routeContext);
+    }
+
+    private void prepareMaskingFormatter(RouteContext routeContext) {
+        if (routeContext.isLogMask()) {
+            MaskingFormatter formatter = routeContext.getCamelContext().getRegistry().lookupByNameAndType(Constants.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
+            if (formatter == null) {
+                formatter = new DefaultMaskingFormatter();
+            }
+            logger.setMaskingFormatter(formatter);
+        }
     }
 
     @Override

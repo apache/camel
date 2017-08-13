@@ -45,7 +45,10 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "advanced", description = "A ConnectionResource is an interface that allows for customization and container control of the ConnectionFactory."
                     + " * See Plugable Connection Resource Management for further details.")
     private ConnectionResource connectionResource;
-    @Metadata(label = "advanced", description = "Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides one implementation out of the box: default. The default strategy will safely marshal dots and hyphens (. and -). Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation.")
+    @Metadata(label = "advanced", description = "Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification."
+        + " Camel provides one implementation out of the box: default. The default strategy will safely marshal dots and hyphens (. and -)."
+        + " Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation"
+        + " of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation.")
     private JmsKeyFormatStrategy jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
     @Metadata(defaultValue = "1", description = "The maximum number of connections available to endpoints started under this component")
     private Integer connectionCount = 1;
@@ -55,17 +58,23 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     private TimedTaskManager timedTaskManager;
     @Metadata(label = "advanced", description = "To use a custom DestinationCreationStrategy.")
     private DestinationCreationStrategy destinationCreationStrategy;
-    @Metadata(label = "advanced", description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of <tt>javax.jms.Message</tt> objects when Camel is sending a JMS message.")
+    @Metadata(label = "advanced", description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances"
+        + " of <tt>javax.jms.Message</tt> objects when Camel is sending a JMS message.")
     private MessageCreatedStrategy messageCreatedStrategy;
-    @Metadata(label = "advanced", defaultValue = "true", description = "When using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource} then should each {@link javax.jms.Connection} be tested (calling start) before returned from the pool.")
+    @Metadata(label = "advanced", defaultValue = "true", description = "When using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}"
+        + " then should each {@link javax.jms.Connection} be tested (calling start) before returned from the pool.")
     private boolean connectionTestOnBorrow = true;
-    @Metadata(label = "security", secret = true, description = "The username to use when creating {@link javax.jms.Connection} when using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.")
+    @Metadata(label = "security", secret = true, description = "The username to use when creating {@link javax.jms.Connection} when using the"
+        + " default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.")
     private String connectionUsername;
-    @Metadata(label = "security", secret = true, description = "The password to use when creating {@link javax.jms.Connection} when using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.")
+    @Metadata(label = "security", secret = true, description = "The password to use when creating {@link javax.jms.Connection} when using the"
+        + " default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.")
     private String connectionPassword;
-    @Metadata(label = "advanced", description = "The client ID to use when creating {@link javax.jms.Connection} when using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.")
+    @Metadata(label = "advanced", description = "The client ID to use when creating {@link javax.jms.Connection} when using the"
+        + " default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.")
     private String connectionClientId;
-    @Metadata(label = "advanced", defaultValue = "5000", description = "The max wait time in millis to block and wait on free connection when the pool is exhausted when using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.")
+    @Metadata(label = "advanced", defaultValue = "5000", description = "The max wait time in millis to block and wait on free connection when the pool"
+        + " is exhausted when using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.")
     private long connectionMaxWait = 5000;
 
     public SjmsComponent() {

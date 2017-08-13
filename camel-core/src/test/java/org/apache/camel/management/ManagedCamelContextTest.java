@@ -91,6 +91,9 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         Boolean messageHistory = (Boolean) mbeanServer.getAttribute(on, "MessageHistory");
         assertEquals(Boolean.TRUE, messageHistory);
 
+        Boolean logMask = (Boolean) mbeanServer.getAttribute(on, "LogMask");
+        assertEquals(Boolean.FALSE, logMask);
+
         Integer total = (Integer) mbeanServer.getAttribute(on, "TotalRoutes");
         assertEquals(2, total.intValue());
 
@@ -304,8 +307,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         int pos2 = json.indexOf("groupDelay");
         assertTrue("LoggerName should come before groupDelay", pos < pos2);
 
-        assertEquals(29, StringHelper.countChar(json, '{'));
-        assertEquals(29, StringHelper.countChar(json, '}'));
+        assertEquals(30, StringHelper.countChar(json, '{'));
+        assertEquals(30, StringHelper.countChar(json, '}'));
 
         assertTrue(json.contains("\"scheme\": \"log\""));
         assertTrue(json.contains("\"label\": \"core,monitoring\""));

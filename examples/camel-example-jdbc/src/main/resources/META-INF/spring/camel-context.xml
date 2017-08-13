@@ -25,7 +25,7 @@
 		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <!--
-  Embedded in-memeory database setup.
+  Embedded in-memory database setup.
   -->
   <jdbc:embedded-database id="dataSource" type="DERBY">
     <jdbc:script location="classpath:create-derby.sql"/>

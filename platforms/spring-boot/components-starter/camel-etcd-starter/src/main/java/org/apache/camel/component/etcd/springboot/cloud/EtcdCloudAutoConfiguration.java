@@ -18,13 +18,13 @@ package org.apache.camel.component.etcd.springboot.cloud;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
-import org.apache.camel.component.etcd.EtcdConfiguration;
 import org.apache.camel.component.etcd.cloud.EtcdServiceDiscoveryFactory;
+import org.apache.camel.model.cloud.springboot.EtcdServiceCallServiceDiscoveryConfigurationCommon;
+import org.apache.camel.model.cloud.springboot.EtcdServiceCallServiceDiscoveryConfigurationProperties;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
@@ -44,12 +44,12 @@ import org.springframework.context.annotation.Lazy;
 @ConditionalOnBean(CamelAutoConfiguration.class)
 @Conditional(EtcdCloudAutoConfiguration.Condition.class)
 @AutoConfigureAfter(CamelAutoConfiguration.class)
-@EnableConfigurationProperties(EtcdCloudConfiguration.class)
+@EnableConfigurationProperties(EtcdServiceCallServiceDiscoveryConfigurationProperties.class)
 public class EtcdCloudAutoConfiguration {
     @Autowired
     private CamelContext camelContext;
     @Autowired
-    private EtcdCloudConfiguration configuration;
+    private EtcdServiceCallServiceDiscoveryConfigurationProperties configuration;
     @Autowired
     private ConfigurableBeanFactory beanFactory;
 
@@ -71,10 +71,9 @@ public class EtcdCloudAutoConfiguration {
     @PostConstruct
     public void postConstruct() {
         if (beanFactory != null) {
-            EtcdCloudConfiguration.ServiceDiscoveryConfiguration discovery = configuration.getServiceDiscovery();
             Map<String, Object> parameters = new HashMap<>();
 
-            for (Map.Entry<String, EtcdConfiguration> entry : discovery.getConfigurations().entrySet()) {
+            for (Map.Entry<String, EtcdServiceCallServiceDiscoveryConfigurationCommon> entry : configuration.getConfigurations().entrySet()) {
                 // clean up params
                 parameters.clear();
 
@@ -100,8 +99,8 @@ public class EtcdCloudAutoConfiguration {
     public static class Condition extends GroupCondition {
         public Condition() {
             super(
-                "camel.cloud",
-                "camel.cloud.etcd"
+                "camel.cloud.etcd",
+                "camel.cloud.etcd.service-discovery"
             );
         }
     }

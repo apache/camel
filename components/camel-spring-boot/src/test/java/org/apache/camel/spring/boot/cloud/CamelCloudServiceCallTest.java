@@ -69,16 +69,16 @@ public class CamelCloudServiceCallTest {
                 public void configure() throws Exception {
                     from("direct:start")
                         .serviceCall()
-                            .name("custom-svc-list/hello")
-                            .uri("netty4-http:http://custom-svc-list");
+                            .name("custom-svc-list")
+                            .uri("jetty:http://custom-svc-list/hello");
 
-                    from("netty4-http:http://localhost:9090/hello")
+                    from("jetty:http://localhost:9090/hello")
                         .transform()
                         .constant("9090");
-                    from("netty4-http:http://localhost:9091/hello")
+                    from("jetty:http://localhost:9091/hello")
                         .transform()
                         .constant("9091");
-                    from("netty4-http:http://localhost:9092/hello")
+                    from("jetty:http://localhost:9092/hello")
                         .transform()
                         .constant("9092");
                 }

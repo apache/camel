@@ -18,6 +18,7 @@ package org.apache.camel.catalog;
 
 import java.io.FileInputStream;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -296,6 +297,17 @@ public class CamelCatalogTest {
 
         String uri2 = catalog.asEndpointUriXml("jms", map, true);
         assertEquals("jms:foo?allowNullBody=true&amp;deliveryPersistent=false", uri2);
+    }
+
+    @Test
+    public void testAsEndpointUriRestUriTemplate() throws Exception {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("method", "get");
+        map.put("path", "api");
+        map.put("uriTemplate", "user/{id}");
+        String uri = catalog.asEndpointUri("rest", map, true);
+
+        assertEquals("rest:get:api:user/{id}", uri);
     }
 
     @Test

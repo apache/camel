@@ -94,15 +94,6 @@ public class ApprovalIntegrationTest extends AbstractApprovalIntegrationTest {
             approvalResult.size());
     }
 
-    @Override
-    protected RouteBuilder doCreateRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-            }
-        };
-    }
-
     @Parameters(name = "format = {0}")
     public static Iterable<String> formats() {
         return Arrays.asList("JSON", "XML");

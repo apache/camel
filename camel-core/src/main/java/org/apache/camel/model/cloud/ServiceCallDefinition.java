@@ -46,7 +46,6 @@ import org.apache.camel.impl.cloud.PassThroughServiceFilter;
 import org.apache.camel.impl.cloud.RandomServiceChooser;
 import org.apache.camel.impl.cloud.RoundRobinServiceChooser;
 import org.apache.camel.model.NoOutputDefinition;
-import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -95,7 +94,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
     @XmlElements({
         @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "chainedServiceDiscovery", type = ChainedServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "aggregatingServiceDiscovery", type = AggregatingServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
@@ -307,13 +306,6 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         this.expression = expression;
     }
 
-    /**
-     * Set a custom {@link Expression} using the {@link org.apache.camel.language.simple.SimpleLanguage}
-     */
-    public void setSimpleExpression(String expression) {
-        setExpression(new SimpleExpression(expression));
-    }
-
     public ServiceCallServiceDiscoveryConfiguration getServiceDiscoveryConfiguration() {
         return serviceDiscoveryConfiguration;
     }
@@ -483,14 +475,6 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     /**
-     * Set a custom {@link Expression} using the {@link org.apache.camel.language.simple.SimpleLanguage}
-     */
-    public ServiceCallDefinition simpleExpression(String expression) {
-        setExpression(new SimpleExpression(expression));
-        return this;
-    }
-
-    /**
      * Configures the ServiceDiscovery using the given configuration.
      */
     public ServiceCallDefinition serviceDiscoveryConfiguration(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
@@ -637,8 +621,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return this;
     }
 
-    public ChainedServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
-        ChainedServiceCallServiceDiscoveryConfiguration conf = new ChainedServiceCallServiceDiscoveryConfiguration(this);
+    public AggregatingServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
+        AggregatingServiceCallServiceDiscoveryConfiguration conf = new AggregatingServiceCallServiceDiscoveryConfiguration(this);
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
@@ -749,17 +733,33 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
         // The component is used to configure the default scheme to use (eg camel component name).
         // The component configured on EIP takes precedence vs configured on configuration.
-        String scheme = this.component;
-        if (scheme == null) {
+        String endpointScheme = this.component;
+        if (endpointScheme == null) {
             ServiceCallConfigurationDefinition conf = retrieveConfig(camelContext);
             if (conf != null) {
-                scheme = conf.getComponent();
+                endpointScheme = conf.getComponent();
             }
         }
-        if (scheme == null) {
+        if (endpointScheme == null) {
             ServiceCallConfigurationDefinition conf = retrieveDefaultConfig(camelContext);
             if (conf != null) {
-                scheme = conf.getComponent();
+                endpointScheme = conf.getComponent();
+            }
+        }
+
+        // The uri is used to tweak the uri.
+        // The uri configured on EIP takes precedence vs configured on configuration.
+        String endpointUri = this.uri;
+        if (endpointUri == null) {
+            ServiceCallConfigurationDefinition conf = retrieveConfig(camelContext);
+            if (conf != null) {
+                endpointUri = conf.getUri();
+            }
+        }
+        if (endpointUri == null) {
+            ServiceCallConfigurationDefinition conf = retrieveDefaultConfig(camelContext);
+            if (conf != null) {
+                endpointUri = conf.getUri();
             }
         }
 
@@ -769,8 +769,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return new DefaultServiceCallProcessor(
             camelContext,
             camelContext.resolvePropertyPlaceholders(name),
-            ObjectHelper.applyIfNotEmpty(scheme, camelContext::resolvePropertyPlaceholders, () -> ServiceCallConstants.DEFAULT_COMPONENT),
-            ObjectHelper.applyIfNotEmpty(uri, camelContext::resolvePropertyPlaceholders, () -> null),
+            ObjectHelper.applyIfNotEmpty(endpointScheme, camelContext::resolvePropertyPlaceholders, () -> ServiceCallConstants.DEFAULT_COMPONENT),
+            ObjectHelper.applyIfNotEmpty(endpointUri, camelContext::resolvePropertyPlaceholders, () -> null),
             pattern,
             loadBalancer,
             expression);

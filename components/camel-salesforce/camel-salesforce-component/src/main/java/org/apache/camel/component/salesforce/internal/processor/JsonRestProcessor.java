@@ -27,7 +27,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.salesforce.NotFoundBehaviour;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
+import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
@@ -171,8 +173,17 @@ public class JsonRestProcessor extends AbstractRestProcessor {
 
         // process JSON response for TypeReference
         try {
-            // do we need to un-marshal a response
-            if (responseEntity != null) {
+            final Message out = exchange.getOut();
+            final Message in = exchange.getIn();
+            out.copyFromWithNewBody(in, null);
+
+            if (ex != null) {
+                // if an exception is reported we should not loose it
+                if (shouldReport(ex)) {
+                    exchange.setException(ex);
+                }
+            } else if (responseEntity != null) {
+                // do we need to un-marshal a response
                 Object response = null;
                 Class<?> responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
                 if (responseClass != null) {
@@ -186,13 +197,8 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                         response = responseEntity;
                     }
                 }
-                exchange.getOut().setBody(response);
-            } else {
-                exchange.setException(ex);
+                out.setBody(response);
             }
-            // copy headers and attachments
-            exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-            exchange.getOut().getAttachmentObjects().putAll(exchange.getIn().getAttachmentObjects());
         } catch (IOException e) {
             String msg = "Error parsing JSON response: " + e.getMessage();
             exchange.setException(new SalesforceException(msg, e));
@@ -214,5 +220,4 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         }
 
     }
-
 }

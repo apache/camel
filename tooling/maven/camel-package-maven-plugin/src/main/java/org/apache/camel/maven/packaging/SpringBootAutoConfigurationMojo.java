@@ -39,13 +39,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
@@ -53,6 +51,8 @@ import org.apache.camel.maven.packaging.model.DataFormatOptionModel;
 import org.apache.camel.maven.packaging.model.EndpointOptionModel;
 import org.apache.camel.maven.packaging.model.LanguageModel;
 import org.apache.camel.maven.packaging.model.LanguageOptionModel;
+import org.apache.camel.maven.packaging.model.OtherModel;
+import org.apache.camel.maven.packaging.model.OtherOptionModel;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.commons.io.FileUtils;
@@ -71,12 +71,14 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
 import org.jboss.forge.roaster.model.util.Formatter;
 import org.jboss.forge.roaster.model.util.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
@@ -94,6 +96,7 @@ import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyDefau
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyJavaType;
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyType;
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getSafeValue;
+import static org.apache.camel.maven.packaging.JSonSchemaHelper.parseJsonSchema;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 
 /**
@@ -186,9 +189,318 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             return;
         }
 
+        executeModels();
         executeComponent();
         executeDataFormat();
         executeLanguage();
+    }
+
+    private void executeModels() throws MojoExecutionException, MojoFailureException {
+        final Set<File> files = PackageHelper.findJsonFiles(buildDir, p -> p.isDirectory() || p.getName().endsWith(".json"));
+
+        String json;
+
+        // Hystrix
+        json = loadModelJson(files, "hystrixConfiguration");
+        if (json != null) {
+            OtherModel model = generateOtherModel(json);
+
+            int pos = model.getJavaType().lastIndexOf(".");
+            String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+            // Generate properties, auto-configuration happens in camel-hystrix-starter
+            createOtherModelConfigurationSource(pkg, model, "camel.hystrix", true);
+        }
+
+        // Consul
+        json = loadModelJson(files, "consulServiceDiscovery");
+        if (json != null) {
+            OtherModel model = generateOtherModel(json);
+
+            int pos = model.getJavaType().lastIndexOf(".");
+            String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+            // Generate properties, auto-configuration happens in camel-consul-starter
+            createOtherModelConfigurationSource(pkg, model, "camel.cloud.consul.service-discovery", true);
+        }
+
+        // DNS
+        json = loadModelJson(files, "dnsServiceDiscovery");
+        if (json != null) {
+            OtherModel model = generateOtherModel(json);
+
+            int pos = model.getJavaType().lastIndexOf(".");
+            String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+            // Generate properties, auto-configuration happens in camel-dns-starter
+            createOtherModelConfigurationSource(pkg, model, "camel.cloud.dns.service-discovery", true);
+        }
+
+        // Etcd
+        json = loadModelJson(files, "etcdServiceDiscovery");
+        if (json != null) {
+            OtherModel model = generateOtherModel(json);
+
+            int pos = model.getJavaType().lastIndexOf(".");
+            String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+            // Generate properties, auto-configuration happens in camel-etcd-starter
+            createOtherModelConfigurationSource(pkg, model, "camel.cloud.etcd.service-discovery", true);
+        }
+
+        // Kubernetes
+        json = loadModelJson(files, "kubernetesServiceDiscovery");
+        if (json != null) {
+            OtherModel model = generateOtherModel(json);
+
+            int pos = model.getJavaType().lastIndexOf(".");
+            String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+            // Generate properties, auto-configuration happens in camel-kubernetes-starter
+            createOtherModelConfigurationSource(pkg, model, "camel.cloud.kubernetes.service-discovery", true);
+        }
+
+        // Rest
+        json = loadModelJson(files, "restConfiguration");
+        if (json != null) {
+            OtherModel model = generateOtherModel(json);
+
+            int pos = model.getJavaType().lastIndexOf(".");
+            String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+            // Generate properties, auto-configuration happens in camel-kubernetes-starter
+            createRestConfigurationSource(pkg, model, "camel.rest");
+            createRestModuleAutoConfigurationSource(pkg, model);
+        }
+    }
+
+    private void createOtherModelConfigurationSource(String packageName, OtherModel model, String propertiesPrefix, boolean generatedNestedConfig) throws MojoFailureException {
+        final int pos = model.getJavaType().lastIndexOf(".");
+        final String commonName = model.getJavaType().substring(pos + 1) + (generatedNestedConfig ? "Common" : "Properties");
+        final String configName = model.getJavaType().substring(pos + 1) + (generatedNestedConfig ? "Properties" : null);
+
+        // Common base class
+        JavaClassSource commonClass = Roaster.create(JavaClassSource.class);
+        commonClass.setPackage(packageName);
+        commonClass.setName(commonName);
+
+        String doc = "Generated by camel-package-maven-plugin - do not edit this file!";
+        if (!Strings.isBlank(model.getDescription())) {
+            doc = model.getDescription() + "\n\n" + doc;
+        }
+        commonClass.getJavaDoc().setFullText(doc);
+
+        for (OtherOptionModel option : model.getOptions()) {
+            String type = option.getJavaType();
+            String name = option.getName();
+
+            if ("id".equalsIgnoreCase(name) || "parent".equalsIgnoreCase(name) || "camelContext".equalsIgnoreCase(name)) {
+                // Skip them as they should not be set via spring boot
+                continue;
+            }
+
+            if ("java.util.List<org.apache.camel.model.PropertyDefinition>".equalsIgnoreCase(type)) {
+                type = "java.util.Map<java.lang.String, java.lang.String>";
+            }
+
+            // generate inner class for non-primitive options
+            PropertySource<JavaClassSource> prop = commonClass.addProperty(type, option.getName());
+            if (!Strings.isBlank(option.getDescription())) {
+                prop.getField().getJavaDoc().setFullText(option.getDescription());
+            }
+            if (!Strings.isBlank(option.getDefaultValue())) {
+                if ("java.lang.String".equals(type)) {
+                    prop.getField().setStringInitializer(option.getDefaultValue());
+                } else if ("long".equals(type) || "java.lang.Long".equals(type)) {
+                    // the value should be a Long number
+                    String value = option.getDefaultValue() + "L";
+                    prop.getField().setLiteralInitializer(value);
+                } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
+                    prop.getField().setLiteralInitializer(option.getDefaultValue());
+                } else if (!Strings.isBlank(option.getEnums())) {
+                    String enumShortName = type.substring(type.lastIndexOf(".") + 1);
+                    prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
+                    commonClass.addImport(model.getJavaType());
+                }
+            }
+        }
+
+        sortImports(commonClass);
+        writeSourceIfChanged(commonClass, packageName.replaceAll("\\.", "\\/") + "/" + commonName + ".java");
+
+        // Config class
+        if (generatedNestedConfig) {
+            JavaClassSource configClass = Roaster.create(JavaClassSource.class);
+            configClass.setPackage(packageName);
+            configClass.setName(configName);
+            configClass.extendSuperType(commonClass);
+            configClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", propertiesPrefix);
+            configClass.addImport(Map.class);
+            configClass.addImport(HashMap.class);
+            configClass.removeImport(commonClass);
+
+            configClass.addField()
+                .setName("enabled")
+                .setType(boolean.class)
+                .setPrivate()
+                .setLiteralInitializer("true")
+                .getJavaDoc().setFullText("Enable the component");
+            configClass.addField("Map<String, " + commonName + "> configurations = new HashMap<>()")
+                .setPrivate()
+                .getJavaDoc().setFullText("Define additional configuration definitions");
+
+            MethodSource<JavaClassSource> method;
+
+            method = configClass.addMethod();
+            method.setName("getConfigurations");
+            method.setReturnType("Map<String, " + commonName + ">");
+            method.setPublic();
+            method.setBody("return configurations;");
+
+            method = configClass.addMethod();
+            method.setName("isEnabled");
+            method.setReturnType(boolean.class);
+            method.setPublic();
+            method.setBody("return enabled;");
+
+            method = configClass.addMethod();
+            method.setName("setEnabled");
+            method.addParameter(boolean.class, "enabled");
+            method.setPublic();
+            method.setBody("this.enabled = enabled;");
+
+
+            sortImports(configClass);
+            writeSourceIfChanged(configClass, packageName.replaceAll("\\.", "\\/") + "/" + configName + ".java");
+        }
+    }
+
+    private void createRestConfigurationSource(String packageName, OtherModel model, String propertiesPrefix) throws MojoFailureException {
+        final int pos = model.getJavaType().lastIndexOf(".");
+        final String className = model.getJavaType().substring(pos + 1) + "Properties";
+
+        // Common base class
+        JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
+        javaClass.setPackage(packageName);
+        javaClass.setName(className);
+        javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", propertiesPrefix);
+
+        String doc = "Generated by camel-package-maven-plugin - do not edit this file!";
+        if (!Strings.isBlank(model.getDescription())) {
+            doc = model.getDescription() + "\n\n" + doc;
+        }
+        javaClass.getJavaDoc().setFullText(doc);
+
+        for (OtherOptionModel option : model.getOptions()) {
+            String type = option.getJavaType();
+            String name = option.getName();
+
+            if ("id".equalsIgnoreCase(name) || "parent".equalsIgnoreCase(name) || "camelContext".equalsIgnoreCase(name)) {
+                // Skip them as they should not be set via spring boot
+                continue;
+            }
+
+            if ("java.util.List<org.apache.camel.model.PropertyDefinition>".equalsIgnoreCase(type)) {
+                type = "java.util.Map<java.lang.String, java.lang.String>";
+            }
+
+            if ("enableCORS".equalsIgnoreCase(name)) {
+                name = "enableCors";
+            }
+
+            // generate inner class for non-primitive options
+            PropertySource<JavaClassSource> prop = javaClass.addProperty(type, name);
+            if (!Strings.isBlank(option.getDescription())) {
+                prop.getField().getJavaDoc().setFullText(option.getDescription());
+            }
+            if (!Strings.isBlank(option.getDefaultValue())) {
+                if ("java.lang.String".equals(type)) {
+                    prop.getField().setStringInitializer(option.getDefaultValue());
+                } else if ("long".equals(type) || "java.lang.Long".equals(type)) {
+                    // the value should be a Long number
+                    String value = option.getDefaultValue() + "L";
+                    prop.getField().setLiteralInitializer(value);
+                } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
+                    prop.getField().setLiteralInitializer(option.getDefaultValue());
+                } else if (!Strings.isBlank(option.getEnums())) {
+                    String enumShortName = type.substring(type.lastIndexOf(".") + 1);
+                    prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
+                    javaClass.addImport(model.getJavaType());
+                }
+            }
+        }
+
+        sortImports(javaClass);
+        writeSourceIfChanged(javaClass, packageName.replaceAll("\\.", "\\/") + "/" + className + ".java");
+    }
+
+    private void createRestModuleAutoConfigurationSource(String packageName, OtherModel model) throws MojoFailureException {
+        final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
+        final int pos = model.getJavaType().lastIndexOf(".");
+        final String name = model.getJavaType().substring(pos + 1) + "AutoConfiguration";
+        final String configType = model.getJavaType().substring(pos + 1) + "Properties";
+
+        javaClass.setPackage(packageName);
+        javaClass.setName(name);
+
+        String doc = "Generated by camel-package-maven-plugin - do not edit this file!";
+        javaClass.getJavaDoc().setFullText(doc);
+
+        javaClass.addAnnotation(Configuration.class);
+        javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.spring.boot.CamelAutoConfiguration");
+        javaClass.addAnnotation(ConditionalOnProperty.class).setStringValue("name", "camel.rest.enabled").setLiteralValue("matchIfMissing", "true");
+        javaClass.addAnnotation(AutoConfigureAfter.class).setStringValue("name", "org.apache.camel.spring.boot.CamelAutoConfiguration");
+        javaClass.addAnnotation(EnableConfigurationProperties.class).setLiteralValue("value", configType + ".class");
+
+        javaClass.addImport("java.util.Map");
+        javaClass.addImport("java.util.HashMap");
+        javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
+        javaClass.addImport("org.apache.camel.CamelContext");
+        javaClass.addImport("org.apache.camel.model.rest.RestConstants");
+        javaClass.addImport("org.apache.camel.spi.RestConfiguration");
+
+        javaClass.addField()
+            .setName("camelContext")
+            .setType("org.apache.camel.CamelContext")
+            .setPrivate()
+            .addAnnotation(Autowired.class);
+        javaClass.addField()
+            .setName("config")
+            .setType(configType)
+            .setPrivate()
+            .addAnnotation(Autowired.class);
+
+        MethodSource<JavaClassSource> method;
+
+        // Configuration
+        method = javaClass.addMethod();
+        method.setName("configure" + model.getShortJavaType());
+        method.setPublic();
+        method.addThrows(Exception.class);
+        method.setReturnType("org.apache.camel.spi.RestConfiguration");
+        method.addAnnotation(Lazy.class);
+        method.addAnnotation(Bean.class).setLiteralValue("name", "RestConstants.DEFAULT_REST_CONFIGURATION_ID");
+        method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
+        method.addAnnotation(ConditionalOnMissingBean.class);
+        method.setBody(""
+            + "Map<String, Object> properties = new HashMap<>();\n"
+            + "IntrospectionSupport.getProperties(config, properties, null, false);\n"
+            + "\n"
+            + "RestConfiguration definition = new RestConfiguration();\n"
+            + "IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), definition, properties);\n"
+            + "\n"
+            + "// Workaround for spring-boot properties name as It would appear\n"
+            + "// as enable-c-o-r-s if left uppercase in Configuration\n"
+            + "definition.setEnableCORS(config.getEnableCors());\n"
+            + "\n"
+            + "return definition;"
+        );
+
+        sortImports(javaClass);
+
+        String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
+        writeSourceIfChanged(javaClass, fileName);
+        writeComponentSpringFactorySource(packageName, name);
     }
 
     private void executeComponent() throws MojoExecutionException, MojoFailureException {
@@ -1226,6 +1538,23 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         return code;
     }
 
+    private static String loadModelJson(Set<File> jsonFiles, String modelName) {
+        try {
+            for (File file : jsonFiles) {
+                if (file.getName().equals(modelName + ".json")) {
+                    String json = loadText(new FileInputStream(file));
+                    boolean isModel = json.contains("\"kind\": \"model\"");
+                    if (isModel) {
+                        return json;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
     private static String loadComponentJson(Set<File> jsonFiles, String componentName) {
         try {
             for (File file : jsonFiles) {
@@ -1400,6 +1729,39 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
 
         return language;
+    }
+
+    private OtherModel generateOtherModel(String json) {
+        List<Map<String, String>> rows = parseJsonSchema("model", json, false);
+
+        OtherModel model = new OtherModel();
+        model.setName(getSafeValue("name", rows));
+        model.setTitle(getSafeValue("title", rows));
+        model.setDescription(getSafeValue("description", rows));
+        model.setJavaType(getSafeValue("javaType", rows));
+        model.setLabel(getSafeValue("label", rows));
+        model.setDeprecated(getSafeValue("deprecated", rows));
+
+        rows = parseJsonSchema("properties", json, true);
+        for (Map<String, String> row : rows) {
+            OtherOptionModel option = new OtherOptionModel();
+            option.setName(getSafeValue("name", row));
+            option.setDisplayName(getSafeValue("displayName", row));
+            option.setKind(getSafeValue("kind", row));
+            option.setGroup(getSafeValue("group", row));
+            option.setRequired(getSafeValue("required", row));
+            option.setType(getSafeValue("type", row));
+            option.setJavaType(getSafeValue("javaType", row));
+            option.setEnums(getSafeValue("enum", row));
+            option.setDeprecated(getSafeValue("deprecated", row));
+            option.setDefaultValue(getSafeValue("defaultValue", row));
+            option.setDescription(getSafeValue("description", row));
+            option.setEnums(getSafeValue("enums", row));
+
+            model.addOptionModel(option);
+        }
+
+        return model;
     }
 
     private List<String> findComponentNames() {

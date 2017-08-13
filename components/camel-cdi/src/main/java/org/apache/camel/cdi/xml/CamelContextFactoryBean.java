@@ -81,6 +81,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private String messageHistory;
 
     @XmlAttribute
+    private String logMask;
+
+    @XmlAttribute
     private String logExhaustedMessageBody;
 
     @XmlAttribute
@@ -541,6 +544,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public String getLogMask() {
+        return logMask;
+    }
+
+    public void setLogMask(String logMask) {
+        this.logMask = logMask;
     }
 
     @Override

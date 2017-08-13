@@ -100,6 +100,7 @@
     <module>camel-couchdb</module>
     <module>camel-crypto</module>
     <module>camel-csv</module>
+    <module>camel-digitalocean</module>
     <module>camel-disruptor</module>
     <module>camel-dns</module>
     <module>camel-docker</module>

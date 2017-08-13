@@ -22,16 +22,12 @@ import javax.annotation.PostConstruct;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.hystrix.processor.HystrixConstants;
-import org.apache.camel.model.HystrixConfigurationCommon;
 import org.apache.camel.model.HystrixConfigurationDefinition;
+import org.apache.camel.model.springboot.HystrixConfigurationDefinitionCommon;
+import org.apache.camel.model.springboot.HystrixConfigurationDefinitionProperties;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.util.IntrospectionSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -50,21 +46,14 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(name = "camel.hystrix.enabled", matchIfMissing = true)
 @ConditionalOnBean(value = CamelAutoConfiguration.class)
 @AutoConfigureAfter(value = CamelAutoConfiguration.class)
-@EnableConfigurationProperties(HystrixConfiguration.class)
-public class HystrixAutoConfiguration implements BeanFactoryAware {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HystrixAutoConfiguration.class);
-
-    private BeanFactory beanFactory;
-
+@EnableConfigurationProperties(HystrixConfigurationDefinitionProperties.class)
+public class HystrixAutoConfiguration {
+    @Autowired
+    private ConfigurableBeanFactory beanFactory;
     @Autowired
     private CamelContext camelContext;
     @Autowired
-    private HystrixConfiguration config;
-
-    @Override
-    public void setBeanFactory(BeanFactory factory) throws BeansException {
-        beanFactory = factory;
-    }
+    private HystrixConfigurationDefinitionProperties config;
 
     @Bean(name = HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID)
     @ConditionalOnClass(CamelContext.class)
@@ -73,7 +62,6 @@ public class HystrixAutoConfiguration implements BeanFactoryAware {
         Map<String, Object> properties = new HashMap<>();
 
         IntrospectionSupport.getProperties(config, properties, null, false);
-
         HystrixConfigurationDefinition definition = new HystrixConfigurationDefinition();
         IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), definition, properties);
 
@@ -81,16 +69,14 @@ public class HystrixAutoConfiguration implements BeanFactoryAware {
     }
 
     @PostConstruct
-    public void addHystrixConfigurations() {
-        if (!(beanFactory instanceof ConfigurableBeanFactory)) {
-            LOGGER.warn("BeanFactory is not of type ConfigurableBeanFactory");
+    public void postConstruct() {
+        if (beanFactory == null) {
             return;
         }
 
-        final ConfigurableBeanFactory factory = (ConfigurableBeanFactory) beanFactory;
-        final Map<String, Object> properties = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
 
-        for (Map.Entry<String, HystrixConfigurationCommon> entry : config.getConfigurations().entrySet()) {
+        for (Map.Entry<String, HystrixConfigurationDefinitionCommon> entry : config.getConfigurations().entrySet()) {
 
             // clear the properties map for reuse
             properties.clear();
@@ -103,7 +89,7 @@ public class HystrixAutoConfiguration implements BeanFactoryAware {
                 IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), definition, properties);
 
                 // Registry the definition
-                factory.registerSingleton(entry.getKey(), definition);
+                beanFactory.registerSingleton(entry.getKey(), definition);
 
             } catch (Exception e) {
                 throw new BeanCreationException(entry.getKey(), e);

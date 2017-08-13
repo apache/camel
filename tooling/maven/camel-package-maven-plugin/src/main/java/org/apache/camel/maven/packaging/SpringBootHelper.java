@@ -71,6 +71,4 @@ public final class SpringBootHelper {
             throw new IllegalStateException("Error while getting directory", e);
         }
     }
-
-
 }

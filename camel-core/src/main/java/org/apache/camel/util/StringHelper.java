@@ -647,5 +647,31 @@ public final class StringHelper {
         return changed;
     }
 
+    /**
+     * Removes the leading and trailing whitespace and if the resulting
+     * string is empty returns {@code null}. Examples:
+     * <p>
+     * Examples:
+     * <blockquote><pre>
+     * trimToNull("abc") -> "abc"
+     * trimToNull(" abc") -> "abc"
+     * trimToNull(" abc ") -> "abc"
+     * trimToNull(" ") -> null
+     * trimToNull("") -> null
+     * </pre></blockquote>
+     */
+    public static String trimToNull(final String given) {
+        if (given == null) {
+            return null;
+        }
+
+        final String trimmed = given.trim();
+
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+
+        return trimmed;
+    }
 
 }

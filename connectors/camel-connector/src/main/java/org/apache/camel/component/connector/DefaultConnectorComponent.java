@@ -35,6 +35,8 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.URISupport.sanitizeUri;
+
 /**
  * Base class for Camel Connector components.
  */
@@ -61,7 +63,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         // clean-up parameters so that validation won't fail later on
         // in DefaultConnectorComponent.validateParameters()
         parameters.clear();
-        
+
         String scheme = model.getBaseScheme();
 
         // now create the endpoint instance which either happens with a new
@@ -72,7 +74,10 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         // create the uri of the base component
         String delegateUri = createEndpointUri(scheme, options);
         Endpoint delegate = getCamelContext().getEndpoint(delegateUri);
-        log.debug("Connector resolved: {} -> {}", uri, delegateUri);
+        if (log.isInfoEnabled()) {
+            // the uris can have sensitive information so sanitize
+            log.info("Connector resolved: {} -> {}", sanitizeUri(uri), sanitizeUri(delegateUri));
+        }
 
         return new DefaultConnectorEndpoint(uri, this, delegate, model.getInputDataType(), model.getOutputDataType());
     }
@@ -147,9 +152,9 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
             return (scope, map) -> {
                 return ResultBuilder.withStatusAndScope(ComponentVerifier.Result.Status.UNSUPPORTED, scope)
                     .error(
-                        ResultErrorBuilder.withCode("unsupported")
-                            .attribute("camel.connector.name", getConnectorName())
-                            .attribute("camel.component.name", getComponentName())
+                        ResultErrorBuilder.withCode(ComponentVerifier.VerificationError.StandardCode.UNSUPPORTED)
+                            .detail("camel_connector_name", getConnectorName())
+                            .detail("camel_component_name", getComponentName())
                             .build())
                     .build();
             };

@@ -23,12 +23,12 @@ import org.apache.camel.ComponentVerifier;
 public class DefaultResult implements ComponentVerifier.Result {
     private final ComponentVerifier.Scope scope;
     private final Status status;
-    private final List<ComponentVerifier.Error> errors;
+    private final List<ComponentVerifier.VerificationError> verificationErrors;
 
-    public DefaultResult(ComponentVerifier.Scope scope, Status status, List<ComponentVerifier.Error> errors) {
+    public DefaultResult(ComponentVerifier.Scope scope, Status status, List<ComponentVerifier.VerificationError> verificationErrors) {
         this.scope = scope;
         this.status = status;
-        this.errors = errors;
+        this.verificationErrors = verificationErrors;
     }
 
     @Override
@@ -42,16 +42,16 @@ public class DefaultResult implements ComponentVerifier.Result {
     }
 
     @Override
-    public List<ComponentVerifier.Error> getErrors() {
-        return errors;
+    public List<ComponentVerifier.VerificationError> getErrors() {
+        return verificationErrors;
     }
 
     @Override
     public String toString() {
         return "DefaultResult{"
-            + "scope=" + scope
-            + ", status=" + status
-            + ", errors=" + errors
-            + '}';
+               + "scope=" + scope
+               + ", status=" + status
+               + ", errors=" + verificationErrors
+               + '}';
     }
 }

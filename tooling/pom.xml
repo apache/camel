@@ -42,6 +42,7 @@
     <module>camel-route-parser</module>
     <module>maven</module>
     <module>camel-manual</module>
+    <module>swagger-rest-dsl-generator</module>
   </modules>
 
   <!-- profiles>

@@ -727,6 +727,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getMessageHistory();
 
+    public abstract String getLogMask();
+
     public abstract String getLogExhaustedMessageBody();
 
     public abstract String getStreamCache();
@@ -821,6 +823,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getMessageHistory() != null) {
             ctx.setMessageHistory(CamelContextHelper.parseBoolean(getContext(), getMessageHistory()));
+        }
+        if (getLogMask() != null) {
+            ctx.setLogMask(CamelContextHelper.parseBoolean(getContext(), getLogMask()));
         }
         if (getLogExhaustedMessageBody() != null) {
             ctx.setLogExhaustedMessageBody(CamelContextHelper.parseBoolean(getContext(), getLogExhaustedMessageBody()));

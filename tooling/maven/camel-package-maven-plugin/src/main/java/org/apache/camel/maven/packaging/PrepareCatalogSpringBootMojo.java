@@ -431,6 +431,7 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                         || "camel-jetty-common".equals(dir.getName())
                         || "camel-linkedin".equals(dir.getName())
                         || "camel-olingo2".equals(dir.getName())
+                        || "camel-olingo4".equals(dir.getName())
                         || "camel-salesforce".equals(dir.getName())) {
                         continue;
                     }

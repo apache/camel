@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -41,8 +42,10 @@ import com.thoughtworks.xstream.io.xml.XppDriver;
 
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AnnotationFieldKeySorter;
+import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatchResponse;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
@@ -59,6 +62,7 @@ import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.util.InputStreamContentProvider;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
+import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,8 +85,8 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
     private final XStream xStream;
 
     public DefaultCompositeApiClient(final SalesforceEndpointConfig configuration, final PayloadFormat format,
-            final String version, final SalesforceSession session, final SalesforceHttpClient httpClient)
-            throws SalesforceException {
+        final String version, final SalesforceSession session, final SalesforceHttpClient httpClient)
+        throws SalesforceException {
         super(version, session, httpClient);
         this.format = format;
 
@@ -120,7 +124,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     @Override
     public void submitCompositeBatch(final SObjectBatch batch, final ResponseCallback<SObjectBatchResponse> callback)
-            throws SalesforceException {
+        throws SalesforceException {
         checkCompositeBatchVersion(version, batch.getVersion());
 
         final String url = versionUrl() + "composite/batch";
@@ -136,7 +140,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     @Override
     public void submitCompositeTree(final SObjectTree tree, final ResponseCallback<SObjectTreeResponse> callback)
-            throws SalesforceException {
+        throws SalesforceException {
         final String url = versionUrl() + "composite/tree/" + tree.getObjectType();
 
         final Request post = createRequest(HttpMethod.POST, url);
@@ -151,10 +155,8 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
     static void checkCompositeBatchVersion(final String configuredVersion, final Version batchVersion)
         throws SalesforceException {
         if (Version.create(configuredVersion).compareTo(batchVersion) < 0) {
-            throw new SalesforceException("Component is configured with Salesforce API version "
-                                          + configuredVersion
-                                          + ", but the payload of the Composite API batch operation requires at least "
-                                          + batchVersion, 0);
+            throw new SalesforceException("Component is configured with Salesforce API version " + configuredVersion
+                + ", but the payload of the Composite API batch operation requires at least " + batchVersion, 0);
         }
     }
 
@@ -263,8 +265,19 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     @Override
     protected SalesforceException createRestException(final Response response, final InputStream responseContent) {
-        final String reason = response.getReason();
+        final List<RestError> errors;
+        try {
+            errors = readErrorsFrom(responseContent, format, mapper, xStream);
+        } catch (IOException e) {
+            return new SalesforceException("Unable to read error response", e);
+        }
+
         final int status = response.getStatus();
+        if (status == HttpStatus.NOT_FOUND_404) {
+            return new NoSuchSObjectException(errors);
+        }
+
+        final String reason = response.getReason();
 
         return new SalesforceException("Unexpected error: " + reason, status);
     }

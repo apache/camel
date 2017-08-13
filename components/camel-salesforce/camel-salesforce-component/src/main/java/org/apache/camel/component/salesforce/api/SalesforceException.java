@@ -71,34 +71,6 @@ public class SalesforceException extends CamelException {
         return statusCode;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder("{");
-        appendFields(builder);
-        builder.append("}");
-        return builder.toString();
-    }
-
-    protected void appendFields(StringBuilder builder) {
-        // append message
-        builder.append("message:'");
-        builder.append(getMessage());
-        builder.append("',");
-
-        // check for error
-        if (errors != null) {
-            builder.append("errors:[");
-            for (RestError error : errors) {
-                builder.append(error.toString());
-            }
-            builder.append("],");
-
-        }
-        // append statusCode
-        builder.append("statusCode:");
-        builder.append(statusCode);
-    }
-
     private static String toErrorMessage(List<RestError> errors, int statusCode) {
         StringBuilder builder = new StringBuilder("{");
         if (errors != null) {

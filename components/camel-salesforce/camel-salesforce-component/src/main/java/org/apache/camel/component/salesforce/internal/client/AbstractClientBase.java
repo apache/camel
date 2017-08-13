@@ -16,16 +16,26 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.xstream.XStream;
+
 import org.apache.camel.Service;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.TypeReferences;
+import org.apache.camel.component.salesforce.api.dto.RestError;
+import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.apache.camel.component.salesforce.internal.dto.RestErrors;
 import org.eclipse.jetty.client.HttpContentResponse;
 import org.eclipse.jetty.client.api.ContentProvider;
 import org.eclipse.jetty.client.api.ContentResponse;
@@ -167,16 +177,11 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
                         }
                     } else if (status < HttpStatus.OK_200 || status >= HttpStatus.MULTIPLE_CHOICES_300) {
-
                         // Salesforce HTTP failure!
-                        request = (SalesforceHttpRequest) result.getRequest();
-                        final String msg = String.format("Error {%s:%s} executing {%s:%s}",
-                            status, response.getReason(), request.getMethod(), request.getURI());
-                        final SalesforceException cause = createRestException(response, getContentAsInputStream());
+                        final SalesforceException exception = createRestException(response, getContentAsInputStream());
 
                         // for APIs that return body on status 400, such as Composite API we need content as well
-                        callback.onResponse(getContentAsInputStream(), new SalesforceException(msg, response.getStatus(), cause));
-
+                        callback.onResponse(getContentAsInputStream(), exception);
                     } else {
 
                         // Success!!!
@@ -201,6 +206,20 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
     public void setInstanceUrl(String instanceUrl) {
         this.instanceUrl = instanceUrl;
+    }
+
+    final List<RestError> readErrorsFrom(final InputStream responseContent, final PayloadFormat format,
+        final ObjectMapper objectMapper, final XStream xStream)
+        throws IOException, JsonParseException, JsonMappingException {
+        final List<RestError> restErrors;
+        if (PayloadFormat.JSON.equals(format)) {
+            restErrors = objectMapper.readValue(responseContent, TypeReferences.REST_ERROR_LIST_TYPE);
+        } else {
+            RestErrors errors = new RestErrors();
+            xStream.fromXML(responseContent, errors);
+            restErrors = errors.getErrors();
+        }
+        return restErrors;
     }
 
     protected abstract void setAccessToken(Request request);

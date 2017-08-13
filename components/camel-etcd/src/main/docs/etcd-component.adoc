@@ -14,7 +14,20 @@ etcd:namespace/path[?options]
 ### URI Options
 
 // component options: START
-The etcd component has no options.
+The etcd component supports 6 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **uris** (common) | To set the URIs the client connects. |  | String
+| **sslContextParameters** (common) | To configure security using SSLContextParameters. |  | SSLContextParameters
+| **userName** (common) | The user name to use for basic authentication. |  | String
+| **password** (common) | The password to use for basic authentication. |  | String
+| **configuration** (advanced) | Sets the common configuration shared among endpoints |  | EtcdConfiguration
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|=======================================================================
 // component options: END
 
 // endpoint options: START

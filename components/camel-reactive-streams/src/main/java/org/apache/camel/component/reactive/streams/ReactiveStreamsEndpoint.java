@@ -25,7 +25,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * The Camel reactive-streams endpoint.
+ * Reactive Camel using reactive streams
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "reactive-streams", title = "Reactive Streams", syntax = "reactive-streams:stream",
         consumerClass = ReactiveStreamsConsumer.class, label = "reactive,streams")

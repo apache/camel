@@ -149,7 +149,9 @@ public final class MailConverters {
 
         if (simple.getSubjectOrBody() != null) {
             String text = simple.getSubjectOrBody();
-            builder = builder.subject(text).body(SearchTermBuilder.Op.or, text);
+            SearchTermBuilder builderTemp = new SearchTermBuilder();
+            builderTemp = builderTemp.subject(text).body(SearchTermBuilder.Op.or, text);
+            builder = builder.and(builderTemp.build());
         }
         if (simple.getSubject() != null) {
             builder = builder.subject(simple.getSubject());

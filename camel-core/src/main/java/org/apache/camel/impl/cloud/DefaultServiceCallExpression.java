@@ -26,15 +26,22 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * Below are some examples how to call a service and what Camel endpoint URI is constructed based on the input:
  * <pre>
- serviceCall("myService") -> http://hostname:port
- serviceCall("myService/foo") -> http://hostname:port/foo
- serviceCall("http:myService/foo") -> http:hostname:port/foo
- serviceCall("myService", "http:myService.host:myService.port/foo") -> http:hostname:port/foo
+ serviceCall("myService") -> http4://hostname:port
+ serviceCall("myService/foo") -> http4://hostname:port/foo
+ serviceCall("http4:myService/foo") -> http4:hostname:port/foo
+ serviceCall("myService", "http4:myService.host:myService.port/foo") -> http4:hostname:port/foo
  serviceCall("myService", "netty4:tcp:myService?connectTimeout=1000") -> netty:tcp:hostname:port?connectTimeout=1000
  * </pre>
  */
 public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceCallExpression.class);
+
+    public DefaultServiceCallExpression() {
+    }
+
+    public DefaultServiceCallExpression(String hostHeader, String portHeader) {
+        super(hostHeader, portHeader);
+    }
 
     @Override
     protected String buildCamelEndpointUri(String name, String host, Integer port, String uri, String contextPath, String scheme) {
@@ -44,11 +51,11 @@ public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {
             if (scheme == null) {
                 // use http/https by default if no scheme or port have been configured
                 if (port == null) {
-                    scheme = "http";
+                    scheme = "http4";
                 } else if (port == 443) {
-                    scheme = "https";
+                    scheme = "https4";
                 } else {
-                    scheme = "http";
+                    scheme = "http4";
                 }
             }
             answer = scheme + "://" + host;

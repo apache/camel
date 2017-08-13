@@ -144,6 +144,7 @@ public class CamelAutoConfiguration {
         }
 
         camelContext.setMessageHistory(config.isMessageHistory());
+        camelContext.setLogMask(config.isLogMask());
         camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
         camelContext.setHandleFault(config.isHandleFault());
         camelContext.setAutoStartup(config.isAutoStartup());

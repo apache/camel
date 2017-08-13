@@ -18,6 +18,7 @@ package org.apache.camel.component.rest;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -32,6 +33,8 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * Rest component.
@@ -58,7 +61,7 @@ public class RestComponent extends DefaultComponent {
         mergeConfigurations(config, getCamelContext().getRestConfiguration(restConfigurationName, true));
 
         // if no explicit host was given, then fallback and use default configured host
-        String h = resolveAndRemoveReferenceParameter(parameters, "host", String.class, host);
+        String h = getAndRemoveOrResolveReferenceParameter(parameters, "host", String.class, host);
         if (h == null && config != null) {
             h = config.getHost();
             int port = config.getPort();
@@ -73,12 +76,18 @@ public class RestComponent extends DefaultComponent {
         }
         answer.setHost(h);
 
-        String query = ObjectHelper.after(uri, "?");
-        if (query != null) {
-            answer.setQueryParameters(query);
+        setProperties(answer, parameters);
+        if (!parameters.isEmpty()) {
+            // use only what remains and at this point parameters that have been used have been removed
+            // without overwriting any query parameters set via queryParameters endpoint option
+            final Map<String, Object> queryParameters = new LinkedHashMap<>(parameters);
+            final Map<String, Object> existingQueryParameters = URISupport.parseQuery(answer.getQueryParameters());
+            queryParameters.putAll(existingQueryParameters);
+
+            final String remainingParameters = URISupport.createQueryString(queryParameters);
+            answer.setQueryParameters(remainingParameters);
         }
 
-        setProperties(answer, parameters);
         answer.setParameters(parameters);
 
         if (!remaining.contains(":")) {

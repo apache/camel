@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.ComponentVerifier;
+import org.apache.camel.ComponentVerifier.VerificationError;
 import org.apache.camel.ContextTestSupport;
 import org.junit.Assert;
 
@@ -59,8 +60,8 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
 
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifier.CODE_MISSING_OPTION, result.getErrors().get(0).getCode());
-        Assert.assertTrue(result.getErrors().get(0).getParameters().contains("timerName"));
+        Assert.assertEquals(VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("timerName"));
     }
 
     public void testParametersWithWrongOptions() throws Exception {
@@ -73,8 +74,8 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
 
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifier.CODE_ILLEGAL_OPTION_VALUE, result.getErrors().get(0).getCode());
+        Assert.assertEquals(VerificationError.StandardCode.ILLEGAL_PARAMETER_VALUE, result.getErrors().get(0).getCode());
         Assert.assertEquals("fixedRate has wrong value (wrong)", result.getErrors().get(0).getDescription());
-        Assert.assertTrue(result.getErrors().get(0).getParameters().contains("fixedRate"));
+        Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("fixedRate"));
     }
 }

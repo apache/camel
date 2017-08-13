@@ -51,7 +51,7 @@ public class DefaultComponentVerifier implements ComponentVerifier {
         // Camel context is mandatory
         if (this.camelContext == null) {
             return ResultBuilder.withStatusAndScope(Result.Status.ERROR, scope)
-                .error(ResultErrorBuilder.withCodeAndDescription(ComponentVerifier.CODE_INTERNAL, "Missing camel-context").build())
+                .error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.INTERNAL, "Missing camel-context").build())
                 .build();
         }
 
@@ -123,7 +123,7 @@ public class DefaultComponentVerifier implements ComponentVerifier {
             stream(result.getInvalidEnum())
                 .map(entry ->
                     ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue())
-                        .attribute("enum.values", result.getEnumChoices(entry.getKey()))
+                        .detail("enum.values", result.getEnumChoices(entry.getKey()))
                         .build())
                 .forEach(builder::error);
         }

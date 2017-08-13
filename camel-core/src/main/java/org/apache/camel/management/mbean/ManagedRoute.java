@@ -159,6 +159,10 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return route.getRouteContext().isMessageHistory();
     }
 
+    public Boolean getLogMask() {
+        return route.getRouteContext().isLogMask();
+    }
+
     public String getRoutePolicyList() {
         List<RoutePolicy> policyList = route.getRouteContext().getRoutePolicyList();
 

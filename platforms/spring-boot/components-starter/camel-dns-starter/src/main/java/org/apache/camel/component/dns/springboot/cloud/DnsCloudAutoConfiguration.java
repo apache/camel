@@ -18,13 +18,13 @@ package org.apache.camel.component.dns.springboot.cloud;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
-import org.apache.camel.component.dns.DnsConfiguration;
 import org.apache.camel.component.dns.cloud.DnsServiceDiscoveryFactory;
+import org.apache.camel.model.cloud.springboot.DnsServiceCallServiceDiscoveryConfigurationCommon;
+import org.apache.camel.model.cloud.springboot.DnsServiceCallServiceDiscoveryConfigurationProperties;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
@@ -44,12 +44,12 @@ import org.springframework.context.annotation.Lazy;
 @ConditionalOnBean(CamelAutoConfiguration.class)
 @Conditional(DnsCloudAutoConfiguration.Condition.class)
 @AutoConfigureAfter(CamelAutoConfiguration.class)
-@EnableConfigurationProperties(DnsCloudConfiguration.class)
+@EnableConfigurationProperties(DnsServiceCallServiceDiscoveryConfigurationProperties.class)
 public class DnsCloudAutoConfiguration {
     @Autowired
     private CamelContext camelContext;
     @Autowired
-    private DnsCloudConfiguration configuration;
+    private DnsServiceCallServiceDiscoveryConfigurationProperties configuration;
     @Autowired
     private ConfigurableBeanFactory beanFactory;
 
@@ -71,10 +71,9 @@ public class DnsCloudAutoConfiguration {
     @PostConstruct
     public void postConstruct() {
         if (beanFactory != null) {
-            DnsCloudConfiguration.ServiceDiscoveryConfiguration discovery = configuration.getServiceDiscovery();
             Map<String, Object> parameters = new HashMap<>();
 
-            for (Map.Entry<String, DnsConfiguration> entry : discovery.getConfigurations().entrySet()) {
+            for (Map.Entry<String, DnsServiceCallServiceDiscoveryConfigurationCommon> entry : configuration.getConfigurations().entrySet()) {
                 // clean up params
                 parameters.clear();
 
@@ -100,8 +99,8 @@ public class DnsCloudAutoConfiguration {
     public static class Condition extends GroupCondition {
         public Condition() {
             super(
-                "camel.cloud",
-                "camel.cloud.dns"
+                "camel.cloud.dns",
+                "camel.cloud.dns.service-discovery"
             );
         }
     }

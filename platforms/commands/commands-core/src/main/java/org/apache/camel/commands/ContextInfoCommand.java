@@ -80,6 +80,7 @@ public class ContextInfoCommand extends AbstractContextCommand {
         out.println(stringEscape.unescapeJava("\tAllow UseOriginalMessage: " + row.get("allowUseOriginalMessage")));
         out.println(stringEscape.unescapeJava("\tMessage History: " + row.get("messageHistory")));
         out.println(stringEscape.unescapeJava("\tTracing: " + row.get("tracing")));
+        out.println(stringEscape.unescapeJava("\tLog Mask: " + row.get("logMask")));
         out.println("");
         out.println(stringEscape.unescapeJava("\u001B[1mProperties\u001B[0m"));
         for (Map.Entry<String, Object> entry : row.entrySet()) {

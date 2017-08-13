@@ -37,6 +37,8 @@ public final class Constants {
 
     public static final String PLACEHOLDER_QNAME = "http://camel.apache.org/schema/placeholder";
 
+    public static final String CUSTOM_LOG_MASK_REF = "CamelCustomLogMask";
+
     private Constants() {
     }
 

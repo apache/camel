@@ -220,12 +220,20 @@ public class XmlRestProcessor extends AbstractRestProcessor {
     }
 
     @Override
-    protected void processResponse(Exchange exchange, InputStream responseEntity,
-                                   SalesforceException exception, AsyncCallback callback) {
+    protected void processResponse(final Exchange exchange, final InputStream responseEntity,
+        final SalesforceException exception, final AsyncCallback callback) {
         final XStream localXStream = xStream.get();
         try {
-            // do we need to un-marshal a response
-            if (responseEntity != null) {
+            final Message out = exchange.getOut();
+            final Message in = exchange.getIn();
+            out.copyFromWithNewBody(in, null);
+
+            if (exception != null) {
+                if (shouldReport(exception)) {
+                    exchange.setException(exception);
+                }
+            } else if (responseEntity != null) {
+                // do we need to un-marshal a response
                 final Class<?> responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
                 Object response;
                 if (responseClass != null) {
@@ -251,13 +259,8 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                     // return the response as a stream, for getBlobField
                     response = responseEntity;
                 }
-                exchange.getOut().setBody(response);
-            } else {
-                exchange.setException(exception);
+                out.setBody(response);
             }
-            // copy headers and attachments
-            exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-            exchange.getOut().getAttachmentObjects().putAll(exchange.getIn().getAttachmentObjects());
         } catch (XStreamException e) {
             String msg = "Error parsing XML response: " + e.getMessage();
             exchange.setException(new SalesforceException(msg, e));

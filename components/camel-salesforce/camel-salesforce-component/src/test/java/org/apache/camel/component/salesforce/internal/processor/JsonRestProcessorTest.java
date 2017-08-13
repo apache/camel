@@ -54,7 +54,7 @@ public class JsonRestProcessorTest {
         assertThat(result, result.length() <= 48, Is.is(true));
     }
 
-    private static class TestObject extends AbstractDTOBase {
+    static class TestObject extends AbstractDTOBase {
 
         private ZonedDateTime creationDate;
 

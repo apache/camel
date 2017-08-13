@@ -205,4 +205,13 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         this.inBody = inBody;
     }
 
+    /**
+     * Sets the {@link FacebookEndpointConfiguration} to use
+     * 
+     * @param configuration the {@link FacebookEndpointConfiguration} to use
+     */
+    public void setConfiguration(FacebookEndpointConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
 }

@@ -102,15 +102,6 @@ public class CompositeApiTreeIntegrationTest extends AbstractSalesforceTestBase 
         assertNotNull("Simple asset on the contact of the third account should have Id set", asset.getId());
     }
 
-    @Override
-    protected RouteBuilder doCreateRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-            }
-        };
-    }
-
     @Parameters(name = "format = {0}")
     public static Iterable<String> formats() {
         return Arrays.asList("JSON", "XML");

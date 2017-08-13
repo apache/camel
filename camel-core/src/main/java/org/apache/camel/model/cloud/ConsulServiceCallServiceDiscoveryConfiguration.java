@@ -32,7 +32,7 @@ public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallS
     @XmlAttribute
     private String url;
     @XmlAttribute
-    private String dc;
+    private String datacenter;
     @XmlAttribute @Metadata(label = "security")
     private String aclToken;
     @XmlAttribute @Metadata(label = "security")
@@ -73,15 +73,33 @@ public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallS
         this.url = url;
     }
 
+    /**
+     * @deprecated replaced by {@link #getDatacenter()} ()}
+     */
+    @Deprecated
     public String getDc() {
-        return dc;
+        return datacenter;
+    }
+
+    /**
+     * The data center
+     *
+     * @deprecated replaced by {@link #setDatacenter(String)} ()}
+     */
+    @Deprecated
+    public void setDc(String dc) {
+        this.datacenter = dc;
+    }
+
+    public String getDatacenter() {
+        return datacenter;
     }
 
     /**
      * The data center
      */
-    public void setDc(String dc) {
-        this.dc = dc;
+    public void setDatacenter(String datacenter) {
+        this.datacenter = datacenter;
     }
 
     public String getAclToken() {

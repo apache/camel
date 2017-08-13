@@ -17,71 +17,176 @@
 package org.apache.camel.component.consul;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.consul.enpoint.ConsulAgentProducer;
+import org.apache.camel.component.consul.enpoint.ConsulCatalogProducer;
+import org.apache.camel.component.consul.enpoint.ConsulCoordinatesProducer;
 import org.apache.camel.component.consul.enpoint.ConsulEventConsumer;
 import org.apache.camel.component.consul.enpoint.ConsulEventProducer;
+import org.apache.camel.component.consul.enpoint.ConsulHealthProducer;
 import org.apache.camel.component.consul.enpoint.ConsulKeyValueConsumer;
 import org.apache.camel.component.consul.enpoint.ConsulKeyValueProducer;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.component.consul.enpoint.ConsulPreparedQueryProducer;
+import org.apache.camel.component.consul.enpoint.ConsulSessionProducer;
+import org.apache.camel.component.consul.enpoint.ConsulStatusProducer;
+import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
  * Represents the component that manages {@link ConsulEndpoint}.
  */
-public class ConsulComponent extends UriEndpointComponent {
+public class ConsulComponent extends DefaultComponent {
+
+    @Metadata(label = "advanced")
+    private ConsulConfiguration configuration = new ConsulConfiguration();
     
     public ConsulComponent() {
-        super(ConsulEndpoint.class);
+        super();
     }
 
     public ConsulComponent(CamelContext context) {
-        super(context, ConsulEndpoint.class);
+        super(context);
     }
 
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        return ConsulApiEndpoint.valueOf(remaining).create(
-            remaining,
-            uri,
-            this,
-            createConfiguration(parameters)
-        );
+    // ************************************
+    // Options
+    // ************************************
+
+
+    public String getUrl() {
+        return this.configuration.getUrl();
     }
 
-    private ConsulConfiguration createConfiguration(Map<String, Object> parameters) throws Exception {
-        ConsulConfiguration configuration = new ConsulConfiguration(getCamelContext());
-        setProperties(configuration, parameters);
+    /**
+     * The Consul agent URL
+     */
+    public void setUrl(String url) {
+        this.configuration.setUrl(url);
+    }
 
+    public String getDatacenter() {
+        return configuration.getDatacenter();
+    }
+
+    /**
+     * The data center
+     * @param datacenter
+     */
+    public void setDatacenter(String datacenter) {
+        configuration.setDatacenter(datacenter);
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return configuration.getSslContextParameters();
+    }
+
+    /**
+     * SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters
+     * instance.
+     * @param sslContextParameters
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        configuration.setSslContextParameters(sslContextParameters);
+    }
+
+    public String getAclToken() {
+        return configuration.getAclToken();
+    }
+
+    /**
+     * Sets the ACL token to be used with Consul
+     * @param aclToken
+     */
+    public void setAclToken(String aclToken) {
+        configuration.setAclToken(aclToken);
+    }
+
+    public String getUserName() {
+        return configuration.getUserName();
+    }
+
+    /**
+     * Sets the username to be used for basic authentication
+     * @param userName
+     */
+    public void setUserName(String userName) {
+        configuration.setUserName(userName);
+    }
+
+    public String getPassword() {
+        return configuration.getPassword();
+    }
+
+    /**
+     * Sets the password to be used for basic authentication
+     * @param password
+     */
+    public void setPassword(String password) {
+        configuration.setPassword(password);
+    }
+
+    public ConsulConfiguration getConfiguration() {
         return configuration;
     }
 
-    // *************************************************************************
-    // Consul Api Enpoints (see https://www.consul.io/docs/agent/http.html)
-    // *************************************************************************
+    /**
+     * Sets the common configuration shared among endpoints
+     */
+    public void setConfiguration(ConsulConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
-    private enum ConsulApiEndpoint {
-        kv(ConsulKeyValueProducer::new, ConsulKeyValueConsumer::new),
-        event(ConsulEventProducer::new, ConsulEventConsumer::new),
-        agent(ConsulAgentProducer::new, null);
 
-        private final ConsulEndpoint.ProducerFactory producerFactory;
-        private final ConsulEndpoint.ConsumerFactory consumerFactory;
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        ConsulConfiguration configuration = Optional.ofNullable(this.configuration).orElseGet(ConsulConfiguration::new).copy();
+        configuration.setCamelContext(getCamelContext());
 
-        ConsulApiEndpoint(ConsulEndpoint.ProducerFactory producerFactory, ConsulEndpoint.ConsumerFactory consumerFactory) {
-            this.producerFactory = producerFactory;
-            this.consumerFactory = consumerFactory;
-        }
+        setProperties(configuration, parameters);
 
-        public Endpoint create(String apiEndpoint, String uri, ConsulComponent component, ConsulConfiguration configuration) throws Exception {
+        switch (remaining) {
+        case "kv":
             return new ConsulEndpoint(
-                apiEndpoint,
-                uri,
-                component,
-                configuration,
-                producerFactory,
-                consumerFactory);
+                remaining, uri, this, configuration, Optional.of(ConsulKeyValueProducer::new), Optional.of(ConsulKeyValueConsumer::new)
+            );
+        case "event":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulEventProducer::new), Optional.of(ConsulEventConsumer::new)
+            );
+        case "agent":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulAgentProducer::new), Optional.empty()
+            );
+        case "coordinates":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulCoordinatesProducer::new), Optional.empty()
+            );
+        case "health":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulHealthProducer::new), Optional.empty()
+            );
+        case "status":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulStatusProducer::new), Optional.empty()
+            );
+        case "preparedQuery":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulPreparedQueryProducer::new), Optional.empty()
+            );
+        case "catalog":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulCatalogProducer::new), Optional.empty()
+            );
+        case "session":
+            return new ConsulEndpoint(
+                remaining, uri, this, configuration, Optional.of(ConsulSessionProducer::new), Optional.empty()
+            );
+        default:
+            throw new IllegalArgumentException("Unknown apiEndpoint: " + remaining);
         }
     }
 }

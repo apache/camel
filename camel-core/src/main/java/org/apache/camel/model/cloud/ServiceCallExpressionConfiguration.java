@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -33,10 +34,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.cloud.ServiceExpressionFactory;
+import org.apache.camel.impl.cloud.DefaultServiceCallExpression;
 import org.apache.camel.impl.cloud.ServiceCallConstants;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
@@ -58,6 +61,10 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
     private String hostHeader = ServiceCallConstants.SERVICE_HOST;
     @XmlAttribute @Metadata(defaultValue = ServiceCallConstants.SERVICE_PORT)
     private String portHeader = ServiceCallConstants.SERVICE_PORT;
+    @XmlElementRef(required = false)
+    private ExpressionDefinition expressionType;
+    @XmlTransient
+    private Expression expression;
 
     public ServiceCallExpressionConfiguration() {
         this(null, null);
@@ -153,6 +160,22 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
         this.portHeader = portHeader;
     }
 
+    public ExpressionDefinition getExpressionType() {
+        return expressionType;
+    }
+
+    public void setExpressionType(ExpressionDefinition expressionType) {
+        this.expressionType = expressionType;
+    }
+
+    public Expression getExpression() {
+        return expression;
+    }
+
+    public void setExpression(Expression expression) {
+        this.expression = expression;
+    }
+
     /**
      * The header that holds the service host information, default ServiceCallConstants.SERVICE_HOST
      */
@@ -169,54 +192,77 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
         return this;
     }
 
+    public ServiceCallExpressionConfiguration expressionType(ExpressionDefinition expressionType) {
+        setExpressionType(expressionType);
+        return this;
+    }
+
+    public ServiceCallExpressionConfiguration expression(Expression expression) {
+        setExpression(expression);
+        return this;
+    }
+
     // *************************************************************************
     // Factory
     // *************************************************************************
 
     @Override
     public Expression newInstance(CamelContext camelContext) throws Exception {
-        ObjectHelper.notNull(factoryKey, "Expression factoryKey");
+        Expression answer = getExpression();
+        if (answer != null) {
+            return answer;
+        }
 
-        Expression answer;
+        ExpressionDefinition expressionType = getExpressionType();
+        if (expressionType != null && answer == null) {
+            return expressionType.createExpression(camelContext);
+        }
 
-        // First try to find the factory from the registry.
-        ServiceExpressionFactory factory = CamelContextHelper.lookup(camelContext, factoryKey, ServiceExpressionFactory.class);
-        if (factory != null) {
-            // If a factory is found in the registry do not re-configure it as
-            // it should be pre-configured.
-            answer = factory.newInstance(camelContext);
-        } else {
+        if (factoryKey != null) {
+            // First try to find the factory from the registry.
+            ServiceExpressionFactory factory = CamelContextHelper.lookup(camelContext, factoryKey, ServiceExpressionFactory.class);
+            if (factory != null) {
+                // If a factory is found in the registry do not re-configure it as
+                // it should be pre-configured.
+                answer = factory.newInstance(camelContext);
+            } else {
 
-            Class<?> type;
-            try {
-                // Then use Service factory.
-                type = camelContext.getFactoryFinder(RESOURCE_PATH).findClass(factoryKey);
-            } catch (Exception e) {
-                throw new NoFactoryAvailableException(RESOURCE_PATH + factoryKey, e);
-            }
+                Class<?> type;
+                try {
+                    // Then use Service factory.
+                    type = camelContext.getFactoryFinder(RESOURCE_PATH).findClass(factoryKey);
+                } catch (Exception e) {
+                    throw new NoFactoryAvailableException(RESOURCE_PATH + factoryKey, e);
+                }
 
-            if (type != null) {
-                if (ServiceExpressionFactory.class.isAssignableFrom(type)) {
-                    factory = (ServiceExpressionFactory) camelContext.getInjector().newInstance(type);
-                } else {
-                    throw new IllegalArgumentException(
-                        "Resolving Expression: " + factoryKey + " detected type conflict: Not a ExpressionFactory implementation. Found: " + type.getName());
+                if (type != null) {
+                    if (ServiceExpressionFactory.class.isAssignableFrom(type)) {
+                        factory = (ServiceExpressionFactory) camelContext.getInjector().newInstance(type);
+                    } else {
+                        throw new IllegalArgumentException(
+                            "Resolving Expression: " + factoryKey + " detected type conflict: Not a ExpressionFactory implementation. Found: " + type.getName());
+                    }
+                }
+
+                try {
+                    Map<String, Object> parameters = new HashMap<>();
+                    IntrospectionSupport.getProperties(this, parameters, null, false);
+                    parameters.put("properties", getPropertiesAsMap(camelContext));
+
+                    postProcessFactoryParameters(camelContext, parameters);
+
+                    IntrospectionSupport.setProperties(factory, parameters);
+
+                    answer = factory.newInstance(camelContext);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(e);
                 }
             }
-
-            try {
-                Map<String, Object> parameters = new HashMap<>();
-                IntrospectionSupport.getProperties(this, parameters, null, false);
-                parameters.put("properties", getPropertiesAsMap(camelContext));
-
-                postProcessFactoryParameters(camelContext, parameters);
-
-                IntrospectionSupport.setProperties(factory, parameters);
-
-                answer = factory.newInstance(camelContext);
-            } catch (Exception e) {
-                throw new IllegalArgumentException(e);
-            }
+        } else {
+            answer = new DefaultServiceCallExpression(
+                ObjectHelper.notNull(hostHeader, "hostHeader"),
+                ObjectHelper.notNull(portHeader, "portHeader")
+            );
         }
 
         return answer;
