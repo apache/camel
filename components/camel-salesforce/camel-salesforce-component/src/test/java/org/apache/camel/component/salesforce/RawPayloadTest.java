@@ -23,6 +23,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import okhttp3.HttpUrl;
+import okhttp3.mockwebserver.Dispatcher;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.jetty.http.HttpHeader;
 import org.junit.AfterClass;
@@ -35,15 +41,15 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.Dispatcher;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
-
 @Category(Standalone.class)
 @RunWith(Parameterized.class)
 public class RawPayloadTest extends AbstractSalesforceTestBase {
+
+    @Parameter
+    public static String format;
+
+    @Parameter(1)
+    public static String endpointUri;
 
     private static final String OAUTH2_TOKEN_PATH = "/services/oauth2/token";
     private static final String XML_RESPONSE = "<response/>";
@@ -52,11 +58,6 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
     private static HttpUrl loginUrl;
     private static MockWebServer server;
 
-    @Parameter
-    public static String format;
-
-    @Parameter(1)
-    public static String endpointUri;
 
     private static String lastFormat;
     private static String expectedResponse;
@@ -227,10 +228,10 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
     @Parameters(name = "format = {0}, endpoint = {1}")
     public static List<String[]> parameters() {
         final String[] endpoints = {"direct:getVersions", "direct:getResources", "direct:getGlobalObjects",
-                "direct:getBasicInfo", "direct:getDescription", "direct:getSObject", "direct:createSObject", 
-                "direct:updateSObject", "direct:deleteSObject", "direct:getSObjectWithId", "direct:upsertSObject", 
-                "direct:deleteSObjectWithId", "direct:getBlobField", "direct:query", "direct:queryAll", 
-                "direct:search", "direct:apexCallGet", "direct:apexCallGetWithId", "direct:apexCallPatch"};
+            "direct:getBasicInfo", "direct:getDescription", "direct:getSObject", "direct:createSObject", 
+            "direct:updateSObject", "direct:deleteSObject", "direct:getSObjectWithId", "direct:upsertSObject", 
+            "direct:deleteSObjectWithId", "direct:getBlobField", "direct:query", "direct:queryAll", 
+            "direct:search", "direct:apexCallGet", "direct:apexCallGetWithId", "direct:apexCallPatch"};
 
         final String[] formats = {"XML", "JSON"};
 
