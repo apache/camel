@@ -40,7 +40,7 @@ import org.apache.camel.spi.UriParam;
  * Another consideration is that exceptions are not handled within the class. They are expected to bubble up and be handled
  * by Camel.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "bigquery", title = "BigQuery", syntax = "bigquery:projectId:datasetId[:tableName]", label = "messaging")
+@UriEndpoint(firstVersion = "2.20.0", scheme = "bigquery", title = "BigQuery", syntax = "bigquery:projectId:datasetId:tableName", label = "messaging", producerOnly = true)
 public class GoogleBigQueryEndpoint extends DefaultEndpoint {
     @UriParam
     protected final GoogleBigQueryConfiguration configuration;
