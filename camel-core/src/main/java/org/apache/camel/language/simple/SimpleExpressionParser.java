@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.simple.ast.LiteralExpression;
 import org.apache.camel.language.simple.ast.LiteralNode;
