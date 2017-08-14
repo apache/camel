@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.ssh;
 
-import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ResourceHelper;
 import org.apache.sshd.SshClient;
 
 public class SshProducer extends DefaultProducer {
