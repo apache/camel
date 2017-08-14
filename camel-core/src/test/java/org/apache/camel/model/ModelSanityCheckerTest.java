@@ -19,14 +19,15 @@ package org.apache.camel.model;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 
 import junit.framework.TestCase;
+
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
-import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
