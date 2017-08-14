@@ -251,6 +251,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
             return Optional.empty();
         } finally {
             try {
+            	if (responseStream != null)
                 responseStream.close();
             } catch (final IOException ignored) {
             }
