@@ -479,13 +479,33 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public void testDateExpressions() throws Exception {
-        Calendar cal = Calendar.getInstance();
-        cal.set(1974, Calendar.APRIL, 20);
-        exchange.getIn().setHeader("birthday", cal.getTime());
+        Calendar inHeaderCalendar = Calendar.getInstance();
+        inHeaderCalendar.set(1974, Calendar.APRIL, 20);
+        exchange.getIn().setHeader("birthday", inHeaderCalendar.getTime());
+        
+        Calendar outHeaderCalendar = Calendar.getInstance();
+        outHeaderCalendar.set(1975, Calendar.MAY, 21);
+        exchange.getOut().setHeader("birthday", outHeaderCalendar.getTime());
 
-        assertExpression("date:header.birthday", cal.getTime());
+        Calendar propertyCalendar = Calendar.getInstance();
+        propertyCalendar.set(1976, Calendar.JUNE, 22);
+        exchange.setProperty("birthday", propertyCalendar.getTime());
+
+        assertExpression("date:header.birthday", inHeaderCalendar.getTime());
         assertExpression("date:header.birthday:yyyyMMdd", "19740420");
         assertExpression("date:header.birthday+24h:yyyyMMdd", "19740421");
+        
+        assertExpression("date:in.header.birthday", inHeaderCalendar.getTime());
+        assertExpression("date:in.header.birthday:yyyyMMdd", "19740420");
+        assertExpression("date:in.header.birthday+24h:yyyyMMdd", "19740421");
+        
+        assertExpression("date:out.header.birthday", outHeaderCalendar.getTime());
+        assertExpression("date:out.header.birthday:yyyyMMdd", "19750521");
+        assertExpression("date:out.header.birthday+24h:yyyyMMdd", "19750522");
+
+        assertExpression("date:property.birthday", propertyCalendar.getTime());
+        assertExpression("date:property.birthday:yyyyMMdd", "19760622");
+        assertExpression("date:property.birthday+24h:yyyyMMdd", "19760623");
 
         try {
             assertExpression("date:yyyyMMdd", "19740420");
