@@ -1949,6 +1949,12 @@ public final class ExpressionBuilder {
                     if (date == null) {
                         throw new IllegalArgumentException("Cannot find java.util.Date object at command: " + command);
                     }
+                } else if (command.startsWith("property.")) {
+                    String key = command.substring(command.lastIndexOf('.') + 1);
+                    date = exchange.getProperty(key, Date.class);
+                    if (date == null) {
+                        throw new IllegalArgumentException("Cannot find java.util.Date object at command: " + command);
+                    }
                 } else if ("file".equals(command)) {
                     Long num = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);
                     if (num != null && num > 0) {
