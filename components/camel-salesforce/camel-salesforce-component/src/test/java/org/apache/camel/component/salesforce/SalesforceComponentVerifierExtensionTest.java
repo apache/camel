@@ -20,57 +20,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Component;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.Test;
 
 public class SalesforceComponentVerifierExtensionTest extends CamelTestSupport {
-    private static final String CLIENT_ID = getSystemPropertyOrEnvVar("salesforce.clientid");
-    private static final String CLIENT_SECRET = getSystemPropertyOrEnvVar("salesforce.clientsecret");
-    private static final String USERNAME = getSystemPropertyOrEnvVar("salesforce.userName");
-    private static final String PASSWORD = getSystemPropertyOrEnvVar("salesforce.password");
-
-    @Override
-    protected void doPreSetup() throws Exception {
-        Assume.assumeNotNull(CLIENT_ID);
-        Assume.assumeNotNull(CLIENT_SECRET);
-        Assume.assumeNotNull(USERNAME);
-        Assume.assumeNotNull(PASSWORD);
-    }
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
-    }
-
-    // *********************************
-    // Helpers
-    // *********************************
-
-    protected Map<String, Object> getParameters() {
-        HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put("clientId", CLIENT_ID);
-        parameters.put("clientSecret", CLIENT_SECRET);
-        parameters.put("userName", USERNAME);
-        parameters.put("password", PASSWORD);
-
-
-        return parameters;
-    }
-
-    public static String getSystemPropertyOrEnvVar(String systemProperty) {
-        String answer = System.getProperty(systemProperty);
-        if (ObjectHelper.isEmpty(answer)) {
-            String envProperty = systemProperty.toUpperCase().replaceAll("[.-]", "_");
-            answer = System.getenv(envProperty);
-        }
-
-        return answer;
     }
 
     protected ComponentVerifierExtension getExtension() {
@@ -99,7 +58,7 @@ public class SalesforceComponentVerifierExtensionTest extends CamelTestSupport {
 
     @Test
     public void testRefreshTokenParameters() {
-        Map<String, Object> parameters = getParameters();
+        Map<String, Object> parameters = new HashMap<>();
         parameters.put("clientId", "clientId");
         parameters.put("clientSecret", "clientSecret");
         parameters.put("refreshToken", "refreshToken");
@@ -121,63 +80,8 @@ public class SalesforceComponentVerifierExtensionTest extends CamelTestSupport {
         Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(3, result.getErrors().size());
 
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.INCOMPLETE_PARAMETER_GROUP, result.getErrors().get(0).getCode());
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.INCOMPLETE_PARAMETER_GROUP, result.getErrors().get(1).getCode());
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.INCOMPLETE_PARAMETER_GROUP, result.getErrors().get(2).getCode());
-    }
-
-    // *********************************
-    // Connectivity validation
-    // *********************************
-
-    @Test
-    public void testConnectivity() {
-        Map<String, Object> parameters = getParameters();
-        ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
-
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
-    }
-
-    @Test
-    public void testConnectivityWithWrongUserName() {
-        Map<String, Object> parameters = getParameters();
-        parameters.put("userName", "not-a-salesforce-user");
-
-        ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
-
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(2, result.getErrors().size());
-
-        // Exception
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
-        Assert.assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
-        Assert.assertTrue(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof SalesforceException);
-        Assert.assertEquals(400, result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_CODE));
-
-        // Salesforce Error
-        Assert.assertEquals("invalid_grant", result.getErrors().get(1).getDetail("salesforce_code"));
-    }
-
-    @Test
-    public void testConnectivityWithWrongSecrets() {
-        Map<String, Object> parameters = getParameters();
-        parameters.put("clientId", "wrong-client-id");
-        parameters.put("clientSecret", "wrong-client-secret");
-
-        ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
-
-        Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
-
-        Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(2, result.getErrors().size());
-
-        // Exception
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
-        Assert.assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
-        Assert.assertTrue(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof SalesforceException);
-        Assert.assertEquals(400, result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.HttpAttribute.HTTP_CODE));
-
-        // Salesforce Error
-        Assert.assertEquals("invalid_client_id", result.getErrors().get(1).getDetail("salesforce_code"));
+        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION, result.getErrors().get(0).getCode());
+        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION, result.getErrors().get(1).getCode());
+        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION, result.getErrors().get(2).getCode());
     }
 }
