@@ -272,6 +272,27 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                   </resources>
                 </configuration>
               </execution>
+              <execution>
+                <id>set-connected-app-client-id</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${salesforce.component.root}/it/resources/salesforce/connectedApps</outputDirectory>
+                  <overwrite>true</overwrite>
+                  <filters>
+                    <filter>${salesforce.component.root}/test-salesforce-login.properties</filter>
+                  </filters>
+                  <resources>
+                    <resource>
+                      <directory>${salesforce.component.root}/it/resources/</directory>
+                      <include>CamelSalesforceIntegrationTests.connectedApp</include>
+                      <filtering>true</filtering>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
             </executions>
           </plugin>
           <plugin>
