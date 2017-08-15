@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
@@ -447,13 +448,13 @@ public class CamelSalesforceMojo extends AbstractMojo {
                 getLog().info("Generating JSON Schema...");
                 // generate JSON schema for every object description
                 final ObjectMapper schemaObjectMapper = JsonUtils.createSchemaObjectMapper();
-                final Set<Object> allSchemas = new HashSet<>();
+                final Set<JsonSchema> allSchemas = new HashSet<>();
                 for (SObjectDescription description : descriptions) {
                     if (IGNORED_OBJECTS.contains(description.getName())) {
                         continue;
                     }
                     try {
-                        allSchemas.add(JsonUtils.getSObjectJsonSchema(schemaObjectMapper, description, jsonSchemaId, true));
+                        allSchemas.addAll(JsonUtils.getSObjectJsonSchema(schemaObjectMapper, description, jsonSchemaId, true));
                     } catch (IOException e) {
                         throw new MojoExecutionException("Unable to generate JSON Schema types for: " + description.getName(), e);
                     }
