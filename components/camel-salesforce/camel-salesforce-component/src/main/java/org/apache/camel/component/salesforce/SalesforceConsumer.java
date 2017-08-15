@@ -28,7 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.streaming.PushTopicHelper;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
@@ -110,9 +109,9 @@ public class SalesforceConsumer extends DefaultConsumer {
         if (config.getSObjectQuery() != null) {
             // Note that we don't lookup topic if the query is not specified
             // create REST client for PushTopic operations
-            SalesforceComponent component = endpoint.getComponent();
-            RestClient restClient = new DefaultRestClient(component.getConfig().getHttpClient(),
-                    endpoint.getConfiguration().getApiVersion(), endpoint.getConfiguration().getFormat(), component.getSession());
+            final SalesforceComponent salesforceComponent = endpoint.getComponent();
+            final RestClient restClient = salesforceComponent.createRestClientFor(endpoint);
+
             // don't forget to start the client
             ServiceHelper.startService(restClient);
 

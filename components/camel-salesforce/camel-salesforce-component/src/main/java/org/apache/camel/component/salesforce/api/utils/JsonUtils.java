@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -88,7 +89,7 @@ public abstract class JsonUtils {
                     && AbstractDTOBase.class.isAssignableFrom(type),
                 "org.apache.camel.component.salesforce.api.dto"));
 
-        Set<Object> allSchemas = new HashSet<>();
+        Set<JsonSchema> allSchemas = new HashSet<>();
         for (Class<?> aClass : schemaClasses) {
             JsonSchema jsonSchema = schemaGen.generateSchema(aClass);
             allSchemas.add(jsonSchema);
@@ -97,17 +98,29 @@ public abstract class JsonUtils {
         return getJsonSchemaString(mapper, allSchemas, API_DTO_ID);
     }
 
-    public static String getJsonSchemaString(ObjectMapper mapper, Set<Object> allSchemas, String id) throws JsonProcessingException {
-        ObjectSchema rootSchema = new ObjectSchema();
-        rootSchema.set$schema(SCHEMA4);
-        rootSchema.setId(id);
-        rootSchema.setOneOf(allSchemas);
+    public static String getJsonSchemaString(ObjectMapper mapper, Set<JsonSchema> allSchemas, String id) throws JsonProcessingException {
+        JsonSchema rootSchema = getJsonSchemaAsSchema(allSchemas, id);
 
         return mapper.writeValueAsString(rootSchema);
     }
 
+    public static JsonSchema getJsonSchemaAsSchema(Set<JsonSchema> allSchemas, String id) {
+        ObjectSchema rootSchema = new ObjectSchema();
+        rootSchema.set$schema(SCHEMA4);
+        rootSchema.setId(id);
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        Set<Object> tmp = (Set) allSchemas;
+        rootSchema.setOneOf(tmp);
+
+        return rootSchema;
+    }
+
     public static String getSObjectJsonSchema(SObjectDescription description) throws JsonProcessingException {
         return getSObjectJsonSchema(description, true);
+    }
+
+    public static JsonSchema getSObjectJsonSchemaAsJson(SObjectDescription description) throws JsonProcessingException {
+        return getSObjectJsonSchemaAsSchema(description, true);
     }
 
     public static String getSObjectJsonSchema(SObjectDescription description, boolean addQuerySchema) throws JsonProcessingException {
@@ -115,8 +128,13 @@ public abstract class JsonUtils {
         return getJsonSchemaString(schemaObjectMapper, getSObjectJsonSchema(schemaObjectMapper, description, DEFAULT_ID_PREFIX, addQuerySchema), DEFAULT_ID_PREFIX);
     }
 
-    public static Set<Object> getSObjectJsonSchema(ObjectMapper objectMapper, SObjectDescription description, String idPrefix, boolean addQuerySchema) throws JsonProcessingException {
-        Set<Object> allSchemas = new HashSet<>();
+    public static JsonSchema getSObjectJsonSchemaAsSchema(SObjectDescription description, boolean addQuerySchema) throws JsonProcessingException {
+        ObjectMapper schemaObjectMapper = createSchemaObjectMapper();
+        return getJsonSchemaAsSchema(getSObjectJsonSchema(schemaObjectMapper, description, DEFAULT_ID_PREFIX, addQuerySchema), DEFAULT_ID_PREFIX);
+    }
+
+    public static Set<JsonSchema> getSObjectJsonSchema(ObjectMapper objectMapper, SObjectDescription description, String idPrefix, boolean addQuerySchema) throws JsonProcessingException {
+        Set<JsonSchema> allSchemas = new HashSet<>();
 
         // generate SObject schema from description
         ObjectSchema sobjectSchema = new ObjectSchema();
@@ -191,7 +209,7 @@ public abstract class JsonUtils {
             switch (field.getType()) {
             case "picklist":
                 fieldSchema.asStringSchema().setEnums(
-                        picklistValues == null ? Collections.EMPTY_SET : picklistValues.stream()
+                        picklistValues == null ? Collections.emptySet() : picklistValues.stream()
                                 .map(PickListValue::getValue)
                                 .distinct()
                                 .collect(Collectors.toSet()));
@@ -215,6 +233,23 @@ public abstract class JsonUtils {
             if (field.isUpdateable() != null) {
                 fieldSchema.setReadonly(!field.isUpdateable());
             }
+
+            final String descriptionText = Arrays.asList(new Object[] {
+                "unique",
+                field.isUnique()
+            }, new Object[] {
+                "idLookup",
+                field.isIdLookup()
+            }, new Object[] {
+                "autoNumber",
+                field.isAutoNumber()
+            }, new Object[] {
+                "calculated",
+                field.isCalculated()
+            }).stream().filter(ary -> Boolean.TRUE.equals(ary[1])).map(ary -> String.valueOf(ary[0])).collect(Collectors.joining(","));
+            // JSON schema currently does not support the above attributes so we'll store this information
+            // in the description
+            fieldSchema.setDescription(descriptionText);
 
             // add property to sobject schema
             if (field.isNillable()) {
