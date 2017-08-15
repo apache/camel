@@ -39,13 +39,13 @@
               <to uri="direct:getPersons"/>
            </get>
            <get uri="/persons/{personId}">
-               <to uri="direct:getPersionId"/>
+               <to uri="direct:getPersonId"/>
            </get>
            <put uri="/persons/{personId}">
-               <to uri="direct:putPersionId"/>
+               <to uri="direct:putPersonId"/>
            </put>
            <delete uri="/persons/{personId}">
-               <to uri="direct:deletePersionId"/>
+               <to uri="direct:deletePersonId"/>
            </delete>    
         </rest>
         
@@ -73,7 +73,7 @@
         </route>
 
         <route>
-            <from uri="direct:getPersionId"/>
+            <from uri="direct:getPersonId"/>
             <setBody>
                 <simple>select * from person where id = ${header.personId}</simple>
             </setBody>
@@ -81,7 +81,7 @@
         </route>
         
         <route>       
-            <from uri="direct:putPersionId"/>
+            <from uri="direct:putPersonId"/>
             <setBody>
                  <simple>update person set firstName='${header.firstName}', lastName='${header.lastName}' where id = ${header.personId}</simple>
             </setBody>
@@ -89,7 +89,7 @@
         </route>        
       
         <route>
-            <from uri="direct:deletePersionId"/>
+            <from uri="direct:deletePersonId"/>
             <setBody>
                 <simple>delete from person where id = ${header.personId}</simple>
             </setBody>
