@@ -506,6 +506,14 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         }
     }
 
+    @Test
+    public void testFetchingGlobalObjects() {
+        final GlobalObjects globalObjects = template().requestBody("salesforce:getGlobalObjects", null, GlobalObjects.class);
+
+        assertNotNull(globalObjects);
+        assertFalse(globalObjects.getSobjects().isEmpty());
+    }
+
     @Override
     protected RouteBuilder doCreateRouteBuilder() throws Exception {
 
