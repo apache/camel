@@ -51,7 +51,7 @@ public class AhcProducer extends DefaultAsyncProducer {
             // AHC supports async processing
             Request request = getEndpoint().getBinding().prepareRequest(getEndpoint(), exchange);
             log.debug("Executing request {} ", request);
-            client.prepareRequest(request).execute(new AhcAsyncHandler(exchange, callback, request.getUrl(), getEndpoint().getBufferSize()));
+            client.executeRequest(request, new AhcAsyncHandler(exchange, callback, request.getUrl(), getEndpoint().getBufferSize()));
             return false;
         } catch (Exception e) {
             exchange.setException(e);
