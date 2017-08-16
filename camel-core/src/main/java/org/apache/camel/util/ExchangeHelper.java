@@ -281,10 +281,25 @@ public final class ExchangeHelper {
      * @param filter whether to handover the on completion
      */
     public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover, boolean useSameMessageId, Predicate<Synchronization> filter) {
+       return createCorrelatedCopy(exchange, handover,useSameMessageId,true,filter);
+    }
+    /**
+     * Creates a new instance and copies from the current message exchange so that it can be
+     * forwarded to another destination as a new instance. Unlike regular copy this operation
+     * will not share the same {@link org.apache.camel.spi.UnitOfWork} so its should be used
+     * for async messaging, where the original and copied exchange are independent.
+     *
+     * @param exchange original copy of the exchange
+     * @param handover whether the on completion callbacks should be handed over to the new copy.
+     * @param useSameMessageId whether to use same message id on the copy message.
+     * @param safeCopy whether to do a safe copy
+     * @param filter whether to handover the on completion
+     */
+    public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover, boolean useSameMessageId, boolean safeCopy, Predicate<Synchronization> filter) {
         String id = exchange.getExchangeId();
 
-        // make sure to do a safe copy as the correlated copy can be routed independently of the source.
-        Exchange copy = exchange.copy(true);
+        // make sure to use safe copy as the correlated copy can be routed independently of the source.
+        Exchange copy = exchange.copy(safeCopy);
         // do not reuse message id on copy
         if (!useSameMessageId) {
             if (copy.hasOut()) {
