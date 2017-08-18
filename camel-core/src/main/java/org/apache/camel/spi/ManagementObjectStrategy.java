@@ -36,6 +36,8 @@ public interface ManagementObjectStrategy {
     
     Object getManagedObjectForCamelContext(CamelContext context);
 
+    Object getManagedObjectForCamelHealth(CamelContext context);
+
     Object getManagedObjectForComponent(CamelContext context, Component component, String name);
 
     Object getManagedObjectForDataFormat(CamelContext context, DataFormat dataFormat);

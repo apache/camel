@@ -160,7 +160,6 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ConsulConfiguration configuration = Optional.ofNullable(this.configuration).orElseGet(ConsulConfiguration::new).copy();
-        configuration.setCamelContext(getCamelContext());
 
         // using global ssl context parameters if set
         if (configuration.getSslContextParameters() == null) {

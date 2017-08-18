@@ -54,7 +54,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Component;
+import org.apache.camel.ComponentAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Ordered;
@@ -2069,6 +2072,28 @@ public final class ObjectHelper {
                 Thread.currentThread().setContextClassLoader(tccl);
             }
         }
+    }
+
+    /**
+     * Set the {@link CamelContext} context if the component is an instance of {@link CamelContextAware}.
+     */
+    public static <T> T trySetCamelContext(T object, CamelContext camelContext) {
+        if (object instanceof CamelContextAware) {
+            ((CamelContextAware) object).setCamelContext(camelContext);
+        }
+
+        return object;
+    }
+
+    /**
+     * Set the {@link Component} context if the component is an instance of {@link ComponentAware}.
+     */
+    public static <T> T trySetComponent(T object, Component component) {
+        if (object instanceof ComponentAware) {
+            ((ComponentAware) object).setComponent(component);
+        }
+
+        return object;
     }
     
 }

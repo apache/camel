@@ -79,6 +79,9 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        // Sa ve a copy of the parameters.
+        Map<String, Object> healthCheckOptions = new HashMap<>(parameters);
+
         URI uriHttpUriAddress = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, parameters);
 
@@ -369,5 +372,4 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     public ComponentVerifier getVerifier() {
         return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
-
 }

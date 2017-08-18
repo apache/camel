@@ -33,7 +33,6 @@ import com.orbitz.consul.model.kv.Value;
 import com.orbitz.consul.model.session.ImmutableSession;
 import com.orbitz.consul.model.session.SessionInfo;
 import com.orbitz.consul.option.QueryOptions;
-import org.apache.camel.CamelContext;
 import org.apache.camel.ha.CamelClusterMember;
 import org.apache.camel.impl.ha.AbstractCamelClusterView;
 import org.slf4j.Logger;
@@ -61,13 +60,6 @@ final class ConsulClusterView extends AbstractCamelClusterView {
         this.nullMember = new ConsulClusterMember();
         this.watcher = new Watcher();
         this.path = configuration.getRootPath() + "/" + namespace;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        super.setCamelContext(camelContext);
-
-        this.configuration.setCamelContext(camelContext);
     }
 
     @Override
@@ -103,7 +95,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
     @Override
     protected void doStart() throws Exception {
         if (sessionId == null) {
-            client = configuration.createConsulClient();
+            client = configuration.createConsulClient(getCamelContext());
             sessionClient = client.sessionClient();
             keyValueClient = client.keyValueClient();
 

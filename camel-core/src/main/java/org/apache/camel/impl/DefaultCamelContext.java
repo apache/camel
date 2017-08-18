@@ -88,9 +88,11 @@ import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.converter.BaseTypeConverterRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.LazyLoadingTypeConverter;
+import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.management.DefaultManagementMBeanAssembler;
@@ -312,6 +314,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private SSLContextParameters sslContextParameters;
     private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(HashSet::new);
     private RouteController routeController;
+    private HealthCheckRegistry healthCheckRegistry;
 
     /**
      * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
@@ -351,6 +354,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // Route controller
         this.routeController = new DefaultRouteController(this);
+
+        // Health check registry
+        this.healthCheckRegistry = new DefaultHealthCheckRegistry(this);
 
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
@@ -4741,4 +4747,15 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     }
 
+    @Override
+    public HealthCheckRegistry getHealthCheckRegistry() {
+        return healthCheckRegistry;
+    }
+
+    /**
+     * Sets a {@link HealthCheckRegistry}.
+     */
+    public void setHealthCheckRegistry(HealthCheckRegistry healthCheckRegistry) {
+        this.healthCheckRegistry = ObjectHelper.notNull(healthCheckRegistry, "HealthCheckRegistry");
+    }
 }

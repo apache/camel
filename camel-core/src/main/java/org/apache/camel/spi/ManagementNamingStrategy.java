@@ -42,6 +42,8 @@ public interface ManagementNamingStrategy {
 
     ObjectName getObjectNameForCamelContext(String managementName, String name) throws MalformedObjectNameException;
 
+    ObjectName getObjectNameForCamelHealth(CamelContext context) throws MalformedObjectNameException;
+
     ObjectName getObjectNameForCamelContext(CamelContext context) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForRouteController(CamelContext context) throws MalformedObjectNameException;

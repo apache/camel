@@ -27,7 +27,6 @@ import com.orbitz.consul.model.catalog.CatalogService;
 import com.orbitz.consul.model.health.ServiceHealth;
 import com.orbitz.consul.option.ImmutableQueryOptions;
 import com.orbitz.consul.option.QueryOptions;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
@@ -41,7 +40,10 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
     private final QueryOptions queryOptions;
 
     public ConsulServiceDiscovery(ConsulConfiguration configuration) throws Exception {
-        this.client = Suppliers.memorize(configuration::createConsulClient, this::rethrowAsRuntimeCamelException);
+        this.client = Suppliers.memorize(
+            () -> configuration.createConsulClient(getCamelContext()),
+            e -> ObjectHelper.wrapRuntimeCamelException(e)
+        );
 
         ImmutableQueryOptions.Builder builder = ImmutableQueryOptions.builder();
         ObjectHelper.ifNotEmpty(configuration.getDatacenter(), builder::datacenter);
@@ -67,10 +69,6 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
     // *************************
     // Helpers
     // *************************
-
-    private void rethrowAsRuntimeCamelException(Exception e) {
-        throw new RuntimeCamelException(e);
-    }
 
     private boolean isHealthy(ServiceHealth serviceHealth) {
         return serviceHealth.getChecks().stream().allMatch(

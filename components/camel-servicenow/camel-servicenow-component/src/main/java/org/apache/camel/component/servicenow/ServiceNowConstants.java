@@ -17,6 +17,8 @@
 package org.apache.camel.component.servicenow;
 
 public final class ServiceNowConstants {
+    public static final String COMPONENT_SCHEME = "servicenow";
+
     public static final String CAMEL_HEADER_PREFIX = "CamelServiceNow";
 
     public static final String RESOURCE = "CamelServiceNowResource";

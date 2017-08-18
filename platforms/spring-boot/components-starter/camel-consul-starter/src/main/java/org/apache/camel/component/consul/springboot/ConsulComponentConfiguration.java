@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Set;
 import javax.annotation.Generated;
 import com.orbitz.consul.option.ConsistencyMode;
-import org.apache.camel.CamelContext;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -158,7 +157,19 @@ public class ConsulComponentConfiguration
 
     public static class ConsulConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.consul.ConsulConfiguration.class;
-        private CamelContext camelContext;
+        /**
+         * The default action. Can be overridden by CamelConsulAction
+         */
+        private String action;
+        /**
+         * Default to transform values retrieved from Consul i.e. on KV endpoint
+         * to string.
+         */
+        private Boolean valueAsString;
+        /**
+         * The default key. Can be overridden by CamelConsulKey
+         */
+        private String key;
         /**
          * The Consul agent URL
          */
@@ -201,10 +212,6 @@ public class ConsulComponentConfiguration
          */
         private String aclToken;
         /**
-         * The default action. Can be overridden by CamelConsulAction
-         */
-        private String action;
-        /**
          * Sets the username to be used for basic authentication
          */
         private String userName;
@@ -230,15 +237,6 @@ public class ConsulComponentConfiguration
          */
         private Boolean pingInstance;
         /**
-         * Default to transform values retrieved from Consul i.e. on KV endpoint
-         * to string.
-         */
-        private Boolean valueAsString;
-        /**
-         * The default key. Can be overridden by CamelConsulKey
-         */
-        private String key;
-        /**
          * The second to wait for a watch event, default 10 seconds
          */
         private Integer blockSeconds;
@@ -251,12 +249,28 @@ public class ConsulComponentConfiguration
          */
         private Boolean recursive;
 
-        public CamelContext getCamelContext() {
-            return camelContext;
+        public String getAction() {
+            return action;
         }
 
-        public void setCamelContext(CamelContext camelContext) {
-            this.camelContext = camelContext;
+        public void setAction(String action) {
+            this.action = action;
+        }
+
+        public Boolean getValueAsString() {
+            return valueAsString;
+        }
+
+        public void setValueAsString(Boolean valueAsString) {
+            this.valueAsString = valueAsString;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
         }
 
         public String getUrl() {
@@ -335,14 +349,6 @@ public class ConsulComponentConfiguration
             this.aclToken = aclToken;
         }
 
-        public String getAction() {
-            return action;
-        }
-
-        public void setAction(String action) {
-            this.action = action;
-        }
-
         public String getUserName() {
             return userName;
         }
@@ -389,22 +395,6 @@ public class ConsulComponentConfiguration
 
         public void setPingInstance(Boolean pingInstance) {
             this.pingInstance = pingInstance;
-        }
-
-        public Boolean getValueAsString() {
-            return valueAsString;
-        }
-
-        public void setValueAsString(Boolean valueAsString) {
-            this.valueAsString = valueAsString;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public void setKey(String key) {
-            this.key = key;
         }
 
         public Integer getBlockSeconds() {

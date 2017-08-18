@@ -17,9 +17,9 @@
 package org.apache.camel.component.consul.ha;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.consul.ConsulConfiguration;
+import org.apache.camel.component.consul.ConsulClientConfiguration;
 
-public class ConsulClusterConfiguration extends ConsulConfiguration {
+public class ConsulClusterConfiguration extends ConsulClientConfiguration {
     private int sessionTtl = 60;
     private int sessionLockDelay = 5;
     private int sessionRefreshInterval = 5;

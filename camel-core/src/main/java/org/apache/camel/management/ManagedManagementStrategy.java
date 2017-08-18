@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.management.mbean.ManagedBacklogDebugger;
 import org.apache.camel.management.mbean.ManagedBacklogTracer;
 import org.apache.camel.management.mbean.ManagedCamelContext;
+import org.apache.camel.management.mbean.ManagedCamelHealth;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedDataFormat;
@@ -87,9 +88,14 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
 
         ObjectName objectName = null;
 
+
+
         if (managedObject instanceof ManagedCamelContext) {
             ManagedCamelContext mcc = (ManagedCamelContext) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForCamelContext(mcc.getContext());
+        } else if (managedObject instanceof ManagedCamelHealth) {
+            ManagedCamelHealth mch = (ManagedCamelHealth) managedObject;
+            objectName = getManagementNamingStrategy().getObjectNameForCamelHealth(mch.getContext());
         } else if (managedObject instanceof ManagedRouteController) {
             ManagedRouteController mrc = (ManagedRouteController) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForRouteController(mrc.getContext());

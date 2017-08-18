@@ -39,7 +39,7 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        this.verifier = new DefaultComponentVerifierExtension("timer", context);
+        this.verifier = new TestVerifier();
     }
 
     // *************************************
@@ -80,5 +80,11 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
         Assert.assertEquals(VerificationError.StandardCode.ILLEGAL_PARAMETER_VALUE, result.getErrors().get(0).getCode());
         Assert.assertEquals("fixedRate has wrong value (wrong)", result.getErrors().get(0).getDescription());
         Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("fixedRate"));
+    }
+
+    private class TestVerifier extends DefaultComponentVerifierExtension {
+        public TestVerifier() {
+            super("timer", context);
+        }
     }
 }

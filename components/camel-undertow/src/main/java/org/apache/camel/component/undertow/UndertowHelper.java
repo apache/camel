@@ -26,6 +26,7 @@ import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
@@ -169,6 +170,32 @@ public final class UndertowHelper {
         }
 
         return answer;
+    }
+
+    public static URI makeHttpURI(String httpURI) {
+        return makeHttpURI(
+            URI.create(UnsafeUriCharactersEncoder.encodeHttpURI(httpURI))
+        );
+    }
+
+    public static URI makeHttpURI(URI httpURI) {
+        if (ObjectHelper.isEmpty(httpURI.getPath())) {
+            try {
+                return new URI(
+                    httpURI.getScheme(),
+                    httpURI.getUserInfo(),
+                    httpURI.getHost(),
+                    httpURI.getPort(),
+                    "/",
+                    httpURI.getQuery(),
+                    httpURI.getFragment()
+                );
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException(e);
+            }
+        } else {
+            return httpURI;
+        }
     }
 
 }
