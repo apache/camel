@@ -346,7 +346,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             lock.lock();
             try {
                 aggregated = doAggregation(key, copy);
-                // we are completed so do that work outside the lock
+                // we are completed so submit to completion
                 if (aggregated != null) {
                     for (Exchange agg : aggregated) {
                         onSubmitCompletion(key, agg);
