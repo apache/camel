@@ -22,7 +22,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.sshd.common.KeyPairProvider;
+import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -22,7 +22,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.sshd.SshClient;
+import org.apache.sshd.client.SshClient;
 
 public class SshProducer extends DefaultProducer {
     private SshEndpoint endpoint;
