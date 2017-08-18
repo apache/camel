@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.net.ssl.SSLContext;
 
 import io.undertow.client.ClientRequest;
@@ -34,9 +33,7 @@ import io.undertow.server.DefaultByteBufferPool;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
-
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;

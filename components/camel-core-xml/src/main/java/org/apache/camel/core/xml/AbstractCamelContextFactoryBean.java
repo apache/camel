@@ -46,6 +46,9 @@ import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
 import org.apache.camel.ha.CamelClusterService;
+import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.health.HealthCheckRepository;
+import org.apache.camel.health.HealthCheckService;
 import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementStrategy;
@@ -160,6 +163,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         return contextClassLoaderOnStart;
     }
 
+    //CHECKSTYLE:OFF
     public void afterPropertiesSet() throws Exception {
         if (ObjectHelper.isEmpty(getId())) {
             throw new IllegalArgumentException("Id must be set");
@@ -339,7 +343,29 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 getContext().addRoutePolicyFactory(factory);
             }
         }
-
+        // Health check registry
+        HealthCheckRegistry healthCheckRegistry = getBeanForType(HealthCheckRegistry.class);
+        if (healthCheckRegistry != null) {
+            healthCheckRegistry.setCamelContext(getContext());
+            LOG.info("Using HealthCheckRegistry: {}", healthCheckRegistry);
+            getContext().setHealthCheckRegistry(healthCheckRegistry);
+        } else {
+            healthCheckRegistry = getContext().getHealthCheckRegistry();
+            healthCheckRegistry.setCamelContext(getContext());
+        }
+        // Health check repository
+        Set<HealthCheckRepository> repositories = getContext().getRegistry().findByType(HealthCheckRepository.class);
+        if (ObjectHelper.isNotEmpty(repositories)) {
+            for (HealthCheckRepository repository: repositories) {
+                healthCheckRegistry.addRepository(repository);
+            }
+        }
+        // Health check service
+        HealthCheckService healthCheckService = getBeanForType(HealthCheckService.class);
+        if (healthCheckService != null) {
+            LOG.info("Using HealthCheckService: {}", healthCheckService);
+            getContext().addService(healthCheckService);
+        }
         // Route controller
         RouteController routeController = getBeanForType(RouteController.class);
         if (clusterService != null) {
@@ -359,6 +385,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         // init stream caching strategy
         initStreamCachingStrategy();
     }
+    //CHECKSTYLE:ON
 
     /**
      * Setup all the routes which must be done prior starting {@link CamelContext}.

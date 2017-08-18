@@ -71,7 +71,7 @@ public class ConsulServiceDiscoveryTest {
 
     @Test
     public void testServiceDiscovery() throws Exception {
-        ConsulConfiguration configuration = new ConsulConfiguration(null);
+        ConsulConfiguration configuration = new ConsulConfiguration();
         ServiceDiscovery discovery = new ConsulServiceDiscovery(configuration);
 
         List<ServiceDefinition> services = discovery.getServices("my-service");

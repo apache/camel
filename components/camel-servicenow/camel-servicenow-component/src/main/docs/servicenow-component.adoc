@@ -30,7 +30,7 @@ for this component:
 
 
 // component options: START
-The ServiceNow component supports 10 options which are listed below.
+The ServiceNow component supports 14 options which are listed below.
 
 
 
@@ -45,6 +45,10 @@ The ServiceNow component supports 10 options which are listed below.
 | *oauthClientId* (security) | OAuth2 ClientID |  | String
 | *oauthClientSecret* (security) | OAuth2 ClientSecret |  | String
 | *oauthTokenUrl* (security) | OAuth token Url |  | String
+| *proxyHost* (advanced) | The proxy host name |  | String
+| *proxyPort* (advanced) | The proxy port number |  | Integer
+| *proxyUserName* (security) | Username for proxy authentication |  | String
+| *proxyPassword* (security) | Password for proxy authentication |  | String
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===

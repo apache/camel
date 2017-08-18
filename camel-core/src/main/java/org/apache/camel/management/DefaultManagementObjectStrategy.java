@@ -36,6 +36,7 @@ import org.apache.camel.management.mbean.ManagedAggregateProcessor;
 import org.apache.camel.management.mbean.ManagedBeanProcessor;
 import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
 import org.apache.camel.management.mbean.ManagedCamelContext;
+import org.apache.camel.management.mbean.ManagedCamelHealth;
 import org.apache.camel.management.mbean.ManagedChoice;
 import org.apache.camel.management.mbean.ManagedCircuitBreakerLoadBalancer;
 import org.apache.camel.management.mbean.ManagedComponent;
@@ -170,6 +171,12 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         ManagedCamelContext mc = new ManagedCamelContext((ModelCamelContext)context);
         mc.init(context.getManagementStrategy());
         return mc;
+    }
+
+    public Object getManagedObjectForCamelHealth(CamelContext context) {
+        ManagedCamelHealth mch = new ManagedCamelHealth(context);
+        mch.init(context.getManagementStrategy());
+        return mch;
     }
 
     @SuppressWarnings({"deprecation", "unchecked"})

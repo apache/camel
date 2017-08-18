@@ -100,6 +100,7 @@
     <module>camel-example-spring-boot-clustered-route-controller</module>
     <module>camel-example-spring-boot-geocoder</module>
     <module>camel-example-spring-boot-grpc</module>
+    <module>camel-example-spring-boot-health-checks</module>
     <module>camel-example-spring-boot-infinispan</module>
     <module>camel-example-spring-boot-live-reload</module>
     <module>camel-example-spring-boot-metrics</module>

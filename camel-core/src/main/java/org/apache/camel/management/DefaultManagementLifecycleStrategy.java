@@ -221,6 +221,17 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         enlistPreRegisteredServices();
 
         try {
+            Object me = getManagementObjectStrategy().getManagedObjectForCamelHealth(camelContext);
+            if (me == null) {
+                // endpoint should not be managed
+                return;
+            }
+            manageObject(me);
+        } catch (Exception e) {
+            LOG.warn("Could not register CamelHealth MBean. This exception will be ignored.", e);
+        }
+
+        try {
             Object me = getManagementObjectStrategy().getManagedObjectForRouteController(camelContext);
             if (me == null) {
                 // endpoint should not be managed
@@ -296,6 +307,16 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             }
         } catch (Exception e) {
             LOG.warn("Could not unregister RouteController MBean", e);
+        }
+
+        try {
+            Object mc = getManagementObjectStrategy().getManagedObjectForCamelHealth(context);
+            // the context could have been removed already
+            if (getManagementStrategy().isManaged(mc, null)) {
+                unmanageObject(mc);
+            }
+        } catch (Exception e) {
+            LOG.warn("Could not unregister CamelHealth MBean", e);
         }
 
         try {

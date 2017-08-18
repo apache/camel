@@ -35,7 +35,7 @@ public final class AuthenticationRequestFilter implements ClientRequestFilter {
     private final OAuthToken authToken;
     private final String authString;
 
-    public AuthenticationRequestFilter(ServiceNowConfiguration conf) throws IOException {
+    public AuthenticationRequestFilter(ServiceNowConfiguration conf) {
         this.authToken = conf.hasOAuthAuthentication() ? new OAuthToken(conf) : null;
         this.authString = conf.hasBasicAuthentication() ? getBasicAuthenticationString(conf) : null;
     }
