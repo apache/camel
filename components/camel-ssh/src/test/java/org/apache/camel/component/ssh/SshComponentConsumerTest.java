@@ -26,9 +26,9 @@ public class SshComponentConsumerTest extends SshComponentTestSupport {
     public void testPollingConsumer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived("test\r");
+        mock.expectedBodiesReceived("test");
         mock.expectedHeaderReceived(SshResult.EXIT_VALUE, 0);
-        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test\r");
+        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test");
         assertMockEndpointsSatisfied();
     }
 

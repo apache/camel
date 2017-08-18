@@ -23,8 +23,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.sshd.common.KeyPairProvider;
+import org.apache.camel.util.StringHelper;
+
+import org.apache.sshd.common.keyprovider.KeyPairProvider;
 
 @UriParams
 public class SshConfiguration implements Cloneable {
@@ -62,8 +63,8 @@ public class SshConfiguration implements Cloneable {
         String username = uri.getUserInfo();
         String pw = null;
         if (username != null && username.contains(":")) {
-            pw = ObjectHelper.after(username, ":");
-            username = ObjectHelper.before(username, ":");
+            pw = StringHelper.after(username, ":");
+            username = StringHelper.before(username, ":");
         }
         if (username != null) {
             setUsername(username);

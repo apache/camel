@@ -27,7 +27,7 @@ public class SshComponentErrorHandlingTest extends SshComponentTestSupport {
 
     @Test
     public void testRedelivery() throws Exception {
-        final String msg = "test\n";
+        final String msg = "test";
 
         MockEndpoint mockError = getMockEndpoint("mock:error");
         mockError.expectedMinimumMessageCount(0);
