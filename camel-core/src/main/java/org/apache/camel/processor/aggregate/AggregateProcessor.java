@@ -346,16 +346,16 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             lock.lock();
             try {
                 aggregated = doAggregation(key, copy);
+                // we are completed so do that work outside the lock
+                if (aggregated != null) {
+                    for (Exchange agg : aggregated) {
+                        onSubmitCompletion(key, agg);
+                    }
+                }
             } finally {
                 lock.unlock();
             }
 
-            // we are completed so do that work outside the lock
-            if (aggregated != null) {
-                for (Exchange agg : aggregated) {
-                    onSubmitCompletion(key, agg);
-                }
-            }
         }
 
         // check for the special header to force completion of all groups (inclusive of the message)
