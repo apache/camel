@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  *     Supported commands are: <tt>now</tt> for current timestamp,
  *     <tt>in.header.xxx</tt> or <tt>header.xxx</tt> to use the Date object in the in header.
  *     <tt>out.header.xxx</tt> to use the Date object in the out header.
- *     <tt>property.xxx</tt> to use the Date object in the out header.
+ *     <tt>property.xxx</tt> to use the Date object in the exchange property.
  *     <tt>file</tt> for the last modified timestamp of the file (available with a File consumer).
  *     Command accepts offsets such as: <tt>now-24h</tt> or <tt>in.header.xxx+1h</tt> or even <tt>now+1h30m-100</tt>.
  * </li>
