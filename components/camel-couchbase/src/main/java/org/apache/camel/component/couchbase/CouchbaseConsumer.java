@@ -85,7 +85,7 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
         log.info("Stopping Couchbase consumer");
         super.doStop();
         if (client != null) {
-        	client.shutdown();
+            client.shutdown();
         }
     }
 
