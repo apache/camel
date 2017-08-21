@@ -138,7 +138,7 @@ public class CouchbaseProducer extends DefaultProducer {
     protected void doStop() throws Exception {
         super.doStop();
         if (client != null) {
-        	client.shutdown();
+            client.shutdown();
         }
     }
 
