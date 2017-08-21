@@ -59,13 +59,17 @@ with the following path and query parameters:
 
 ### Queue producer – to(“hazelcast-queue:foo”)
 
-The queue producer provides 6 operations:
+The queue producer provides 10 operations:
 * add
 * put
 * poll
 * peek
 * offer
-* removevalue
+* remove value
+* remaining capacity
+* remove all
+* remove if
+* drain to
 
 #### Sample for *add*:
 
@@ -119,6 +123,38 @@ from("direct:offer")
 from("direct:removevalue")
 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMOVE_VALUE))
 .toF("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX);
+--------------------------------------------------------------------------------------------
+
+#### Sample for *remaining capacity*:
+
+[source,java]
+--------------------------------------------------------------------------------------------
+from("direct:remaining-capacity").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMAINING_CAPACITY)).to(
+String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
+--------------------------------------------------------------------------------------------
+
+#### Sample for *remove all*:
+
+[source,java]
+--------------------------------------------------------------------------------------------
+from("direct:removeAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMOVE_ALL)).to(
+String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
+--------------------------------------------------------------------------------------------
+
+#### Sample for *remove if*:
+
+[source,java]
+--------------------------------------------------------------------------------------------
+from("direct:removeIf").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMOVE_IF)).to(
+String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
+--------------------------------------------------------------------------------------------
+
+#### Sample for *drain to*:
+
+[source,java]
+--------------------------------------------------------------------------------------------
+from("direct:drainTo").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DRAIN_TO)).to(
+String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 --------------------------------------------------------------------------------------------
 
 ### Queue consumer – from(“hazelcast-queue:foo”)
