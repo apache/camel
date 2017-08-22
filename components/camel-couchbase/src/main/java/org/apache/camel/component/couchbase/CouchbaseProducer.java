@@ -133,6 +133,14 @@ public class CouchbaseProducer extends DefaultProducer {
         exchange.getIn().removeHeader(HEADER_ID);
 
     }
+    
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (client != null) {
+            client.shutdown();
+        }
+    }
 
     private Boolean setDocument(String id, int expiry, Object obj, PersistTo persistTo, ReplicateTo replicateTo) throws Exception {
         return setDocument(id, expiry, obj, producerRetryAttempts, persistTo, replicateTo);

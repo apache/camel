@@ -55,6 +55,7 @@ public enum HazelcastOperation {
     POLL("poll"),
     REMAINING_CAPACITY("remainingCapacity"),
     DRAIN_TO("drainTo"),
+    REMOVE_IF("removeIf"),
 
     // topic
     PUBLISH("publish"),
