@@ -16,14 +16,11 @@
  */
 package org.apache.camel.component.ssh;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
@@ -32,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.sshd.client.keyverifier.ServerKeyVerifier;
 import org.apache.sshd.client.session.ClientSession;
@@ -51,9 +49,7 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
     private String knownHostsResource;
 
     public ResourceBasedSSHKeyVerifier(CamelContext camelContext, String knownHostsResource) {
-        this.camelContext = camelContext;
-        this.knownHostsResource = knownHostsResource;
-        this.failOnUnknownHost = false;
+        this(camelContext, knownHostsResource, false);
     }
     
     public ResourceBasedSSHKeyVerifier(CamelContext camelContext, String knownHostsResource,
@@ -81,13 +77,7 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
         } catch (IOException ioException) {
             log.debug(String.format("Could not find known_hosts file %s", knownHostsResource), ioException);
         } finally {
-            if (knownHostsInputStream != null) {
-                try {
-                    knownHostsInputStream.close();
-                } catch (IOException e) {
-                    // Ignore
-                }
-            }
+            IOHelper.close(knownHostsInputStream);
         }
         if (failOnUnknownHost) {
             log.warn("Could not find matching key for client session, connection will fail due to configuration");
@@ -99,11 +89,14 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
         }
     }
 
-    private PublicKey findKeyForServerToken(InputStream knownHostsInputStream, List<String> possibleTokens)
-            throws IOException {
-        List<String> knowHostsLines = readInputStreamToStringList(knownHostsInputStream);
+    private PublicKey findKeyForServerToken(InputStream knownHostsInputStream, List<String> possibleTokens) {
+        String knowHostsLines = camelContext.getTypeConverter().convertTo(String.class, knownHostsInputStream);
+        if (knowHostsLines == null) {
+            log.warn("Could not read from the known_hosts file input stream");
+            return null;
+        }
 
-        for (String s : knowHostsLines) {
+        for (String s : knowHostsLines.split("\n")) {
             String[] parts = s.split(" ");
             if (parts.length != 3) {
                 log.warn("Found malformed entry in known_hosts file");
@@ -122,17 +115,6 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
             }
         }
         return null;
-    }
-
-    private List<String> readInputStreamToStringList(InputStream knownHostsInputStream) throws IOException {
-        List<String> returnList = new LinkedList<>();
-        String line;
-        BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(knownHostsInputStream, Charset.forName("UTF-8")));
-        while ((line = bufferedReader.readLine()) != null) {
-            returnList.add(line);
-        }
-        return returnList;
     }
 
     private List<String> getKnownHostsFileTokensForSocketAddress(SocketAddress remoteAddress) {
