@@ -46,8 +46,11 @@ public class NagiosConfiguration implements Cloneable {
     private int timeout = 5000;
     @UriParam(label = "security", secret = true)
     private String password;
+    @Deprecated
     @UriParam(label = "security")
     private NagiosEncryptionMethod encryptionMethod;
+    @UriParam(label = "security")
+    private Encryption encryption = Encryption.NONE;
 
     /**
      * Returns a copy of this configuration
@@ -88,18 +91,7 @@ public class NagiosConfiguration implements Cloneable {
             nagiosSettings.setNagiosHost(getHost());
             nagiosSettings.setPort(getPort());
             nagiosSettings.setPassword(getPassword());
-
-            if (encryptionMethod != null) {
-                if (NagiosEncryptionMethod.No == encryptionMethod) {
-                    nagiosSettings.setEncryption(Encryption.NONE);
-                } else if (NagiosEncryptionMethod.Xor == encryptionMethod) {
-                    nagiosSettings.setEncryption(Encryption.XOR);
-                } else if (NagiosEncryptionMethod.TripleDes == encryptionMethod) {
-                    nagiosSettings.setEncryption(Encryption.TRIPLE_DES);
-                } else {
-                    throw new IllegalArgumentException("Unknown encryption method: " + encryptionMethod);
-                }
-            }
+            nagiosSettings.setEncryption(encryption);
         }
 
         return nagiosSettings;
@@ -175,10 +167,21 @@ public class NagiosConfiguration implements Cloneable {
         this.encryptionMethod = encryptionMethod;
     }
 
+    public Encryption getEncryption() {
+        return encryption;
+    }
+
+    /**
+     * To specify an encryption method.
+     */
+    public void setEncryption(Encryption encryption) {
+        this.encryption = encryption;
+    }
+
     @Override
     public String toString() {
         return "NagiosConfiguration[host=" + host + ":" + port + ", connectionTimeout=" + connectionTimeout
-                + ", timeout=" + timeout + ", encryptionMethod=" + encryptionMethod + "]";
+                + ", timeout=" + timeout + ", encryptionMethod=" + encryptionMethod + ", encryption=" + encryption + "]";
     }
 
 }
