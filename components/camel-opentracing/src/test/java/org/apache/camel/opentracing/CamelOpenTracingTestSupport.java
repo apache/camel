@@ -20,8 +20,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import io.opentracing.Span;
@@ -55,6 +57,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
 
         OpenTracingTracer ottracer = new OpenTracingTracer();
         ottracer.setTracer(tracer);
+        ottracer.setExcludePatterns(getExcludePatterns());
 
         ottracer.init(context);
 
@@ -63,6 +66,10 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
 
     protected MockTracer getTracer() {
         return tracer;
+    }
+
+    protected Set<String> getExcludePatterns() {
+        return new HashSet<String>();
     }
 
     protected void verify() {
