@@ -44,6 +44,9 @@ public class OpenTracingAutoConfiguration {
         if (tracer != null) {
             ottracer.setTracer(tracer);
         }
+        if (config.getExcludePatterns() != null) {
+            ottracer.setExcludePatterns(config.getExcludePatterns());
+        }
         ottracer.init(camelContext);
 
         return ottracer;

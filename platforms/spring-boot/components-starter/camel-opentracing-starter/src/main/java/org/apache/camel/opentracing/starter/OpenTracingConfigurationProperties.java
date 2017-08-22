@@ -16,11 +16,24 @@
  */
 package org.apache.camel.opentracing.starter;
 
+import java.util.Set;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "camel.opentracing")
 public class OpenTracingConfigurationProperties {
 
-    // Placeholder for configuration properties
+    /**
+     * Sets exclude pattern(s) that will disable tracing for Camel messages that matches the pattern.
+     */
+    private Set<String> excludePatterns;
+
+    public Set<String> getExcludePatterns() {
+        return excludePatterns;
+    }
+
+    public void setExcludePatterns(Set<String> excludePatterns) {
+        this.excludePatterns = excludePatterns;
+    }
 
 }
