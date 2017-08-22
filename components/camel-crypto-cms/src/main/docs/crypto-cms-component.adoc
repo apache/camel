@@ -81,7 +81,7 @@ with the following path and query parameters:
 | **includeContent** (sign) | Indicates whether the signed content should be included into the Signed Data instance. If false then a detached Signed Data instance is created in the header CamelCryptoCmsSignedData. | true | Boolean
 | **signer** (sign) | Signer information: reference to a bean which implements org.apache.camel.component.crypto.cms.api.SignerInfo |  | List
 | **signedDataHeaderBase64** (verify) | Indicates whether the value in the header CamelCryptoCmsSignedData is base64 encoded. Default value is false. Only relevant for detached signatures. In the detached signature case the header contains the Signed Data object. | false | Boolean
-| **verifySignaturesOfAllSigners** (verify) | If true then the signatures of all signers contained in the Signed Data object are verified. If false then only one signature whose signer info matches with one of the specified certificates is verified. Default value is true. | true | Boolean
+| **verifySignaturesOfAll Signers** (verify) | If true then the signatures of all signers contained in the Signed Data object are verified. If false then only one signature whose signer info matches with one of the specified certificates is verified. Default value is true. | true | Boolean
 |=======================================================================
 // endpoint options: END
 
