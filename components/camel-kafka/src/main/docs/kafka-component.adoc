@@ -67,7 +67,7 @@ with the following path and query parameters:
 | **topic** | *Required* Name of the topic to use. On the consumer you can use comma to separate multiple topics. A producer can only send a message to a single topic. |  | String
 |=======================================================================
 
-#### Query Parameters (85 parameters):
+#### Query Parameters (86 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -139,6 +139,7 @@ with the following path and query parameters:
 | **kerberosPrincipalToLocal Rules** (security) | A list of rules for mapping from principal names to short names (typically operating system usernames). The rules are evaluated in order and the first rule that matches a principal name is used to map it to a short name. Any later rules in the list are ignored. By default principal names of the form username/hostnameREALM are mapped to username. For more details on the format please see security authorization and acls. Multiple values can be separated by comma | DEFAULT | String
 | **kerberosRenewJitter** (security) | Percentage of random jitter added to the renewal time. | 0.05 | Double
 | **kerberosRenewWindowFactor** (security) | Login thread will sleep until the specified window factor of time from last refresh to ticket's expiry has been reached at which time it will try to renew the ticket. | 0.8 | Double
+| **saslJaasConfig** (security) | Expose the kafka sasl.jaas.config parameter Example: org.apache.kafka.common.security.plain.PlainLoginModule required username=\USERNAME\ password=\PASSWORD\; |  | String
 | **saslKerberosServiceName** (security) | The Kerberos principal name that Kafka runs as. This can be defined either in Kafka's JAAS config or in Kafka's config. |  | String
 | **saslMechanism** (security) | The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml | GSSAPI | String
 | **securityProtocol** (security) | Protocol used to communicate with brokers. Currently only PLAINTEXT and SSL are supported. | PLAINTEXT | String
