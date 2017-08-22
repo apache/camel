@@ -14,6 +14,19 @@ See the http://opentracing.io/[OpenTracing] website for a list of supported trac
 
 ### Configuration
 
+The configuration properties for the OpenTracing tracer are:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Option |Default |Description
+
+|excludePatterns |  | Sets exclude pattern(s) that will disable tracing for Camel
+messages that matches the pattern. The content is a Set<String> where the key is a pattern. The pattern
+uses the rules from link:intercept.html[Intercept].
+
+|=======================================================================
+
+
 There are three ways in which an OpenTracing tracer can be configured to provide distributed tracing for a Camel application:
 
 #### Explicit
