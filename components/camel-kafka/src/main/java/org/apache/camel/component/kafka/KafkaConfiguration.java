@@ -285,7 +285,10 @@ public class KafkaConfiguration implements Cloneable {
     private Double kerberosRenewWindowFactor = SaslConfigs.DEFAULT_KERBEROS_TICKET_RENEW_WINDOW_FACTOR;
     @UriParam(label = "common,security", defaultValue = "DEFAULT")
     //sasl.kerberos.principal.to.local.rules
-    private String kerberosPrincipalToLocalRules;
+    private String kerberosPrincipalToLocalRules; 
+    @UriParam(label = "common,security", secret = true)
+    //sasl.jaas.config
+    private String saslJaasConfig;   
 
     public KafkaConfiguration() {
     }
@@ -355,6 +358,7 @@ public class KafkaConfiguration implements Cloneable {
         addPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_TICKET_RENEW_WINDOW_FACTOR, getKerberosRenewWindowFactor());
         addListPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_PRINCIPAL_TO_LOCAL_RULES, getKerberosPrincipalToLocalRules());
         addPropertyIfNotNull(props, SaslConfigs.SASL_MECHANISM, getSaslMechanism());
+        addPropertyIfNotNull(props, SaslConfigs.SASL_JAAS_CONFIG, getSaslJaasConfig());
 
         return props;
     }
@@ -414,6 +418,7 @@ public class KafkaConfiguration implements Cloneable {
         addPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_TICKET_RENEW_WINDOW_FACTOR, getKerberosRenewWindowFactor());
         addListPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_PRINCIPAL_TO_LOCAL_RULES, getKerberosPrincipalToLocalRules());
         addPropertyIfNotNull(props, SaslConfigs.SASL_MECHANISM, getSaslMechanism());
+        addPropertyIfNotNull(props, SaslConfigs.SASL_JAAS_CONFIG, getSaslJaasConfig());
         return props;
     }
 
@@ -984,6 +989,20 @@ public class KafkaConfiguration implements Cloneable {
      */
     public void setSaslMechanism(String saslMechanism) {
         this.saslMechanism = saslMechanism;
+    }
+    
+    public String getSaslJaasConfig() {
+        return saslJaasConfig;
+    }
+
+    /**
+     * Expose the kafka sasl.jaas.config parameter
+     * 
+     * Example:
+     * org.apache.kafka.common.security.plain.PlainLoginModule required username=\"USERNAME\" password=\"PASSWORD\";
+     */
+    public void setSaslJaasConfig(String saslMechanism) {
+        this.saslJaasConfig = saslMechanism;
     }
 
     public String getSecurityProtocol() {
