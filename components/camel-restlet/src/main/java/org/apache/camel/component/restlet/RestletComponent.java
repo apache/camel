@@ -22,6 +22,7 @@ import java.security.GeneralSecurityException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -284,13 +285,16 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         }
 
         for (MethodBasedRouter router : routesToRemove) {
+
+            List<Method> methods = new ArrayList<>();
+            Collections.addAll(methods, Method.OPTIONS);
             if (endpoint.getRestletMethods() != null) {
-                Method[] methods = endpoint.getRestletMethods();
-                for (Method method : methods) {
-                    router.removeRoute(method);
-                }
+                Collections.addAll(methods, endpoint.getRestletMethods());
             } else {
-                router.removeRoute(endpoint.getRestletMethod());
+                Collections.addAll(methods, endpoint.getRestletMethod());
+            }
+            for (Method method : methods) {
+                router.removeRoute(method);
             }
 
             if (LOG.isDebugEnabled()) {
@@ -488,14 +492,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             LOG.debug("Target has been set to guard: {}", guard);
         }
 
+        List<Method> methods = new ArrayList<>();
+        Collections.addAll(methods, Method.OPTIONS);
         if (endpoint.getRestletMethods() != null) {
-            Method[] methods = endpoint.getRestletMethods();
-            for (Method method : methods) {
-                router.addRoute(method, target);
-                LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, method);
-            }
+            Collections.addAll(methods, endpoint.getRestletMethods());
         } else {
-            Method method = endpoint.getRestletMethod();
+            Collections.addAll(methods, endpoint.getRestletMethod());
+        }
+        for (Method method : methods) {
             router.addRoute(method, target);
             LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, method);
         }
