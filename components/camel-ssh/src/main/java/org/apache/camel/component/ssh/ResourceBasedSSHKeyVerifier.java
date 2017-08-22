@@ -33,8 +33,8 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.ResourceHelper;
-import org.apache.sshd.ClientSession;
-import org.apache.sshd.client.ServerKeyVerifier;
+import org.apache.sshd.client.keyverifier.ServerKeyVerifier;
+import org.apache.sshd.client.session.ClientSession;
 import org.bouncycastle.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

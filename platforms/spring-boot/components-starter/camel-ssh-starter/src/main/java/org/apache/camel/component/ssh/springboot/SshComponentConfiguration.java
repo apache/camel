@@ -204,31 +204,30 @@ public class SshComponentConfiguration
         /**
          * Sets the username to use in logging into the remote SSH server.
          * 
-         * @param username
-         *            String representing login username.
+         * @param usernameString
+         *            representing login username.
          */
         private String username;
         /**
          * Sets the hostname of the remote SSH server.
          * 
-         * @param host
-         *            String representing hostname of SSH server.
+         * @param hostString
+         *            representing hostname of SSH server.
          */
         private String host;
         /**
          * Sets the port number for the remote SSH server.
          * 
-         * @param port
-         *            int representing port number on remote host. Defaults to
-         *            22.
+         * @param portint
+         *            representing port number on remote host. Defaults to 22.
          */
         private Integer port = 22;
         /**
          * Sets the password to use in connecting to remote SSH server. Requires
          * keyPairProvider to be set to null.
          * 
-         * @param password
-         *            String representing password for username at remote host.
+         * @param passwordString
+         *            representing password for username at remote host.
          */
         private String password;
         /**
@@ -237,18 +236,17 @@ public class SshComponentConfiguration
          * consumer, i.e. from("ssh://...") You may need to end your command
          * with a newline, and that must be URL encoded %0A
          * 
-         * @param pollCommand
-         *            String representing the command to send.
+         * @param pollCommandString
+         *            representing the command to send.
          */
         private String pollCommand;
         /**
          * Sets the KeyPairProvider reference to use when connecting using
          * Certificates to the remote SSH Server.
          * 
-         * @param keyPairProvider
-         *            KeyPairProvider reference to use in authenticating. If set
-         *            to 'null', then will attempt to connect using
-         *            username/password settings.
+         * @param keyPairProviderKeyPairProvider
+         *            reference to use in authenticating. If set to 'null', then
+         *            will attempt to connect using username/password settings.
          * @see KeyPairProvider
          */
         private KeyPairProvider keyPairProvider;
@@ -257,9 +255,8 @@ public class SshComponentConfiguration
          * authentication. KeyPairProvider.loadKey(...) will be passed this
          * value. Defaults to "ssh-rsa".
          * 
-         * @param keyType
-         *            String defining the type of KeyPair to use for
-         *            authentication.
+         * @param keyTypeString
+         *            defining the type of KeyPair to use for authentication.
          * @see KeyPairProvider
          */
         private String keyType = "ssh-rsa";
@@ -267,8 +264,8 @@ public class SshComponentConfiguration
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
          * 
-         * @param timeout
-         *            long milliseconds to wait.
+         * @param timeoutlong
+         *            milliseconds to wait.
          */
         private Long timeout = 30000L;
         /**
@@ -282,10 +279,25 @@ public class SshComponentConfiguration
          * Will use {@link ResourceHelperKeyPairProvider} to resolve file based
          * certificate, and depends on keyType setting.
          * 
-         * @param certResource
-         *            String file, classpath, or http url for the certificate
+         * @param certResourceString
+         *            file, classpath, or http url for the certificate
          */
         private String certResource;
+        /**
+         * Sets the resource path for a known_hosts file
+         * 
+         * @param knownHostsString
+         *            file, classpath, or http url for the certificate
+         */
+        private String knownHostsResource;
+        /**
+         * Specifies whether a connection to an unknown host should fail or not.
+         * This value is only checked when the property knownHosts is set.
+         * 
+         * @param boolean boolean flag, whether a connection to an unknown host
+         *        should fail
+         */
+        private Boolean failOnUnknownHost = false;
 
         public String getUsername() {
             return username;
@@ -368,6 +380,22 @@ public class SshComponentConfiguration
 
         public void setCertResource(String certResource) {
             this.certResource = certResource;
+        }
+
+        public String getKnownHostsResource() {
+            return knownHostsResource;
+        }
+
+        public void setKnownHostsResource(String knownHostsResource) {
+            this.knownHostsResource = knownHostsResource;
+        }
+
+        public Boolean getFailOnUnknownHost() {
+            return failOnUnknownHost;
+        }
+
+        public void setFailOnUnknownHost(Boolean failOnUnknownHost) {
+            this.failOnUnknownHost = failOnUnknownHost;
         }
     }
 }

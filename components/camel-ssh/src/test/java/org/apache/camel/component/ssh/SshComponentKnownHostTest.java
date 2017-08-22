@@ -24,13 +24,13 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
 
     @Test
     public void testProducerWithValidFile() throws Exception {
-        final String msg = "test\n";
+        final String msg = "test";
 
         MockEndpoint mock = getMockEndpoint("mock:password");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived(msg);
         mock.expectedHeaderReceived(SshResult.EXIT_VALUE, 0);
-        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test\n");
+        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test");
 
         template.sendBody("direct:ssh", msg);
 
@@ -39,7 +39,7 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
 
     @Test
     public void testProducerWithInvalidFile() throws Exception {
-        final String msg = "test\n";
+        final String msg = "test";
 
         MockEndpoint mock = getMockEndpoint("mock:password");
         mock.expectedMessageCount(0);
@@ -51,13 +51,13 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
 
     @Test
     public void testProducerWithInvalidFileWarnOnly() throws Exception {
-        final String msg = "test\n";
+        final String msg = "test";
 
         MockEndpoint mock = getMockEndpoint("mock:password");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived(msg);
         mock.expectedHeaderReceived(SshResult.EXIT_VALUE, 0);
-        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test\n");
+        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test");
 
         template.sendBody("direct:sshInvalidWarnOnly", msg);
 
@@ -68,9 +68,9 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
     public void testPollingConsumerWithValidKnownHostFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived("test\r");
+        mock.expectedBodiesReceived("test");
         mock.expectedHeaderReceived(SshResult.EXIT_VALUE, 0);
-        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test\r");
+        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test");
         assertMockEndpointsSatisfied();
     }
     
@@ -85,9 +85,9 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
     public void testPollingConsumerWithInvalidKnownHostFileWarnOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultInvalidWarnOnly");
         mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived("test\r");
+        mock.expectedBodiesReceived("test");
         mock.expectedHeaderReceived(SshResult.EXIT_VALUE, 0);
-        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test\r");
+        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test");
         assertMockEndpointsSatisfied();
     }
 
