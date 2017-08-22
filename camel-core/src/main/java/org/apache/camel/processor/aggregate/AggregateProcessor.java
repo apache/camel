@@ -1223,7 +1223,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                     LOG.info("We are shutting down so stop recovering");
                     return;
                 }
-                if(!optimisticLocking){
+                if (!optimisticLocking) {
                     lock.lock();
                 }
                 try {
@@ -1288,9 +1288,8 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                             }
                         }
                     }
-                }
-                finally {
-                    if(!optimisticLocking){
+                } finally {
+                    if (!optimisticLocking) {
                         lock.unlock();
                     }
                 }
