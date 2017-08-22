@@ -379,6 +379,12 @@ public class KafkaComponentConfiguration
          */
         private String saslMechanism = "GSSAPI";
         /**
+         * Expose the kafka sasl.jaas.config parameter Example:
+         * org.apache.kafka.common.security.plain.PlainLoginModule required
+         * username=\"USERNAME\" password=\"PASSWORD\";
+         */
+        private String saslJaasConfig;
+        /**
          * Protocol used to communicate with brokers. Currently only PLAINTEXT
          * and SSL are supported.
          */
@@ -1012,6 +1018,14 @@ public class KafkaComponentConfiguration
 
         public void setSaslMechanism(String saslMechanism) {
             this.saslMechanism = saslMechanism;
+        }
+
+        public String getSaslJaasConfig() {
+            return saslJaasConfig;
+        }
+
+        public void setSaslJaasConfig(String saslJaasConfig) {
+            this.saslJaasConfig = saslJaasConfig;
         }
 
         public String getSecurityProtocol() {
