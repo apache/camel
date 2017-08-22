@@ -98,13 +98,13 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
             public void configure() {
                 onException(Exception.class).handled(true).to("mock:error");
 
-                from("ssh://smx:smx@localhost:" + port + "?useFixedDelay=true&delay=40000&pollCommand=test%0D&knownHostsResource=classpath:known_hosts_valid&failOnUnknownHost=true")
+                from("ssh://smx:smx@localhost:" + port + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_valid&failOnUnknownHost=true")
                     .to("mock:result");
                 
-                from("ssh://smx:smx@localhost:" + port + "?useFixedDelay=true&delay=40000&pollCommand=test%0D&knownHostsResource=classpath:known_hosts_invalid&failOnUnknownHost=true")
+                from("ssh://smx:smx@localhost:" + port + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_invalid&failOnUnknownHost=true")
                     .to("mock:resultInvalid");
 
-                from("ssh://smx:smx@localhost:" + port + "?useFixedDelay=true&delay=40000&pollCommand=test%0D&knownHostsResource=classpath:known_hosts_invalid")
+                from("ssh://smx:smx@localhost:" + port + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_invalid")
                     .to("mock:resultInvalidWarnOnly");
 
                 from("direct:ssh")

@@ -37,7 +37,7 @@ public class SshComponentConsumerTest extends SshComponentTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("ssh://smx:smx@localhost:" + port + "?useFixedDelay=true&delay=40000&pollCommand=test%0D")
+                from("ssh://smx:smx@localhost:" + port + "?useFixedDelay=true&delay=40000&pollCommand=test%0A")
                         .to("mock:result");
             }
         };
