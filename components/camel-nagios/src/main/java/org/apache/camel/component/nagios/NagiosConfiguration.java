@@ -47,7 +47,7 @@ public class NagiosConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String password;
     @UriParam(label = "security")
-    private Encryption encryption = Encryption.NONE;
+    private NagiosEncryptionMethod encryptionMethod;
 
     /**
      * Returns a copy of this configuration
@@ -89,19 +89,19 @@ public class NagiosConfiguration implements Cloneable {
             nagiosSettings.setPort(getPort());
             nagiosSettings.setPassword(getPassword());
 
-            if (encryption != null) {
-                if (Encryption.NONE == encryption) {
+            if (encryptionMethod != null) {
+                if (NagiosEncryptionMethod.No == encryptionMethod) {
                     nagiosSettings.setEncryption(Encryption.NONE);
-                } else if (Encryption.XOR == encryption) {
+                } else if (NagiosEncryptionMethod.Xor == encryptionMethod) {
                     nagiosSettings.setEncryption(Encryption.XOR);
-                } else if (Encryption.TRIPLE_DES == encryption) {
+                } else if (NagiosEncryptionMethod.TripleDes == encryptionMethod) {
                     nagiosSettings.setEncryption(Encryption.TRIPLE_DES);
                 } else {
-                    throw new IllegalArgumentException("Unknown encryption method: " + encryption);
+                    throw new IllegalArgumentException("Unknown encryption method: " + encryptionMethod);
                 }
             }
         }
-        
+
         return nagiosSettings;
     }
 
@@ -164,21 +164,21 @@ public class NagiosConfiguration implements Cloneable {
         this.password = password;
     }
 
-    public Encryption getEncryptionMethod() {
-        return encryption;
+    public NagiosEncryptionMethod getEncryptionMethod() {
+        return encryptionMethod;
     }
 
     /**
      * To specify an encryption method.
      */
-    public void setEncryption(Encryption encryptionMethod) {
-        this.encryption = encryption;
+    public void setEncryptionMethod(NagiosEncryptionMethod encryptionMethod) {
+        this.encryptionMethod = encryptionMethod;
     }
 
     @Override
     public String toString() {
         return "NagiosConfiguration[host=" + host + ":" + port + ", connectionTimeout=" + connectionTimeout
-                + ", timeout=" + timeout + ", encryption=" + encryption + "]";
+                + ", timeout=" + timeout + ", encryptionMethod=" + encryptionMethod + "]";
     }
 
 }
