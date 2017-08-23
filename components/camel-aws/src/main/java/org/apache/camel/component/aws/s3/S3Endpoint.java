@@ -240,6 +240,11 @@ public class S3Endpoint extends ScheduledPollEndpoint {
             clientConfiguration = new ClientConfiguration();
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
+            clientConfiguration.setMaxConnections(configuration.getMaxConnections());
+            isClientConfigFound = true;
+        } else {
+            clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setMaxConnections(configuration.getMaxConnections());
             isClientConfigFound = true;
         }
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
