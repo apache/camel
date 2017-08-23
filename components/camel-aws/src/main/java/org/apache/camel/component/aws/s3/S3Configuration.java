@@ -66,6 +66,8 @@ public class S3Configuration implements Cloneable {
     private S3Operations operation;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean autocloseBody = true;
+    @UriParam(label = "consumer", defaultValue = "50")
+    private int maxConnections = 50;
 
     public long getPartSize() {
         return partSize;
@@ -311,9 +313,18 @@ public class S3Configuration implements Cloneable {
         this.autocloseBody = autocloseBody;
     }
 
+    public int getMaxConnections() {
+        return maxConnections;
+    }
+
+    /**
+     * Set the maxConnections parameter in the S3 client configuration
+     */
+    public void setMaxConnections(int maxConnections) {
+        this.maxConnections = maxConnections;
+    }
+
     boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
     }
-    
-    
 }
