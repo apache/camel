@@ -74,7 +74,6 @@ public class TemplateStoredProcedure extends StoredProcedure {
                 }
 
                 declareParameter(sqlOutParameter);
-                setFunction(false);
             }
         }
 

@@ -32,3 +32,10 @@ CREATE PROCEDURE BATCHFN(VALUE1 CHAR(10))
  LANGUAGE JAVA
  EXTERNAL NAME
 'org.apache.camel.component.sql.stored.TestStoredProcedure.batchfn';
+
+CREATE FUNCTION SUBNUMBERS_FUNCTION(VALUE1 INTEGER, VALUE2 INTEGER)
+ RETURNS INTEGER
+ PARAMETER STYLE JAVA
+ LANGUAGE JAVA
+ EXTERNAL NAME
+'org.apache.camel.component.sql.stored.TestStoredFunction.subnumbers';

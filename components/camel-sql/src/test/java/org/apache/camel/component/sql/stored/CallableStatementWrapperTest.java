@@ -75,6 +75,28 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
     }
 
     @Test
+    public void shouldExecuteStoredFunction() throws Exception {
+        CallableStatementWrapperFactory factory = new CallableStatementWrapperFactory(jdbcTemplate, templateParser, true);
+
+        CallableStatementWrapper wrapper = new CallableStatementWrapper("SUBNUMBERS_FUNCTION"
+                + "(OUT INTEGER resultofsub, INTEGER ${header.v1},INTEGER ${header.v2})", factory);
+
+        final Exchange exchange = createExchangeWithBody(null);
+        exchange.getIn().setHeader("v1", 1);
+        exchange.getIn().setHeader("v2", 2);
+
+        wrapper.call(new WrapperExecuteCallback() {
+            @Override
+            public void execute(StatementWrapper statementWrapper) throws SQLException, DataAccessException {
+                statementWrapper.populateStatement(null, exchange);
+
+                Map resultOfQuery = (Map) statementWrapper.executeStatement();
+                Assert.assertEquals(-1, resultOfQuery.get("resultofsub"));
+            }
+        });
+    }
+
+    @Test
     public void shouldExecuteNilacidProcedure() throws Exception {
         CallableStatementWrapper wrapper = new CallableStatementWrapper("NILADIC()", factory);
 
