@@ -147,6 +147,12 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
     }
     
     @Test
+    public void take() throws InterruptedException {
+        template.sendBody("direct:take", "foo");
+        verify(queue).take();
+    }
+    
+    @Test
     public void drainTo() throws InterruptedException {
         Map<String, Object> headers = new HashMap<String, Object>();
         Collection l = new ArrayList<>();
@@ -186,6 +192,9 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
                         String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 
                 from("direct:REMAINING_CAPACITY").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMAINING_CAPACITY)).to(
+                        String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
+                
+                from("direct:take").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.TAKE)).to(
                         String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
                 
                 from("direct:drainTo").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DRAIN_TO)).to(
