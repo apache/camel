@@ -50,6 +50,14 @@ public class HBaseComponent extends UriEndpointComponent {
             configuration = HBaseConfiguration.create();
         }
 
+        if (configuration.getClassLoader() == null) {
+            ClassLoader applicationContextClassLoader = getCamelContext().getApplicationContextClassLoader();
+            if (applicationContextClassLoader != null) {
+                configuration.setClassLoader(applicationContextClassLoader);
+                HBaseConfiguration.addHbaseResources(configuration);
+            }
+        }
+
         connection = ConnectionFactory.createConnection(
             configuration,
             Executors.newFixedThreadPool(poolMaxSize)
