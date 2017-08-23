@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.hazelcast.queue;
 
+import java.util.concurrent.ExecutorService;
+
 import com.hazelcast.core.HazelcastInstance;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -31,16 +34,19 @@ import org.apache.camel.spi.UriEndpoint;
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-queue", title = "Hazelcast Queue", syntax = "hazelcast-queue:cacheName", label = "cache,datagrid")
 public class HazelcastQueueEndpoint extends HazelcastDefaultEndpoint {
+    
+    private final HazelcastQueueConfiguration configuration;
 
-    public HazelcastQueueEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName) {
+    public HazelcastQueueEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName, final HazelcastQueueConfiguration configuration) {
         super(hazelcastInstance, endpointUri, component, cacheName);
+        this.configuration = configuration;
         setCommand(HazelcastCommand.queue);
         setDefaultOperation(HazelcastOperation.ADD);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        HazelcastQueueConsumer answer = new HazelcastQueueConsumer(hazelcastInstance, this, processor, cacheName);
+        HazelcastQueueConsumer answer = new HazelcastQueueConsumer(hazelcastInstance, this, processor, cacheName, configuration);
         configureConsumer(answer);
         return answer;
     }
@@ -48,6 +54,10 @@ public class HazelcastQueueEndpoint extends HazelcastDefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         return new HazelcastQueueProducer(hazelcastInstance, this, cacheName);
+    }
+    
+    public ExecutorService createExecutor() {
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "QueueConsumer", configuration.getPoolSize());
     }
 
 }
