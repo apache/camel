@@ -56,7 +56,6 @@ public class TemplateStoredProcedure extends StoredProcedure {
             } else if (parameter instanceof OutParameter) {
                 OutParameter outParameter = (OutParameter) parameter;
                 declareParameter(new SqlOutParameter(outParameter.getOutValueMapKey(), outParameter.getSqlType()));
-                setFunction(false);
             }
         }
 
