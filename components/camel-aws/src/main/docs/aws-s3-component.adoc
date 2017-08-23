@@ -63,7 +63,7 @@ with the following path and query parameters:
 | **bucketNameOrArn** | *Required* Bucket name or ARN |  | String
 |=======================================================================
 
-#### Query Parameters (40 parameters):
+#### Query Parameters (41 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -81,6 +81,7 @@ with the following path and query parameters:
 | **deleteAfterRead** (consumer) | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs the object is not deleted. If this option is false then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the link S3ConstantsBUCKET_NAME and link S3ConstantsKEY headers or only the link S3ConstantsKEY header. | true | boolean
 | **fileName** (consumer) | To get the object from the bucket with the given file name |  | String
 | **includeBody** (consumer) | If it is true the exchange body will be set to a stream to the contents of the file. If false the headers will be set with the S3 object metadata but the body will be null. This option is strongly related to autocloseBody option. In case of setting includeBody to true and autocloseBody to false it will be up to the caller to close the S3Object stream. Setting autocloseBody to true will close the S3Object stream automatically. | true | boolean
+| **maxConnections** (consumer) | Set the maxConnections parameter in the S3 client configuration | 50 | int
 | **maxMessagesPerPoll** (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited but use 0 or negative number to disable it as unlimited. | 10 | int
 | **prefix** (consumer) | Camel 2.10.1: The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
 | **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
