@@ -93,7 +93,11 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         
         // Recreate EntityManager in case it is disposed due to transaction rollback
         if (entityManager == null) {
-            entityManager = entityManagerFactory.createEntityManager();
+            if (getEndpoint().isSharedEntityManager()) {
+                this.entityManager = SharedEntityManagerCreator.createSharedEntityManager(entityManagerFactory);
+            } else {
+                this.entityManager = entityManagerFactory.createEntityManager();
+            }
             LOG.trace("Recreated EntityManager {} on {}", entityManager, this);
         }
 
