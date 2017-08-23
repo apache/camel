@@ -70,6 +70,8 @@ The queue producer provides 10 operations:
 * remove all
 * remove if
 * drain to
+* take
+* retain all
 
 #### Sample for *add*:
 
@@ -154,6 +156,22 @@ String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 [source,java]
 --------------------------------------------------------------------------------------------
 from("direct:drainTo").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DRAIN_TO)).to(
+String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
+--------------------------------------------------------------------------------------------
+
+#### Sample for *take*:
+
+[source,java]
+--------------------------------------------------------------------------------------------
+from("direct:take").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.TAKE)).to(
+String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
+--------------------------------------------------------------------------------------------
+
+#### Sample for *retain all*:
+
+[source,java]
+--------------------------------------------------------------------------------------------
+from("direct:retainAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.RETAIN_ALL)).to(
 String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 --------------------------------------------------------------------------------------------
 
