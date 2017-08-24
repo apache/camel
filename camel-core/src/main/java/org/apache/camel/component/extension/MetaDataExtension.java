@@ -35,13 +35,17 @@ public interface MetaDataExtension extends ComponentExtension {
         String JAVA_TYPE = "Java-Type";
 
         /**
-         *
          * Returns an attribute associated with this meta data by name.
          *
          * @param name the attribute name
          * @return the attribute
          */
         Object getAttribute(String name);
+
+        /**
+         * @return a red-only list of attributes.
+         */
+        Map<String, Object> getAttributes();
 
         /**
          *

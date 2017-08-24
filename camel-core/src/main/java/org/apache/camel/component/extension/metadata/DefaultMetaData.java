@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.extension.metadata;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -35,6 +36,11 @@ public class DefaultMetaData implements MetaDataExtension.MetaData {
     @Override
     public Object getAttribute(String name) {
         return attributes.get(name);
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return Collections.unmodifiableMap(attributes);
     }
 
     @Override
