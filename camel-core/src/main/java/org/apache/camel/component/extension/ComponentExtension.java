@@ -23,4 +23,20 @@ package org.apache.camel.component.extension;
  * ServiceMetaData.
  */
 public interface ComponentExtension {
+    /**
+     * Access the underlying concrete ComponentExtension implementation to
+     * provide access to further features.
+     *
+     * @param clazz the proprietary class or interface of the underlying concrete ComponentExtension.
+     * @return an instance of the underlying concrete ComponentExtension as the required type.
+     */
+    default <T extends ComponentExtension> T unwrap(Class<T> clazz) {
+        if (ComponentExtension.class.isAssignableFrom(clazz)) {
+            return clazz.cast(this);
+        }
+
+        throw new IllegalArgumentException(
+            "Unable to unwrap this ComponentExtension type (" + getClass() + ") to the required type (" + clazz + ")"
+        );
+    }
 }
