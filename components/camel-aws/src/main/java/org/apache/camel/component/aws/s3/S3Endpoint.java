@@ -67,6 +67,8 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     private S3Configuration configuration;
     @UriParam(label = "consumer", defaultValue = "10")
     private int maxMessagesPerPoll = 10;
+    @UriParam(label = "consumer", defaultValue = "60")
+    private int maxConnections = 50 + maxMessagesPerPoll;
 
     @Deprecated
     public S3Endpoint(String uri, CamelContext context, S3Configuration configuration) {
@@ -240,11 +242,11 @@ public class S3Endpoint extends ScheduledPollEndpoint {
             clientConfiguration = new ClientConfiguration();
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
-            clientConfiguration.setMaxConnections(configuration.getMaxConnections());
+            clientConfiguration.setMaxConnections(getMaxConnections());
             isClientConfigFound = true;
         } else {
             clientConfiguration = new ClientConfiguration();
-            clientConfiguration.setMaxConnections(configuration.getMaxConnections());
+            clientConfiguration.setMaxConnections(getMaxConnections());
             isClientConfigFound = true;
         }
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
@@ -281,5 +283,16 @@ public class S3Endpoint extends ScheduledPollEndpoint {
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+    
+    public int getMaxConnections() {
+        return maxConnections;
+    }
+
+    /**
+     * Set the maxConnections parameter in the S3 client configuration
+     */
+    public void setMaxConnections(int maxConnections) {
+        this.maxConnections = maxConnections;
     }
 }
