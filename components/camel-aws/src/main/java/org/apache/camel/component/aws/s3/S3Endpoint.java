@@ -255,15 +255,15 @@ public class S3Endpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-            	client = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider).build();
+                client = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider).build();
             } else {
                 client = AmazonS3ClientBuilder.standard().withCredentials(credentialsProvider).build();
             }
         } else {
             if (isClientConfigFound) {
-            	client = AmazonS3ClientBuilder.standard().build();
+                client = AmazonS3ClientBuilder.standard().build();
             } else {
-            	client = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration).build();
+                client = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration).build();
             }
         }
 
