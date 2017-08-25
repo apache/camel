@@ -36,20 +36,38 @@ import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
 
 public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private boolean usingIterator;
+<<<<<<< HEAD
     private String clazzName;
 
     public ASN1DataFormat() {
+=======
+    private Class<?> clazz;
+    private String clazzName;
+
+    public ASN1DataFormat() {
+        super();
+>>>>>>> 07665ba... CAMEL-ASN1 - ASN.1 Data Format Component with Bouncy Castle-bcprov-jdk15on and openmuc-jasn1
         this.usingIterator = false;
     }
 
     public ASN1DataFormat(String clazzName) {
+<<<<<<< HEAD
+=======
+        super();
+>>>>>>> 07665ba... CAMEL-ASN1 - ASN.1 Data Format Component with Bouncy Castle-bcprov-jdk15on and openmuc-jasn1
         this.usingIterator = true;
         this.clazzName = clazzName;
     }
 
     public ASN1DataFormat(Class<?> clazz) {
+<<<<<<< HEAD
         this.usingIterator = true;
         this.clazzName = clazz.getName();
+=======
+        super();
+        this.usingIterator = true;
+        this.clazz = clazz;
+>>>>>>> 07665ba... CAMEL-ASN1 - ASN.1 Data Format Component with Bouncy Castle-bcprov-jdk15on and openmuc-jasn1
     }
 
     @Override
@@ -61,8 +79,15 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         InputStream berOut = null;
         if (usingIterator) {
+<<<<<<< HEAD
             if (clazzName != null) {
                 Class<?> clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(clazzName);
+=======
+            if (clazzName != null || clazz != null) {
+                if (clazz != null && clazz.getName() != null) {
+                    clazzName = clazz.getName();
+                }
+>>>>>>> 07665ba... CAMEL-ASN1 - ASN.1 Data Format Component with Bouncy Castle-bcprov-jdk15on and openmuc-jasn1
                 encodeGenericTypeObject(exchange, clazz, stream);
                 return;
             }
@@ -84,9 +109,18 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
         }
     }
 
+<<<<<<< HEAD
     private void encodeGenericTypeObject(Exchange exchange, Class<?> clazz, OutputStream stream)
         throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
         Class<?>[] paramOut = new Class<?>[1];
+=======
+    @SuppressWarnings("rawtypes")
+    private void encodeGenericTypeObject(Exchange exchange, Class<?> clazz, OutputStream stream) 
+        throws NoSuchMethodException, SecurityException, 
+        IllegalAccessException, IllegalArgumentException, 
+        InvocationTargetException, IOException {
+        Class[] paramOut = new Class[1]; 
+>>>>>>> 07665ba... CAMEL-ASN1 - ASN.1 Data Format Component with Bouncy Castle-bcprov-jdk15on and openmuc-jasn1
         paramOut[0] = BerByteArrayOutputStream.class;
         BerByteArrayOutputStream berOut = new BerByteArrayOutputStream(IOHelper.DEFAULT_BUFFER_SIZE / 256, true);
         Method encodeMethod = exchange.getIn().getBody().getClass().getDeclaredMethod("encode", paramOut);
@@ -98,24 +132,52 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         if (usingIterator) {
+<<<<<<< HEAD
             if (clazzName != null) {
                 Class<?> clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(clazzName);
+=======
+            if (clazzName != null || clazz != null) {
+                if (clazz != null && clazz.getName() != null) {
+                    clazzName = clazz.getName();
+                }
+                clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(clazzName);
+>>>>>>> 07665ba... CAMEL-ASN1 - ASN.1 Data Format Component with Bouncy Castle-bcprov-jdk15on and openmuc-jasn1
                 ASN1GenericIterator asn1GenericIterator = new ASN1GenericIterator(clazz, stream);
                 return asn1GenericIterator;
             }
             ASN1MessageIterator asn1MessageIterator = new ASN1MessageIterator(exchange, stream);
             return asn1MessageIterator;
         } else {
+<<<<<<< HEAD
             ASN1Primitive asn1Record = null;
             byte[] asn1Bytes;
             try (ASN1InputStream ais = new ASN1InputStream(stream); ByteArrayOutputStream asn1Out = new ByteArrayOutputStream();) {
+=======
+            ASN1InputStream ais = new ASN1InputStream(stream);
+            ASN1Primitive asn1Record = null;
+            ByteArrayOutputStream asn1Out = null;
+            try {
+                asn1Out = new ByteArrayOutputStream();
+>>>>>>> 07665ba... CAMEL-ASN1 - ASN.1 Data Format Component with Bouncy Castle-bcprov-jdk15on and openmuc-jasn1
                 while (ais.available() > 0) {
                     asn1Record = ais.readObject();
                     asn1Out.write(asn1Record.getEncoded());
                 }
+<<<<<<< HEAD
                 asn1Bytes = asn1Out.toByteArray();
             }
             return asn1Bytes;
+=======
+            } finally {
+                if (asn1Out != null) {
+                    asn1Out.close();
+                }
+                if (ais != null) {
+                    ais.close();
+                }
+            }
+            return asn1Out.toByteArray();
+>>>>>>> 07665ba... CAMEL-ASN1 - ASN.1 Data Format Component with Bouncy Castle-bcprov-jdk15on and openmuc-jasn1
         }
     }
 
@@ -127,6 +189,18 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
         this.usingIterator = usingIterator;
     }
 
+<<<<<<< HEAD
+=======
+    @SuppressWarnings("rawtypes")
+    public Class getClazz() {
+        return clazz;
+    }
+
+    public void setClazz(Class<?> clazz) {
+        this.clazz = clazz;
+    }
+
+>>>>>>> 07665ba... CAMEL-ASN1 - ASN.1 Data Format Component with Bouncy Castle-bcprov-jdk15on and openmuc-jasn1
     public String getClazzName() {
         return clazzName;
     }

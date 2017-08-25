@@ -26,7 +26,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+<<<<<<< HEAD
 import org.junit.Ignore;
+=======
+>>>>>>> 07665ba... CAMEL-ASN1 - ASN.1 Data Format Component with Bouncy Castle-bcprov-jdk15on and openmuc-jasn1
 
 public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport {
 
@@ -97,6 +100,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
         baseUnmarshalMarshalReturnOutputStreamTest("mock:marshaldsl", "direct:unmarshalthenmarshaldsl");
     }
 
+<<<<<<< HEAD
     @Test
     @Ignore
     public void testUnmarshalReturnClassObjectAfterUnmarshalMarshalReturnOutputStream() throws Exception {
@@ -116,6 +120,31 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
 
         assertMockEndpointsSatisfied();
     }
+=======
+    // @Test
+    // public void
+    // testUnmarshalReturnClassObjectAfterUnmarshalMarshalReturnOutputStream()
+    // throws Exception {
+    // getMockEndpoint("mock:unmarshal").expectedMessageCount(1);
+    //
+    // File testFile = new
+    // File("src/test/resources/after_unmarshal_marshal_SMS_SINGLE.tt");
+    // ByteArrayInputStream bais =
+    // ASN1DataFormatTestHelper.reteriveByteArrayInputStream(testFile);
+    //
+    // template.sendBody("direct:unmarshal", bais);
+    //
+    // List<Exchange> exchanges =
+    // getMockEndpoint("mock:unmarshal").getExchanges();
+    //
+    // assertTrue(exchanges.size() == 1);
+    // for (Exchange exchange : exchanges) {
+    // assertTrue(exchange.getIn().getBody() instanceof SmsCdr);
+    // }
+    //
+    // assertMockEndpointsSatisfied();
+    // }
+>>>>>>> 07665ba... CAMEL-ASN1 - ASN.1 Data Format Component with Bouncy Castle-bcprov-jdk15on and openmuc-jasn1
 
     private void baseDoubleUnmarshalTest(String firstMockEnpointName, String secondMockEnpointName, String directEndpointName) throws Exception {
         getMockEndpoint(firstMockEnpointName).expectedMessageCount(1);

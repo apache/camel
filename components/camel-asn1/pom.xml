@@ -129,6 +129,18 @@
                </arguments>
              </configuration>
            </execution>
+<<<<<<< HEAD
+=======
+           <!-- 
+           <execution>
+             <id>generate-sources</id>
+             <phase>package</phase>
+             <goals>
+               <goal>java</goal>
+             </goals>
+           </execution>
+            -->
+>>>>>>> 07665ba... CAMEL-ASN1 - ASN.1 Data Format Component with Bouncy Castle-bcprov-jdk15on and openmuc-jasn1
          </executions>
          <dependencies>
            <dependency>
@@ -138,6 +150,19 @@
            </dependency>
          </dependencies>
       </plugin>
+<<<<<<< HEAD
+=======
+
+      <!-- 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <sourceDirectories>${project.build.sourceDirectory}</sourceDirectories>
+        </configuration>
+      </plugin>
+       -->
+>>>>>>> 07665ba... CAMEL-ASN1 - ASN.1 Data Format Component with Bouncy Castle-bcprov-jdk15on and openmuc-jasn1
     </plugins>
   </build>
 

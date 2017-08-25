@@ -93,8 +93,14 @@ public class ASN1GenericIterator<T> implements Iterator<T>, Closeable {
         }
     }
 
+<<<<<<< HEAD
     private Object createGenericTypeObject(ASN1Primitive current, Class<T> clazz2) throws Throwable {
         Class<?>[] paramIS = new Class[1];
+=======
+    @SuppressWarnings("rawtypes")
+    private Object createGenericTypeObject(ASN1Primitive current, Class<T> clazz2) throws Throwable {
+        Class[] paramIS = new Class[1];
+>>>>>>> 07665ba... CAMEL-ASN1 - ASN.1 Data Format Component with Bouncy Castle-bcprov-jdk15on and openmuc-jasn1
         paramIS[0] = InputStream.class;
 
         Method m = clazz.getDeclaredMethod("decode", paramIS);
