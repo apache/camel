@@ -100,7 +100,10 @@ public class RabbitMQDeclareSupport {
     }
 
     private void declareExchange(final Channel channel, final String exchange, final String exchangeType, final Map<String, Object> exchangeArgs) throws IOException {
-        channel.exchangeDeclare(exchange, exchangeType, endpoint.isDurable(), endpoint.isAutoDelete(), exchangeArgs);
+        if (endpoint.isPassive())
+        	channel.exchangeDeclarePassive(exchange);
+        else
+        	channel.exchangeDeclare(exchange, exchangeType, endpoint.isDurable(), endpoint.isAutoDelete(), exchangeArgs);
     }
 
     private void declareAndBindQueue(final Channel channel,
@@ -111,7 +114,12 @@ public class RabbitMQDeclareSupport {
                                      final Map<String, Object> bindingArgs)
 
             throws IOException {
-        channel.queueDeclare(queue, endpoint.isDurable(), endpoint.isExclusive(), endpoint.isAutoDelete(), queueArgs);
+        
+    	if (endpoint.isPassive())
+        	channel.queueDeclarePassive(queue);
+        else
+        	channel.queueDeclare(queue, endpoint.isDurable(), endpoint.isExclusive(), endpoint.isAutoDelete(), queueArgs);
+        
         if (shouldBindQueue()) {
             channel.queueBind(queue, exchange, emptyIfNull(routingKey), bindingArgs);
         }
