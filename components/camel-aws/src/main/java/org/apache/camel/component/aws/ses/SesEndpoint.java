@@ -18,9 +18,12 @@ package org.apache.camel.component.aws.ses;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -97,16 +100,17 @@ public class SesEndpoint extends DefaultEndpoint {
         }
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                client = new AmazonSimpleEmailServiceClient(credentials, clientConfiguration);
+                client = AmazonSimpleEmailServiceClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider).build();
             } else {
-                client = new AmazonSimpleEmailServiceClient(credentials);
+                client = AmazonSimpleEmailServiceClientBuilder.standard().withCredentials(credentialsProvider).build();
             }
         } else {
             if (isClientConfigFound) {
-                client = new AmazonSimpleEmailServiceClient();
+                client = AmazonSimpleEmailServiceClientBuilder.standard().build();
             } else {
-                client = new AmazonSimpleEmailServiceClient(clientConfiguration);
+                client = AmazonSimpleEmailServiceClientBuilder.standard().withClientConfiguration(clientConfiguration).build();
             }
         }
         return client;
