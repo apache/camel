@@ -829,6 +829,11 @@
         <artifactId>camel-amqp</artifactId>
         <version>${project.version}</version>
       </dependency>
+	  <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-asn1</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-asterisk</artifactId>
@@ -2302,6 +2307,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-apns-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+	  <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-asn1-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
