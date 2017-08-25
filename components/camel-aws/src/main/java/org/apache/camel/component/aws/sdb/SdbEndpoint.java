@@ -18,9 +18,12 @@ package org.apache.camel.component.aws.sdb;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import com.amazonaws.services.simpledb.AmazonSimpleDBClient;
+import com.amazonaws.services.simpledb.AmazonSimpleDBClientBuilder;
 import com.amazonaws.services.simpledb.model.CreateDomainRequest;
 import com.amazonaws.services.simpledb.model.DomainMetadataRequest;
 import com.amazonaws.services.simpledb.model.NoSuchDomainException;
@@ -117,16 +120,17 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
         }
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                client = new AmazonSimpleDBClient(credentials, clientConfiguration);
+                client = AmazonSimpleDBClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider).build();
             } else {
-                client = new AmazonSimpleDBClient(credentials);
+                client = AmazonSimpleDBClientBuilder.standard().withCredentials(credentialsProvider).build();
             }
         } else {
             if (isClientConfigFound) {
-                client = new AmazonSimpleDBClient();
+                client = AmazonSimpleDBClientBuilder.standard().build();
             } else {
-                client = new AmazonSimpleDBClient(clientConfiguration);
+                client = AmazonSimpleDBClientBuilder.standard().withClientConfiguration(clientConfiguration).build();
             }
         }
         return client;
