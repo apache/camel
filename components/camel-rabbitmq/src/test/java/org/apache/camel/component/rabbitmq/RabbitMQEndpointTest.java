@@ -27,17 +27,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeoutException;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Address;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Envelope;
-import com.rabbitmq.client.impl.LongStringHelper;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Address;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.impl.LongStringHelper;
 
 public class RabbitMQEndpointTest extends CamelTestSupport {
 
@@ -354,5 +354,11 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     public void createEndpointWithExclusiveEnabled() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?exclusive=true", RabbitMQEndpoint.class);
         assertTrue(endpoint.isExclusive());
+    }
+    
+    @Test
+    public void createEndpointWithPassiveEnabled() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?passive=true", RabbitMQEndpoint.class);
+        assertTrue(endpoint.isPassive());
     }
 }

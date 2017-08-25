@@ -27,13 +27,6 @@ import java.util.concurrent.TimeoutException;
 
 import javax.net.ssl.TrustManager;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Address;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Envelope;
-
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -45,6 +38,13 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Address;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Envelope;
 
 /**
  * The rabbitmq component allows you produce and consume messages from <a href="http://www.rabbitmq.com/">RabbitMQ</a> instances.
@@ -77,6 +77,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean durable = true;
     @UriParam(label = "common", defaultValue = "false")
     private boolean exclusive;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean passive = false;
     @UriParam(label = "producer")
     private boolean bridgeEndpoint;
     @UriParam(label = "common")
@@ -958,5 +960,17 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     public void setExclusive(boolean exclusive) {
         this.exclusive = exclusive;
     }
+    
+    public boolean isPassive() {
+        return passive;
+    }
+
+    /**
+     * Passive queues depend on the queue already to be available at RabbitMQ.
+     */
+    public void setPassive(boolean passive) {
+        this.passive = passive;
+    }
+    
    
 }
