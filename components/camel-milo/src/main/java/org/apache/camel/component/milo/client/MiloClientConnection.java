@@ -26,6 +26,7 @@ import org.apache.camel.component.milo.client.internal.SubscriptionManager;
 import org.eclipse.milo.opcua.sdk.client.api.config.OpcUaClientConfigBuilder;
 import org.eclipse.milo.opcua.stack.core.Stack;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 
@@ -113,9 +114,9 @@ public class MiloClientConnection implements AutoCloseable {
             return (DataValue)value;
         }
         if (value instanceof Variant) {
-            return new DataValue((Variant)value);
+            return new DataValue((Variant)value, StatusCode.GOOD, null, null);
         }
-        return new DataValue(new Variant(value));
+        return new DataValue(new Variant(value), StatusCode.GOOD, null, null);
     }
 
 }
