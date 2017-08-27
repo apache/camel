@@ -68,6 +68,7 @@
     <module>camel-ahc-ws</module>
     <module>camel-amqp</module>
     <module>camel-apns</module>
+    <module>camel-asn1</module>
     <module>camel-asterisk</module>
     <module>camel-atmos</module>
     <module>camel-atmosphere-websocket</module>
