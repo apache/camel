@@ -23,7 +23,12 @@ import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerInterceptor;
 import io.grpc.ServerInterceptors;
+import io.grpc.netty.GrpcSslContexts;
+import io.grpc.netty.NegotiationType;
 import io.grpc.netty.NettyServerBuilder;
+import io.netty.handler.ssl.ClientAuth;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslProvider;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import org.apache.camel.AsyncCallback;
@@ -31,8 +36,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.grpc.server.GrpcHeaderInterceptor;
 import org.apache.camel.component.grpc.server.GrpcMethodHandler;
+import org.apache.camel.component.grpc.server.auth.jwt.JwtServerInterceptor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +86,7 @@ public class GrpcConsumer extends DefaultConsumer {
         super.doStop();
     }
 
-    protected void initializeServer() {
+    protected void initializeServer() throws Exception {
         NettyServerBuilder serverBuilder = null;
         BindableService bindableService = null;
         ProxyFactory serviceProxy = new ProxyFactory();
@@ -99,7 +107,36 @@ public class GrpcConsumer extends DefaultConsumer {
             throw new IllegalArgumentException("No server start properties (host, port) specified");
         }
         
-        server = serverBuilder.addService(ServerInterceptors.intercept(bindableService, headerInterceptor)).build();
+        if (configuration.getNegotiationType() == NegotiationType.TLS) {
+            ObjectHelper.notNull(configuration.getKeyCertChainResource(), "keyCertChainResource");
+            ObjectHelper.notNull(configuration.getKeyResource(), "keyResource");
+            
+            ClassResolver classResolver = endpoint.getCamelContext().getClassResolver();
+            
+            SslContextBuilder sslContextBuilder = SslContextBuilder.forServer(ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getKeyCertChainResource()),
+                                                                              ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getKeyResource()),
+                                                                              configuration.getKeyPassword())
+                                                                   .clientAuth(ClientAuth.REQUIRE)
+                                                                   .sslProvider(SslProvider.OPENSSL);
+            
+            if (ObjectHelper.isNotEmpty(configuration.getTrustCertCollectionResource())) {
+                sslContextBuilder = sslContextBuilder.trustManager(ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getTrustCertCollectionResource()));
+            }
+            
+            serverBuilder = serverBuilder.sslContext(GrpcSslContexts.configure(sslContextBuilder).build());
+        }
+        
+        if (configuration.getAuthenticationType() == GrpcAuthType.JWT) {
+            ObjectHelper.notNull(configuration.getJwtSecret(), "jwtSecret");
+            
+            serverBuilder = serverBuilder.intercept(new JwtServerInterceptor(configuration.getJwtSecret(), configuration.getJwtIssuer(), configuration.getJwtSubject()));
+        }
+        
+        server = serverBuilder.addService(ServerInterceptors.intercept(bindableService, headerInterceptor))
+                              .maxMessageSize(configuration.getMaxMessageSize())
+                              .flowControlWindow(configuration.getFlowControlWindow())
+                              .maxConcurrentCallsPerConnection(configuration.getMaxConcurrentCallsPerConnection())
+                              .build();
     }
     
     public boolean process(Exchange exchange, AsyncCallback callback) {

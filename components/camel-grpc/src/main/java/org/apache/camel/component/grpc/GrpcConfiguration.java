@@ -19,6 +19,9 @@ package org.apache.camel.component.grpc;
 import java.net.URI;
 import java.util.Map;
 
+import io.grpc.internal.GrpcUtil;
+import io.grpc.netty.NegotiationType;
+import io.grpc.netty.NettyChannelBuilder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -42,25 +45,63 @@ public class GrpcConfiguration {
     @UriParam(label = "producer")
     private String method;
             
-    @UriParam(label = "producer", defaultValue = "true")
-    private Boolean usePlainText = true;
+    @UriParam(defaultValue = "PLAINTEXT")
+    private NegotiationType negotiationType = NegotiationType.PLAINTEXT;
+    
+    @UriParam(defaultValue = "NONE")
+    private GrpcAuthType authenticationType = GrpcAuthType.NONE;
+    
+    @UriParam
+    private String serviceAccountResource;
+    
+    @UriParam(secret = true)
+    private String jwtSecret;
+    
+    @UriParam
+    private String jwtIssuer;
+    
+    @UriParam
+    private String jwtSubject;
+    
+    @UriParam
+    private String keyCertChainResource;
+    
+    @UriParam
+    private String keyResource;
+    
+    @UriParam(secret = true)
+    private String keyPassword;
+    
+    @UriParam
+    private String trustCertCollectionResource;
 
     @UriParam(label = "producer", defaultValue = "SIMPLE")
     private GrpcProducerStrategy producerStrategy = GrpcProducerStrategy.SIMPLE;
 
     @UriParam(label = "producer")
     private String streamRepliesTo;
-
+    
+    @UriParam(label = "producer")
+    private String userAgent;
 
     @UriParam(label = "consumer", defaultValue = "PROPAGATION")
     private GrpcConsumerStrategy consumerStrategy = GrpcConsumerStrategy.PROPAGATION;
     
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "false")
     private boolean forwardOnCompleted;
 
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "false")
     private boolean forwardOnError;
-
+    
+    @UriParam(defaultValue = "" + NettyChannelBuilder.DEFAULT_FLOW_CONTROL_WINDOW)
+    private int flowControlWindow = NettyChannelBuilder.DEFAULT_FLOW_CONTROL_WINDOW;
+    
+    @UriParam(defaultValue = "" + GrpcUtil.DEFAULT_MAX_MESSAGE_SIZE)
+    private int maxMessageSize = GrpcUtil.DEFAULT_MAX_MESSAGE_SIZE;
+    
+    @UriParam(label = "consumer", defaultValue = "" + Integer.MAX_VALUE)
+    private int maxConcurrentCallsPerConnection = Integer.MAX_VALUE;
+    
     /**
      * Fully qualified service name from the protocol buffer descriptor file
      * (package dot service definition name)
@@ -86,7 +127,7 @@ public class GrpcConfiguration {
 
     /**
      * The gRPC server host name. This is localhost or 0.0.0.0 when being a
-     * consumer or remote server hostname when using producer.
+     * consumer or remote server host name when using producer.
      */
     public String getHost() {
         return host;
@@ -97,7 +138,7 @@ public class GrpcConfiguration {
     }
 
     /**
-     * The gRPC server port
+     * The gRPC local or remote server port
      */
     public int getPort() {
         return port;
@@ -106,16 +147,115 @@ public class GrpcConfiguration {
     public void setPort(int port) {
         this.port = port;
     }
-
+    
     /**
-     * The plain text connection to the server flag
+     * Identifies the security negotiation type used for HTTP/2 communication
      */
-    public Boolean getUsePlainText() {
-        return usePlainText;
+    public void setNegotiationType(NegotiationType negotiationType) {
+        this.negotiationType = negotiationType;
+    }
+    
+    public NegotiationType getNegotiationType() {
+        return negotiationType;
+    }
+    
+    /**
+     * Authentication method type in advance to the SSL/TLS negotiation
+     */
+    public GrpcAuthType getAuthenticationType() {
+        return authenticationType;
     }
 
-    public void setUsePlainText(Boolean usePlainText) {
-        this.usePlainText = usePlainText;
+    public void setAuthenticationType(GrpcAuthType authenticationType) {
+        this.authenticationType = authenticationType;
+    }
+    
+    /**
+     * Service Account key file in JSON format resource link supported by the Google Cloud SDK
+     */
+    public String getServiceAccountResource() {
+        return serviceAccountResource;
+    }
+
+    public void setServiceAccountResource(String serviceAccountResource) {
+        this.serviceAccountResource = serviceAccountResource;
+    }
+    
+    /**
+     * JSON Web Token secret
+     */
+    public String getJwtSecret() {
+        return jwtSecret;
+    }
+
+    public void setJwtSecret(String jwtSecret) {
+        this.jwtSecret = jwtSecret;
+    }
+
+    /**
+     * JSON Web Token issuer
+     */
+    public String getJwtIssuer() {
+        return jwtIssuer;
+    }
+
+    public void setJwtIssuer(String jwtIssuer) {
+        this.jwtIssuer = jwtIssuer;
+    }
+
+    /**
+     * JSON Web Token subject
+     */
+    public String getJwtSubject() {
+        return jwtSubject;
+    }
+
+    public void setJwtSubject(String jwtSubject) {
+        this.jwtSubject = jwtSubject;
+    }
+
+    /**
+     * The X.509 certificate chain file resource in PEM format link 
+     */
+    public void setKeyCertChainResource(String keyCertChainResource) {
+        this.keyCertChainResource = keyCertChainResource;
+    }
+    
+    public String getKeyCertChainResource() {
+        return keyCertChainResource;
+    }
+
+    /**
+     * The PKCS#8 private key file resource in PEM format link 
+     */
+    public void setKeyResource(String keyResource) {
+        this.keyResource = keyResource;
+    }
+    
+    public String getKeyResource() {
+        return keyResource;
+    }
+    
+    /**
+     * The PKCS#8 private key file password
+     */
+    public String getKeyPassword() {
+        return keyPassword;
+    }
+
+    public void setKeyPassword(String keyPassword) {
+        this.keyPassword = keyPassword;
+    }
+
+    /**
+     * The trusted certificates collection file resource in PEM format for verifying the remote endpoint's certificate
+     */
+    public void setTrustCertCollectionResource(String trustCertCollectionResource) {
+        this.trustCertCollectionResource = trustCertCollectionResource;
+    }
+    
+    public String getTrustCertCollectionResource() {
+        return trustCertCollectionResource;
     }
 
     /**
@@ -181,6 +321,50 @@ public class GrpcConfiguration {
         this.streamRepliesTo = streamRepliesTo;
     }
     
+    /**
+     * The user agent header passed to the server
+     */    
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
+    /**
+     * The HTTP/2 flow control window size (MiB)
+     */
+    public int getFlowControlWindow() {
+        return flowControlWindow;
+    }
+
+    public void setFlowControlWindow(int flowControlWindow) {
+        this.flowControlWindow = flowControlWindow;
+    }
+
+    /**
+     * The maximum message size allowed to be received/sent (MiB)
+     */
+    public void setMaxMessageSize(int maxMessageSize) {
+        this.maxMessageSize = maxMessageSize;
+    }
+    
+    public int getMaxMessageSize() {
+        return maxMessageSize;
+    }
+
+    /**
+     * The maximum number of concurrent calls permitted for each incoming server connection
+     */
+    public void setMaxConcurrentCallsPerConnection(int maxConcurrentCallsPerConnection) {
+        this.maxConcurrentCallsPerConnection = maxConcurrentCallsPerConnection;
+    }
+    
+    public int getMaxConcurrentCallsPerConnection() {
+        return maxConcurrentCallsPerConnection;
+    }
+
     public void parseURI(URI uri, Map<String, Object> parameters, GrpcComponent component) {
         setHost(uri.getHost());
         
