@@ -330,6 +330,7 @@
         <include>org.apache.camel:camel-amqp-starter</include>
         <include>org.apache.camel:camel-apns-starter</include>
         <include>org.apache.camel:camel-asn1-starter</include>
+        <include>org.apache.camel:camel-asterisk-starter</include>
         <include>org.apache.camel:camel-atmosphere-websocket-starter</include>
         <include>org.apache.camel:camel-atmos-starter</include>
         <include>org.apache.camel:camel-atom-starter</include>
