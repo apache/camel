@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
+import org.apache.camel.component.hazelcast.HazelcastOperation;
 import org.apache.camel.component.hazelcast.topic.HazelcastTopicComponent;
 
 public class HazelcastRoute extends RouteBuilder {
@@ -50,7 +51,7 @@ public class HazelcastRoute extends RouteBuilder {
             .process(new Processor() {
                 @Override
                 public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setHeader(HazelcastConstants.OPERATION, HazelcastConstants.PUBLISH_OPERATION);
+                    exchange.getIn().setHeader(HazelcastConstants.OPERATION, HazelcastOperation.PUBLISH);
                     String payload = "Test " + UUID.randomUUID();
                     exchange.getIn().setBody(payload);
                 }
