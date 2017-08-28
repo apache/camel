@@ -96,4 +96,3 @@ public class TemplateStoredProcedure extends StoredProcedure {
         return template;
     }
 }
-
