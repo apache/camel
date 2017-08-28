@@ -313,7 +313,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                 attempt++;
                 // copy exchange, and do not share the unit of work
                 // the aggregated output runs in another unit of work
-                Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+                Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false,false,false,null);
                 try {
                     aggregated = doAggregation(key, copy);
                     exhaustedRetries = false;
@@ -337,7 +337,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         } else {
             // copy exchange, and do not share the unit of work
             // the aggregated output runs in another unit of work
-            Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+            Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false,false,false,null);
 
             // when memory based then its fast using synchronized, but if the aggregation repository is IO
             // bound such as JPA etc then concurrent aggregation per correlation key could
