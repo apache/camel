@@ -27,24 +27,35 @@ import java.util.stream.IntStream;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.RemovalCause;
+import com.github.benmanes.caffeine.cache.RemovalListener;
 
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CaffeineCacheTestSupport extends CamelTestSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CaffeineCacheTestSupport.class);
     private Cache cache = Caffeine.newBuilder().recordStats().build();
+    private Cache cacheRl = Caffeine.newBuilder().recordStats().removalListener(new DummyRemovalListener()).build();
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
         registry.bind("cache", cache);
+        registry.bind("cacheRl", cacheRl);
 
         return registry;
     }
 
     protected Cache getTestCache() {
         return cache;
+    }
+
+    protected Cache getTestRemovalListenerCache() {
+        return cacheRl;
     }
 
     protected static int[] generateRandomArrayOfInt(int size, int lower, int upper) {
@@ -73,5 +84,14 @@ public class CaffeineCacheTestSupport extends CamelTestSupport {
 
     protected static Map<String, String> generateRandomMapOfString(int size) {
         return IntStream.range(0, size).boxed().collect(Collectors.toMap(i -> i + "-" + generateRandomString(), i -> i + "-" + generateRandomString()));
+    }
+
+    class DummyRemovalListener implements RemovalListener<Object, Object> {
+
+        @Override
+        public void onRemoval(Object key, Object value, RemovalCause cause) {
+            LOG.info("Key %s was removed (%s)%n", key, cause);
+        }
+
     }
 }

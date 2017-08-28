@@ -79,6 +79,9 @@ public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
             if (configuration.isStatsEnabled()) {
                 builder.recordStats();
             }
+            if (ObjectHelper.isNotEmpty(configuration.getRemovalListener())) {
+                builder.removalListener(configuration.getRemovalListener());
+            }
             cache = builder.build(configuration.getCacheLoader());
         }
         super.doStart();
