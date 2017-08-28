@@ -18,7 +18,7 @@ package org.apache.camel.component.caffeine;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.CacheLoader;
-import com.github.benmanes.caffeine.cache.Expiry;
+import com.github.benmanes.caffeine.cache.RemovalListener;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
@@ -52,6 +52,8 @@ public class CaffeineConfiguration implements Cloneable {
     private int expireAfterAccessTime = 300;
     @UriParam(label = "producer", defaultValue = "300")
     private int expireAfterWriteTime = 300;
+    @UriParam(label = "producer")
+    private RemovalListener removalListener;
 
     public CaffeineConfiguration() {
     }
@@ -185,7 +187,8 @@ public class CaffeineConfiguration implements Cloneable {
     }
 
     /**
-     * Set the expire After Access Time in case of time based Eviction (in seconds)
+     * Set the expire After Access Time in case of time based Eviction (in
+     * seconds)
      */
     public void setExpireAfterAccessTime(int expireAfterAccessTime) {
         this.expireAfterAccessTime = expireAfterAccessTime;
@@ -196,10 +199,22 @@ public class CaffeineConfiguration implements Cloneable {
     }
 
     /**
-     * Set the expire After Access Write in case of time based Eviction (in seconds)
+     * Set the expire After Access Write in case of time based Eviction (in
+     * seconds)
      */
     public void setExpireAfterWriteTime(int expireAfterWriteTime) {
         this.expireAfterWriteTime = expireAfterWriteTime;
+    }
+
+    public RemovalListener getRemovalListener() {
+        return removalListener;
+    }
+
+    /**
+     * Set a specific removal Listener for the cache
+     */
+    public void setRemovalListener(RemovalListener removalListener) {
+        this.removalListener = removalListener;
     }
 
     // ****************************

@@ -61,7 +61,7 @@ with the following path and query parameters:
 | **cacheName** | *Required* the cache name |  | String
 |=======================================================================
 
-#### Query Parameters (17 parameters):
+#### Query Parameters (18 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -79,6 +79,7 @@ with the following path and query parameters:
 | **initialCapacity** (producer) | Set the initial Capacity for the cache | 10000 | int
 | **key** (producer) | To configure the default action key. If a key is set in the message header then the key from the header takes precedence. |  | Object
 | **maximumSize** (producer) | Set the maximum size for the cache | 10000 | int
+| **removalListener** (producer) | Set a specific removal Listener for the cache |  | RemovalListener
 | **statsEnabled** (producer) | To enable stats on the cache | false | boolean
 | **keyType** (advanced) | The cache key type default java.lang.Object | java.lang.Object | String
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean

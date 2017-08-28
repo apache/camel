@@ -19,6 +19,7 @@ package org.apache.camel.component.caffeine.cache.springboot;
 import javax.annotation.Generated;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.RemovalListener;
 import org.apache.camel.component.caffeine.EvictionType;
 import org.apache.camel.component.caffeine.cache.CaffeineCacheComponent;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
@@ -123,6 +124,10 @@ public class CaffeineCacheComponentConfiguration
          * seconds)
          */
         private Integer expireAfterWriteTime = 300;
+        /**
+         * Set a specific removal Listener for the cache
+         */
+        private RemovalListener removalListener;
 
         public Boolean getCreateCacheIfNotExist() {
             return createCacheIfNotExist;
@@ -226,6 +231,14 @@ public class CaffeineCacheComponentConfiguration
 
         public void setExpireAfterWriteTime(Integer expireAfterWriteTime) {
             this.expireAfterWriteTime = expireAfterWriteTime;
+        }
+
+        public RemovalListener getRemovalListener() {
+            return removalListener;
+        }
+
+        public void setRemovalListener(RemovalListener removalListener) {
+            this.removalListener = removalListener;
         }
     }
 }
