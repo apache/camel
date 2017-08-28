@@ -16,11 +16,17 @@
  */
 package org.apache.camel.component.grpc;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import io.grpc.CallCredentials;
 import io.grpc.Channel;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.CamelContext;
@@ -44,12 +50,12 @@ public final class GrpcUtils {
         return service.contains(".") ? service.substring(0, service.lastIndexOf(".")) : "";
     }
 
-    public static Object constructGrpcAsyncStub(String packageName, String serviceName, Channel channel, final CamelContext context) {
-        return constructGrpcStubClass(packageName, serviceName, GrpcConstants.GRPC_SERVICE_ASYNC_STUB_METHOD, channel, context);
+    public static Object constructGrpcAsyncStub(String packageName, String serviceName, Channel channel, final CallCredentials creds, final CamelContext context) {
+        return constructGrpcStubClass(packageName, serviceName, GrpcConstants.GRPC_SERVICE_ASYNC_STUB_METHOD, channel, creds, context);
     }
 
-    public static Object constructGrpcBlockingStub(String packageName, String serviceName, Channel channel, final CamelContext context) {
-        return constructGrpcStubClass(packageName, serviceName, GrpcConstants.GRPC_SERVICE_SYNC_STUB_METHOD, channel, context);
+    public static Object constructGrpcBlockingStub(String packageName, String serviceName, Channel channel, final CallCredentials creds, final CamelContext context) {
+        return constructGrpcStubClass(packageName, serviceName, GrpcConstants.GRPC_SERVICE_SYNC_STUB_METHOD, channel, creds, context);
     }
 
     /**
@@ -59,24 +65,38 @@ public final class GrpcUtils {
      * newFutureStub - for ListenableFuture-style (not implemented yet)
      */
     @SuppressWarnings({"rawtypes"})
-    private static Object constructGrpcStubClass(String packageName, String serviceName, String stubMethod, Channel channel, final CamelContext context) {
-        Class[] paramChannel = new Class[1];
-        paramChannel[0] = Channel.class;
-        Object grpcBlockingStub = null;
+    private static Object constructGrpcStubClass(String packageName, String serviceName, String stubMethod, Channel channel, final CallCredentials creds, final CamelContext context) {
+        Class[] paramChannel = {Channel.class};
+        Object grpcStub = null;
 
         String serviceClassName = constructFullClassName(packageName, serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX);
         try {
             Class grpcServiceClass = context.getClassResolver().resolveMandatoryClass(serviceClassName);
-            Method grpcBlockingMethod = ReflectionHelper.findMethod(grpcServiceClass, stubMethod, paramChannel);
-            if (grpcBlockingMethod == null) {
+            Method grpcMethod = ReflectionHelper.findMethod(grpcServiceClass, stubMethod, paramChannel);
+            if (grpcMethod == null) {
                 throw new IllegalArgumentException("gRPC service method not found: " + serviceClassName + "." + stubMethod);
             }
-            grpcBlockingStub = ObjectHelper.invokeMethod(grpcBlockingMethod, grpcServiceClass, channel);
+            grpcStub = ObjectHelper.invokeMethod(grpcMethod, grpcServiceClass, channel);
+            
+            if (creds != null) {
+                return addClientCallCredentials(grpcStub, creds);
+            }
 
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("gRPC service class not found: " + serviceClassName);
         }
-        return grpcBlockingStub;
+        return grpcStub;
+    }
+    
+    @SuppressWarnings("rawtypes")
+    public static Object addClientCallCredentials(Object grpcStub, final CallCredentials creds) {
+        Class[] paramCallCreds = {CallCredentials.class};
+        Object grpcStubWithCreds = null;
+               
+        Method callCredsMethod = ReflectionHelper.findMethod(grpcStub.getClass(), GrpcConstants.GRPC_SERVICE_STUB_CALL_CREDS_METHOD, paramCallCreds);
+        grpcStubWithCreds = ObjectHelper.invokeMethod(callCredsMethod, grpcStub, creds);
+        
+        return grpcStubWithCreds;
     }
 
     @SuppressWarnings("rawtypes")
