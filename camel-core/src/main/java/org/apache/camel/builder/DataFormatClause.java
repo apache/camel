@@ -24,6 +24,7 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
@@ -1162,6 +1163,22 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T zipFile() {
         ZipFileDataFormat zfdf = new ZipFileDataFormat();
         return dataFormat(zfdf);
+    }
+    
+    /**
+     * Uses the ASN.1 file data format
+     */
+    public T asn1() {
+        ASN1DataFormat asn1Df = new ASN1DataFormat();
+        return dataFormat(asn1Df);
+    }
+    
+    public T asn1(String clazzName) {
+        return dataFormat(new ASN1DataFormat(clazzName));
+    }
+    
+    public T asn1(Boolean usingIterator) {
+        return dataFormat(new ASN1DataFormat(usingIterator));
     }
 
     @SuppressWarnings("unchecked")
