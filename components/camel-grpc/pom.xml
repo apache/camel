@@ -43,6 +43,12 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-auth</artifactId>
+      <version>${grpc-version}</version>
+    </dependency>    
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-netty</artifactId>
@@ -58,12 +64,36 @@
       <artifactId>grpc-stub</artifactId>
       <version>${grpc-version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.javassist</groupId>
       <artifactId>javassist</artifactId>
       <version>${javassist-version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-tcnative-boringssl-static</artifactId>
+      <version>${grpc-netty-tcnative-boringssl-static-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.auth</groupId>
+      <artifactId>google-auth-library-oauth2-http</artifactId>
+      <version>${grpc-google-auth-library-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.auth</groupId>
+      <artifactId>google-auth-library-credentials</artifactId>
+      <version>${grpc-google-auth-library-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.auth0</groupId>
+      <artifactId>java-jwt</artifactId>
+      <version>${grpc-java-jwt-version}</version>
+    </dependency> 
 
     <!-- for testing -->
     <dependency>

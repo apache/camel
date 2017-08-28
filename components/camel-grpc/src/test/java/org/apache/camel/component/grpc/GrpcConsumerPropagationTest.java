@@ -57,6 +57,7 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
     @After
     public void stopGrpcChannels() throws Exception {
         asyncOnNextChannel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+        asyncOnCompletedChannel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 
     @Test
@@ -113,8 +114,7 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
                     .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
                 
                 from("grpc://localhost:" + GRPC_ASYNC_COMPLETED_REQUEST_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&forwardOnCompleted=true")
-                    .to("mock:async-on-completed-propagation")
-                    .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
+                    .to("mock:async-on-completed-propagation");
             }
         };
     }
