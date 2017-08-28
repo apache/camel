@@ -43,7 +43,7 @@ public interface MetaDataExtension extends ComponentExtension {
         Object getAttribute(String name);
 
         /**
-         * @return a red-only list of attributes.
+         * @return a read-only list of attributes.
          */
         Map<String, Object> getAttributes();
 

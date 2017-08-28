@@ -98,7 +98,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private int connectionPollDelay = 10;
     @UriParam(label = "filter")
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
-    @UriParam(label = "advanced", description = "Currently XMPPTCPConnectionConfiguration is only supported (XMPP over TCP) but not BOSHConfiguration (XMPP over HTTP).")
+    @UriParam(label = "advanced")
     private ConnectionConfiguration connectionConfig;
 
     public XmppEndpoint() {
@@ -431,7 +431,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     }
 
     /**
-     * To use an existing connection configuration
+     * To use an existing connection configuration. Currently {@link org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration} is only supported (XMPP over TCP).
      */
     public void setConnectionConfig(ConnectionConfiguration connectionConfig) {
         this.connectionConfig = connectionConfig;
