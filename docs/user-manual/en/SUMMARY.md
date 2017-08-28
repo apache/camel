@@ -428,6 +428,7 @@
 
 <!-- dataformats: START -->
 * Data Formats
+	* [ASN.1 File](asn1-dataformat.adoc)
 	* [Avro](avro-dataformat.adoc)
 	* [Barcode](barcode-dataformat.adoc)
 	* [Base64](base64-dataformat.adoc)
