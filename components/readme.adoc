@@ -856,11 +856,13 @@ Data Formats
 ^^^^^^^^^^^^
 
 // dataformats: START
-Number of Data Formats: 47 in 38 JAR artifacts (0 deprecated)
+Number of Data Formats: 48 in 39 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
 | Data Format | Available From | Description
+
+| link:camel-asn1/src/main/docs/asn1-dataformat.adoc[ASN.1 File] (camel-asn1) | 2.20 | Camel ASN.1 support
 
 | link:camel-avro/src/main/docs/avro-dataformat.adoc[Avro] (camel-avro) | 2.14 | Camel Avro data format
 

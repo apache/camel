@@ -120,11 +120,11 @@
                <mainClass>org.openmuc.jasn1.compiler.Compiler</mainClass>
                <arguments>
                  <argument>-o</argument>
-                 <argument>target/generated/src/test/java</argument>
+                 <argument>${basedir}/target/generated/src/test/java</argument>
                  <argument>-p</argument>
                  <argument>org.apache.camel.dataformat.asn1.model</argument>
                  <argument>-f</argument>
-                 <argument>src/test/resources/asn1_structure/TestSMSCBerCdr.asn1</argument>
+                 <argument>${basedir}/src/test/resources/asn1_structure/TestSMSCBerCdr.asn1</argument>
                  <argument>-il</argument>
                </arguments>
              </configuration>
