@@ -77,7 +77,7 @@ with the following path and query parameters:
 | **doc** (consumer) | Set a doc header on the IN message containing a Document form of the incoming packet; default is true if presence or pubsub are true otherwise false | false | boolean
 | **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| **connectionConfig** (advanced) | To use an existing connection configuration |  | ConnectionConfiguration
+| **connectionConfig** (advanced) | To use an existing connection configuration. Currently org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration is only supported (XMPP over TCP). |  | ConnectionConfiguration
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | **headerFilterStrategy** (filter) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | **password** (security) | Password for login |  | String

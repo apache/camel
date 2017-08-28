@@ -162,7 +162,9 @@ public class NagiosConfiguration implements Cloneable {
 
     /**
      * To specify an encryption method.
+     * @deprecated use the {@link #encryption} query parameter instead.
      */
+    @Deprecated
     public void setEncryptionMethod(NagiosEncryptionMethod encryptionMethod) {
         this.encryptionMethod = encryptionMethod;
     }
