@@ -381,7 +381,7 @@ public class KafkaComponentConfiguration
         /**
          * Expose the kafka sasl.jaas.config parameter Example:
          * org.apache.kafka.common.security.plain.PlainLoginModule required
-         * username=\"USERNAME\" password=\"PASSWORD\";
+         * username="USERNAME" password="PASSWORD";
          */
         private String saslJaasConfig;
         /**
