@@ -97,6 +97,16 @@ public final class GoogleDriveFilesConverter {
         return null;
     }
     
+    @Converter
+    public static com.google.api.services.drive.model.ChildReference genericStringToChildReference(String payload, Exchange exchange) throws Exception {       
+        if (payload != null) {
+            com.google.api.services.drive.model.ChildReference childReference = new com.google.api.services.drive.model.ChildReference();
+            childReference.setId(payload);
+            return childReference;
+        }
+        return null;
+    }
+    
     private static Drive getClient(Exchange exchange) {
         GoogleDriveComponent component = exchange.getContext().getComponent("google-drive", GoogleDriveComponent.class);
         return component.getClient(component.getConfiguration());
