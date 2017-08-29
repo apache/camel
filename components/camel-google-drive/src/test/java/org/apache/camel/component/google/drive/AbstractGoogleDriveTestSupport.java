@@ -142,6 +142,11 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         return (T) template().requestBodyAndHeaders(endpointUri, body, headers);
     }
 
+    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type)
+        throws CamelExecutionException {
+        return (T) template().requestBodyAndHeaders(endpointUri, body, headers, type);
+    }
+    
     protected <T> T requestBody(String endpoint, Object body) throws CamelExecutionException {
         return (T) template().requestBody(endpoint, body);
     }
