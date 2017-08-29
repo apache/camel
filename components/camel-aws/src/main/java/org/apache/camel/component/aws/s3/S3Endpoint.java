@@ -26,11 +26,13 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.AmazonS3EncryptionClientBuilder;
 import com.amazonaws.services.s3.S3ClientOptions;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.StaticEncryptionMaterialsProvider;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -47,7 +49,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -254,14 +255,22 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
-            if (isClientConfigFound) {
+            if (isClientConfigFound && !configuration.isUseEncryption()) {
                 client = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider).build();
+            } else if (isClientConfigFound && configuration.isUseEncryption()) {
+                StaticEncryptionMaterialsProvider encryptionMaterialsProvider = new StaticEncryptionMaterialsProvider(configuration.getEncryptionMaterials());
+                client = AmazonS3EncryptionClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                   .withCredentials(credentialsProvider).withEncryptionMaterials(encryptionMaterialsProvider).build();
             } else {
                 client = AmazonS3ClientBuilder.standard().withCredentials(credentialsProvider).build();
             }
         } else {
-            if (isClientConfigFound) {
+            if (isClientConfigFound && !configuration.isUseEncryption()) {
                 client = AmazonS3ClientBuilder.standard().build();
+            } else if (isClientConfigFound && configuration.isUseEncryption()) {
+                StaticEncryptionMaterialsProvider encryptionMaterialsProvider = new StaticEncryptionMaterialsProvider(configuration.getEncryptionMaterials());
+                client = AmazonS3EncryptionClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                  .withEncryptionMaterials(encryptionMaterialsProvider).build();
             } else {
                 client = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration).build();
             }
