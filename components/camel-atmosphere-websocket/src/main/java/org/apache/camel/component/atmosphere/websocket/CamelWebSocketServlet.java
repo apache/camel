@@ -17,6 +17,7 @@
 package org.apache.camel.component.atmosphere.websocket;
 
 import java.io.IOException;
+import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,11 +43,9 @@ public class CamelWebSocketServlet extends CamelHttpTransportServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        String eventsResendingParameter = config.getInitParameter(RESEND_ALL_WEBSOCKET_EVENTS_PARAM_KEY);
-        if ("true".equals(eventsResendingParameter)) {
-            log.debug("Events resending enabled");
-            enableEventsResending = true;
-        }
+        initParameters(config);
+
+        enrichConsumers(config);
     }
 
     @Override
@@ -86,7 +85,22 @@ public class CamelWebSocketServlet extends CamelHttpTransportServlet {
         }
         
         log.debug("Dispatching to Websocket Consumer at {}", consumer.getPath());
-        ((WebsocketConsumer)consumer).service(request, response, enableEventsResending);
+        ((WebsocketConsumer)consumer).service(request, response);
     }
-    
+
+    private void initParameters(ServletConfig config) {
+        String eventsResendingParameter = config.getInitParameter(RESEND_ALL_WEBSOCKET_EVENTS_PARAM_KEY);
+        if ("true".equals(eventsResendingParameter)) {
+            log.debug("Events resending enabled");
+            enableEventsResending = true;
+        }
+    }
+
+    private void enrichConsumers(ServletConfig config) throws ServletException {
+        for (Map.Entry<String, HttpConsumer> httpConsumerEntry : getConsumers().entrySet()) {
+            WebsocketConsumer consumer = (WebsocketConsumer) httpConsumerEntry.getValue();
+            consumer.configureFramework(config);
+            consumer.configureEventsResending(enableEventsResending);
+        }
+    }
 }

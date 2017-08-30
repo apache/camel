@@ -42,16 +42,16 @@ public class WebsocketCamelRouterWithInitParamTestSupport extends CamelTestSuppo
         context.setContextPath("/");
         server.setHandler(context);
 
+        if (startCamelContext) {
+            super.setUp();
+        }
+
         servletHolder = new ServletHolder(new CamelWebSocketServlet());
         servletHolder.setName("CamelWsServlet");
         servletHolder.setInitParameter("events", "true");
         context.addServlet(servletHolder, "/*");
-        
+
         server.start();
-        
-        if (startCamelContext) {        
-            super.setUp();
-        }
     }
     
     @After
