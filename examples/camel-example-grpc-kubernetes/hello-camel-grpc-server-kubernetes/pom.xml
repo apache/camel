@@ -11,9 +11,9 @@
 	<name>Camel :: Example :: gRPC :: Hello Camel Server Kubernetes</name>
 	<description>An example showing a simple gRPC server running on Kubernetes</description>
 
-    <properties>
-        <main.class>org.apache.camel.examples.grpc.HelloCamelServer</main.class>
-    </properties>
+	<properties>
+		<main.class>org.apache.camel.examples.grpc.HelloCamelServer</main.class>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -86,43 +86,55 @@
 					<includePluginDependencies>false</includePluginDependencies>
 				</configuration>
 			</plugin>
+			<plugin>
+				<!-- Build an executable JAR -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>org.apache.camel.examples.grpc.HelloCamelServer</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
-  <profiles>
-  <profile>
-  <id>kubernetes-install</id>
+	<profiles>
+		<profile>
+			<id>kubernetes-install</id>
 
-  <build>
-    <defaultGoal>install</defaultGoal>
+			<build>
+				<defaultGoal>install</defaultGoal>
 
-    <plugins>
+				<plugins>
 
-      <plugin>
-        <groupId>io.fabric8</groupId>
-        <artifactId>fabric8-maven-plugin</artifactId>
-        <version>3.2.31</version>
-        <configuration>
-  <enricher>
-    <config>
-      <fmp-service>
-        <name>grpc-server</name>
-      </fmp-service>
-    </config>
-  </enricher>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>resource</goal>
-              <goal>build</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-    </plugins>
-  </build>
-  </profile>
- </profiles>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>fabric8-maven-plugin</artifactId>
+						<version>3.2.31</version>
+						<configuration>
+							<enricher>
+								<config>
+									<fmp-service>
+										<name>grpc-server</name>
+									</fmp-service>
+								</config>
+							</enricher>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>resource</goal>
+									<goal>build</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
