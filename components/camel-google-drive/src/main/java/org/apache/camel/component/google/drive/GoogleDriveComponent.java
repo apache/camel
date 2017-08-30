@@ -21,6 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiComponent;
 
 /**
@@ -55,7 +56,15 @@ public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiNam
     
     public GoogleDriveClientFactory getClientFactory() {
         if (clientFactory == null) {
-            clientFactory = new BatchGoogleDriveClientFactory();
+            // configure https proxy from camelContext
+            if (ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyHost")) 
+                    && ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyPort"))) {
+                String host = getCamelContext().getProperty("http.proxyHost");
+                int port = Integer.parseInt(getCamelContext().getProperty("http.proxyPort"));
+                clientFactory = new BatchGoogleDriveClientFactory(host, port);
+            } else {
+                clientFactory = new BatchGoogleDriveClientFactory();
+            }
         }
         return clientFactory;
     }
