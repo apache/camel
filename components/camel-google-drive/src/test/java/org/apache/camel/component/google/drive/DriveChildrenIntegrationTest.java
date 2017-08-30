@@ -39,7 +39,7 @@ public class DriveChildrenIntegrationTest extends AbstractGoogleDriveTestSupport
 
     @Test
     public void testUploadFileToFolder() throws Exception {
-        File folder = uploadTestFolder();        
+        File folder = uploadTestFolder();
         File file = uploadTestFile();
         
         final Map<String, Object> headers = new HashMap<String, Object>();
@@ -101,6 +101,10 @@ public class DriveChildrenIntegrationTest extends AbstractGoogleDriveTestSupport
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                //set proxy if necessary
+               
+                //this.getContext().getGlobalOptions().put("http.proxyHost", "...");
+                //this.getContext().getGlobalOptions().put("http.proxyPort", "...");
                 // test route for delete
                 from("direct://DELETE")
                     .to("google-drive://" + PATH_PREFIX + "/delete");
