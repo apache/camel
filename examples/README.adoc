@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 97 (8 deprecated)
+Number of Examples: 98 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |=======================================================================
@@ -67,6 +67,8 @@ Number of Examples: 97 (8 deprecated)
 | link:camel-example-cdi-aws-s3/README.md[CDI AWS S3] (camel-example-cdi-aws-s3) | Cloud | AWS S3 CDI example
 
 | link:camel-example-cdi-kubernetes/README.md[CDI Kubernetes] (camel-example-cdi-kubernetes) | Cloud | An example running Camel CDI on Kubernetes
+
+| link:camel-example-grpc-kubernetes/README.adoc[Grpc Kubernetes] (camel-example-grpc-kubernetes) | Cloud | An example showing the Camel gRPC component with Spring Boot running on Kubernetes
 
 | link:camel-example-hazelcast-kubernetes/ReadMe.md[Hazelcast Kubernetes] (camel-example-hazelcast-kubernetes) | Cloud | An example with Camel and Hazelcast running on Kubernetes
 
