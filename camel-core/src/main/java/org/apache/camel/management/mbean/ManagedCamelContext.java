@@ -398,7 +398,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
         if (resolvePlaceholders) {
             final AtomicBoolean changed = new AtomicBoolean();
-            InputStream is = new ByteArrayInputStream(xml.getBytes());
+            InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
             Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
                 @Override
                 public String transform(String text) {
