@@ -115,48 +115,48 @@
 		</plugins>
 	</build>
 
-  <profiles>
-  <profile>
-  <id>kubernetes-install</id>
+	<profiles>
+		<profile>
+			<id>kubernetes-install</id>
 
-  <build>
-    <defaultGoal>install</defaultGoal>
+			<build>
+				<defaultGoal>install</defaultGoal>
 
-    <plugins>
+				<plugins>
 
-      <plugin>
-        <groupId>io.fabric8</groupId>
-        <artifactId>fabric8-maven-plugin</artifactId>
-        <version>3.2.31</version>
-        <configuration>
-          <generator>
-            <config>
-              <java-exec>
-                <mainClass>org.apache.camel.example.springboot.grpc.Application</mainClass>
-              </java-exec>
-            </config>
-          </generator>
-  <enricher>
-    <config>
-      <fmp-service>
-        <name>grpc-client</name>
-      </fmp-service>
-    </config>
-  </enricher>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>resource</goal>
-              <goal>build</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>fabric8-maven-plugin</artifactId>
+						<version>3.2.31</version>
+						<configuration>
+							<generator>
+								<config>
+									<java-exec>
+										<mainClass>org.apache.camel.example.springboot.grpc.Application</mainClass>
+									</java-exec>
+								</config>
+							</generator>
+							<enricher>
+								<config>
+									<fmp-service>
+										<name>grpc-client</name>
+									</fmp-service>
+								</config>
+							</enricher>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>resource</goal>
+									<goal>build</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 
-    </plugins>
-  </build>
-  </profile>
- </profiles>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>

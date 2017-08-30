@@ -32,7 +32,7 @@ public class CamelGrpcRoute extends RouteBuilder {
     public void configure() throws Exception {
 
         CamelHelloRequest request = CamelHelloRequest.newBuilder().setName("Camel").build();
-        from("timer://foo?period=10000&repeatCount=1").process(new Processor() {
+        from("timer://foo?period=10000&repeatCount=5").process(new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
