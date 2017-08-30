@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.google.drive;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.UnknownHostException;
 import java.util.Collection;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -23,6 +27,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
+
 
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
@@ -36,6 +41,17 @@ public class BatchGoogleDriveClientFactory implements GoogleDriveClientFactory {
     public BatchGoogleDriveClientFactory() {
         this.transport = new NetHttpTransport();
         this.jsonFactory = new JacksonFactory();
+    }
+    
+    public BatchGoogleDriveClientFactory(String proxyHost, int proxyPort) {
+        try {
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, 
+                                    new InetSocketAddress(InetAddress.getByName(proxyHost), proxyPort));
+            this.transport = new NetHttpTransport.Builder().setProxy(proxy).build();
+            this.jsonFactory = new JacksonFactory();
+        } catch (UnknownHostException e) {
+            LOG.error("Unknow proxy host", e);
+        }
     }
 
     @Override
