@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,11 +30,11 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.servlet.ServletConsumer;
-import org.atmosphere.cpr.AtmosphereResponseImpl;
-import org.atmosphere.cpr.AtmosphereRequestImpl;
 import org.atmosphere.cpr.ApplicationConfig;
 import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereFrameworkInitializer;
+import org.atmosphere.cpr.AtmosphereRequestImpl;
+import org.atmosphere.cpr.AtmosphereResponseImpl;
 import org.atmosphere.websocket.WebSocketProtocol;
 
 /**
@@ -45,7 +46,13 @@ public class WebsocketConsumer extends ServletConsumer {
     private AtmosphereFramework framework;
     private final AtmosphereFrameworkInitializer initializer;
 
-    public void configureEventsResending(final boolean enableEventsResending){
+
+    public WebsocketConsumer(WebsocketEndpoint endpoint, Processor processor) {
+        super(endpoint, processor);
+        initializer = new AtmosphereFrameworkInitializer(false, true);
+    }
+    
+    public void configureEventsResending(final boolean enableEventsResending) {
         this.enableEventsResending = enableEventsResending;
     }
 
@@ -55,7 +62,7 @@ public class WebsocketConsumer extends ServletConsumer {
         this.framework.setUseNativeImplementation(false);
         this.framework.addInitParameter(ApplicationConfig.WEBSOCKET_SUPPORT, "true");
         this.framework.addInitParameter(ApplicationConfig.WEBSOCKET_PROTOCOL,
-                getEndpoint().isUseStreaming() ? WebsocketStreamHandler.class.getName() : WebsocketHandler.class.getName());
+                                        getEndpoint().isUseStreaming() ? WebsocketStreamHandler.class.getName() : WebsocketHandler.class.getName());
         this.framework.init(config);
 
         WebSocketProtocol wsp = this.framework.getWebSocketProtocol();
@@ -66,16 +73,11 @@ public class WebsocketConsumer extends ServletConsumer {
         }
     }
 
-    public WebsocketConsumer(WebsocketEndpoint endpoint, Processor processor) {
-        super(endpoint, processor);
-        initializer = new AtmosphereFrameworkInitializer(false , true);
-  }
-
     @Override
     public WebsocketEndpoint getEndpoint() {
         return (WebsocketEndpoint)super.getEndpoint();
     }
-    
+
     void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         this.queryMap = getQueryMap(request.getQueryString());
         framework.doCometSupport(AtmosphereRequestImpl.wrap(request), AtmosphereResponseImpl.wrap(response));
