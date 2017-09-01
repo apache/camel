@@ -360,18 +360,18 @@ public class JmsBinding {
                 LOG.trace("Ignoring JMS header: {} with value: {}", headerName, headerValue);
             }
         } else if (shouldOutputHeader(in, headerName, headerValue, exchange)) {
-            // only primitive headers and strings is allowed as properties
-            // see message properties: http://java.sun.com/j2ee/1.4/docs/api/javax/jms/Message.html
-            Object value = getValidJMSHeaderValue(headerName, headerValue);
-            if (value != null) {
-                // must encode to safe JMS header name before setting property on jmsMessage
-                String key = jmsKeyFormatStrategy.encodeKey(headerName);
+            Object value = mapJMSHeaderValue(headerName, headerValue);
+            // must encode to safe JMS header name before setting property on jmsMessage
+            String key = jmsKeyFormatStrategy.encodeKey(headerName);
+            try {
                 // set the property
                 JmsMessageHelper.setProperty(jmsMessage, key, value);
-            } else if (LOG.isDebugEnabled()) {
-                // okay the value is not a primitive or string so we cannot sent it over the wire
-                LOG.debug("Ignoring non primitive header: {} of class: {} with value: {}",
-                        new Object[]{headerName, headerValue.getClass().getName(), headerValue});
+            } catch (JMSException jmsx) {
+                // ignore, its expected that some Camel messages header types
+                // cannot be set on the JMS message as they are unsupported
+                // types
+                LOG.debug("Ignoring unsupported header {} of class {} with value: {}",
+                    new Object[]{headerName, headerValue.getClass().getName(), headerValue});
             }
         }
     }
@@ -405,41 +405,35 @@ public class JmsBinding {
     }
 
     /**
-     * Strategy to test if the given header is valid according to the JMS spec to be set as a property
-     * on the JMS message.
+     * Strategy to test if the given header value can be mapped to a supported JMS type.
+     * If no mapping is needed the header value object is simply returned.
      * <p/>
-     * This default implementation will allow:
+     * This mapping will be:
      * <ul>
-     *   <li>any primitives and their counter Objects (Integer, Double etc.)</li>
-     *   <li>String and any other literals, Character, CharSequence</li>
-     *   <li>Boolean</li>
-     *   <li>Number</li>
-     *   <li>java.util.Date</li>
+     *   <li>BigInteger -> String</li>
+     *   <li>BigDecmal -> String</li>
+     *   <li>Date -> String</li>
      * </ul>
      *
+     * For anything else the original header value is returned.
+     * We will leave it to the JMS provider to raise an exception if a header
+     * value type is unsupported.
+     * 
      * @param headerName   the header name
      * @param headerValue  the header value
-     * @return  the value to use, <tt>null</tt> to ignore this header
+     * @return  the mapped header value (may be the same object passed in headerValue)
      */
-    protected Object getValidJMSHeaderValue(String headerName, Object headerValue) {
-        if (headerValue instanceof String) {
-            return headerValue;
-        } else if (headerValue instanceof BigInteger) {
+    protected Object mapJMSHeaderValue(String headerName, Object headerValue) {
+        if (headerValue instanceof BigInteger) {
             return headerValue.toString();
         } else if (headerValue instanceof BigDecimal) {
             return headerValue.toString();
-        } else if (headerValue instanceof Number) {
-            return headerValue;
-        } else if (headerValue instanceof Character) {
-            return headerValue;
         } else if (headerValue instanceof CharSequence) {
             return headerValue.toString();
-        } else if (headerValue instanceof Boolean) {
-            return headerValue;
         } else if (headerValue instanceof Date) {
             return headerValue.toString();
         }
-        return null;
+        return headerValue;
     }
 
     protected Message createJmsMessage(Exception cause, Session session) throws JMSException {
