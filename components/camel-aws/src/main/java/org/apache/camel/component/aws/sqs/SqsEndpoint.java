@@ -24,6 +24,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
@@ -277,6 +278,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
      */
     AmazonSQS createClient() {
         AmazonSQS client = null;
+        AmazonSQSClientBuilder clientBuilder = null;
         ClientConfiguration clientConfiguration = null;
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
@@ -289,17 +291,22 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                client = AmazonSQSClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider).build();
+                clientBuilder = AmazonSQSClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
             } else {
-                client = AmazonSQSClientBuilder.standard().withCredentials(credentialsProvider).build();
+                clientBuilder = AmazonSQSClientBuilder.standard().withCredentials(credentialsProvider);
             }
         } else {
             if (isClientConfigFound) {
-                client = AmazonSQSClientBuilder.standard().build();
+                clientBuilder = AmazonSQSClientBuilder.standard();
             } else {
-                client = AmazonSQSClientBuilder.standard().withClientConfiguration(clientConfiguration).build();
+                clientBuilder = AmazonSQSClientBuilder.standard().withClientConfiguration(clientConfiguration);
             }
         }
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonSQSEndpoint()) && ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            EndpointConfiguration endpointConfiguration = new EndpointConfiguration(configuration.getAmazonSQSEndpoint(), configuration.getRegion());
+            clientBuilder = clientBuilder.withEndpointConfiguration(endpointConfiguration);
+        }
+        client = clientBuilder.build();
         return client;
     }
 
