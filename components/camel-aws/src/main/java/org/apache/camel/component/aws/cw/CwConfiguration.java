@@ -187,17 +187,4 @@ public class CwConfiguration implements Cloneable {
         this.region = region;
     }
 
-    @Override
-    public String toString() {
-        return "CwConfiguration[name=" + name
-                + ", amazonCwClient=" + amazonCwClient
-                + ", accessKey=" + accessKey
-                + ", secretKey=xxxxxxxxxxxxxxx"
-                + ", value=" + value
-                + ", unit=" + unit
-                + ", proxyHost=" + proxyHost
-                + ", proxyPort=" + proxyPort
-                + "]";
-    }
-
 }

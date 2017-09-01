@@ -364,33 +364,4 @@ public class SqsConfiguration {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-
-    @Override
-    public String toString() {
-        return "SqsConfiguration[queueName=" + queueName
-            + ", amazonAWSHost=" + amazonAWSHost
-            + ", amazonSQSClient=" + amazonSQSClient
-            + ", accessKey=" + accessKey
-            + ", secretKey=xxxxxxxxxxxxxxx"
-            + ", deleteAfterRead=" + deleteAfterRead
-            + ", deleteIfFiltered=" + deleteIfFiltered
-            + ", visibilityTimeout=" + visibilityTimeout
-            + ", attributeNames=" + attributeNames
-            + ", messageAttributeNames=" + messageAttributeNames
-            + ", waitTimeSeconds=" + waitTimeSeconds
-            + ", defaultVisibilityTimeout=" + defaultVisibilityTimeout
-            + ", maximumMessageSize=" + maximumMessageSize
-            + ", messageRetentionPeriod=" + messageRetentionPeriod
-            + ", receiveMessageWaitTimeSeconds=" + receiveMessageWaitTimeSeconds
-            + ", delaySeconds=" + delaySeconds
-            + ", policy=" + policy
-            + ", redrivePolicy=" + redrivePolicy
-            + ", extendMessageVisibility=" + extendMessageVisibility
-            + ", queueOwnerAWSAccountId=" + queueOwnerAWSAccountId
-            + ", concurrentConsumers=" + concurrentConsumers
-            + ", region=" + region
-            + ", proxyHost=" + proxyHost
-            + ", proxyPort=" + proxyPort
-            + "]";
-    }
 }

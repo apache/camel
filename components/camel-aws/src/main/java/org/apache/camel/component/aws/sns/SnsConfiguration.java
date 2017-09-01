@@ -181,19 +181,4 @@ public class SnsConfiguration implements Cloneable {
     public void setRegion(String region) {
         this.region = region;
     }
-
-    @Override
-    public String toString() {
-        return "SnsConfiguration[topicName=" + topicName
-            + ", amazonSNSClient=" + amazonSNSClient
-            + ", accessKey=" + accessKey
-            + ", secretKey=xxxxxxxxxxxxxxx" 
-            + ", subject=" + subject
-            + ", topicArn=" + topicArn
-            + ", policy=" + policy
-            + ", messageStructure=" + messageStructure
-            + ", proxyHost=" + proxyHost
-            + ", proxyPort=" + proxyPort
-            + "]";
-    }
 }
