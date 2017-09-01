@@ -46,7 +46,7 @@ with the following path and query parameters:
 | **from** | *Required* The sender's email address. |  | String
 |=======================================================================
 
-#### Query Parameters (11 parameters):
+#### Query Parameters (12 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -54,8 +54,9 @@ with the following path and query parameters:
 | **accessKey** (producer) | Amazon AWS Access Key |  | String
 | **amazonSESClient** (producer) | To use the AmazonSimpleEmailService as the client |  | AmazonSimpleEmail Service
 | **amazonSESEndpoint** (producer) | The region with which the AWS-SES client wants to work with. |  | String
-| **proxyHost** (producer) | To define a proxy host when instantiating the SQS client |  | String
-| **proxyPort** (producer) | To define a proxy port when instantiating the SQS client |  | Integer
+| **proxyHost** (producer) | To define a proxy host when instantiating the SES client |  | String
+| **proxyPort** (producer) | To define a proxy port when instantiating the SES client |  | Integer
+| **region** (producer) | The region in which SES client needs to work |  | String
 | **replyToAddresses** (producer) | List of reply-to email address(es) for the message override it using 'CamelAwsSesReplyToAddresses' header. |  | List
 | **returnPath** (producer) | The email address to which bounce notifications are to be forwarded override it using 'CamelAwsSesReturnPath' header. |  | String
 | **secretKey** (producer) | Amazon AWS Secret Key |  | String
