@@ -22,6 +22,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -139,6 +140,7 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
     AmazonDynamoDB createDdbClient() {
         AmazonDynamoDB client = null;
         ClientConfiguration clientConfiguration = null;
+        AmazonDynamoDBClientBuilder clientBuilder = null;
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             clientConfiguration = new ClientConfiguration();
@@ -150,17 +152,22 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                client = AmazonDynamoDBClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider).build();
+                clientBuilder = AmazonDynamoDBClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
             } else {
-                client = AmazonDynamoDBClientBuilder.standard().withCredentials(credentialsProvider).build();
+                clientBuilder = AmazonDynamoDBClientBuilder.standard().withCredentials(credentialsProvider);
             }
         } else {
             if (isClientConfigFound) {
-                client = AmazonDynamoDBClientBuilder.standard().build();
+                clientBuilder = AmazonDynamoDBClientBuilder.standard();
             } else {
-                client = AmazonDynamoDBClientBuilder.standard().withClientConfiguration(clientConfiguration).build();
+                clientBuilder = AmazonDynamoDBClientBuilder.standard().withClientConfiguration(clientConfiguration);
             }
         }
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonDdbEndpoint()) && ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            EndpointConfiguration endpointConfiguration = new EndpointConfiguration(configuration.getAmazonDdbEndpoint(), configuration.getRegion());
+            clientBuilder = clientBuilder.withEndpointConfiguration(endpointConfiguration);
+        }
+        client = clientBuilder.build();
         return client;
     }
 

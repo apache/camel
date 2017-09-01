@@ -52,9 +52,11 @@ public class DdbConfiguration {
     private String proxyHost;
     @UriParam
     private Integer proxyPort;
+    @UriParam
+    private String region;
 
     /**
-     * The region with which the AWS-DDB client wants to work with.
+     * The endpoint with which the AWS-DDB client wants to work with.
      */
     public void setAmazonDdbEndpoint(String amazonDdbEndpoint) {
         this.amazonDdbEndpoint = amazonDdbEndpoint;
@@ -175,7 +177,7 @@ public class DdbConfiguration {
     }
     
     /**
-     * To define a proxy host when instantiating the SQS client
+     * To define a proxy host when instantiating the DDB client
      */
     public String getProxyHost() {
         return proxyHost;
@@ -186,7 +188,7 @@ public class DdbConfiguration {
     }
 
     /**
-     * To define a proxy port when instantiating the SQS client
+     * To define a proxy port when instantiating the DDB client
      */
     public Integer getProxyPort() {
         return proxyPort;
@@ -194,5 +196,16 @@ public class DdbConfiguration {
 
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    /**
+     * The region in which DDB client needs to work
+     */
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
     }
 }
