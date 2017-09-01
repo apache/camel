@@ -7,7 +7,7 @@
     "title": "TwitterMention",
     "description": "Connection from twitter when anyone mention you",
     "label": "twitter",
-    "deprecated": false,
+    "deprecated": true,
     "async": false,
     "consumerOnly": true,
     "lenientProperties": false,

@@ -7,7 +7,7 @@
     "title": "TwitterSearch",
     "description": "Search for twitter",
     "label": "twitter",
-    "deprecated": false,
+    "deprecated": true,
     "async": false,
     "consumerOnly": true,
     "lenientProperties": false,
