@@ -21,8 +21,8 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
-import com.amazonaws.services.simpledb.AmazonSimpleDBClient;
 import com.amazonaws.services.simpledb.AmazonSimpleDBClientBuilder;
 import com.amazonaws.services.simpledb.model.CreateDomainRequest;
 import com.amazonaws.services.simpledb.model.DomainMetadataRequest;
@@ -81,9 +81,6 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
         super.doStart();
         
         sdbClient = configuration.getAmazonSDBClient() != null ? configuration.getAmazonSDBClient() : createSdbClient();
-        if (ObjectHelper.isNotEmpty(configuration.getAmazonSdbEndpoint())) {
-            sdbClient.setEndpoint(configuration.getAmazonSdbEndpoint());
-        }
         
         String domainName = getConfiguration().getDomainName();
         LOG.trace("Querying whether domain [{}] already exists...", domainName);
@@ -110,6 +107,7 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
 
     AmazonSimpleDB createSdbClient() {
         AmazonSimpleDB client = null;
+        AmazonSimpleDBClientBuilder clientBuilder = null;
         ClientConfiguration clientConfiguration = null;
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
@@ -122,17 +120,22 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                client = AmazonSimpleDBClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider).build();
+                clientBuilder = AmazonSimpleDBClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
             } else {
-                client = AmazonSimpleDBClientBuilder.standard().withCredentials(credentialsProvider).build();
+                clientBuilder = AmazonSimpleDBClientBuilder.standard().withCredentials(credentialsProvider);
             }
         } else {
             if (isClientConfigFound) {
-                client = AmazonSimpleDBClientBuilder.standard().build();
+                clientBuilder = AmazonSimpleDBClientBuilder.standard();
             } else {
-                client = AmazonSimpleDBClientBuilder.standard().withClientConfiguration(clientConfiguration).build();
+                clientBuilder = AmazonSimpleDBClientBuilder.standard().withClientConfiguration(clientConfiguration);
             }
         }
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonSdbEndpoint()) && ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            EndpointConfiguration endpointConfiguration = new EndpointConfiguration(configuration.getAmazonSdbEndpoint(), configuration.getRegion());
+            clientBuilder = clientBuilder.withEndpointConfiguration(endpointConfiguration);
+        }
+        client = clientBuilder.build();
         return client;
     }
 }
