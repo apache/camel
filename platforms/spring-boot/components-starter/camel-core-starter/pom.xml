@@ -44,11 +44,5 @@
       <artifactId>camel-spring-boot</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!--START OF GENERATED CODE-->
-    <dependency>
-      <groupId>com.github.ben-manes.caffeine</groupId>
-      <artifactId>caffeine</artifactId>
-    </dependency>
-    <!--END OF GENERATED CODE-->
   </dependencies>
 </project>
