@@ -20,7 +20,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -60,7 +59,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
     private final String componentName;
     private final String componentScheme;
     private final ConnectorModel model;
-    private Map<String, Object> options;
+    private final Map<String, Object> options;
     private Processor beforeProducer;
     private Processor afterProducer;
     private Processor beforeConsumer;
@@ -71,6 +70,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         this.baseScheme = this.model.getBaseScheme();
         this.componentName = componentName;
         this.componentScheme = componentName + "-component";
+        this.options = new HashMap<>();
 
         // add to catalog
         this.catalog.addComponent(componentName, className);
@@ -87,6 +87,14 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         }
 
         registerExtension(this::getComponentVerifierExtension);
+    }
+
+    protected <T> void addConnectorOption(Map<String, T> options, String name, T value) {
+        log.trace("Adding option: {}={}", name, value);
+        T val = options.put(name, value);
+        if (val != null) {
+            log.debug("Options {} overridden, old value was {}", name, val);
+        }
     }
 
     @Override
@@ -136,15 +144,6 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
     }
 
     @Override
-    public void addConnectorOption(Map<String, String> options, String name, String value) {
-        log.trace("Adding option: {}={}", name, value);
-        Object val = options.put(name, value);
-        if (val != null) {
-            log.debug("Options {} overridden, old value was {}", name, val);
-        }
-    }
-
-    @Override
     public CamelCatalog getCamelCatalog() {
         return catalog;
     }
@@ -171,9 +170,19 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
 
     @Override
     public void setOptions(Map<String, Object> baseComponentOptions) {
-        // Copy the map so if the given map is externally modified the connector
-        // is not impacted.
-        this.options = Collections.unmodifiableMap(new HashMap<>(baseComponentOptions));
+        this.options.clear();
+        this.options.putAll(baseComponentOptions);
+    }
+
+    @Override
+    public void addOption(String name, Object value) {
+        addConnectorOption(this.options, name, value);
+    }
+
+    @Override
+    public void addOptions(Map<String, Object> options) {
+        options.forEach((name, value)->  addConnectorOption(this.options, name, value));
+
     }
 
     @Override
