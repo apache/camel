@@ -36,14 +36,22 @@ public class JmsBindingTest {
     @Test
     public void testGetValidJmsHeaderValueWithBigInteger() {
         JmsBinding binding = new JmsBinding();
-        Object value = binding.getValidJMSHeaderValue("foo", new BigInteger("12345"));
+        Object value = binding.mapJMSHeaderValue("foo", new BigInteger("12345"));
         assertEquals("12345", value);
     }
 
     @Test
     public void testGetValidJmsHeaderValueWithBigDecimal() {
         JmsBinding binding = new JmsBinding();
-        Object value = binding.getValidJMSHeaderValue("foo", new BigDecimal("123.45"));
+        Object value = binding.mapJMSHeaderValue("foo", new BigDecimal("123.45"));
         assertEquals("123.45", value);
+    }
+    
+    @Test
+    public void testGetValidJmsHeaderValueWithByteArray() {
+        JmsBinding binding = new JmsBinding();
+        byte[] bArray = new byte[] {1,2,3,4};
+        Object value = binding.mapJMSHeaderValue("foo", bArray);
+        assertEquals(bArray, value);
     }
 }
