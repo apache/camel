@@ -21,6 +21,8 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder;
 
@@ -70,13 +72,8 @@ public class CwEndpoint extends DefaultEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        
-        cloudWatchClient = configuration.getAmazonCwClient() != null
-            ? configuration.getAmazonCwClient() : createCloudWatchClient();
-            
-        if (ObjectHelper.isNotEmpty(configuration.getAmazonCwEndpoint())) {
-            cloudWatchClient.setEndpoint(configuration.getAmazonCwEndpoint());
-        }
+
+        cloudWatchClient = configuration.getAmazonCwClient() != null ? configuration.getAmazonCwClient() : createCloudWatchClient();
     }
 
     public CwConfiguration getConfiguration() {
@@ -97,6 +94,7 @@ public class CwEndpoint extends DefaultEndpoint {
 
     AmazonCloudWatch createCloudWatchClient() {
         AmazonCloudWatch client = null;
+        AmazonCloudWatchClientBuilder clientBuilder = null;
         ClientConfiguration clientConfiguration = null;
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
@@ -109,17 +107,22 @@ public class CwEndpoint extends DefaultEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                client = AmazonCloudWatchClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider).build();
+                clientBuilder = AmazonCloudWatchClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
             } else {
-                client = AmazonCloudWatchClientBuilder.standard().withCredentials(credentialsProvider).build();
+                clientBuilder = AmazonCloudWatchClientBuilder.standard().withCredentials(credentialsProvider);
             }
         } else {
             if (isClientConfigFound) {
-                client = AmazonCloudWatchClientBuilder.standard().build();
+                clientBuilder = AmazonCloudWatchClientBuilder.standard();
             } else {
-                client = AmazonCloudWatchClientBuilder.standard().withClientConfiguration(clientConfiguration).build();
+                clientBuilder = AmazonCloudWatchClientBuilder.standard().withClientConfiguration(clientConfiguration);
             }
         }
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonCwEndpoint()) && ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            EndpointConfiguration endpointConfiguration = new EndpointConfiguration(configuration.getAmazonCwEndpoint(), configuration.getRegion());
+            clientBuilder = clientBuilder.withEndpointConfiguration(endpointConfiguration);
+        }
+        client = clientBuilder.build();
         return client;
     }
 }
