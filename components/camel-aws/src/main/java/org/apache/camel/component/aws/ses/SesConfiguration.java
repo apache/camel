@@ -196,21 +196,4 @@ public class SesConfiguration {
     public void setRegion(String region) {
         this.region = region;
     }
-
-    @Override
-    public String toString() {
-        return "SesConfiguration{"
-                + "accessKey='" + accessKey + '\''
-                + ", amazonSESClient=" + amazonSESClient
-                + ", secretKey=xxxxxxxxxxxxxxx"
-                + ", amazonSesEndpoint='" + amazonSESEndpoint + '\''
-                + ", subject='" + subject + '\''
-                + ", from='" + from + '\''
-                + ", to='" + to + '\''
-                + ", returnPath='" + returnPath + '\''
-                + ", replyToAddresses='" + replyToAddresses + '\''
-                + ", proxyHost=" + proxyHost
-                + ", proxyPort=" + proxyPort
-                + '}';
-    }
 }
