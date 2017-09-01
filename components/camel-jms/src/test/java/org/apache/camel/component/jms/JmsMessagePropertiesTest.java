@@ -78,7 +78,7 @@ public class JmsMessagePropertiesTest extends CamelTestSupport {
                 from("activemq:queue:foo")
                     .to("log:foo?showAll=true", "mock:foo")
                     .transform(body().prepend("Bye "));
-                }
+            }
         };
     }
 }

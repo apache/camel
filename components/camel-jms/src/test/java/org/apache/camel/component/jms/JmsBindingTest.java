@@ -46,7 +46,7 @@ public class JmsBindingTest {
         Object value = binding.mapJMSHeaderValue("foo", new BigDecimal("123.45"));
         assertEquals("123.45", value);
     }
-    
+
     @Test
     public void testGetValidJmsHeaderValueWithByteArray() {
         JmsBinding binding = new JmsBinding();
