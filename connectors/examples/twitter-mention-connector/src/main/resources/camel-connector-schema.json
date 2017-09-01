@@ -23,5 +23,7 @@
     "consumerSecret": { "kind": "property", "displayName": "Consumer Secret", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The consumer secret" }
   },
   "properties": {
+  },
+  "connectorProperties": {
   }
 }

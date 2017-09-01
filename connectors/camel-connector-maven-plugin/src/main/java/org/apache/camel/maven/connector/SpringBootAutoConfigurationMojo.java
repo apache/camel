@@ -31,6 +31,7 @@ import javax.annotation.PostConstruct;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.maven.connector.model.ComponentModel;
 import org.apache.camel.maven.connector.model.ComponentOptionModel;
+import org.apache.camel.maven.connector.model.ConnectorOptionModel;
 import org.apache.camel.maven.connector.model.EndpointOptionModel;
 import org.apache.camel.maven.connector.model.OptionModel;
 import org.apache.camel.maven.connector.util.JSonSchemaHelper;
@@ -113,7 +114,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
 
         // find the component dependency and get its .json file
-        file = new File(classesDirectory, "camel-component-schema.json");
+        file = new File(classesDirectory, "camel-connector-schema.json");
         if (file.exists() && javaType != null && connectorScheme != null) {
             String json = loadText(new FileInputStream(file));
             ComponentModel model = generateComponentModel(json);
@@ -229,6 +230,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             }
         }
 
+        for (OptionModel option : model.getConnectorOptions()) {
+            addProperty(commonClass, model, option);
+        }
+
         sortImports(commonClass);
         writeSourceIfChanged(commonClass, packageName.replaceAll("\\.", "\\/") + "/" + commonName + ".java");
 
@@ -293,7 +298,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
             javaClass.addImport(HashMap.class);
             javaClass.addImport(Map.class);
-            javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
+            javaClass.addImport("org.apache.camel.spring.boot.util.CamelPropertiesHelper");
         }
 
         javaClass.addImport(javaType);
@@ -402,9 +407,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("\n");
         if (hasOptions) {
             sb.append("Map<String, Object> parameters = new HashMap<>();\n");
-            sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
-            sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), connector, parameters);\n");
-            sb.append("connector.setComponentOptions(parameters);\n");
+            sb.append("CamelPropertiesHelper.setCamelProperties(camelContext, connector, parameters, false);\n");
+            sb.append("connector.setOptions(parameters);\n");
         }
         sb.append("if (ObjectHelper.isNotEmpty(customizers)) {\n");
         sb.append("    for (ConnectorCustomizer<").append(shortJavaType).append("> customizer : customizers) {\n");
@@ -442,9 +446,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("connector.setCamelContext(camelContext);\n");
         sb.append("\n");
         sb.append("try {\n");
-        sb.append("IntrospectionSupport.getProperties(entry.getValue(), parameters, null, false);\n");
-        sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), connector, parameters);\n");
-        sb.append("connector.setComponentOptions(parameters);\n");
+        sb.append("CamelPropertiesHelper.setCamelProperties(camelContext, connector, parameters, false);\n");
+        sb.append("connector.setOptions(parameters);\n");
         sb.append("if (ObjectHelper.isNotEmpty(customizers)) {\n");
         sb.append("    for (ConnectorCustomizer<").append(shortJavaType).append("> customizer : customizers) {\n");
         sb.append("\n");
@@ -578,6 +581,21 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setDescription(getSafeValue("description", row));
             option.setEnumValues(getSafeValue("enum", row));
             component.addEndpointOption(option);
+        }
+
+        rows = JSonSchemaHelper.parseJsonSchema("connectorProperties", json, true);
+        for (Map<String, String> row : rows) {
+            ConnectorOptionModel option = new ConnectorOptionModel();
+            option.setName(getSafeValue("name", row));
+            option.setDisplayName(getSafeValue("displayName", row));
+            option.setKind(getSafeValue("kind", row));
+            option.setType(getSafeValue("type", row));
+            option.setJavaType(getSafeValue("javaType", row));
+            option.setDeprecated(getSafeValue("deprecated", row));
+            option.setDescription(getSafeValue("description", row));
+            option.setDefaultValue(getSafeValue("defaultValue", row));
+            option.setEnums(getSafeValue("enum", row));
+            component.addConnectorOption(option);
         }
 
         return component;
