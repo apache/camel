@@ -34,5 +34,12 @@ public class TwitterSearchCustomizer implements ConnectorCustomizer<TwitterSearc
         if (ObjectHelper.isNotEmpty(configuration.getKeywords())) {
             component.addOption("keywords", configuration.getKeywords());
         }
+
+        String keywords = (String)component.getOptions().get("keywords");
+        String prefix = (String)component.getOptions().get("prefix");
+
+        if (ObjectHelper.isNotEmpty(keywords) && ObjectHelper.isNotEmpty(prefix)) {
+            component.addOption("keywords", prefix + keywords);
+        }
     }
 }

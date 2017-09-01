@@ -24,8 +24,8 @@ import javax.annotation.PostConstruct;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.connector.ConnectorCustomizer;
 import org.apache.camel.spi.HasId;
+import org.apache.camel.spring.boot.util.CamelPropertiesHelper;
 import org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.foo.search.TwitterSearchComponent;
 import org.slf4j.Logger;
@@ -72,11 +72,9 @@ public class TwitterSearchConnectorAutoConfiguration {
         TwitterSearchComponent connector = new TwitterSearchComponent();
         connector.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();
-        IntrospectionSupport.getProperties(configuration, parameters, null,
-                false);
-        IntrospectionSupport.setProperties(camelContext,
-                camelContext.getTypeConverter(), connector, parameters);
-        connector.setComponentOptions(parameters);
+        CamelPropertiesHelper.setCamelProperties(camelContext, connector,
+                parameters, false);
+        connector.setOptions(parameters);
         if (ObjectHelper.isNotEmpty(customizers)) {
             for (ConnectorCustomizer<TwitterSearchComponent> customizer : customizers) {
                 boolean useCustomizer = (customizer instanceof HasId)
@@ -108,11 +106,9 @@ public class TwitterSearchConnectorAutoConfiguration {
             TwitterSearchComponent connector = new TwitterSearchComponent();
             connector.setCamelContext(camelContext);
             try {
-                IntrospectionSupport.getProperties(entry.getValue(),
-                        parameters, null, false);
-                IntrospectionSupport.setProperties(camelContext,
-                        camelContext.getTypeConverter(), connector, parameters);
-                connector.setComponentOptions(parameters);
+                CamelPropertiesHelper.setCamelProperties(camelContext,
+                        connector, parameters, false);
+                connector.setOptions(parameters);
                 if (ObjectHelper.isNotEmpty(customizers)) {
                     for (ConnectorCustomizer<TwitterSearchComponent> customizer : customizers) {
                         boolean useCustomizer = (customizer instanceof HasId)

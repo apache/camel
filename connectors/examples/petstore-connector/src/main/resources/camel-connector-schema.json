@@ -22,5 +22,7 @@
   "properties": {
     "operationId": { "kind": "path", "displayName": "Operation Id", "group": "producer", "label": "producer", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "ID of the operation from the Swagger specification." },
     "schedulerPeriod": { "kind": "parameter", "displayName": "Period", "group": "consumer", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "secret": false, "defaultValue": 5000, "description": "Delay in milli seconds between scheduling (executing)" }
+  },
+  "connectorProperties": {
   }
 }

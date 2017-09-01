@@ -63,6 +63,7 @@ final class ConnectorModel {
     private Map<String, String> defaultEndpointOptions;
     private List<String> endpointOptions;
     private List<String> componentOptions;
+    private List<String> connectorOptions;
 
     ConnectorModel(String componentName, String className) {
         this.componentName = componentName;
@@ -148,6 +149,14 @@ final class ConnectorModel {
         }
 
         return endpointOptions;
+    }
+
+    public List<String> getConnectorOptions() {
+        if (connectorOptions == null) {
+            connectorOptions = Collections.unmodifiableList(extractConnectorOptions(lines.get()));
+        }
+
+        return connectorOptions;
     }
 
     public DataType getInputDataType() {
@@ -405,6 +414,27 @@ final class ConnectorModel {
                 }
 
                 break;
+            }
+        }
+
+        return answer;
+    }
+
+    private List<String> extractConnectorOptions(List<String> lines) {
+        List<String> answer = new ArrayList<>();
+
+        // extract the default options
+        boolean found = false;
+        for (String line : lines) {
+            line = line.trim();
+            if (line.startsWith("\"connectorProperties\": {")) {
+                found = true;
+            } else if (line.startsWith("}")) {
+                found = false;
+            } else if (found) {
+                int pos = line.indexOf(':');
+                String key = line.substring(0, pos);
+                answer.add(StringHelper.removeLeadingAndEndingQuotes(key.trim()));
             }
         }
 
