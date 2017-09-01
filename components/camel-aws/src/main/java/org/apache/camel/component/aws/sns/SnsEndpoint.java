@@ -22,6 +22,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
@@ -104,12 +105,6 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         super.doStart();
         snsClient = configuration.getAmazonSNSClient() != null
             ? configuration.getAmazonSNSClient() : createSNSClient();
-        
-        // Override the setting Endpoint from url
-        if (ObjectHelper.isNotEmpty(configuration.getAmazonSNSEndpoint())) {
-            LOG.trace("Updating the SNS region with : {} " + configuration.getAmazonSNSEndpoint());
-            snsClient.setEndpoint(configuration.getAmazonSNSEndpoint());
-        }
 
         // check the setting the headerFilterStrategy
         if (headerFilterStrategy == null) {
@@ -182,6 +177,7 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      */
     AmazonSNS createSNSClient() {
         AmazonSNS client = null;
+        AmazonSNSClientBuilder clientBuilder = null;
         ClientConfiguration clientConfiguration = null;
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
@@ -194,17 +190,22 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                client = AmazonSNSClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider).build();
+                clientBuilder = AmazonSNSClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
             } else {
-                client = AmazonSNSClientBuilder.standard().withCredentials(credentialsProvider).build();
+                clientBuilder = AmazonSNSClientBuilder.standard().withCredentials(credentialsProvider);
             }
         } else {
             if (isClientConfigFound) {
-                client = AmazonSNSClientBuilder.standard().build();
+                clientBuilder = AmazonSNSClientBuilder.standard();
             } else {
-                client = AmazonSNSClientBuilder.standard().withClientConfiguration(clientConfiguration).build();
+                clientBuilder = AmazonSNSClientBuilder.standard().withClientConfiguration(clientConfiguration);
             }
         }
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonSNSEndpoint()) && ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            EndpointConfiguration endpointConfiguration = new EndpointConfiguration(configuration.getAmazonSNSEndpoint(), configuration.getRegion());
+            clientBuilder = clientBuilder.withEndpointConfiguration(endpointConfiguration);
+        }
+        client = clientBuilder.build();
         return client;
     }
 }

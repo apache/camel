@@ -50,7 +50,7 @@ with the following path and query parameters:
 | **topicNameOrArn** | *Required* Topic name or ARN |  | String
 |=======================================================================
 
-#### Query Parameters (11 parameters):
+#### Query Parameters (12 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -61,8 +61,9 @@ with the following path and query parameters:
 | **headerFilterStrategy** (producer) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
 | **messageStructure** (producer) | The message structure to use such as json |  | String
 | **policy** (producer) | The policy for this queue |  | String
-| **proxyHost** (producer) | To define a proxy host when instantiating the SQS client |  | String
-| **proxyPort** (producer) | To define a proxy port when instantiating the SQS client |  | Integer
+| **proxyHost** (producer) | To define a proxy host when instantiating the SNS client |  | String
+| **proxyPort** (producer) | To define a proxy port when instantiating the SNS client |  | Integer
+| **region** (producer) | The region in which SNS client needs to work |  | String
 | **secretKey** (producer) | Amazon AWS Secret Key |  | String
 | **subject** (producer) | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean

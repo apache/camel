@@ -87,7 +87,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         
         assertEquals("arn:aws:sns:us-east-1:541925086079:MyTopic", endpoint.getConfiguration().getTopicArn());
         // check the setting of AmazonSNSEndpoint
-        assertEquals("sns.ap-southeast-2.amazonaws.com", mock.getEndpoint());
+        assertEquals("https://sns.us-east-1.amazonaws.com", mock.getEndpoint());
         
         endpoint.stop();
     }

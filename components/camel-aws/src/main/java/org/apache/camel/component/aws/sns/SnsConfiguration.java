@@ -47,7 +47,9 @@ public class SnsConfiguration implements Cloneable {
     private String policy;
     @UriParam
     private String messageStructure;
-
+    @UriParam
+    private String region;
+    
     /**
      * The region with which the AWS-SNS client wants to work with.
      */
@@ -148,7 +150,7 @@ public class SnsConfiguration implements Cloneable {
     }
     
     /**
-     * To define a proxy host when instantiating the SQS client
+     * To define a proxy host when instantiating the SNS client
      */
     public String getProxyHost() {
         return proxyHost;
@@ -159,7 +161,7 @@ public class SnsConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy port when instantiating the SQS client
+     * To define a proxy port when instantiating the SNS client
      */
     public Integer getProxyPort() {
         return proxyPort;
@@ -167,6 +169,17 @@ public class SnsConfiguration implements Cloneable {
 
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+    
+    /**
+     * The region in which SNS client needs to work
+     */
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
     }
 
     @Override
