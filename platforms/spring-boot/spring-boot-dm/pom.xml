@@ -66,6 +66,7 @@
     <ahc-netty-version>4.0.46.Final</ahc-netty-version>
     <cassandra-netty-version-testing>4.0.44.Final</cassandra-netty-version-testing>
     <infinispan-spring-boot-version>1.0.0.Final</infinispan-spring-boot-version>
+    <groovy-version>2.4.10</groovy-version>
 
     <!-- The following versions should be aligned with the ones in spring-boot-repo/spring-boot-dependencies/pom.xml (for the targeted version of spring-boot) -->
     <!-- for example: https://github.com/spring-projects/spring-boot/blob/v1.5.6.RELEASE/spring-boot-dependencies/pom.xml -->
