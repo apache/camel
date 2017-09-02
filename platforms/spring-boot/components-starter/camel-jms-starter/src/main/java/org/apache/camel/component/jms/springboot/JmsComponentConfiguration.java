@@ -532,6 +532,14 @@ public class JmsComponentConfiguration
     @NestedConfigurationProperty
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
     /**
+     * This option is used to allow additional headers which may have values
+     * that are invalid according to JMS specification. For example some message
+     * systems such as WMQ do this vith headers JMS_IBM_MQMD_ that contains byte
+     * or other invalid types. You can specify multiple header names separated
+     * by comma and use as suffix for wildcard matching.
+     */
+    private String allowAdditionalHeaders;
+    /**
      * To use a custom QueueBrowseStrategy when browsing queues
      */
     @NestedConfigurationProperty
@@ -1132,6 +1140,14 @@ public class JmsComponentConfiguration
     public void setJmsKeyFormatStrategy(
             JmsKeyFormatStrategy jmsKeyFormatStrategy) {
         this.jmsKeyFormatStrategy = jmsKeyFormatStrategy;
+    }
+
+    public String getAllowAdditionalHeaders() {
+        return allowAdditionalHeaders;
+    }
+
+    public void setAllowAdditionalHeaders(String allowAdditionalHeaders) {
+        this.allowAdditionalHeaders = allowAdditionalHeaders;
     }
 
     public QueueBrowseStrategy getQueueBrowseStrategy() {
@@ -1809,6 +1825,15 @@ public class JmsComponentConfiguration
          * name.
          */
         private String correlationProperty;
+        /**
+         * This option is used to allow additional headers which may have values
+         * that are invalid according to JMS specification. + For example some
+         * message systems such as WMQ do this vith headers JMS_IBM_MQMD_* that
+         * contains byte[] or other invalid types. + You can specify multiple
+         * header names separated by comma, and use * as suffix for wildcard
+         * matching.
+         */
+        private String allowAdditionalHeaders;
 
         public ConsumerType getConsumerType() {
             return consumerType;
@@ -2533,6 +2558,14 @@ public class JmsComponentConfiguration
 
         public void setCorrelationProperty(String correlationProperty) {
             this.correlationProperty = correlationProperty;
+        }
+
+        public String getAllowAdditionalHeaders() {
+            return allowAdditionalHeaders;
+        }
+
+        public void setAllowAdditionalHeaders(String allowAdditionalHeaders) {
+            this.allowAdditionalHeaders = allowAdditionalHeaders;
         }
     }
 }

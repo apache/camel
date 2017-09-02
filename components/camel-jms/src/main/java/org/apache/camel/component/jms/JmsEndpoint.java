@@ -1234,6 +1234,16 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         configuration.setDefaultTaskExecutorType(type);
     }
 
+    @ManagedAttribute
+    public String getAllowAdditionalHeaders() {
+        return configuration.getAllowAdditionalHeaders();
+    }
+
+    @ManagedAttribute
+    public void setAllowAdditionalHeaders(String AllowAdditionalHeaders) {
+        configuration.setAllowAdditionalHeaders(AllowAdditionalHeaders);
+    }
+
     public MessageListenerContainerFactory getMessageListenerContainerFactory() {
         return configuration.getMessageListenerContainerFactory();
     }
