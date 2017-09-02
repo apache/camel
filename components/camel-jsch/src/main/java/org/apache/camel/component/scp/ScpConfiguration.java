@@ -89,7 +89,7 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key file to that the SFTP endpoint can do private key verification.
+     * Set the private key file to that the endpoint can do private key verification.
      */
     public void setPrivateKeyFile(String privateKeyFile) {
         this.privateKeyFile = privateKeyFile;
@@ -100,7 +100,7 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key file passphrase to that the SFTP endpoint can do private key verification.
+     * Set the private key file passphrase to that the endpoint can do private key verification.
      */
     public void setPrivateKeyFilePassphrase(String privateKeyFilePassphrase) {
         this.privateKeyFilePassphrase = privateKeyFilePassphrase;
