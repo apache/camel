@@ -1240,8 +1240,8 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @ManagedAttribute
-    public void setAllowAdditionalHeaders(String AllowAdditionalHeaders) {
-        configuration.setAllowAdditionalHeaders(AllowAdditionalHeaders);
+    public void setAllowAdditionalHeaders(String allowAdditionalHeaders) {
+        configuration.setAllowAdditionalHeaders(allowAdditionalHeaders);
     }
 
     public MessageListenerContainerFactory getMessageListenerContainerFactory() {

@@ -41,7 +41,6 @@ import javax.jms.Session;
 import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
-import org.apache.camel.util.EndpointHelper;
 import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
@@ -53,6 +52,7 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
