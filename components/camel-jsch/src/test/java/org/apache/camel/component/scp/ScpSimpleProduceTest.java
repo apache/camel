@@ -109,4 +109,17 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+
+    @Test
+    @Ignore("Fails on CI servers")
+    public void testScpProducePrivateKeyFromClasspath() throws Exception {
+        Assume.assumeTrue(this.isSetupComplete());
+
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        String uri = getScpUri() + "?username=admin&privateKeyFile=classpath:camel-key.priv&privateKeyFilePassphrase=password&knownHostsFile=" + getKnownHostsFile();
+        template.sendBodyAndHeader(uri, "Hallo Welt", Exchange.FILE_NAME, "welt.txt");
+
+        assertMockEndpointsSatisfied();
+    }
 }
