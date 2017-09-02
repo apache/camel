@@ -329,7 +329,9 @@ public final class ArquillianPackager {
         ignore.add("org.webjars"); // No problem
         ignore.add("stax:stax-api");
         ignore.add("xml-apis:xml-apis-ext");
-
+        ignore.add("org.infinispan");
+        ignore.add("org.jboss.logging");
+        ignore.add("org.jboss.marshalling");
 
         Map<String, Map<String, String>> status = new TreeMap<>();
         Set<String> mismatches = new TreeSet<>();
