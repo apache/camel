@@ -42,7 +42,7 @@ You can also copy the existing examples from the `connectors` directory where th
 - `foo-connector` - A connector that is based on the Timer component from `camel-core`.
 - `bar-connector` - A connector that is based on the 3rd party `beverage-component`.
 - `wine-connector` - Another connector that is based on the 3rd party `beverage-component`.
-- 'twitter-search' - A connector based on twitter to search for keywords.
+- `twitter-search` - A connector based on twitter to search for keywords.
 
 You can find an example using these connectors in the `foo-bar-wine-example` in the `connectors` directory.
 
