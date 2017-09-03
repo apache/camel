@@ -48,7 +48,8 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
     public final void clearBaseFields() {
         attributes = null;
         Id = null;
-        OwnerId = null;
+        //Commented for availability to update Owner
+        //OwnerId = null;
         IsDeleted = null;
         CreatedDate = null;
         CreatedById = null;
