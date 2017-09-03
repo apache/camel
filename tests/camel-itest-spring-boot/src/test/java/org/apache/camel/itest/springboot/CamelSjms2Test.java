@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Arquillian.class)
-public class CamelSjmsTest extends AbstractSpringBootTestSupport {
+public class CamelSjms2Test extends AbstractSpringBootTestSupport {
 
     @Deployment
     public static Archive<?> createSpringBootPackage() throws Exception {
@@ -34,7 +34,7 @@ public class CamelSjmsTest extends AbstractSpringBootTestSupport {
 
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
-                .module(inferModuleName(CamelSjmsTest.class))
+                .module(inferModuleName(CamelSjms2Test.class))
                 .exclusion("com.atomikos:transactions-jta")
 //                // to run unit tests
 //                .dependency("com.atomikos:transactions-jdbc:3.9.3")

@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Arquillian.class)
-public class CamelSjmsTest extends AbstractSpringBootTestSupport {
+public class CamelOpenstackTest extends AbstractSpringBootTestSupport {
 
     @Deployment
     public static Archive<?> createSpringBootPackage() throws Exception {
@@ -34,23 +34,20 @@ public class CamelSjmsTest extends AbstractSpringBootTestSupport {
 
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
-                .module(inferModuleName(CamelSjmsTest.class))
-                .exclusion("com.atomikos:transactions-jta")
-//                // to run unit tests
-//                .dependency("com.atomikos:transactions-jdbc:3.9.3")
-//                .dependency("com.atomikos:transactions-jms:3.9.3")
-//                .dependency("com.atomikos:transactions-api:3.9.3")
-//                .dependency("javax.transaction:javax.transaction-api:1.2")
-//                .disableJmx("org.apache.activemq:*")
+                .module(inferModuleName(CamelOpenstackTest.class))
                 .build();
     }
 
     @Test
     public void componentTests() throws Exception {
-        this.runComponentTest(config);
-
-        // Unit tests can be enabled if required
-        //this.runModuleUnitTestsIfEnabled(config);
+        this.runComponentTest(config, "openstack-cinder");
+        this.runComponentTest(config, "openstack-glance");
+        this.runComponentTest(config, "openstack-keystone");
+        this.runComponentTest(config, "openstack-neutron");
+        this.runComponentTest(config, "openstack-nova");
+        this.runComponentTest(config, "openstack-swift");
+        this.runModuleUnitTestsIfEnabled(config);
     }
+
 
 }
