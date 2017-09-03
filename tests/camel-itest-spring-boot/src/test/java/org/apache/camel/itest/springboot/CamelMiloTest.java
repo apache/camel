@@ -41,7 +41,7 @@ public class CamelMiloTest extends AbstractSpringBootTestSupport {
     @Test
     public void componentTests() throws Exception {
         this.runComponentTest(config, "milo-client");
-        this.runModuleUnitTestsIfEnabled(config);
+        this.runComponentTest(config, "milo-server");
     }
 
 
