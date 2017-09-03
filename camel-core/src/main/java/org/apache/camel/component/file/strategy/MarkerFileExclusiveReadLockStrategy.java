@@ -167,7 +167,21 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
             // filter unwanted files and directories to avoid traveling everything
             if (filter != null || antFilter != null || excludePattern != null || includePattern != null) {
-                if (!acceptFile(file, endpointPath, filter, antFilter, excludePattern, includePattern)) {
+
+                File targetFile = file;
+
+                // if its a lock file then check if we accept its target file to know if we should delete the orphan lock file
+                if (file.getName().endsWith(FileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
+                    String target = file.getName().substring(0, file.getName().length() - FileComponent.DEFAULT_LOCK_FILE_POSTFIX.length());
+                    if (file.getParent() != null) {
+                        targetFile = new File(file.getParent(), target);
+                    } else {
+                        targetFile = new File(target);
+                    }
+                }
+
+                boolean accept = acceptFile(targetFile, endpointPath, filter, antFilter, excludePattern, includePattern);
+                if (!accept) {
                     continue;
                 }
             }
@@ -219,9 +233,15 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         gf.setFileName(gf.getRelativeFilePath());
 
         if (filter != null) {
+            // a custom filter can also filter directories
             if (!filter.accept(gf)) {
                 return false;
             }
+        }
+
+        // the following filters only works on files so allow any directory from this point
+        if (file.isDirectory()) {
+            return true;
         }
 
         if (antFilter != null) {
