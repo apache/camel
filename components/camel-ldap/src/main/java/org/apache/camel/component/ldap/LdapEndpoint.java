@@ -17,6 +17,7 @@
 package org.apache.camel.component.ldap;
 
 import java.net.URISyntaxException;
+import java.util.Map;
 import javax.naming.directory.SearchControls;
 
 import org.apache.camel.Consumer;
@@ -78,7 +79,10 @@ public class LdapEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Name of {@link javax.naming.directory.DirContext} bean to lookup in the registry.
+     * Name of either a {@link javax.naming.directory.DirContext}, or {@link java.util.Hashtable}, or {@link Map} bean to lookup in the registry.
+     * If the bean is either a Hashtable or Map then a new {@link javax.naming.directory.DirContext} instance is created for each use. If the bean
+     * is a {@link javax.naming.directory.DirContext} then the bean is used as given. The latter may not be possible in all situations where
+     * the {@link javax.naming.directory.DirContext} must not be shared, and in those situations it can be better to use {@link java.util.Hashtable} or {@link Map} instead.
      */
     public void setDirContextName(String dirContextName) {
         this.dirContextName = dirContextName;
