@@ -121,7 +121,7 @@ public class GoogleBigQueryProducer extends DefaultProducer {
     private int process(String tableId, String partitionDecorator, String suffix, List<Exchange> exchanges, String exchangeId) throws Exception {
         String tableIdWithPartition = Strings.isNullOrEmpty(partitionDecorator)
                 ? tableId
-                : (tableId + "?" + partitionDecorator);
+                : (tableId + "$" + partitionDecorator);
 
         List<TableDataInsertAllRequest.Rows> apiRequestRows = new ArrayList<>();
         for (Exchange ex: exchanges) {
