@@ -473,6 +473,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addImport("java.util.HashMap");
         javaClass.addImport("org.apache.camel.util.CollectionHelper");
         javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
+        javaClass.addImport("org.apache.camel.spring.boot.util.CamelPropertiesHelper");
         javaClass.addImport("org.apache.camel.CamelContext");
         javaClass.addImport("org.apache.camel.model.rest.RestConstants");
         javaClass.addImport("org.apache.camel.spi.RestConfiguration");
@@ -503,9 +504,17 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         method.setBody(""
             + "Map<String, Object> properties = new HashMap<>();\n"
             + "IntrospectionSupport.getProperties(config, properties, null, false);\n"
+            + "// These options is configured specially further below, so remove them first\n"
+            + "properties.remove(\"enableCors\");\n"
+            + "properties.remove(\"apiProperty\");\n"
+            + "properties.remove(\"componentProperty\");\n"
+            + "properties.remove(\"consumerProperty\");\n"
+            + "properties.remove(\"dataFormatProperty\");\n"
+            + "properties.remove(\"endpointProperty\");\n"
+            + "properties.remove(\"corsHeaders\");\n"
             + "\n"
             + "RestConfiguration definition = new RestConfiguration();\n"
-            + "IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), definition, properties);\n"
+            + "CamelPropertiesHelper.setCamelProperties(camelContext, definition, properties, true);\n"
             + "\n"
             + "// Workaround for spring-boot properties name as It would appear\n"
             + "// as enable-c-o-r-s if left uppercase in Configuration\n"
@@ -1228,6 +1237,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addImport("org.apache.camel.spi.ComponentCustomizer");
         javaClass.addImport("org.apache.camel.spring.boot.CamelAutoConfiguration");
         javaClass.addImport("org.apache.camel.spring.boot.ComponentConfigurationProperties");
+        javaClass.addImport("org.apache.camel.spring.boot.util.CamelPropertiesHelper");
         javaClass.addImport("org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans");
         javaClass.addImport("org.apache.camel.spring.boot.util.GroupCondition");
         javaClass.addImport("org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator");
@@ -1335,6 +1345,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addImport("org.apache.camel.CamelContextAware");
         javaClass.addImport("org.apache.camel.spring.boot.CamelAutoConfiguration");
         javaClass.addImport("org.apache.camel.spring.boot.DataFormatConfigurationProperties");
+        javaClass.addImport("org.apache.camel.spring.boot.util.CamelPropertiesHelper");
         javaClass.addImport("org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans");
         javaClass.addImport("org.apache.camel.spring.boot.util.GroupCondition");
         javaClass.addImport("org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator");
@@ -1447,6 +1458,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addImport("org.apache.camel.CamelContextAware");
         javaClass.addImport("org.apache.camel.spring.boot.CamelAutoConfiguration");
         javaClass.addImport("org.apache.camel.spring.boot.LanguageConfigurationProperties");
+        javaClass.addImport("org.apache.camel.spring.boot.util.CamelPropertiesHelper");
         javaClass.addImport("org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans");
         javaClass.addImport("org.apache.camel.spring.boot.util.GroupCondition");
         javaClass.addImport("org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator");
@@ -1565,14 +1577,14 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("            HashMap<String, Object> nestedParameters = new HashMap<>();\n");
         sb.append("            IntrospectionSupport.getProperties(value, nestedParameters, null, false);\n");
         sb.append("            Object nestedProperty = nestedClass.newInstance();\n");
-        sb.append("            IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), nestedProperty, nestedParameters);\n");
+        sb.append("            CamelPropertiesHelper.setCamelProperties(camelContext, nestedProperty, nestedParameters, false);\n");
         sb.append("            entry.setValue(nestedProperty);\n");
         sb.append("        } catch (NoSuchFieldException e) {\n");
         sb.append("            // ignore, class must not be a nested configuration class after all\n");
         sb.append("        }\n");
         sb.append("    }\n");
         sb.append("}\n");
-        sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), component, parameters);\n");
+        sb.append("CamelPropertiesHelper.setCamelProperties(camelContext, component, parameters, false);\n");
         sb.append("\n");
         sb.append("if (ObjectHelper.isNotEmpty(customizers)) {\n");
         sb.append("    for (ComponentCustomizer<").append(shortJavaType).append("> customizer : customizers) {\n");
@@ -1616,7 +1628,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("        try {\n");
         sb.append("            Map<String, Object> parameters = new HashMap<>();\n");
         sb.append("            IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
-        sb.append("            IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), dataformat, parameters);\n");
+        sb.append("            CamelPropertiesHelper.setCamelProperties(camelContext, dataformat, parameters, false);\n");
         sb.append("        } catch (Exception e) {\n");
         sb.append("            throw new RuntimeCamelException(e);\n");
         sb.append("        }\n");
@@ -1661,7 +1673,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("\n");
         sb.append("Map<String, Object> parameters = new HashMap<>();\n");
         sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
-        sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), language, parameters);\n");
+        sb.append("CamelPropertiesHelper.setCamelProperties(camelContext, language, parameters, false);\n");
         sb.append("\n");
         sb.append("\n");
         sb.append("if (ObjectHelper.isNotEmpty(customizers)) {\n");
