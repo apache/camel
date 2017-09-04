@@ -47,12 +47,12 @@ public final class CamelPropertiesHelper {
      * @param context        the CamelContext
      * @param target         the target bean
      * @param properties     the properties
-     * @param failOnNotSet   whether to fail if an option cannot be set on the target bean.
+     * @param failIfNotSet   whether to fail if an option either does not exists on the target bean or if the option cannot be due no suitable setter methods with the given type
      * @return <tt>true</tt> if at least one option was configured
      * @throws IllegalArgumentException is thrown if an option cannot be configured on the bean because there is no suitable setter method and failOnNoSet is true.
      * @throws Exception for any other kind of error
      */
-    public static boolean setCamelProperties(CamelContext context, Object target, Map<String, Object> properties, boolean failOnNotSet) throws Exception {
+    public static boolean setCamelProperties(CamelContext context, Object target, Map<String, Object> properties, boolean failIfNotSet) throws Exception {
         ObjectHelper.notNull(context, "context");
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
@@ -83,7 +83,7 @@ public final class CamelPropertiesHelper {
                 // must remove as its a valid option and we could configure it
                 it.remove();
                 rc = true;
-            } else if (failOnNotSet) {
+            } else if (failIfNotSet) {
                 throw new IllegalArgumentException("Cannot configure option [" + name + "] with value [" + stringValue
                     + "] as the bean class [" + ObjectHelper.classCanonicalName(target)
                     + "] has no suitable setter method, or not possible to lookup a bean with the id [" + stringValue + "] in Spring Boot registry");
