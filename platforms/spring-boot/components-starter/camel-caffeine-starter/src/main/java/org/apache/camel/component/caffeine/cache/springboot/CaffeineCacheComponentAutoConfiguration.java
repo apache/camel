@@ -26,6 +26,7 @@ import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.ComponentConfigurationProperties;
+import org.apache.camel.spring.boot.util.CamelPropertiesHelper;
 import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator;
@@ -95,16 +96,15 @@ public class CaffeineCacheComponentAutoConfiguration {
                     IntrospectionSupport.getProperties(value, nestedParameters,
                             null, false);
                     Object nestedProperty = nestedClass.newInstance();
-                    IntrospectionSupport.setProperties(camelContext,
-                            camelContext.getTypeConverter(), nestedProperty,
-                            nestedParameters);
+                    CamelPropertiesHelper.setCamelProperties(camelContext,
+                            nestedProperty, nestedParameters, false);
                     entry.setValue(nestedProperty);
                 } catch (NoSuchFieldException e) {
                 }
             }
         }
-        IntrospectionSupport.setProperties(camelContext,
-                camelContext.getTypeConverter(), component, parameters);
+        CamelPropertiesHelper.setCamelProperties(camelContext, component,
+                parameters, false);
         if (ObjectHelper.isNotEmpty(customizers)) {
             for (ComponentCustomizer<CaffeineCacheComponent> customizer : customizers) {
                 boolean useCustomizer = (customizer instanceof HasId)

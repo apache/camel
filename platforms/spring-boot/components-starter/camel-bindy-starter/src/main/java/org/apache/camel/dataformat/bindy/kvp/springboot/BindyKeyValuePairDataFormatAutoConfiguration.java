@@ -30,6 +30,7 @@ import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.DataFormatConfigurationProperties;
+import org.apache.camel.spring.boot.util.CamelPropertiesHelper;
 import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator;
@@ -96,9 +97,8 @@ public class BindyKeyValuePairDataFormatAutoConfiguration {
                     Map<String, Object> parameters = new HashMap<>();
                     IntrospectionSupport.getProperties(configuration,
                             parameters, null, false);
-                    IntrospectionSupport.setProperties(camelContext,
-                            camelContext.getTypeConverter(), dataformat,
-                            parameters);
+                    CamelPropertiesHelper.setCamelProperties(camelContext,
+                            dataformat, parameters, false);
                 } catch (Exception e) {
                     throw new RuntimeCamelException(e);
                 }
