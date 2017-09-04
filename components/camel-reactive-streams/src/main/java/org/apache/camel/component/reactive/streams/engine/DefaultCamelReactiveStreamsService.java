@@ -75,6 +75,9 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
         this.context = context;
         this.configuration = configuration;
         this.unwrapStreamProcessorSupplier = Suppliers.memorize(UnwrapStreamProcessor::new);
+
+        // must initialize the worker pool as early as possible
+        init();
     }
 
     @Override
@@ -82,14 +85,21 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
         return ReactiveStreamsConstants.DEFAULT_SERVICE_NAME;
     }
 
+    private void init() {
+        if (this.workerPool == null) {
+            this.workerPool = context.getExecutorServiceManager().newThreadPool(
+                this,
+                configuration.getThreadPoolName(),
+                configuration.getThreadPoolMinSize(),
+                configuration.getThreadPoolMaxSize()
+            );
+        }
+    }
+
+
     @Override
     protected void doStart() throws Exception {
-        this.workerPool = context.getExecutorServiceManager().newThreadPool(
-            this,
-            configuration.getThreadPoolName(),
-            configuration.getThreadPoolMinSize(),
-            configuration.getThreadPoolMaxSize()
-        );
+        // noop
     }
 
     @Override
