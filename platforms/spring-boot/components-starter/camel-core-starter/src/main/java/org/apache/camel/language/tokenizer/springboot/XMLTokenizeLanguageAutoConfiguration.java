@@ -27,6 +27,7 @@ import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.LanguageCustomizer;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.LanguageConfigurationProperties;
+import org.apache.camel.spring.boot.util.CamelPropertiesHelper;
 import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator;
@@ -90,8 +91,8 @@ public class XMLTokenizeLanguageAutoConfiguration {
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,
                 false);
-        IntrospectionSupport.setProperties(camelContext,
-                camelContext.getTypeConverter(), language, parameters);
+        CamelPropertiesHelper.setCamelProperties(camelContext, language,
+                parameters, false);
         if (ObjectHelper.isNotEmpty(customizers)) {
             for (LanguageCustomizer<XMLTokenizeLanguage> customizer : customizers) {
                 boolean useCustomizer = (customizer instanceof HasId)
