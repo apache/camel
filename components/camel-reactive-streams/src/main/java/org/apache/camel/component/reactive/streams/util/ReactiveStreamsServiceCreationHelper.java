@@ -19,6 +19,7 @@ package org.apache.camel.component.reactive.streams.util;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
+import org.apache.camel.component.reactive.streams.engine.DefaultCamelReactiveStreamsService;
 import org.apache.camel.spi.FactoryFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,9 @@ public final class ReactiveStreamsServiceCreationHelper {
     public static CamelReactiveStreamsService createNewReactiveStreamsService(CamelContext context, String name) {
         if (name == null) {
             name = "default-service";
+            // okay lets short-circuit and create it asap as we need to use the constructor that takes CamelContext
+            // as parameter to initialize it properly (its improved from Camel 2.20 onwards)
+            return new DefaultCamelReactiveStreamsService(context);
         }
 
         String path = "META-INF/services/org/apache/camel/reactive-streams/";

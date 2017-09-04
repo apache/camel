@@ -70,14 +70,27 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
 
     private final Map<String, String> requestedUriToStream = new ConcurrentHashMap<>();
 
+    @Deprecated
     public DefaultCamelReactiveStreamsService() {
+    }
+
+    public DefaultCamelReactiveStreamsService(CamelContext camelContext) {
+        this.context = camelContext;
+        // must initialize as early as possible
+        init();
     }
 
     @Override
     protected void doStart() throws Exception {
-        ReactiveStreamsComponent component = context.getComponent("reactive-streams", ReactiveStreamsComponent.class);
-        ReactiveStreamsEngineConfiguration config = component.getInternalEngineConfiguration();
-        this.workerPool = context.getExecutorServiceManager().newThreadPool(this, config.getThreadPoolName(), config.getThreadPoolMinSize(), config.getThreadPoolMaxSize());
+        init();
+    }
+
+    private void init() {
+        if (this.workerPool == null) {
+            ReactiveStreamsComponent component = context.getComponent("reactive-streams", ReactiveStreamsComponent.class);
+            ReactiveStreamsEngineConfiguration config = component.getInternalEngineConfiguration();
+            this.workerPool = context.getExecutorServiceManager().newThreadPool(this, config.getThreadPoolName(), config.getThreadPoolMinSize(), config.getThreadPoolMaxSize());
+        }
     }
 
     @Override
