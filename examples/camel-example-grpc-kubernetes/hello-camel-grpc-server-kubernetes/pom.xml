@@ -114,7 +114,7 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>fabric8-maven-plugin</artifactId>
-						<version>3.2.31</version>
+						<version>${fabric8-maven-plugin-version}</version>
 						<configuration>
 							<enricher>
 								<config>
