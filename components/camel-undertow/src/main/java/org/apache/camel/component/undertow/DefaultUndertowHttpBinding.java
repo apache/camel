@@ -283,7 +283,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 // we failed due an exception, and transfer it as java serialized object
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(bos);
-                oos.writeObject(exception.getCause());
+                oos.writeObject(exception);
                 oos.flush();
                 IOHelper.close(oos, bos);
 
@@ -314,7 +314,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             httpExchange.getResponseHeaders().put(Headers.CONTENT_TYPE, contentType);
             LOG.trace("Content-Type: {}", contentType);
         }
-
         return body;
     }
 
