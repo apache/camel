@@ -26,4 +26,5 @@ public interface DropboxConstants {
     String HEADER_LOCAL_PATH = "CamelDropboxLocalPath";
     String HEADER_UPLOAD_MODE = "CamelDropboxUploadMode";
     String HEADER_QUERY = "CamelDropboxQuery";
+    String HEADER_PUT_FILE_NAME = "CamelDropboxPutFileName";
 }

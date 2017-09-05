@@ -93,7 +93,8 @@ public class DropboxConfiguration {
     }
 
     /**
-     * Folder or file to upload on Dropbox from the local filesystem.
+     * Optional folder or file to upload on Dropbox from the local filesystem.
+     * If this option has not been configured then the message body is used as the content to upload.
      */
     public void setLocalPath(String localPath) {
         this.localPath = localPath;

@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.dropbox.core;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,6 +46,8 @@ import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.dropbox.util.DropboxConstants.HEADER_PUT_FILE_NAME;
 
 public final class DropboxAPIFacade {
 
@@ -84,6 +88,15 @@ public final class DropboxAPIFacade {
         } catch (DbxException e) {
             throw new DropboxException(dropboxPath + " does not exist or can't obtain metadata");
         }
+
+        if (localPath != null) {
+            return putFile(localPath, mode, dropboxPath, entry);
+        } else {
+            return putBody(exchange, mode, dropboxPath, entry);
+        }
+    }
+
+    private DropboxFileUploadResult putFile(String localPath, DropboxUploadMode mode, String dropboxPath, DbxEntry entry) throws DropboxException {
         File fileLocalPath = new File(localPath);
         //verify uploading of a single file
         if (fileLocalPath.isFile()) {
@@ -98,6 +111,7 @@ public final class DropboxAPIFacade {
                 }
             }
 
+            LOG.debug("Uploading: {},{}", fileLocalPath, dropboxPath);
             DropboxFileUploadResult result;
             try {
                 DbxEntry.File uploadedFile = putSingleFile(fileLocalPath, dropboxPath, mode);
@@ -110,7 +124,8 @@ public final class DropboxAPIFacade {
                 result = new DropboxFileUploadResult(dropboxPath, DropboxResultCode.KO);
             }
             return result;
-        } else {       //verify uploading of a list of files inside a dir
+        } else if (fileLocalPath.isDirectory()) {
+            //verify uploading of a list of files inside a dir
             LOG.debug("Uploading a dir...");
             //check if dropbox folder exists
             if (entry != null && !entry.isFolder()) {
@@ -150,7 +165,48 @@ public final class DropboxAPIFacade {
                 dropboxPath = oldDropboxPath;
             }
             return new DropboxFileUploadResult(resultMap);
+        } else {
+            return null;
         }
+    }
+
+    private DropboxFileUploadResult putBody(Exchange exchange, DropboxUploadMode mode, String dropboxPath, DbxEntry entry) throws DropboxException {
+        String name = exchange.getIn().getHeader(HEADER_PUT_FILE_NAME, String.class);
+        if (name == null) {
+            // fallback to use CamelFileName
+            name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+        }
+        if (name == null) {
+            // use message id as file name
+            name = exchange.getIn().getMessageId();
+        }
+
+        //check if dropbox file exists
+        if (entry != null && !entry.isFile()) {
+            throw new DropboxException(dropboxPath + " exists on dropbox and is not a file!");
+        }
+        //in case the entry not exists on dropbox check if the filename should be appended
+        if (entry == null) {
+            if (dropboxPath.endsWith(DropboxConstants.DROPBOX_FILE_SEPARATOR)) {
+                dropboxPath = dropboxPath + name;
+            }
+        }
+
+        LOG.debug("Uploading message body: {}", dropboxPath);
+
+        DropboxFileUploadResult result;
+        try {
+            DbxEntry.File uploadedFile = putSingleBody(exchange, dropboxPath, mode);
+            if (uploadedFile == null) {
+                result = new DropboxFileUploadResult(dropboxPath, DropboxResultCode.KO);
+            } else {
+                result = new DropboxFileUploadResult(dropboxPath, DropboxResultCode.OK);
+            }
+        } catch (Exception ex) {
+            result = new DropboxFileUploadResult(dropboxPath, DropboxResultCode.KO);
+        }
+        return result;
+
     }
 
     private DbxEntry.File putSingleFile(File inputFile, String dropboxPath, DropboxUploadMode mode) throws Exception {
@@ -167,6 +223,24 @@ public final class DropboxAPIFacade {
             return uploadedFile;
         } finally {
             inputStream.close();
+        }
+    }
+
+    private DbxEntry.File putSingleBody(Exchange exchange, String dropboxPath, DropboxUploadMode mode) throws Exception {
+        byte[] data = exchange.getIn().getMandatoryBody(byte[].class);
+        InputStream is = new ByteArrayInputStream(data);
+        try {
+            DbxEntry.File uploadedFile;
+            DbxWriteMode uploadMode;
+            if (mode == DropboxUploadMode.force) {
+                uploadMode = DbxWriteMode.force();
+            } else {
+                uploadMode = DbxWriteMode.add();
+            }
+            uploadedFile = client.uploadFile(dropboxPath, uploadMode, data.length, is);
+            return uploadedFile;
+        } finally {
+            is.close();
         }
     }
 
@@ -241,7 +315,10 @@ public final class DropboxAPIFacade {
         return new DropboxFileDownloadResult(downloadFilesInFolder(remotePath));
     }
 
-
+    /**
+     * @deprecated not in use
+     */
+    @Deprecated
     public boolean isDirectory(String path) throws DropboxException {
         try {
             DbxEntry.WithChildren listing = client.getMetadataWithChildren(path);
