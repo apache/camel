@@ -104,7 +104,7 @@ public class AhcProducerSessionTest extends BaseAhcTest {
                                 session.setAttribute("foo", "bar");
                                 message.setBody("New " + body);
                             }
-                            message.getResponse().addCookie(new Cookie("othercookie","value"));
+                            message.getResponse().addCookie(new Cookie("othercookie", "value"));
                         }
                     });
             }
