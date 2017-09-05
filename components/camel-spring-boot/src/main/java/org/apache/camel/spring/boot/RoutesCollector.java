@@ -225,13 +225,17 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
     @Override
     public int getOrder() {
         // RoutesCollector implements Ordered so that it's the
-        // second to last in ApplicationListener to receive events,
+        // first Camel ApplicationListener to receive events,
         // SpringCamelContext should be the last one,
-        // CamelContextFactoryBean should be on par with
-        // RoutesCollector this is important for startup as we want
+        // CamelContextFactoryBean should be second to last and then
+        // RoutesCollector. This is important for startup as we want
         // all resources to be ready and all routes added to the 
-        // context
-        return LOWEST_PRECEDENCE - 1;
+        // context before we start CamelContext.
+        // So the order should be:
+        // 1. RoutesCollector (LOWEST_PRECEDENCE - 2)
+        // 2. CamelContextFactoryBean (LOWEST_PRECEDENCE -1)
+        // 3. SpringCamelContext (LOWEST_PRECEDENCE)
+        return LOWEST_PRECEDENCE - 2;
     }
 
     // Helpers

@@ -18,7 +18,7 @@
 
 -->
 <routes xmlns="http://camel.apache.org/schema/spring">
-    <route>
+    <route id="xmlAutoLoading">
         <from uri="direct:xmlAutoLoading"/>
         <to uri="mock:xmlAutoLoading"/>
     </route>
