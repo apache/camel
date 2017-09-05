@@ -39,7 +39,7 @@ public class CamelGrpcRoute extends RouteBuilder {
                 exchange.getIn().setBody(request, CamelHelloRequest.class);
 
             }
-        }).to("grpc://grpc-server:80/org.apache.camel.examples.CamelHello?method=sayHelloToCamel&synchronous=true").log("Received ${body}");
+        }).to("grpc://grpc-server:8080/org.apache.camel.examples.CamelHello?method=sayHelloToCamel&synchronous=true").log("Received ${body}");
     }
 
 }
