@@ -41,7 +41,6 @@
     <cassandra.driver.version>3.3.0</cassandra.driver.version>
 
     <!-- maven plugin versions -->
-    <fabric8.maven.plugin.version>3.5.22</fabric8.maven.plugin.version>
     <exec-maven-plugin.version>1.5.0</exec-maven-plugin.version>
     <maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
     <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
@@ -114,7 +113,7 @@
       <plugin>
         <groupId>io.fabric8</groupId>
         <artifactId>fabric8-maven-plugin</artifactId>
-        <version>${fabric8.maven.plugin.version}</version>
+        <version>${fabric8-maven-plugin-version}</version>
         <configuration>
           <generator>
             <config>
