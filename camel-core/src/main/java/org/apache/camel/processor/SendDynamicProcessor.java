@@ -102,6 +102,14 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
         try {
             recipient = expression.evaluate(exchange, Object.class);
             endpoint = resolveEndpoint(exchange, recipient);
+            if (endpoint == null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Send dynamic evaluated as null so cannot send to any endpoint");
+                }
+                // no endpoint to send to, so ignore
+                callback.done(true);
+                return true;
+            }
             destinationExchangePattern = EndpointHelper.resolveExchangePatternFromUrl(endpoint.getEndpointUri());
         } catch (Throwable e) {
             if (isIgnoreInvalidEndpoint()) {
@@ -139,12 +147,16 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
             recipient = ((String) recipient).trim();
         } else if (recipient instanceof Endpoint) {
             return (Endpoint) recipient;
-        } else {
+        } else if (recipient != null) {
             // convert to a string type we can work with
             recipient = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
         }
 
-        return ExchangeHelper.resolveEndpoint(exchange, recipient);
+        if (recipient != null) {
+            return ExchangeHelper.resolveEndpoint(exchange, recipient);
+        } else {
+            return null;
+        }
     }
 
     protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern, ExchangePattern destinationExchangePattern, Endpoint endpoint) {
