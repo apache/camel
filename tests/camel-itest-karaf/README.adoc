@@ -1,0 +1,26 @@
+= Camel Karaf Integration Tests
+
+== Overview
+
+This module is where you should add Karaf feature tests for Camel components that are deployed on Karaf container using the `camel-karaf-test` module.
+
+*A Camel component author is expected to add a test for the Karaf feature to this module once they create a new Camel component and add the Karaf feature to the `platforms/karaf/features` module.*
+
+All tests are disabled by default to not run in the main CI job. Instead there is a separate CI job that only run the tests for each commit. The results are available here:
+https://builds.apache.org/blue/organizations/jenkins/Camel.trunk.itest.karaf/activity/
+
+== How to run the tests
+
+Do not use `mvn test`. Run the following script instead.
+----
+$ ./run-test.sh
+----
+
+****
+The reason for not using `mvn test` is that each test starts up a Karaf instance using Pax Exam, but sometimes the instance doesn't shut down well after the test and the phantom instance causes silent failures of the successive tests. The `run-test.sh` script makes sure to kill the Karaf instance after each test finished.
+****
+
+You can also pass in the test name to start testing from the test and onwards, e.g.:
+----
+$ ./run-test.sh CamelFtpTest
+----
