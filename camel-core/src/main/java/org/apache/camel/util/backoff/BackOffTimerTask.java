@@ -212,4 +212,16 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
 
         return currentDelay;
     }
+
+    @Override
+    public String toString() {
+        return "BackOffTimerTask["
+            + "status=" + status
+            + ", currentAttempts=" + currentAttempts
+            + ", currentDelay=" + currentDelay
+            + ", currentElapsedTime=" + currentElapsedTime
+            + ", lastAttemptTime=" + lastAttemptTime
+            + ", nextAttemptTime=" + nextAttemptTime
+            + ']';
+    }
 }
