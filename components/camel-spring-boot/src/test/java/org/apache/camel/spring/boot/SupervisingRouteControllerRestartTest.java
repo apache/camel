@@ -16,14 +16,11 @@
  */
 package org.apache.camel.spring.boot;
 
-import java.net.BindException;
-import java.net.ServerSocket;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.SupervisingRouteController;
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.spring.boot.dummy.DummyComponent;
 import org.apache.camel.util.backoff.BackOffTimer;
 import org.junit.Assert;
 import org.junit.Test;
@@ -34,9 +31,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 @DirtiesContext
 @RunWith(SpringRunner.class)
@@ -59,6 +53,7 @@ import static org.assertj.core.api.Assertions.fail;
     }
 )
 public class SupervisingRouteControllerRestartTest {
+
     @Autowired
     private CamelContext context;
 
@@ -74,43 +69,32 @@ public class SupervisingRouteControllerRestartTest {
 
         Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("foo"));
         Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("bar"));
-        Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("jetty"));
+        Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("dummy"));
 
         // Wait a little
         Thread.sleep(250);
 
-        controller.stopRoute("jetty");
+        controller.stopRoute("dummy");
 
-        Assert.assertNull(context.getRoute("jetty").getRouteContext().getRouteController());
+        Assert.assertNull(context.getRoute("dummy").getRouteContext().getRouteController());
 
-        // bind the port so starting the route jetty should fail
-        ServerSocket socket = new ServerSocket(TestConfiguration.PORT);
-
+        // dummy will fail on first restart
         try {
-            controller.startRoute("jetty");
+            controller.startRoute("dummy");
         } catch (Exception e) {
-            assertThat(e).isInstanceOf(BindException.class);
+            Assert.assertEquals("Forced error on restart", e.getMessage());
         }
 
-        // Wait for at lest one restart attempt.
-        Thread.sleep(2000);
-
-        Assert.assertTrue(controller.getBackOffContext("jetty").isPresent());
-        Assert.assertEquals(BackOffTimer.Task.Status.Active, controller.getBackOffContext("jetty").get().getStatus());
-        Assert.assertTrue(controller.getBackOffContext("jetty").get().getCurrentAttempts() > 0);
-
-        try {
-            socket.close();
-        } catch (Exception e) {
-            fail("Failed to close server socket", e);
-        }
+        Assert.assertTrue(controller.getBackOffContext("dummy").isPresent());
+        Assert.assertEquals(BackOffTimer.Task.Status.Active, controller.getBackOffContext("dummy").get().getStatus());
+        Assert.assertTrue(controller.getBackOffContext("dummy").get().getCurrentAttempts() > 0);
 
         // Wait for wile to give time to the controller to start the route
         Thread.sleep(1500);
 
-        Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("jetty"));
-        Assert.assertNotNull(context.getRoute("jetty").getRouteContext().getRouteController());
-        Assert.assertFalse(controller.getBackOffContext("jetty").isPresent());
+        Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("dummy"));
+        Assert.assertNotNull(context.getRoute("dummy").getRouteContext().getRouteController());
+        Assert.assertFalse(controller.getBackOffContext("dummy").isPresent());
     }
 
     // *************************************
@@ -119,13 +103,14 @@ public class SupervisingRouteControllerRestartTest {
 
     @Configuration
     public static class TestConfiguration {
-        private static final int PORT = AvailablePortFinder.getNextAvailable();
 
         @Bean
         public RouteBuilder routeBuilder() {
             return new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
+                    getContext().addComponent("dummy", new DummyComponent());
+
                     from("timer:foo?period=5s")
                         .id("foo")
                         .startupOrder(2)
@@ -142,9 +127,9 @@ public class SupervisingRouteControllerRestartTest {
                         .autoStartup(false)
                         .to("mock:timer-no-autostartup");
 
-                    fromF("jetty:http://localhost:%d", PORT)
-                        .id("jetty")
-                        .to("mock:jetty");
+                    from("dummy:foo?failOnRestart=true")
+                        .id("dummy")
+                        .to("mock:dummy");
                 }
             };
         }
