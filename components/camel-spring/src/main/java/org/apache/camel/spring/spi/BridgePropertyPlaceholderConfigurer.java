@@ -245,7 +245,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         }
     }
 
-    private final class BridgePropertiesParser implements PropertiesParser {
+    private final class BridgePropertiesParser implements PropertiesParser, AugmentedPropertyNameAwarePropertiesParser {
 
         private final PropertiesParser delegate;
         private final PropertiesParser parser;
@@ -253,6 +253,30 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         private BridgePropertiesParser(PropertiesParser delegate, PropertiesParser parser) {
             this.delegate = delegate;
             this.parser = parser;
+        }
+
+        @Override
+        public String parseUri(String text, Properties properties, String prefixToken, String suffixToken, String propertyPrefix, String propertySuffix,
+                               boolean fallbackToUnaugmentedProperty, boolean defaultFallbackEnabled) throws IllegalArgumentException {
+            String answer = null;
+            if (delegate != null) {
+                if (delegate instanceof AugmentedPropertyNameAwarePropertiesParser) {
+                    answer = ((AugmentedPropertyNameAwarePropertiesParser)this.delegate).parseUri(text, properties,
+                        prefixToken, suffixToken, propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty, defaultFallbackEnabled);
+                } else {
+                    answer = delegate.parseUri(text, properties, prefixToken, suffixToken);
+                }
+            }
+            if (answer != null) {
+                text = answer;
+            }
+            if (parser instanceof AugmentedPropertyNameAwarePropertiesParser) {
+                answer = ((AugmentedPropertyNameAwarePropertiesParser)this.parser).parseUri(text, properties,
+                    prefixToken, suffixToken, propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty, defaultFallbackEnabled);
+            } else {
+                answer = parser.parseUri(text, properties, prefixToken, suffixToken);
+            }
+            return answer;
         }
 
         @Override

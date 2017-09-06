@@ -51,6 +51,13 @@
       </camel:setBody>
       <camel:to uri="mock:result" />
     </camel:route>
-   </camel:camelContext>   
+    <camel:route>
+      <camel:from uri="direct:start2" />
+      <camel:setBody>
+        <camel:simple>{{unknown:myDefaultValue}}</camel:simple>
+      </camel:setBody>
+      <camel:to uri="mock:result" />
+    </camel:route>
+   </camel:camelContext>
     
 </beans>
