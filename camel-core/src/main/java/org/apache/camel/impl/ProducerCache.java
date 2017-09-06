@@ -428,7 +428,6 @@ public class ProducerCache extends ServiceSupport {
 
         final Producer producer = target;
 
-
         try {
             StopWatch sw = null;
             if (eventNotifierEnabled && exchange != null) {
