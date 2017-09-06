@@ -1,7 +1,6 @@
-Camel Performance Tests
------------------------
+= Camel Performance Tests
 
-## Overview
+== Overview
 
 This module is where you should add performance tests.
 
