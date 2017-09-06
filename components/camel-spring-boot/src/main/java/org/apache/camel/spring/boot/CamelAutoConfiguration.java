@@ -56,6 +56,7 @@ import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.spring.spi.XmlCamelContextConfigurer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.slf4j.Logger;
@@ -79,6 +80,15 @@ public class CamelAutoConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(CamelAutoConfiguration.class);
 
     /**
+     * Allows to do custom configuration when running XML based Camel in Spring Boot
+     */
+    // must be named xmlCamelContextConfigurer
+    @Bean(name = "xmlCamelContextConfigurer")
+    XmlCamelContextConfigurer springBootCamelContextConfigurer() {
+        return new SpringBootXmlCamelContextConfigurer();
+    }
+
+    /**
      * Spring-aware Camel context for the application. Auto-detects and loads all routes available in the Spring context.
      */
     // We explicitly declare the destroyMethod to be "" as the Spring @Bean
@@ -91,6 +101,13 @@ public class CamelAutoConfiguration {
     @ConditionalOnMissingBean(CamelContext.class)
     CamelContext camelContext(ApplicationContext applicationContext,
                               CamelConfigurationProperties config) throws Exception {
+        CamelContext camelContext = new SpringCamelContext(applicationContext);
+        return doConfigureCamelContext(applicationContext, camelContext, config);
+    }
+
+    static CamelContext doConfigureCamelContext(ApplicationContext applicationContext,
+                                         CamelContext camelContext,
+                                         CamelConfigurationProperties config) throws Exception {
 
         if (ObjectHelper.isNotEmpty(config.getFileConfigurations())) {
             Environment env = applicationContext.getEnvironment();
@@ -103,8 +120,6 @@ public class CamelAutoConfiguration {
                 }
             }
         }
-
-        CamelContext camelContext = new SpringCamelContext(applicationContext);
 
         if (!config.isJmxEnabled()) {
             camelContext.disableJMX();
@@ -324,7 +339,7 @@ public class CamelAutoConfiguration {
      * <p/>
      * Similar code in camel-core-xml module in class org.apache.camel.core.xml.AbstractCamelContextFactoryBean.
      */
-    void afterPropertiesSet(ApplicationContext applicationContext, CamelContext camelContext) throws Exception {
+    static void afterPropertiesSet(ApplicationContext applicationContext, CamelContext camelContext) throws Exception {
         Tracer tracer = getSingleBeanOfType(applicationContext, Tracer.class);
         if (tracer != null) {
             // use formatter if there is a TraceFormatter bean defined
@@ -472,7 +487,7 @@ public class CamelAutoConfiguration {
         initThreadPoolProfiles(applicationContext, camelContext);
     }
 
-    private void initThreadPoolProfiles(ApplicationContext applicationContext, CamelContext camelContext) {
+    private static void initThreadPoolProfiles(ApplicationContext applicationContext, CamelContext camelContext) {
         Set<String> defaultIds = new HashSet<String>();
 
         // lookup and use custom profiles from the registry
@@ -497,7 +512,7 @@ public class CamelAutoConfiguration {
         }
     }
 
-    private <T> T getSingleBeanOfType(ApplicationContext applicationContext, Class<T> type) {
+    private static <T> T getSingleBeanOfType(ApplicationContext applicationContext, Class<T> type) {
         Map<String, T> beans = applicationContext.getBeansOfType(type);
         if (beans.size() == 1) {
             return beans.values().iterator().next();
