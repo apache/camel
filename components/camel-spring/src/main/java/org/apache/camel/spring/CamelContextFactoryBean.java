@@ -19,7 +19,6 @@ package org.apache.camel.spring;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -69,13 +68,16 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer;
+import org.apache.camel.spring.spi.XmlCamelContextConfigurer;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -447,6 +449,19 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     protected SpringCamelContext createContext() {
         SpringCamelContext ctx = newCamelContext();
         ctx.setName(getId());
+
+        try {
+            // allow any custom configuration, such as when running in camel-spring-boot
+            if (applicationContext.containsBean("xmlCamelContextConfigurer")) {
+                XmlCamelContextConfigurer configurer = applicationContext.getBean("xmlCamelContextConfigurer", XmlCamelContextConfigurer.class);
+                if (configurer != null) {
+                    configurer.configure(applicationContext, ctx);
+                }
+            }
+        } catch (Exception e) {
+            // error during configuration
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
 
         return ctx;
     }

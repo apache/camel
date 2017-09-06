@@ -18,7 +18,6 @@ package org.apache.camel.spring.boot;
 
 import org.apache.camel.CamelContext;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,17 +32,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
     properties = {
-        "camel.springboot.name = camel-spring-boot"
+        "camel.springboot.name = camel-spring-boot",
+        "camel.springboot.shutdownTimeout = 5"
     }
 )
 public class MixedBootAndXmlConfigurationTest {
+
     @Autowired
     private CamelContext camel;
 
-    @Ignore("See https://issues.apache.org/jira/browse/CAMEL-11752")
     @Test
-    public void thereShouldBeTwoRoutesConfigured() {
+    public void thereShouldBeAutoConfiguredFromSpringBoot() {
         Assert.assertEquals("camel-spring-boot", camel.getName());
+        Assert.assertEquals(5, camel.getShutdownStrategy().getTimeout());
     }
 
     @Configuration
