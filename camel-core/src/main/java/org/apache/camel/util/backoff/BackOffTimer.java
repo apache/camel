@@ -91,7 +91,6 @@ public class BackOffTimer {
          */
         long getLastAttemptTime();
 
-
         /**
          * An indication about the time the next attempt will be made.
          */
