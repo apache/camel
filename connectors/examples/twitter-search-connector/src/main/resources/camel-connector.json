@@ -2,7 +2,7 @@
   "baseScheme" : "twitter",
   "baseGroupId" : "org.apache.camel",
   "baseArtifactId" : "camel-twitter",
-  "baseVersion" : "2.20.0-20170904.041524-180",
+  "baseVersion" : "2.20.0-SNAPSHOT",
   "baseJavaType" : "org.apache.camel.component.twitter.TwitterComponent",
   "name" : "TwitterSearch",
   "scheme" : "twitter-search",
@@ -25,7 +25,7 @@
   "connectorProperties" : {
     "prefix" : {
       "kind" : "parameter",
-      "displayName" : "Keywourd prefix",
+      "displayName" : "Keyword prefix",
       "group" : "filter",
       "label" : "consumer,filter",
       "required" : false,

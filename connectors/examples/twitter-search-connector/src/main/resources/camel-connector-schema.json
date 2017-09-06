@@ -28,6 +28,6 @@
     "delay": { "kind": "parameter", "displayName": "Delay", "group": "scheduler", "label": "consumer,scheduler", "required": false, "type": "integer", "javaType": "long", "optionalPrefix": "consumer.", "deprecated": false, "secret": false, "defaultValue": 5000, "description": "Milliseconds before the next poll." }
   },
   "connectorProperties": {
-    "prefix": { "kind": "parameter", "displayName": "Keywourd prefix", "group": "filter", "label": "consumer,filter", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "A prefix" }
+    "prefix": { "kind": "parameter", "displayName": "Keyword prefix", "group": "filter", "label": "consumer,filter", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "A prefix" }
   }
 }
