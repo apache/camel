@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.boot;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,6 +33,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.awaitility.Awaitility.await;
 
 @DirtiesContext
 @RunWith(SpringRunner.class)
@@ -58,27 +62,25 @@ public class SupervisingRouteControllerRestartTest {
     private CamelContext context;
 
     @Test
-    public void test() throws Exception {
+    public void testRouteRestart() throws Exception {
         Assert.assertNotNull(context.getRouteController());
         Assert.assertTrue(context.getRouteController() instanceof SupervisingRouteController);
 
         SupervisingRouteController controller = context.getRouteController().unwrap(SupervisingRouteController.class);
 
         // Wait for the controller to start the routes
-        Thread.sleep(2500);
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
+            // now its suspended by the policy
+            Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("foo"));
+            Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("bar"));
+            Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("dummy"));
+        });
 
-        Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("foo"));
-        Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("bar"));
-        Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("dummy"));
-
-        // Wait a little
-        Thread.sleep(250);
-
+        // restart the dummy route which should fail on first attempt
         controller.stopRoute("dummy");
 
         Assert.assertNull(context.getRoute("dummy").getRouteContext().getRouteController());
 
-        // dummy will fail on first restart
         try {
             controller.startRoute("dummy");
         } catch (Exception e) {
@@ -90,11 +92,12 @@ public class SupervisingRouteControllerRestartTest {
         Assert.assertTrue(controller.getBackOffContext("dummy").get().getCurrentAttempts() > 0);
 
         // Wait for wile to give time to the controller to start the route
-        Thread.sleep(1500);
-
-        Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("dummy"));
-        Assert.assertNotNull(context.getRoute("dummy").getRouteContext().getRouteController());
-        Assert.assertFalse(controller.getBackOffContext("dummy").isPresent());
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            // now its suspended by the policy
+            Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("dummy"));
+            Assert.assertNotNull(context.getRoute("dummy").getRouteContext().getRouteController());
+            Assert.assertFalse(controller.getBackOffContext("dummy").isPresent());
+        });
     }
 
     // *************************************
