@@ -24,6 +24,7 @@ import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
+import org.apache.camel.util.ObjectHelper;
 
 public final class DropboxConfigurationValidator {
 
@@ -72,17 +73,15 @@ public final class DropboxConfigurationValidator {
     }
 
     private static void validateLocalPath(String localPath) throws DropboxException {
-        if (localPath == null || localPath.equals("")) {
-            throw new DropboxException("option <localPath> is not present or not valid!");
-        }
-        File file = new File(localPath);
-        if (!file.exists()) {
-            throw new DropboxException("option <localPath> is not an existing file or directory!");
+        if (ObjectHelper.isNotEmpty(localPath)) {
+            File file = new File(localPath);
+            if (!file.exists()) {
+                throw new DropboxException("option <localPath> is not an existing file or directory!");
+            }
         }
     }
 
     private static void validateRemotePath(String remotePath) throws DropboxException {
-
         if (remotePath == null || !remotePath.startsWith(DropboxConstants.DROPBOX_FILE_SEPARATOR)) {
             throw new DropboxException("option <remotePath> is not valid!");
         }
