@@ -69,7 +69,7 @@ public class DynamicRouter extends RoutingSlip {
                 return false;
             }
             current = ObjectHelper.createIterator(routingSlip, uriDelimiter);
-            return current != null && current.hasNext();
+            return current.hasNext();
         }
 
         public Object next(Exchange exchange) {
