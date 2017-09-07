@@ -20,14 +20,11 @@ package org.apache.camel.component.bonita.producer;
 import org.apache.camel.component.bonita.BonitaConfiguration;
 import org.apache.camel.component.bonita.BonitaEndpoint;
 import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The bonita producer.
  */
 public abstract class BonitaProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(BonitaProducer.class);
 
     protected BonitaEndpoint endpoint;
     protected BonitaConfiguration configuration;

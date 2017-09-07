@@ -73,7 +73,7 @@ public class BonitaAuthFilter implements ClientRequestFilter {
                     bonitaApiToken = cookie.getValue();
                     requestContext.getHeaders().add("X-Bonita-API-Token", bonitaApiToken);
                 }
-                cookies.add(cookie.toCookie());
+                cookies.add(cookie.toString());
             }
             requestContext.getHeaders().put("Cookie", cookies);
 

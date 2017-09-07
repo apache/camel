@@ -63,7 +63,7 @@ The following example start a new case in Bonita:
 
 [source,java]
 ----------------------------------------------------------------------
-from("direct:start).to("bonita:startCase?hostname=localhost&amp;port=8080&amp;processName=TestProcess&amp;username=install&amp;password=install")
+from("direct:start").to("bonita:startCase?hostname=localhost&amp;port=8080&amp;processName=TestProcess&amp;username=install&amp;password=install")
 ----------------------------------------------------------------------
 
 ### Dependencies
