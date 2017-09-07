@@ -30,7 +30,7 @@ import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodListBuilder;
 import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import io.fabric8.mockwebserver.utils.ResponseProvider;
-
+import okhttp3.Headers;
 import okhttp3.mockwebserver.RecordedRequest;
 
 import org.slf4j.Logger;
@@ -60,6 +60,8 @@ public class LockTestServer extends KubernetesMockServer {
         expect().get().withPath("/api/v1/namespaces/test/configmaps/" + lockSimulator.getConfigMapName()).andReply(new ResponseProvider<Object>() {
             ThreadLocal<Integer> responseCode = new ThreadLocal<>();
 
+            private Headers headers = new Headers.Builder().build();
+            
             @Override
             public int getStatusCode() {
                 return responseCode.get();
@@ -82,10 +84,22 @@ public class LockTestServer extends KubernetesMockServer {
                     return "";
                 }
             }
+
+            @Override
+            public Headers getHeaders() {
+                return headers;
+            }
+
+            @Override
+            public void setHeaders(Headers headers) {
+                this.headers = headers;
+            }
         }).always();
 
         expect().post().withPath("/api/v1/namespaces/test/configmaps").andReply(new ResponseProvider<Object>() {
             ThreadLocal<Integer> responseCode = new ThreadLocal<>();
+            
+            private Headers headers = new Headers.Builder().build();
 
             @Override
             public int getStatusCode() {
@@ -114,10 +128,22 @@ public class LockTestServer extends KubernetesMockServer {
                     return "";
                 }
             }
+
+            @Override
+            public Headers getHeaders() {
+                return headers;
+            }
+
+            @Override
+            public void setHeaders(Headers headers) {
+                this.headers = headers;
+            }
         }).always();
 
         expect().put().withPath("/api/v1/namespaces/test/configmaps/" + lockSimulator.getConfigMapName()).andReply(new ResponseProvider<Object>() {
             ThreadLocal<Integer> responseCode = new ThreadLocal<>();
+            
+            private Headers headers = new Headers.Builder().build();
 
             @Override
             public int getStatusCode() {
@@ -143,14 +169,25 @@ public class LockTestServer extends KubernetesMockServer {
                     return "";
                 }
             }
+
+            @Override
+            public Headers getHeaders() {
+                return headers;
+            }
+
+            @Override
+            public void setHeaders(Headers headers) {
+                this.headers = headers;
+            }
         }).always();
 
         // Other resources
-        expect().get().withPath("/api/v1/namespaces/test/pods").andReply(200, request -> new PodListBuilder().withNewMetadata().withResourceVersion("1").and().withItems(
-                getCurrentPods().stream().map(name -> new PodBuilder().withNewMetadata().withName(name).and().build()).collect(Collectors.toList())
-        ).build()).always();
+        expect().get().withPath("/api/v1/namespaces/test/pods")
+            .andReply(200,
+            request -> new PodListBuilder().withNewMetadata().withResourceVersion("1").and().withItems(getCurrentPods()
+            .stream().map(name -> new PodBuilder().withNewMetadata().withName(name).and().build()).collect(Collectors.toList())).build())
+            .always();
     }
-
 
     public boolean isRefuseRequests() {
         return refuseRequests;
