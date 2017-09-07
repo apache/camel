@@ -34,7 +34,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The caffeine-loadcache component is used for integration with Caffeine Load Cache.
+ * The caffeine-loadcache component is used for integration with Caffeine Load
+ * Cache.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "caffeine-loadcache", title = "Caffeine LoadCache", syntax = "caffeine-loadcache:cacheName", label = "cache,datagrid,clustering")
 public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
@@ -77,7 +78,11 @@ public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
                 builder.expireAfterWrite(configuration.getExpireAfterWriteTime(), TimeUnit.SECONDS);
             }
             if (configuration.isStatsEnabled()) {
-                builder.recordStats();
+                if (ObjectHelper.isEmpty(configuration.getStatsCounter())) {
+                    builder.recordStats();
+                } else {
+                    builder.recordStats(() -> configuration.getStatsCounter());
+                }
             }
             if (ObjectHelper.isNotEmpty(configuration.getRemovalListener())) {
                 builder.removalListener(configuration.getRemovalListener());

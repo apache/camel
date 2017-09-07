@@ -20,6 +20,7 @@ import javax.annotation.Generated;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.RemovalListener;
+import com.github.benmanes.caffeine.cache.stats.StatsCounter;
 import org.apache.camel.component.caffeine.EvictionType;
 import org.apache.camel.component.caffeine.load.CaffeineLoadCacheComponent;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
@@ -129,6 +130,10 @@ public class CaffeineLoadCacheComponentConfiguration
          * Set a specific removal Listener for the cache
          */
         private RemovalListener removalListener;
+        /**
+         * Set a specific Stats Counter for the cache stats
+         */
+        private StatsCounter statsCounter;
 
         public Boolean getCreateCacheIfNotExist() {
             return createCacheIfNotExist;
@@ -240,6 +245,14 @@ public class CaffeineLoadCacheComponentConfiguration
 
         public void setRemovalListener(RemovalListener removalListener) {
             this.removalListener = removalListener;
+        }
+
+        public StatsCounter getStatsCounter() {
+            return statsCounter;
+        }
+
+        public void setStatsCounter(StatsCounter statsCounter) {
+            this.statsCounter = statsCounter;
         }
     }
 }

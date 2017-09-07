@@ -19,6 +19,7 @@ package org.apache.camel.component.caffeine;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.RemovalListener;
+import com.github.benmanes.caffeine.cache.stats.StatsCounter;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
@@ -54,6 +55,8 @@ public class CaffeineConfiguration implements Cloneable {
     private int expireAfterWriteTime = 300;
     @UriParam(label = "producer")
     private RemovalListener removalListener;
+    @UriParam(label = "producer")
+    private StatsCounter statsCounter;
 
     public CaffeineConfiguration() {
     }
@@ -215,6 +218,17 @@ public class CaffeineConfiguration implements Cloneable {
      */
     public void setRemovalListener(RemovalListener removalListener) {
         this.removalListener = removalListener;
+    }
+
+    public StatsCounter getStatsCounter() {
+        return statsCounter;
+    }
+
+    /**
+     * Set a specific Stats Counter for the cache stats
+     */
+    public void setStatsCounter(StatsCounter statsCounter) {
+        this.statsCounter = statsCounter;
     }
 
     // ****************************
