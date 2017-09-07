@@ -77,7 +77,11 @@ public class CaffeineCacheEndpoint extends DefaultEndpoint {
                 builder.expireAfterWrite(configuration.getExpireAfterWriteTime(), TimeUnit.SECONDS);
             }
             if (configuration.isStatsEnabled()) {
-                builder.recordStats();
+                if (ObjectHelper.isEmpty(configuration.getStatsCounter())) {
+                    builder.recordStats();
+                } else {
+                    builder.recordStats(() -> configuration.getStatsCounter());
+                }
             }
             if (ObjectHelper.isNotEmpty(configuration.getRemovalListener())) {
                 builder.removalListener(configuration.getRemovalListener());

@@ -25,6 +25,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.codahale.metrics.MetricRegistry;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
@@ -40,12 +41,15 @@ public class CaffeineCacheTestSupport extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CaffeineCacheTestSupport.class);
     private Cache cache = Caffeine.newBuilder().recordStats().build();
     private Cache cacheRl = Caffeine.newBuilder().recordStats().removalListener(new DummyRemovalListener()).build();
+    private MetricRegistry mRegistry = new MetricRegistry();
+    private Cache cacheSc = Caffeine.newBuilder().recordStats(() -> new MetricsStatsCounter(mRegistry)).build();
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
         registry.bind("cache", cache);
         registry.bind("cacheRl", cacheRl);
+        registry.bind("cacheSc", cacheSc);
 
         return registry;
     }
@@ -56,6 +60,14 @@ public class CaffeineCacheTestSupport extends CamelTestSupport {
 
     protected Cache getTestRemovalListenerCache() {
         return cacheRl;
+    }
+    
+    protected Cache getTestStatsCounterCache() {
+        return cacheSc;
+    }
+    
+    protected MetricRegistry getMetricRegistry() {
+        return mRegistry;
     }
 
     protected static int[] generateRandomArrayOfInt(int size, int lower, int upper) {

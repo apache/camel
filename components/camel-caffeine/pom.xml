@@ -90,6 +90,12 @@
       <version>${hamcrest-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.dropwizard.metrics</groupId>
+      <artifactId>metrics-core</artifactId>
+      <version>${metrics-version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>
