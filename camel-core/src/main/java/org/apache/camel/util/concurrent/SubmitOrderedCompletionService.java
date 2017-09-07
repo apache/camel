@@ -63,7 +63,7 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
 
         public long getDelay(TimeUnit unit) {
             // if the answer is 0 then this task is ready to be taken
-            return id - index.get();
+            return unit.convert(id - index.get(), TimeUnit.SECONDS);
         }
 
         @SuppressWarnings("unchecked")
