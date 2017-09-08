@@ -219,7 +219,7 @@ keystore.setPassword("some_password"); // this password will also be used for ac
 DefaultSignerInfo signerInfo1 = new DefaultSignerInfo();
 signerInfo1.setIncludeCertificates(true); // if set to true then the certificate chain of the private key will be added to the Signed Data object
 signerInfo1.setSignatureAlgorithm("SHA256withRSA"); // signature algorithm; attention, the signature algorithm must fit to the signer private key.
-signerInfo1.setPrivateKeyAlias("rsa"); // alias of the private key used for the decryption
+signerInfo1.setPrivateKeyAlias("rsa"); // alias of the private key used for the signing
 signerInfo1.setPassword("private_key_pw".toCharArray()); // optional parameter, if not set then the password of the KeyStoreParameters will be used for accessing the private key
 signerInfo1.setKeyStoreParameters(keystore);
 
@@ -274,7 +274,7 @@ keystore.setPassword("some_password"); // this password will also be used for ac
 DefaultSignerInfo signerInfo1 = new DefaultSignerInfo();
 signerInfo1.setIncludeCertificates(true); // if set to true then the certificate chain of the private key will be added to the Signed Data object
 signerInfo1.setSignatureAlgorithm("SHA256withRSA"); // signature algorithm; attention, the signature algorithm must fit to the signer private key.
-signerInfo1.setPrivateKeyAlias("rsa"); // alias of the private key used for the decryption
+signerInfo1.setPrivateKeyAlias("rsa"); // alias of the private key used for the signing
 signerInfo1.setPassword("private_key_pw".toCharArray()); // optional parameter, if not set then the password of the KeyStoreParameters will be used for accessing the private key
 signerInfo1.setKeyStoreParameters(keystore);
 
@@ -345,7 +345,7 @@ keystore.setPassword("some_password"); // this password will also be used for ac
 DefaultSignerInfo signerInfo1 = new DefaultSignerInfo();
 signerInfo1.setIncludeCertificates(true); // if set to true then the certificate chain of the private key will be added to the Signed Data object
 signerInfo1.setSignatureAlgorithm("SHA256withRSA"); // signature algorithm; attention, the signature algorithm must fit to the signer private key.
-signerInfo1.setPrivateKeyAlias("rsa"); // alias of the private key used for the decryption
+signerInfo1.setPrivateKeyAlias("rsa"); // alias of the private key used for the signing
 signerInfo1.setPassword("private_key_pw".toCharArray()); // optional parameter, if not set then the password of the KeyStoreParameters will be used for accessing the private key
 signerInfo1.setKeyStoreParameters(keystore);
 
