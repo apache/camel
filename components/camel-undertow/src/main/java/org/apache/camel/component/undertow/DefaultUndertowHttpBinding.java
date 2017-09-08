@@ -121,15 +121,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     public void populateCamelHeaders(HttpServerExchange httpExchange, Map<String, Object> headersMap, Exchange exchange) throws Exception {
         LOG.trace("populateCamelHeaders: {}");
 
-        // NOTE: these headers is applied using the same logic as camel-http/camel-jetty to be consistent
-        headersMap.put(Exchange.HTTP_METHOD, httpExchange.getRequestMethod().toString());
-        // strip query parameters from the uri
-        headersMap.put(Exchange.HTTP_URL, httpExchange.getRequestURL());
-        // uri is without the host and port
-        headersMap.put(Exchange.HTTP_URI, httpExchange.getRequestURI());
-        headersMap.put(Exchange.HTTP_QUERY, httpExchange.getQueryString());
-        headersMap.put(Exchange.HTTP_RAW_QUERY, httpExchange.getQueryString());
-
         String path = httpExchange.getRequestPath();
         UndertowEndpoint endpoint = (UndertowEndpoint) exchange.getFromEndpoint();
         if (endpoint.getHttpURI() != null) {
@@ -137,7 +128,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             String endpointPath = endpoint.getHttpURI().getPath();
             String matchPath = path.toLowerCase(Locale.US);
             String match = endpointPath.toLowerCase(Locale.US);
-            if (match != null && matchPath.startsWith(match)) {
+            if (matchPath.startsWith(match)) {
                 path = path.substring(endpointPath.length());
             }
         }
@@ -209,6 +200,15 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 headersMap.put(paramName, predicateContextParams.get(paramName));
             }
         }
+
+        // NOTE: these headers is applied using the same logic as camel-http/camel-jetty to be consistent
+        headersMap.put(Exchange.HTTP_METHOD, httpExchange.getRequestMethod().toString());
+        // strip query parameters from the uri
+        headersMap.put(Exchange.HTTP_URL, httpExchange.getRequestURL());
+        // uri is without the host and port
+        headersMap.put(Exchange.HTTP_URI, httpExchange.getRequestURI());
+        headersMap.put(Exchange.HTTP_QUERY, httpExchange.getQueryString());
+        headersMap.put(Exchange.HTTP_RAW_QUERY, httpExchange.getQueryString());
     }
 
     @Override
@@ -246,6 +246,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 }
             }
         }
+
     }
 
     @Override

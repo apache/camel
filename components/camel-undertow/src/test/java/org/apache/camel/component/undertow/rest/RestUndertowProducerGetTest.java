@@ -48,6 +48,9 @@ public class RestUndertowProducerGetTest extends BaseUndertowTest {
                         .to("mock:input")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
+                                String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
+                                assertEquals("GET", method);
+
                                 String id = exchange.getIn().getHeader("id", String.class);
                                 exchange.getOut().setBody(id + ";Donald Duck");
                             }
