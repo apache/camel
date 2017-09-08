@@ -22,7 +22,6 @@ import java.util.Map;
 import javax.xml.transform.URIResolver;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
