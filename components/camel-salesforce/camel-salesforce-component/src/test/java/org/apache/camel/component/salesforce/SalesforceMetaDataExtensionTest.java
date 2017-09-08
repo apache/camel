@@ -31,6 +31,7 @@ import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
 
 import org.apache.camel.component.extension.MetaDataExtension;
 import org.apache.camel.component.extension.MetaDataExtension.MetaData;
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient.ResponseCallback;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -68,7 +69,7 @@ public class SalesforceMetaDataExtensionTest {
         try (InputStream stream = resource("/objectDescription.json")) {
             doAnswer(provideStreamToCallback(stream)).when(restClient).getDescription(eq("Account"),
                 any(ResponseCallback.class));
-            maybeMeta = metadata.meta(Collections.singletonMap(SalesforceMetaDataExtension.OBJECT_TYPE, "Account"));
+            maybeMeta = metadata.meta(Collections.singletonMap(SalesforceEndpointConfig.SOBJECT_NAME, "Account"));
         }
 
         assertThat(maybeMeta).isPresent();
@@ -80,15 +81,8 @@ public class SalesforceMetaDataExtensionTest {
         final ObjectSchema payload = meta.getPayload(ObjectSchema.class);
         assertThat(payload).isNotNull();
 
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        final Set<JsonSchema> oneOf = (Set) payload.getOneOf();
-        final Optional<JsonSchema> merchandiseSchema = StreamSupport.stream(oneOf.spliterator(), false)
-            .filter(idMatches("urn:jsonschema:org:apache:camel:component:salesforce:dto:Merchandise__c")).findAny();
-        final Optional<JsonSchema> merchandiseQuerySchema = StreamSupport.stream(oneOf.spliterator(), false)
-            .filter(idMatches("urn:jsonschema:org:apache:camel:component:salesforce:dto:QueryRecordsMerchandise__c"))
-            .findAny();
-        assertThat(merchandiseSchema).isPresent();
-        assertThat(merchandiseQuerySchema).isPresent();
+        assertThat(schemaFor(payload, "Merchandise__c")).isPresent();
+        assertThat(schemaFor(payload, "QueryRecordsMerchandise__c")).isPresent();
     }
 
     @Test
@@ -103,26 +97,23 @@ public class SalesforceMetaDataExtensionTest {
 
         final MetaData meta = maybeMeta.get();
         assertThat(meta.getAttribute(MetaDataExtension.MetaData.JAVA_TYPE)).isEqualTo(JsonNode.class);
-        assertThat(meta.getAttribute(MetaDataExtension.MetaData.CONTENT_TYPE)).isEqualTo("application/json");
+        assertThat(meta.getAttribute(MetaDataExtension.MetaData.CONTENT_TYPE)).isEqualTo("application/schema+json");
 
-        final JsonNode payload = meta.getPayload(JsonNode.class);
+        final ObjectSchema payload = meta.getPayload(ObjectSchema.class);
         assertThat(payload).isNotNull();
-        assertThat(valueAt(payload, 0, "name")).isEqualTo("AcceptedEventRelation");
-        assertThat(valueAt(payload, 0, "label")).isEqualTo("Accepted Event Relation");
-        assertThat(valueAt(payload, 1, "name")).isEqualTo("Account");
-        assertThat(valueAt(payload, 1, "label")).isEqualTo("Account");
-        assertThat(valueAt(payload, 2, "name")).isEqualTo("AccountCleanInfo");
-        assertThat(valueAt(payload, 2, "label")).isEqualTo("Account Clean Info");
-        assertThat(valueAt(payload, 3, "name")).isEqualTo("AccountContactRole");
-        assertThat(valueAt(payload, 3, "label")).isEqualTo("Account Contact Role");
-    }
 
-    static InputStream resource(final String path) {
-        return SalesforceMetaDataExtensionTest.class.getResourceAsStream(path);
-    }
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        final Set<JsonSchema> oneOf = (Set) payload.getOneOf();
+        assertThat(oneOf).hasSize(4);
 
-    static String valueAt(final JsonNode payload, final int idx, final String name) {
-        return payload.get(idx).get(name).asText();
+        assertThat(schemaFor(payload, "AcceptedEventRelation")).isPresent()
+            .hasValueSatisfying(schema -> assertThat(schema.getTitle()).isEqualTo("Accepted Event Relation"));
+        assertThat(schemaFor(payload, "Account")).isPresent()
+            .hasValueSatisfying(schema -> assertThat(schema.getTitle()).isEqualTo("Account"));
+        assertThat(schemaFor(payload, "AccountCleanInfo")).isPresent()
+            .hasValueSatisfying(schema -> assertThat(schema.getTitle()).isEqualTo("Account Clean Info"));
+        assertThat(schemaFor(payload, "AccountContactRole")).isPresent()
+            .hasValueSatisfying(schema -> assertThat(schema.getTitle()).isEqualTo("Account Contact Role"));
     }
 
     static Answer<Void> provideStreamToCallback(final InputStream stream) {
@@ -133,6 +124,22 @@ public class SalesforceMetaDataExtensionTest {
 
             return null;
         };
+    }
+
+    static InputStream resource(final String path) {
+        return SalesforceMetaDataExtensionTest.class.getResourceAsStream(path);
+    }
+
+    static Optional<ObjectSchema> schemaFor(final ObjectSchema schema, final String sObjectName) {
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        final Set<ObjectSchema> oneOf = (Set) schema.getOneOf();
+
+        return StreamSupport.stream(oneOf.spliterator(), false)
+            .filter(idMatches(JsonUtils.DEFAULT_ID_PREFIX + ":" + sObjectName)).findAny();
+    }
+
+    static String valueAt(final JsonNode payload, final int idx, final String name) {
+        return payload.get(idx).get(name).asText();
     }
 
     private static Predicate<JsonSchema> idMatches(final String wantedId) {
