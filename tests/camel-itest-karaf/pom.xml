@@ -32,10 +32,6 @@
   <name>Camel :: Integration Tests :: Karaf</name>
   <description>Performs Karaf compliance integration tests</description>
 
-  <properties>
-    <karaf-test-version>${karaf4-version}</karaf-test-version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -66,7 +62,7 @@
     <dependency>
       <groupId>org.apache.karaf</groupId>
       <artifactId>apache-karaf</artifactId>
-      <version>${karaf-test-version}</version>
+      <version>${karaf4-version}</version>
       <type>tar.gz</type>
       <scope>test</scope>
       <exclusions>
@@ -200,7 +196,7 @@
           <!-- not supported by older version of surefire -->
           <!--<rerunFailingTestsCount>0</rerunFailingTestsCount>-->
           <systemPropertyVariables>
-            <karafVersion>${karaf-version}</karafVersion>
+            <karafVersion>${karaf4-version}</karafVersion>
             <camelKarafFeatureVersion>${project.version}</camelKarafFeatureVersion>
           </systemPropertyVariables>
         </configuration>
@@ -233,7 +229,7 @@
               -->
               <argLine>-Dorg.ops4j.pax.url.mvn.localRepository=${maven.repo.local}</argLine>
               <systemPropertyVariables>
-                <karafVersion>${karaf-version}</karafVersion>
+                <karafVersion>${karaf4-version}</karafVersion>
                 <camelKarafFeatureVersion>${project.version}</camelKarafFeatureVersion>
               </systemPropertyVariables>
             </configuration>
