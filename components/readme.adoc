@@ -150,7 +150,7 @@ Number of Components: 280 in 192 JAR artifacts (17 deprecated)
 `class:beanName` | 2.4 | The Class Component is for invoking Java Classes (Java beans) from Camel.
 
 | link:camel-cm-sms/src/main/docs/cm-sms-component.adoc[CM SMS Gateway] (camel-cm-sms) +
-`cm-sms:host` | 2.18 | The influxdb component allows to integrate with CM SMS Gateway.
+`cm-sms:host` | 2.18 | The cm-sms component allows to integrate with CM SMS Gateway.
 
 | link:camel-cmis/src/main/docs/cmis-component.adoc[CMIS] (camel-cmis) +
 `cmis:cmsUrl` | 2.11 | The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.

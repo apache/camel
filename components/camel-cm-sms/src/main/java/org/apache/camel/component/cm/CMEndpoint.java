@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The influxdb component allows to integrate with <a href="https://www.cmtelecom.com/">CM SMS Gateway</a>.
+ * The cm-sms component allows to integrate with <a href="https://www.cmtelecom.com/">CM SMS Gateway</a>.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "cm-sms", title = "CM SMS Gateway", syntax = "cm-sms:host", label = "mobile", producerOnly = true)
 public class CMEndpoint extends DefaultEndpoint {
