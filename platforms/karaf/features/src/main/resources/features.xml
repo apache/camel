@@ -774,9 +774,33 @@
   <feature name='camel-grpc' version='${project.version}' resolver='(obr)' start-level='50'>
     <details>camel-grpc currently doesn't work in OSGi</details>
     <feature version='${project.version}'>camel-core</feature>
+    <!--
+    Temporarly commented until new servicemix bundle has not released
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.grpc/${grpc-bundle-version}</bundle>
+    -->
+    <bundle dependency='true'>wrap:mvn:io.grpc/grpc-core/${grpc-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:io.grpc/grpc-auth/${grpc-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:io.grpc/grpc-netty/${grpc-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:io.grpc/grpc-protobuf/${grpc-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:io.grpc/grpc-stub/${grpc-version}</bundle>
+    <!-- gRPC netty dependencies -->
+    <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-http2/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-socks/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-handler-proxy/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-tcnative-boringssl-static/${grpc-netty-tcnative-boringssl-static-version}</bundle>
+    <!-- Third party dependencies -->
     <bundle dependency='true'>mvn:org.javassist/javassist/${javassist-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-grpc/${project.version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.auth0/java-jwt/${grpc-java-jwt-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.auth/google-auth-library-oauth2-http/${grpc-google-auth-library-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.auth/google-auth-library-credentials/${grpc-google-auth-library-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-grpc/${project.version}</bundle>    
   </feature>
   <feature name='camel-gson' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
