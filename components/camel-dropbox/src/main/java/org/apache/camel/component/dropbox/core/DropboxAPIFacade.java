@@ -43,6 +43,7 @@ import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxResultCode;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.apache.camel.converter.stream.OutputStreamBuilder;
+import org.apache.camel.util.IOHelper;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,12 +52,11 @@ import static org.apache.camel.component.dropbox.util.DropboxConstants.HEADER_PU
 
 public final class DropboxAPIFacade {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxAPIFacade.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DropboxAPIFacade.class);
 
     private final DbxClient client;
 
     private final Exchange exchange;
-
 
     /**
      * @param client the DbxClient performing dropbox low level operations
@@ -181,10 +181,6 @@ public final class DropboxAPIFacade {
             name = exchange.getIn().getMessageId();
         }
 
-        //check if dropbox file exists
-        if (entry != null && !entry.isFile()) {
-            throw new DropboxException(dropboxPath + " exists on dropbox and is not a file!");
-        }
         //in case the entry not exists on dropbox check if the filename should be appended
         if (entry == null) {
             if (dropboxPath.endsWith(DropboxConstants.DROPBOX_FILE_SEPARATOR)) {
@@ -206,7 +202,6 @@ public final class DropboxAPIFacade {
             result = new DropboxFileUploadResult(dropboxPath, DropboxResultCode.KO);
         }
         return result;
-
     }
 
     private DbxEntry.File putSingleFile(File inputFile, String dropboxPath, DropboxUploadMode mode) throws Exception {
@@ -222,7 +217,7 @@ public final class DropboxAPIFacade {
             uploadedFile = client.uploadFile(dropboxPath, uploadMode, inputFile.length(), inputStream);
             return uploadedFile;
         } finally {
-            inputStream.close();
+            IOHelper.close(inputStream);
         }
     }
 
@@ -240,7 +235,7 @@ public final class DropboxAPIFacade {
             uploadedFile = client.uploadFile(dropboxPath, uploadMode, data.length, is);
             return uploadedFile;
         } finally {
-            is.close();
+            IOHelper.close(is);
         }
     }
 
