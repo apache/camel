@@ -20,10 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("CAME-11765")
 public class RestUndertowProducerVerbUpperCaseTest extends BaseUndertowTest {
 
     @Test
