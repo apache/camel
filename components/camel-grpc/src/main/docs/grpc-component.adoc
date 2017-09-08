@@ -54,18 +54,8 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
-| **authenticationType** (common) | Authentication method type in advance to the SSL/TLS negotiation | NONE | GrpcAuthType
 | **flowControlWindow** (common) | The HTTP/2 flow control window size (MiB) | 1048576 | int
-| **jwtIssuer** (common) | JSON Web Token issuer |  | String
-| **jwtSecret** (common) | JSON Web Token secret |  | String
-| **jwtSubject** (common) | JSON Web Token subject |  | String
-| **keyCertChainResource** (common) | The X.509 certificate chain file resource in PEM format link |  | String
-| **keyPassword** (common) | The PKCS8 private key file password |  | String
-| **keyResource** (common) | The PKCS8 private key file resource in PEM format link |  | String
 | **maxMessageSize** (common) | The maximum message size allowed to be received/sent (MiB) | 4194304 | int
-| **negotiationType** (common) | Identifies the security negotiation type used for HTTP/2 communication | PLAINTEXT | NegotiationType
-| **serviceAccountResource** (common) | Service Account key file in JSON format resource link supported by the Google Cloud SDK |  | String
-| **trustCertCollectionResource** (common) | The trusted certificates collection file resource in PEM format for verifying the remote endpoint's certificate |  | String
 | **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | **consumerStrategy** (consumer) | This option specifies the top-level strategy for processing service requests and responses in streaming mode. If an aggregation strategy is selected all requests will be accumulated in the list then transferred to the flow and the accumulated responses will be sent to the sender. If a propagation strategy is selected request is sent to the stream and the response will be immediately sent back to the sender. | PROPAGATION | GrpcConsumerStrategy
 | **forwardOnCompleted** (consumer) | Determines if onCompleted events should be pushed to the Camel route. | false | boolean
@@ -78,6 +68,16 @@ with the following path and query parameters:
 | **streamRepliesTo** (producer) | When using STREAMING client mode it indicates the endpoint where responses should be forwarded. |  | String
 | **userAgent** (producer) | The user agent header passed to the server |  | String
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **authenticationType** (security) | Authentication method type in advance to the SSL/TLS negotiation | NONE | GrpcAuthType
+| **jwtIssuer** (security) | JSON Web Token issuer |  | String
+| **jwtSecret** (security) | JSON Web Token secret |  | String
+| **jwtSubject** (security) | JSON Web Token subject |  | String
+| **keyCertChainResource** (security) | The X.509 certificate chain file resource in PEM format link |  | String
+| **keyPassword** (security) | The PKCS8 private key file password |  | String
+| **keyResource** (security) | The PKCS8 private key file resource in PEM format link |  | String
+| **negotiationType** (security) | Identifies the security negotiation type used for HTTP/2 communication | PLAINTEXT | NegotiationType
+| **serviceAccountResource** (security) | Service Account key file in JSON format resource link supported by the Google Cloud SDK |  | String
+| **trustCertCollectionResource** (security) | The trusted certificates collection file resource in PEM format for verifying the remote endpoint's certificate |  | String
 |=======================================================================
 // endpoint options: END
 

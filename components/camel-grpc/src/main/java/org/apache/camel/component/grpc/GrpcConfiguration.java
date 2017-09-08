@@ -45,34 +45,34 @@ public class GrpcConfiguration {
     @UriParam(label = "producer")
     private String method;
             
-    @UriParam(defaultValue = "PLAINTEXT")
+    @UriParam(label = "security", defaultValue = "PLAINTEXT")
     private NegotiationType negotiationType = NegotiationType.PLAINTEXT;
     
-    @UriParam(defaultValue = "NONE")
+    @UriParam(label = "security", defaultValue = "NONE")
     private GrpcAuthType authenticationType = GrpcAuthType.NONE;
     
-    @UriParam
+    @UriParam(label = "security")
     private String serviceAccountResource;
     
-    @UriParam(secret = true)
+    @UriParam(label = "security", secret = true)
     private String jwtSecret;
     
-    @UriParam
+    @UriParam(label = "security")
     private String jwtIssuer;
     
-    @UriParam
+    @UriParam(label = "security")
     private String jwtSubject;
     
-    @UriParam
+    @UriParam(label = "security")
     private String keyCertChainResource;
     
-    @UriParam
+    @UriParam(label = "security")
     private String keyResource;
     
-    @UriParam(secret = true)
+    @UriParam(label = "security", secret = true)
     private String keyPassword;
     
-    @UriParam
+    @UriParam(label = "security")
     private String trustCertCollectionResource;
 
     @UriParam(label = "producer", defaultValue = "SIMPLE")
