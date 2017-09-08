@@ -37,7 +37,7 @@ You can use the Maven archetype `camel-archetype-connector` to create a new conn
 some values as input to select the existing Camel component to use as base, and then in addition the name and title
 of the connector, and a few other values as well.
 
-You can also copy the existing examples from the `connectors` directory where the following connectors examples is provided:
+You can also copy the existing examples from the `connectors` directory where the following connectors examples are provided:
 
 - `foo-connector` - A connector that is based on the Timer component from `camel-core`.
 - `bar-connector` - A connector that is based on the 3rd party `beverage-component`.
@@ -112,15 +112,15 @@ And these following Maven plugins:
 
 ### Spring Boot compliant
 
-A Camel connector works great with Spring Boot. If a connector has been configured to allow configuration on the component and/por endpoint level which is done in the `camel-connector.json` file, such as
+A Camel connector works great with Spring Boot. If a connector has been configured to allow configuration on the component and/or endpoint level which is done in the `camel-connector.json` file, such as
 
       "componentOptions" : [ "consumerKey", "consumerSecret", "accessToken", "accessTokenSecret" ],
       "endpointOptions" : [ "keywords" ],
 
 Then the `camel-connector-maven-plugin` will be able to generate Spring Boot auto configuration for these options.
-This allows users to essily configure these options if using Spring Boot with the connector.
+This allows users to easily configure these options if using Spring Boot with the connector.
 
-NOTE: There's no disctinction between component/endpoint options on spring-boot auto configuration side so all the options are flattered to a single namespace thus they appear as connector options and then the conenctor figures out where they should be applied.
+NOTE: There's no distinction between component/endpoint options on spring-boot auto configuration side so all the options are flattered to a single namespace thus they appear as connector options and then the connector figures out where they should be applied.
 
 TIP: The options configured through spring-boot auto configuration classes can be overridden by standard endpoint options.
 
@@ -190,8 +190,8 @@ You may need to instantiate multiple instance of the connector i.e. to use diffe
     camel.connector.twitter-search.configurations.tw-search2.keywords = apache-karaf
 ------------
 
-This would create two instances of the twitter-search connector each one configured with its own list o options.
-You can no use the nre connector as standard components like:
+This would create two instances of the twitter-search connector each one configured with its own list of options.
+You can now use the new connectors as standard components like:
 
 [source,java]
 ------------
@@ -225,7 +225,7 @@ The following data types are in use:
 |=========================================
 
 For example to accept any incoming data type and output Java as `com.foo.MyCustomer` you would
-configure the the `camel-connector.json` file:
+configure the `camel-connector.json` file:
 
     "inputDataType": "any",
     "outputDataType": "java:com.foo.MyCustomer",
