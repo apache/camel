@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.xslt.springboot;
 
-import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -44,17 +43,14 @@ public class XsltComponentConfiguration
      */
     private XmlConverterNestedConfiguration xmlConverter;
     /**
-     * To use a custom javax.xml.transform.URIResolver which depends on a
-     * dynamic endpoint resource URI or which is a subclass of XsltUriResolver.
-     * Do not use in combination with uriResolver. See also link
-     * setUriResolver(URIResolver).
+     * To use a custom UriResolver which depends on a dynamic endpoint resource
+     * URI. Should not be used together with the option 'uriResolver'.
      */
     @NestedConfigurationProperty
     private XsltUriResolverFactory uriResolverFactory;
     /**
-     * To use a custom javax.xml.transform.URIResolver. Do not use in
-     * combination with uriResolverFactory. See also link
-     * setUriResolverFactory(XsltUriResolverFactory).
+     * To use a custom UriResolver. Should not be used together with the option
+     * 'uriResolverFactory'.
      */
     private URIResolver uriResolver;
     /**
@@ -64,7 +60,7 @@ public class XsltComponentConfiguration
      * forced to reload at runtime via JMX using the clearCachedStylesheet
      * operation.
      */
-    private Boolean contentCache = false;
+    private Boolean contentCache = true;
     /**
      * Whether to use Saxon as the transformerFactoryClass. If enabled then the
      * class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to
@@ -77,7 +73,7 @@ public class XsltComponentConfiguration
      * looked up in the registry where you can comma to separate multiple values
      * to lookup.
      */
-    private List<Object> saxonExtensionFunctions;
+    private String saxonExtensionFunctions;
     /**
      * To use a custom Saxon configuration
      */
@@ -133,11 +129,11 @@ public class XsltComponentConfiguration
         this.saxon = saxon;
     }
 
-    public List<Object> getSaxonExtensionFunctions() {
+    public String getSaxonExtensionFunctions() {
         return saxonExtensionFunctions;
     }
 
-    public void setSaxonExtensionFunctions(List<Object> saxonExtensionFunctions) {
+    public void setSaxonExtensionFunctions(String saxonExtensionFunctions) {
         this.saxonExtensionFunctions = saxonExtensionFunctions;
     }
 

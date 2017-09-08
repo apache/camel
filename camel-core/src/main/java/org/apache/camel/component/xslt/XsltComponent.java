@@ -26,7 +26,6 @@ import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
@@ -41,17 +40,17 @@ public class XsltComponent extends UriEndpointComponent {
 
     @Metadata(label = "advanced")
     private XmlConverter xmlConverter;
-    @Metadata(label = "advanced", description = "To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'.")
+    @Metadata(label = "advanced")
     private URIResolver uriResolver;
-    @Metadata(label = "advanced", description = "To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'.")
+    @Metadata(label = "advanced")
     private XsltUriResolverFactory uriResolverFactory;
-    @Metadata(defaultValue = "true")
-    @UriParam(label = "advanced")
+    @Metadata(label = "advanced")
     private Object saxonConfiguration;
     @Metadata(label = "advanced")
     private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
-    @UriParam(label = "advanced", javaType = "java.lang.String")
+    @Metadata(label = "advanced", javaType = "java.lang.String")
     private List<Object> saxonExtensionFunctions;
+    @Metadata(defaultValue = "true")
     private boolean contentCache = true;
     private boolean saxon;
 
@@ -69,17 +68,13 @@ public class XsltComponent extends UriEndpointComponent {
     public void setXmlConverter(XmlConverter xmlConverter) {
         this.xmlConverter = xmlConverter;
     }
-    
-    
 
     public XsltUriResolverFactory getUriResolverFactory() {
         return uriResolverFactory;
     }
 
     /**
-     * To use a custom javax.xml.transform.URIResolver which depends on a dynamic endpoint resource URI or which is a subclass of {@link XsltUriResolver}.
-     *  Do not use in combination with uriResolver.
-     * See also {@link #setUriResolver(URIResolver)}.
+     * To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'.
      */
     public void setUriResolverFactory(XsltUriResolverFactory uriResolverFactory) {
         this.uriResolverFactory = uriResolverFactory;
@@ -90,8 +85,7 @@ public class XsltComponent extends UriEndpointComponent {
     }
 
     /**
-     * To use a custom javax.xml.transform.URIResolver. Do not use in combination with uriResolverFactory.
-     * See also {@link #setUriResolverFactory(XsltUriResolverFactory)}.
+     * To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'.
      */
     public void setUriResolver(URIResolver uriResolver) {
         this.uriResolver = uriResolver;

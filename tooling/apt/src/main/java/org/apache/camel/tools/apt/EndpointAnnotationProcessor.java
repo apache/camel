@@ -535,6 +535,11 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     }
                 }
 
+                // the field type may be overloaded by another type
+                if (metadata != null && !Strings.isNullOrEmpty(metadata.javaType())) {
+                    fieldTypeName = metadata.javaType();
+                }
+
                 String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                 ComponentOption option = new ComponentOption(name, displayName, fieldTypeName, required, defaultValue, defaultValueNote,
                         docComment.trim(), deprecated, deprecationNote, secret, group, label, isEnum, enums);
