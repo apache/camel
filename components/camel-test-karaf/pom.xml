@@ -68,7 +68,7 @@
     <dependency>
       <groupId>org.apache.karaf.features</groupId>
       <artifactId>org.apache.karaf.features.core</artifactId>
-      <version>${karaf-version}</version>
+      <version>${karaf4-version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -81,6 +81,11 @@
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.configadmin</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.gogo.runtime</artifactId>
+      <version>1.0.6</version>
     </dependency>
     <dependency>
       <groupId>org.osgi</groupId>
@@ -161,7 +166,7 @@
           <!-- not supported by older version of surefire -->
           <!--<rerunFailingTestsCount>0</rerunFailingTestsCount>-->
           <systemPropertyVariables>
-            <karafVersion>${karaf-version}</karafVersion>
+            <karafVersion>${karaf4-version}</karafVersion>
           </systemPropertyVariables>
         </configuration>
       </plugin>
@@ -208,7 +213,7 @@
               -->
               <argLine>-Dorg.ops4j.pax.url.mvn.localRepository=${maven.repo.local}</argLine>
               <systemPropertyVariables>
-                <karafVersion>${karaf-version}</karafVersion>
+                <karafVersion>${karaf4-version}</karafVersion>
               </systemPropertyVariables>
             </configuration>
           </plugin>
