@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
  */
 public class ValidatorComponent extends UriEndpointComponent {
 
-    @Metadata(label = "advanced", description = "To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI")
+    @Metadata(label = "advanced")
     private ValidatorResourceResolverFactory resourceResolverFactory;
     
     public ValidatorComponent() {
@@ -38,14 +38,6 @@ public class ValidatorComponent extends UriEndpointComponent {
 
     public ValidatorComponent(Class<? extends Endpoint> endpointClass) {
         super(endpointClass);
-    }
-
-    public ValidatorResourceResolverFactory getResourceResolverFactory() {
-        return resourceResolverFactory;
-    }
-
-    public void setResourceResolverFactory(ValidatorResourceResolverFactory resourceResolverFactory) {
-        this.resourceResolverFactory = resourceResolverFactory;
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -63,6 +55,17 @@ public class ValidatorComponent extends UriEndpointComponent {
         endpoint.setResourceResolverFactory(resolverFactory);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public ValidatorResourceResolverFactory getResourceResolverFactory() {
+        return resourceResolverFactory;
+    }
+
+    /**
+     * To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI
+     */
+    public void setResourceResolverFactory(ValidatorResourceResolverFactory resourceResolverFactory) {
+        this.resourceResolverFactory = resourceResolverFactory;
     }
 
 }

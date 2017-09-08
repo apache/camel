@@ -84,6 +84,13 @@ public @interface Metadata {
     boolean secret() default false;
 
     /**
+     * To re-associate the preferred Java type of this parameter.
+     * <p/>
+     * This is used for parameters which are of a specialized type but can be configured by another Java type, such as from a String.
+     */
+    String javaType() default "";
+
+    /**
      * The first version this functionality was added to Apache Camel.
      */
     String firstVersion() default "";

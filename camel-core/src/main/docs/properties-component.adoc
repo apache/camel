@@ -27,15 +27,15 @@ The Properties component supports 17 options which are listed below.
 | **propertiesResolver** (common) | To use a custom PropertiesResolver |  | PropertiesResolver
 | **propertiesParser** (common) | To use a custom PropertiesParser |  | PropertiesParser
 | **cache** (common) | Whether or not to cache loaded properties. The default value is true. | true | boolean
-| **propertyPrefix** (common) | Optional prefix prepended to property names before resolution. |  | String
-| **propertySuffix** (common) | Optional suffix appended to property names before resolution. |  | String
-| **fallbackToUnaugmented Property** (common) | If true first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false only the augmented property name is searched. | true | boolean
+| **propertyPrefix** (advanced) | Optional prefix prepended to property names before resolution. |  | String
+| **propertySuffix** (advanced) | Optional suffix appended to property names before resolution. |  | String
+| **fallbackToUnaugmented Property** (advanced) | If true first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false only the augmented property name is searched. | true | boolean
 | **defaultFallbackEnabled** (common) | If false the component does not attempt to find a default for the key by looking after the colon separator. | true | boolean
 | **ignoreMissingLocation** (common) | Whether to silently ignore if a location cannot be located such as a properties file not found. | false | boolean
-| **prefixToken** (common) | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_PREFIX_TOKEN). | {{ | String
-| **suffixToken** (common) | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_SUFFIX_TOKEN). | }} | String
-| **initialProperties** (common) | Sets initial properties which will be used before any locations are resolved. |  | Properties
-| **overrideProperties** (common) | Sets a special list of override properties that take precedence and will use first if a property exist. |  | Properties
+| **prefixToken** (advanced) | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_PREFIX_TOKEN). | {{ | String
+| **suffixToken** (advanced) | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_SUFFIX_TOKEN). | }} | String
+| **initialProperties** (advanced) | Sets initial properties which will be used before any locations are resolved. |  | Properties
+| **overrideProperties** (advanced) | Sets a special list of override properties that take precedence and will use first if a property exist. |  | Properties
 | **systemPropertiesMode** (common) | Sets the system property mode. | 2 | int
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================

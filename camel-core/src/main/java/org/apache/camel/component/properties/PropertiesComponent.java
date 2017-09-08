@@ -102,21 +102,25 @@ public class PropertiesComponent extends UriEndpointComponent {
     private String encoding;
     @Metadata(defaultValue = "true")
     private boolean cache = true;
+    @Metadata(label = "advanced")
     private String propertyPrefix;
-    private String propertyPrefixResolved;
+    private transient String propertyPrefixResolved;
+    @Metadata(label = "advanced")
     private String propertySuffix;
-    private String propertySuffixResolved;
-    @Metadata(defaultValue = "true")
+    private transient String propertySuffixResolved;
+    @Metadata(label = "advanced", defaultValue = "true")
     private boolean fallbackToUnaugmentedProperty = true;
     @Metadata(defaultValue = "true")
     private boolean defaultFallbackEnabled = true;
-    @Metadata(defaultValue = DEFAULT_PREFIX_TOKEN)
+    @Metadata(label = "advanced", defaultValue = DEFAULT_PREFIX_TOKEN)
     private String prefixToken = DEFAULT_PREFIX_TOKEN;
-    @Metadata(defaultValue = DEFAULT_SUFFIX_TOKEN)
+    @Metadata(label = "advanced", defaultValue = DEFAULT_SUFFIX_TOKEN)
     private String suffixToken = DEFAULT_SUFFIX_TOKEN;
+    @Metadata(label = "advanced")
     private Properties initialProperties;
+    @Metadata(label = "advanced")
     private Properties overrideProperties;
-    @Metadata(defaultValue = "" + SYSTEM_PROPERTIES_MODE_OVERRIDE)
+    @Metadata(defaultValue = "" + SYSTEM_PROPERTIES_MODE_OVERRIDE, enums = "0,1,2")
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
 
     public PropertiesComponent() {

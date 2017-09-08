@@ -49,7 +49,7 @@ The Direct VM component supports 5 options which are listed below.
 | Name | Description | Default | Type
 | **block** (producer) | If sending a message to a direct endpoint which has no active consumer then we can tell the producer to block and wait for the consumer to become active. | false | boolean
 | **timeout** (producer) | The timeout value to use if block is enabled. | 30000 | long
-| **headerFilterStrategy** (common) | Sets a HeaderFilterStrategy that will only be applied on producer endpoints (on both directions: request and response). Default value: none. |  | HeaderFilterStrategy
+| **headerFilterStrategy** (advanced) | Sets a HeaderFilterStrategy that will only be applied on producer endpoints (on both directions: request and response). Default value: none. |  | HeaderFilterStrategy
 | **propagateProperties** (advanced) | Whether to propagate or not properties from the producer side to the consumer side and vice versa. Default value: true. | true | boolean
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
