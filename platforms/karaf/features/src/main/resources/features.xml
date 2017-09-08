@@ -772,12 +772,8 @@
     <bundle>mvn:org.apache.camel/camel-groovy/${project.version}</bundle>
   </feature>
   <feature name='camel-grpc' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>camel-grpc currently doesn't work in OSGi</details>
+    <details>gRPC bundle version 1.6.1 currently doesn't work well so we are actually use the wrapped gRPC jars</details>
     <feature version='${project.version}'>camel-core</feature>
-    <!--
-    Temporarly commented until new servicemix bundle has not released
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.grpc/${grpc-bundle-version}</bundle>
-    -->
     <bundle dependency='true'>wrap:mvn:io.grpc/grpc-core/${grpc-version}</bundle>
     <bundle dependency='true'>wrap:mvn:io.grpc/grpc-auth/${grpc-version}</bundle>
     <bundle dependency='true'>wrap:mvn:io.grpc/grpc-netty/${grpc-version}</bundle>
