@@ -22,7 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +40,20 @@ public class PahoConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         String topic = getEndpoint().getTopic();
-        getEndpoint().getClient().subscribe(topic);
-        getEndpoint().getClient().setCallback(new MqttCallback() {
+        getEndpoint().getClient().subscribe(topic, getEndpoint().getQos());
+        getEndpoint().getClient().setCallback(new MqttCallbackExtended() {
+
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+                if (reconnect) {
+                    try {
+                        getEndpoint().getClient().subscribe(topic, getEndpoint().getQos());
+                    } catch (MqttException e) {
+                        LOG.error("MQTT resubscribe failed " + e.getMessage(), e);
+                    }
+                }
+            }
+
             @Override
             public void connectionLost(Throwable cause) {
                 LOG.debug("MQTT broker connection lost due " + cause.getMessage(), cause);
