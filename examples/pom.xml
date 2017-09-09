@@ -96,6 +96,7 @@
     <module>camel-example-splunk</module>
     <module>camel-example-spring</module>
     <module>camel-example-spring-boot</module>
+    <module>camel-example-spring-boot2</module>
     <module>camel-example-spring-boot-activemq</module>
     <module>camel-example-spring-boot-clustered-route-controller</module>
     <module>camel-example-spring-boot-geocoder</module>

@@ -28,9 +28,12 @@
     <version>2.20.0-SNAPSHOT</version>
   </parent>
 
-  <name>Camel :: Spring Boot 2</name>
+  <name>Camel :: Spring Boot 2 (work in progress)</name>
   <artifactId>camel-spring-boot2</artifactId>
-  <description>Using Camel with Spring Boot 2</description>
+  <description>Using Camel with Spring Boot 2 (work in progress)</description>
+
+  <!-- TODO: this is work in progress and not recommended for production -->
+  <!-- TODO: spring-boot 2 will be supported officially in a future release -->
 
   <properties>
     <!-- use by camel-catalog -->
