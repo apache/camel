@@ -530,7 +530,9 @@
         <include>org.apache.camel:camel-splunk-starter</include>
         <include>org.apache.camel:camel-spring-batch-starter</include>
         <include>org.apache.camel:camel-spring-boot</include>
+        <include>org.apache.camel:camel-spring-boot2</include>
         <include>org.apache.camel:camel-spring-boot-starter</include>
+        <include>org.apache.camel:camel-spring-boot2-starter</include>
         <include>org.apache.camel:camel-spring-cloud-starter</include>
         <include>org.apache.camel:camel-spring-cloud-netflix-starter</include>
         <include>org.apache.camel:camel-spring-integration-starter</include>

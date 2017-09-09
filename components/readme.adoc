@@ -1026,7 +1026,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 37 in 37 JAR artifacts (13 deprecated)
+Number of Miscellaneous Components: 38 in 38 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -1077,6 +1077,8 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (13 deprecated)
 | link:camel-shiro/src/main/docs/shiro.adoc[Shiro] (camel-shiro) | 2.5 | Security using Shiro
 
 | link:camel-spring-boot/src/main/docs/spring-boot.adoc[Spring Boot] (camel-spring-boot) | 2.15 | Using Camel with Spring Boot
+
+| link:camel-spring-boot2/src/main/docs/spring-boot2.adoc[Spring Boot2] (camel-spring-boot2) | 2.20 | Using Camel with Spring Boot 2
 
 | link:camel-spring-cloud/src/main/docs/spring-cloud.adoc[Spring Cloud] (camel-spring-cloud) | 2.19 | Camel Cloud integration with Spring Cloud
 
