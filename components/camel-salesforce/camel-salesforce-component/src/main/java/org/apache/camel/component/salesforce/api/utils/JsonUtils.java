@@ -46,7 +46,9 @@ import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 import org.apache.camel.component.salesforce.api.dto.Address;
 import org.apache.camel.component.salesforce.api.dto.GeoLocation;
+import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
 import org.apache.camel.component.salesforce.api.dto.PickListValue;
+import org.apache.camel.component.salesforce.api.dto.SObject;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
@@ -289,6 +291,21 @@ public abstract class JsonUtils {
 
     private static ObjectSchema getSchemaFromClass(ObjectMapper objectMapper, Class<?> type) throws JsonMappingException {
         return new JsonSchemaGenerator(objectMapper).generateSchema(type).asObjectSchema();
+    }
+
+    public static JsonSchema getGlobalObjectsJsonSchemaAsSchema(final GlobalObjects globalObjects) {
+        final Set<JsonSchema> allSchemas = new HashSet<>();
+
+        for (SObject sobject : globalObjects.getSobjects()) {
+            // generate SObject schema from description
+            ObjectSchema sobjectSchema = new ObjectSchema();
+            sobjectSchema.setId(DEFAULT_ID_PREFIX + ":" + sobject.getName());
+            sobjectSchema.setTitle(sobject.getLabel());
+
+            allSchemas.add(sobjectSchema);
+        }
+
+        return getJsonSchemaAsSchema(allSchemas, DEFAULT_ID_PREFIX + ":GlobalObjects");
     }
 
 }

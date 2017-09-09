@@ -33,6 +33,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class GoogleBigQueryProducerTest extends BaseBigQueryTest {
+
     @Test
     public void sendMessage() throws Exception {
         producer.process(createExchangeWithBody(new HashMap<>()));
@@ -56,7 +57,6 @@ public class GoogleBigQueryProducerTest extends BaseBigQueryTest {
         assertEquals(1, requests.get(0).getRows().size());
         assertNull(requests.get(0).getRows().get(0).getInsertId());
     }
-
 
     @Test
     public void useAsInsertIdConfig() throws Exception {

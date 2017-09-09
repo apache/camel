@@ -15,9 +15,5 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 
-debug = false
-
-logging.level.org.springframework = INFO
-logging.level.io.atomix = DEBUG
-
-cluster.address = 127.0.0.1:8700
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.apache.camel.component.google.bigquery.springboot.GoogleBigQueryComponentAutoConfiguration
