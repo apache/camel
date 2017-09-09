@@ -23,11 +23,11 @@ import org.ops4j.pax.exam.junit.PaxExam;
 @RunWith(PaxExam.class)
 public class CamelASN1Test extends BaseKarafTest {
 
-    public static final String COMPONENT = extractName(CamelASN1Test.class);
+    public static final String COMPONENT = "asn1";
 
     @Test
     public void test() throws Exception {
-        testDataFormat("asn1");
+        testDataFormat(COMPONENT);
     }
 
 
