@@ -46,13 +46,11 @@ public final class HierarchicalPropertiesEvaluator {
     }
 
     private static boolean isEnabled(Environment environment, String prefix, boolean defaultValue) {
-        // TODO: need to find a solution for this, we can maybe copy the code from 1.x
-        /*RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(
+        RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(
             environment,
             prefix.endsWith(".") ? prefix : prefix + "."
         );
 
-        return resolver.getProperty("enabled", Boolean.class, defaultValue);*/
-        return defaultValue;
+        return resolver.getProperty("enabled", Boolean.class, defaultValue);
     }
 }

@@ -19,6 +19,7 @@ package org.apache.camel.spring.boot.security;
 import java.util.Map;
 
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
+import org.apache.camel.spring.boot.util.RelaxedPropertyResolver;
 import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -47,16 +48,14 @@ public class CamelSSLAutoConfiguration {
     public static class Condition extends SpringBootCondition {
         @Override
         public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata annotatedTypeMetadata) {
-            // TODO: need to find a solution for this, we can maybe copy the code from 1.x
-            /*RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(context.getEnvironment(), "camel.ssl.config");
+            RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(context.getEnvironment(), "camel.ssl.config");
             Map<String, Object> sslProperties = resolver.getSubProperties(".");
             ConditionMessage.Builder message = ConditionMessage.forCondition("camel.ssl.config");
             if (sslProperties.size() > 0) {
                 return ConditionOutcome.match(message.because("enabled"));
-            }*/
+            }
 
-            //return ConditionOutcome.noMatch(message.because("not enabled"));
-            return ConditionOutcome.noMatch("not enabled");
+            return ConditionOutcome.noMatch(message.because("not enabled"));
         }
     }
 
