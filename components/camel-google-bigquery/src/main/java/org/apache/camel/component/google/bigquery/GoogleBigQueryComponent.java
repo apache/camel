@@ -14,16 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.google.bigquery;
 
 import java.util.Map;
 
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.bigquery.Bigquery;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
@@ -31,7 +25,6 @@ import org.apache.camel.impl.DefaultComponent;
 public class GoogleBigQueryComponent extends DefaultComponent {
     private String projectId;
     private String datasetId;
-
     private GoogleBigQueryConnectionFactory connectionFactory;
 
     public GoogleBigQueryComponent() {
@@ -62,16 +55,15 @@ public class GoogleBigQueryComponent extends DefaultComponent {
         return new GoogleBigQueryEndpoint(uri, this, configuration);
     }
 
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
-
-    public void setDatasetId(String datasetId) {
-        this.datasetId = datasetId;
-    }
-
     public String getProjectId() {
         return projectId;
+    }
+
+    /**
+     * Google Cloud Project Id
+     */
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
 
     public String getDatasetId() {
@@ -79,11 +71,12 @@ public class GoogleBigQueryComponent extends DefaultComponent {
     }
 
     /**
-     * Sets the connection factory to use:
-     * provides the ability to explicitly manage connection credentials:
-     * - the path to the key file
-     * - the Service Account Key / Email pair
+     * BigQuery Dataset Id
      */
+    public void setDatasetId(String datasetId) {
+        this.datasetId = datasetId;
+    }
+
     public GoogleBigQueryConnectionFactory getConnectionFactory() {
         if (connectionFactory == null) {
             connectionFactory = new GoogleBigQueryConnectionFactory();
@@ -91,6 +84,9 @@ public class GoogleBigQueryComponent extends DefaultComponent {
         return connectionFactory;
     }
 
+    /**
+     * ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used
+     */
     public void setConnectionFactory(GoogleBigQueryConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }

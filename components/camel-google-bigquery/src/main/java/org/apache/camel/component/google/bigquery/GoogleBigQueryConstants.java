@@ -17,8 +17,8 @@
 package org.apache.camel.component.google.bigquery;
 
 public interface GoogleBigQueryConstants {
-    String TABLE_SUFFIX = "CamelGoogleBigQuery.TableSuffix";
-    String TABLE_ID = "CamelGoogleBigQuery.TableId";
-    String INSERT_ID = "CamelGoogleBigQuery.InsertId";
-    String PARTITION_DECORATOR = "CamelGoogleBigQuery.PartitionDecorator";
+    String TABLE_SUFFIX = "CamelGoogleBigQueryTableSuffix";
+    String TABLE_ID = "CamelGoogleBigQueryTableId";
+    String INSERT_ID = "CamelGoogleBigQueryInsertId";
+    String PARTITION_DECORATOR = "CamelGoogleBigQueryPartitionDecorator";
 }
