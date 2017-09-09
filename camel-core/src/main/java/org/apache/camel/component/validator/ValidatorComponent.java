@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
  */
 public class ValidatorComponent extends UriEndpointComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI")
     private ValidatorResourceResolverFactory resourceResolverFactory;
     
     public ValidatorComponent() {
