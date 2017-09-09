@@ -183,7 +183,6 @@ follows:
 |updateCollaborationInfo |updateInfo |collaborationId, info |com.box.sdk.BoxCollaboration
 |=======================================================================
 
-[[Box-URIOptionsforcollaborations]]
 URI Options for _collaborations_
 
 
@@ -233,7 +232,6 @@ follows:
 |replyToComment |reply |commentId, message |com.box.sdk.BoxComment
 |=======================================================================
 
-[[Box-URIOptionsforcollaborations]]
 URI Options for _collaborations_
 
 
@@ -267,7 +265,6 @@ The following endpoints can be invoked with the prefix *`events`* as follows:
 |getEnterpriseEvents |events |position, after, before, [types] |java.util.List
 |=======================================================================
 
-[[Box-URIOptionsforevent-logs]]
 URI Options for _event-logs_
 
 [width="100%",cols="10%,90%",options="header"]
@@ -342,7 +339,6 @@ prefix *`files`* as follows.
 |getFileThumbnail |thumbnail |fileId, fileType, minWidth, minHeight, maxWidth, maxHeight |byte[]
 |=======================================================================
 
-[[Box-URIOptionsforfiles]]
 URI Options for _files_
 
 [width="100%",cols="10%,90%",options="header"]
@@ -443,7 +439,6 @@ The following endpoints can be invoked with the prefix
 |updateFolderInfo |updateInfo |folderId, info |com.box.sdk.BoxFolder
 |=======================================================================
 
-[[Box-URIOptionsforfolders]]
 URI Options for _folders_
 
 [width="100%",cols="10%,90%",options="header"]
@@ -516,7 +511,6 @@ follows:
 |updateGroupMembershipInfo |updateMembershipInfo |groupMemebershipId, info |com.box.sdk.BoxGroupMembership
 |=======================================================================
 
-[[Box-URIOptionsforgroups]]
 URI Options for _groups_
 
 [width="100%",cols="10%,90%",options="header"]
@@ -556,7 +550,6 @@ follows:
 |searchFolder |search |folderId, query |java.util.Collection
 |=======================================================================
 
-[[Box-URIOptionsforsearch]]
 URI Options for _search_
 
 [width="100%",cols="10%,90%",options="header"]
@@ -603,7 +596,6 @@ follows:
 |getTaskAssignmentInfo |assignmentInfo |taskAssignmentId |com.box.sdk.BoxTaskAssignment.Info
 |=======================================================================
 
-[[Box-URIOptionsfortasks]]
 URI Options for _tasks_
 
 [width="100%",cols="10%,90%",options="header"]
@@ -662,7 +654,6 @@ follows:
 |updateUserInfo |updateInfo |userId, info |com.box.sdk.BoxUser
 |=======================================================================
 
-[[Box-URIOptionsforusers]]
 URI Options for _users_
 
 [width="100%",cols="10%,90%",options="header"]
@@ -709,7 +700,6 @@ shown in the example next.
 |events |  |[startingPosition] |com.box.sdk.BoxEvent 
 |=======================================================================
 
-[[Box-URIOptionsforevents]]
 URI Options for _events_
 
 [width="100%",cols="10%,90%",options="header",]
