@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.google.bigquery;
 
 import org.apache.camel.spi.Metadata;
@@ -24,12 +23,11 @@ import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class GoogleBigQueryConfiguration {
-    @UriParam(name = "connectionFactory", description = "ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used")
+
+    @UriParam(description = "ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used")
     private GoogleBigQueryConnectionFactory connectionFactory;
-
-    @UriParam(name = "useAsInsertId", description = "Field name to use as insert id")
+    @UriParam(description = "Field name to use as insert id")
     private String useAsInsertId;
-
     @UriPath(label = "common", description = "Google Cloud Project Id") @Metadata(required = "true")
     private String projectId;
     @UriPath(label = "common", description = "BigQuery Dataset Id") @Metadata(required = "true")

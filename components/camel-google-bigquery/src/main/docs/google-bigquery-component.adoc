@@ -58,14 +58,16 @@ Service Account Email and Service Account Key can be found in the GCP JSON crede
 ### Options
 
 // component options: START
-The Google BigQuery component supports 2 options which are listed below.
+The Google BigQuery component supports 4 options which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
-| **connectionFactory** (common) | Sets the connection factory to use: provides the ability to explicitly manage connection credentials: - the path to the key file - the Service Account Key / Email pair |  | GoogleBigQueryConnection Factory
+| **projectId** (producer) | Google Cloud Project Id |  | String
+| **datasetId** (producer) | BigQuery Dataset Id |  | String
+| **connectionFactory** (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used |  | GoogleBigQuery ConnectionFactory
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
@@ -73,7 +75,7 @@ The Google BigQuery component supports 2 options which are listed below.
 // endpoint options: START
 The Google BigQuery endpoint is configured using URI syntax:
 
-    google-bigquery:projectId:datasetId[:tableId]
+    google-bigquery:projectId:datasetId:tableName
 
 with the following path and query parameters:
 
@@ -82,22 +84,18 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
-| **projectId** | *Required* Project Id |  | String
-| **datasetId** | *Required* Dataset Id |  | String
-| **tableId** | Table Id. If not supplied a table name need to be set in the exchange header |  | String
+| **projectId** | *Required* Google Cloud Project Id |  | String
+| **datasetId** | *Required* BigQuery Dataset Id |  | String
+| **tableId** | BigQuery table id |  | String
 |=======================================================================
 
-#### Query Parameters (8 parameters):
+#### Query Parameters (3 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
-| **connectionFactory** (common) | ConnectionFactory to obtain connection to BigQuery Service. If non provided the default will be used. |  | GoogleBigQueryConnection Factory
-| **loggerId** (common) | Logger ID to use when a match to the parent route required |  | String
-| **useAsInsertId** (producer) | Field in message to use as insert id. |  | String
-| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **connectionFactory** (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default will be used. |  | GoogleBigQuery ConnectionFactory
+| **useAsInsertId** (producer) | Field name to use as insert id |  | String
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END

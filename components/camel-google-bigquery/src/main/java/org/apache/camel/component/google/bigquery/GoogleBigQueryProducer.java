@@ -44,12 +44,8 @@ public class GoogleBigQueryProducer extends DefaultProducer {
 
     /**
      * The method converts a single incoming message into a List
-     *
-     * @param exchange
-     * @return
      */
     private static List<Exchange> prepareExchangeList(Exchange exchange) {
-
         List<Exchange> entryList;
 
         if (null == exchange.getProperty(Exchange.GROUPED_EXCHANGE)) {
@@ -155,7 +151,7 @@ public class GoogleBigQueryProducer extends DefaultProducer {
             apiRequest.set("template_suffix", suffix);
         }
 
-        if (log.isDebugEnabled()) {
+        if (log.isTraceEnabled()) {
             log.trace("Sending {} messages to bigquery table {}, suffix, partition",
                     apiRequestRows.size(), tableId, suffix, partitionDecorator);
         }
@@ -166,11 +162,13 @@ public class GoogleBigQueryProducer extends DefaultProducer {
             throw new Exception("InsertAll into " + tableId + " failed: " + apiResponse.getInsertErrors());
         }
 
-        if (log.isDebugEnabled()) {
+        if (log.isTraceEnabled()) {
             log.trace("Sent {} messages to bigquery table {}, suffix, partition",
-                    apiRequestRows.size(), tableId, suffix, partitionDecorator);
+                apiRequestRows.size(), tableId, suffix, partitionDecorator);
         }
-        log.debug("uploader thread/id: {} / {} . api call completed.", Thread.currentThread().getId(), exchangeId);
+        if (log.isDebugEnabled()) {
+            log.debug("uploader thread/id: {} / {} . api call completed.", Thread.currentThread().getId(), exchangeId);
+        }
         return apiRequestData.size();
     }
 
