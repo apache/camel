@@ -110,9 +110,6 @@ Number of Components: 280 in 192 JAR artifacts (17 deprecated)
 | link:camel-beanstalk/src/main/docs/beanstalk-component.adoc[Beanstalk] (camel-beanstalk) +
 `beanstalk:connectionSettings` | 2.15 | The beanstalk component is used for job retrieval and post-processing of Beanstalk jobs.
 
-| link:camel-google-bigquery/src/main/docs/bigquery-component.adoc[BigQuery] (camel-google-bigquery) +
-`bigquery:projectId:datasetId:tableName` | 2.20 | Google BigQuery data warehouse for analytics.
-
 | link:../camel-core/src/main/docs/binding-component.adoc[Binding] (camel-core) +
 `binding:bindingName:delegateUri` | 2.11 | *deprecated* The binding component is used for as a of wrapping an Endpoint in a contract with a data format.
 
@@ -274,6 +271,9 @@ Number of Components: 280 in 192 JAR artifacts (17 deprecated)
 
 | link:camel-github/src/main/docs/github-component.adoc[GitHub] (camel-github) +
 `github:type/branchName` | 2.15 | The github component is used for integrating Camel with github.
+
+| link:camel-google-bigquery/src/main/docs/google-bigquery-component.adoc[Google BigQuery] (camel-google-bigquery) +
+`google-bigquery:projectId:datasetId:tableName` | 2.20 | Google BigQuery data warehouse for analytics.
 
 | link:camel-google-calendar/src/main/docs/google-calendar-component.adoc[Google Calendar] (camel-google-calendar) +
 `google-calendar:apiName/methodName` | 2.15 | The google-calendar component provides access to Google Calendar.
