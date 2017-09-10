@@ -624,6 +624,7 @@
     <spring-batch-version>3.0.8.RELEASE</spring-batch-version>
     <spring-batch-bundle-version>3.0.8.RELEASE_1</spring-batch-bundle-version>
     <spring-boot-version>1.5.6.RELEASE</spring-boot-version>
+    <spring-boot1-version>1.5.6.RELEASE</spring-boot1-version>
     <spring-boot2-version>2.0.0.M3</spring-boot2-version>
     <!-- use same version of spring-cloud 1.2.x -->
     <spring-cloud-commons-version>1.2.3.RELEASE</spring-cloud-commons-version>
@@ -651,6 +652,7 @@
     <spring42-version>4.2.9.RELEASE</spring42-version>
     <spring43-version>4.3.10.RELEASE</spring43-version>
     <spring4-version>4.3.10.RELEASE</spring4-version>
+    <spring5-version>5.0.0.RC3</spring5-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>4.2.3.RELEASE</spring-security-version>
     <spring-security-bundle-version>4.2.3.RELEASE_1</spring-security-bundle-version>
@@ -5358,13 +5360,34 @@
       </build>
     </profile>
 
-    <!-- profiles for choosing default spring version -->
+    <!-- spring-boot2 experiment -->
     <profile>
-      <id>spring4</id>
+      <id>spring-boot2</id>
       <properties>
-        <spring-version>${spring4-version}</spring-version>
-        <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
+        <spring-boot-version>${spring-boot2-version}</spring-boot-version>
+        <spring-version>${spring5-version}</spring-version>
+        <jackson2-version>2.9.1</jackson2-version>
       </properties>
+       <repositories>
+        <repository>
+          <id>spring-milestones</id>
+          <name>Spring Milestones</name>
+          <url>https://repo.spring.io/libs-milestone</url>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>spring-milestones</id>
+          <name>Spring Milestones</name>
+          <url>https://repo.spring.io/libs-milestone</url>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
     </profile>
 
     <profile>

@@ -43,19 +43,19 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
-      <version>${spring-boot-version}</version>
+      <version>${spring-boot1-version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-configuration-processor</artifactId>
-      <version>${spring-boot-version}</version>
+      <version>${spring-boot1-version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-actuator</artifactId>
-      <version>${spring-boot-version}</version>
+      <version>${spring-boot1-version}</version>
       <optional>true</optional>
     </dependency>
 
@@ -73,7 +73,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <version>${spring-boot-version}</version>
+      <version>${spring-boot1-version}</version>
       <optional>true</optional>
     </dependency>
 
@@ -106,7 +106,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-      <version>${spring-boot-version}</version>
+      <version>${spring-boot1-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
