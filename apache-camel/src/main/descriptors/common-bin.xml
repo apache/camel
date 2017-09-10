@@ -529,6 +529,7 @@
         <include>org.apache.camel:camel-spark-starter</include>
         <include>org.apache.camel:camel-splunk-starter</include>
         <include>org.apache.camel:camel-spring-batch-starter</include>
+        <include>org.apache.camel:camel-spring-boot-common</include>
         <include>org.apache.camel:camel-spring-boot</include>
         <include>org.apache.camel:camel-spring-boot2</include>
         <include>org.apache.camel:camel-spring-boot-starter</include>

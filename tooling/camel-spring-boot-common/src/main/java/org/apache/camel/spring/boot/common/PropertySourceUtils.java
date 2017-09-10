@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.boot.util;
+package org.apache.camel.spring.boot.common;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -30,6 +30,8 @@ import org.springframework.core.env.PropertySources;
  * @author Dave Syer
  * @see PropertySource
  * @see PropertySources
+ *
+ * Source code copied from spring-boot 1.5.6.RELEASE
  */
 public abstract class PropertySourceUtils {
 

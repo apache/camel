@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.boot.util;
+package org.apache.camel.spring.boot.common;
 
 import java.util.Map;
 
@@ -29,6 +29,8 @@ import org.springframework.util.Assert;
  *
  * @author Phillip Webb
  * @see RelaxedNames
+ *
+ * Source code copied from spring-boot 1.5.6.RELEASE
  */
 public class RelaxedPropertyResolver implements PropertyResolver {
 
@@ -86,6 +88,11 @@ public class RelaxedPropertyResolver implements PropertyResolver {
             }
         }
         return defaultValue;
+    }
+
+    // not implemented in spring boot 2 and not in use by us
+    public <T> Class<T> getPropertyAsClass(String key, Class<T> targetType) {
+        return null;
     }
 
     @Override

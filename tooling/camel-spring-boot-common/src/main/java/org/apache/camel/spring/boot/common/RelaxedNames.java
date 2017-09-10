@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.boot.util;
+package org.apache.camel.spring.boot.common;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -30,6 +30,8 @@ import org.springframework.util.StringUtils;
  * @author Phillip Webb
  * @author Dave Syer
  * @see RelaxedPropertyResolver
+ *
+ * Source code copied from spring-boot 1.5.6.RELEASE
  */
 public final class RelaxedNames implements Iterable<String> {
 

@@ -42,6 +42,7 @@
     <module>spi-annotations</module>
     <module>apt</module>
     <module>camel-route-parser</module>
+    <module>camel-spring-boot-common</module>
     <module>swagger-rest-dsl-generator</module>
     <module>maven</module>
     <module>camel-manual</module>

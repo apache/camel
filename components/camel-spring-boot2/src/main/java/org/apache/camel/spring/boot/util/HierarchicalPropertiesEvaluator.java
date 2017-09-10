@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.boot.util;
 
+import org.apache.camel.spring.boot.common.RelaxedPropertyResolver;
 import org.springframework.core.env.Environment;
 
 public final class HierarchicalPropertiesEvaluator {
