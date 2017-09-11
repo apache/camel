@@ -271,7 +271,13 @@ If this option has been configured then it takes precedence over uploading as a 
 file with content from the Camel message body (message body is converted into a byte array).
 
 |`remotePath` |`false` |Folder destination on Dropbox. If the property is not set, the component
-will upload the file on a remote path equal to the local path.
+will upload the file on a remote path equal to the local path. With Windows or without an absolute 
+localPath you may run into an exception like the following:
+
+Caused by: java.lang.IllegalArgumentException: 'path': bad path: must start with "/": "C:/My/File" +
+OR +
+Caused by: java.lang.IllegalArgumentException: 'path': bad path: must start with "/": "MyFile" +
+	
 |=======================================================================
 
 #### Samples
