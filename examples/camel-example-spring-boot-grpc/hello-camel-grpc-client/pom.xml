@@ -38,13 +38,13 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-parent</artifactId>
-				<version>${project.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
+                        <dependency>
+                                <groupId>org.apache.camel</groupId>
+                                <artifactId>camel-spring-boot-dependencies</artifactId>
+                                <version>${project.version}</version>
+                                <type>pom</type>
+                                <scope>import</scope>
+                        </dependency>
 		</dependencies>
 	</dependencyManagement>
 
