@@ -46,6 +46,7 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.util.ModCountCopyOnWriteArrayList;
+import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.feature.Feature;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.interceptor.AbstractBasicInterceptorProvider;
@@ -290,7 +291,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
      */
     private void processUserResources(JAXRSServerFactoryBean sfb, List<UserResource> resources) {
         for (UserResource resource : resources) {
-            if (resource.getName() == null) {
+            if (StringUtils.isEmpty(resource.getName())) {
                 resource.setName(DefaultModelResource.class.getName());
             }
         }
