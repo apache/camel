@@ -34,8 +34,13 @@
   <name>Camel :: Platforms :: Spring-Boot :: Dependency Management :: Starter Parent</name>
 
   <properties>
-    <spring-boot2-version>2.0.0.M3</spring-boot2-version>
-    <spring5-version>5.0.0.RC3</spring5-version>
+    <!-- spring-boot -->
+    <spring-boot-version>2.0.0.M3</spring-boot-version>
+    <spring-version>5.0.0.RC3</spring-version>
+    <jackson2-version>2.9.1</jackson2-version>
+    <!-- spring-cloud -->
+    <spring-cloud-commons-version>2.0.0.M2</spring-cloud-commons-version>
+    <spring-cloud-netflix-version>2.0.0.M2</spring-cloud-netflix-version>
   </properties>
 
   <dependencies>
@@ -180,9 +185,12 @@
     <profile>
       <id>spring-boot2</id>
       <properties>
-        <spring-boot-version>${spring-boot2-version}</spring-boot-version>
-        <spring-version>${spring5-version}</spring-version>
+        <spring-boot-version>2.0.0.M3</spring-boot-version>
+        <spring-version>5.0.0.RC3</spring-version>
         <jackson2-version>2.9.1</jackson2-version>
+        <!-- spring-cloud -->
+        <spring-cloud-commons-version>2.0.0.M2</spring-cloud-commons-version>
+        <spring-cloud-netflix-version>2.0.0.M2</spring-cloud-netflix-version>
       </properties>
        <repositories>
         <repository>

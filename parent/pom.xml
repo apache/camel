@@ -5364,9 +5364,13 @@
     <profile>
       <id>spring-boot2</id>
       <properties>
+        <!-- spring-boot -->
         <spring-boot-version>${spring-boot2-version}</spring-boot-version>
         <spring-version>${spring5-version}</spring-version>
         <jackson2-version>2.9.1</jackson2-version>
+        <!-- spring-cloud -->
+        <spring-cloud-commons-version>2.0.0.M2</spring-cloud-commons-version>
+        <spring-cloud-netflix-version>2.0.0.M2</spring-cloud-netflix-version>
       </properties>
        <repositories>
         <repository>

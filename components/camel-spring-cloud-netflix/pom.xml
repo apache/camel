@@ -121,6 +121,12 @@
       <version>${spring-boot-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.reactivex</groupId>
+      <artifactId>rxjava</artifactId>
+      <version>${rxjava-version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
