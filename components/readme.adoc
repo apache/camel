@@ -488,11 +488,11 @@ Number of Components: 280 in 192 JAR artifacts (17 deprecated)
 | link:camel-kubernetes/src/main/docs/kubernetes-secrets-component.adoc[Kubernetes Secrets] (camel-kubernetes) +
 `kubernetes-secrets:masterUrl` | 2.17 | The Kubernetes Secrets component provides a producer to execute kubernetes secret operations.
 
+| link:camel-kubernetes/src/main/docs/kubernetes-service-accounts-component.adoc[Kubernetes Service Account] (camel-kubernetes) +
+`kubernetes-service-accounts:masterUrl` | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service account operations.
+
 | link:camel-kubernetes/src/main/docs/kubernetes-services-component.adoc[Kubernetes Services] (camel-kubernetes) +
 `kubernetes-services:masterUrl` | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service operations and a consumer to consume service events.
-
-| link:camel-kubernetes/src/main/docs/kubernetes-service-account-component.adoc[Kubernetes Servkce Account] (camel-kubernetes) +
-`kubernetes-service-account:masterUrl` | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service account operations.
 
 | link:../camel-core/src/main/docs/language-component.adoc[Language] (camel-core) +
 `language:languageName:resourceUri` | 2.5 | The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.
