@@ -21,6 +21,8 @@ import com.hazelcast.core.HazelcastInstance;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+// Needed by customizer
+
 /**
  * The hazelcast component allows you to work with the Hazelcast distributed
  * data grid / cache.
