@@ -44,8 +44,6 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "serviceChooserConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceCallServiceChooserConfiguration extends IdentifiedType implements ServiceChooserFactory {
-    private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/cloud/";
-
     @XmlTransient
     private final ServiceCallDefinition parent;
     @XmlTransient
@@ -146,9 +144,9 @@ public class ServiceCallServiceChooserConfiguration extends IdentifiedType imple
             Class<?> type;
             try {
                 // Then use Service factory.
-                type = camelContext.getFactoryFinder(RESOURCE_PATH).findClass(factoryKey);
+                type = camelContext.getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey);
             } catch (Exception e) {
-                throw new NoFactoryAvailableException(RESOURCE_PATH + factoryKey, e);
+                throw new NoFactoryAvailableException(ServiceCallDefinitionConstants.RESOURCE_PATH + factoryKey, e);
             }
 
             if (type != null) {
@@ -163,7 +161,28 @@ public class ServiceCallServiceChooserConfiguration extends IdentifiedType imple
             try {
                 Map<String, Object> parameters = new HashMap<>();
                 IntrospectionSupport.getProperties(this, parameters, null, false);
+
+                parameters.replaceAll(
+                    (k, v) -> {
+                        if (v != null && v instanceof String) {
+                            try {
+                                v = camelContext.resolvePropertyPlaceholders((String) v);
+                            } catch (Exception e) {
+                                throw new IllegalArgumentException(
+                                    String.format("Exception while resolving %s (%s)", k, v.toString()),
+                                    e
+                                );
+                            }
+                        }
+
+                        return v;
+                    }
+                );
+
+                // Convert properties to Map<String, String>
                 parameters.put("properties", getPropertiesAsMap(camelContext));
+
+                postProcessFactoryParameters(camelContext, parameters);
 
                 IntrospectionSupport.setProperties(factory, parameters);
 

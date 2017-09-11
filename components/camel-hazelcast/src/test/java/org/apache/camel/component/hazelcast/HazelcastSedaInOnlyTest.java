@@ -50,9 +50,9 @@ public class HazelcastSedaInOnlyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").to("hazelcast:seda:foo");
+                from("direct:foo").to("hazelcast-seda:foo");
 
-                from("hazelcast:seda:foo").to("mock:result");
+                from("hazelcast-seda:foo").to("mock:result");
             }
         };
     }

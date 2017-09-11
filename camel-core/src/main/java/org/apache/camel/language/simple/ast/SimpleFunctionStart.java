@@ -21,6 +21,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -28,11 +29,14 @@ import org.apache.camel.util.StringHelper;
  */
 public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
 
-    private CompositeNodes block;
+    // use caches to avoid re-parsing the same expressions over and over again
+    private final LRUCache<String, Expression> cacheExpression;
+    private final CompositeNodes block;
 
-    public SimpleFunctionStart(SimpleToken token) {
+    public SimpleFunctionStart(SimpleToken token, LRUCache<String, Expression> cacheExpression) {
         super(token);
         this.block = new CompositeNodes(token);
+        this.cacheExpression = cacheExpression;
     }
 
     public boolean lazyEval(SimpleNode child) {
@@ -58,7 +62,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
     }
 
     private Expression doCreateLiteralExpression(final String expression) {
-        SimpleFunctionExpression function = new SimpleFunctionExpression(this.getToken());
+        SimpleFunctionExpression function = new SimpleFunctionExpression(this.getToken(), cacheExpression);
         LiteralNode literal = (LiteralNode) block.getChildren().get(0);
         function.addText(literal.getText());
         return function.createExpression(expression);
@@ -109,7 +113,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                 // we have now concat the block as a String which contains the function expression
                 // which we then need to evaluate as a function
                 String exp = sb.toString();
-                SimpleFunctionExpression function = new SimpleFunctionExpression(token);
+                SimpleFunctionExpression function = new SimpleFunctionExpression(token, cacheExpression);
                 function.addText(exp);
                 try {
                     return function.createExpression(exp).evaluate(exchange, type);

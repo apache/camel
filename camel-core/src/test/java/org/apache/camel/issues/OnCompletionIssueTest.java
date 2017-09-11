@@ -54,8 +54,6 @@ public class OnCompletionIssueTest extends ContextTestSupport {
             assertIsInstanceOf(RollbackExchangeException.class, e.getCause());
         }
 
-        setAssertPeriod(2000);
-
         assertMockEndpointsSatisfied();
     }
 

@@ -26,6 +26,7 @@ import javax.net.ssl.SSLContext;
 import javax.servlet.DispatcherType;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -50,7 +51,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Component for Jetty Cometd
  */
-public class CometdComponent extends UriEndpointComponent {
+public class CometdComponent extends UriEndpointComponent implements SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(CometdComponent.class);
 
     private final Map<String, ConnectorRef> connectors = new LinkedHashMap<String, ConnectorRef>();
@@ -68,6 +69,8 @@ public class CometdComponent extends UriEndpointComponent {
     private List<BayeuxServer.Extension> extensions;
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     class ConnectorRef {
         Connector connector;
@@ -224,9 +227,13 @@ public class CometdComponent extends UriEndpointComponent {
 
     protected ServerConnector getSslSocketConnector(Server server) throws Exception {
         ServerConnector sslSocketConnector = null;
-        if (sslContextParameters != null) {
+        SSLContextParameters sslParams = this.sslContextParameters;
+        if (sslParams == null) {
+            sslParams = retrieveGlobalSslContextParameters();
+        }
+        if (sslParams != null) {
             SslContextFactory sslContextFactory = new CometdComponentSslContextFactory();
-            sslContextFactory.setSslContext(sslContextParameters.createSSLContext(getCamelContext()));
+            sslContextFactory.setSslContext(sslParams.createSSLContext(getCamelContext()));
             sslSocketConnector = new ServerConnector(server, sslContextFactory);
         } else {
             SslContextFactory sslContextFactory = new SslContextFactory();
@@ -319,6 +326,19 @@ public class CometdComponent extends UriEndpointComponent {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     protected Server createServer() throws Exception {

@@ -33,6 +33,7 @@ import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -307,7 +308,10 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         }
         if ("R".equals(dataField.align())) {
             return leftTrim(token, myPaddingChar);
+        } else if ("L".equals(dataField.align())) {
+            return rightTrim(token, myPaddingChar);
         } else {
+            token = leftTrim(token, myPaddingChar);
             return rightTrim(token, myPaddingChar);
         }
     }
@@ -404,6 +408,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     // Get field value
                     Object value = field.get(obj);
 
+                    // If the field value is empty, populate it with the default value
+                    if (ObjectHelper.isNotEmpty(datafield.defaultValue()) && ObjectHelper.isEmpty(value)) {
+                        value = datafield.defaultValue();
+                    }
+
                     result = formatString(format, value);
 
                     // trim if enabled
@@ -450,9 +459,12 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                             } else if (align.contains("L")) {
                                 temp.append(result);
                                 temp.append(generatePaddingChars(padChar, fieldLength, result.length()));
+                            } else if (align.contains("B")) {
+                                temp.append(generatePaddingChars(padChar, fieldLength, result.length()));
+                                temp.append(result);
                             } else {
                                 throw new IllegalArgumentException("Alignment for the field: " + field.getName()
-                                        + " must be equal to R for RIGHT or L for LEFT");
+                                        + " must be equal to R for RIGHT or L for LEFT or B for trimming both ends");
                             }
 
                             result = temp.toString();

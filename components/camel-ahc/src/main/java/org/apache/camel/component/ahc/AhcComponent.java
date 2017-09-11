@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  *  To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>
  */
-public class AhcComponent extends HeaderFilterStrategyComponent {
+public class AhcComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
     
     private static final Logger LOG = LoggerFactory.getLogger(AhcComponent.class);
     
@@ -54,6 +55,8 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
     private AhcBinding binding;
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     private boolean allowJavaSerializedObject;
 
@@ -65,6 +68,11 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String addressUri = createAddressUri(uri, remaining);
 
+        SSLContextParameters ssl = getSslContextParameters();
+        if (ssl == null) {
+            ssl = retrieveGlobalSslContextParameters();
+        }
+
         // Do not set the HTTP URI because we still have all of the Camel internal
         // parameters in the URI at this point.
         AhcEndpoint endpoint = createAhcEndpoint(uri, this, null);
@@ -72,7 +80,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
         endpoint.setClient(getClient());
         endpoint.setClientConfig(getClientConfig());
         endpoint.setBinding(getBinding());
-        endpoint.setSslContextParameters(getSslContextParameters());
+        endpoint.setSslContextParameters(ssl);
         
         setProperties(endpoint, parameters);
 
@@ -203,6 +211,19 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
      */
     public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     protected String createAddressUri(String uri, String remaining) {

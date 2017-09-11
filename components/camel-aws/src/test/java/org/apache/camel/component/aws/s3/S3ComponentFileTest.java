@@ -61,7 +61,7 @@ public class S3ComponentFileTest extends CamelTestSupport {
     public void setup() throws Exception {
         super.setUp();
 
-        testFile = FileUtil.createTempFile("test", "file");
+        testFile = FileUtil.createTempFile("test", "file", null);
 
         FileWriter writer = new FileWriter(testFile);
         writer.write("This is my bucket content.");

@@ -134,6 +134,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         merchandise.setName("Test Merchandise");
         merchandise.setPrice__c(10.0);
         merchandise.setTotal_Inventory__c(100.0);
+        merchandise.setDescription__c("Test Merchandise!");
         final CreateSObjectResult result = template().requestBody("salesforce:createSObject", merchandise,
             CreateSObjectResult.class);
 
@@ -503,6 +504,14 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
             assertEquals(404, noSuchObject.getStatusCode());
             assertEquals(1, noSuchObject.getErrors().size());
         }
+    }
+
+    @Test
+    public void testFetchingGlobalObjects() {
+        final GlobalObjects globalObjects = template().requestBody("salesforce:getGlobalObjects", null, GlobalObjects.class);
+
+        assertNotNull(globalObjects);
+        assertFalse(globalObjects.getSobjects().isEmpty());
     }
 
     @Override

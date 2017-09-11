@@ -243,8 +243,14 @@ public class MethodInfo {
         return method.toString();
     }
 
-    public MethodInvocation createMethodInvocation(final Object pojo, final Exchange exchange) {
-        final Object[] arguments = parametersExpression.evaluate(exchange, Object[].class);
+    public MethodInvocation createMethodInvocation(final Object pojo, boolean hasParameters, final Exchange exchange) {
+        final Object[] arguments;
+        if (hasParameters) {
+            arguments = parametersExpression.evaluate(exchange, Object[].class);
+        } else {
+            arguments = null;
+        }
+
         return new MethodInvocation() {
             public Method getMethod() {
                 return method;
@@ -376,7 +382,7 @@ public class MethodInfo {
         boolean copyNeeded = !(old.getClass().equals(DefaultMessage.class));
 
         if (copyNeeded) {
-            Message msg = new DefaultMessage();
+            Message msg = new DefaultMessage(exchange.getContext());
             msg.copyFromWithNewBody(old, result);
 
             // replace message on exchange
@@ -632,22 +638,19 @@ public class MethodInfo {
         @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             Object body = exchange.getIn().getBody();
-            boolean multiParameterArray = false;
-            if (exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY) != null) {
-                multiParameterArray = exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, Boolean.class);
-                if (multiParameterArray) {
-                    // Just change the message body to an Object array
-                    if (!(body instanceof Object[])) {
-                        body = exchange.getIn().getBody(Object[].class);
-                    }
+            boolean multiParameterArray = exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, false, boolean.class);
+            if (multiParameterArray) {
+                // Just change the message body to an Object array
+                if (!(body instanceof Object[])) {
+                    body = exchange.getIn().getBody(Object[].class);
                 }
             }
 
             // if there was an explicit method name to invoke, then we should support using
             // any provided parameter values in the method name
-            String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, "", String.class);
+            String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
             // the parameter values is between the parenthesis
-            String methodParameters = ObjectHelper.betweenOuterPair(methodName, '(', ')');
+            String methodParameters = StringHelper.betweenOuterPair(methodName, '(', ')');
             // use an iterator to walk the parameter values
             Iterator<?> it = null;
             if (methodParameters != null) {
@@ -661,8 +664,12 @@ public class MethodInfo {
             // we need to do this before the expressions gets evaluated as it may contain
             // a @Bean expression which would by mistake read these headers. So the headers
             // must be removed at this point of time
-            exchange.getIn().removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
-            exchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
+            if (multiParameterArray) {
+                exchange.getIn().removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
+            }
+            if (methodName != null) {
+                exchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
+            }
 
             Object[] answer = evaluateParameterExpressions(exchange, body, multiParameterArray, it);
             return (T) answer;

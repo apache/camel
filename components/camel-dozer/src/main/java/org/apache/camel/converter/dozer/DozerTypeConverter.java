@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.support.TypeConverterSupport;
-import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.dozer.metadata.ClassMappingMetadata;
 import org.slf4j.Logger;
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * types. <code>DozerTypeConverter</code>s are created and installed into a
  * {@link CamelContext} by an instance of {@link DozerTypeConverterLoader}.
  * <p>
- * See <a href="http://dozer.sourceforge.net">dozer project page</a> or more information on configuring Dozer
+ * See <a href="https://github.com/DozerMapper/dozer">dozer project page</a> or more information on configuring Dozer
  *
  * @see DozerTypeConverterLoader
  */
@@ -41,13 +40,13 @@ public class DozerTypeConverter extends TypeConverterSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DozerTypeConverter.class);
 
-    private final DozerBeanMapper mapper;
+    private final Mapper mapper;
 
-    public DozerTypeConverter(DozerBeanMapper mapper) {
+    public DozerTypeConverter(Mapper mapper) {
         this.mapper = mapper;
     }
 
-    public DozerBeanMapper getMapper() {
+    public Mapper getMapper() {
         return mapper;
     }
 

@@ -59,7 +59,7 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
                 onException(IllegalArgumentException.class)
                     .to("mock:error");
 
-                from("file://target/movefile?move=done").process(new Processor() {
+                from("file://target/movefile?initialDelay=0&delay=10&move=done").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         throw new IllegalArgumentException("Forced by unittest");
                     }

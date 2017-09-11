@@ -21,7 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.model.Constants;
 import org.apache.camel.util.jndi.JndiTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,7 +34,7 @@ public class LogListenerTest {
         CamelContext context = createCamelContext();
         MockEndpoint mock = context.getEndpoint("mock:foo", MockEndpoint.class);
         mock.expectedMessageCount(1);
-        context.addlogListener((exchange, camelLogger, message) -> {
+        context.addLogListener((exchange, camelLogger, message) -> {
             Assert.assertEquals("Exchange[ExchangePattern: InOnly, BodyType: String, Body: hello]", message);
             listenerFired = true;
             return message + " - modified by listener";

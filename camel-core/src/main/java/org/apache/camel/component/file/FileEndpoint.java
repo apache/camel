@@ -140,7 +140,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     public Exchange createExchange(GenericFile<File> file) {
         Exchange exchange = createExchange();
         if (file != null) {
-            file.bindToExchange(exchange);
+            file.bindToExchange(exchange, probeContentType);
         }
         return exchange;
     }
@@ -238,7 +238,6 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     public void setProbeContentType(boolean probeContentType) {
         this.probeContentType = probeContentType;
     }
-
 
     public String getExtendedAttributes() {
         return extendedAttributes;

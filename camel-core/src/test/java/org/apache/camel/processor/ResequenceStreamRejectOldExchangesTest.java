@@ -61,7 +61,6 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    
     public void testOutOfSequenceAfterCapacityReachedComplex() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("A", "D", "E", "F");
         getMockEndpoint("mock:error").expectedBodiesReceived("B", "C");
@@ -70,7 +69,7 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "D", "seqno", 4);
         template.sendBodyAndHeader("direct:start", "A", "seqno", 1);
 
-        Thread.sleep(500);
+        Thread.sleep(100);
 
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
@@ -87,7 +86,7 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
 
                 from("direct:start")
                     .onException(MessageRejectedException.class).maximumRedeliveries(0).handled(true).to("mock:error").end()
-                    .resequence(header("seqno")).stream().capacity(3).rejectOld()
+                    .resequence(header("seqno")).stream().capacity(3).rejectOld().timeout(50).deliveryAttemptInterval(10) // use low timeout to run faster
                     .to("mock:result");
             }
         };

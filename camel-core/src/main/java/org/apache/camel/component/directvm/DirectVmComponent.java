@@ -43,6 +43,7 @@ public class DirectVmComponent extends UriEndpointComponent {
     private boolean block;
     @Metadata(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
+    @Metadata(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean propagateProperties = true;

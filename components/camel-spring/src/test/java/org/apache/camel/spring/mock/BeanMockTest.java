@@ -24,12 +24,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version 
  */
 public class BeanMockTest extends ApplicationContextTestSupport {
+
     public void testAssertionsUsingBean() throws Exception {
         MyAssertions bean = getMandatoryBean(MyAssertions.class, "myBean");
         bean.assertEndpointsValid();
-
-        // give time for file consumer to stop properly
-        Thread.sleep(20);
     }
 
     protected AbstractXmlApplicationContext createApplicationContext() {

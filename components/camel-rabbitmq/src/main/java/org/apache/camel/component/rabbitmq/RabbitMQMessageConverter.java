@@ -230,7 +230,7 @@ public class RabbitMQMessageConverter {
                 // Use the existing message so we keep the headers
                 message = camelExchange.getIn();
             } else {
-                message = new DefaultMessage();
+                message = new DefaultMessage(camelExchange.getContext());
                 camelExchange.setIn(message);
             }
         }

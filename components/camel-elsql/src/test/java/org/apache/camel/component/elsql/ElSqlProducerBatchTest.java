@@ -69,6 +69,26 @@ public class ElSqlProducerBatchTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
     }
+    
+    @Test
+    public void testNonBatchMode() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).header(SqlConstants.SQL_UPDATE_COUNT).isEqualTo(1);
+        mock.message(0).header("id").isEqualTo("4");
+        mock.message(0).header("license").isEqualTo("GNU");
+        mock.message(0).header("project").isEqualTo("nonBatch");
+        
+        Map<String, Object> headers = new HashMap<>();       
+        headers.put("id", "4");
+        headers.put("license", "GNU");
+        headers.put("project", "nonBatch");
+        
+        template.sendBodyAndHeaders("direct:nonBatch", "", headers);
+
+        mock.assertIsSatisfied();
+    }
+
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -77,6 +97,10 @@ public class ElSqlProducerBatchTest extends CamelTestSupport {
                 
                 from("direct:batch")
                         .to("elsql:insertProject:elsql/projects.elsql?dataSource=#dataSource&batch=true")
+                        .to("mock:result");
+                
+                from("direct:nonBatch")
+                        .to("elsql:insertProject:elsql/projects.elsql?dataSource=#dataSource")
                         .to("mock:result");
 
             }

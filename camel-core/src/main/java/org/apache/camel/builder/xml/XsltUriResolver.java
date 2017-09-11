@@ -32,13 +32,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Camel specific {@link javax.xml.transform.URIResolver} which is capable of loading files
- * from the classpath and file system.
+ * from classpath, file system and more.
  * <p/>
- * Use prefix <tt>classpath:</tt> or <tt>file:</tt> to denote either classpath or file system.
- * If no prefix is provided then the prefix from the <tt>location</tt> parameter is used.
- * If it neither has a prefix then <tt>classpath:</tt> is used.
- * <p/>
- * This implementation <b>cannot</b> load files over http.
+ * You can prefix with: classpath, file, http, ref, or bean.
+ * classpath, file and http loads the resource using these protocols (classpath is default).
+ * ref will lookup the resource in the registry.
+ * bean will call a method on a bean to be used as the resource.
+ * For bean you can specify the method name after dot, eg bean:myBean.myMethod
  *
  * @version 
  */

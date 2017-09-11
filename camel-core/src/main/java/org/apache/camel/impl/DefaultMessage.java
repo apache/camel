@@ -24,9 +24,10 @@ import java.util.function.Supplier;
 import javax.activation.DataHandler;
 
 import org.apache.camel.Attachment;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.util.AttachmentMap;
-import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -37,6 +38,8 @@ import org.apache.camel.util.ObjectHelper;
  * This allows us to be able to lookup headers using case insensitive keys, making it easier for end users
  * as they do not have to be worried about using exact keys.
  * See more details at {@link org.apache.camel.util.CaseInsensitiveMap}.
+ * The implementation of the map can be configured by the {@link HeadersMapFactory} which can be set
+ * on the {@link CamelContext}. The default implementation uses the {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
  *
  * @version 
  */
@@ -45,6 +48,17 @@ public class DefaultMessage extends MessageSupport {
     private Map<String, Object> headers;
     private Map<String, DataHandler> attachments;
     private Map<String, Attachment> attachmentObjects;
+
+    /**
+     * @deprecated use {@link #DefaultMessage(CamelContext)}
+     */
+    @Deprecated
+    public DefaultMessage() {
+    }
+
+    public DefaultMessage(CamelContext camelContext) {
+        setCamelContext(camelContext);
+    }
 
     public boolean isFault() {
         return fault;
@@ -79,7 +93,7 @@ public class DefaultMessage extends MessageSupport {
         Object value = getHeader(name);
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class.isAssignableFrom(type)) {
+            if (boolean.class == type) {
                 return (T) Boolean.FALSE;
             }
             return null;
@@ -104,7 +118,7 @@ public class DefaultMessage extends MessageSupport {
         Object value = getHeader(name, defaultValue);
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class.isAssignableFrom(type)) {
+            if (boolean.class == type) {
                 return (T) Boolean.FALSE;
             }
             return null;
@@ -132,7 +146,7 @@ public class DefaultMessage extends MessageSupport {
         Object value = getHeader(name, defaultValueSupplier);
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class.isAssignableFrom(type)) {
+            if (boolean.class == type) {
                 return (T) Boolean.FALSE;
             }
             return null;
@@ -204,11 +218,13 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public void setHeaders(Map<String, Object> headers) {
-        if (headers instanceof CaseInsensitiveMap) {
+        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
+
+        if (getCamelContext().getHeadersMapFactory().isInstanceOf(headers)) {
             this.headers = headers;
         } else {
-            // wrap it in a case insensitive map
-            this.headers = new CaseInsensitiveMap(headers);
+            // create a new map
+            this.headers = getCamelContext().getHeadersMapFactory().newMap(headers);
         }
     }
 
@@ -221,7 +237,9 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public DefaultMessage newInstance() {
-        return new DefaultMessage();
+        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
+
+        return new DefaultMessage(getCamelContext());
     }
 
     /**
@@ -233,7 +251,9 @@ public class DefaultMessage extends MessageSupport {
      *         the underlying inbound transport
      */
     protected Map<String, Object> createHeaders() {
-        Map<String, Object> map = new CaseInsensitiveMap();
+        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
+
+        Map<String, Object> map = getCamelContext().getHeadersMapFactory().newMap();
         populateInitialHeaders(map);
         return map;
     }

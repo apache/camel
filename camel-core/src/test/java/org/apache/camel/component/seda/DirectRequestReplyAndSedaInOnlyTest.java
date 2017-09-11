@@ -44,7 +44,7 @@ public class DirectRequestReplyAndSedaInOnlyTest extends ContextTestSupport {
                 // In EIP patterns the WireTap pattern is what this would be
                 from("direct:start").transform(constant("Bye World")).inOnly("seda:log");
 
-                from("seda:log").delay(1000).transform(body().prepend("Logging: ")).to("log:log", "mock:log");
+                from("seda:log").transform(body().prepend("Logging: ")).to("log:log", "mock:log");
             }
         };
     }

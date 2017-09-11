@@ -25,33 +25,47 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
 import org.apache.camel.component.ignite.ClusterGroupExpression;
 import org.apache.camel.component.ignite.IgniteComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCompute;
 
 /**
- * Ignite Compute endpoint.
+ * The Ignite Compute endpoint is one of camel-ignite endpoints which allows you to run
+ * <a href="https://apacheignite.readme.io/docs/compute-grid">compute operations</a>
+ * on the cluster by passing in an IgniteCallable, an IgniteRunnable, an IgniteClosure,
+ * or collections of them, along with their parameters if necessary.
+ * This endpoint only supports producers.
  */
-@UriEndpoint(scheme = "ignite:compute", title = "Ignite Compute", syntax = "ignite:compute:[endpointId]", label = "nosql,cache,compute", producerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-compute", title = "Ignite Compute", syntax = "ignite-compute:endpointId", label = "nosql,cache,compute", producerOnly = true)
 public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
 
-    @UriParam
+    @UriPath @Metadata(required = "true")
+    private String endpointId;
+
+    @UriParam(label = "producer")
     private ClusterGroupExpression clusterGroupExpression;
 
-    @UriParam
+    @UriParam(label = "producer") @Metadata(required = "true")
     private IgniteComputeExecutionType executionType;
 
-    @UriParam
+    @UriParam(label = "producer")
     private String taskName;
 
-    @UriParam
+    @UriParam(label = "producer")
     private String computeName;
 
-    @UriParam
+    @UriParam(label = "producer")
     private Long timeoutMillis;
 
+    @Deprecated
     public IgniteComputeEndpoint(String uri, URI remainingUri, Map<String, Object> parameters, IgniteComponent igniteComponent) throws ClassNotFoundException {
+        super(uri, igniteComponent);
+    }
+
+    public IgniteComputeEndpoint(String uri, String remaining, Map<String, Object> parameters, IgniteComputeComponent igniteComponent) throws ClassNotFoundException {
         super(uri, igniteComponent);
     }
 
@@ -81,6 +95,42 @@ public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
+     * Gets the endpoint ID.
+     * 
+     * @return endpoint ID (not used)
+     */
+    public String getEndpointId() {
+        return endpointId;
+    }
+
+    /**
+     * The endpoint ID (not used).
+     * 
+     * @param endpointId endpoint ID (not used)
+     */
+    public void setEndpointId(String endpointId) {
+        this.endpointId = endpointId;
+    }
+
+    /**
+     * Gets the cluster group expression.
+     * 
+     * @return cluster group expression
+     */
+    public ClusterGroupExpression getClusterGroupExpression() {
+        return clusterGroupExpression;
+    }
+
+    /**
+     * An expression that returns the Cluster Group for the IgniteCompute instance.
+     * 
+     * @param clusterGroupExpression cluster group expression
+     */
+    public void setClusterGroupExpression(ClusterGroupExpression clusterGroupExpression) {
+        this.clusterGroupExpression = clusterGroupExpression;
+    }
+
+    /**
      * Gets the execution type of this producer.
      * 
      * @return
@@ -90,7 +140,9 @@ public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Sets the execution type of this producer.
+     * The compute operation to perform. Possible values: CALL, BROADCAST, APPLY,
+     *  EXECUTE, RUN, AFFINITY_CALL, AFFINITY_RUN.
+     * The component expects different payload types depending on the operation.
      * 
      * @param executionType
      */
@@ -108,7 +160,7 @@ public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Sets the task name, only applicable if using the {@link IgniteComputeExecutionType#EXECUTE} execution type.
+     * The task name, only applicable if using the {@link IgniteComputeExecutionType#EXECUTE} execution type.
      * 
      * @param taskName
      */
@@ -126,7 +178,7 @@ public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Sets the name of the compute job, which will be set via {@link IgniteCompute#withName(String)}.
+     * The name of the compute job, which will be set via {@link IgniteCompute#withName(String)}.
      * 
      * @param computeName
      */
@@ -144,7 +196,7 @@ public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Sets the timeout interval for triggered jobs, in milliseconds, which will be set via {@link IgniteCompute#withTimeout(long)}.
+     * The timeout interval for triggered jobs, in milliseconds, which will be set via {@link IgniteCompute#withTimeout(long)}.
      * 
      * @param timeoutMillis
      */

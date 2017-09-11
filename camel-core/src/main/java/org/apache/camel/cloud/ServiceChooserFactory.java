@@ -16,17 +16,12 @@
  */
 package org.apache.camel.cloud;
 
-import org.apache.camel.CamelContext;
-
 /**
  * A factory to create ServiceChooser
  *
+ * @see ServiceFactory
  * @see ServiceChooser
  */
-public interface ServiceChooserFactory {
-
-    /**
-     * Creates an instance of a ServiceChooser.
-     */
-    ServiceChooser newInstance(CamelContext camelContext) throws Exception;
+@FunctionalInterface
+public interface ServiceChooserFactory extends ServiceFactory<ServiceChooser> {
 }

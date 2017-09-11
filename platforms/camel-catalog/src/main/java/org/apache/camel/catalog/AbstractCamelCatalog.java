@@ -67,6 +67,7 @@ public abstract class AbstractCamelCatalog {
     // CHECKSTYLE:OFF
 
     private static final Pattern SYNTAX_PATTERN = Pattern.compile("(\\w+)");
+    private static final Pattern COMPONENT_SYNTAX_PARSER = Pattern.compile("([^\\w-]*)([\\w-]+)");
 
     private SuggestionStrategy suggestionStrategy;
     private JSonSchemaResolver jsonSchemaResolver;
@@ -879,15 +880,15 @@ public abstract class AbstractCamelCatalog {
         }
 
         // grab the syntax
-        String syntax = null;
+        String originalSyntax = null;
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
         for (Map<String, String> row : rows) {
             if (row.containsKey("syntax")) {
-                syntax = row.get("syntax");
+                originalSyntax = row.get("syntax");
                 break;
             }
         }
-        if (syntax == null) {
+        if (originalSyntax == null) {
             throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
         }
 
@@ -897,20 +898,19 @@ public abstract class AbstractCamelCatalog {
         rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
         // clip the scheme from the syntax
-        syntax = after(syntax, ":");
-
-        String originalSyntax = syntax;
+        String syntax = "";
+        if (originalSyntax.contains(":")) {
+            originalSyntax = after(originalSyntax, ":");
+        }
 
         // build at first according to syntax (use a tree map as we want the uri options sorted)
-        Map<String, String> copy = new TreeMap<String, String>();
-        for (Map.Entry<String, String> entry : properties.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue() != null ? entry.getValue() : "";
-            if (syntax != null && syntax.contains(key)) {
-                syntax = syntax.replace(key, value);
-            } else {
-                copy.put(key, value);
-            }
+        Map<String, String> copy = new TreeMap<>(properties);
+        Matcher syntaxMatcher = COMPONENT_SYNTAX_PARSER.matcher(originalSyntax);
+        while (syntaxMatcher.find()) {
+            syntax += syntaxMatcher.group(1);
+            String propertyName = syntaxMatcher.group(2);
+            String propertyValue = copy.remove(propertyName);
+            syntax += propertyValue != null ? propertyValue : propertyName;
         }
 
         // do we have all the options the original syntax needs (easy way)
@@ -919,8 +919,8 @@ public abstract class AbstractCamelCatalog {
 
         // build endpoint uri
         StringBuilder sb = new StringBuilder();
-        sb.append(scheme);
-        sb.append(":");
+        // add scheme later as we need to take care if there is any context-path or query parameters which
+        // affect how the URI should be constructed
 
         if (hasAllKeys) {
             // we have all the keys for the syntax so we can build the uri the easy way
@@ -1020,7 +1020,18 @@ public abstract class AbstractCamelCatalog {
             }
         }
 
-        return sb.toString();
+        String remainder = sb.toString();
+        boolean queryOnly = remainder.startsWith("?");
+        if (queryOnly) {
+            // it has only query parameters
+            return scheme + remainder;
+        } else if (!remainder.isEmpty()) {
+            // it has context path and possible query parameters
+            return scheme + ":" + remainder;
+        } else {
+            // its empty without anything
+            return scheme;
+        }
     }
 
     @Deprecated
@@ -1055,22 +1066,24 @@ public abstract class AbstractCamelCatalog {
         // build tokens between the separators
         List<String> tokens = new ArrayList<>();
 
-        String current = "";
-        for (int i = 0; i < syntax.length(); i++) {
-            char ch = syntax.charAt(i);
-            if (Character.isLetterOrDigit(ch)) {
-                current += ch;
-            } else {
-                // reset for new current tokens
-                if (current.length() > 0) {
-                    tokens.add(current);
-                    current = "";
+        if (syntax != null) {
+            String current = "";
+            for (int i = 0; i < syntax.length(); i++) {
+                char ch = syntax.charAt(i);
+                if (Character.isLetterOrDigit(ch)) {
+                    current += ch;
+                } else {
+                    // reset for new current tokens
+                    if (current.length() > 0) {
+                        tokens.add(current);
+                        current = "";
+                    }
                 }
             }
-        }
-        // anything left over?
-        if (current.length() > 0) {
-            tokens.add(current);
+            // anything left over?
+            if (current.length() > 0) {
+                tokens.add(current);
+            }
         }
 
         return tokens.toArray(new String[tokens.size()]);

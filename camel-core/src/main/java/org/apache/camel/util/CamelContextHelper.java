@@ -268,6 +268,37 @@ public final class CamelContextHelper {
     }
 
     /**
+     * Gets the maximum simple cache size.
+     * <p/>
+     * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_SIMPLE_CACHE_SIZE}.
+     * If no property has been set, then it will fallback to return a size of 1000.
+     *
+     * @param camelContext the camel context
+     * @return the maximum cache size
+     * @throws IllegalArgumentException is thrown if the property is illegal
+     */
+    public static int getMaximumSimpleCacheSize(CamelContext camelContext) throws IllegalArgumentException {
+        if (camelContext != null) {
+            String s = camelContext.getGlobalOption(Exchange.MAXIMUM_SIMPLE_CACHE_SIZE);
+            if (s != null) {
+                // we cannot use Camel type converters as they may not be ready this early
+                try {
+                    Integer size = Integer.valueOf(s);
+                    if (size == null || size <= 0) {
+                        throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_SIMPLE_CACHE_SIZE + " must be a positive number, was: " + s);
+                    }
+                    return size;
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_SIMPLE_CACHE_SIZE + " must be a positive number, was: " + s, e);
+                }
+            }
+        }
+
+        // 1000 is the default fallback
+        return 1000;
+    }
+
+    /**
      * Gets the maximum transformer cache size.
      * <p/>
      * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_TRANSFORMER_CACHE_SIZE}.
@@ -735,5 +766,4 @@ public final class CamelContextHelper {
             }
         }
     }
-
 }

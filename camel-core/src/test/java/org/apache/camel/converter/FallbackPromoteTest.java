@@ -24,6 +24,11 @@ import org.apache.camel.TypeConverter;
  */
 public class FallbackPromoteTest extends ContextTestSupport {
 
+    @Override
+    protected boolean isLoadTypeConverters() {
+        return true;
+    }
+
     public void testFallbackPromote() throws Exception {
         MyCoolBean cool = new MyCoolBean();
         cool.setCool("Camel rocks");

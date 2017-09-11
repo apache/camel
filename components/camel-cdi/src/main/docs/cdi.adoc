@@ -64,6 +64,26 @@ Besides, `RouteContainer` beans are also automatically collected,
 instantiated and added to the `CamelContext` bean instance managed by
 Camel CDI when the container initializes.
 
+*Available as of Camel 2.19*
+
+In some situations, it may be necessary to disable the auto-configuration of the `RouteBuilder` and `RouteContainer` beans. That can be achieved by observing for the `CdiCamelConfiguration` event, e.g.:
+
+[source,java]
+----
+static void configuration(@Observes CdiCamelConfiguration configuration) {
+    configuration.autoConfigureRoutes(false);
+}
+----
+
+Similarly, it is possible to deactivate the automatic starting of the configured `CamelContext` beans, e.g.:
+
+[source,java]
+----
+static void configuration(@Observes CdiCamelConfiguration configuration) {
+    configuration.autoStartContexts(false);
+}
+----
+
 ### Auto-configured Camel primitives
 
 Camel CDI provides beans for common Camel primitives that can be
@@ -835,6 +855,106 @@ configuration, e.g.:
 <camelContext/>
 ----
 
+
+### Transaction support
+
+*Available as of Camel 2.19*
+
+Camel CDI provides support for Camel transactional client using JTA.
+
+That support is optional hence you need to have JTA in your application classpath, e.g., by explicitly add JTA as a dependency when using Maven:
+
+[source,xml]
+----
+<dependency>
+    <groupId>javax.transaction</groupId>
+    <artifactId>javax.transaction-api</artifactId>
+    <scope>runtime</scope>
+</dependency>
+----
+
+You'll have to have your application deployed in a JTA capable container or provide a standalone JTA implementation.
+
+[CAUTION]
+====
+Note that, for the time being, the transaction manager is looked up as JNDI resource with the `java:/TransactionManager` key.
+
+More flexible strategies will be added in the future to support a wider range of deployment scenarios.
+====
+
+#### Transaction policies
+
+Camel CDI provides implementation for the typically supported Camel `TransactedPolicy` as CDI beans. It is possible to have these policies looked up by name using the transacted EIP, e.g.:
+
+[source,java]
+----
+class MyRouteBean extends RouteBuilder {
+
+    @Override
+    public void configure() {
+        from("activemq:queue:foo")
+            .transacted("PROPAGATION_REQUIRED")
+            .bean("transformer")
+            .to("jpa:my.application.entity.Bar")
+            .log("${body.id} inserted");
+    }
+}
+----
+
+This would be equivalent to:
+
+[source,java]
+----
+class MyRouteBean extends RouteBuilder {
+
+    @Inject
+    @Named("PROPAGATION_REQUIRED")
+    Policy required;
+
+    @Override
+    public void configure() {
+        from("activemq:queue:foo")
+            .policy(required)
+            .bean("transformer")
+            .to("jpa:my.application.entity.Bar")
+            .log("${body.id} inserted");
+    }
+}
+----
+
+The list of supported transaction policy names is:
+
+- `PROPAGATION_NEVER`,
+- `PROPAGATION_NOT_SUPPORTED`,
+- `PROPAGATION_SUPPORTS`,
+- `PROPAGATION_REQUIRED`,
+- `PROPAGATION_REQUIRES_NEW`,
+- `PROPAGATION_NESTED`,
+- `PROPAGATION_MANDATORY`.
+
+#### Transactional error handler
+
+Camel CDI provides a transactional error handler that extends the redelivery error handler, forces a rollback whenever an exception occurs and creates a new transaction for each redelivery.
+
+Camel CDI provides the `CdiRouteBuilder` class that exposes the `transactionErrorHandler` helper method to enable quick access to the configuration, e.g.:
+
+[source,java]
+----
+class MyRouteBean extends CdiRouteBuilder {
+
+    @Override
+    public void configure() {
+        errorHandler(transactionErrorHandler()
+            .setTransactionPolicy("PROPAGATION_SUPPORTS")
+            .maximumRedeliveries(5)
+            .maximumRedeliveryDelay(5000)
+            .collisionAvoidancePercent(10)
+            .backOffMultiplier(1.5));
+    }
+}
+----
+
+
 ### Auto-configured OSGi integration
 
 *Available as of Camel 2.17*
@@ -964,11 +1084,11 @@ following runtimes:
 |Container |Version |Runtime
 |Weld SE |1.1.28.Final |CDI 1.0 / Java SE 7
 |OpenWebBeans |1.2.7 |CDI 1.0 / Java SE 7
-|Weld SE |2.3.4.Final |CDI 1.2 / Java SE 7
-|OpenWebBeans |1.6.3 |CDI 1.2 / Java SE 7
+|Weld SE |2.4.2.Final |CDI 1.2 / Java SE 7
+|OpenWebBeans |1.7.2 |CDI 1.2 / Java SE 7
 |WildFly |8.2.1.Final |CDI 1.2 / Java EE 7
 |WildFly |9.0.1.Final |CDI 1.2 / Java EE 7
-|WildFly |10.0.0.Final |CDI 1.2 / Java EE 7
+|WildFly |10.1.0.Final |CDI 1.2 / Java EE 7
 |Karaf |2.4.4 |CDI 1.2 / OSGi 4 / PAX CDI
 |Karaf |3.0.5 |CDI 1.2 / OSGi 5 / PAX CDI
 |Karaf |4.0.4 |CDI 1.2 / OSGi 6 / PAX CDI

@@ -37,7 +37,7 @@ else
 fi  
 
 ## ensure the files are sorted
-for filename in $(ls -f $testdir/* | sort);
+for filename in $(ls -f $testdir/*Test* | sort);
 do
   testname=$(basename ${filename%.*})
 
@@ -69,6 +69,6 @@ do
       exit 1;
     fi  
     echo "Killing Karaf to ensure no dangling karaf running"
-    jps -l | grep karaf | cut -d ' ' -f 1 | xargs -n1 kill -kill
+    ./kill-karaf.sh
   fi  
 done

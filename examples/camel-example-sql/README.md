@@ -29,26 +29,17 @@ as well the CamelContext. You can see this in the following file:
 In the src/main/resources/META-INF/spring/camel-context.xml
 
 ### Run with Karaf
+You will need to install this example first to your local maven repository with:
 
-To install Apache Camel in Karaf you type in the shell (we use version ${project.version}):
+	mvn install
+
+Then you can install this example from the shell using this example's `features.xml`
+for easy provisioning:
 
 	feature:repo-add camel ${project.version}
 	feature:install camel
-
-First you need to install the following features in Karaf/ServiceMix with:
-
-	feature:install camel-spring
-	feature:install camel-sql
-
-Then you need to install JDBC connection pool and the Derby Database:
-
-	install -s mvn:commons-pool/commons-pool/1.6
-	install -s mvn:commons-dbcp/commons-dbcp/1.4
-	install -s mvn:org.apache.derby/derby/10.10.1.1
-
-Then you can install the Camel example:
-
-	install -s mvn:org.apache.camel/camel-example-sql/${project.version}
+  feature:repo-add mvn:org.apache.camel.example/camel-example-sql/${version}/xml/features
+  feature:install camel-example-sql
 
 And you can see the application running by tailing the logs
 

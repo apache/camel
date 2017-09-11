@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -51,6 +52,7 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -363,6 +365,18 @@ public class JmsBinding {
             // only primitive headers and strings is allowed as properties
             // see message properties: http://java.sun.com/j2ee/1.4/docs/api/javax/jms/Message.html
             Object value = getValidJMSHeaderValue(headerName, headerValue);
+            // if the value was null, then it may be allowed as an additional header
+            if (value == null && endpoint.getConfiguration().getAllowAdditionalHeaders() != null) {
+                Iterator it = ObjectHelper.createIterator(endpoint.getConfiguration().getAllowAdditionalHeaders());
+                while (it.hasNext()) {
+                    String pattern = (String) it.next();
+                    if (EndpointHelper.matchPattern(headerName, pattern)) {
+                        LOG.debug("Header {} allowed as additional header despite not being valid according to the JMS specification", headerName);
+                        value = headerValue;
+                        break;
+                    }
+                }
+            }
             if (value != null) {
                 // must encode to safe JMS header name before setting property on jmsMessage
                 String key = jmsKeyFormatStrategy.encodeKey(headerName);
@@ -414,6 +428,8 @@ public class JmsBinding {
      *   <li>String and any other literals, Character, CharSequence</li>
      *   <li>Boolean</li>
      *   <li>Number</li>
+     *   <li>java.math.BigInteger</li>
+     *   <li>java.math.BigDecimal</li>
      *   <li>java.util.Date</li>
      * </ul>
      *

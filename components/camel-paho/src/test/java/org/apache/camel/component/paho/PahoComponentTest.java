@@ -211,4 +211,16 @@ public class PahoComponentTest extends CamelTestSupport {
         testCustomizedPahoMock.assertIsSatisfied();
     }
 
+    @Test
+    public void shouldNotSendMessageAuthIsNotValid() throws InterruptedException {
+        // Given
+        mock.expectedMessageCount(0);
+
+        // When
+        template.sendBody("paho:someRandomQueue?brokerUrl=tcp://localhost:" + mqttPort + "&userName=test&password=test", "msg");
+
+        // Then
+        mock.assertIsSatisfied();
+    }
+    
 }

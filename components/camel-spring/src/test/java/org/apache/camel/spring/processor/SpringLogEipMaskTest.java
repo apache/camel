@@ -16,18 +16,14 @@
  */
 package org.apache.camel.spring.processor;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.Constants;
-import org.apache.camel.processor.LogEipMaskTest;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spring.SpringCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringLogEipMaskTest {
 

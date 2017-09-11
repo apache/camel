@@ -52,7 +52,7 @@ public class Application {
                     // Let's stop the route (we may want to implement a way to exit the container)
                     .to("controlbus:route?routeId=kubernetes-client&action=stop&async=true&loggingLevel=DEBUG")
                     .end()
-                .to("kubernetes://{{kubernetes-master-url:{{env:KUBERNETES_MASTER}}}}?oauthToken={{kubernetes-oauth-token:}}&category=pods&operation=listPods")
+                .to("kubernetes-pods://{{kubernetes-master-url:{{env:KUBERNETES_MASTER}}}}?oauthToken={{kubernetes-oauth-token:}}&operation=listPods")
                 .log("We currently have ${body.size()} pods:")
                 .process(exchange -> {
                     List<Pod> pods = exchange.getIn().getBody(List.class);

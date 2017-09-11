@@ -68,7 +68,7 @@ public class RestProducerBindingProcessorTest {
             jsonDataFormat, xmlDataFormat, outJsonDataFormat, outXmlDataFormat, "json", true, outType);
 
         final Exchange exchange = new DefaultExchange(context);
-        final Message input = new DefaultMessage();
+        final Message input = new DefaultMessage(context);
 
         final RequestPojo request = new RequestPojo();
         input.setBody(request);
@@ -107,7 +107,7 @@ public class RestProducerBindingProcessorTest {
             jsonDataFormat, xmlDataFormat, outJsonDataFormat, outXmlDataFormat, "xml", true, outType);
 
         final Exchange exchange = new DefaultExchange(context);
-        final Message input = new DefaultMessage();
+        final Message input = new DefaultMessage(context);
 
         final RequestPojo request = new RequestPojo();
         input.setBody(request);
@@ -146,7 +146,7 @@ public class RestProducerBindingProcessorTest {
             jsonDataFormat, xmlDataFormat, outJsonDataFormat, outXmlDataFormat, "off", true, outType);
 
         final Exchange exchange = new DefaultExchange(context);
-        final Message input = new DefaultMessage();
+        final Message input = new DefaultMessage(context);
 
         final RequestPojo request = new RequestPojo();
         input.setBody(request);

@@ -22,6 +22,7 @@ import java.security.GeneralSecurityException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +35,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.component.restlet.converter.RestletConverter;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
@@ -45,7 +48,6 @@ import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.Component;
 import org.restlet.Restlet;
@@ -66,7 +68,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version
  */
-public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory {
+public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);
     private static final Object LOCK = new Object();
 
@@ -113,6 +115,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     private Boolean synchronous;
     @Metadata(label = "advanced")
     private List<String> enabledConverters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public RestletComponent() {
         this(new Component());
@@ -127,27 +131,56 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String remainingRaw = URISupport.extractRemainderPath(new URI(uri), true);
-        RestletEndpoint result = new RestletEndpoint(this, remainingRaw);
+
+        // grab uri and remove all query parameters as we need to rebuild it a bit special
+        String endpointUri = uri;
+        if (endpointUri.indexOf('?') > 0) {
+            endpointUri = endpointUri.substring(0, endpointUri.indexOf('?'));
+        }
+        // normalize so the uri is as expected
+        endpointUri = URISupport.normalizeUri(endpointUri);
+
+        // decode %7B -> {
+        // decode %7D -> }
+        endpointUri = endpointUri.replaceAll("%7B", "{").replaceAll("%7D", "}");
+
+        // include restlet methods in the uri (use GET as default)
+        String restletMethods = getAndRemoveParameter(parameters, "restletMethods", String.class);
+        if (restletMethods != null) {
+            endpointUri = endpointUri + "?restletMethods=" + restletMethods.toUpperCase();
+        }
+        String restletMethod = null;
+        if (restletMethods == null) {
+            restletMethod = getAndRemoveParameter(parameters, "restletMethod", String.class, "GET");
+            endpointUri = endpointUri + "?restletMethod=" + restletMethod.toUpperCase();
+        }
+
+        RestletEndpoint result = new RestletEndpoint(this, endpointUri);
         if (synchronous != null) {
             result.setSynchronous(synchronous);
         }
         result.setDisableStreamCache(isDisableStreamCache());
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
-        // set the endpoint uri according to the parameter
-        result.updateEndpointUri();
+        if (restletMethods != null) {
+            result.setRestletMethods(RestletConverter.toMethods(restletMethods));
+        } else {
+            result.setRestletMethod(RestletConverter.toMethod(restletMethod));
+        }
 
         // construct URI so we can use it to get the splitted information
+        // use raw values to support paths that has spaces
+        String remainingRaw = URISupport.extractRemainderPath(new URI(uri), true);
         URI u = new URI(remainingRaw);
         String protocol = u.getScheme();
 
-        String uriPattern = u.getRawPath();
-        if (parameters.size() > 0) {
-            uriPattern = uriPattern + "?" + URISupport.createQueryString(parameters);
-        }
+        String uriPattern = URISupport.createRemainingURI(u, parameters).getRawPath();
+        // must decode back to use {} style as that is what the restlet router expect to match in its uri pattern
+        // decode %7B -> {
+        // decode %7D -> }
+        uriPattern = uriPattern.replaceAll("%7B", "{").replaceAll("%7D", "}");
 
-        int port = 0;
+        int port;
         String host = u.getHost();
         if (u.getPort() > 0) {
             port = u.getPort();
@@ -160,6 +193,17 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         result.setHost(host);
         if (port > 0) {
             result.setPort(port);
+        }
+
+        if (result.getSslContextParameters() == null) {
+            result.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
+        // any additional query parameters from parameters then we need to include them as well
+        if (!parameters.isEmpty()) {
+            result.setQueryParameters(parameters);
+            endpointUri = URISupport.appendParametersToURI(endpointUri, parameters);
+            result.setCompleteEndpointUri(endpointUri);
         }
 
         return result;
@@ -223,7 +267,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         List<MethodBasedRouter> routesToRemove = new ArrayList<MethodBasedRouter>();
 
-        String pattern = decodePattern(endpoint.getUriPattern());
+        String pattern = endpoint.getUriPattern();
         if (pattern != null && !pattern.isEmpty()) {
             MethodBasedRouter methodRouter = getMethodRouter(pattern, false);
             if (methodRouter != null) {
@@ -241,13 +285,16 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         }
 
         for (MethodBasedRouter router : routesToRemove) {
+
+            List<Method> methods = new ArrayList<>();
+            Collections.addAll(methods, Method.OPTIONS);
             if (endpoint.getRestletMethods() != null) {
-                Method[] methods = endpoint.getRestletMethods();
-                for (Method method : methods) {
-                    router.removeRoute(method);
-                }
+                Collections.addAll(methods, endpoint.getRestletMethods());
             } else {
-                router.removeRoute(endpoint.getRestletMethod());
+                Collections.addAll(methods, endpoint.getRestletMethod());
+            }
+            for (Method method : methods) {
+                router.removeRoute(method);
             }
 
             if (LOG.isDebugEnabled()) {
@@ -257,7 +304,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
             // remove router if its no longer in use
             if (!router.hasRoutes()) {
-                deattachUriPatternFrimRestlet(router.getUriPattern(), endpoint, router);
+                deAttachUriPatternFromRestlet(router.getUriPattern(), endpoint, router);
                 if (!router.isStopped()) {
                     router.stop();
                 }
@@ -286,7 +333,6 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
         }
     }
-
 
     protected String stringArrayToString(String[] strings) {
         StringBuffer result = new StringBuffer();
@@ -430,7 +476,6 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     }
 
     private void attachUriPatternToRestlet(String offsetPath, String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
-        uriPattern = decodePattern(uriPattern);
         MethodBasedRouter router = getMethodRouter(uriPattern, true);
 
         Map<String, String> realm = endpoint.getRestletRealm();
@@ -447,14 +492,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             LOG.debug("Target has been set to guard: {}", guard);
         }
 
+        List<Method> methods = new ArrayList<>();
+        Collections.addAll(methods, Method.OPTIONS);
         if (endpoint.getRestletMethods() != null) {
-            Method[] methods = endpoint.getRestletMethods();
-            for (Method method : methods) {
-                router.addRoute(method, target);
-                LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, method);
-            }
+            Collections.addAll(methods, endpoint.getRestletMethods());
         } else {
-            Method method = endpoint.getRestletMethod();
+            Collections.addAll(methods, endpoint.getRestletMethod());
+        }
+        for (Method method : methods) {
             router.addRoute(method, target);
             LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, method);
         }
@@ -471,20 +516,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         }
     }
 
-    private void deattachUriPatternFrimRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
+    private void deAttachUriPatternFromRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
         component.getDefaultHost().detach(target);
-        LOG.debug("Deattached methodRouter uriPattern: {}", uriPattern);
-    }
-
-    @Deprecated
-    protected String preProcessUri(String uri) {
-        // If the URI was not valid (i.e. contains '{' and '}'
-        // it was most likely encoded by normalizeEndpointUri in DefaultCamelContext.getEndpoint(String)
-        return UnsafeUriCharactersEncoder.encode(uri.replaceAll("%7B", "(").replaceAll("%7D", ")"));
-    }
-
-    private static String decodePattern(String pattern) {
-        return pattern == null ? null : pattern.replaceAll("\\(", "{").replaceAll("\\)", "}");
+        LOG.debug("De-attached methodRouter uriPattern: {}", uriPattern);
     }
 
     public Boolean getControllerDaemon() {
@@ -721,6 +755,19 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         if (ObjectHelper.isNotEmpty(enabledConverters)) {
             this.enabledConverters = Arrays.asList(enabledConverters.split(","));
         }
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     @Override

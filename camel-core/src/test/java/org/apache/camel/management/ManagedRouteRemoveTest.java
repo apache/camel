@@ -86,7 +86,7 @@ public class ManagedRouteRemoveTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/managed").to("mock:result");
+                from("file://target/managed?initialDelay=0&delay=10").to("mock:result");
             }
         };
     }

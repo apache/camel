@@ -84,7 +84,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     public Message toCamelMessage(FullHttpRequest request, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
         LOG.trace("toCamelMessage: {}", request);
 
-        NettyHttpMessage answer = new NettyHttpMessage(request, null);
+        NettyHttpMessage answer = new NettyHttpMessage(exchange.getContext(), request, null);
         answer.setExchange(exchange);
         if (configuration.isMapHeaders()) {
             populateCamelHeaders(request, answer.getHeaders(), exchange, configuration);
@@ -170,7 +170,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
             // add the headers one by one, and use the header filter strategy
             List<String> values = request.headers().getAll(name);
-            Iterator<?> it = ObjectHelper.createIterator(values);
+            Iterator<?> it = ObjectHelper.createIterator(values, ",", true);
             while (it.hasNext()) {
                 Object extracted = it.next();
                 Object decoded = shouldUrlDecodeHeader(configuration, name, extracted, "UTF-8");
@@ -190,7 +190,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             for (Map.Entry<String, Object> entry : uriParameters.entrySet()) {
                 String name = entry.getKey();
                 Object values = entry.getValue();
-                Iterator<?> it = ObjectHelper.createIterator(values);
+                Iterator<?> it = ObjectHelper.createIterator(values, ",", true);
                 while (it.hasNext()) {
                     Object extracted = it.next();
                     Object decoded = shouldUrlDecodeHeader(configuration, name, extracted, "UTF-8");
@@ -212,7 +212,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             String charset = "UTF-8";
 
             // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
-            String body = null;
+            String body;
             ByteBuf buffer = request.content();
             try {
                 body = buffer.toString(Charset.forName(charset));
@@ -263,7 +263,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     public Message toCamelMessage(FullHttpResponse response, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
         LOG.trace("toCamelMessage: {}", response);
 
-        NettyHttpMessage answer = new NettyHttpMessage(null, response);
+        NettyHttpMessage answer = new NettyHttpMessage(exchange.getContext(), null, response);
         answer.setExchange(exchange);
         if (configuration.isMapHeaders()) {
             populateCamelHeaders(response, answer.getHeaders(), exchange, configuration);
@@ -385,7 +385,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             }
         }
         
-        HttpResponse response = null;
+        HttpResponse response;
         
         if (buffer != null) {
             response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(code), buffer);
@@ -410,7 +410,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             String key = entry.getKey();
             Object value = entry.getValue();
             // use an iterator as there can be multiple values. (must not use a delimiter)
-            final Iterator<?> it = ObjectHelper.createIterator(value, null);
+            final Iterator<?> it = ObjectHelper.createIterator(value, null, true);
             while (it.hasNext()) {
                 String headerValue = tc.convertTo(String.class, it.next());
                 if (headerValue != null && headerFilterStrategy != null

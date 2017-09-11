@@ -49,7 +49,7 @@ public class AggregateCompleteAllOnStopTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("seda:start").routeId("foo")
                         .aggregate(header("id"), new BodyInAggregatingStrategy()).aggregationRepository(new MemoryAggregationRepository())
-                        .completionSize(2).completionTimeout(2000).completeAllOnStop()
+                        .completionSize(2).completionTimeout(100).completeAllOnStop().completionTimeoutCheckerInterval(10)
                         .to("mock:aggregated");
             }
         };

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,13 +8,14 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 -->
 <component>
 
@@ -27,10 +29,12 @@
         <include>org.apache.camel:camel-ahc-ws</include>
         <include>org.apache.camel:camel-amqp</include>
         <include>org.apache.camel:camel-apns</include>
+        <include>org.apache.camel:camel-asn1</include>
         <include>org.apache.camel:camel-asterisk</include>
         <include>org.apache.camel:camel-atmos</include>
         <include>org.apache.camel:camel-atmosphere-websocket</include>
         <include>org.apache.camel:camel-atom</include>
+        <include>org.apache.camel:camel-atomix</include>
         <include>org.apache.camel:camel-aws</include>
         <include>org.apache.camel:camel-azure</include>
         <include>org.apache.camel:camel-avro</include>
@@ -48,6 +52,7 @@
         <include>org.apache.camel:camel-box-api</include>
         <include>org.apache.camel:camel-braintree</include>
         <include>org.apache.camel:camel-cache</include>
+        <include>org.apache.camel:camel-caffeine</include>
         <include>org.apache.camel:camel-cassandraql</include>
         <include>org.apache.camel:camel-castor</include>
         <include>org.apache.camel:camel-cdi</include>
@@ -64,6 +69,7 @@
         <include>org.apache.camel:camel-couchdb</include>
         <include>org.apache.camel:camel-couchbase</include>
         <include>org.apache.camel:camel-crypto</include>
+        <include>org.apache.camel:camel-crypto-cms</include>
         <include>org.apache.camel:camel-csv</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-cxf-transport</include>
@@ -73,7 +79,7 @@
         <include>org.apache.camel:camel-docker</include>
         <include>org.apache.camel:camel-dozer</include>
         <include>org.apache.camel:camel-drill</include>
-	    <include>org.apache.camel:camel-dropbox</include>
+        <include>org.apache.camel:camel-dropbox</include>
         <include>org.apache.camel:camel-eclipse</include>
         <include>org.apache.camel:camel-ehcache</include>
         <include>org.apache.camel:camel-ejb</include>
@@ -84,6 +90,7 @@
         <include>org.apache.camel:camel-eventadmin</include>
         <include>org.apache.camel:camel-exec</include>
         <include>org.apache.camel:camel-facebook</include>
+        <include>org.apache.camel:camel-fastjson</include>
         <include>org.apache.camel:camel-flatpack</include>
         <include>org.apache.camel:camel-flink</include>
         <include>org.apache.camel:camel-fop</include>
@@ -96,10 +103,12 @@
         <include>org.apache.camel:camel-google-calendar</include>
         <include>org.apache.camel:camel-google-drive</include>
         <include>org.apache.camel:camel-google-mail</include>
+        <include>org.apache.camel:camel-google-bigquery</include>
         <include>org.apache.camel:camel-google-pubsub</include>
         <include>org.apache.camel:camel-gora</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-groovy-dsl</include>
+        <include>org.apache.camel:camel-grpc</include>
         <include>org.apache.camel:camel-guava-eventbus</include>
         <include>org.apache.camel:camel-guice</include>
         <include>org.apache.camel:camel-gson</include>
@@ -109,6 +118,7 @@
         <include>org.apache.camel:camel-hbase</include>
         <include>org.apache.camel:camel-hdfs</include>
         <include>org.apache.camel:camel-hdfs2</include>
+        <include>org.apache.camel:camel-headersmap</include>
         <include>org.apache.camel:camel-hessian</include>
         <include>org.apache.camel:camel-hipchat</include>
         <include>org.apache.camel:camel-http</include>
@@ -116,6 +126,7 @@
         <include>org.apache.camel:camel-http4</include>
         <include>org.apache.camel:camel-ibatis</include>
         <include>org.apache.camel:camel-ical</include>
+        <include>org.apache.camel:camel-iec60870</include>
         <include>org.apache.camel:camel-infinispan</include>
         <include>org.apache.camel:camel-influxdb</include>
         <include>org.apache.camel:camel-ignite</include>
@@ -162,6 +173,7 @@
         <include>org.apache.camel:camel-lumberjack</include>
         <include>org.apache.camel:camel-lzf</include>
         <include>org.apache.camel:camel-metrics</include>
+        <include>org.apache.camel:camel-milo</include>
         <include>org.apache.camel:camel-mail</include>
         <include>org.apache.camel:camel-mina</include>
         <include>org.apache.camel:camel-mina2</include>
@@ -182,6 +194,8 @@
         <include>org.apache.camel:camel-ognl</include>
         <include>org.apache.camel:camel-olingo2-api</include>
         <include>org.apache.camel:camel-olingo2</include>
+        <include>org.apache.camel:camel-olingo4-api</include>
+        <include>org.apache.camel:camel-olingo4</include>
         <include>org.apache.camel:camel-openshift</include>
         <include>org.apache.camel:camel-openstack</include>
         <include>org.apache.camel:camel-opentracing</include>
@@ -192,12 +206,15 @@
         <include>org.apache.camel:camel-pgevent</include>
         <include>org.apache.camel:camel-printer</include>
         <include>org.apache.camel:camel-protobuf</include>
+        <include>org.apache.camel:camel-pubnub</include>
         <include>org.apache.camel:camel-quartz</include>
         <include>org.apache.camel:camel-quartz2</include>
         <include>org.apache.camel:camel-quickfix</include>
         <include>org.apache.camel:camel-rabbitmq</include>
         <include>org.apache.camel:camel-reactive-streams</include>
+        <include>org.apache.camel:camel-reactor</include>
         <include>org.apache.camel:camel-restlet</include>
+        <include>org.apache.camel:camel-rest-swagger</include>
         <include>org.apache.camel:camel-ribbon</include>
         <include>org.apache.camel:camel-rmi</include>
         <include>org.apache.camel:camel-routebox</include>
@@ -229,13 +246,8 @@
         <include>org.apache.camel:camel-splunk</include>
         <include>org.apache.camel:camel-spring</include>
         <include>org.apache.camel:camel-spring-batch</include>
-        <include>org.apache.camel:camel-spring-boot</include>
-        <include>org.apache.camel:camel-spring-boot-starter</include>
         <include>org.apache.camel:camel-spring-cloud</include>
-        <include>org.apache.camel:camel-spring-cloud-starter</include>
         <include>org.apache.camel:camel-spring-cloud-netflix</include>
-        <include>org.apache.camel:camel-spring-cloud-netflix-starter</include>
-        <include>org.apache.camel:camel-spring-dm</include>
         <include>org.apache.camel:camel-spring-integration</include>
         <include>org.apache.camel:camel-spring-javaconfig</include>
         <include>org.apache.camel:camel-spring-ldap</include>
@@ -260,7 +272,9 @@
         <include>org.apache.camel:camel-test-karaf</include>
         <include>org.apache.camel:camel-test-spring</include>
         <include>org.apache.camel:camel-testng</include>
+        <include>org.apache.camel:camel-thrift</include>
         <include>org.apache.camel:camel-tika</include>
+        <include>org.apache.camel:camel-twilio</include>
         <include>org.apache.camel:camel-twitter</include>
         <include>org.apache.camel:camel-undertow</include>
         <include>org.apache.camel:camel-univocity-parsers</include>
@@ -276,9 +290,9 @@
         <include>org.apache.camel:camel-xmpp</include>
         <include>org.apache.camel:camel-xstream</include>
         <include>org.apache.camel:camel-yammer</include>
+        <include>org.apache.camel:camel-zendesk</include>
         <include>org.apache.camel:camel-zipfile</include>
         <include>org.apache.camel:camel-zipkin</include>
-        <include>org.apache.camel:camel-zipkin-starter</include>
         <include>org.apache.camel:camel-zookeeper</include>
         <include>org.apache.camel:camel-zookeeper-master</include>
       </includes>
@@ -315,9 +329,12 @@
         <include>org.apache.camel:camel-ahc-ws-starter</include>
         <include>org.apache.camel:camel-amqp-starter</include>
         <include>org.apache.camel:camel-apns-starter</include>
+        <include>org.apache.camel:camel-asn1-starter</include>
+        <include>org.apache.camel:camel-asterisk-starter</include>
         <include>org.apache.camel:camel-atmosphere-websocket-starter</include>
         <include>org.apache.camel:camel-atmos-starter</include>
         <include>org.apache.camel:camel-atom-starter</include>
+        <include>org.apache.camel:camel-atomix-starter</include>
         <include>org.apache.camel:camel-avro-starter</include>
         <include>org.apache.camel:camel-aws-starter</include>
         <include>org.apache.camel:camel-bam-starter</include>
@@ -332,6 +349,7 @@
         <include>org.apache.camel:camel-box-starter</include>
         <include>org.apache.camel:camel-braintree-starter</include>
         <include>org.apache.camel:camel-cache-starter</include>
+        <include>org.apache.camel:camel-caffeine-starter</include>
         <include>org.apache.camel:camel-cassandraql-starter</include>
         <include>org.apache.camel:camel-castor-starter</include>
         <include>org.apache.camel:camel-chronicle-starter</include>
@@ -343,10 +361,10 @@
         <include>org.apache.camel:camel-consul-starter</include>
         <include>org.apache.camel:camel-context-starter</include>
         <include>org.apache.camel:camel-core-starter</include>
-        <include>org.apache.camel:camel-core-xml-starter</include>
         <include>org.apache.camel:camel-couchdb-starter</include>
         <include>org.apache.camel:camel-couchbase-starter</include>
         <include>org.apache.camel:camel-crypto-starter</include>
+        <include>org.apache.camel:camel-crypto-cms-starter</include>
         <include>org.apache.camel:camel-csv-starter</include>
         <include>org.apache.camel:camel-cxf-starter</include>
         <include>org.apache.camel:camel-cxf-transport-starter</include>
@@ -360,10 +378,12 @@
         <include>org.apache.camel:camel-eclipse-starter</include>
         <include>org.apache.camel:camel-ehcache-starter</include>
         <include>org.apache.camel:camel-elasticsearch-starter</include>
+        <include>org.apache.camel:camel-elasticsearch5-starter</include>
         <include>org.apache.camel:camel-elsql-starter</include>
         <include>org.apache.camel:camel-etcd-starter</include>
         <include>org.apache.camel:camel-exec-starter</include>
         <include>org.apache.camel:camel-facebook-starter</include>
+        <include>org.apache.camel:camel-fastjson-starter</include>
         <include>org.apache.camel:camel-flatpack-starter</include>
         <include>org.apache.camel:camel-flink-starter</include>
         <include>org.apache.camel:camel-fop-starter</include>
@@ -373,6 +393,7 @@
         <include>org.apache.camel:camel-geocoder-starter</include>
         <include>org.apache.camel:camel-github-starter</include>
         <include>org.apache.camel:camel-git-starter</include>
+        <include>org.apache.camel:camel-google-bigquery-starter</include>
         <include>org.apache.camel:camel-google-calendar-starter</include>
         <include>org.apache.camel:camel-google-drive-starter</include>
         <include>org.apache.camel:camel-google-mail-starter</include>
@@ -380,14 +401,16 @@
         <include>org.apache.camel:camel-gora-starter</include>
         <include>org.apache.camel:camel-grape-starter</include>
         <include>org.apache.camel:camel-groovy-starter</include>
+        <include>org.apache.camel:camel-grpc-starter</include>
         <include>org.apache.camel:camel-gson-starter</include>
         <include>org.apache.camel:camel-guava-eventbus-starter</include>
         <include>org.apache.camel:camel-guice-starter</include>
         <include>org.apache.camel:camel-hawtdb-starter</include>
         <include>org.apache.camel:camel-hazelcast-starter</include>
         <include>org.apache.camel:camel-hbase-starter</include>
-        <include>org.apache.camel:camel-hdfs2-starter</include>
         <include>org.apache.camel:camel-hdfs-starter</include>
+        <include>org.apache.camel:camel-hdfs2-starter</include>
+        <include>org.apache.camel:camel-headersmap-starter</include>
         <include>org.apache.camel:camel-hessian-starter</include>
         <include>org.apache.camel:camel-hipchat-starter</include>
         <include>org.apache.camel:camel-hl7-starter</include>
@@ -396,6 +419,7 @@
         <include>org.apache.camel:camel-http-starter</include>
         <include>org.apache.camel:camel-hystrix-starter</include>
         <include>org.apache.camel:camel-ical-starter</include>
+        <include>org.apache.camel:camel-iec60870-starter</include>
         <include>org.apache.camel:camel-ignite-starter</include>
         <include>org.apache.camel:camel-infinispan-starter</include>
         <include>org.apache.camel:camel-influxdb-starter</include>
@@ -441,6 +465,7 @@
         <include>org.apache.camel:camel-lzf-starter</include>
         <include>org.apache.camel:camel-mail-starter</include>
         <include>org.apache.camel:camel-metrics-starter</include>
+        <include>org.apache.camel:camel-milo-starter</include>
         <include>org.apache.camel:camel-mina2-starter</include>
         <include>org.apache.camel:camel-mllp-starter</include>
         <include>org.apache.camel:camel-mongodb-gridfs-starter</include>
@@ -459,6 +484,7 @@
         <include>org.apache.camel:camel-netty-starter</include>
         <include>org.apache.camel:camel-ognl-starter</include>
         <include>org.apache.camel:camel-olingo2-starter</include>
+        <include>org.apache.camel:camel-olingo4-starter</include>
         <include>org.apache.camel:camel-openshift-starter</include>
         <include>org.apache.camel:camel-openstack-starter</include>
         <include>org.apache.camel:camel-opentracing-starter</include>
@@ -468,11 +494,14 @@
         <include>org.apache.camel:camel-pgevent-starter</include>
         <include>org.apache.camel:camel-printer-starter</include>
         <include>org.apache.camel:camel-protobuf-starter</include>
+        <include>org.apache.camel:camel-pubnub-starter</include>
         <include>org.apache.camel:camel-quartz2-starter</include>
         <include>org.apache.camel:camel-quickfix-starter</include>
         <include>org.apache.camel:camel-rabbitmq-starter</include>
         <include>org.apache.camel:camel-reactive-streams-starter</include>
+        <include>org.apache.camel:camel-reactor-starter</include>
         <include>org.apache.camel:camel-restlet-starter</include>
+        <include>org.apache.camel:camel-rest-swagger-starter</include>
         <include>org.apache.camel:camel-ribbon-starter</include>
         <include>org.apache.camel:camel-rmi-starter</include>
         <include>org.apache.camel:camel-routebox-starter</include>
@@ -484,7 +513,6 @@
         <include>org.apache.camel:camel-saxon-starter</include>
         <include>org.apache.camel:camel-schematron-starter</include>
         <include>org.apache.camel:camel-script-starter</include>
-        <include>org.apache.camel:camel-scr-starter</include>
         <include>org.apache.camel:camel-servicenow-starter</include>
         <include>org.apache.camel:camel-servletlistener-starter</include>
         <include>org.apache.camel:camel-servlet-starter</include>
@@ -501,9 +529,10 @@
         <include>org.apache.camel:camel-spark-starter</include>
         <include>org.apache.camel:camel-splunk-starter</include>
         <include>org.apache.camel:camel-spring-batch-starter</include>
+        <include>org.apache.camel:camel-spring-boot</include>
         <include>org.apache.camel:camel-spring-boot-starter</include>
         <include>org.apache.camel:camel-spring-cloud-starter</include>
-        <include>org.apache.camel:camel-spring-dm-starter</include>
+        <include>org.apache.camel:camel-spring-cloud-netflix-starter</include>
         <include>org.apache.camel:camel-spring-integration-starter</include>
         <include>org.apache.camel:camel-spring-javaconfig-starter</include>
         <include>org.apache.camel:camel-spring-ldap-starter</include>
@@ -522,6 +551,9 @@
         <include>org.apache.camel:camel-tagsoup-starter</include>
         <include>org.apache.camel:camel-tarfile-starter</include>
         <include>org.apache.camel:camel-telegram-starter</include>
+        <include>org.apache.camel:camel-thrift-starter</include>
+        <include>org.apache.camel:camel-tika-starter</include>
+        <include>org.apache.camel:camel-twilio-starter</include>
         <include>org.apache.camel:camel-twitter-starter</include>
         <include>org.apache.camel:camel-undertow-starter</include>
         <include>org.apache.camel:camel-univocity-parsers-starter</include>
@@ -537,9 +569,11 @@
         <include>org.apache.camel:camel-xmpp-starter</include>
         <include>org.apache.camel:camel-xstream-starter</include>
         <include>org.apache.camel:camel-yammer-starter</include>
+        <include>org.apache.camel:camel-zendesk-starter</include>
         <include>org.apache.camel:camel-zipfile-starter</include>
         <include>org.apache.camel:camel-zipkin-starter</include>
         <include>org.apache.camel:camel-zookeeper-starter</include>
+        <include>org.apache.camel:camel-zookeeper-master-starter</include>
       </includes>
     </dependencySet>
   </dependencySets>

@@ -17,5 +17,13 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 
+XARGS_OPTIONS="-t -n1"
+if [ `uname` = "Linux" ]; then
+  XARGS_OPTIONS="$XARGS_OPTIONS --no-run-if-empty"
+fi
+
+echo "Listing all karaf processes"
+jps -l | grep karaf
+
 echo "Killing all karaf processes"
-jps -l | grep karaf | cut -d ' ' -f 1 | xargs -n1 kill -kill
+jps -l | grep karaf | cut -d ' ' -f 1 | xargs $XARGS_OPTIONS kill

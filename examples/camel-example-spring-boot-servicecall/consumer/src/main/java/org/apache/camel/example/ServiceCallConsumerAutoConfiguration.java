@@ -37,9 +37,9 @@ public class ServiceCallConsumerAutoConfiguration {
                     .to("log:service-call?level=INFO&showAll=true&multiline=true")
                     .choice()
                         .when(header("serviceId").isEqualTo("service1"))
-                            .serviceCall("service-1", "undertow:http://service-1")
+                            .serviceCall("service-1")
                         .when(header("serviceId").isEqualTo("service2"))
-                            .serviceCall("service-2", "undertow:http://service-2");
+                            .serviceCall("service-2");
             }
         };
     }

@@ -1,6 +1,17 @@
-## Twitter Component
+## Twitter Component (deprecated)
 
 *Available as of Camel version 2.10*
+
+[IMPORTANT]
+====================================================================================
+The composite twitter component has been deprecated. Use individual component for directmessage, search, streaming and timeline.
+
+* link:twitter.html[Twitter Components]
+  ** link:twitter-directmessage-component.html[Twitter Direct Message]
+  ** link:twitter-search-component.html[Twitter Search]
+  ** link:twitter-streaming-component.html[Twitter Streaming]
+  ** link:twitter-timeline-component.html[Twitter Timeline]
+====================================================================================
 
 The Twitter component enables the most useful features of the Twitter
 API by encapsulating http://twitter4j.org/[Twitter4J]. It allows direct,
@@ -141,10 +152,10 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
-| **kind** | *Required* What polling mode to use direct polling or event based. The event mode is only supported when the endpoint kind is event based. |  | String
+| **kind** | *Required* The kind of endpoint |  | String
 |=======================================================================
 
-#### Query Parameters (42 parameters):
+#### Query Parameters (43 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -173,7 +184,7 @@ with the following path and query parameters:
 | **backoffErrorThreshold** (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | **backoffIdleThreshold** (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
 | **backoffMultiplier** (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
-| **delay** (scheduler) | Milliseconds before the next poll. | 60000 | long
+| **delay** (scheduler) | Milliseconds before the next poll. | 30000 | long
 | **greedy** (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
 | **initialDelay** (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
 | **runLoggingLevel** (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
@@ -183,6 +194,7 @@ with the following path and query parameters:
 | **startScheduler** (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | **timeUnit** (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| **sortById** (sort) | Sorts by id so the oldest are first and newest last. | true | boolean
 | **httpProxyHost** (proxy) | The http proxy host which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead. |  | String
 | **httpProxyPassword** (proxy) | The http proxy password which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead. |  | String
 | **httpProxyPort** (proxy) | The http proxy port which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead. |  | Integer

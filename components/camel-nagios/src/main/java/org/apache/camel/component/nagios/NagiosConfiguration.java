@@ -18,14 +18,15 @@ package org.apache.camel.component.nagios;
 
 import java.net.URI;
 
-import com.googlecode.jsendnsca.core.Encryption;
-import com.googlecode.jsendnsca.core.NagiosSettings;
+import com.googlecode.jsendnsca.NagiosSettings;
+import com.googlecode.jsendnsca.encryption.Encryption;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * @version 
@@ -45,8 +46,11 @@ public class NagiosConfiguration implements Cloneable {
     private int timeout = 5000;
     @UriParam(label = "security", secret = true)
     private String password;
+    @Deprecated
     @UriParam(label = "security")
     private NagiosEncryptionMethod encryptionMethod;
+    @UriParam(label = "security")
+    private Encryption encryption = Encryption.NONE;
 
     /**
      * Returns a copy of this configuration
@@ -75,7 +79,7 @@ public class NagiosConfiguration implements Cloneable {
         if (nagiosSettings == null) {
 
             // validate parameters
-            ObjectHelper.notEmpty(host, "host", this);
+            StringHelper.notEmpty(host, "host", this);
             if (port <= 0) {
                 throw new IllegalArgumentException("Port must be a positive number on " + this);
             }
@@ -87,18 +91,7 @@ public class NagiosConfiguration implements Cloneable {
             nagiosSettings.setNagiosHost(getHost());
             nagiosSettings.setPort(getPort());
             nagiosSettings.setPassword(getPassword());
-
-            if (encryptionMethod != null) {
-                if (NagiosEncryptionMethod.No == encryptionMethod) {
-                    nagiosSettings.setEncryptionMethod(Encryption.NO_ENCRYPTION);
-                } else if (NagiosEncryptionMethod.Xor == encryptionMethod) {
-                    nagiosSettings.setEncryptionMethod(Encryption.XOR_ENCRYPTION);
-                } else if (NagiosEncryptionMethod.TripleDes == encryptionMethod) {
-                    nagiosSettings.setEncryptionMethod(Encryption.TRIPLE_DES_ENCRYPTION);
-                } else {
-                    throw new IllegalArgumentException("Unknown encryption method: " + encryptionMethod);
-                }
-            }
+            nagiosSettings.setEncryption(encryption);
         }
 
         return nagiosSettings;
@@ -169,15 +162,28 @@ public class NagiosConfiguration implements Cloneable {
 
     /**
      * To specify an encryption method.
+     * @deprecated use the {@link #encryption} query parameter instead.
      */
+    @Deprecated
     public void setEncryptionMethod(NagiosEncryptionMethod encryptionMethod) {
         this.encryptionMethod = encryptionMethod;
+    }
+
+    public Encryption getEncryption() {
+        return encryption;
+    }
+
+    /**
+     * To specify an encryption method.
+     */
+    public void setEncryption(Encryption encryption) {
+        this.encryption = encryption;
     }
 
     @Override
     public String toString() {
         return "NagiosConfiguration[host=" + host + ":" + port + ", connectionTimeout=" + connectionTimeout
-                + ", timeout=" + timeout + ", encryptionMethod=" + encryptionMethod + "]";
+                + ", timeout=" + timeout + ", encryptionMethod=" + encryptionMethod + ", encryption=" + encryption + "]";
     }
 
 }

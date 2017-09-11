@@ -163,7 +163,9 @@ public class RestApiEndpoint extends DefaultEndpoint {
             String host = "";
             int port = 80;
 
-            if (config.getHost() != null) {
+            if (config.getApiHost() != null) {
+                host = config.getApiHost();
+            } else if (config.getHost() != null) {
                 host = config.getHost();
             }
             int num = config.getPort();

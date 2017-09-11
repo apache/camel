@@ -154,6 +154,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Whether MDC logging is supported")
     boolean isUseMDCLogging();
 
+    @ManagedAttribute(description = "Whether Message DataType is enabled")
+    boolean isUseDataType();
+
     @ManagedOperation(description = "Start Camel")
     void start() throws Exception;
 

@@ -16,14 +16,17 @@ Where client -> service1 -> service2 using HTTP.
 
 ### Configuration
 
-Service1 is configured in the `src/main/java/sample/camel/Service1Application.java` source code.
-Service2 is configured in the `src/main/resources/application.properties` properties file.
+This example assumes you will run Zipkin on the same host using the default collector port of 9410.  If you wish to change those, you can do so using these files:  
 
-Here you need to configure the hostname and port number for the Zipkin Server.
+Service1 is configured in the `src/main/resources/application.properties` properties file.
+Service2 is configured in the `src/main/java/sample/camel/Service2Route.java` source file.
+Client is configured in the `src/main/java/sample/camel/ClientApplication.java` source file.
 
 ### Build
 
-You will need to compile this example first:
+First, start Zipkin as described below in the [Zipkin web console]("Zipkin web console") section
+
+Then compile this example:
 
 ```sh
 $ mvn compile
@@ -77,7 +80,7 @@ wget -O zipkin.jar 'https://search.maven.org/remote_content?g=io.zipkin.java&a=z
 .. and then run it
 
 ```bash
-java -jar zipkin.jar
+java -DSCRIBE_ENABLED=true -jar zipkin.jar
 ```
 
 Finally, browse to http://localhost:9411 to find traces!

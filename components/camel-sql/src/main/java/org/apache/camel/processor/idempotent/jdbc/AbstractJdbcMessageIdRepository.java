@@ -77,7 +77,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
      * @param key  the key
      * @return int number of rows
      */
-    protected abstract int queryForInt(final T key);
+    protected abstract int queryForInt(T key);
 
     /**
      * Operation that inserts the key if it does not already exist
@@ -85,7 +85,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
      * @param key  the key
      * @return int number of rows inserted
      */
-    protected abstract int insert(final T key);
+    protected abstract int insert(T key);
 
     /**
      * Operations that deletes the key if it exists
@@ -93,7 +93,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
      * @param key  the key
      * @return int number of rows deleted
      */
-    protected abstract int delete(final T key);
+    protected abstract int delete(T key);
     
     /**
      * Operations that deletes all the rows

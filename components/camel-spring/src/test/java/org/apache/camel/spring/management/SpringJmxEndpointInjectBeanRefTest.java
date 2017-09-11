@@ -29,6 +29,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringJmxEndpointInjectBeanRefTest extends SpringTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringJmxEndpointInjectBeanRefTest.xml");
     }

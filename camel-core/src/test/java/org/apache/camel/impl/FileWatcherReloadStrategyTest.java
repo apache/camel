@@ -28,6 +28,8 @@ import org.apache.camel.management.event.RouteAddedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.FileUtil;
 
+import static org.awaitility.Awaitility.await;
+
 public class FileWatcherReloadStrategyTest extends ContextTestSupport {
 
     private FileWatcherReloadStrategy reloadStrategy;
@@ -42,6 +44,8 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
         reloadStrategy = new FileWatcherReloadStrategy();
         reloadStrategy.setFolder("target/dummy");
+        // to make unit test faster
+        reloadStrategy.setPollTimeout(100);
         context.setReloadStrategy(reloadStrategy);
         return context;
     }
@@ -55,7 +59,6 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         // there are 0 routes to begin with
         assertEquals(0, context.getRoutes().size());
 
-        Thread.sleep(1000);
         log.info("Copying file to target/dummy");
 
         // create an xml file with some routes
@@ -63,17 +66,9 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
 
         // wait for that file to be processed
         // (is slow on osx, so wait up till 20 seconds)
-        for (int i = 0; i < 20; i++) {
-            if (context.getRoutes().size() > 0) {
-                break;
-            }
-            Thread.sleep(1000);
-        }
-
-        assertEquals(1, context.getRoutes().size());
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, context.getRoutes().size()));
 
         // and the route should work
-        Thread.sleep(1000);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         template.sendBody("direct:bar", "Hello World");
         assertMockEndpointsSatisfied();
@@ -116,7 +111,6 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
 
         resetMocks();
 
-        Thread.sleep(1000);
         log.info("Copying file to target/dummy");
 
         // create an xml file with some routes
@@ -128,7 +122,7 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         assertTrue("Should reload file within 20 seconds", done);
 
         // and the route should be changed to route to mock:bar instead of mock:foo
-        Thread.sleep(1000);
+        Thread.sleep(500);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedMessageCount(0);
         template.sendBody("direct:bar", "Bye World");
@@ -158,7 +152,6 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         // there are 0 routes to begin with
         assertEquals(0, context.getRoutes().size());
 
-        Thread.sleep(1000);
         log.info("Copying file to target/dummy");
 
         // create an xml file with some routes
@@ -166,14 +159,7 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
 
         // wait for that file to be processed
         // (is slow on osx, so wait up till 20 seconds)
-        for (int i = 0; i < 20; i++) {
-            if (context.getRoutes().size() > 0) {
-                break;
-            }
-            Thread.sleep(1000);
-        }
-
-        assertEquals(1, context.getRoutes().size());
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, context.getRoutes().size()));
 
         // and the route should work
         getMockEndpoint("mock:bar").expectedMessageCount(1);
@@ -194,7 +180,7 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         assertTrue("Should reload file within 20 seconds", done);
 
         // and the route should work with the update
-        Thread.sleep(1000);
+        Thread.sleep(500);
         getMockEndpoint("mock:bar").expectedBodiesReceived("Bye Camel");
         template.sendBody("direct:bar", "Camel");
         assertMockEndpointsSatisfied();

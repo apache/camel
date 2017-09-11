@@ -149,7 +149,7 @@ public class SpringAnnotationProcessor {
             doc = sanitizeDescription(doc, false);
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
-                    entry.isDeprecated(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes(), entry.isAsPredicate(),
+                    entry.isDeprecated(), entry.getDeprecationNote(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes(), entry.isAsPredicate(),
                 null, null, false));
         }
         buffer.append("\n  }");
@@ -286,11 +286,15 @@ public class SpringAnnotationProcessor {
             }
         }
 
-        boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
         String displayName = null;
         Metadata metadata = fieldElement.getAnnotation(Metadata.class);
         if (metadata != null) {
             displayName = metadata.displayName();
+        }
+        boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+        String deprecationNote = null;
+        if (metadata != null) {
+            deprecationNote = metadata.deprecationNode();
         }
 
         // special for id as its inherited from camel-core
@@ -302,7 +306,8 @@ public class SpringAnnotationProcessor {
             }
         }
 
-        EipOption ep = new EipOption(name, displayName, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, false, null, false);
+        EipOption ep = new EipOption(name, displayName, "attribute", fieldTypeName, required, defaultValue, docComment,
+            deprecated, deprecationNote, isEnum, enums, false, null, false);
         eipOptions.add(ep);
 
         return false;
@@ -320,7 +325,8 @@ public class SpringAnnotationProcessor {
         Set<String> oneOfTypes = new TreeSet<String>();
         oneOfTypes.add("route");
 
-        EipOption ep = new EipOption("route", "Route", "element", fieldTypeName, false, "", "Contains the Camel routes", false, false, null, true, oneOfTypes, false);
+        EipOption ep = new EipOption("route", "Route", "element", fieldTypeName, false, "", "Contains the Camel routes",
+            false, null, false, null, true, oneOfTypes, false);
         eipOptions.add(ep);
     }
 
@@ -336,7 +342,8 @@ public class SpringAnnotationProcessor {
         Set<String> oneOfTypes = new TreeSet<String>();
         oneOfTypes.add("rest");
 
-        EipOption ep = new EipOption("rest", "Rest", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, false, null, true, oneOfTypes, false);
+        EipOption ep = new EipOption("rest", "Rest", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl",
+            false, null,  false, null, true, oneOfTypes, false);
         eipOptions.add(ep);
     }
 
@@ -413,15 +420,19 @@ public class SpringAnnotationProcessor {
             }
             boolean oneOf = !oneOfTypes.isEmpty();
 
-            boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
             boolean asPredicate = false;
             String displayName = null;
             Metadata metadata = fieldElement.getAnnotation(Metadata.class);
             if (metadata != null) {
                 displayName = metadata.displayName();
             }
+            boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+            String deprecationNote = null;
+            if (metadata != null) {
+                deprecationNote = metadata.deprecationNode();
+            }
 
-            EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, oneOf, oneOfTypes, asPredicate);
+            EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, oneOf, oneOfTypes, asPredicate);
             eipOptions.add(ep);
         }
     }
@@ -461,8 +472,13 @@ public class SpringAnnotationProcessor {
             if (metadata != null) {
                 displayName = metadata.displayName();
             }
+            boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+            String deprecationNote = null;
+            if (metadata != null) {
+                deprecationNote = metadata.deprecationNode();
+            }
 
-            EipOption ep = new EipOption(name, kind, displayName, fieldTypeName, required, defaultValue, docComment, false, false, null, true, oneOfTypes, false);
+            EipOption ep = new EipOption(name, kind, displayName, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, false, null, true, oneOfTypes, false);
             eipOptions.add(ep);
         }
     }
@@ -555,14 +571,15 @@ public class SpringAnnotationProcessor {
         private String defaultValue;
         private String documentation;
         private boolean deprecated;
+        private String deprecationNote;
         private boolean enumType;
         private Set<String> enums;
         private boolean oneOf;
         private Set<String> oneOfTypes;
         private boolean asPredicate;
 
-        private EipOption(String name, String displayName, String kind, String type, boolean required, String defaultValue, String documentation, boolean deprecated,
-                          boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfTypes, boolean asPredicate) {
+        private EipOption(String name, String displayName, String kind, String type, boolean required, String defaultValue, String documentation,
+                          boolean deprecated, String deprecationNote, boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfTypes, boolean asPredicate) {
             this.name = name;
             this.displayName = displayName;
             this.kind = kind;
@@ -571,6 +588,7 @@ public class SpringAnnotationProcessor {
             this.defaultValue = defaultValue;
             this.documentation = documentation;
             this.deprecated = deprecated;
+            this.deprecationNote = deprecationNote;
             this.enumType = enumType;
             this.enums = enums;
             this.oneOf = oneOf;
@@ -608,6 +626,10 @@ public class SpringAnnotationProcessor {
 
         public boolean isDeprecated() {
             return deprecated;
+        }
+
+        public String getDeprecationNote() {
+            return deprecationNote;
         }
 
         public boolean isEnumType() {

@@ -19,6 +19,10 @@ package org.apache.camel.component.twitter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.twitter.data.EndpointType;
 
+/**
+ * @deprecated Migrate with {@link AbstractTwitterEndpoint} in 3.0
+ */
+@Deprecated
 public interface TwitterEndpoint extends Endpoint {
 
     TwitterConfiguration getProperties();

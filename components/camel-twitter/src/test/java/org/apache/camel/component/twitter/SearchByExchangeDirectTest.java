@@ -120,17 +120,17 @@ public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .toF("twitter://search?%s&keywords=java", getUriTokens())
+                        .toF("twitter-search://java?%s", getUriTokens())
                         .split().body()
                         .to("mock:result");
 
                 from("direct:header")
-                        .toF("twitter://search?%s", getUriTokens())
+                        .toF("twitter-search://foo?%s", getUriTokens())
                         .split().body()
                         .to("mock:result");
 
                 from("direct:double")
-                        .toF("twitter://search?filterOld=false&%s", getUriTokens())
+                        .toF("twitter-search://foo?filterOld=false&%s", getUriTokens())
                         .split().body()
                         .to("mock:result");
             }

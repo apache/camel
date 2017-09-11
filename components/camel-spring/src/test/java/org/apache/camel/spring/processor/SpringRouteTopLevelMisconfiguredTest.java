@@ -18,31 +18,36 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.RuntimeCamelException;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringRouteTopLevelMisconfiguredTest extends ContextTestSupport {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         try {
             createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringRouteTopLevelOnExceptionMisconfiguredTest.xml");
             fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertTrue(e.getCause().getMessage().startsWith("The output must be added as top-level on the route."));
+        } catch (RuntimeCamelException e) {
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertTrue(iae.getMessage().startsWith("The output must be added as top-level on the route."));
         }
 
         try {
             createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringRouteTopLevelOnCompletionMisconfiguredTest.xml");
             fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertTrue(e.getCause().getMessage().startsWith("The output must be added as top-level on the route."));
+        } catch (RuntimeCamelException e) {
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertTrue(iae.getMessage().startsWith("The output must be added as top-level on the route."));
         }
 
         try {
             createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringRouteTopLevelTransactedMisconfiguredTest.xml");
             fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertTrue(e.getCause().getMessage().startsWith("The output must be added as top-level on the route."));
+        } catch (RuntimeCamelException e) {
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertTrue(iae.getMessage().startsWith("The output must be added as top-level on the route."));
         }
 
 

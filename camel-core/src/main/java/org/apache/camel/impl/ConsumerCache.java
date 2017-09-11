@@ -31,6 +31,7 @@ import org.apache.camel.spi.ServicePool;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,12 +101,13 @@ public class ConsumerCache extends ServiceSupport {
      * @param cacheSize the cache size
      * @return the cache
      */
+    @SuppressWarnings("unchecked")
     protected static LRUCache<String, PollingConsumer> createLRUCache(int cacheSize) {
         // Use a regular cache as we want to ensure that the lifecycle of the consumers
         // being cache is properly handled, such as they are stopped when being evicted
         // or when this cache is stopped. This is needed as some consumers requires to
         // be stopped so they can shutdown internal resources that otherwise may cause leaks
-        return new LRUCache<String, PollingConsumer>(cacheSize);
+        return LRUCacheFactory.newLRUCache(cacheSize);
     }
     
     /**
@@ -134,11 +136,18 @@ public class ConsumerCache extends ServiceSupport {
             if (pollingConsumer instanceof IsSingleton) {
                 singleton = ((IsSingleton) pollingConsumer).isSingleton();
             }
-            if (!singleton) {
+            String key = endpoint.getEndpointUri();
+            boolean cached = consumers.containsKey(key);
+            if (!singleton || !cached) {
                 try {
-                    // stop and shutdown non-singleton producers as we should not leak resources
+                    // stop and shutdown non-singleton/non-cached consumers as we should not leak resources
+                    if (!singleton) {
+                        LOG.debug("Released PollingConsumer: {} is stopped as consumer is not singleton", endpoint);
+                    } else {
+                        LOG.debug("Released PollingConsumer: {} is stopped as consumer cache is full", endpoint);
+                    }
                     ServiceHelper.stopAndShutdownService(pollingConsumer);
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     if (ex instanceof RuntimeCamelException) {
                         throw (RuntimeCamelException)ex;
                     } else {
@@ -164,7 +173,7 @@ public class ConsumerCache extends ServiceSupport {
             try {
                 answer = endpoint.createPollingConsumer();
                 answer.start();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 throw new FailedToCreateConsumerException(endpoint, e);
             }
             if (pooled && answer instanceof ServicePoolAware) {

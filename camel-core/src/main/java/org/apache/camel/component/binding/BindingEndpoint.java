@@ -52,7 +52,7 @@ import static org.apache.camel.util.CamelContextHelper.getMandatoryEndpoint;
  *
  * @deprecated use {@link org.apache.camel.spi.Contract} instead
  */
-@Deprecated
+@Deprecated @Metadata(deprecationNode = "Use org.apache.camel.spi.Contract instead")
 @UriEndpoint(firstVersion = "2.11.0", scheme = "binding", title = "Binding", syntax = "binding:bindingName:delegateUri",
     consumerClass = BindingConsumerProcessor.class, label = "core,transformation")
 public class BindingEndpoint extends DefaultEndpoint implements HasBinding {

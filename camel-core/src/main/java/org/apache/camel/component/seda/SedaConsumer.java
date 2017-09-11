@@ -35,6 +35,7 @@ import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
@@ -154,13 +155,15 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             doRun();
         } finally {
             taskCount.decrementAndGet();
+            latch.countDown();
+            LOG.debug("Ending this polling consumer thread, there are still {} consumer threads left.", latch.getCount());
         }
     }
 
     protected void doRun() {
         BlockingQueue<Exchange> queue = endpoint.getQueue();
         // loop while we are allowed, or if we are stopping loop until the queue is empty
-        while (queue != null && (isRunAllowed())) {
+        while (queue != null && isRunAllowed()) {
 
             // do not poll during CamelContext is starting, as we should only poll when CamelContext is fully started
             if (getEndpoint().getCamelContext().getStatus().isStarting()) {
@@ -235,9 +238,6 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
                 }
             }
         }
-
-        latch.countDown();
-        LOG.debug("Ending this polling consumer thread, there are still {} consumer threads left.", latch.getCount());
     }
 
     /**
@@ -295,11 +295,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             });
         } else {
             // use the regular processor and use the asynchronous routing engine to support it
-            processor.process(exchange, new AsyncCallback() {
-                public void done(boolean doneSync) {
-                    // noop
-                }
-            });
+            processor.process(exchange, EmptyAsyncCallback.get());
         }
     }
 

@@ -40,6 +40,7 @@ public class EndpointHelperTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Bye World");
 
         final List<String> bodies = new ArrayList<String>();
+        // uses 1 sec default timeout
         EndpointHelper.pollEndpoint(context.getEndpoint("seda:foo"), new Processor() {
             public void process(Exchange exchange) throws Exception {
                 bodies.add(exchange.getIn().getBody(String.class));
@@ -60,7 +61,7 @@ public class EndpointHelperTest extends ContextTestSupport {
             public void process(Exchange exchange) throws Exception {
                 bodies.add(exchange.getIn().getBody(String.class));
             }
-        }, 2000);
+        }, 10);
 
         assertEquals(2, bodies.size());
         assertEquals("Hello World", bodies.get(0));

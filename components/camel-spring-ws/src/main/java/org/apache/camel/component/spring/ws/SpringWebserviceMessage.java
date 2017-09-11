@@ -16,13 +16,15 @@
  */
 package org.apache.camel.component.spring.ws;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultMessage;
 import org.springframework.ws.WebServiceMessage;
 
 public class SpringWebserviceMessage extends DefaultMessage {
     private WebServiceMessage webServiceMessage;
 
-    public SpringWebserviceMessage(WebServiceMessage webServiceMessage) {
+    public SpringWebserviceMessage(CamelContext camelContext, WebServiceMessage webServiceMessage) {
+        super(camelContext);
         this.webServiceMessage = webServiceMessage;
     }
 
@@ -40,6 +42,11 @@ public class SpringWebserviceMessage extends DefaultMessage {
 
     public void setWebServiceMessage(WebServiceMessage webServiceMessage) {
         this.webServiceMessage = webServiceMessage;
+    }
+
+    @Override
+    public DefaultMessage newInstance() {
+        return new SpringWebserviceMessage(getCamelContext(), webServiceMessage);
     }
 
     @Override

@@ -55,29 +55,29 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
 
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        this.exchangesCompleted = new Statistic("org.apache.camel.exchangesCompleted", this, Statistic.UpdateMode.COUNTER);
-        this.exchangesFailed = new Statistic("org.apache.camel.exchangesFailed", this, Statistic.UpdateMode.COUNTER);
-        this.exchangesInflight = new Statistic("org.apache.camel.exchangesInflight", this, Statistic.UpdateMode.COUNTER);
+        this.exchangesCompleted = new StatisticCounter();
+        this.exchangesFailed = new StatisticCounter();
+        this.exchangesInflight = new StatisticCounter();
 
-        this.failuresHandled = new Statistic("org.apache.camel.failuresHandled", this, Statistic.UpdateMode.COUNTER);
-        this.redeliveries = new Statistic("org.apache.camel.redeliveries", this, Statistic.UpdateMode.COUNTER);
-        this.externalRedeliveries = new Statistic("org.apache.camel.externalRedeliveries", this, Statistic.UpdateMode.COUNTER);
+        this.failuresHandled = new StatisticCounter();
+        this.redeliveries = new StatisticCounter();
+        this.externalRedeliveries = new StatisticCounter();
 
-        this.minProcessingTime = new Statistic("org.apache.camel.minimumProcessingTime", this, Statistic.UpdateMode.MINIMUM);
-        this.maxProcessingTime = new Statistic("org.apache.camel.maximumProcessingTime", this, Statistic.UpdateMode.MAXIMUM);
-        this.totalProcessingTime = new Statistic("org.apache.camel.totalProcessingTime", this, Statistic.UpdateMode.COUNTER);
-        this.lastProcessingTime = new Statistic("org.apache.camel.lastProcessingTime", this, Statistic.UpdateMode.VALUE);
-        this.deltaProcessingTime = new Statistic("org.apache.camel.deltaProcessingTime", this, Statistic.UpdateMode.DELTA);
-        this.meanProcessingTime = new Statistic("org.apache.camel.meanProcessingTime", this, Statistic.UpdateMode.VALUE);
+        this.minProcessingTime = new StatisticMinimum();
+        this.maxProcessingTime = new StatisticMaximum();
+        this.totalProcessingTime = new StatisticCounter();
+        this.lastProcessingTime = new StatisticValue();
+        this.deltaProcessingTime = new StatisticDelta();
+        this.meanProcessingTime = new StatisticValue();
 
-        this.firstExchangeCompletedTimestamp = new Statistic("org.apache.camel.firstExchangeCompletedTimestamp", this, Statistic.UpdateMode.VALUE);
-        this.firstExchangeFailureTimestamp = new Statistic("org.apache.camel.firstExchangeFailureTimestamp", this, Statistic.UpdateMode.VALUE);
-        this.lastExchangeCompletedTimestamp = new Statistic("org.apache.camel.lastExchangeCompletedTimestamp", this, Statistic.UpdateMode.VALUE);
-        this.lastExchangeFailureTimestamp = new Statistic("org.apache.camel.lastExchangeFailureTimestamp", this, Statistic.UpdateMode.VALUE);
+        this.firstExchangeCompletedTimestamp = new StatisticValue();
+        this.firstExchangeFailureTimestamp = new StatisticValue();
+        this.lastExchangeCompletedTimestamp = new StatisticValue();
+        this.lastExchangeFailureTimestamp = new StatisticValue();
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         super.reset();
         exchangesCompleted.reset();
         exchangesFailed.reset();
@@ -193,11 +193,11 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         this.statisticsEnabled = statisticsEnabled;
     }
 
-    public synchronized void processExchange(Exchange exchange) {
+    public void processExchange(Exchange exchange) {
         exchangesInflight.increment();
     }
 
-    public synchronized void completedExchange(Exchange exchange, long time) {
+    public void completedExchange(Exchange exchange, long time) {
         increment();
         exchangesCompleted.increment();
         exchangesInflight.decrement();
@@ -216,8 +216,8 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         lastProcessingTime.updateValue(time);
         deltaProcessingTime.updateValue(time);
 
-        long now = new Date().getTime();
-        if (firstExchangeCompletedTimestamp.getUpdateCount() == 0) {
+        long now = System.currentTimeMillis();
+        if (!firstExchangeCompletedTimestamp.isUpdated()) {
             firstExchangeCompletedTimestamp.updateValue(now);
         }
 
@@ -228,12 +228,15 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         lastExchangeCompletedExchangeId = exchange.getExchangeId();
 
         // update mean
-        long count = exchangesCompleted.getValue();
-        long mean = count > 0 ? totalProcessingTime.getValue() / count : 0;
+        long mean = 0;
+        long completed = exchangesCompleted.getValue();
+        if (completed > 0) {
+            mean = totalProcessingTime.getValue() / completed;
+        }
         meanProcessingTime.updateValue(mean);
     }
 
-    public synchronized void failedExchange(Exchange exchange) {
+    public void failedExchange(Exchange exchange) {
         increment();
         exchangesFailed.increment();
         exchangesInflight.decrement();
@@ -246,8 +249,8 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
             externalRedeliveries.increment();
         }
 
-        long now = new Date().getTime();
-        if (firstExchangeFailureTimestamp.getUpdateCount() == 0) {
+        long now = System.currentTimeMillis();
+        if (!firstExchangeFailureTimestamp.isUpdated()) {
             firstExchangeFailureTimestamp.updateValue(now);
         }
 
@@ -274,8 +277,8 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         sb.append(String.format(" meanProcessingTime=\"%s\"", meanProcessingTime.getValue()));
 
         if (fullStats) {
-            sb.append(String.format(" startTimestamp=\"%s\"", dateAsString(startTimestamp.getValue())));
-            sb.append(String.format(" resetTimestamp=\"%s\"", dateAsString(resetTimestamp.getValue())));
+            sb.append(String.format(" startTimestamp=\"%s\"", dateAsString(startTimestamp.getTime())));
+            sb.append(String.format(" resetTimestamp=\"%s\"", dateAsString(resetTimestamp.getTime())));
             sb.append(String.format(" firstExchangeCompletedTimestamp=\"%s\"", dateAsString(firstExchangeCompletedTimestamp.getValue())));
             sb.append(String.format(" firstExchangeCompletedExchangeId=\"%s\"", nullSafe(firstExchangeCompletedExchangeId)));
             sb.append(String.format(" firstExchangeFailureTimestamp=\"%s\"", dateAsString(firstExchangeFailureTimestamp.getValue())));

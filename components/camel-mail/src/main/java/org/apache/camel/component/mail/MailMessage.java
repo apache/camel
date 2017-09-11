@@ -94,7 +94,9 @@ public class MailMessage extends DefaultMessage {
 
     @Override
     public MailMessage newInstance() {
-        return new MailMessage(null, this.mapMailMessage);
+        MailMessage answer = new MailMessage(null, this.mapMailMessage);
+        answer.setCamelContext(getCamelContext());
+        return answer;
     }
 
     @Override

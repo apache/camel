@@ -30,12 +30,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
+import org.junit.Ignore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  *
  */
+@Ignore("Manual unit test")
 public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(AggregateSimpleExpressionIssueTest.class);

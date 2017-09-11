@@ -43,4 +43,10 @@ final class CdiCamelInjector implements Injector {
     public <T> T newInstance(Class<T> type, Object instance) {
         return injector.newInstance(type, instance);
     }
+
+    @Override
+    public boolean supportsAutoWiring() {
+        // TODO: cdi to support some kind of @Inject on constructors?
+        return false;
+    }
 }

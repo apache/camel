@@ -52,7 +52,11 @@ public class DdbComponentTest extends CamelTestSupport {
     }
 
 
-
+    @Test
+    public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {
+        DdbComponent component = new DdbComponent(context);
+        component.createEndpoint("aws-ddb://activeTable?accessKey=xxx&secretKey=yyy");
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

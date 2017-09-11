@@ -35,7 +35,7 @@ You can append query options to the URI in the following format:
 
 
 // component options: START
-The Consul component supports 8 options which are listed below.
+The Consul component supports 9 options which are listed below.
 
 
 
@@ -45,6 +45,7 @@ The Consul component supports 8 options which are listed below.
 | **url** (common) | The Consul agent URL |  | String
 | **datacenter** (common) | The data center |  | String
 | **sslContextParameters** (common) | SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters instance. |  | SSLContextParameters
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **aclToken** (common) | Sets the ACL token to be used with Consul |  | String
 | **userName** (common) | Sets the username to be used for basic authentication |  | String
 | **password** (common) | Sets the password to be used for basic authentication |  | String

@@ -254,7 +254,7 @@ public class AbstractRestProcessorApprovalTest {
         final CamelContext context = new DefaultCamelContext();
         final Exchange exchange = new DefaultExchange(context);
 
-        final Message message = new DefaultMessage();
+        final Message message = new DefaultMessage(context);
         if (headers != null) {
             message.setHeaders(headers);
         }

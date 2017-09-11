@@ -21,7 +21,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 /**
  * A context path matcher when using rest-dsl that allows components to reuse the same matching logic.
@@ -95,17 +94,14 @@ public final class RestConsumerContextPathMatcher {
             consumerPath = consumerPath.substring(0, consumerPath.length() - 1);
         }
 
-        String p1 = requestPath.toLowerCase(Locale.ENGLISH);
-        String p2 = consumerPath.toLowerCase(Locale.ENGLISH);
-
-        if (p1.equals(p2)) {
+        if (matchOnUriPrefix && requestPath.toLowerCase(Locale.ENGLISH).startsWith(consumerPath.toLowerCase(Locale.ENGLISH))) {
             return true;
         }
-
-        if (matchOnUriPrefix && p1.startsWith(p2)) {
+        
+        if (requestPath.equalsIgnoreCase(consumerPath)) {
             return true;
         }
-
+        
         return false;
     }
 
@@ -136,6 +132,22 @@ public final class RestConsumerContextPathMatcher {
             if (matchRestPath(requestPath, consumer.getConsumerPath(), false)) {
                 answer = consumer;
                 break;
+            }
+        }
+
+        // we could not find a direct match, and if the request is OPTIONS then we need all candidates
+        if (answer == null && isOptionsMethod(requestMethod)) {
+            candidates.clear();
+            candidates.addAll(consumerPaths);
+
+            // then try again to see if we can find a direct match
+            it = candidates.iterator();
+            while (it.hasNext()) {
+                ConsumerPath consumer = it.next();
+                if (matchRestPath(requestPath, consumer.getConsumerPath(), false)) {
+                    answer = consumer;
+                    break;
+                }
             }
         }
 
@@ -192,7 +204,7 @@ public final class RestConsumerContextPathMatcher {
     }
 
     /**
-     * Matches the given request HTTP method with the configured HTTP method of the consumer
+     * Matches the given request HTTP method with the configured HTTP method of the consumer.
      *
      * @param method   the request HTTP method
      * @param restrict the consumer configured HTTP restrict method
@@ -204,6 +216,15 @@ public final class RestConsumerContextPathMatcher {
         }
 
         return restrict.toLowerCase(Locale.ENGLISH).contains(method.toLowerCase(Locale.ENGLISH));
+    }
+
+    /**
+     * Is the request method OPTIONS
+     *
+     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
+     */
+    private static boolean isOptionsMethod(String method) {
+        return "options".equalsIgnoreCase(method);
     }
 
     /**

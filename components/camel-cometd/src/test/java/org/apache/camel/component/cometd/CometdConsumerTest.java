@@ -19,28 +19,22 @@ package org.apache.camel.component.cometd;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cometd.CometdConsumer.ConsumerService;
 import org.cometd.bayeux.MarkedReference;
 import org.cometd.bayeux.server.LocalSession;
 import org.cometd.bayeux.server.ServerChannel;
-import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.cometd.server.BayeuxServerImpl;
 import org.eclipse.jetty.util.log.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -98,24 +92,6 @@ public class CometdConsumerTest {
         assertEquals(expectedService, result);
     }
     
-    @Test
-    public void testSessionHeadersAdded() throws Exception {
-        // setup
-        when(endpoint.isSessionHeadersEnabled()).thenReturn(true);
-        testObj.start();
-        ServerMessage cometdMessage = mock(ServerMessage.class);
-        Exchange exchange = mock(Exchange.class);
-        when(endpoint.createExchange()).thenReturn(exchange);
-        ArgumentCaptor<Message> transferredMessage = ArgumentCaptor.forClass(Message.class);
-
-        // act
-        testObj.getConsumerService().push(remote, cometdMessage);
-
-        // verify
-        verify(exchange).setIn(transferredMessage.capture());
-        Message message = transferredMessage.getValue();
-        assertEquals(MEMEBER_USER_NAME, message.getHeader(USER_NAME));
-    }
 }
 
 

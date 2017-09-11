@@ -48,6 +48,7 @@ public class OnExceptionRetryUntilWithDefaultErrorHandlerTest extends ContextTes
 
                 onException(MyFunctionalException.class)
                         .retryWhile(method("myRetryHandler"))
+                        .redeliveryDelay(0)
                         .handled(true)
                         .transform().constant("Sorry").stop();
 

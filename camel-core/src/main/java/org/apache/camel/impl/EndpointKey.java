@@ -31,6 +31,14 @@ final class EndpointKey extends ValueHolder<String> {
         ObjectHelper.notEmpty(uri, "uri");
     }
 
+    /**
+     * Optimized when the uri is already normalized.
+     */
+    EndpointKey(String uri, boolean normalized) {
+        super(uri);
+        ObjectHelper.notEmpty(uri, "uri");
+    }
+
     @Override
     public String toString() {
         return get();

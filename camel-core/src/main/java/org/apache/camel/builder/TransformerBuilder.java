@@ -70,7 +70,7 @@ public class TransformerBuilder {
     /**
      * Set the 'from' data type using Java class.
      *
-     * @param clazz 'from' Java class
+     * @param from 'from' Java class
      */
     public TransformerBuilder fromType(Class<?> from) {
         this.from = new DataType(from).toString();
@@ -102,8 +102,7 @@ public class TransformerBuilder {
 
     /**
      * Set the URI to be used for the endpoint {@code Transformer}.
-     * @see {@code EndpointTransformerDefinition}, {@code ProcessorTransformer}
-     * 
+     *
      * @param uri endpoint URI
      */
     public TransformerBuilder withUri(String uri) {
@@ -114,9 +113,6 @@ public class TransformerBuilder {
 
     /**
      * Set the {@code DataFormatDefinition} to be used for the {@code DataFormat} {@code Transformer}.
-     * @see {@code DataFormatTransformerDefinition}, {@code DataFormatTransformer}
-     * 
-     * @param dataFormatDefinition {@code DataFormatDefinition}
      */
     public TransformerBuilder withDataFormat(DataFormatDefinition dataFormatDefinition) {
         resetType();
@@ -126,9 +122,6 @@ public class TransformerBuilder {
 
     /**
      * Set the Java {@code Class} represents a custom {@code Transformer} implementation class.
-     * @see {@code CustomTransformerDefinition}
-     * 
-     * @param clazz {@code Class} object represents custom transformer implementation
      */
     public TransformerBuilder withJava(Class<? extends Transformer> clazz) {
         resetType();
@@ -138,9 +131,6 @@ public class TransformerBuilder {
 
     /**
      * Set the Java Bean name to be used for custom {@code Transformer}.
-     * @see {@code CustomTransformerDefinition}
-     * 
-     * @param ref bean name for the custom {@code Transformer}
      */
     public TransformerBuilder withBean(String ref) {
         resetType();

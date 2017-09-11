@@ -59,7 +59,7 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file/splitprop?move=done")
+                from("file://target/file/splitprop?initialDelay=0&delay=10&move=done")
                     .convertBodyTo(String.class)
                     .split(new MyCustomExpression())
                     .recipientList(header("myCustomDestination"));

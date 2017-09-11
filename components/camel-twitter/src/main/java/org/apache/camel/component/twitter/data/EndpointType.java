@@ -23,7 +23,7 @@ public enum EndpointType {
 
     private static final EndpointType[] VALUES = values();
 
-    public static EndpointType fromUri(String uri) {
+    public static EndpointType fromString(String uri) {
         return TwitterHelper.enumFromString(VALUES, uri, EndpointType.DIRECT);
     }
 }

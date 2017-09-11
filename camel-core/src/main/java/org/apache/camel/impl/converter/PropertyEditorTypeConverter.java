@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,8 @@ public class PropertyEditorTypeConverter implements TypeConverter {
     private static final Logger LOG = LoggerFactory.getLogger(PropertyEditorTypeConverter.class);
     // use a soft bound cache to avoid using too much memory in case a lot of different classes
     // is being converted to string
-    private final Map<Class<?>, Class<?>> misses = new LRUSoftCache<Class<?>, Class<?>>(1000);
+    @SuppressWarnings("unchecked")
+    private final Map<Class<?>, Class<?>> misses = LRUCacheFactory.newLRUSoftCache(1000);
     // we don't anticipate so many property editors so we have unbounded map
     private final Map<Class<?>, PropertyEditor> cache = new HashMap<Class<?>, PropertyEditor>();
 

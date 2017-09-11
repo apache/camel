@@ -21,13 +21,19 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import javax.annotation.Generated;
+import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.maven.connector.model.ComponentModel;
 import org.apache.camel.maven.connector.model.ComponentOptionModel;
+import org.apache.camel.maven.connector.model.ConnectorOptionModel;
+import org.apache.camel.maven.connector.model.EndpointOptionModel;
+import org.apache.camel.maven.connector.model.OptionModel;
 import org.apache.camel.maven.connector.util.JSonSchemaHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -44,12 +50,16 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
 import org.jboss.forge.roaster.model.util.Formatter;
 import org.jboss.forge.roaster.model.util.Strings;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -89,7 +99,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
         String javaType = null;
         String connectorScheme = null;
-        List<String> componentOptions = null;
+        List<String> componentOptions = Collections.emptyList();
+        List<String> endpointOptions = Collections.emptyList();
 
         File file = new File(classesDirectory, "camel-connector.json");
         if (file.exists()) {
@@ -99,10 +110,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             javaType = (String) dto.get("javaType");
             connectorScheme = (String) dto.get("scheme");
             componentOptions = (List) dto.get("componentOptions");
+            endpointOptions = (List) dto.get("endpointOptions");
         }
 
         // find the component dependency and get its .json file
-        file = new File(classesDirectory, "camel-component-schema.json");
+        file = new File(classesDirectory, "camel-connector-schema.json");
         if (file.exists() && javaType != null && connectorScheme != null) {
             String json = loadText(new FileInputStream(file));
             ComponentModel model = generateComponentModel(json);
@@ -119,7 +131,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             if (hasOptions) {
                 getLog().info("Generating Spring Boot AutoConfiguration for Connector: " + model.getScheme());
 
-                createConnectorConfigurationSource(pkg, model, javaType, connectorScheme, componentOptions);
+                createConnectorConfigurationSource(pkg, model, javaType, connectorScheme, componentOptions, endpointOptions);
                 createConnectorAutoConfigurationSource(pkg, hasOptions, javaType, connectorScheme);
                 createConnectorSpringFactorySource(pkg, javaType);
             }
@@ -165,23 +177,29 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
+
+
     private void createConnectorConfigurationSource(String packageName, ComponentModel model, String javaType,
-                                                    String connectorScheme, List<String> componentOptions) throws MojoFailureException {
-        final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
+                                                     String connectorScheme, List<String> componentOptions, List<String> endpointOptions) throws MojoFailureException {
 
-        int pos = javaType.lastIndexOf(".");
-        String name = javaType.substring(pos + 1);
-        name = name.replace("Component", "ConnectorConfiguration");
-        javaClass.setPackage(packageName).setName(name);
+        final int pos = javaType.lastIndexOf(".");
+        final String commonName = javaType.substring(pos + 1).replace("Component", "ConnectorConfigurationCommon");
+        final String configName = javaType.substring(pos + 1).replace("Component", "ConnectorConfiguration");
 
-        String doc = "Generated by camel-connector-maven-plugin - do not edit this file!";
+        // Common base class
+        JavaClassSource commonClass = Roaster.create(JavaClassSource.class);
+        commonClass.setPackage(packageName);
+        commonClass.setName(commonName);
+
+        String doc = "Generated by camel-package-maven-plugin - do not edit this file!";
         if (!Strings.isBlank(model.getDescription())) {
             doc = model.getDescription() + "\n\n" + doc;
         }
         // replace Component with Connector
         doc = doc.replaceAll("Component", "Connector");
         doc = doc.replaceAll("component", "connector");
-        javaClass.getJavaDoc().setFullText(doc);
+        commonClass.getJavaDoc().setFullText(doc);
+        commonClass.addAnnotation(Generated.class).setStringValue("value", SpringBootAutoConfigurationMojo.class.getName());
 
         // compute the configuration prefix to use with spring boot configuration
         String prefix = "";
@@ -194,53 +212,57 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
         prefix += connectorScheme.toLowerCase(Locale.US);
 
-        javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
+        for (OptionModel option : model.getComponentOptions()) {
+            boolean isComponentOption = componentOptions != null && componentOptions.stream().anyMatch(o -> o.equals(option.getName()));
+            boolean isEndpointOption = endpointOptions != null && endpointOptions.stream().anyMatch(o -> o.equals(option.getName()));
 
-        for (ComponentOptionModel option : model.getComponentOptions()) {
-
-            // only include the options that has been explicit configured in the camel-connector.json file
-            boolean accepted = false;
-            if (componentOptions != null) {
-                accepted = componentOptions.stream().anyMatch(o -> o.equals(option.getName()));
-            }
-
-            if (accepted) {
-                String type = option.getJavaType();
-                PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
-
-                if ("true".equals(option.getDeprecated())) {
-                    prop.getField().addAnnotation(Deprecated.class);
-                    prop.getAccessor().addAnnotation(Deprecated.class);
-                    prop.getMutator().addAnnotation(Deprecated.class);
-                    // DeprecatedConfigurationProperty must be on getter when deprecated
-                    prop.getAccessor().addAnnotation(DeprecatedConfigurationProperty.class);
-                }
-                if (!Strings.isBlank(option.getDescription())) {
-                    prop.getField().getJavaDoc().setFullText(option.getDescription());
-                }
-                if (!Strings.isBlank(option.getDefaultValue())) {
-                    if ("java.lang.String".equals(option.getJavaType())) {
-                        prop.getField().setStringInitializer(option.getDefaultValue());
-                    } else if ("long".equals(option.getJavaType()) || "java.lang.Long".equals(option.getJavaType())) {
-                        // the value should be a Long number
-                        String value = option.getDefaultValue() + "L";
-                        prop.getField().setLiteralInitializer(value);
-                    } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
-                        prop.getField().setLiteralInitializer(option.getDefaultValue());
-                    } else if (!Strings.isBlank(option.getEnums())) {
-                        String enumShortName = type.substring(type.lastIndexOf(".") + 1);
-                        prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
-                        javaClass.addImport(model.getJavaType());
-                    }
-                }
+            // only include the options that has been explicit configured in the
+            // componentOptions section of camel-connector.json file and exclude
+            // those configured on endpointOptions in the same file
+            if (isComponentOption && !isEndpointOption) {
+                addProperty(commonClass, model, option);
             }
         }
 
+        for (OptionModel option : model.getEndpointOptions()) {
+            if (endpointOptions != null && endpointOptions.stream().anyMatch(o -> o.equals(option.getName()))) {
+                addProperty(commonClass, model, option);
+            }
+        }
 
-        sortImports(javaClass);
+        for (OptionModel option : model.getConnectorOptions()) {
+            addProperty(commonClass, model, option);
+        }
 
-        String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
-        writeSourceIfChanged(javaClass, fileName);
+        sortImports(commonClass);
+        writeSourceIfChanged(commonClass, packageName.replaceAll("\\.", "\\/") + "/" + commonName + ".java");
+
+        // Config class
+        JavaClassSource configClass = Roaster.create(JavaClassSource.class);
+        configClass.setPackage(packageName);
+        configClass.setName(configName);
+        configClass.extendSuperType(commonClass);
+        configClass.addAnnotation(Generated.class).setStringValue("value", SpringBootAutoConfigurationMojo.class.getName());
+        configClass.addAnnotation(ConfigurationProperties.class).setStringValue("prefix", prefix);
+        configClass.addImport(Map.class);
+        configClass.addImport(HashMap.class);
+        configClass.removeImport(commonClass);
+
+        configClass.addField("Map<String, " + commonName + "> configurations = new HashMap<>()")
+            .setPrivate()
+            .getJavaDoc().setFullText("Define additional configuration definitions");
+
+        MethodSource<JavaClassSource> method;
+
+        method = configClass.addMethod();
+        method.setName("getConfigurations");
+        method.setReturnType("Map<String, " + commonName + ">");
+        method.setPublic();
+        method.setBody("return configurations;");
+
+
+        sortImports(configClass);
+        writeSourceIfChanged(configClass, packageName.replaceAll("\\.", "\\/") + "/" + configName + ".java");
     }
 
     private void createConnectorAutoConfigurationSource(String packageName, boolean hasOptions,
@@ -251,12 +273,20 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         int pos = javaType.lastIndexOf(".");
         String name = javaType.substring(pos + 1);
         name = name.replace("Component", "ConnectorAutoConfiguration");
+        final String configNameCommon = javaType.substring(pos + 1).replace("Component", "ConnectorConfigurationCommon");
+        final String configName = javaType.substring(pos + 1).replace("Component", "ConnectorConfiguration");
+
+        // add method for auto configure
+        final String shortJavaType = getShortJavaType(javaType);
+        // must be named -component because camel-spring-boot uses that to lookup components
+        final String beanName = connectorScheme + "-component";
 
         javaClass.setPackage(packageName).setName(name);
 
         String doc = "Generated by camel-connector-maven-plugin - do not edit this file!";
         javaClass.getJavaDoc().setFullText(doc);
 
+        javaClass.addAnnotation(Generated.class).setStringValue("value", SpringBootAutoConfigurationMojo.class.getName());
         javaClass.addAnnotation(Configuration.class);
         javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.spring.boot.CamelAutoConfiguration");
         javaClass.addAnnotation(AutoConfigureAfter.class).setStringValue("name", "org.apache.camel.spring.boot.CamelAutoConfiguration");
@@ -266,38 +296,71 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             AnnotationSource<JavaClassSource> ann = javaClass.addAnnotation(EnableConfigurationProperties.class);
             ann.setLiteralValue("value", configurationName + ".class");
 
-            javaClass.addImport("java.util.HashMap");
-            javaClass.addImport("java.util.Map");
-            javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
+            javaClass.addImport(HashMap.class);
+            javaClass.addImport(Map.class);
+            javaClass.addImport("org.apache.camel.spring.boot.util.CamelPropertiesHelper");
         }
 
         javaClass.addImport(javaType);
+        javaClass.addImport(ApplicationContext.class);
+        javaClass.addImport(BeanCreationException.class);
+        javaClass.addImport(List.class);
+        javaClass.addImport("org.slf4j.Logger");
+        javaClass.addImport("org.slf4j.LoggerFactory");
         javaClass.addImport("org.apache.camel.CamelContext");
+        javaClass.addImport("org.apache.camel.component.connector.ConnectorCustomizer");
+        javaClass.addImport("org.apache.camel.spi.HasId");
+        javaClass.addImport("org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator");
+        javaClass.addImport("org.apache.camel.util.ObjectHelper");
 
-        // add method for auto configure
-        String shortJavaType = getShortJavaType(javaType);
-        String body = createComponentBody(shortJavaType, hasOptions);
-        String methodName = "configure" + shortJavaType;
+        javaClass.addField()
+            .setPrivate()
+            .setStatic(true)
+            .setFinal(true)
+            .setName("LOGGER")
+            .setType("Logger")
+            .setLiteralInitializer("LoggerFactory.getLogger(" + name + ".class)");
+        javaClass.addField()
+            .setPrivate()
+            .setName("applicationContext")
+            .setType("ApplicationContext")
+            .addAnnotation(Autowired.class);
+        javaClass.addField()
+            .setName("camelContext")
+            .setType("org.apache.camel.CamelContext")
+            .setPrivate()
+            .addAnnotation(Autowired.class);
+        javaClass.addField()
+            .setName("configuration")
+            .setType(configName)
+            .setPrivate()
+            .addAnnotation(Autowired.class);
+        javaClass.addField()
+            .setPrivate()
+            .setName("customizers")
+            .setType("List<ConnectorCustomizer<" + shortJavaType + ">>")
+            .addAnnotation(Autowired.class)
+            .setLiteralValue("required", "false");
 
-        MethodSource<JavaClassSource> method = javaClass.addMethod()
-            .setName(methodName)
+        MethodSource<JavaClassSource> configureMethod = javaClass.addMethod()
+            .setName("configure" + shortJavaType)
             .setPublic()
-            .setBody(body)
+            .setBody(createComponentBody(shortJavaType, hasOptions, connectorScheme.toLowerCase(Locale.US)))
             .setReturnType(shortJavaType)
             .addThrows(Exception.class);
 
-        method.addParameter("CamelContext", "camelContext");
+        configureMethod.addAnnotation(Lazy.class);
+        configureMethod.addAnnotation(Bean.class).setStringValue("name", beanName);
+        configureMethod.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
+        configureMethod.addAnnotation(ConditionalOnMissingBean.class).setStringValue("name", beanName);
 
-        if (hasOptions) {
-            method.addParameter(configurationName, "configuration");
-        }
+        MethodSource<JavaClassSource> postProcessMethod = javaClass.addMethod()
+            .setName("postConstruct" + shortJavaType)
+            .setPublic()
+            .setBody(createPostConstructBody(shortJavaType, configNameCommon, connectorScheme.toLowerCase(Locale.US)));
 
-        // must be named -component because camel-spring-boot uses that to lookup components
-        String beanName = connectorScheme + "-component";
-        method.addAnnotation(Lazy.class);
-        method.addAnnotation(Bean.class).setStringValue("name", beanName);
-        method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
-        method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", javaType + ".class");
+
+        postProcessMethod.addAnnotation(PostConstruct.class);
 
         sortImports(javaClass);
 
@@ -337,19 +400,80 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
-    private static String createComponentBody(String shortJavaType, boolean hasOptions) {
+    private static String createComponentBody(String shortJavaType, boolean hasOptions, String name) {
         StringBuilder sb = new StringBuilder();
         sb.append(shortJavaType).append(" connector = new ").append(shortJavaType).append("();").append("\n");
         sb.append("connector.setCamelContext(camelContext);\n");
         sb.append("\n");
         if (hasOptions) {
             sb.append("Map<String, Object> parameters = new HashMap<>();\n");
-            sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
-            sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), connector, parameters);\n");
-            sb.append("connector.setComponentOptions(parameters);\n");
+            sb.append("CamelPropertiesHelper.setCamelProperties(camelContext, connector, parameters, false);\n");
+            sb.append("connector.setOptions(parameters);\n");
         }
+        sb.append("if (ObjectHelper.isNotEmpty(customizers)) {\n");
+        sb.append("    for (ConnectorCustomizer<").append(shortJavaType).append("> customizer : customizers) {\n");
+        sb.append("\n");
+        sb.append("        boolean useCustomizer = (customizer instanceof HasId)");
+        sb.append("            ? HierarchicalPropertiesEvaluator.evaluate(\n");
+        sb.append("                applicationContext.getEnvironment(),\n");
+        sb.append("               \"camel.connector.customizer\",\n");
+        sb.append("               \"camel.connector.").append(name).append(".customizer\",\n");
+        sb.append("               ((HasId)customizer).getId())\n");
+        sb.append("            : HierarchicalPropertiesEvaluator.evaluate(\n");
+        sb.append("                applicationContext.getEnvironment(),\n");
+        sb.append("               \"camel.connector.customizer\",\n");
+        sb.append("               \"camel.connector.").append(name).append(".customizer\");\n");
+        sb.append("\n");
+        sb.append("        if (useCustomizer) {\n");
+        sb.append("            LOGGER.debug(\"Configure connector {}, with customizer {}\", connector, customizer);\n");
+        sb.append("            customizer.customize(connector);\n");
+        sb.append("        }\n");
+        sb.append("    }\n");
+        sb.append("}\n");
         sb.append("\n");
         sb.append("return connector;");
+        return sb.toString();
+    }
+
+    private static String createPostConstructBody(String shortJavaType, String commonConfigurationName, String name) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Map<String, Object> parameters = new HashMap<>();\n");
+        sb.append("\n");
+        sb.append("for (Map.Entry<String, " + commonConfigurationName + "> entry : configuration.getConfigurations().entrySet()) {\n");
+        sb.append("parameters.clear();\n");
+        sb.append("\n");
+        sb.append(shortJavaType).append(" connector = new ").append(shortJavaType).append("();\n");
+        sb.append("connector.setCamelContext(camelContext);\n");
+        sb.append("\n");
+        sb.append("try {\n");
+        sb.append("CamelPropertiesHelper.setCamelProperties(camelContext, connector, parameters, false);\n");
+        sb.append("connector.setOptions(parameters);\n");
+        sb.append("if (ObjectHelper.isNotEmpty(customizers)) {\n");
+        sb.append("    for (ConnectorCustomizer<").append(shortJavaType).append("> customizer : customizers) {\n");
+        sb.append("\n");
+        sb.append("        boolean useCustomizer = (customizer instanceof HasId)");
+        sb.append("            ? HierarchicalPropertiesEvaluator.evaluate(\n");
+        sb.append("                applicationContext.getEnvironment(),\n");
+        sb.append("               \"camel.connector.customizer\",\n");
+        sb.append("               \"camel.connector.").append(name).append(".\" + entry.getKey() + \".customizer\",\n");
+        sb.append("               ((HasId)customizer).getId())\n");
+        sb.append("            : HierarchicalPropertiesEvaluator.evaluate(\n");
+        sb.append("                applicationContext.getEnvironment(),\n");
+        sb.append("               \"camel.connector.customizer\",\n");
+        sb.append("               \"camel.connector.").append(name).append(".\" + entry.getKey() + \".customizer\");\n");
+        sb.append("\n");
+        sb.append("        if (useCustomizer) {\n");
+        sb.append("            LOGGER.debug(\"Configure connector {}, with customizer {}\", connector, customizer);\n");
+        sb.append("            customizer.customize(connector);\n");
+        sb.append("        }\n");
+        sb.append("    }\n");
+        sb.append("}\n");
+        sb.append("\n");
+        sb.append("camelContext.addComponent(entry.getKey(), connector);\n");
+        sb.append("} catch (Exception e) {\n");
+        sb.append("throw new BeanCreationException(entry.getKey(), e.getMessage(), e);\n");
+        sb.append("}\n");
+        sb.append("}\n");
         return sb.toString();
     }
 
@@ -408,7 +532,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     private static ComponentModel generateComponentModel(String json) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
 
-        ComponentModel component = new ComponentModel(true);
+        ComponentModel component = new ComponentModel();
         component.setScheme(getSafeValue("scheme", rows));
         component.setSyntax(getSafeValue("syntax", rows));
         component.setAlternativeSyntax(getSafeValue("alternativeSyntax", rows));
@@ -439,7 +563,74 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             component.addComponentOption(option);
         }
 
+        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        for (Map<String, String> row : rows) {
+            EndpointOptionModel option = new EndpointOptionModel();
+            option.setName(getSafeValue("name", row));
+            option.setDisplayName(getSafeValue("displayName", row));
+            option.setKind(getSafeValue("kind", row));
+            option.setGroup(getSafeValue("group", row));
+            option.setRequired(getSafeValue("required", row));
+            option.setType(getSafeValue("type", row));
+            option.setJavaType(getSafeValue("javaType", row));
+            option.setEnums(getSafeValue("enum", row));
+            option.setPrefix(getSafeValue("prefix", row));
+            option.setMultiValue(getSafeValue("multiValue", row));
+            option.setDeprecated(getSafeValue("deprecated", row));
+            option.setDefaultValue(getSafeValue("defaultValue", row));
+            option.setDescription(getSafeValue("description", row));
+            option.setEnumValues(getSafeValue("enum", row));
+            component.addEndpointOption(option);
+        }
+
+        rows = JSonSchemaHelper.parseJsonSchema("connectorProperties", json, true);
+        for (Map<String, String> row : rows) {
+            ConnectorOptionModel option = new ConnectorOptionModel();
+            option.setName(getSafeValue("name", row));
+            option.setDisplayName(getSafeValue("displayName", row));
+            option.setKind(getSafeValue("kind", row));
+            option.setType(getSafeValue("type", row));
+            option.setJavaType(getSafeValue("javaType", row));
+            option.setDeprecated(getSafeValue("deprecated", row));
+            option.setDescription(getSafeValue("description", row));
+            option.setDefaultValue(getSafeValue("defaultValue", row));
+            option.setEnums(getSafeValue("enum", row));
+            component.addConnectorOption(option);
+        }
+
         return component;
+    }
+
+
+    private void addProperty(JavaClassSource clazz, ComponentModel model, OptionModel option) {
+        String type = option.getJavaType();
+        PropertySource<JavaClassSource> prop = clazz.addProperty(type, option.getName());
+
+        if ("true".equals(option.getDeprecated())) {
+            prop.getField().addAnnotation(Deprecated.class);
+            prop.getAccessor().addAnnotation(Deprecated.class);
+            prop.getMutator().addAnnotation(Deprecated.class);
+            // DeprecatedConfigurationProperty must be on getter when deprecated
+            prop.getAccessor().addAnnotation(DeprecatedConfigurationProperty.class);
+        }
+        if (!Strings.isBlank(option.getDescription())) {
+            prop.getField().getJavaDoc().setFullText(option.getDescription());
+        }
+        if (!Strings.isBlank(option.getDefaultValue())) {
+            if ("java.lang.String".equals(option.getJavaType())) {
+                prop.getField().setStringInitializer(option.getDefaultValue());
+            } else if ("long".equals(option.getJavaType()) || "java.lang.Long".equals(option.getJavaType())) {
+                // the value should be a Long number
+                String value = option.getDefaultValue() + "L";
+                prop.getField().setLiteralInitializer(value);
+            } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
+                prop.getField().setLiteralInitializer(option.getDefaultValue());
+            } else if (!Strings.isBlank(option.getEnums())) {
+                String enumShortName = type.substring(type.lastIndexOf(".") + 1);
+                prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
+                clazz.addImport(model.getJavaType());
+            }
+        }
     }
 
 }

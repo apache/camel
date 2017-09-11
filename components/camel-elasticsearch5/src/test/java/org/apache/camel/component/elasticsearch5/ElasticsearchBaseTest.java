@@ -24,13 +24,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.node.InternalSettingsPreparer;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeValidationException;
-import org.elasticsearch.node.internal.InternalSettingsPreparer;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.Netty4Plugin;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
@@ -42,22 +42,28 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
     public static Node node;
     public static TransportClient client;
 
+    protected static final int ES_TRANSPORT_PORT = AvailablePortFinder.getNextAvailable();
+
     private static class PluginConfigurableNode extends Node {
         PluginConfigurableNode(Settings settings, Collection<Class<? extends Plugin>> classpathPlugins) {
             super(InternalSettingsPreparer.prepareEnvironment(settings, null), classpathPlugins);
         }
     }
 
+    @SuppressWarnings("resource")
     @BeforeClass
     public static void cleanupOnce() throws Exception {
         deleteDirectory("target/data");
 
         // create an embedded node to resume
-        node = new PluginConfigurableNode(Settings.builder().put("http.enabled", true).put("path.data", "target/data")
-                .put("path.home", "target/home").build(), Arrays.asList(Netty4Plugin.class)).start();
-        client = new PreBuiltTransportClient(Settings.EMPTY)
-                .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
-    } 
+        node = new PluginConfigurableNode(Settings.builder()
+            .put("http.enabled", true)
+            .put("path.data", "target/data")
+            .put("path.home", "target/home")
+            .put("transport.profiles.default.port", ES_TRANSPORT_PORT)
+            .build(), Arrays.asList(Netty4Plugin.class)).start();
+        client = new PreBuiltTransportClient(Settings.EMPTY).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), ES_TRANSPORT_PORT));
+    }
 
     @AfterClass
     public static void teardownOnce() throws IOException {

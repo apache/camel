@@ -43,6 +43,7 @@ public class RestConfiguration {
     private String producerApiDoc;
     private String scheme;
     private String host;
+    private String apiHost;
     private int port;
     private String contextPath;
     private String apiContextPath;
@@ -153,6 +154,19 @@ public class RestConfiguration {
      */
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public String getApiHost() {
+        return apiHost;
+    }
+
+    /**
+     * To use an specific hostname for the API documentation (eg swagger)
+     * <p/>
+     * This can be used to override the generated host with this configured hostname
+     */
+    public void setApiHost(String apiHost) {
+        this.apiHost = apiHost;
     }
 
     /**

@@ -24,6 +24,7 @@ import javax.mail.search.SearchTerm;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
@@ -34,12 +35,14 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version
  */
-public class MailComponent extends UriEndpointComponent {
+public class MailComponent extends UriEndpointComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private MailConfiguration configuration;
     @Metadata(label = "advanced")
     private ContentTypeResolver contentTypeResolver;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public MailComponent() {
         super(MailEndpoint.class);
@@ -98,6 +101,11 @@ public class MailComponent extends UriEndpointComponent {
         ObjectHelper.notEmpty(config.getHost(), "host");
         ObjectHelper.notEmpty(config.getProtocol(), "protocol");
 
+        // Use global ssl if present
+        if (endpoint.getConfiguration().getSslContextParameters() == null) {
+            endpoint.getConfiguration().setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
         return endpoint;
     }
 
@@ -142,5 +150,18 @@ public class MailComponent extends UriEndpointComponent {
      */
     public void setContentTypeResolver(ContentTypeResolver contentTypeResolver) {
         this.contentTypeResolver = contentTypeResolver;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 }

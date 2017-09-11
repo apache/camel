@@ -33,4 +33,21 @@ public class MyOtherFooBean {
     public String toString(String input) {
         return "toString(String) was called";
     }
+
+    public interface InterfaceSize {
+        int size();
+    }
+
+    public abstract static class AbstractClassSize {
+        public abstract int size();
+    }
+
+    public static class SuperClazz extends AbstractClassSize implements InterfaceSize {
+        public int size() {
+            return 1;
+        }
+    }
+
+    public static class Clazz extends SuperClazz {
+    }
 }

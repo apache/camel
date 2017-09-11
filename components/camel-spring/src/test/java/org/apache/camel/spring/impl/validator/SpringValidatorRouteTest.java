@@ -17,8 +17,6 @@
 package org.apache.camel.spring.impl.validator;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.impl.validator.ValidatorRouteTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;

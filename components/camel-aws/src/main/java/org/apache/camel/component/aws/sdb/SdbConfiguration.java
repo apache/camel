@@ -46,6 +46,8 @@ public class SdbConfiguration {
     private String proxyHost;
     @UriParam
     private Integer proxyPort;
+    @UriParam
+    private String region;
 
     /**
      * The region with which the AWS-SDB client wants to work with.
@@ -136,7 +138,7 @@ public class SdbConfiguration {
     }
     
     /**
-     * To define a proxy host when instantiating the SQS client
+     * To define a proxy host when instantiating the SDB client
      */
     public String getProxyHost() {
         return proxyHost;
@@ -147,7 +149,7 @@ public class SdbConfiguration {
     }
 
     /**
-     * To define a proxy port when instantiating the SQS client
+     * To define a proxy port when instantiating the SDB client
      */
     public Integer getProxyPort() {
         return proxyPort;
@@ -155,5 +157,16 @@ public class SdbConfiguration {
 
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+    
+    /**
+     * The region in which SDB client needs to work
+     */
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
     }
 }

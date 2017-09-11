@@ -23,8 +23,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
+
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Assert;
 import org.junit.Test;
@@ -45,6 +50,26 @@ public class CamelSalesforceMojoIntegrationTest {
         Assert.assertTrue("Output directory was not created", mojo.outputDirectory.exists());
 
         // TODO check that the generated code compiles
+    }
+
+    @Test
+    public void testExecuteJsonSchema() throws Exception {
+        CamelSalesforceMojo mojo = createMojo();
+        mojo.jsonSchema = true;
+        mojo.jsonSchemaFilename = "test-schema.json";
+        mojo.jsonSchemaId = JsonUtils.DEFAULT_ID_PREFIX;
+
+        // generate code
+        mojo.execute();
+
+        // validate generated schema
+        File schemaFile = mojo.outputDirectory.toPath().resolve("test-schema.json").toFile();
+        Assert.assertTrue("Output file was not created",
+                schemaFile.exists());
+        ObjectMapper objectMapper = JsonUtils.createObjectMapper();
+        JsonSchema jsonSchema = objectMapper.readValue(schemaFile, JsonSchema.class);
+        Assert.assertTrue("Expected root JSON schema with oneOf element",
+                jsonSchema.isObjectSchema() && !((ObjectSchema)jsonSchema).getOneOf().isEmpty());
     }
 
     protected CamelSalesforceMojo createMojo() throws IOException {
@@ -82,10 +107,10 @@ public class CamelSalesforceMojoIntegrationTest {
         try {
             stream = new FileInputStream(TEST_LOGIN_PROPERTIES);
             properties.load(stream);
-            mojo.clientId = properties.getProperty("clientId");
-            mojo.clientSecret = properties.getProperty("clientSecret");
-            mojo.userName = properties.getProperty("userName");
-            mojo.password = properties.getProperty("password");
+            mojo.clientId = properties.getProperty("salesforce.client.id");
+            mojo.clientSecret = properties.getProperty("salesforce.client.secret");
+            mojo.userName = properties.getProperty("salesforce.username");
+            mojo.password = properties.getProperty("salesforce.password");
         } catch (FileNotFoundException e) {
             throw new FileNotFoundException("Create a properties file named "
                     + TEST_LOGIN_PROPERTIES + " with clientId, clientSecret, userName, password"

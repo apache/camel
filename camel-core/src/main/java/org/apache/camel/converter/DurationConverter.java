@@ -17,19 +17,14 @@
 package org.apache.camel.converter;
 
 import java.time.Duration;
+
 import org.apache.camel.Converter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Converters for java.time.Duration.
- * Provides a converter from a string (ISO-8601) to a Duration,
- * a Duration to a string (ISO-8601) and
- * a Duration to millis (long)
  */
 @Converter
 public final class DurationConverter {
-    private static final Logger LOG = LoggerFactory.getLogger(DurationConverter.class);
 
     /**
      * Utility classes should not have a public constructor.
@@ -39,22 +34,16 @@ public final class DurationConverter {
     
     @Converter
     public static long toMilliSeconds(Duration source) {
-        long milliseconds = source.toMillis();
-        LOG.trace("source: {} milliseconds: ", source, milliseconds);
-        return milliseconds;
+        return source.toMillis();
     }
 
     @Converter
-    public static Duration fromString(String source) {
-        Duration duration = Duration.parse(source);
-        LOG.trace("source: {} milliseconds: ", source, duration);
-        return duration;
+    public static Duration toDuration(String source) {
+        return Duration.parse(source);
     }
 
     @Converter
-    public static String asString(Duration source) {
-        String result = source.toString();
-        LOG.trace("source: {} milliseconds: ", source, result);
-        return result;
+    public static String toString(Duration source) {
+        return source.toString();
     }
 }

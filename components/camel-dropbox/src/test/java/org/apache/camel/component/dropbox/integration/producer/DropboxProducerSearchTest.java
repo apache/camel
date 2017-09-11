@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -39,9 +40,30 @@ public class DropboxProducerSearchTest extends DropboxTestSupport {
             }
         });
 
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);       
+        assertMockEndpointsSatisfied();
+
+        List<Exchange> exchanges = mock.getReceivedExchanges();
+        Exchange exchange = exchanges.get(0);
+        Object header =  exchange.getIn().getHeader(DropboxResultHeader.FOUND_FILES.name());
+        Object body = exchange.getIn().getBody();
+        assertNotNull(header);
+        assertNotNull(body);
+    }
+
+    @Test
+    public void testCamelDropboxWithOptionInHeader() throws Exception {
+        template.send("direct:start2", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader("test", "test");
+            }
+        });
+
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
         assertMockEndpointsSatisfied();
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
@@ -59,6 +81,11 @@ public class DropboxProducerSearchTest extends DropboxTestSupport {
                 from("direct:start")
                         .to("dropbox://search?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/XXX")
                         .to("mock:result");
+
+                from("direct:start")
+                    .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant("/XXX"))
+                    .to("dropbox://search?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}")
+                    .to("mock:result");
             }
         };
     }

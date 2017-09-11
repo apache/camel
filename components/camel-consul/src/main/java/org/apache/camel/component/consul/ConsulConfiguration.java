@@ -23,6 +23,7 @@ import java.util.Set;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.option.ConsistencyMode;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;

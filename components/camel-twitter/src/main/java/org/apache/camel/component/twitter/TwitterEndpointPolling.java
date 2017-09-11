@@ -21,19 +21,26 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.component.twitter.consumer.TwitterConsumer;
+import org.apache.camel.component.twitter.consumer.AbstractTwitterConsumerHandler;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerPolling;
 import org.apache.camel.component.twitter.data.EndpointType;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
- * This component integrates with Twitter to send tweets or search for tweets and more.
+ * Use twitter-directmessage, twitter-search, twitter-streaming and twitter-timeline instead of this component.
+ * @deprecated
  */
+@Deprecated
 @ManagedResource(description = "Managed Twitter Endpoint")
-@UriEndpoint(firstVersion = "2.10.0", scheme = "twitter", title = "Twitter", syntax = "twitter:kind", consumerClass = TwitterConsumer.class, label = "api,social")
-public class TwitterEndpointPolling extends DefaultPollingEndpoint implements TwitterEndpoint {
+@UriEndpoint(firstVersion = "2.10.0", scheme = "twitter", title = "Twitter", syntax = "twitter:kind", consumerClass = AbstractTwitterConsumerHandler.class, label = "api,social")
+public class TwitterEndpointPolling extends DefaultPollingEndpoint implements CommonPropertiesTwitterEndpoint {
+    @UriPath(description = "The kind of endpoint", enums = "directmessage,search,streaming/filter,streaming/sample,streaming/user"
+            + ",timeline/home,timeline/mentions,timeline/retweetsofme,timeline/user") @Metadata(required = "true")
+    private final String kind;
 
     @UriParam(optionalPrefix = "consumer.", defaultValue = "" + TwitterConsumerPolling.DEFAULT_CONSUMER_DELAY, label = "consumer,scheduler",
             description = "Milliseconds before the next poll.")
@@ -42,14 +49,23 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
     @UriParam
     private TwitterConfiguration properties;
 
-    public TwitterEndpointPolling(String uri, TwitterComponent component, TwitterConfiguration properties) {
+    @UriParam(description = "Username, used for user timeline consumption, direct message production, etc.")
+    private String user;
+
+    @UriParam(description = "Can be used for search and streaming/filter. Multiple values can be separated with comma.", label = "consumer,filter")
+    private String keywords;
+
+    public TwitterEndpointPolling(String uri, String remaining, TwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
+        this.kind = remaining;
         this.properties = properties;
+
+        setDelay(delay); // reconfigure the default delay
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        TwitterConsumer twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri());
+        AbstractTwitterConsumerHandler twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri(), kind);
         // update the pulling lastID with sinceId
         twitter4jConsumer.setLastId(properties.getSinceId());
         TwitterConsumerPolling tc = new TwitterConsumerPolling(this, processor, twitter4jConsumer);
@@ -59,7 +75,7 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
 
     @Override
     public Producer createProducer() throws Exception {
-        return TwitterHelper.createProducer(this, getEndpointUri());
+        return TwitterHelper.createProducer(this, getEndpointUri(), kind);
     }
 
     @Override
@@ -76,13 +92,23 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
     }
 
     @ManagedAttribute
+    public String getUser() {
+        return user;
+    }
+
+    @ManagedAttribute
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    @ManagedAttribute
     public String getKeywords() {
-        return getProperties().getKeywords();
+        return keywords;
     }
 
     @ManagedAttribute
     public void setKeywords(String keywords) {
-        getProperties().setKeywords(keywords);
+        this.keywords = keywords;
     }
 
     @ManagedAttribute
@@ -143,6 +169,16 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
     @ManagedAttribute
     public Integer getNumberOfPages() {
         return getProperties().getNumberOfPages();
+    }
+
+    @ManagedAttribute
+    public boolean isSortById() {
+        return getProperties().isSortById();
+    }
+
+    @ManagedAttribute
+    public void setSortById(boolean sortById) {
+        getProperties().setSortById(sortById);
     }
 
     @Override

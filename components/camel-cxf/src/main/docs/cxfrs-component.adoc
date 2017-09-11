@@ -54,13 +54,14 @@ cxfrs:bean:cxfEndpoint?resourceClasses=org.apache.camel.rs.Example
 
 
 // component options: START
-The CXF-RS component supports 2 options which are listed below.
+The CXF-RS component supports 3 options which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **headerFilterStrategy** (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================

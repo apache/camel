@@ -94,11 +94,11 @@ with the following path and query parameters:
 | **soTimeout** (advanced) | Sets the so timeout Used only by FTPClient | 300000 | int
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | **timeout** (advanced) | Sets the data timeout for waiting for reply Used only by FTPClient | 30000 | int
-| **knownHostsFile** (security) | Sets the known_hosts file so that the jsch endpoint can do host key verification. |  | String
+| **knownHostsFile** (security) | Sets the known_hosts file so that the jsch endpoint can do host key verification. You can prefix with classpath: to load the file from classpath instead of file system. |  | String
 | **password** (security) | Password to use for login |  | String
 | **preferredAuthentications** (security) | Set a comma separated list of authentications that will be used in order of preference. Possible authentication methods are defined by JCraft JSCH. Some examples include: gssapi-with-micpublickeykeyboard-interactivepassword If not specified the JSCH and/or system defaults will be used. |  | String
-| **privateKeyFile** (security) | Set the private key file to that the SFTP endpoint can do private key verification. |  | String
-| **privateKeyFilePassphrase** (security) | Set the private key file passphrase to that the SFTP endpoint can do private key verification. |  | String
+| **privateKeyFile** (security) | Set the private key file to that the endpoint can do private key verification. You can prefix with classpath: to load the file from classpath instead of file system. |  | String
+| **privateKeyFilePassphrase** (security) | Set the private key file passphrase to that the endpoint can do private key verification. |  | String
 | **username** (security) | Username to use for login |  | String
 | **useUserKnownHostsFile** (security) | If knownHostFile has not been explicit configured then use the host file from System.getProperty(user.home) /.ssh/known_hosts | true | boolean
 | **ciphers** (security) | Set a comma separated list of ciphers that will be used in order of preference. Possible cipher names are defined by JCraft JSCH. Some examples include: aes128-ctraes128-cbc3des-ctr3des-cbcblowfish-cbcaes192-cbcaes256-cbc. If not specified the default list from JSCH will be used. |  | String

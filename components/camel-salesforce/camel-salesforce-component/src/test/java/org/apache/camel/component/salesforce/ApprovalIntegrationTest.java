@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 import com.googlecode.junittoolbox.ParallelParameterized;
 
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult;

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.camel.AsyncCallback;

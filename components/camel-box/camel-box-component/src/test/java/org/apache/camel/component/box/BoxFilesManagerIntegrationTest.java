@@ -61,8 +61,6 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
     private static final String CAMEL_TEST_RENAME_FILE_NAME = "CamelTestFile_Rename.txt";
     private static final String CAMEL_TEST_UPLOAD_FILE_NAME = "CamelTestFile_Upload.txt";
 
-    private BoxFile testFile;
-
     @Test
     public void testCopyFile() throws Exception {
         com.box.sdk.BoxFile result = null;
@@ -550,14 +548,6 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         BoxFolder rootFolder = BoxFolder.getRootFolder(getConnection());
         InputStream stream = getClass().getResourceAsStream(CAMEL_TEST_FILE);
         testFile = rootFolder.uploadFile(stream, CAMEL_TEST_FILE_NAME).getResource();
-    }
-
-    private void deleteTestFile() {
-        try {
-            testFile.delete();
-        } catch (Throwable t) {
-        }
-        testFile = null;
     }
 
     private int sizeOfIterable(Iterable<?> it) {

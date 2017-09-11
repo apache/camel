@@ -47,7 +47,7 @@ public class CamelSjmsTest extends AbstractSpringBootTestSupport {
 
     @Test
     public void componentTests() throws Exception {
-        //this.runComponentTest(config);
+        this.runComponentTest(config);
 
         // Unit tests can be enabled if required
         //this.runModuleUnitTestsIfEnabled(config);

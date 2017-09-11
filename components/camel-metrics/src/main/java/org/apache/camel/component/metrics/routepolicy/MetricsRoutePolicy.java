@@ -17,6 +17,7 @@
 package org.apache.camel.component.metrics.routepolicy;
 
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
@@ -171,7 +172,7 @@ public class MetricsRoutePolicy extends RoutePolicySupport implements NonManaged
 
         String answer = namePattern;
         answer = answer.replaceFirst("##name##", name);
-        answer = answer.replaceFirst("##routeId##", route.getId());
+        answer = answer.replaceFirst("##routeId##", Matcher.quoteReplacement(route.getId()));
         answer = answer.replaceFirst("##type##", type);
         return answer;
     }

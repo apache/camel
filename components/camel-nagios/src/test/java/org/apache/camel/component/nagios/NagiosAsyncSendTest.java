@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.nagios;
 
-import com.googlecode.jsendnsca.core.NonBlockingNagiosPassiveCheckSender;
+import com.googlecode.jsendnsca.NonBlockingNagiosPassiveCheckSender;
+
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.BeforeClass;

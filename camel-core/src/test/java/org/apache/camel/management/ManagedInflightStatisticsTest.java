@@ -16,7 +16,10 @@
  */
 package org.apache.camel.management;
 
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -25,12 +28,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
+import static org.awaitility.Awaitility.await;
+
 /**
  * @version
  */
 public class ManagedInflightStatisticsTest extends ManagementTestSupport {
 
-    public void testManageStatistics() throws Exception {
+    public void testOldestInflight() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
             return;
@@ -53,11 +58,18 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(2);
 
+        CountDownLatch latch1 = new CountDownLatch(1);
+        CountDownLatch latch2 = new CountDownLatch(1);
+
         // start some exchanges.
-        template.asyncSendBody("direct:start", 1000L);
-        Thread.sleep(500);
-        template.asyncSendBody("direct:start", 1000L);
-        Thread.sleep(100);
+        template.asyncSendBody("direct:start", latch1);
+        Thread.sleep(250);
+        template.asyncSendBody("direct:start", latch2);
+
+        await().atMost(2, TimeUnit.SECONDS).until(() -> {
+            Long num = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
+            return num != null && num == 2;
+        });
 
         inflight = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
         assertEquals(2, inflight.longValue());
@@ -67,76 +79,34 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
         id = (String) mbeanServer.getAttribute(on, "OldestInflightExchangeId");
         assertNotNull(id);
 
+        log.info("Oldest Exchange id: {}, duration: {}", id, ts);
+
+        // complete first exchange
+        latch1.countDown();
+
         // Lets wait for the first exchange to complete.
-        Thread.sleep(500);
+        Thread.sleep(200);
         Long ts2 = (Long) mbeanServer.getAttribute(on, "OldestInflightDuration");
         assertNotNull(ts2);
         String id2 = (String) mbeanServer.getAttribute(on, "OldestInflightExchangeId");
         assertNotNull(id2);
 
+        log.info("Oldest Exchange id: {}, duration: {}", id2, ts2);
+
         // Lets verify the oldest changed.
         assertTrue(!id2.equals(id));
         // The duration values could be different
-        //assertTrue(ts2 > ts);
+        assertTrue(!Objects.equals(ts2, ts));
+
+        latch2.countDown();
 
         // Lets wait for all the exchanges to complete.
-        Thread.sleep(500);
+        await().atMost(2, TimeUnit.SECONDS).until(() -> {
+            Long num = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
+            return num != null && num == 0;
+        });
 
         assertMockEndpointsSatisfied();
-
-        inflight = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
-        assertEquals(0, inflight.longValue());
-        ts = (Long) mbeanServer.getAttribute(on, "OldestInflightDuration");
-        assertNull(ts);
-        id = (String) mbeanServer.getAttribute(on, "OldestInflightExchangeId");
-        assertNull(id);
-    }
-
-    public void testManageStatisticsFailed() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
-        // get the stats for the route
-        MBeanServer mbeanServer = getMBeanServer();
-
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
-        assertEquals(1, set.size());
-        ObjectName on = set.iterator().next();
-
-        Long inflight = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
-        assertEquals(0, inflight.longValue());
-        Long ts = (Long) mbeanServer.getAttribute(on, "OldestInflightDuration");
-        assertNull(ts);
-        String id = (String) mbeanServer.getAttribute(on, "OldestInflightExchangeId");
-        assertNull(id);
-
-        MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedMessageCount(1);
-
-        // start some exchanges.
-        template.asyncSendBody("direct:start", 1000L);
-        Thread.sleep(500);
-        try {
-            template.sendBody("direct:start", "Kaboom");
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            // expected
-        }
-
-        inflight = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
-        assertEquals(1, inflight.longValue());
-
-        ts = (Long) mbeanServer.getAttribute(on, "OldestInflightDuration");
-        assertNotNull(ts);
-        id = (String) mbeanServer.getAttribute(on, "OldestInflightExchangeId");
-        assertNotNull(id);
-
-        assertMockEndpointsSatisfied();
-
-        // Lets wait for all the exchanges to complete.
-        Thread.sleep(500);
 
         inflight = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
         assertEquals(0, inflight.longValue());
@@ -155,13 +125,8 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                String body = exchange.getIn().getBody(String.class);
-                                if ("Kaboom".equals(body)) {
-                                    throw new IllegalArgumentException("Forced");
-                                }
-
-                                Long delay = (Long) exchange.getIn().getBody();
-                                Thread.sleep(delay.longValue());
+                                CountDownLatch latch = (CountDownLatch) exchange.getIn().getBody();
+                                latch.await(10, TimeUnit.SECONDS);
                             }
                         })
                         .to("mock:result").id("mock");

@@ -118,7 +118,7 @@ public abstract class AbstractMessageHandler implements MessageListener {
         }
     }
 
-    public abstract void handleMessage(final Exchange exchange);
+    public abstract void handleMessage(Exchange exchange);
 
     /**
      * Method will be called to

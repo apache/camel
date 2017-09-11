@@ -16,17 +16,12 @@
  */
 package org.apache.camel.cloud;
 
-import org.apache.camel.CamelContext;
-
 /**
  * A factory to create ServiceFilter
  *
+ * @see ServiceFactory
  * @see ServiceFilter
  */
-public interface ServiceFilterFactory {
-
-    /**
-     * Creates an instance of a ServiceFilter.
-     */
-    ServiceFilter newInstance(CamelContext camelContext) throws Exception;
+@FunctionalInterface
+public interface ServiceFilterFactory extends ServiceFactory<ServiceFilter> {
 }

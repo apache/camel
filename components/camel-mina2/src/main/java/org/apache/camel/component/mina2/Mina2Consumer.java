@@ -436,7 +436,7 @@ public class Mina2Consumer extends DefaultConsumer {
 
             if (response != null) {
                 LOG.debug("Writing body: {}", response);
-                Mina2Helper.writeBody(session, response, exchange);
+                Mina2Helper.writeBody(session, response, exchange, configuration.getWriteTimeout());
             } else {
                 LOG.debug("Writing no response");
                 disconnect = Boolean.TRUE;

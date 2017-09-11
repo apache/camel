@@ -16,12 +16,9 @@
  */
 package org.apache.camel.spi;
 
-import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.StaticService;
-import org.apache.camel.model.validator.ValidatorDefinition;
 
 /**
  * Registry to cache validators in memory.

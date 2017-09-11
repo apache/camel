@@ -31,7 +31,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.FilePathResolver;
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +90,8 @@ public class PropertiesComponent extends UriEndpointComponent {
     public static final String OVERRIDE_PROPERTIES = PropertiesComponent.class.getName() + ".OverrideProperties";
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
-    private final Map<CacheKey, Properties> cacheMap = new LRUSoftCache<CacheKey, Properties>(1000);
+    @SuppressWarnings("unchecked")
+    private final Map<CacheKey, Properties> cacheMap = LRUCacheFactory.newLRUSoftCache(1000);
     private final Map<String, PropertiesFunction> functions = new HashMap<String, PropertiesFunction>();
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
@@ -101,21 +102,25 @@ public class PropertiesComponent extends UriEndpointComponent {
     private String encoding;
     @Metadata(defaultValue = "true")
     private boolean cache = true;
+    @Metadata(label = "advanced")
     private String propertyPrefix;
-    private String propertyPrefixResolved;
+    private transient String propertyPrefixResolved;
+    @Metadata(label = "advanced")
     private String propertySuffix;
-    private String propertySuffixResolved;
-    @Metadata(defaultValue = "true")
+    private transient String propertySuffixResolved;
+    @Metadata(label = "advanced", defaultValue = "true")
     private boolean fallbackToUnaugmentedProperty = true;
     @Metadata(defaultValue = "true")
     private boolean defaultFallbackEnabled = true;
-    @Metadata(defaultValue = DEFAULT_PREFIX_TOKEN)
+    @Metadata(label = "advanced", defaultValue = DEFAULT_PREFIX_TOKEN)
     private String prefixToken = DEFAULT_PREFIX_TOKEN;
-    @Metadata(defaultValue = DEFAULT_SUFFIX_TOKEN)
+    @Metadata(label = "advanced", defaultValue = DEFAULT_SUFFIX_TOKEN)
     private String suffixToken = DEFAULT_SUFFIX_TOKEN;
+    @Metadata(label = "advanced")
     private Properties initialProperties;
+    @Metadata(label = "advanced")
     private Properties overrideProperties;
-    @Metadata(defaultValue = "" + SYSTEM_PROPERTIES_MODE_OVERRIDE)
+    @Metadata(defaultValue = "" + SYSTEM_PROPERTIES_MODE_OVERRIDE, enums = "0,1,2")
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
 
     public PropertiesComponent() {
@@ -185,7 +190,7 @@ public class PropertiesComponent extends UriEndpointComponent {
         Properties prop = new Properties();
 
         // use initial properties
-        if (null != initialProperties) {
+        if (initialProperties != null) {
             prop.putAll(initialProperties);
         }
 
@@ -590,7 +595,7 @@ public class PropertiesComponent extends UriEndpointComponent {
 
         @Override
         public int hashCode() {
-            return locations != null ? locations.hashCode() : 0;
+            return locations.hashCode();
         }
 
         @Override

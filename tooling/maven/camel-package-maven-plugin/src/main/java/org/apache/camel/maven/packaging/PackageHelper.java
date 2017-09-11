@@ -151,7 +151,7 @@ public final class PackageHelper {
         @Override
         public boolean accept(File pathname) {
             // skip camel-jetty9 as its a duplicate of camel-jetty
-            if ("camel-jetty9".equals(pathname)) {
+            if ("camel-jetty9".equals(pathname.getName())) {
                 return false;
             }
             return pathname.isDirectory() || pathname.getName().endsWith(".json");
@@ -162,17 +162,22 @@ public final class PackageHelper {
 
         @Override
         public boolean accept(File pathname) {
-            if ("camel-core-osgi".equals(pathname)
-                || "camel-core-xml".equals(pathname)
-                || "camel-http-common".equals(pathname)
-                || "camel-jetty".equals(pathname)
-                || "camel-jetty-common".equals(pathname)
-                || "camel-linkedin".equals(pathname)
-                || "camel-olingo2".equals(pathname)
-                || "camel-salesforce".equals(pathname)) {
+            String name = pathname.getName();
+            boolean special = "camel-core-osgi".equals(name)
+                || "camel-core-xml".equals(name)
+                || "camel-box".equals(name)
+                || "camel-http-common".equals(name)
+                || "camel-jetty".equals(name)
+                || "camel-jetty-common".equals(name);
+            boolean special2 = "camel-linkedin".equals(name)
+                || "camel-olingo2".equals(name)
+                || "camel-olingo4".equals(name)
+                || "camel-salesforce".equals(name);
+            if (special || special2) {
                 return false;
             }
-            return pathname.isDirectory() || pathname.getName().endsWith(".json");
+
+            return pathname.isDirectory() || name.endsWith(".json");
         }
     }
 

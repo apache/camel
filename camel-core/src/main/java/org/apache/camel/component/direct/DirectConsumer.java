@@ -44,6 +44,7 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Su
 
     @Override
     protected void doStart() throws Exception {
+        super.doStart();
         // add consumer to endpoint
         boolean existing = this == endpoint.getConsumer();
         if (!existing && endpoint.hasConsumer(this)) {
@@ -57,6 +58,7 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Su
     @Override
     protected void doStop() throws Exception {
         endpoint.removeConsumer(this);
+        super.doStop();
     }
 
     @Override

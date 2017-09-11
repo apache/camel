@@ -65,9 +65,9 @@ public class CustomDataSetTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("dataset:foo").to("direct:foo");
+                from("dataset:foo?initialDelay=0").to("direct:foo");
 
-                from("direct:foo").to("dataset:foo");
+                from("direct:foo").to("dataset:foo?initialDelay=0");
             }
         };
     }

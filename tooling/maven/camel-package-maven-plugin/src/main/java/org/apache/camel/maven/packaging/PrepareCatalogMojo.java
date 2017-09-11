@@ -57,9 +57,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private static final String[] EXCLUDE_DOC_FILES = {
         "camel-core-osgi", "camel-core-xml",
-        "camel-spring-dm",
-        "camel-http-common", "camel-jetty", "camel-jetty-common", "camel-jetty8",
-        "camel-test-karaf", "camel-test-spring", "camel-testng", "camel-test-spring3", "camel-test-spring40", "camel-zipkin-starter"
+        "camel-http-common", "camel-jetty", "camel-jetty-common"
     };
 
     private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
@@ -322,6 +320,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         printModelsReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels, missingJavaDoc);
     }
 
+    // CHECKSTYLE:OFF
     protected Set<String> executeComponents() throws MojoExecutionException, MojoFailureException {
         getLog().info("Copying all Camel component json descriptors");
 
@@ -340,10 +339,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
             File[] components = componentsDir.listFiles();
             if (components != null) {
                 for (File dir : components) {
-                    // skip camel-spring-dm
-                    if (dir.isDirectory() && "camel-spring-dm".equals(dir.getName())) {
-                        continue;
-                    }
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
 
@@ -358,6 +353,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-olingo4-component/target/classes");
                         } else if ("camel-box".equals(dir.getName())) {
                             target = new File(dir, "camel-box-component/target/classes");
+                        } else if ("camel-servicenow".equals(dir.getName())) {
+                            target = new File(dir, "camel-servicenow-component/target/classes");
                         }
 
                         int before = componentFiles.size();
@@ -535,6 +532,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         return answer;
     }
+    // CHECKSTYLE:ON
 
     protected Set<String> executeDataFormats() throws MojoExecutionException, MojoFailureException {
         getLog().info("Copying all Camel dataformat json descriptors");
@@ -669,10 +667,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
             File[] languages = componentsDir.listFiles();
             if (languages != null) {
                 for (File dir : languages) {
-                    // skip camel-spring-dm
-                    if (dir.isDirectory() && "camel-spring-dm".equals(dir.getName())) {
-                        continue;
-                    }
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
                         findLanguageFilesRecursive(target, jsonFiles, languageFiles, new CamelLanguagesFileFilter());
@@ -794,16 +788,18 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
                     // skip these special cases
                     // (camel-jetty is a placeholder, as camel-jetty9 is the actual component)
-                    if ("camel-core-osgi".equals(dir.getName())
+                    boolean special = "camel-core-osgi".equals(dir.getName())
                         || "camel-core-xml".equals(dir.getName())
                         || "camel-box".equals(dir.getName())
                         || "camel-http-common".equals(dir.getName())
                         || "camel-jetty".equals(dir.getName())
-                        || "camel-jetty-common".equals(dir.getName())
-                        || "camel-linkedin".equals(dir.getName())
+                        || "camel-jetty-common".equals(dir.getName());
+                    boolean special2 = "camel-linkedin".equals(dir.getName())
                         || "camel-olingo2".equals(dir.getName())
                         || "camel-olingo4".equals(dir.getName())
-                        || "camel-salesforce".equals(dir.getName())) {
+                        || "camel-servicenow".equals(dir.getName())
+                        || "camel-salesforce".equals(dir.getName());
+                    if (special || special2) {
                         continue;
                     }
 
@@ -978,6 +974,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-olingo4-component/src/main/docs");
                         } else if ("camel-box".equals(dir.getName())) {
                             target = new File(dir, "camel-box-component/src/main/docs");
+                        } else if ("camel-servicenow".equals(dir.getName())) {
+                            target = new File(dir, "camel-servicenow-component/src/main/docs");
                         }
 
                         int before = adocFiles.size();
@@ -1103,7 +1101,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 component = "ftp";
             } 
             String name = component + "-component";
-            if (!docs.contains(name) && (!component.equalsIgnoreCase("linkedin") && !component.equalsIgnoreCase("salesforce"))) {
+            if (!docs.contains(name) && (!component.equalsIgnoreCase("linkedin") && !component.equalsIgnoreCase("salesforce") && !component.equalsIgnoreCase("servicenow"))) {
                 missing.add(name);
             }
         }

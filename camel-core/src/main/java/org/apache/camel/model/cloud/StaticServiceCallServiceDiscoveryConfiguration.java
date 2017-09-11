@@ -18,13 +18,18 @@
 package org.apache.camel.model.cloud;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
 
 @Metadata(label = "routing,cloud,service-discovery")
 @XmlRootElement(name = "staticServiceDiscovery")
@@ -50,21 +55,16 @@ public class StaticServiceCallServiceDiscoveryConfiguration extends ServiceCallS
     }
 
     /**
-     * Sets the server list;
+     * Sets the server list.
+     * Each entry can be a list of servers separated by comma in the format:
+     *
+     *   [service@]host:port,[service@]host2:port,[service@]host3:port
+     *
+     * @param servers a list of servers.
+     * @return this instance
      */
     public void setServers(List<String> servers) {
         this.servers = servers;
-    }
-
-    /**
-     * Sets the server list;
-     */
-    public void addServer(String server) {
-        if (this.servers == null) {
-            this.servers = new ArrayList<>();
-        }
-
-        this.servers.add(server);
     }
 
     // *************************************************************************
@@ -72,17 +72,53 @@ public class StaticServiceCallServiceDiscoveryConfiguration extends ServiceCallS
     // *************************************************************************
 
     /**
-     * Sets the server list;
+     * Sets the server list.
+     * Each entry can be a list of servers separated by comma in the format:
+     *
+     *   [service@]host:port,[service@]host2:port,[service@]host3:port
+     *
+     * @param servers a list of servers.
+     * @return this instance
      */
     public StaticServiceCallServiceDiscoveryConfiguration servers(List<String> servers) {
         setServers(servers);
         return this;
     }
+
     /**
-     * Add a server to the list of servers
+     * Sets the server list.
+     *
+     * @param servers a list of servers separated by comma in the format: [service@]host:port,[service@]host2:port,[service@]host3:port
+     * @return this instance
      */
-    public StaticServiceCallServiceDiscoveryConfiguration server(String server) {
-        addServer(server);
+    public StaticServiceCallServiceDiscoveryConfiguration servers(String servers) {
+        if (ObjectHelper.isNotEmpty(servers)) {
+            String[] parts = servers.split(",");
+
+            if (this.servers == null) {
+                this.servers = new ArrayList<>();
+            }
+
+            this.servers.addAll(Arrays.asList(parts));
+        }
+
         return this;
+    }
+
+    // *************************************************************************
+    // Utilities
+    // *************************************************************************
+
+    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception  {
+        List<String> servers = List.class.cast(parameters.get("servers"));
+
+        if (ObjectHelper.isNotEmpty(servers)) {
+            final ListIterator<String> it = servers.listIterator();
+            while (it.hasNext()) {
+                it.set(camelContext.resolvePropertyPlaceholders(it.next()));
+            }
+
+            parameters.put("servers", servers);
+        }
     }
 }

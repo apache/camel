@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Alphabet;
@@ -76,8 +77,9 @@ public class SmppBinding {
     /**
      * Create a new SmppMessage from the inbound alert notification
      */
-    public SmppMessage createSmppMessage(AlertNotification alertNotification) {
+    public SmppMessage createSmppMessage(CamelContext camelContext, AlertNotification alertNotification) {
         SmppMessage smppMessage = new SmppMessage(alertNotification, configuration);
+        smppMessage.setCamelContext(camelContext);
 
         smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.AlertNotification.toString());
         smppMessage.setHeader(SmppConstants.SEQUENCE_NUMBER, alertNotification.getSequenceNumber());
@@ -96,8 +98,9 @@ public class SmppBinding {
     /**
      * Create a new SmppMessage from the inbound deliver sm or deliver receipt
      */
-    public SmppMessage createSmppMessage(DeliverSm deliverSm) throws Exception {
+    public SmppMessage createSmppMessage(CamelContext camelContext, DeliverSm deliverSm) throws Exception {
         SmppMessage smppMessage = new SmppMessage(deliverSm, configuration);
+        smppMessage.setCamelContext(camelContext);
 
         String messagePayload = null;
 
@@ -233,8 +236,9 @@ public class SmppBinding {
         return optParams;
     }
 
-    public SmppMessage createSmppMessage(DataSm dataSm, String smppMessageId) {
+    public SmppMessage createSmppMessage(CamelContext camelContext, DataSm dataSm, String smppMessageId) {
         SmppMessage smppMessage = new SmppMessage(dataSm, configuration);
+        smppMessage.setCamelContext(camelContext);
 
         smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.DataSm.toString());
         smppMessage.setHeader(SmppConstants.ID, smppMessageId);

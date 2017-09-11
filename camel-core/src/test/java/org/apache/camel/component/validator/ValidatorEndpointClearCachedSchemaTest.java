@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.validator;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
@@ -32,7 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.impl.SimpleRegistry;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -90,9 +87,12 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        String handlerPackageSystemProp = "java.protocol.handler.pkgs";
+        String customUrlHandlerPackage = "org.apache.camel.urlhandler";
+        registerSystemProperty(handlerPackageSystemProp, customUrlHandlerPackage, "|");
+
         simpleReg = new SimpleRegistry();
         context = new DefaultCamelContext(simpleReg);
-        context.setClassResolver(new ClassResolverImpl());
         return context;
     }
 
@@ -157,69 +157,6 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
                 LOG.info("schema cache cleared");
             }
         }
-    }
-
-    /**
-     * Class to simulate a change of the XSD document. During the first call of
-     * the resource a XSD is returned which does not fit to the XML document. In
-     * the second call a XSD fitting to the XML document is returned.
-     */
-    static class ClassResolverImpl extends DefaultClassResolver {
-
-        private final String xsdtemplate1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                                            "<xsd:schema targetNamespace=\"http://apache.camel.org/test\" xmlns=\"http://apache.camel.org/test\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">"
-                                            + //
-                                            "    <xsd:complexType name=\"TestMessage\">" + //
-                                            "        <xsd:sequence>" + //
-                                            "            <xsd:element name=\"Content\" type=\"xsd:string\" />" + // //
-                                                                                                                 // wrong
-                                                                                                                 // element
-                                                                                                                 // name
-                                                                                                                 // will
-                                                                                                                 // cause
-                                                                                                                 // the
-                                                                                                                 // validation
-                                                                                                                 // to
-                                                                                                                 // fail
-        "        </xsd:sequence>" + //
-                                            "        <xsd:attribute name=\"attr\" type=\"xsd:string\" default=\"xsd1\"/>" + //
-                                            "    </xsd:complexType>" + //
-                                            "    <xsd:element name=\"TestMessage\" type=\"TestMessage\" />" + //
-                                            "</xsd:schema>"; //
-
-        private final String xsdtemplate2 = xsdtemplate1.replace("\"Content\"", "\"MessageContent\""); // correct
-                                                                                                       // element
-                                                                                                       // name
-                                                                                                       // -->
-                                                                                                       // validation
-                                                                                                       // will
-                                                                                                       // be
-                                                                                                       // correct
-
-        private byte[] xsd1 = xsdtemplate1.getBytes(StandardCharsets.UTF_8);
-
-        private byte[] xsd2 = xsdtemplate2.getBytes(StandardCharsets.UTF_8);
-
-        private volatile short counter;
-
-        @Override
-        public InputStream loadResourceAsStream(String uri) {
-            if (uri.startsWith("pd:")) {
-                byte[] xsd;
-                if (counter == 0) {
-                    xsd = xsd1;
-                    LOG.info("resolved XSD1");
-                } else {
-                    xsd = xsd2;
-                    LOG.info("resolved XSD2");
-                }
-                counter++;
-                return new ByteArrayInputStream(xsd);
-            } else {
-                return super.loadResourceAsStream(uri);
-            }
-        }
-
     }
 
 }

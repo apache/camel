@@ -37,7 +37,7 @@ import org.apache.camel.util.ServiceHelper;
  */
 public class StringSourceTest extends TestCase {
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
-            new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()));
+            new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), false);
     protected String expectedBody = "<hello>world!</hello>";
 
     @Override

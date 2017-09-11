@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public final class Suppliers {
@@ -70,6 +71,19 @@ public final class Suppliers {
         for (int i = 0; i < suppliers.length; i++) {
             answer = suppliers[i].get();
             if (answer != null) {
+                break;
+            }
+        }
+
+        return Optional.ofNullable(answer);
+    }
+
+    public static <T> Optional<T> firstMatching(Predicate<T> predicate, ThrowingSupplier<T, Exception>... suppliers) throws Exception {
+        T answer = null;
+
+        for (int i = 0; i < suppliers.length; i++) {
+            answer = suppliers[i].get();
+            if (predicate.test(answer)) {
                 break;
             }
         }

@@ -18,9 +18,12 @@ package org.apache.camel.component.aws.sdb;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
-import com.amazonaws.services.simpledb.AmazonSimpleDBClient;
+import com.amazonaws.services.simpledb.AmazonSimpleDBClientBuilder;
 import com.amazonaws.services.simpledb.model.CreateDomainRequest;
 import com.amazonaws.services.simpledb.model.DomainMetadataRequest;
 import com.amazonaws.services.simpledb.model.NoSuchDomainException;
@@ -78,9 +81,6 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
         super.doStart();
         
         sdbClient = configuration.getAmazonSDBClient() != null ? configuration.getAmazonSDBClient() : createSdbClient();
-        if (ObjectHelper.isNotEmpty(configuration.getAmazonSdbEndpoint())) {
-            sdbClient.setEndpoint(configuration.getAmazonSdbEndpoint());
-        }
         
         String domainName = getConfiguration().getDomainName();
         LOG.trace("Querying whether domain [{}] already exists...", domainName);
@@ -107,6 +107,7 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
 
     AmazonSimpleDB createSdbClient() {
         AmazonSimpleDB client = null;
+        AmazonSimpleDBClientBuilder clientBuilder = null;
         ClientConfiguration clientConfiguration = null;
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
@@ -117,18 +118,24 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
         }
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                client = new AmazonSimpleDBClient(credentials, clientConfiguration);
+                clientBuilder = AmazonSimpleDBClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
             } else {
-                client = new AmazonSimpleDBClient(credentials);
+                clientBuilder = AmazonSimpleDBClientBuilder.standard().withCredentials(credentialsProvider);
             }
         } else {
             if (isClientConfigFound) {
-                client = new AmazonSimpleDBClient();
+                clientBuilder = AmazonSimpleDBClientBuilder.standard();
             } else {
-                client = new AmazonSimpleDBClient(clientConfiguration);
+                clientBuilder = AmazonSimpleDBClientBuilder.standard().withClientConfiguration(clientConfiguration);
             }
         }
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonSdbEndpoint()) && ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            EndpointConfiguration endpointConfiguration = new EndpointConfiguration(configuration.getAmazonSdbEndpoint(), configuration.getRegion());
+            clientBuilder = clientBuilder.withEndpointConfiguration(endpointConfiguration);
+        }
+        client = clientBuilder.build();
         return client;
     }
 }

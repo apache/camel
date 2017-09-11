@@ -28,7 +28,7 @@ import org.eclipse.jetty.client.HttpClient;
 
 public interface JettyContentExchange {
 
-    void init(Exchange exchange, JettyHttpBinding jettyBinding, final HttpClient client, AsyncCallback callback);
+    void init(Exchange exchange, JettyHttpBinding jettyBinding, HttpClient client, AsyncCallback callback);
 
     // Methods to prepare the request
     void setRequestContentType(String contentType);

@@ -1,5 +1,6 @@
 package com.example;
 
+import javax.annotation.Generated;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
@@ -7,6 +8,10 @@ import org.apache.camel.model.rest.RestParamType;
 /**
  * Generated from Swagger specification by Camel REST DSL generator.
  */
+@Generated(
+		value = "org.apache.camel.generator.swagger.AppendableGenerator",
+		date = "2017-10-17T00:00:00Z"
+)
 public final class MyRestRoute extends RouteBuilder {
 	/**
 	 * Defines Apache Camel routes using REST DSL fluent API.

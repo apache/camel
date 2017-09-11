@@ -41,4 +41,8 @@ public class DateTimeDeserializer extends JsonDeserializer<ZonedDateTime> {
         throw JsonMappingException.from(deserializationContext, "Expected String value, got: " + currentToken);
     }
 
+    @Override
+    public Class<?> handledType() {
+        return ZonedDateTime.class;
+    }
 }

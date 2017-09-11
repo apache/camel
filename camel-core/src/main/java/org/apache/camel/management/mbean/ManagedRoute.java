@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.management.AttributeValueExp;
@@ -39,7 +37,6 @@ import javax.management.StringValueExp;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
@@ -50,7 +47,9 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.XmlLineNumberParser;
@@ -68,8 +67,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     protected final String description;
     protected final ModelCamelContext context;
     private final LoadTriplet load = new LoadTriplet();
-    private final ConcurrentSkipListMap<InFlightKey, Long> exchangesInFlightStartTimestamps = new ConcurrentSkipListMap<InFlightKey, Long>();
-    private final ConcurrentHashMap<String, InFlightKey> exchangesInFlightKeys = new ConcurrentHashMap<String, InFlightKey>();
     private final String jmxDomain;
 
     public ManagedRoute(ModelCamelContext context, Route route) {
@@ -84,9 +81,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         super.init(strategy);
         boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
-
-        exchangesInFlightKeys.clear();
-        exchangesInFlightStartTimestamps.clear();
     }
 
     public Route getRoute() {
@@ -222,28 +216,28 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
         }
-        context.startRoute(getRouteId());
+        context.getRouteController().startRoute(getRouteId());
     }
 
     public void stop() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
         }
-        context.stopRoute(getRouteId());
+        context.getRouteController().stopRoute(getRouteId());
     }
 
     public void stop(long timeout) throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
         }
-        context.stopRoute(getRouteId(), timeout, TimeUnit.SECONDS);
+        context.getRouteController().stopRoute(getRouteId(), timeout, TimeUnit.SECONDS);
     }
 
     public boolean stop(Long timeout, Boolean abortAfterTimeout) throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
         }
-        return context.stopRoute(getRouteId(), timeout, TimeUnit.SECONDS, abortAfterTimeout);
+        return context.getRouteController().stopRoute(getRouteId(), timeout, TimeUnit.SECONDS, abortAfterTimeout);
     }
 
     public void shutdown() throws Exception {
@@ -285,7 +279,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
             if (resolvePlaceholders) {
                 final AtomicBoolean changed = new AtomicBoolean();
-                InputStream is = new ByteArrayInputStream(xml.getBytes());
+                InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
                 Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
                     @Override
                     public String transform(String text) {
@@ -410,13 +404,13 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         String stat = dumpStatsAsXml(fullStats);
         answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
         answer.append(" selfProcessingTime=\"").append(routeSelfTime).append("\"");
-        InFlightKey oldestInflightEntry = getOldestInflightEntry();
-        if (oldestInflightEntry == null) {
+        InflightRepository.InflightExchange oldest = getOldestInflightEntry();
+        if (oldest == null) {
             answer.append(" oldestInflightExchangeId=\"\"");
             answer.append(" oldestInflightDuration=\"\"");
         } else {
-            answer.append(" oldestInflightExchangeId=\"").append(oldestInflightEntry.exchangeId).append("\"");
-            answer.append(" oldestInflightDuration=\"").append(System.currentTimeMillis() - oldestInflightEntry.timeStamp).append("\"");
+            answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append("\"");
+            answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append("\"");
         }
         answer.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
 
@@ -466,111 +460,36 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return route.hashCode();
     }
 
-    private InFlightKey getOldestInflightEntry() {
-        Map.Entry<InFlightKey, Long> entry = exchangesInFlightStartTimestamps.firstEntry();
-        if (entry != null) {
-            return entry.getKey();
-        }
-        return null;
+    private InflightRepository.InflightExchange getOldestInflightEntry() {
+        return getContext().getInflightRepository().oldest(getRouteId());
     }
 
     public Long getOldestInflightDuration() {
-        InFlightKey oldest = getOldestInflightEntry();
+        InflightRepository.InflightExchange oldest = getOldestInflightEntry();
         if (oldest == null) {
             return null;
+        } else {
+            return oldest.getDuration();
         }
-        return System.currentTimeMillis() - oldest.timeStamp;
     }
 
     public String getOldestInflightExchangeId() {
-        InFlightKey oldest = getOldestInflightEntry();
+        InflightRepository.InflightExchange oldest = getOldestInflightEntry();
         if (oldest == null) {
             return null;
+        } else {
+            return oldest.getExchange().getExchangeId();
         }
-        return oldest.exchangeId;
     }
 
     @Override
-    public synchronized void processExchange(Exchange exchange) {
-        InFlightKey key = new InFlightKey(System.currentTimeMillis(), exchange.getExchangeId());
-        InFlightKey oldKey = exchangesInFlightKeys.putIfAbsent(exchange.getExchangeId(), key);
-        // we may already have the exchange being processed so only add to timestamp if its a new exchange
-        // for example when people call the same routes recursive
-        if (oldKey == null) {
-            exchangesInFlightStartTimestamps.put(key, key.timeStamp);
-        }
-        super.processExchange(exchange);
+    public Boolean getHasRouteController() {
+        return route.getRouteContext().getRouteController() != null;
     }
 
     @Override
-    public synchronized void completedExchange(Exchange exchange, long time) {
-        InFlightKey key = exchangesInFlightKeys.remove(exchange.getExchangeId());
-        if (key != null) {
-            exchangesInFlightStartTimestamps.remove(key);
-        }
-        super.completedExchange(exchange, time);
-    }
-
-    @Override
-    public synchronized void failedExchange(Exchange exchange) {
-        InFlightKey key = exchangesInFlightKeys.remove(exchange.getExchangeId());
-        if (key != null) {
-            exchangesInFlightStartTimestamps.remove(key);
-        }
-        super.failedExchange(exchange);
-    }
-
-    private static class InFlightKey implements Comparable<InFlightKey> {
-
-        private final Long timeStamp;
-        private final String exchangeId;
-
-        InFlightKey(Long timeStamp, String exchangeId) {
-            this.timeStamp = timeStamp;
-            this.exchangeId = exchangeId;
-        }
-
-        @Override
-        public int compareTo(InFlightKey o) {
-            int compare = Long.compare(timeStamp, o.timeStamp);
-            if (compare == 0) {
-                return exchangeId.compareTo(o.exchangeId);
-            }
-            return compare;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            InFlightKey that = (InFlightKey) o;
-
-            if (!exchangeId.equals(that.exchangeId)) {
-                return false;
-            }
-            if (!timeStamp.equals(that.timeStamp)) {
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = timeStamp.hashCode();
-            result = 31 * result + exchangeId.hashCode();
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return exchangeId;
-        }
+    public RouteError getLastError() {
+        return route.getRouteContext().getLastError();
     }
 
     /**

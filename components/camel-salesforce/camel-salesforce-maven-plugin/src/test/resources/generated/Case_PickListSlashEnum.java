@@ -4,12 +4,15 @@
  */
 package $packageName;
 
+import javax.annotation.Generated;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Salesforce Enumeration DTO for picklist PickListSlash
  */
+@Generated("org.apache.camel.maven.CamelSalesforceMojo")
 public enum Case_PickListSlashEnum {
 
     // Acciones relacionadas con cotizaciones y/o avisos de entrega

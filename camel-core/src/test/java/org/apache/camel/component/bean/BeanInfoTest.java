@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -26,11 +27,12 @@ import org.apache.camel.InOnly;
 import org.apache.camel.InOut;
 import org.apache.camel.Pattern;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
+ * @version
  */
 public class BeanInfoTest extends TestCase {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInfoTest.class);
@@ -50,9 +52,15 @@ public class BeanInfoTest extends TestCase {
 
         List<MethodInfo> operations = info.getMethods();
         assertEquals(3, operations.size());
-        assertEquals("inOnlyMethod", operations.get(0).getMethod().getName());
-        assertEquals("inOutMethod", operations.get(1).getMethod().getName());
-        assertEquals("robustInOnlyMethod", operations.get(2).getMethod().getName());
+
+        long size = operations.stream().filter(m -> m.getMethod().getName().equals("inOnlyMethod")).count();
+        assertEquals(1, size);
+
+        size = operations.stream().filter(m -> m.getMethod().getName().equals("inOutMethod")).count();
+        assertEquals(1, size);
+
+        size = operations.stream().filter(m -> m.getMethod().getName().equals("robustInOnlyMethod")).count();
+        assertEquals(1, size);
     }
 
     public void testMethodPatternUsingMethodAnnotations() throws Exception {
@@ -104,6 +112,30 @@ public class BeanInfoTest extends TestCase {
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
         assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
         assertMethodPattern(info, "inOutMethod", ExchangePattern.InOut);
+    }
+
+    public void testImplementLevel2InterfaceMethodInPackagePrivateClass() {
+        BeanInfo info = createBeanInfo(PackagePrivateClassImplementingLevel2InterfaceMethod.class);
+        List<MethodInfo> mis = info.getMethods();
+        Assert.assertNotNull(mis);
+        Assert.assertEquals(1, mis.size());
+        MethodInfo mi = mis.get(0);
+        Assert.assertNotNull(mi);
+        Method m = mi.getMethod();
+        Assert.assertEquals("method", m.getName());
+        Assert.assertTrue(Modifier.isPublic(m.getDeclaringClass().getModifiers()));
+    }
+
+    public void testPublicClassImplementingInterfaceMethodBySuperPackagePrivateClass() {
+        BeanInfo info = createBeanInfo(PublicClassImplementingBySuperPackagePrivateClass.class);
+        List<MethodInfo> mis = info.getMethods();
+        Assert.assertNotNull(mis);
+        Assert.assertEquals(1, mis.size());
+        MethodInfo mi = mis.get(0);
+        Assert.assertNotNull(mi);
+        Method m = mi.getMethod();
+        Assert.assertEquals("method", m.getName());
+        Assert.assertTrue(Modifier.isPublic(m.getDeclaringClass().getModifiers()));
     }
 
     protected BeanInfo createBeanInfo(Class<?> type) {
@@ -177,6 +209,33 @@ public class BeanInfoTest extends TestCase {
         public Object inOutMethod() {
             return null;
         }
+    }
+
+    public interface ILevel2Interface {
+        String method();
+    }
+
+    public interface ILevel1Interface extends ILevel2Interface {
+    }
+
+    class PackagePrivateClassImplementingLevel2InterfaceMethod implements ILevel1Interface {
+        @Override
+        public String method() {
+            return "PackagePrivateClassImplementingLevel2InterfaceMethod.method() has been called";
+        }
+    }
+
+    public interface IMethodInterface {
+        String method();
+    }
+
+    class PackagePrivateClassDefiningMethod {
+        public String method() {
+            return "PackagePrivateClassDefiningMethod.method() has been called";
+        }
+    }
+
+    public class PublicClassImplementingBySuperPackagePrivateClass extends PackagePrivateClassDefiningMethod implements IMethodInterface {
     }
 
 }

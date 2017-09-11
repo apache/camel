@@ -34,6 +34,7 @@ import org.apache.camel.maven.helper.EndpointHelper;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelEndpointDetails;
+import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
@@ -49,6 +50,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  * Parses the source code and validates the Camel routes has valid endpoint uris and simple expressions.
  *
  * @goal validate
+ * @threadSafe
  */
 public class ValidateMojo extends AbstractExecMojo {
 
@@ -160,6 +162,15 @@ public class ValidateMojo extends AbstractExecMojo {
      */
     private boolean downloadVersion;
 
+    /**
+     * Whether to validate for duplicate route ids. Route ids should be unique and if there are duplicates
+     * then Camel will fail to startup.
+     *
+     * @parameter property="camel.duplicateRouteId"
+     *            default-value="true"
+     */
+    private boolean duplicateRouteId;
+
     // CHECKSTYLE:OFF
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -172,6 +183,11 @@ public class ValidateMojo extends AbstractExecMojo {
         catalog.setVersionManager(new MavenVersionManager());
         // enable caching
         catalog.enableCache();
+
+        String detectedVersion = findCamelVersion(project);
+        if (detectedVersion != null) {
+            getLog().info("Detected Camel version used in project: " + detectedVersion);
+        }
 
         if (downloadVersion) {
             String catalogVersion = catalog.getCatalogVersion();
@@ -186,20 +202,15 @@ public class ValidateMojo extends AbstractExecMojo {
             }
         }
 
-        // if using the same version as the camel-maven-plugin we must still load it
-        if (catalog.getLoadedVersion() == null) {
-            catalog.loadVersion(catalog.getCatalogVersion());
-        }
-
         if (catalog.getLoadedVersion() != null) {
-            getLog().info("Using Camel version: " + catalog.getLoadedVersion());
+            getLog().info("Validating using downloaded Camel version: " + catalog.getLoadedVersion());
         } else {
-            // force load version from the camel-maven-plugin
-            getLog().info("Using Camel version: " + catalog.getCatalogVersion());
+            getLog().info("Validating using Camel version: " + catalog.getCatalogVersion());
         }
 
         List<CamelEndpointDetails> endpoints = new ArrayList<>();
         List<CamelSimpleExpressionDetails> simpleExpressions = new ArrayList<>();
+        List<CamelRouteDetails> routeIds = new ArrayList<>();
         Set<File> javaFiles = new LinkedHashSet<File>();
         Set<File> xmlFiles = new LinkedHashSet<File>();
 
@@ -238,6 +249,7 @@ public class ValidateMojo extends AbstractExecMojo {
             if (matchFile(file)) {
                 try {
                     List<CamelEndpointDetails> fileEndpoints = new ArrayList<>();
+                    List<CamelRouteDetails> fileRouteIds = new ArrayList<>();
                     List<CamelSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
                     List<String> unparsable = new ArrayList<>();
 
@@ -250,10 +262,14 @@ public class ValidateMojo extends AbstractExecMojo {
                         JavaClassSource clazz = (JavaClassSource) out;
                         RouteBuilderParser.parseRouteBuilderEndpoints(clazz, baseDir, fqn, fileEndpoints, unparsable, includeTest);
                         RouteBuilderParser.parseRouteBuilderSimpleExpressions(clazz, baseDir, fqn, fileSimpleExpressions);
+                        if (duplicateRouteId) {
+                            RouteBuilderParser.parseRouteBuilderRouteIds(clazz, baseDir, fqn, fileRouteIds);
+                        }
 
                         // add what we found in this file to the total list
                         endpoints.addAll(fileEndpoints);
                         simpleExpressions.addAll(fileSimpleExpressions);
+                        routeIds.addAll(fileRouteIds);
 
                         // was there any unparsable?
                         if (logUnparseable && !unparsable.isEmpty()) {
@@ -272,6 +288,7 @@ public class ValidateMojo extends AbstractExecMojo {
                 try {
                     List<CamelEndpointDetails> fileEndpoints = new ArrayList<>();
                     List<CamelSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
+                    List<CamelRouteDetails> fileRouteIds = new ArrayList<>();
 
                     // parse the xml source code and find Camel routes
                     String fqn = file.getPath();
@@ -285,9 +302,17 @@ public class ValidateMojo extends AbstractExecMojo {
                     XmlRouteParser.parseXmlRouteSimpleExpressions(is, baseDir, fqn, fileSimpleExpressions);
                     is.close();
 
+                    if (duplicateRouteId) {
+                        // need a new stream
+                        is = new FileInputStream(file);
+                        XmlRouteParser.parseXmlRouteRouteIds(is, baseDir, fqn, fileRouteIds);
+                        is.close();
+                    }
+
                     // add what we found in this file to the total list
                     endpoints.addAll(fileEndpoints);
                     simpleExpressions.addAll(fileSimpleExpressions);
+                    routeIds.addAll(fileRouteIds);
                 } catch (Exception e) {
                     getLog().warn("Error parsing xml file " + file + " code due " + e.getMessage(), e);
                 }
@@ -484,17 +509,116 @@ public class ValidateMojo extends AbstractExecMojo {
             simpleSummary = String.format("Simple validation error: (%s = passed, %s = invalid)", ok, simpleErrors);
         }
 
-        if (failOnError && (endpointErrors > 0 || simpleErrors > 0)) {
-            throw new MojoExecutionException(endpointSummary + "\n" + simpleSummary);
-        }
-
         if (simpleErrors > 0) {
             getLog().warn(simpleSummary);
         } else {
             getLog().info(simpleSummary);
         }
+
+        int duplicateRouteIdErrors = 0;
+        if (duplicateRouteId) {
+
+            // filter out all non uniques
+            for (CamelRouteDetails detail : routeIds) {
+                // skip empty route ids
+                if (detail.getRouteId() == null || "".equals(detail.getRouteId())) {
+                    continue;
+                }
+                int count = countRouteId(routeIds, detail.getRouteId());
+                if (count > 1) {
+                    duplicateRouteIdErrors++;
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("Duplicate route id validation error at: ");
+                    if (detail.getClassName() != null && detail.getLineNumber() != null) {
+                        // this is from java code
+                        sb.append(detail.getClassName());
+                        if (detail.getMethodName() != null) {
+                            sb.append(".").append(detail.getMethodName());
+                        }
+                        sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
+                        sb.append(detail.getLineNumber()).append(")");
+                    } else if (detail.getLineNumber() != null) {
+                        // this is from xml
+                        String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
+                        if (fqn.endsWith(".xml")) {
+                            fqn = fqn.substring(0, fqn.length() - 4);
+                            fqn = asPackageName(fqn);
+                        }
+                        sb.append(fqn);
+                        sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
+                        sb.append(detail.getLineNumber()).append(")");
+                    } else {
+                        sb.append(detail.getFileName());
+                    }
+                    sb.append("\n");
+                    sb.append("\n\t").append(detail.getRouteId());
+                    sb.append("\n\n");
+
+                    getLog().warn(sb.toString());
+                } else if (showAll) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("Duplicate route id validation passed at: ");
+                    if (detail.getClassName() != null && detail.getLineNumber() != null) {
+                        // this is from java code
+                        sb.append(detail.getClassName());
+                        if (detail.getMethodName() != null) {
+                            sb.append(".").append(detail.getMethodName());
+                        }
+                        sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
+                        sb.append(detail.getLineNumber()).append(")");
+                    } else if (detail.getLineNumber() != null) {
+                        // this is from xml
+                        String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
+                        if (fqn.endsWith(".xml")) {
+                            fqn = fqn.substring(0, fqn.length() - 4);
+                            fqn = asPackageName(fqn);
+                        }
+                        sb.append(fqn);
+                        sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
+                        sb.append(detail.getLineNumber()).append(")");
+                    } else {
+                        sb.append(detail.getFileName());
+                    }
+                    sb.append("\n");
+                    sb.append("\n\t").append(detail.getRouteId());
+                    sb.append("\n\n");
+
+                    getLog().info(sb.toString());
+                }
+            }
+        }
+
+        String routeIdSummary = "";
+        if (duplicateRouteId) {
+            if (duplicateRouteIdErrors == 0) {
+                routeIdSummary = String.format("Duplicate route id validation success (%s = ids)", routeIds.size());
+            } else {
+                routeIdSummary = String.format("Duplicate route id validation error: (%s = ids, %s = duplicates)", routeIds.size(), duplicateRouteIdErrors);
+            }
+
+            if (duplicateRouteIdErrors > 0) {
+                getLog().warn(routeIdSummary);
+            } else {
+                getLog().info(routeIdSummary);
+            }
+        }
+
+        if (failOnError && (endpointErrors > 0 || simpleErrors > 0 || duplicateRouteIdErrors > 0)) {
+            throw new MojoExecutionException(endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary);
+        }
     }
     // CHECKSTYLE:ON
+
+    private static int countRouteId(List<CamelRouteDetails> details, String routeId) {
+        int answer = 0;
+        for (CamelRouteDetails detail : details) {
+            if (routeId.equals(detail.getRouteId())) {
+                answer++;
+            }
+        }
+        return answer;
+    }
 
     private static String findCamelVersion(MavenProject project) {
         Dependency candidate = null;

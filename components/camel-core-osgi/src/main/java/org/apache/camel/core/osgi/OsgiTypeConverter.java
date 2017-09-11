@@ -207,7 +207,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
                 // we don't need any classloaders as we use OSGi service tracker instead
                 return Collections.emptySet();
             }
-        }, injector, factoryFinder);
+        }, injector, factoryFinder, false);
 
         // inject CamelContext
         answer.setCamelContext(camelContext);

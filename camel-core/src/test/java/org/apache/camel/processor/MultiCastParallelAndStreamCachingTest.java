@@ -76,7 +76,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
 
             if (withSleepTime) {
                 // simulate some processing in order to get easier concurrency effects
-                Thread.sleep(900);
+                Thread.sleep(50);
             }
             Object body = exchange.getIn().getBody();
             if (body instanceof InputStream) {

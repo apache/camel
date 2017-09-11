@@ -19,6 +19,7 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.RuntimeCamelException;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
@@ -28,10 +29,10 @@ public class SpringTryCatchMustHaveExceptionConfiguredTest extends ContextTestSu
         try {
             createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringTryCatchMustHaveExceptionConfiguredTest.xml");
             fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("At least one Exception must be configured to catch", e.getCause().getCause().getMessage());
+        } catch (RuntimeCamelException e) {
+            FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, ftcre.getCause());
+            assertEquals("At least one Exception must be configured to catch", iae.getMessage());
         }
 
         // return a working context instead, to let this test pass

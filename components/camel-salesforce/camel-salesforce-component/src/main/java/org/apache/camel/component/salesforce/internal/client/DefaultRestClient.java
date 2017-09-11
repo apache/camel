@@ -25,12 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 
-import org.apache.camel.component.salesforce.NotFoundBehaviour;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -396,9 +393,18 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             request = getRequest(httpMethod, apexCallUrl(apexUrl, queryParams));
             // set request SObject and content type
             if (requestDto != null) {
-                request.content(new InputStreamContentProvider(requestDto));
-                request.header(HttpHeader.CONTENT_TYPE,
-                        PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+                // guard against requests that do not support bodies
+                switch (request.getMethod()) {
+                case "PUT":
+                case "PATCH":
+                case "POST":
+                    request.content(new InputStreamContentProvider(requestDto));
+                    request.header(HttpHeader.CONTENT_TYPE,
+                            PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+                    break;
+                default:
+                    // ignore body for other methods
+                }
             }
 
             // requires authorization token

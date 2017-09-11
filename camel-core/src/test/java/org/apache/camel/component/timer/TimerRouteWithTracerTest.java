@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.timer;
 
-
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -29,7 +28,7 @@ public class TimerRouteWithTracerTest extends TimerRouteTest {
         return new RouteBuilder() {
             public void configure() {
                 getContext().setTracing(true);
-                from("timer://foo?fixedRate=true&delay=0&period=500").to("bean:myBean", "mock:result");
+                from("timer://foo?fixedRate=true&delay=0&period=10").to("bean:myBean", "mock:result");
             }
         };
     }

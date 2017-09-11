@@ -55,7 +55,7 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
 
             args.put(Olingo4Endpoint.RESPONSE_HANDLER_PROPERTY, new Olingo4ResponseHandler<Object>() {
                 @Override
-                public void onResponse(Object response) {
+                public void onResponse(Object response, Map<String, String> responseHeaders) {
                     result[0] = response;
                     latch.countDown();
                 }

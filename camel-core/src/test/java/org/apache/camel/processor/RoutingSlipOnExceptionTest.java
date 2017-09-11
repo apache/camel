@@ -26,6 +26,7 @@ public class RoutingSlipOnExceptionTest extends DynamicRouterOnExceptionTest {
             @Override
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(5);
 
                 from("direct:start")

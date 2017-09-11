@@ -107,7 +107,7 @@ public final class CamelBlueprintHelper {
     
     public static BundleContext createBundleContext(String name, String descriptors, boolean includeTestBundle,
                                                     String bundleFilter, String testBundleVersion, String testBundleDirectives,
-                                                    String[] ... configAdminPidFiles) throws Exception {
+                                                    String[]... configAdminPidFiles) throws Exception {
         return createBundleContext(name, descriptors, includeTestBundle,
                 bundleFilter, testBundleVersion, testBundleDirectives,
                 null,
@@ -117,7 +117,7 @@ public final class CamelBlueprintHelper {
     public static BundleContext createBundleContext(String name, String descriptors, boolean includeTestBundle,
                                                     String bundleFilter, String testBundleVersion, String testBundleDirectives,
                                                     ClassLoader loader,
-                                                    String[] ... configAdminPidFiles) throws Exception {
+                                                    String[]... configAdminPidFiles) throws Exception {
         TinyBundle bundle = null;
         TinyBundle configAdminInitBundle = null;
 
@@ -368,7 +368,7 @@ public final class CamelBlueprintHelper {
         }
     }
 
-    protected static TinyBundle createConfigAdminInitBundle(String[] ... configAdminPidFiles) throws IOException {
+    protected static TinyBundle createConfigAdminInitBundle(String[]... configAdminPidFiles) throws IOException {
         TinyBundle bundle = TinyBundles.newBundle();
         StringWriter configAdminInit = null;
         for (String[] configAdminPidFile : configAdminPidFiles) {

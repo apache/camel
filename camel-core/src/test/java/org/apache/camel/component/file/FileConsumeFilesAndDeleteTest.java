@@ -32,14 +32,15 @@ public class FileConsumeFilesAndDeleteTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/files");
         super.setUp();
-        template.sendBodyAndHeader("file://target/files", "Hello World", Exchange.FILE_NAME, "report.txt");
-        template.sendBodyAndHeader("file://target/files", "Bye World", Exchange.FILE_NAME, "report2.txt");
-        template.sendBodyAndHeader("file://target/files/2008", "2008 Report", Exchange.FILE_NAME, "report2008.txt");
     }
 
     public void testConsumeAndDelete() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
+
+        template.sendBodyAndHeader("file://target/files", "Bye World", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader("file://target/files", "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file://target/files/2008", "2008 Report", Exchange.FILE_NAME, "report2008.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -53,7 +54,8 @@ public class FileConsumeFilesAndDeleteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/files/?fileName=report.txt&delete=true").convertBodyTo(String.class).to("mock:result");
+                from("file://target/files/?initialDelay=0&delay=10&fileName=report.txt&delete=true")
+                    .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

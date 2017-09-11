@@ -35,8 +35,10 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Requires a running Kubernetes Cluster")
 public class KubernetesServicesConsumerTest extends KubernetesTestSupport {
 
     @EndpointInject(uri = "mock:result")
@@ -102,18 +104,18 @@ public class KubernetesServicesConsumerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list").toF("kubernetes://%s?oauthToken=%s&category=services&operation=listServices", host,
+                from("direct:list").toF("kubernetes-services://%s?oauthToken=%s&operation=listServices", host,
                         authToken);
                 from("direct:listByLabels").toF(
-                        "kubernetes://%s?oauthToken=%s&category=services&operation=listServicesByLabels", host,
+                        "kubernetes-services://%s?oauthToken=%s&operation=listServicesByLabels", host,
                         authToken);
-                from("direct:getServices").toF("kubernetes://%s?oauthToken=%s&category=services&operation=getService",
+                from("direct:getServices").toF("kubernetes-services://%s?oauthToken=%s&operation=getService",
                         host, authToken);
                 from("direct:createService").toF(
-                        "kubernetes://%s?oauthToken=%s&category=services&operation=createService", host, authToken);
+                        "kubernetes-services://%s?oauthToken=%s&operation=createService", host, authToken);
                 from("direct:deleteService").toF(
-                        "kubernetes://%s?oauthToken=%s&category=services&operation=deleteService", host, authToken);
-                fromF("kubernetes://%s?oauthToken=%s&category=services&labelKey=this&labelValue=rocks", host, authToken)
+                        "kubernetes-services://%s?oauthToken=%s&operation=deleteService", host, authToken);
+                fromF("kubernetes-services://%s?oauthToken=%s&labelKey=this&labelValue=rocks", host, authToken)
                         .process(new KubernertesProcessor()).to(mockResultEndpoint);
             }
         };

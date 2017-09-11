@@ -464,7 +464,7 @@ public final class ProcessorDefinitionHelper {
             // lookup in registry first and use existing thread pool if exists
             ExecutorService answer = lookupExecutorServiceRef(routeContext, name, definition, definition.getExecutorServiceRef());
             if (answer == null) {
-                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() + " not found in registry or as a thread pool profile.");
+                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() + " not found in registry (as an ExecutorService instance) or as a thread pool profile.");
             }
             return answer;
         } else if (useDefault) {
@@ -546,7 +546,8 @@ public final class ProcessorDefinitionHelper {
         } else if (definition.getExecutorServiceRef() != null) {
             ScheduledExecutorService answer = lookupScheduledExecutorServiceRef(routeContext, name, definition, definition.getExecutorServiceRef());
             if (answer == null) {
-                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() + " not found in registry or as a thread pool profile.");
+                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() 
+                        + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
             }
             return answer;
         } else if (useDefault) {

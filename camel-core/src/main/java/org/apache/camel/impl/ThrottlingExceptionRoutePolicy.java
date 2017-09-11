@@ -201,7 +201,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     protected void openCircuit(Route route) {
         try {
             lock.lock();
-            stopConsumer(route.getConsumer());
+            suspendOrStopConsumer(route.getConsumer());
             state.set(STATE_OPEN);
             openedAt = System.currentTimeMillis();
             halfOpenTimer = new Timer();
@@ -217,7 +217,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     protected void halfOpenCircuit(Route route) {
         try {
             lock.lock();
-            startConsumer(route.getConsumer());
+            resumeOrStartConsumer(route.getConsumer());
             state.set(STATE_HALF_OPEN);
             logState();
         } catch (Exception e) {
@@ -230,7 +230,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     protected void closeCircuit(Route route) {
         try {
             lock.lock();
-            startConsumer(route.getConsumer());
+            resumeOrStartConsumer(route.getConsumer());
             failures.set(0);
             lastFailure = 0;
             openedAt = 0;

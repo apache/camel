@@ -40,7 +40,7 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
     private long checkInterval = 1000;
     private long minLength = 1;
     private long minAge;
-    private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
+    private LoggingLevel readLockLoggingLevel = LoggingLevel.DEBUG;
 
     @Override
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {

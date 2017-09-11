@@ -51,7 +51,7 @@ public class OsgiServletRegisterer {
     private HttpServlet servlet;
     
     /**
-     * HttpService to register with. Get this with osgi:reference in the blueprint/spring-dm file
+     * HttpService to register with. Get this with osgi:reference in the blueprint file
      */
     private HttpService httpService;
     

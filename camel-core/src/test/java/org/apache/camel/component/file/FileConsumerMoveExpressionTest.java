@@ -52,7 +52,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?exclude=.*bak"
+                from("file://target/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
                         + "&move=${id}.bak").convertBodyTo(String.class).to("mock:result");
             }
         });
@@ -75,7 +75,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?exclude=.*bak"
+                from("file://target/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
                      + "&move=backup-${id}-${file:name.noext}.bak").convertBodyTo(String.class).to("mock:result");
             }
         });
@@ -98,7 +98,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?exclude=.*bak"
+                from("file://target/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
                       + "&move=backup/${bean:myguidgenerator.guid}.txt").convertBodyTo(String.class).to("mock:result");
             }
         });
@@ -116,7 +116,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?exclude=.*bak"
+                from("file://target/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
                      + "&move=../backup/${file:name}.bak").to("mock:result");
             }
         });
@@ -141,6 +141,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
                 endpoint.setAutoCreate(false);
                 endpoint.setMove(BeanLanguage.bean("myguidgenerator"));
                 endpoint.setExclude(".*bak");
+                endpoint.setInitialDelay(10);
 
                 from(endpoint).to("mock:result");
             }

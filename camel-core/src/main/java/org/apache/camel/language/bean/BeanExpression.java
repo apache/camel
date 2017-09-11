@@ -25,13 +25,13 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
+import org.apache.camel.component.bean.BeanExpressionProcessor;
 import org.apache.camel.component.bean.BeanHolder;
-import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.bean.ConstantTypeBeanHolder;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
@@ -110,10 +110,8 @@ public class BeanExpression implements Expression, Predicate {
 
         if (OgnlHelper.isValidOgnlExpression(method)) {
             // okay the method is an ognl expression
-            OgnlInvokeProcessor ognl = new OgnlInvokeProcessor(beanHolder, method);
             try {
-                ognl.process(exchange);
-                return ognl.getResult();
+                return invokeOgnlMethod(beanHolder, beanName, method, exchange);
             } catch (Exception e) {
                 if (e instanceof RuntimeBeanExpressionException) {
                     throw (RuntimeBeanExpressionException) e;
@@ -122,10 +120,8 @@ public class BeanExpression implements Expression, Predicate {
             }
         } else {
             // regular non ognl invocation
-            InvokeProcessor invoke = new InvokeProcessor(beanHolder, method);
             try {
-                invoke.process(exchange);
-                return invoke.getResult();
+                return invokeBean(beanHolder, beanName, method, exchange);
             } catch (Exception e) {
                 if (e instanceof RuntimeBeanExpressionException) {
                     throw (RuntimeBeanExpressionException) e;
@@ -181,57 +177,46 @@ public class BeanExpression implements Expression, Predicate {
     }
 
     /**
-     * Invokes a given bean holder. The method name is optional.
+     * Invokes the bean and returns the result. If an exception was thrown while invoking the bean, then the
+     * exception is set on the exchange.
      */
-    private final class InvokeProcessor implements Processor {
+    private static Object invokeBean(BeanHolder beanHolder, String beanName, String methodName, Exchange exchange) {
+        Object result;
 
-        private BeanHolder beanHolder;
-        private String methodName;
-        private Object result;
-
-        private InvokeProcessor(BeanHolder beanHolder, String methodName) {
-            this.beanHolder = beanHolder;
-            this.methodName = methodName;
+        BeanExpressionProcessor processor = new BeanExpressionProcessor(beanHolder);
+        if (methodName != null) {
+            processor.setMethod(methodName);
+            // enable OGNL like invocation
+            processor.setShorthandMethod(true);
         }
+        try {
+            // copy the original exchange to avoid side effects on it
+            Exchange resultExchange = ExchangeHelper.createCopy(exchange, true);
+            // remove any existing exception in case we do OGNL on the exception
+            resultExchange.setException(null);
 
-        public void process(Exchange exchange) throws Exception {
-            BeanProcessor processor = new BeanProcessor(beanHolder);
-            if (methodName != null) {
-                processor.setMethod(methodName);
-                // enable OGNL like invocation
-                processor.setShorthandMethod(true);
+            // force to use InOut to retrieve the result on the OUT message
+            resultExchange.setPattern(ExchangePattern.InOut);
+            processor.process(resultExchange);
+            result = resultExchange.getOut().getBody();
+
+            // propagate properties and headers from result
+            if (resultExchange.hasProperties()) {
+                exchange.getProperties().putAll(resultExchange.getProperties());
             }
-            try {
-                // copy the original exchange to avoid side effects on it
-                Exchange resultExchange = exchange.copy();
-                // remove any existing exception in case we do OGNL on the exception
-                resultExchange.setException(null);
-
-                // force to use InOut to retrieve the result on the OUT message
-                resultExchange.setPattern(ExchangePattern.InOut);
-                processor.process(resultExchange);
-                result = resultExchange.getOut().getBody();
-
-                // propagate properties and headers from result
-                if (resultExchange.hasProperties()) {
-                    exchange.getProperties().putAll(resultExchange.getProperties());
-                }
-                if (resultExchange.getOut().hasHeaders()) {
-                    exchange.getIn().getHeaders().putAll(resultExchange.getOut().getHeaders());
-                }
-
-                // propagate exceptions
-                if (resultExchange.getException() != null) {
-                    exchange.setException(resultExchange.getException());
-                }
-            } catch (Exception e) {
-                throw new RuntimeBeanExpressionException(exchange, beanName, methodName, e);
+            if (resultExchange.getOut().hasHeaders()) {
+                exchange.getIn().getHeaders().putAll(resultExchange.getOut().getHeaders());
             }
+
+            // propagate exceptions
+            if (resultExchange.getException() != null) {
+                exchange.setException(resultExchange.getException());
+            }
+        } catch (Throwable e) {
+            throw new RuntimeBeanExpressionException(exchange, beanName, methodName, e);
         }
 
-        public Object getResult() {
-            return result;
-        }
+        return result;
     }
 
     /**
@@ -240,176 +225,163 @@ public class BeanExpression implements Expression, Predicate {
      * For more advanced OGNL you may have to look for a real framework such as OGNL, Mvel or dynamic
      * programming language such as Groovy, JuEL, JavaScript.
      */
-    private final class OgnlInvokeProcessor implements Processor {
+    private static Object invokeOgnlMethod(BeanHolder beanHolder, String beanName, String ognl, Exchange exchange) {
 
-        private final String ognl;
-        private final BeanHolder beanHolder;
-        private Object result;
+        // we must start with having bean as the result
+        Object result = beanHolder.getBean();
 
-        OgnlInvokeProcessor(BeanHolder beanHolder, String ognl) {
-            this.beanHolder = beanHolder;
-            this.ognl = ognl;
-            // we must start with having bean as the result
-            this.result = beanHolder.getBean();
+        // copy the original exchange to avoid side effects on it
+        Exchange resultExchange = ExchangeHelper.createCopy(exchange, true);
+        // remove any existing exception in case we do OGNL on the exception
+        resultExchange.setException(null);
+        // force to use InOut to retrieve the result on the OUT message
+        resultExchange.setPattern(ExchangePattern.InOut);
+        // do not propagate any method name when using OGNL, as with OGNL we
+        // compute and provide the method name to explicit to invoke
+        resultExchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
+
+        // current ognl path as we go along
+        String ognlPath = "";
+
+        // loop and invoke each method
+        Object beanToCall = beanHolder.getBean();
+        Class<?> beanType = beanHolder.getBeanInfo().getType();
+
+        // there must be a bean to call with, we currently does not support OGNL expressions on using purely static methods
+        if (beanToCall == null && beanType == null) {
+            throw new IllegalArgumentException("Bean instance and bean type is null. OGNL bean expressions requires to have either a bean instance of the class name of the bean to use.");
         }
 
-        public void process(Exchange exchange) throws Exception {
-            // copy the original exchange to avoid side effects on it
-            Exchange resultExchange = exchange.copy();
-            // remove any existing exception in case we do OGNL on the exception
-            resultExchange.setException(null);
-            // force to use InOut to retrieve the result on the OUT message
-            resultExchange.setPattern(ExchangePattern.InOut);
-            // do not propagate any method name when using OGNL, as with OGNL we
-            // compute and provide the method name to explicit to invoke
-            resultExchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
-
-            // current ognl path as we go along
-            String ognlPath = "";
-
-            // loop and invoke each method
-            Object beanToCall = beanHolder.getBean();
-            Class<?> beanType = beanHolder.getBeanInfo().getType();
-
-            // there must be a bean to call with, we currently does not support OGNL expressions on using purely static methods
-            if (beanToCall == null && beanType == null) {
-                throw new IllegalArgumentException("Bean instance and bean type is null. OGNL bean expressions requires to have either a bean instance of the class name of the bean to use.");
-            }
-
-            if (ognl != null) {
-                // must be a valid method name according to java identifier ruling
-                OgnlHelper.validateMethodName(ognl);
-            }
-
-            // Split ognl except when this is not a Map, Array
-            // and we would like to keep the dots within the key name
-            List<String> methods = OgnlHelper.splitOgnl(ognl);
-
-            for (String methodName : methods) {
-                BeanHolder holder;
-                if (beanToCall != null) {
-                    holder = new ConstantBeanHolder(beanToCall, exchange.getContext());
-                } else if (beanType != null) {
-                    holder = new ConstantTypeBeanHolder(beanType, exchange.getContext());
-                } else {
-                    holder = null;
-                }
-
-                // support the null safe operator
-                boolean nullSafe = OgnlHelper.isNullSafeOperator(methodName);
-
-                if (holder == null) {
-                    String name = getBeanName(null, beanHolder);
-                    throw new RuntimeBeanExpressionException(exchange, name, ognl, "last method returned null and therefore cannot continue to invoke method " + methodName + " on a null instance");
-                }
-
-                // keep up with how far are we doing
-                ognlPath += methodName;
-
-                // get rid of leading ?. or . as we only needed that to determine if null safe was enabled or not
-                methodName = OgnlHelper.removeLeadingOperators(methodName);
-
-                // are we doing an index lookup (eg in Map/List/array etc)?
-                String key = null;
-                KeyValueHolder<String, String> index = OgnlHelper.isOgnlIndex(methodName);
-                if (index != null) {
-                    methodName = index.getKey();
-                    key = index.getValue();
-                }
-
-                // only invoke if we have a method name to use to invoke
-                if (methodName != null) {
-                    InvokeProcessor invoke = new InvokeProcessor(holder, methodName);
-                    invoke.process(resultExchange);
-
-                    // check for exception and rethrow if we failed
-                    if (resultExchange.getException() != null) {
-                        throw new RuntimeBeanExpressionException(exchange, beanName, methodName, resultExchange.getException());
-                    }
-
-                    result = invoke.getResult();
-                }
-
-                // if there was a key then we need to lookup using the key
-                if (key != null) {
-                    // if key is a nested simple expression then re-evaluate that again
-                    if (SimpleLanguage.hasSimpleFunction(key)) {
-                        key = SimpleLanguage.expression(key).evaluate(exchange, String.class);
-                    }
-                    if (key != null) {
-                        result = lookupResult(resultExchange, key, result, nullSafe, ognlPath, holder.getBean());
-                    }
-                }
-
-                // check null safe for null results
-                if (result == null && nullSafe) {
-                    return;
-                }
-
-                // prepare for next bean to invoke
-                beanToCall = result;
-                beanType = null;
-            }
+        if (ognl != null) {
+            // must be a valid method name according to java identifier ruling
+            OgnlHelper.validateMethodName(ognl);
         }
 
-        private Object lookupResult(Exchange exchange, String key, Object result, boolean nullSafe, String ognlPath, Object bean) {
-            ObjectHelper.notEmpty(key, "key", "in Simple language ognl path: " + ognlPath);
+        // Split ognl except when this is not a Map, Array
+        // and we would like to keep the dots within the key name
+        List<String> methods = OgnlHelper.splitOgnl(ognl);
 
-            // trim key
-            key = key.trim();
-
-            // remove any enclosing quotes
-            key = StringHelper.removeLeadingAndEndingQuotes(key);
-
-            // try map first
-            Map<?, ?> map = exchange.getContext().getTypeConverter().convertTo(Map.class, result);
-            if (map != null) {
-                return map.get(key);
-            }
-
-            // special for list is last keyword
-            Integer num = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, key);
-            boolean checkList = key.startsWith("last") || num != null;
-
-            if (checkList) {
-                List<?> list = exchange.getContext().getTypeConverter().convertTo(List.class, result);
-                if (list != null) {
-                    if (key.startsWith("last")) {
-                        num = list.size() - 1;
-
-                        // maybe its an expression to subtract a number after last
-                        String after = ObjectHelper.after(key, "-");
-                        if (after != null) {
-                            Integer redux = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, after.trim());
-                            if (redux != null) {
-                                num -= redux;
-                            } else {
-                                throw new ExpressionIllegalSyntaxException(key);
-                            }
-                        }
-                    }
-                    if (num != null && num >= 0 && list.size() > num - 1 && list.size() > 0) {
-                        return list.get(num);
-                    }
-                    if (!nullSafe) {
-                        // not null safe then its mandatory so thrown out of bounds exception
-                        throw new IndexOutOfBoundsException("Index: " + num + ", Size: " + list.size()
-                                + " out of bounds with List from bean: " + bean + "using OGNL path [" + ognlPath + "]");
-                    }
-                }
-            }
-
-            if (!nullSafe) {
-                throw new IndexOutOfBoundsException("Key: " + key + " not found in bean: " + bean + " of type: "
-                        + ObjectHelper.classCanonicalName(bean) + " using OGNL path [" + ognlPath + "]");
+        for (String methodName : methods) {
+            BeanHolder holder;
+            if (beanToCall != null) {
+                holder = new ConstantBeanHolder(beanToCall, exchange.getContext());
+            } else if (beanType != null) {
+                holder = new ConstantTypeBeanHolder(beanType, exchange.getContext());
             } else {
-                // null safe so we can return null
+                holder = null;
+            }
+
+            // support the null safe operator
+            boolean nullSafe = OgnlHelper.isNullSafeOperator(methodName);
+
+            if (holder == null) {
+                String name = getBeanName(null, beanHolder);
+                throw new RuntimeBeanExpressionException(exchange, name, ognl, "last method returned null and therefore cannot continue to invoke method " + methodName + " on a null instance");
+            }
+
+            // keep up with how far are we doing
+            ognlPath += methodName;
+
+            // get rid of leading ?. or . as we only needed that to determine if null safe was enabled or not
+            methodName = OgnlHelper.removeLeadingOperators(methodName);
+
+            // are we doing an index lookup (eg in Map/List/array etc)?
+            String key = null;
+            KeyValueHolder<String, String> index = OgnlHelper.isOgnlIndex(methodName);
+            if (index != null) {
+                methodName = index.getKey();
+                key = index.getValue();
+            }
+
+            // only invoke if we have a method name to use to invoke
+            if (methodName != null) {
+                Object newResult = invokeBean(holder, beanName, methodName, resultExchange);
+
+                // check for exception and rethrow if we failed
+                if (resultExchange.getException() != null) {
+                    throw new RuntimeBeanExpressionException(exchange, beanName, methodName, resultExchange.getException());
+                }
+
+                result = newResult;
+            }
+
+            // if there was a key then we need to lookup using the key
+            if (key != null) {
+                // if key is a nested simple expression then re-evaluate that again
+                if (SimpleLanguage.hasSimpleFunction(key)) {
+                    key = SimpleLanguage.expression(key).evaluate(exchange, String.class);
+                }
+                if (key != null) {
+                    result = lookupResult(resultExchange, key, result, nullSafe, ognlPath, holder.getBean());
+                }
+            }
+
+            // check null safe for null results
+            if (result == null && nullSafe) {
                 return null;
             }
+
+            // prepare for next bean to invoke
+            beanToCall = result;
+            beanType = null;
         }
 
-        public Object getResult() {
-            return result;
+        return result;
+    }
+
+    private static Object lookupResult(Exchange exchange, String key, Object result, boolean nullSafe, String ognlPath, Object bean) {
+        StringHelper.notEmpty(key, "key", "in Simple language ognl path: " + ognlPath);
+
+        // trim key
+        key = key.trim();
+
+        // remove any enclosing quotes
+        key = StringHelper.removeLeadingAndEndingQuotes(key);
+
+        // try map first
+        Map<?, ?> map = exchange.getContext().getTypeConverter().convertTo(Map.class, result);
+        if (map != null) {
+            return map.get(key);
+        }
+
+        // special for list is last keyword
+        Integer num = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, key);
+        boolean checkList = key.startsWith("last") || num != null;
+
+        if (checkList) {
+            List<?> list = exchange.getContext().getTypeConverter().convertTo(List.class, result);
+            if (list != null) {
+                if (key.startsWith("last")) {
+                    num = list.size() - 1;
+
+                    // maybe its an expression to subtract a number after last
+                    String after = StringHelper.after(key, "-");
+                    if (after != null) {
+                        Integer redux = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, after.trim());
+                        if (redux != null) {
+                            num -= redux;
+                        } else {
+                            throw new ExpressionIllegalSyntaxException(key);
+                        }
+                    }
+                }
+                if (num != null && num >= 0 && list.size() > num - 1 && list.size() > 0) {
+                    return list.get(num);
+                }
+                if (!nullSafe) {
+                    // not null safe then its mandatory so thrown out of bounds exception
+                    throw new IndexOutOfBoundsException("Index: " + num + ", Size: " + list.size()
+                            + " out of bounds with List from bean: " + bean + "using OGNL path [" + ognlPath + "]");
+                }
+            }
+        }
+
+        if (!nullSafe) {
+            throw new IndexOutOfBoundsException("Key: " + key + " not found in bean: " + bean + " of type: "
+                    + ObjectHelper.classCanonicalName(bean) + " using OGNL path [" + ognlPath + "]");
+        } else {
+            // null safe so we can return null
+            return null;
         }
     }
 

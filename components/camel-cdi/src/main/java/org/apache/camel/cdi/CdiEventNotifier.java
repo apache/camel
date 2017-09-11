@@ -62,7 +62,7 @@ final class CdiEventNotifier extends EventNotifierSupport {
             List<Annotation> annotations = new ArrayList<>();
             Collections.addAll(annotations, qualifiers);
             annotations.add(NamedLiteral.of(id));
-            manager.fireEvent(event, annotations.stream().toArray(Annotation[]::new));
+            manager.fireEvent(event, annotations.toArray(new Annotation[0]));
         } else {
             manager.fireEvent(event, qualifiers);
         }

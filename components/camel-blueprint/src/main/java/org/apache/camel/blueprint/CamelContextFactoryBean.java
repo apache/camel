@@ -109,6 +109,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute
     private String useMDCLogging;
     @XmlAttribute
+    private String useDataType;
+    @XmlAttribute
     private String useBreadcrumb;
     @XmlAttribute
     private String allowUseOriginalMessage;
@@ -127,6 +129,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute
     @Deprecated
     private Boolean lazyLoadTypeConverters;
+    @XmlAttribute
+    private Boolean loadTypeConverters;
     @XmlAttribute
     private Boolean typeConverterStatisticsEnabled;
     @XmlAttribute
@@ -383,6 +387,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.useMDCLogging = useMDCLogging;
     }
 
+    public String getUseDataType() {
+        return useDataType;
+    }
+
+    public void setUseDataType(String useDataType) {
+        this.useDataType = useDataType;
+    }
+
     public String getUseBreadcrumb() {
         return useBreadcrumb;
     }
@@ -432,6 +444,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @Deprecated
     public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
         this.lazyLoadTypeConverters = lazyLoadTypeConverters;
+    }
+
+    @Override
+    public Boolean getLoadTypeConverters() {
+        return loadTypeConverters;
+    }
+
+    public void setLoadTypeConverters(Boolean loadTypeConverters) {
+        this.loadTypeConverters = loadTypeConverters;
     }
 
     public Boolean getTypeConverterStatisticsEnabled() {

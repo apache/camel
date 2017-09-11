@@ -88,17 +88,6 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
                             + exchange.getIn().getHeader("passwd"));
                     }
                 });
-
-                // Restlet consumer default to handle GET method
-                from("restlet:http://localhost:" + portNum + "/orders with spaces in path/{id}/{x}").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody(
-                            "received GET request with id="
-                            + exchange.getIn().getHeader("id")
-                            + " and x="
-                            + exchange.getIn().getHeader("x"));
-                    }
-                });
             }
         };
     }
@@ -151,15 +140,6 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
             response.getEntity().getText());
     }
 
-    @Test
-    public void testConsumerWithSpaces() throws IOException {
-        Client client = new Client(Protocol.HTTP);
-        Response response = client.handle(new Request(Method.GET, 
-            "http://localhost:" + portNum + "/orders with spaces in path/99991/6"));
-        assertEquals("received GET request with id=99991 and x=6",
-            response.getEntity().getText());
-    }
-    
     @Test
     public void testUnhandledConsumer() throws IOException {
         Client client = new Client(Protocol.HTTP);

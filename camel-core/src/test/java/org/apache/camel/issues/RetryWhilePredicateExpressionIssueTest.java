@@ -43,6 +43,7 @@ public class RetryWhilePredicateExpressionIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class)
                     .handled(true)
+                    .redeliveryDelay(0)
                     .retryWhile(new Predicate() {
                         @Override
                         public boolean matches(Exchange exchange) {

@@ -38,6 +38,7 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,6 +64,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
     protected String routeBuilderClasses;
     protected String fileWatchDirectory;
+    protected boolean fileWatchDirectoryRecursively;
     protected final List<CamelContext> camelContexts = new ArrayList<CamelContext>();
     protected ProducerTemplate camelTemplate;
     protected boolean hangupInterceptorEnabled = true;
@@ -240,7 +242,11 @@ public abstract class MainSupport extends ServiceSupport {
 
     private void internalBeforeStart() {
         if (hangupInterceptorEnabled) {
-            Runtime.getRuntime().addShutdownHook(new HangupInterceptor(this));
+            String threadName = ThreadHelper.resolveThreadName(null, "CamelHangupInterceptor");
+
+            Thread task = new HangupInterceptor(this);
+            task.setName(threadName);
+            Runtime.getRuntime().addShutdownHook(task);
         }
     }
 
@@ -411,6 +417,19 @@ public abstract class MainSupport extends ServiceSupport {
     public void setFileWatchDirectory(String fileWatchDirectory) {
         this.fileWatchDirectory = fileWatchDirectory;
     }
+    
+    public boolean isFileWatchDirectoryRecursively() {
+        return fileWatchDirectoryRecursively;
+    }
+    
+    /**
+     * Sets the flag to watch directory of XML file changes recursively to trigger live reload of Camel routes.
+     * <p/>
+     * Notice you cannot set this value and a custom {@link ReloadStrategy} as well.
+     */
+    public void setFileWatchDirectoryRecursively(boolean fileWatchDirectoryRecursively) {
+        this.fileWatchDirectoryRecursively = fileWatchDirectoryRecursively;
+    }
 
     public String getRouteBuilderClasses() {
         return routeBuilderClasses;
@@ -553,7 +572,7 @@ public abstract class MainSupport extends ServiceSupport {
             camelContext.setTracing(true);
         }
         if (fileWatchDirectory != null) {
-            ReloadStrategy reload = new FileWatcherReloadStrategy(fileWatchDirectory);
+            ReloadStrategy reload = new FileWatcherReloadStrategy(fileWatchDirectory, fileWatchDirectoryRecursively);
             camelContext.setReloadStrategy(reload);
             // ensure reload is added as service and started
             camelContext.addService(reload);

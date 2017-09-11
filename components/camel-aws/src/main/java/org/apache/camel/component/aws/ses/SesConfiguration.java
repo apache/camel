@@ -51,6 +51,8 @@ public class SesConfiguration {
     private String proxyHost;
     @UriParam
     private Integer proxyPort;
+    @UriParam
+    private String region;
 
     public String getAccessKey() {
         return accessKey;
@@ -163,7 +165,7 @@ public class SesConfiguration {
     }
     
     /**
-     * To define a proxy host when instantiating the SQS client
+     * To define a proxy host when instantiating the SES client
      */
     public String getProxyHost() {
         return proxyHost;
@@ -174,7 +176,7 @@ public class SesConfiguration {
     }
 
     /**
-     * To define a proxy port when instantiating the SQS client
+     * To define a proxy port when instantiating the SES client
      */
     public Integer getProxyPort() {
         return proxyPort;
@@ -183,21 +185,15 @@ public class SesConfiguration {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
+    
+    /**
+     * The region in which SES client needs to work
+     */
+    public String getRegion() {
+        return region;
+    }
 
-    @Override
-    public String toString() {
-        return "SesConfiguration{"
-                + "accessKey='" + accessKey + '\''
-                + ", amazonSESClient=" + amazonSESClient
-                + ", secretKey=xxxxxxxxxxxxxxx"
-                + ", amazonSesEndpoint='" + amazonSESEndpoint + '\''
-                + ", subject='" + subject + '\''
-                + ", from='" + from + '\''
-                + ", to='" + to + '\''
-                + ", returnPath='" + returnPath + '\''
-                + ", replyToAddresses='" + replyToAddresses + '\''
-                + ", proxyHost=" + proxyHost
-                + ", proxyPort=" + proxyPort
-                + '}';
+    public void setRegion(String region) {
+        this.region = region;
     }
 }

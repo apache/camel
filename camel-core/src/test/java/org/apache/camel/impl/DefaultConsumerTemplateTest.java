@@ -17,12 +17,15 @@
 package org.apache.camel.impl;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version 
@@ -74,11 +77,13 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello");
 
-        // a little delay to let the consumer see it
-        Thread.sleep(500);
-
-        out = consumer.receiveNoWait("seda:foo");
-        assertEquals("Hello", out.getIn().getBody());
+        await().atMost(1, TimeUnit.SECONDS).until(() -> {
+            Exchange foo = consumer.receiveNoWait("seda:foo");
+            if (foo != null) {
+                assertEquals("Hello", foo.getIn().getBody());
+            }
+            return foo != null;
+        });
     }
 
     public void testConsumeReceiveTimeout() throws Exception {
@@ -119,11 +124,10 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello");
 
-        // a little delay to let the consumer see it
-        Thread.sleep(500);
-
-        body = consumer.receiveBodyNoWait("seda:foo");
-        assertEquals("Hello", body);
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Object foo = consumer.receiveBodyNoWait("seda:foo");
+            assertEquals("Hello", foo);
+        });
     }
 
     public void testConsumeReceiveBodyString() throws Exception {
@@ -151,11 +155,10 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello");
 
-        // a little delay to let the consumer see it
-        Thread.sleep(400);
-
-        body = consumer.receiveBodyNoWait("seda:foo", String.class);
-        assertEquals("Hello", body);
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            String foo = consumer.receiveBodyNoWait("seda:foo", String.class);
+            assertEquals("Hello", foo);
+        });
     }
 
     public void testConsumeReceiveEndpoint() throws Exception {
@@ -187,11 +190,13 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello");
 
-        // a little delay to let the consumer see it
-        Thread.sleep(400);
-
-        out = consumer.receiveNoWait(endpoint);
-        assertEquals("Hello", out.getIn().getBody());
+        await().atMost(1, TimeUnit.SECONDS).until(() -> {
+            Exchange foo = consumer.receiveNoWait(endpoint);
+            if (foo != null) {
+                assertEquals("Hello", foo.getIn().getBody());
+            }
+            return foo != null;
+        });
     }
 
     public void testConsumeReceiveEndpointBody() throws Exception {
@@ -250,11 +255,10 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello");
 
-        // a little delay to let the consumer see it
-        Thread.sleep(400);
-
-        out = consumer.receiveBodyNoWait(endpoint, String.class);
-        assertEquals("Hello", out);
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            String foo = consumer.receiveBodyNoWait(endpoint, String.class);
+            assertEquals("Hello", foo);
+        });
     }
 
     public void testConsumeReceiveEndpointBodyNoWait() throws Exception {
@@ -266,11 +270,10 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello");
 
-        // a little delay to let the consumer see it
-        Thread.sleep(400);
-
-        out = consumer.receiveBodyNoWait(endpoint);
-        assertEquals("Hello", out);
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Object foo = consumer.receiveBodyNoWait(endpoint);
+            assertEquals("Hello", foo);
+        });
     }
 
     public void testReceiveException() throws Exception {
@@ -347,7 +350,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         deleteDirectory("target/foo");
         template.sendBodyAndHeader("file:target/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        Exchange exchange = consumer.receive("file:target/foo?delete=true");
+        Exchange exchange = consumer.receive("file:target/foo?initialDelay=0&delay=10&delete=true");
         assertNotNull(exchange);
         assertEquals("Hello World", exchange.getIn().getBody(String.class));
 

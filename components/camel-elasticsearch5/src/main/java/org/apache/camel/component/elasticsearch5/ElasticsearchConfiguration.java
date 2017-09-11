@@ -45,8 +45,23 @@ public class ElasticsearchConfiguration {
     private String transportAddresses;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_PORT)
     private int port = ElasticsearchConstants.DEFAULT_PORT;
-    @UriParam(defaultValue = "true")
-    private Boolean clientTransportSniff = true;
+    @UriParam
+    private boolean clientTransportSniff;
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_PING_SCHEDULE)
+    private String pingSchedule = ElasticsearchConstants.DEFAULT_PING_SCHEDULE;
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_PING_TIMEOUT)
+    private String pingTimeout = ElasticsearchConstants.DEFAULT_PING_TIMEOUT;
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_TCP_CONNECT_TIMEOUT)
+    private String tcpConnectTimeout = ElasticsearchConstants.DEFAULT_TCP_CONNECT_TIMEOUT;
+    @UriParam
+    private boolean tcpCompress;
+    @UriParam(label = "authentication")
+    private String user;
+    @UriParam(label = "authentication", secret = true)
+    private String password;
+    @UriParam(label = "advanced,security")
+    private boolean enableSSL;
+
 
     /**
      * Name of the cluster
@@ -138,13 +153,13 @@ public class ElasticsearchConfiguration {
     }
 
     /**
-     * Is the client allowed to sniff the rest of the cluster or not (default true). This setting map to the <tt>client.transport.sniff</tt> setting.
+     * Is the client allowed to sniff the rest of the cluster or not. This setting map to the <tt>client.transport.sniff</tt> setting.
      */
-    public Boolean getClientTransportSniff() {
+    public boolean getClientTransportSniff() {
         return clientTransportSniff;
     }
 
-    public void setClientTransportSniff(Boolean clientTransportSniff) {
+    public void setClientTransportSniff(boolean clientTransportSniff) {
         this.clientTransportSniff = clientTransportSniff;
     }
 
@@ -154,5 +169,83 @@ public class ElasticsearchConfiguration {
 
     public void setTransportAddressesList(List<InetSocketTransportAddress> transportAddressesList) {
         this.transportAddressesList = transportAddressesList;
+    }
+
+    /**
+     * The time(in unit) the client ping the cluster.
+     */
+    public String getPingSchedule() {
+        return pingSchedule;
+    }
+
+    public void setPingSchedule(String pingSchedule) {
+        this.pingSchedule = pingSchedule;
+    }
+
+    /**
+     *  The time( in unit) to wait for connection timeout.
+     */
+    public String getTcpConnectTimeout() {
+        return tcpConnectTimeout;
+    }
+
+    public void setTcpConnectTimeout(String tcpConnectTimeout) {
+        this.tcpConnectTimeout = tcpConnectTimeout;
+    }
+
+    /**
+     * true if compression (LZF) enable between all nodes.
+     */
+    public boolean getTcpCompress() {
+        return tcpCompress;
+    }
+
+    public void setTcpCompress(boolean tcpCompress) {
+        this.tcpCompress = tcpCompress;
+    }
+
+    /**
+     *  User for authenticate against the cluster. Requires "transport_client" role
+     *  for accessing the cluster. Require XPack client jar on the classpath
+     */
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    /**
+     *  Password for authenticate against the cluster. Require XPack client jar on the classpath
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * Enable SSL. Require XPack client jar on the classpath
+     */
+    public boolean getEnableSSL() {
+        return enableSSL;
+    }
+
+    public void setEnableSSL(boolean enableSSL) {
+        this.enableSSL = enableSSL;
+    }
+
+    /**
+     * The time(in unit) to wait for a ping response from a node too return.
+     */
+    public String getPingTimeout() {
+        return pingTimeout;
+    }
+
+    public void setPingTimeout(String pingTimeout) {
+        this.pingTimeout = pingTimeout;
     }
 }

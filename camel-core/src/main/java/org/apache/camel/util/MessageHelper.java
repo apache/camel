@@ -560,9 +560,9 @@ public final class MessageHelper {
             label = URISupport.sanitizeUri(exchange.getFromEndpoint().getEndpointUri());
         }
         long elapsed = 0;
-        Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
+        Date created = exchange.getCreated();
         if (created != null) {
-            elapsed = new StopWatch(created).stop();
+            elapsed = new StopWatch(created).taken();
         }
 
         String goMessageHistoryOutput = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_OUTPUT_FORMAT);

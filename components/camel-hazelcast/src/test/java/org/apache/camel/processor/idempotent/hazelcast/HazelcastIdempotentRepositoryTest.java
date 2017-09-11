@@ -51,22 +51,22 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
 
     @Test
     public void testAdd() throws Exception {
-        // add first key
+        // ADD first key
         assertTrue(repo.add(key01));
         assertTrue(cache.containsKey(key01));
 
-        // try to add the same key again
+        // try to ADD the same key again
         assertFalse(repo.add(key01));
         assertEquals(1, cache.size());
 
-        // try to add an other one
+        // try to ADD an other one
         assertTrue(repo.add(key02));
         assertEquals(2, cache.size());
     }
 
     @Test
     public void testConfirm() throws Exception {
-        // add first key and confirm
+        // ADD first key and confirm
         assertTrue(repo.add(key01));
         assertTrue(repo.confirm(key01));
 
@@ -78,7 +78,7 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
     public void testContains() throws Exception {
         assertFalse(repo.contains(key01));
 
-        // add key and check again
+        // ADD key and check again
         assertTrue(repo.add(key01));
         assertTrue(repo.contains(key01));
 
@@ -86,19 +86,19 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
 
     @Test
     public void testRemove() throws Exception {
-        // add key to remove
+        // ADD key to remove
         assertTrue(repo.add(key01));
         assertTrue(repo.add(key02));
         assertEquals(2, cache.size());
 
-        // clear repo
+        // CLEAR repo
         repo.clear();
         assertEquals(0, cache.size());
     }
     
     @Test
     public void testClear() throws Exception {
-        // add key to remove
+        // ADD key to remove
         assertTrue(repo.add(key01));
         assertEquals(1, cache.size());
 

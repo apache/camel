@@ -63,7 +63,7 @@ with the following path and query parameters:
 | **bucketNameOrArn** | *Required* Bucket name or ARN |  | String
 |=======================================================================
 
-#### Query Parameters (40 parameters):
+#### Query Parameters (43 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -71,16 +71,19 @@ with the following path and query parameters:
 | **accessKey** (common) | Amazon AWS Access Key |  | String
 | **amazonS3Client** (common) | Reference to a com.amazonaws.services.sqs.AmazonS3 in the link:registry.htmlRegistry. |  | AmazonS3
 | **amazonS3Endpoint** (common) | The region with which the AWS-S3 client wants to work with. |  | String
+| **encryptionMaterials** (common) | The encryption materials to use in case of Symmetric/Asymmetric client usage |  | EncryptionMaterials
 | **pathStyleAccess** (common) | Whether or not the S3 client should use path style access | false | boolean
 | **policy** (common) | Camel 2.8.4: The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3setBucketPolicy() method. |  | String
 | **proxyHost** (common) | Camel 2.16: To define a proxy host when instantiating the SQS client |  | String
 | **proxyPort** (common) | Camel 2.16: Specify a proxy port to be used inside the client definition. |  | Integer
 | **secretKey** (common) | Amazon AWS Secret Key |  | String
+| **useEncryption** (common) | Define if encryption must be used or not | false | boolean
 | **autocloseBody** (consumer) | If this option is true and includeBody is true then the S3Object.close() method will be called on exchange completion This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false it will be up to the caller to close the S3Object stream. Setting autocloseBody to true will close the S3Object stream automatically. | true | boolean
 | **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | **deleteAfterRead** (consumer) | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs the object is not deleted. If this option is false then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the link S3ConstantsBUCKET_NAME and link S3ConstantsKEY headers or only the link S3ConstantsKEY header. | true | boolean
 | **fileName** (consumer) | To get the object from the bucket with the given file name |  | String
 | **includeBody** (consumer) | If it is true the exchange body will be set to a stream to the contents of the file. If false the headers will be set with the S3 object metadata but the body will be null. This option is strongly related to autocloseBody option. In case of setting includeBody to true and autocloseBody to false it will be up to the caller to close the S3Object stream. Setting autocloseBody to true will close the S3Object stream automatically. | true | boolean
+| **maxConnections** (consumer) | Set the maxConnections parameter in the S3 client configuration | 60 | int
 | **maxMessagesPerPoll** (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited but use 0 or negative number to disable it as unlimited. | 10 | int
 | **prefix** (consumer) | Camel 2.10.1: The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
 | **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean

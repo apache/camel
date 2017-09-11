@@ -19,15 +19,19 @@ package org.apache.camel.component.ssh;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.security.KeyPair;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.sshd.ClientChannel;
-import org.apache.sshd.ClientSession;
-import org.apache.sshd.SshClient;
+import org.apache.sshd.client.SshClient;
+import org.apache.sshd.client.channel.ClientChannel;
+import org.apache.sshd.client.channel.ClientChannelEvent;
 import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.ConnectFuture;
 import org.apache.sshd.client.future.OpenFuture;
-import org.apache.sshd.common.KeyPairProvider;
+import org.apache.sshd.client.session.ClientSession;
+import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,24 +42,26 @@ public final class SshHelper {
     private SshHelper() {
     }
     
-    public static SshResult sendExecCommand(String command, SshEndpoint endpoint, SshClient client) throws Exception {
-        SshResult result = null;
-        
+    public static SshResult sendExecCommand(Map<String, Object> headers, String command, SshEndpoint endpoint, SshClient client) throws Exception {
         SshConfiguration configuration = endpoint.getConfiguration();
 
         if (configuration == null) {
             throw new IllegalStateException("Configuration must be set");
         }
 
-        ConnectFuture connectFuture = client.connect(null, configuration.getHost(), configuration.getPort());
+        String userName = configuration.getUsername();
+        Object userNameHeaderObj = headers.get(SshConstants.USERNAME_HEADER);
+        if (userNameHeaderObj != null && userNameHeaderObj instanceof String) {
+            userName = (String) headers.get(SshConstants.USERNAME_HEADER);
+        }
 
-        // Wait getTimeout milliseconds for connect operation to complete
+        ConnectFuture connectFuture = client.connect(userName, configuration.getHost(), configuration.getPort());
+
+        // wait getTimeout milliseconds for connect operation to complete
         connectFuture.await(configuration.getTimeout());
 
         if (!connectFuture.isDone() || !connectFuture.isConnected()) {
-            final String msg = "Failed to connect to " + configuration.getHost() + ":" + configuration.getPort() + " within timeout " + configuration.getTimeout() + "ms";
-            LOG.debug(msg);
-            throw new RuntimeCamelException(msg);
+            throw new RuntimeCamelException("Failed to connect to " + configuration.getHost() + ":" + configuration.getPort() + " within timeout " + configuration.getTimeout() + "ms");
         }
 
         LOG.debug("Connected to {}:{}", configuration.getHost(), configuration.getPort());
@@ -75,16 +81,27 @@ public final class SshHelper {
             } else {
                 keyPairProvider = configuration.getKeyPairProvider();
             }
-    
+
+            // either provide a keypair or password identity first
             if (keyPairProvider != null) {
-                LOG.debug("Attempting to authenticate username '{}' using Key...", configuration.getUsername());
+                LOG.debug("Attempting to authenticate username '{}' using a key identity", userName);
                 KeyPair pair = keyPairProvider.loadKey(configuration.getKeyType());
-                authResult = session.authPublicKey(configuration.getUsername(), pair);
+                session.addPublicKeyIdentity(pair);
             } else {
-                LOG.debug("Attempting to authenticate username '{}' using Password...", configuration.getUsername());
-                authResult = session.authPassword(configuration.getUsername(), configuration.getPassword());
+                String password = configuration.getPassword();
+
+                Object passwordHeaderObj = headers.get(SshConstants.PASSWORD_HEADER);
+                if (passwordHeaderObj != null && passwordHeaderObj instanceof String) {
+                    password = (String) headers.get(SshConstants.PASSWORD_HEADER);
+                }
+
+                LOG.debug("Attempting to authenticate username '{}' using a password identity", userName);
+                session.addPasswordIdentity(password);
             }
-    
+
+            // now start the authentication process
+            authResult = session.auth();
+
             authResult.await(configuration.getTimeout());
     
             if (!authResult.isDone() || authResult.isFailure()) {
@@ -104,12 +121,14 @@ public final class SshHelper {
             channel.setErr(err);
             OpenFuture openFuture = channel.open();
             openFuture.await(configuration.getTimeout());
+            SshResult result = null;
             if (openFuture.isOpened()) {
-                channel.waitFor(ClientChannel.CLOSED, 0);
-                result = new SshResult(command, channel.getExitStatus(),
-                        new ByteArrayInputStream(out.toByteArray()),
-                        new ByteArrayInputStream(err.toByteArray()));
-    
+                Set<ClientChannelEvent> events = channel.waitFor(Arrays.asList(ClientChannelEvent.CLOSED), 0);
+                if (!events.contains(ClientChannelEvent.TIMEOUT)) {
+                    result = new SshResult(command, channel.getExitStatus(),
+                            new ByteArrayInputStream(out.toByteArray()),
+                            new ByteArrayInputStream(err.toByteArray()));
+                }
             }
             return result;
         } finally {

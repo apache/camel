@@ -32,7 +32,7 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
     public void testRequestA() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
 
-        Message message = new DefaultMessage();
+        Message message = new DefaultMessage(context);
         message.setBody(new RequestA());
         Exchange exchange = new DefaultExchange(context);
         exchange.setIn(message);
@@ -48,7 +48,7 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
     public void testRequestB() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
 
-        Message message = new DefaultMessage();
+        Message message = new DefaultMessage(context);
         message.setBody(new RequestB());
         Exchange exchange = new DefaultExchange(context);
         exchange.setIn(message);
@@ -64,7 +64,7 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
     public void testAmbigious() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
 
-        Message message = new DefaultMessage();
+        Message message = new DefaultMessage(context);
         message.setBody("Hello World");
         Exchange exchange = new DefaultExchange(context);
         exchange.setIn(message);

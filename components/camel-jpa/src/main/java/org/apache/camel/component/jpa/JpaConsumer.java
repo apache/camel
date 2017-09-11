@@ -93,68 +93,76 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         
         // Recreate EntityManager in case it is disposed due to transaction rollback
         if (entityManager == null) {
-            entityManager = entityManagerFactory.createEntityManager();
+            if (getEndpoint().isSharedEntityManager()) {
+                this.entityManager = SharedEntityManagerCreator.createSharedEntityManager(entityManagerFactory);
+            } else {
+                this.entityManager = entityManagerFactory.createEntityManager();
+            }
             LOG.trace("Recreated EntityManager {} on {}", entityManager, this);
         }
 
-        Object messagePolled = transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
-                if (getEndpoint().isJoinTransaction()) {
-                    entityManager.joinTransaction();
-                }
-
-                Queue<DataHolder> answer = new LinkedList<DataHolder>();
-
-                Query query = getQueryFactory().createQuery(entityManager);
-                configureParameters(query);
-                LOG.trace("Created query {}", query);
-
-                List<?> results = query.getResultList();
-                LOG.trace("Got result list from query {}", results);
-
-                for (Object result : results) {
-                    DataHolder holder = new DataHolder();
-                    holder.manager = entityManager;
-                    holder.result = result;
-                    holder.exchange = createExchange(result, entityManager);
-                    answer.add(holder);
-                }
-
-                PersistenceException cause = null;
-                int messagePolled = 0;
-                try {
-                    messagePolled = processBatch(CastUtils.cast(answer));
-                } catch (Exception e) {
-                    if (e instanceof PersistenceException) {
-                        cause = (PersistenceException) e;
-                    } else {
-                        cause = new PersistenceException(e);
+        Object messagePolled = null;
+        try {
+            messagePolled = transactionTemplate.execute(new TransactionCallback<Object>() {
+                public Object doInTransaction(TransactionStatus status) {
+                    if (getEndpoint().isJoinTransaction()) {
+                        entityManager.joinTransaction();
                     }
-                }
 
-                if (cause != null) {
-                    if (!isTransacted()) {
-                        LOG.warn("Error processing last message due: {}. Will commit all previous successful processed message, and ignore this last failure.", cause.getMessage(), cause);
-                    } else {
-                        // Potentially EntityManager could be in an inconsistent state after transaction rollback,
-                        // so disposing it to have it recreated in next poll. cf. Java Persistence API 3.3.2 Transaction Rollback
-                        LOG.info("Disposing EntityManager {} on {} due to coming transaction rollback", entityManager, this);
-                        entityManager.close();
-                        entityManager = null;
-                        
-                        // rollback all by throwning exception
-                        throw cause;
+                    Queue<DataHolder> answer = new LinkedList<DataHolder>();
+
+                    Query query = getQueryFactory().createQuery(entityManager);
+                    configureParameters(query);
+                    LOG.trace("Created query {}", query);
+
+                    List<?> results = query.getResultList();
+                    LOG.trace("Got result list from query {}", results);
+
+                    for (Object result : results) {
+                        DataHolder holder = new DataHolder();
+                        holder.manager = entityManager;
+                        holder.result = result;
+                        holder.exchange = createExchange(result, entityManager);
+                        answer.add(holder);
                     }
-                }
 
-                // commit
-                LOG.debug("Flushing EntityManager");
-                entityManager.flush();
-                // must clear after flush
-                entityManager.clear();
-                return messagePolled;
-            }
-        });
+                    PersistenceException cause = null;
+                    int messagePolled = 0;
+                    try {
+                        messagePolled = processBatch(CastUtils.cast(answer));
+                    } catch (Exception e) {
+                        if (e instanceof PersistenceException) {
+                            cause = (PersistenceException) e;
+                        } else {
+                            cause = new PersistenceException(e);
+                        }
+                    }
+
+                    if (cause != null) {
+                        if (!isTransacted()) {
+                            LOG.warn("Error processing last message due: {}. Will commit all previous successful processed message, and ignore this last failure.", cause.getMessage(), cause);
+                        } else {
+                            // rollback all by throwning exception
+                            throw cause;
+                        }
+                    }
+
+                    // commit
+                    LOG.debug("Flushing EntityManager");
+                    entityManager.flush();
+                    // must clear after flush
+                    entityManager.clear();
+                    return messagePolled;
+                }
+            });
+        } catch (Exception e) {
+            // Potentially EntityManager could be in an inconsistent state after transaction rollback,
+            // so disposing it to have it recreated in next poll. cf. Java Persistence API 3.3.2 Transaction Rollback
+            LOG.debug("Disposing EntityManager {} on {} due to coming transaction rollback", entityManager, this);
+            entityManager.close();
+            entityManager = null;
+            throw new PersistenceException(e);
+        }
 
         return getEndpoint().getCamelContext().getTypeConverter().convertTo(int.class, messagePolled);
     }

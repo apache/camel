@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.camel.CamelContext;
@@ -37,8 +36,8 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
-import org.apache.camel.catalog.DefaultRuntimeCamelCatalog;
-import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.runtimecatalog.DefaultRuntimeCamelCatalog;
+import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +51,6 @@ public final class EndpointHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointHelper.class);
     private static final AtomicLong ENDPOINT_COUNTER = new AtomicLong(0);
-    private static final Pattern SYNTAX_PATTERN = Pattern.compile("(\\w+)");
 
     private EndpointHelper() {
         //Utility Class
@@ -523,7 +521,7 @@ public final class EndpointHelper {
      * @param uri          the endpoint uri
      * @return a map for each option in the uri with the corresponding information from the json
      * @throws Exception is thrown in case of error
-     * @deprecated use {@link org.apache.camel.catalog.RuntimeCamelCatalog#endpointProperties(String)}
+     * @deprecated use {@link org.apache.camel.runtimecatalog.RuntimeCamelCatalog#endpointProperties(String)}
      */
     @Deprecated
     public static Map<String, Object> endpointProperties(CamelContext camelContext, String uri) throws Exception {

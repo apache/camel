@@ -24,10 +24,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -123,12 +125,16 @@ public class ConnectorMojo extends AbstractJarMojo {
                     String endpointOptions = buildEndpointOptionsSchema(rows, dto);
                     getLog().debug(endpointOptions);
 
+                    String connectorOptions = buildConnectorOptionsSchema(dto);
+                    getLog().debug(connectorOptions);
+
                     // generate the json file
                     StringBuilder jsonSchema = new StringBuilder();
                     jsonSchema.append("{\n");
                     jsonSchema.append(header);
                     jsonSchema.append(componentOptions);
                     jsonSchema.append(endpointOptions);
+                    jsonSchema.append(connectorOptions);
                     jsonSchema.append("}\n");
 
                     String newJson = jsonSchema.toString();
@@ -232,6 +238,7 @@ public class ConnectorMojo extends AbstractJarMojo {
         sb.append("  \"componentProperties\": {\n");
 
         boolean first = true;
+
         for (int i = 0; i < rows.size(); i++) {
             Map<String, String> row = rows.get(i);
             String key = row.get("name");
@@ -282,6 +289,25 @@ public class ConnectorMojo extends AbstractJarMojo {
         Map values = (Map) dto.get("endpointValues");
         Map overrides = (Map) dto.get("endpointOverrides");
 
+        // if the dto is scheduled then we need to add timer options
+        if ("timer".equals(dto.get("scheduler"))) {
+            // include the period option from the timer as we use that
+            Map<String, String> period = new LinkedHashMap<>();
+            period.put("name", "schedulerPeriod");
+            period.put("kind", "parameter");
+            period.put("displayName", "Period");
+            period.put("group", "consumer");
+            period.put("type", "integer");
+            period.put("javaType", "long");
+            period.put("deprecated", "false");
+            period.put("secret", "false");
+            period.put("defaultValue", "1000");
+            period.put("description", "Delay in milli seconds between scheduling (executing)");
+
+            getLog().debug("Connector is using scheduler: timer");
+            rows.add(period);
+        }
+
         StringBuilder sb = new StringBuilder();
         sb.append("  \"properties\": {\n");
 
@@ -323,6 +349,39 @@ public class ConnectorMojo extends AbstractJarMojo {
             first = false;
         }
         if (!first) {
+            sb.append("\n");
+        }
+
+        sb.append("  },\n");
+        return sb.toString();
+    }
+
+    private String buildConnectorOptionsSchema(Map dto) throws JsonProcessingException {
+        // find the endpoint options
+        Map<String, Map> properties = (Map) dto.get("connectorProperties");
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("  \"connectorProperties\": {\n");
+
+        AtomicBoolean first = new AtomicBoolean(true);
+
+        if (properties != null) {
+            for (Map.Entry<String, Map> entry: properties.entrySet()) {
+                Map row = entry.getValue();
+                row.put("name", entry.getKey());
+
+                String line = buildJSonLineFromRow(row);
+
+                if (!first.get()) {
+                    sb.append(",\n");
+                }
+                sb.append("    ").append(line);
+
+                first.set(false);
+            }
+        }
+
+        if (!first.get()) {
             sb.append("\n");
         }
 

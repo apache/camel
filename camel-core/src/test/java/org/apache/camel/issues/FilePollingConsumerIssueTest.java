@@ -35,7 +35,7 @@ public class FilePollingConsumerIssueTest extends ContextTestSupport {
     public void testFilePollingConsumer() throws Exception {
         template.sendBodyAndHeader("file://target/fpc", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        Endpoint endpoint = context.getEndpoint("file://target/fpc?fileName=hello.txt");
+        Endpoint endpoint = context.getEndpoint("file://target/fpc?initialDelay=0&delay=10&fileName=hello.txt");
         PollingConsumer consumer = endpoint.createPollingConsumer();
         consumer.start();
         Exchange exchange = consumer.receive(5000);

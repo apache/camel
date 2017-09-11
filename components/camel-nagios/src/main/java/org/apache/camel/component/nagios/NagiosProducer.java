@@ -18,10 +18,11 @@ package org.apache.camel.component.nagios;
 
 import java.util.concurrent.ExecutorService;
 
-import com.googlecode.jsendnsca.core.INagiosPassiveCheckSender;
-import com.googlecode.jsendnsca.core.Level;
-import com.googlecode.jsendnsca.core.MessagePayload;
-import com.googlecode.jsendnsca.core.NonBlockingNagiosPassiveCheckSender;
+import com.googlecode.jsendnsca.Level;
+import com.googlecode.jsendnsca.MessagePayload;
+import com.googlecode.jsendnsca.NonBlockingNagiosPassiveCheckSender;
+import com.googlecode.jsendnsca.PassiveCheckSender;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 
@@ -34,9 +35,9 @@ import static org.apache.camel.component.nagios.NagiosConstants.SERVICE_NAME;
  */
 public class NagiosProducer extends DefaultProducer {
 
-    private final INagiosPassiveCheckSender sender;
+    private final PassiveCheckSender sender;
 
-    public NagiosProducer(NagiosEndpoint endpoint, INagiosPassiveCheckSender sender) {
+    public NagiosProducer(NagiosEndpoint endpoint, PassiveCheckSender sender) {
         super(endpoint);
         this.sender = sender;
     }
@@ -52,7 +53,7 @@ public class NagiosProducer extends DefaultProducer {
         String serviceName = exchange.getIn().getHeader(SERVICE_NAME, exchange.getContext().getName(), String.class);
         String hostName = exchange.getIn().getHeader(HOST_NAME, "localhost", String.class);
 
-        MessagePayload payload = new MessagePayload(hostName, level.ordinal(), serviceName, message);
+        MessagePayload payload = new MessagePayload(hostName, level, serviceName, message);
 
         if (log.isDebugEnabled()) {
             log.debug("Sending notification to Nagios: {}", payload.getMessage());

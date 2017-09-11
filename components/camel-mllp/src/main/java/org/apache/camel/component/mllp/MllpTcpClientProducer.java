@@ -23,6 +23,8 @@ import java.net.SocketException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.mllp.impl.Hl7Util;
 import org.apache.camel.component.mllp.impl.MllpBufferedSocketWriter;
 import org.apache.camel.component.mllp.impl.MllpSocketReader;
@@ -45,6 +47,7 @@ import static org.apache.camel.component.mllp.MllpEndpoint.SEGMENT_DELIMITER;
 /**
  * The MLLP producer.
  */
+@ManagedResource(description = "MllpTcpClient Producer")
 public class MllpTcpClientProducer extends DefaultProducer {
     MllpEndpoint endpoint;
 
@@ -74,6 +77,16 @@ public class MllpTcpClientProducer extends DefaultProducer {
         MllpSocketUtil.close(socket, log, "Stopping component");
 
         super.doStop();
+    }
+
+    @ManagedOperation(description = "Close client socket")
+    public void closeMllpSocket() {
+        MllpSocketUtil.close(socket, log, "JMX triggered closing socket");
+    }
+
+    @ManagedOperation(description = "Reset client socket")
+    public void resetMllpSocket() {
+        MllpSocketUtil.reset(socket, log, "JMX triggered resetting socket");
     }
 
     @Override
@@ -235,11 +248,13 @@ public class MllpTcpClientProducer extends DefaultProducer {
     }
 
     /**
-     * Validate the TCP Connection
+     * Validate the TCP Connection, if closed opens up the socket with
+     * the value set via endpoint configuration
      *
-     * @return null if the connection is valid, otherwise the Exception encountered checking the connection
+     * @throws IOException if the connection is not valid, otherwise the Exception is not
+     *                     encountered while checking the connection
      */
-    void checkConnection() throws IOException {
+    private void checkConnection() throws IOException {
         if (null == socket || socket.isClosed() || !socket.isConnected()) {
             socket = new Socket();
 
@@ -276,6 +291,19 @@ public class MllpTcpClientProducer extends DefaultProducer {
                 mllpSocketWriter = new MllpSocketWriter(socket, false);
             }
         }
+        return;
+    }
+
+    @ManagedOperation(description = "Check client connection")
+    public boolean managedCheckConnection() {
+        boolean isValid = true;
+        try {
+            checkConnection();
+        } catch (IOException ioEx) {
+            isValid = false;
+            log.debug("JMX check connection: {}", ioEx);
+        }
+        return isValid;
     }
 
 }

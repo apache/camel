@@ -103,7 +103,7 @@ with the following path and query parameters:
 | **throwExceptionOnFailure** (producer) | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | true | boolean
 | **cookieHandler** (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
 | **okStatusCodeRange** (producer) | The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included. | 200-299 | String
-| **urlRewrite** (producer) | Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at http://camel.apache.org/urlrewrite.html |  | UrlRewrite
+| **urlRewrite** (producer) | *Deprecated* Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at http://camel.apache.org/urlrewrite.html |  | UrlRewrite
 | **mapHttpMessageBody** (advanced) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
 | **mapHttpMessageFormUrl EncodedBody** (advanced) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
 | **mapHttpMessageHeaders** (advanced) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean

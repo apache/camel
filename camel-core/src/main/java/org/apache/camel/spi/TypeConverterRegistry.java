@@ -55,6 +55,11 @@ public interface TypeConverterRegistry extends StaticService {
         long getHitCounter();
 
         /**
+         * Number of successful conversions by optimised core converters
+         */
+        long getBaseHitCounter();
+
+        /**
          * Number of attempts which cannot be converted as no suitable type converter exists
          */
         long getMissCounter();

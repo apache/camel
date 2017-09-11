@@ -40,14 +40,6 @@ public class ValidatorComponent extends UriEndpointComponent {
         super(endpointClass);
     }
 
-    public ValidatorResourceResolverFactory getResourceResolverFactory() {
-        return resourceResolverFactory;
-    }
-
-    public void setResourceResolverFactory(ValidatorResourceResolverFactory resourceResolverFactory) {
-        this.resourceResolverFactory = resourceResolverFactory;
-    }
-
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ValidatorEndpoint endpoint = new ValidatorEndpoint(uri, this, remaining);
         // lookup custom resolver to use
@@ -63,6 +55,17 @@ public class ValidatorComponent extends UriEndpointComponent {
         endpoint.setResourceResolverFactory(resolverFactory);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public ValidatorResourceResolverFactory getResourceResolverFactory() {
+        return resourceResolverFactory;
+    }
+
+    /**
+     * To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI
+     */
+    public void setResourceResolverFactory(ValidatorResourceResolverFactory resourceResolverFactory) {
+        this.resourceResolverFactory = resourceResolverFactory;
     }
 
 }

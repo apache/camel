@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model.cloud;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -31,16 +32,18 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.cloud.LoadBalancer;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceChooserAware;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryAware;
+import org.apache.camel.cloud.ServiceExpressionFactory;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceFilterAware;
-import org.apache.camel.impl.cloud.DefaultLoadBalancer;
+import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.impl.cloud.DefaultServiceCallExpression;
 import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
+import org.apache.camel.impl.cloud.DefaultServiceLoadBalancer;
 import org.apache.camel.impl.cloud.HealthyServiceFilter;
 import org.apache.camel.impl.cloud.PassThroughServiceFilter;
 import org.apache.camel.impl.cloud.RandomServiceChooser;
@@ -48,6 +51,7 @@ import org.apache.camel.impl.cloud.RoundRobinServiceChooser;
 import org.apache.camel.model.NoOutputDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 
@@ -55,7 +59,7 @@ import static org.apache.camel.util.CamelContextHelper.findByType;
 import static org.apache.camel.util.CamelContextHelper.lookup;
 
 /**
- * Remote service call definition
+ * To call remote services
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "serviceCall")
@@ -65,7 +69,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     private String name;
     @XmlAttribute
     private String uri;
-    @XmlAttribute @Metadata(defaultValue = ServiceCallConstants.DEFAULT_COMPONENT)
+    @XmlAttribute @Metadata(defaultValue = ServiceCallDefinitionConstants.DEFAULT_COMPONENT)
     private String component;
     @XmlAttribute
     private ExchangePattern pattern;
@@ -86,7 +90,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     @XmlAttribute
     private String loadBalancerRef;
     @XmlTransient
-    private LoadBalancer loadBalancer;
+    private ServiceLoadBalancer loadBalancer;
     @XmlAttribute
     private String expressionRef;
     @XmlTransient
@@ -99,7 +103,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class)}
+        @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "zookeeperServiceDiscovery", type = ZooKeeperServiceCallServiceDiscoveryConfiguration.class)}
     )
     private ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration;
 
@@ -113,10 +118,10 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     private ServiceCallServiceFilterConfiguration serviceFilterConfiguration;
 
     @XmlElements({
-        @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallLoadBalancerConfiguration.class),
-        @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallLoadBalancerConfiguration.class) }
+        @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallServiceLoadBalancerConfiguration.class),
+        @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallServiceLoadBalancerConfiguration.class) }
     )
-    private ServiceCallLoadBalancerConfiguration loadBalancerConfiguration;
+    private ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration;
 
     @XmlElements({
         @XmlElement(name = "expressionConfiguration", type = ServiceCallExpressionConfiguration.class)}
@@ -267,20 +272,20 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     /**
-     * Sets a reference to a custom {@link LoadBalancer} to use.
+     * Sets a reference to a custom {@link ServiceLoadBalancer} to use.
      */
     public void setLoadBalancerRef(String loadBalancerRef) {
         this.loadBalancerRef = loadBalancerRef;
     }
 
-    public LoadBalancer getLoadBalancer() {
+    public ServiceLoadBalancer getLoadBalancer() {
         return loadBalancer;
     }
 
     /**
-     * Sets a custom {@link LoadBalancer} to use.
+     * Sets a custom {@link ServiceLoadBalancer} to use.
      */
-    public void setLoadBalancer(LoadBalancer loadBalancer) {
+    public void setLoadBalancer(ServiceLoadBalancer loadBalancer) {
         this.loadBalancer = loadBalancer;
     }
 
@@ -328,14 +333,14 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         this.serviceFilterConfiguration = serviceFilterConfiguration;
     }
 
-    public ServiceCallLoadBalancerConfiguration getLoadBalancerConfiguration() {
+    public ServiceCallServiceLoadBalancerConfiguration getLoadBalancerConfiguration() {
         return loadBalancerConfiguration;
     }
 
     /**
      * Configures the LoadBalancer using the given configuration.
      */
-    public void setLoadBalancerConfiguration(ServiceCallLoadBalancerConfiguration loadBalancerConfiguration) {
+    public void setLoadBalancerConfiguration(ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration) {
         this.loadBalancerConfiguration = loadBalancerConfiguration;
     }
 
@@ -443,7 +448,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     /**
-     * Sets a reference to a custom {@link LoadBalancer} to use.
+     * Sets a reference to a custom {@link ServiceLoadBalancer} to use.
      */
     public ServiceCallDefinition loadBalancer(String loadBalancerRef) {
         setLoadBalancerRef(loadBalancerRef);
@@ -451,9 +456,9 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     /**
-     * Sets a custom {@link LoadBalancer} to use.
+     * Sets a custom {@link ServiceLoadBalancer} to use.
      */
-    public ServiceCallDefinition loadBalancer(LoadBalancer loadBalancer) {
+    public ServiceCallDefinition loadBalancer(ServiceLoadBalancer loadBalancer) {
         setLoadBalancer(loadBalancer);
         return this;
     }
@@ -475,6 +480,18 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     /**
+     * Sets a custom {@link Expression} to use through an expression builder clause.
+     *
+     * @return a expression builder clause to set the body
+     */
+    public ExpressionClause<ServiceCallDefinition> expression() {
+        ExpressionClause<ServiceCallDefinition> clause = new ExpressionClause<>(this);
+        setExpression(clause);
+
+        return clause;
+    }
+
+    /**
      * Configures the ServiceDiscovery using the given configuration.
      */
     public ServiceCallDefinition serviceDiscoveryConfiguration(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
@@ -493,7 +510,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     /**
      * Configures the LoadBalancer using the given configuration.
      */
-    public ServiceCallDefinition loadBalancerConfiguration(ServiceCallLoadBalancerConfiguration loadBalancerConfiguration) {
+    public ServiceCallDefinition loadBalancerConfiguration(ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration) {
         setLoadBalancerConfiguration(loadBalancerConfiguration);
         return this;
     }
@@ -635,6 +652,23 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return conf;
     }
 
+    public ZooKeeperServiceCallServiceDiscoveryConfiguration zookeeperServiceDiscovery() {
+        ZooKeeperServiceCallServiceDiscoveryConfiguration conf = new ZooKeeperServiceCallServiceDiscoveryConfiguration(this);
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+
+    public ServiceCallDefinition zookeeperServiceDiscovery(String nodes, String basePath) {
+        ZooKeeperServiceCallServiceDiscoveryConfiguration conf = new ZooKeeperServiceCallServiceDiscoveryConfiguration(this);
+        conf.setNodes(nodes);
+        conf.setBasePath(basePath);
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
     // *****************************
     // Shortcuts - ServiceFilter
     // *****************************
@@ -655,6 +689,13 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
     public ChainedServiceCallServiceFilterConfiguration multiFilter() {
         ChainedServiceCallServiceFilterConfiguration conf = new ChainedServiceCallServiceFilterConfiguration(this);
+        setServiceFilterConfiguration(conf);
+
+        return conf;
+    }
+
+    public BlacklistServiceCallServiceFilterConfiguration blacklistFilter() {
+        BlacklistServiceCallServiceFilterConfiguration conf = new BlacklistServiceCallServiceFilterConfiguration();
         setServiceFilterConfiguration(conf);
 
         return conf;
@@ -683,21 +724,21 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     // *****************************
 
     public ServiceCallDefinition defaultLoadBalancer() {
-        DefaultServiceCallLoadBalancerConfiguration conf = new DefaultServiceCallLoadBalancerConfiguration();
+        DefaultServiceCallServiceLoadBalancerConfiguration conf = new DefaultServiceCallServiceLoadBalancerConfiguration();
         setLoadBalancerConfiguration(conf);
 
         return this;
     }
 
     public ServiceCallDefinition ribbonLoadBalancer() {
-        RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration(this);
+        RibbonServiceCallServiceLoadBalancerConfiguration conf = new RibbonServiceCallServiceLoadBalancerConfiguration(this);
         setLoadBalancerConfiguration(conf);
 
         return this;
     }
 
     public ServiceCallDefinition ribbonLoadBalancer(String clientName) {
-        RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration(this);
+        RibbonServiceCallServiceLoadBalancerConfiguration conf = new RibbonServiceCallServiceLoadBalancerConfiguration(this);
         conf.setClientName(clientName);
 
         setLoadBalancerConfiguration(conf);
@@ -715,8 +756,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         final ServiceDiscovery serviceDiscovery = retrieveServiceDiscovery(camelContext);
         final ServiceFilter serviceFilter = retrieveServiceFilter(camelContext);
         final ServiceChooser serviceChooser = retrieveServiceChooser(camelContext);
-        final LoadBalancer loadBalancer = retrieveLoadBalancer(camelContext);
-        final Expression expression = retrieveExpression(camelContext);
+        final ServiceLoadBalancer loadBalancer = retrieveLoadBalancer(camelContext);
 
         if (loadBalancer instanceof CamelContextAware) {
             ((CamelContextAware) loadBalancer).setCamelContext(camelContext);
@@ -766,14 +806,17 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         // Service name is mandatory
         ObjectHelper.notNull(name, "Service name");
 
+        endpointScheme = ObjectHelper.applyIfNotEmpty(endpointScheme, camelContext::resolvePropertyPlaceholders, () -> ServiceCallDefinitionConstants.DEFAULT_COMPONENT);
+        endpointUri = ObjectHelper.applyIfNotEmpty(endpointUri, camelContext::resolvePropertyPlaceholders, () -> null);
+
         return new DefaultServiceCallProcessor(
             camelContext,
             camelContext.resolvePropertyPlaceholders(name),
-            ObjectHelper.applyIfNotEmpty(endpointScheme, camelContext::resolvePropertyPlaceholders, () -> ServiceCallConstants.DEFAULT_COMPONENT),
-            ObjectHelper.applyIfNotEmpty(endpointUri, camelContext::resolvePropertyPlaceholders, () -> null),
+            endpointScheme,
+            endpointUri,
             pattern,
             loadBalancer,
-            expression);
+            retrieveExpression(camelContext, endpointScheme));
     }
 
     // *****************************
@@ -788,7 +831,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             // Or if it is in the registry
             config = lookup(
                 camelContext,
-                ServiceCallConstants.DEFAULT_SERVICE_CALL_CONFIG_ID,
+                ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_CONFIG_ID,
                 ServiceCallConfigurationDefinition.class);
         }
 
@@ -842,7 +885,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
     private ServiceDiscovery retrieveServiceDiscovery(CamelContext camelContext) throws Exception {
         return Suppliers.firstNotNull(
-            () -> (serviceDiscoveryConfiguration != null) ?  serviceDiscoveryConfiguration.newInstance(camelContext) : null,
+            () -> (serviceDiscoveryConfiguration != null) ? serviceDiscoveryConfiguration.newInstance(camelContext) : null,
             // Local configuration
             () -> retrieve(ServiceDiscovery.class, camelContext, this::getServiceDiscovery, this::getServiceDiscoveryRef),
             // Linked configuration
@@ -852,7 +895,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             // Check if there is a single instance in the registry
             () -> findByType(camelContext, ServiceDiscovery.class),
             // From registry
-            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_DISCOVERY_ID, ServiceDiscovery.class)
+            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_DISCOVERY_ID, ServiceDiscovery.class)
         ).orElseGet(
             // Default, that's s little ugly but a load balancer may live without
             // (i.e. the Ribbon one) so let's delegate the null check to the actual
@@ -908,7 +951,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             // Check if there is a single instance in the registry
             () -> findByType(camelContext, ServiceFilter.class),
             // From registry
-            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_FILTER_ID, ServiceFilter.class)
+            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_FILTER_ID, ServiceFilter.class)
         ).orElseGet(
             // Default
             () -> new HealthyServiceFilter()
@@ -957,7 +1000,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             // Check if there is a single instance in the registry
             () -> findByType(camelContext, ServiceChooser.class),
             // From registry
-            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_CHOOSER_ID, ServiceChooser.class)
+            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_CHOOSER_ID, ServiceChooser.class)
         ).orElseGet(
             // Default
             () -> new RoundRobinServiceChooser()
@@ -968,8 +1011,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     // LoadBalancer
     // ******************************************
 
-    private LoadBalancer retrieveLoadBalancer(CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function) throws Exception {
-        LoadBalancer answer = null;
+    private ServiceLoadBalancer retrieveLoadBalancer(CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function) throws Exception {
+        ServiceLoadBalancer answer = null;
 
         ServiceCallConfigurationDefinition config = function.apply(camelContext);
         if (config != null) {
@@ -977,7 +1020,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
                 answer = config.getLoadBalancerConfiguration().newInstance(camelContext);
             } else {
                 answer = retrieve(
-                    LoadBalancer.class,
+                    ServiceLoadBalancer.class,
                     camelContext,
                     config::getLoadBalancer,
                     config::getLoadBalancerRef
@@ -988,22 +1031,22 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return answer;
     }
 
-    private LoadBalancer retrieveLoadBalancer(CamelContext camelContext) throws Exception {
+    private ServiceLoadBalancer retrieveLoadBalancer(CamelContext camelContext) throws Exception {
         return Suppliers.firstNotNull(
             () -> (loadBalancerConfiguration != null) ? loadBalancerConfiguration.newInstance(camelContext) : null,
             // Local configuration
-            () -> retrieve(LoadBalancer.class, camelContext, this::getLoadBalancer, this::getLoadBalancerRef),
+            () -> retrieve(ServiceLoadBalancer.class, camelContext, this::getLoadBalancer, this::getLoadBalancerRef),
             // Linked configuration
             () -> retrieveLoadBalancer(camelContext, this::retrieveConfig),
             // Default configuration
             () -> retrieveLoadBalancer(camelContext, this::retrieveDefaultConfig),
             // Check if there is a single instance in the registry
-            () -> findByType(camelContext, LoadBalancer.class),
+            () -> findByType(camelContext, ServiceLoadBalancer.class),
             // From registry
-            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_LOAD_BALANCER_ID, LoadBalancer.class)
+            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_LOAD_BALANCER_ID, ServiceLoadBalancer.class)
         ).orElseGet(
             // Default
-            () -> new DefaultLoadBalancer()
+            () -> new DefaultServiceLoadBalancer()
         );
     }
 
@@ -1031,8 +1074,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return answer;
     }
 
-    private Expression retrieveExpression(CamelContext camelContext) throws Exception {
-        return Suppliers.firstNotNull(
+    private Expression retrieveExpression(CamelContext camelContext, String component) throws Exception {
+        Optional<Expression> expression = Suppliers.firstNotNull(
             () -> (expressionConfiguration != null) ? expressionConfiguration.newInstance(camelContext) : null,
             // Local configuration
             () -> retrieve(Expression.class, camelContext, this::getExpression, this::getExpressionRef),
@@ -1041,11 +1084,44 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             // Default configuration
             () -> retrieveExpression(camelContext, this::retrieveDefaultConfig),
             // From registry
-            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_CALL_EXPRESSION_ID, Expression.class)
-        ).orElseGet(
-            // Default
-            () -> new DefaultServiceCallExpression()
+            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_EXPRESSION_ID, Expression.class)
         );
+
+        if (expression.isPresent()) {
+            return expression.get();
+        } else {
+            String lookupName = component + "-service-expression";
+            // First try to find the factory from the registry.
+            ServiceExpressionFactory factory = CamelContextHelper.lookup(camelContext, lookupName, ServiceExpressionFactory.class);
+            if (factory != null) {
+                // If a factory is found in the registry do not re-configure it as
+                // it should be pre-configured.
+                return factory.newInstance(camelContext);
+            } else {
+
+                Class<?> type = null;
+
+                try {
+                    // Then use Service factory.
+                    type = camelContext.getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(lookupName);
+                } catch (Exception e) {
+                }
+
+                if (ObjectHelper.isNotEmpty(type)) {
+                    if (ServiceExpressionFactory.class.isAssignableFrom(type)) {
+                        factory = (ServiceExpressionFactory) camelContext.getInjector().newInstance(type);
+                    } else {
+                        throw new IllegalArgumentException(
+                            "Resolving Expression: " + lookupName + " detected type conflict: Not a ServiceExpressionFactory implementation. Found: " + type.getName());
+                    }
+                } else {
+                    // If no factory is found, returns the default
+                    factory = context -> new DefaultServiceCallExpression();
+                }
+
+                return factory.newInstance(camelContext);
+            }
+        }
     }
 
     // ************************************

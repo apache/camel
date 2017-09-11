@@ -157,7 +157,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
         if (id == null) {
             id = factory.createId(this);
         }
-        return getId();
+        return id;
     }
 
     public Boolean getCustomId() {

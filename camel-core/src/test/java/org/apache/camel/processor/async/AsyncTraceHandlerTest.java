@@ -25,10 +25,13 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.interceptor.TraceEventHandler;
 import org.apache.camel.processor.interceptor.TraceInterceptor;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.junit.Ignore;
 
 /**
  * @version 
  */
+@Deprecated
+@Ignore
 public class AsyncTraceHandlerTest extends ContextTestSupport {
 
     private static String beforeThreadName;

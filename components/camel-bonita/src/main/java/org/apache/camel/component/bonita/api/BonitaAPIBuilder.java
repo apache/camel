@@ -20,12 +20,12 @@ package org.apache.camel.component.bonita.api;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Configuration;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
-import org.glassfish.jersey.client.ClientConfig;
 
 public class BonitaAPIBuilder {
 
@@ -37,9 +37,8 @@ public class BonitaAPIBuilder {
         if (bonitaAPIConfig == null) {
             throw new IllegalArgumentException("bonitaApiConfig is null");
         }
-        ClientConfig clientConfig = new ClientConfig();
-        clientConfig.register(JacksonJsonProvider.class);
-        ClientBuilder clientBuilder = ClientBuilder.newBuilder().withConfig(clientConfig);
+        ClientBuilder clientBuilder = ClientBuilder.newBuilder();
+        clientBuilder.register(JacksonJsonProvider.class);
         Client client = clientBuilder.build();
         client.register(new BonitaAuthFilter(bonitaAPIConfig));
         WebTarget webTarget = client.target(bonitaAPIConfig.getBaseBonitaURI()).path("/API/bpm");

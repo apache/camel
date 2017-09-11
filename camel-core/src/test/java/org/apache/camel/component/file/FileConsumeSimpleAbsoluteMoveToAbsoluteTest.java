@@ -37,18 +37,20 @@ public class FileConsumeSimpleAbsoluteMoveToAbsoluteTest extends ContextTestSupp
         // use current dir as base as absolute path
         base = new File("").getAbsolutePath() + "/target/move";
         super.setUp();
-        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
-        template.sendBodyAndHeader(fileUrl, "Goodday World", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
     }
 
     public void testMoveToSubDir() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
+
         // will flatten when using absolute path in move
         mock.expectedFileExists(base + "/.done/bye.txt");
         mock.expectedFileExists(base + "/.done/hello.txt");
         mock.expectedFileExists(base + "/.done/goodday.txt");
+
+        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
+        template.sendBodyAndHeader(fileUrl, "Goodday World", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -58,7 +60,7 @@ public class FileConsumeSimpleAbsoluteMoveToAbsoluteTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://" + base + "?recursive=true&move=" + base + "/.done")
+                from("file://" + base + "?recursive=true&move=" + base + "/.done&initialDelay=0&delay=10")
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

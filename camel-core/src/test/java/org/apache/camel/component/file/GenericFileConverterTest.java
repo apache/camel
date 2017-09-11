@@ -47,7 +47,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/gf")
+                from("file://target/gf?initialDelay=0&delay=10")
                     .convertBodyTo(File.class)
                     .to("mock:result");
             }
@@ -67,7 +67,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/gf")
+                from("file://target/gf?initialDelay=0&delay=10")
                     .convertBodyTo(String.class)
                     .to("mock:result");
             }
@@ -88,7 +88,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/gf")
+                from("file://target/gf?initialDelay=0&delay=10")
                     .convertBodyTo(byte[].class)
                     .to("mock:result");
             }
@@ -109,7 +109,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/gf")
+                from("file://target/gf?initialDelay=0&delay=10")
                     .convertBodyTo(Serializable.class)
                     .to("mock:result");
             }
@@ -130,7 +130,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/gf")
+                from("file://target/gf?initialDelay=0&delay=10")
                     .convertBodyTo(InputStream.class)
                     .to("mock:result");
             }
@@ -151,7 +151,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/gf")
+                from("file://target/gf?initialDelay=0&delay=10")
                     .convertBodyTo(InputStream.class)
                     .process(new Processor() {
                         @Override

@@ -21,12 +21,18 @@ package org.apache.camel.component.reactive.streams;
  */
 public final class ReactiveStreamsConstants {
 
+    public static final String SCHEME = "reactive-streams";
+    public static final String SERVICE_PATH = "META-INF/services/org/apache/camel/reactive-streams/";
+    public static final String DEFAULT_SERVICE_NAME =  "default-service";
+
     /**
      * Every exchange consumed by Camel has this header set to indicate if the exchange
      * contains an item (value="onNext"), an error (value="onError") or a completion event (value="onComplete").
      * Errors and completion notification are not forwarded by default.
      */
     public static final String REACTIVE_STREAMS_EVENT_TYPE = "CamelReactiveStreamsEventType";
+
+    public static final String REACTIVE_STREAMS_CALLBACK = "CamelReactiveStreamsCallback";
 
 
     private ReactiveStreamsConstants() {

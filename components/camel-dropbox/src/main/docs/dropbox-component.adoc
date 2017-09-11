@@ -91,7 +91,7 @@ with the following path and query parameters:
 | **accessToken** (common) | *Required* The access token to make API requests for a specific Dropbox user |  | String
 | **client** (common) | To use an existing DbxClient instance as DropBox client. |  | DbxClient
 | **clientIdentifier** (common) | *Required* Name of the app registered to make API requests |  | String
-| **localPath** (common) | Folder or file to upload on Dropbox from the local filesystem. |  | String
+| **localPath** (common) | Optional folder or file to upload on Dropbox from the local filesystem. If this option has not been configured then the message body is used as the content to upload. |  | String
 | **newRemotePath** (common) | Destination file or folder |  | String
 | **query** (common) | A space-separated list of sub-strings to search for. A file matches only if it contains all the sub-strings. If this option is not set all files will be matched. |  | String
 | **remotePath** (common) | Original file or folder to move |  | String
@@ -266,10 +266,18 @@ dropbox: in case of "add" the new file will be renamed if a file with the same
 name already exists on dropbox. In case of "force" if a file with the same name already exists on
 dropbox, this will be overwritten.
 
-|`localPath` |`true` |Folder or file to upload on Dropbox from the local filesystem .
+|`localPath` |`false` |Folder or file to upload on Dropbox from the local filesystem.
+If this option has been configured then it takes precedence over uploading as a single
+file with content from the Camel message body (message body is converted into a byte array).
 
 |`remotePath` |`false` |Folder destination on Dropbox. If the property is not set, the component
-will upload the file on a remote path equal to the local path.
+will upload the file on a remote path equal to the local path. With Windows or without an absolute 
+localPath you may run into an exception like the following:
+
+Caused by: java.lang.IllegalArgumentException: 'path': bad path: must start with "/": "C:/My/File" +
+OR +
+Caused by: java.lang.IllegalArgumentException: 'path': bad path: must start with "/": "MyFile" +
+	
 |=======================================================================
 
 #### Samples
@@ -280,6 +288,20 @@ from("direct:start").to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&uplo
 
 from("direct:start").to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&uploadMode=add&localPath=/root/folder1&remotePath=/root/folder2").to("mock:result");
 -------------------------------
+
+And to upload a single file with content from the message body
+
+[source,java]
+-------------------------------
+from("direct:start")
+   .setHeader(DropboxConstants.HEADER_PUT_FILE_NAME, constant("myfile.txt"))
+   .to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&uploadMode=add&remotePath=/root/folder2")
+   .to("mock:result");
+-------------------------------
+
+The name of the file can be provided in the header `DropboxConstants.HEADER_PUT_FILE_NAME`
+or `Exchange.FILE_NAME` in that order of precedence. If no header has been provided then the message id (uuid) is
+used as the file name.
 
 #### Result Message Headers
 

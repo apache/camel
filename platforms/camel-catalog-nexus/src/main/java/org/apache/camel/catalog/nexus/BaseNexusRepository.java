@@ -45,7 +45,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseNexusRepository {
 
-    final Logger log = LoggerFactory.getLogger(getClass());
+    final Logger logger = LoggerFactory.getLogger(getClass());
+    boolean log;
 
     private final Set<NexusArtifactDto> indexedArtifacts = new LinkedHashSet<>();
 
@@ -59,6 +60,14 @@ public abstract class BaseNexusRepository {
 
     public BaseNexusRepository(String classifier) {
         this.classifier = classifier;
+    }
+
+    /**
+     * Sets whether to log errors and warnings to System.out.
+     * By default nothing is logged.
+     */
+    public void setLog(boolean log) {
+        this.log = log;
     }
 
     public String getNexusUrl() {
@@ -111,32 +120,32 @@ public abstract class BaseNexusRepository {
      */
     public void start() {
         if (nexusUrl == null || nexusUrl.isEmpty()) {
-            log.warn("Nexus service not found. Indexing Nexus is not enabled!");
+            logger.warn("Nexus service not found. Indexing Nexus is not enabled!");
             return;
         }
 
         if (!started.compareAndSet(false, true)) {
-            log.info("NexusRepository is already started");
+            logger.info("NexusRepository is already started");
             return;
         }
 
-        log.info("Starting NexusRepository to scan every {} seconds", delay);
+        logger.info("Starting NexusRepository to scan every {} seconds", delay);
 
         executorService = Executors.newScheduledThreadPool(1);
 
         executorService.scheduleWithFixedDelay(() -> {
             try {
-                log.debug("Indexing Nexus {} +++ start +++", nexusUrl);
+                logger.debug("Indexing Nexus {} +++ start +++", nexusUrl);
                 indexNexus();
             } catch (Throwable e) {
                 if (e.getMessage().contains("UnknownHostException")) {
                     // less noise if its unknown host
-                    log.warn("Error indexing Nexus " + nexusUrl + " due unknown hosts: " + e.getMessage());
+                    logger.warn("Error indexing Nexus " + nexusUrl + " due unknown hosts: " + e.getMessage());
                 } else {
-                    log.warn("Error indexing Nexus " + nexusUrl + " due " + e.getMessage(), e);
+                    logger.warn("Error indexing Nexus " + nexusUrl + " due " + e.getMessage(), e);
                 }
             } finally {
-                log.debug("Indexing Nexus {} +++ end +++", nexusUrl);
+                logger.debug("Indexing Nexus {} +++ end +++", nexusUrl);
             }
         }, initialDelay, delay, TimeUnit.SECONDS);
     }
@@ -145,7 +154,7 @@ public abstract class BaseNexusRepository {
      * Stops the Nexus indexer.
      */
     public void stop() {
-        log.info("Stopping NexusRepository");
+        logger.info("Stopping NexusRepository");
         if (executorService != null) {
             executorService.shutdownNow();
             executorService = null;
@@ -213,7 +222,7 @@ public abstract class BaseNexusRepository {
                     dto.setVersion(v);
                     dto.setArtifactLink(l);
 
-                    log.debug("Found: {}:{}:{}", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
+                    logger.debug("Found: {}:{}:{}", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
 
                     // is it a new artifact
                     boolean newArtifact = true;

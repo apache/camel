@@ -31,6 +31,7 @@ import org.apache.camel.component.ignite.ClusterGroupExpression;
 import org.apache.camel.component.ignite.IgniteComponent;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteEvents;
 import org.apache.ignite.cluster.ClusterGroup;
@@ -39,21 +40,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Ignite Events endpoint. Only supports consumers.
+ * The Ignite Events endpoint is one of camel-ignite endpoints which allows you to
+ * <a href="https://apacheignite.readme.io/docs/events">receive events</a> from
+ * the Ignite cluster by creating a local event listener.
+ * This endpoint only supports consumers.
+ * The Exchanges created by this consumer put the received Event object into the body of the IN message.
  */
-@UriEndpoint(scheme = "ignite:events", title = "Ignite Events", syntax = "ignite:events:[endpointId]", label = "nosql,cache,compute,messaging,data", 
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-events", title = "Ignite Events", syntax = "ignite-events:endpointId", label = "nosql,cache,compute,messaging,data",
     consumerOnly = true, consumerClass = IgniteEventsConsumer.class)
 public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IgniteEventsEndpoint.class);
 
-    @UriParam
+    @UriPath
+    private String endpointId;
+
+    @UriParam(label = "consumer", javaType = "Set<Integer> or String", defaultValue = "EventType.EVTS_ALL")
     private Set<Integer> events;
 
-    @UriParam
+    @UriParam(label = "consumer")
     private ClusterGroupExpression clusterGroupExpression;
 
+    @Deprecated
     public IgniteEventsEndpoint(String uri, URI remainingUri, Map<String, Object> parameters, IgniteComponent igniteComponent) {
+        super(uri, igniteComponent);
+
+        // Initialize subscribed event types with ALL.
+        events = new HashSet<>();
+        for (Integer eventType : EventType.EVTS_ALL) {
+            events.add(eventType);
+        }
+    }
+
+    public IgniteEventsEndpoint(String uri, String remaining, Map<String, Object> parameters, IgniteEventsComponent igniteComponent) {
         super(uri, igniteComponent);
 
         // Initialize subscribed event types with ALL.
@@ -95,6 +114,24 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
+     * Gets the endpoint ID (not used).
+     * 
+     * @return endpoint ID (not used)
+     */
+    public String getEndpointId() {
+        return endpointId;
+    }
+
+    /**
+     * The endpoint ID (not used).
+     * 
+     * @param endpointId endpoint ID (not used)
+     */
+    public void setEndpointId(String endpointId) {
+        this.endpointId = endpointId;
+    }
+
+    /**
      * Gets the event types to subscribe to.
      * 
      * @return
@@ -104,7 +141,8 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Sets the event types to subscribe to as a {@link Set}.
+     * The event IDs to subscribe to as a Set<Integer> directly where
+     * the IDs are the different constants in org.apache.ignite.events.EventType.
      * 
      * @param events
      */
@@ -113,7 +151,7 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Sets the event types to subscribe to as a comma-separated string of event constants as defined in {@link EventType}.
+     * The event types to subscribe to as a comma-separated string of event constants as defined in {@link EventType}.
      * <p>
      * For example: EVT_CACHE_ENTRY_CREATED,EVT_CACHE_OBJECT_REMOVED,EVT_IGFS_DIR_CREATED.
      * 
@@ -135,10 +173,20 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
         }
     }
 
+    /**
+     * Gets the cluster group expression.
+     * 
+     * @return cluster group expression
+     */
     public ClusterGroupExpression getClusterGroupExpression() {
         return clusterGroupExpression;
     }
 
+    /**
+     * The cluster group expression.
+     * 
+     * @param clusterGroupExpression cluster group expression
+     */
     public void setClusterGroupExpression(ClusterGroupExpression clusterGroupExpression) {
         this.clusterGroupExpression = clusterGroupExpression;
     }

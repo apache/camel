@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,6 +47,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
+import org.apache.http.ParseException;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -214,16 +216,19 @@ public final class Olingo2AppImpl implements Olingo2App {
 
     @Override
     public <T> void read(final Edm edm, final String resourcePath, final Map<String, String> queryParams,
+                         final Map<String, String> endpointHttpHeaders, 
                          final Olingo2ResponseHandler<T> responseHandler) {
 
         final UriInfoWithType uriInfo = parseUri(edm, resourcePath, queryParams);
 
         execute(new HttpGet(createUri(resourcePath, queryParams)), getResourceContentType(uriInfo),
-            new AbstractFutureCallback<T>(responseHandler) {
+            endpointHttpHeaders, new AbstractFutureCallback<T>(responseHandler) {
 
                 @Override
                 public void onCompleted(HttpResponse result) throws IOException {
-                    readContent(uriInfo, result.getEntity() != null ? result.getEntity().getContent() : null,
+                    readContent(uriInfo, 
+                        headersToMap(result.getAllHeaders()),
+                        result.getEntity() != null ? result.getEntity().getContent() : null,
                         responseHandler);
                 }
 
@@ -232,16 +237,19 @@ public final class Olingo2AppImpl implements Olingo2App {
 
     @Override
     public void uread(final Edm edm, final String resourcePath, final Map<String, String> queryParams,
+                      final Map<String, String> endpointHttpHeaders, 
                       final Olingo2ResponseHandler<InputStream> responseHandler) {
 
         final UriInfoWithType uriInfo = parseUri(edm, resourcePath, queryParams);
 
         execute(new HttpGet(createUri(resourcePath, queryParams)), getResourceContentType(uriInfo),
-            new AbstractFutureCallback<InputStream>(responseHandler) {
+            endpointHttpHeaders, new AbstractFutureCallback<InputStream>(responseHandler) {
 
                 @Override
                 public void onCompleted(HttpResponse result) throws IOException {
-                    responseHandler.onResponse(result.getEntity() != null ? result.getEntity().getContent() : null);
+                    responseHandler.onResponse(
+                        (result.getEntity() != null) ? result.getEntity().getContent() : null,
+                        headersToMap(result.getAllHeaders()));
                 }
 
             });
@@ -282,60 +290,82 @@ public final class Olingo2AppImpl implements Olingo2App {
     }
 
     @Override
-    public <T> void create(Edm edm, String resourcePath, Object data, Olingo2ResponseHandler<T> responseHandler) {
+    public <T> void create(final Edm edm, 
+                           final String resourcePath, 
+                           final Map<String, String> endpointHttpHeaders, 
+                           final Object data, 
+                           final Olingo2ResponseHandler<T> responseHandler) {
         final UriInfoWithType uriInfo = parseUri(edm, resourcePath, null);
 
-        writeContent(edm, new HttpPost(createUri(resourcePath, null)), uriInfo, data, responseHandler);
+        writeContent(edm, new HttpPost(createUri(resourcePath, null)), uriInfo, endpointHttpHeaders, data, responseHandler);
     }
 
     @Override
-    public <T> void update(Edm edm, String resourcePath, Object data, Olingo2ResponseHandler<T> responseHandler) {
+    public <T> void update(final Edm edm, 
+                           final String resourcePath, 
+                           final Map<String, String> endpointHttpHeaders, 
+                           final Object data, 
+                           final Olingo2ResponseHandler<T> responseHandler) {
         final UriInfoWithType uriInfo = parseUri(edm, resourcePath, null);
 
-        writeContent(edm, new HttpPut(createUri(resourcePath, null)), uriInfo, data, responseHandler);
+        writeContent(edm, new HttpPut(createUri(resourcePath, null)), uriInfo, endpointHttpHeaders, data, responseHandler);
     }
 
     @Override
-    public <T> void patch(Edm edm, String resourcePath, Object data, Olingo2ResponseHandler<T> responseHandler) {
+    public <T> void patch(final Edm edm, 
+                          final String resourcePath, 
+                          final Map<String, String> endpointHttpHeaders, 
+                          final Object data, 
+                          final Olingo2ResponseHandler<T> responseHandler) {
         final UriInfoWithType uriInfo = parseUri(edm, resourcePath, null);
 
-        writeContent(edm, new HttpPatch(createUri(resourcePath, null)), uriInfo, data, responseHandler);
+        writeContent(edm, new HttpPatch(createUri(resourcePath, null)), uriInfo, endpointHttpHeaders, data, responseHandler);
     }
 
     @Override
-    public <T> void merge(Edm edm, String resourcePath, Object data, Olingo2ResponseHandler<T> responseHandler) {
+    public <T> void merge(final Edm edm, 
+                          final String resourcePath, 
+                          final Map<String, String> endpointHttpHeaders, 
+                          final Object data, 
+                          final Olingo2ResponseHandler<T> responseHandler) {
         final UriInfoWithType uriInfo = parseUri(edm, resourcePath, null);
 
-        writeContent(edm, new HttpMerge(createUri(resourcePath, null)), uriInfo, data, responseHandler);
+        writeContent(edm, new HttpMerge(createUri(resourcePath, null)), uriInfo, endpointHttpHeaders, data, responseHandler);
     }
 
     @Override
-    public void batch(Edm edm, Object data, Olingo2ResponseHandler<List<Olingo2BatchResponse>> responseHandler) {
+    public void batch(final Edm edm, 
+                      final Map<String, String> endpointHttpHeaders, 
+                      final Object data, 
+                      final Olingo2ResponseHandler<List<Olingo2BatchResponse>> responseHandler) {
         final UriInfoWithType uriInfo = parseUri(edm, BATCH, null);
 
-        writeContent(edm, new HttpPost(createUri(BATCH, null)), uriInfo, data, responseHandler);
+        writeContent(edm, new HttpPost(createUri(BATCH, null)), uriInfo, endpointHttpHeaders, data, responseHandler);
     }
 
     @Override
-    public void delete(String resourcePath, final Olingo2ResponseHandler<HttpStatusCodes> responseHandler) {
+    public void delete(final String resourcePath, 
+                       final Map<String, String> endpointHttpHeaders, 
+                       final Olingo2ResponseHandler<HttpStatusCodes> responseHandler) {
 
         execute(new HttpDelete(createUri(resourcePath)), contentType,
-            new AbstractFutureCallback<HttpStatusCodes>(responseHandler) {
+            endpointHttpHeaders, new AbstractFutureCallback<HttpStatusCodes>(responseHandler) {
                 @Override
                 public void onCompleted(HttpResponse result) {
                     final StatusLine statusLine = result.getStatusLine();
-                    responseHandler.onResponse(HttpStatusCodes.fromStatusCode(statusLine.getStatusCode()));
+                    responseHandler.onResponse(HttpStatusCodes.fromStatusCode(statusLine.getStatusCode()),
+                        headersToMap(result.getAllHeaders()));
                 }
             });
     }
 
-    private <T> void readContent(UriInfoWithType uriInfo, InputStream content, Olingo2ResponseHandler<T> responseHandler) {
+    private <T> void readContent(UriInfoWithType uriInfo, Map<String, String> responseHeaders, InputStream content, Olingo2ResponseHandler<T> responseHandler) {
         try {
-            responseHandler.onResponse(this.<T>readContent(uriInfo, content));
-        } catch (EntityProviderException e) {
+            responseHandler.onResponse(this.<T>readContent(uriInfo, content), responseHeaders);
+        } catch (Exception e) {
             responseHandler.onException(e);
-        } catch (ODataApplicationException e) {
-            responseHandler.onException(e);
+        } catch (Error e) {
+            responseHandler.onException(new ODataApplicationException("Runtime Error Occurred", Locale.ENGLISH, e));
         }
     }
 
@@ -439,8 +469,10 @@ public final class Olingo2AppImpl implements Olingo2App {
         return response;
     }
 
-    private <T> void writeContent(final Edm edm, HttpEntityEnclosingRequestBase httpEntityRequest,
-                                  final UriInfoWithType uriInfo, final Object content,
+    private <T> void writeContent(final Edm edm, final HttpEntityEnclosingRequestBase httpEntityRequest,
+                                  final UriInfoWithType uriInfo, 
+                                  final Map<String, String> endpointHttpHeaders,
+                                  final Object content,
                                   final Olingo2ResponseHandler<T> responseHandler) {
 
         try {
@@ -467,7 +499,7 @@ public final class Olingo2AppImpl implements Olingo2App {
             final Header requestContentTypeHeader = httpEntityRequest.getFirstHeader(HttpHeaders.CONTENT_TYPE);
             final ContentType requestContentType = requestContentTypeHeader != null
                 ? ContentType.parse(requestContentTypeHeader.getValue()) : contentType;
-            execute(httpEntityRequest, requestContentType, new AbstractFutureCallback<T>(responseHandler) {
+            execute(httpEntityRequest, requestContentType, endpointHttpHeaders, new AbstractFutureCallback<T>(responseHandler) {
                 @SuppressWarnings("unchecked")
                 @Override
                 public void onCompleted(HttpResponse result)
@@ -480,15 +512,16 @@ public final class Olingo2AppImpl implements Olingo2App {
                     final boolean noEntity = result.getEntity() == null || result.getEntity().getContentLength() == 0;
                     if (statusCode == HttpStatusCodes.NO_CONTENT || noEntity) {
                         responseHandler.onResponse(
-                            (T) HttpStatusCodes.fromStatusCode(result.getStatusLine().getStatusCode()));
+                            (T) HttpStatusCodes.fromStatusCode(result.getStatusLine().getStatusCode()),
+                            headersToMap(result.getAllHeaders()));
                     } else {
 
                         switch (uriInfo.getUriType()) {
                         case URI9:
                             // $batch
+                            String type = result.containsHeader(HttpHeaders.CONTENT_TYPE) ? result.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue() : null;
                             final List<BatchSingleResponse> singleResponses = EntityProvider.parseBatchResponse(
-                                result.getEntity().getContent(),
-                                result.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
+                                result.getEntity().getContent(), type);
 
                             // parse batch response bodies
                             final List<Olingo2BatchResponse> responses = new ArrayList<Olingo2BatchResponse>();
@@ -519,7 +552,7 @@ public final class Olingo2AppImpl implements Olingo2App {
                                             Locale.ENGLISH, e)));
                                 }
                             }
-                            responseHandler.onResponse((T) responses);
+                            responseHandler.onResponse((T) responses, headersToMap(result.getAllHeaders()));
                             break;
 
                         case URI4:
@@ -531,12 +564,14 @@ public final class Olingo2AppImpl implements Olingo2App {
                             if (uriInfo.isValue()) {
                                 responseHandler.onResponse(
                                     (T) EntityProvider.readPropertyValue(simpleProperty,
-                                        result.getEntity().getContent()));
+                                        result.getEntity().getContent()),
+                                    headersToMap(result.getAllHeaders()));
                             } else {
                                 responseHandler.onResponse(
                                     (T) EntityProvider.readProperty(getContentType(), simpleProperty,
                                         result.getEntity().getContent(),
-                                        EntityProviderReadProperties.init().build()));
+                                        EntityProviderReadProperties.init().build()),
+                                    headersToMap(result.getAllHeaders()));
                             }
                             break;
 
@@ -550,7 +585,8 @@ public final class Olingo2AppImpl implements Olingo2App {
                                     .getEntity()
                                     .getContent(),
                                 EntityProviderReadProperties
-                                    .init().build()));
+                                    .init().build()),
+                                headersToMap(result.getAllHeaders()));
                             break;
 
                         case URI7A:
@@ -560,7 +596,8 @@ public final class Olingo2AppImpl implements Olingo2App {
                             responseHandler.onResponse((T) EntityProvider.readLink(getContentType(),
                                 targetLinkEntitySet, result
                                     .getEntity()
-                                    .getContent()));
+                                    .getContent()),
+                                headersToMap(result.getAllHeaders()));
                             break;
 
                         case URI7B:
@@ -570,7 +607,8 @@ public final class Olingo2AppImpl implements Olingo2App {
                             responseHandler.onResponse((T) EntityProvider.readLinks(getContentType(),
                                 targetLinksEntitySet,
                                 result.getEntity()
-                                    .getContent()));
+                                    .getContent()),
+                                headersToMap(result.getAllHeaders()));
                             break;
 
                         case URI1:
@@ -582,7 +620,8 @@ public final class Olingo2AppImpl implements Olingo2App {
                             responseHandler.onResponse((T) EntityProvider.readEntry(response.getContentHeader(),
                                 uriInfo.getTargetEntitySet(),
                                 result.getEntity().getContent(),
-                                EntityProviderReadProperties.init().build()));
+                                EntityProviderReadProperties.init().build()),
+                                headersToMap(result.getAllHeaders()));
                             break;
 
                         default:
@@ -593,14 +632,10 @@ public final class Olingo2AppImpl implements Olingo2App {
                     }
                 }
             });
-        } catch (ODataException e) {
+        } catch (Exception e) {
             responseHandler.onException(e);
-        } catch (URISyntaxException e) {
-            responseHandler.onException(e);
-        } catch (UnsupportedEncodingException e) {
-            responseHandler.onException(e);
-        } catch (IOException e) {
-            responseHandler.onException(e);
+        } catch (Error e) {
+            responseHandler.onException(new ODataApplicationException("Runtime Error Occurred", Locale.ENGLISH, e));
         }
     }
 
@@ -770,7 +805,12 @@ public final class Olingo2AppImpl implements Olingo2App {
         }
 
         // Olingo is sensitive to batch part charset case!!
-        headers.put(HttpHeaders.ACCEPT, getResourceContentType(uriInfo).toString().toLowerCase());
+        final ContentType contentType = getResourceContentType(uriInfo);
+        headers.put(HttpHeaders.ACCEPT, contentType.withCharset("").toString().toLowerCase());
+        final Charset charset = contentType.getCharset();
+        if (null != charset) {
+            headers.put(HttpHeaders.ACCEPT_CHARSET, charset.name().toLowerCase());
+        }
         if (!headers.containsKey(HttpHeaders.CONTENT_TYPE)) {
             headers.put(HttpHeaders.CONTENT_TYPE, getContentType());
         }
@@ -792,9 +832,14 @@ public final class Olingo2AppImpl implements Olingo2App {
     private BatchQueryPart createBatchQueryPart(UriInfoWithType uriInfo, Olingo2BatchQueryRequest batchRequest) {
 
         final Map<String, String> headers = new HashMap<String, String>(batchRequest.getHeaders());
+        final ContentType contentType = getResourceContentType(uriInfo);
+        final Charset charset = contentType.getCharset();
         if (!headers.containsKey(HttpHeaders.ACCEPT)) {
             // Olingo is sensitive to batch part charset case!!
-            headers.put(HttpHeaders.ACCEPT, getResourceContentType(uriInfo).toString().toLowerCase());
+            headers.put(HttpHeaders.ACCEPT, contentType.withCharset("").toString().toLowerCase());
+        }
+        if (!headers.containsKey(HttpHeaders.ACCEPT_CHARSET) && (null != charset)) {
+            headers.put(HttpHeaders.ACCEPT_CHARSET, charset.name().toLowerCase());
         }
 
         return BatchQueryPart.method("GET")
@@ -867,9 +912,14 @@ public final class Olingo2AppImpl implements Olingo2App {
         ByteArrayInputStream content = null;
         try {
             if (response.getBody() != null) {
-                final ContentType partContentType = receiveWithCharsetParameter(ContentType.parse(
-                    headers.get(HttpHeaders.CONTENT_TYPE)), Consts.UTF_8);
-                final String charset = partContentType.getCharset().toString();
+                String charset = Consts.UTF_8.toString();
+                try {
+                    final ContentType partContentType = receiveWithCharsetParameter(ContentType.parse(
+                        headers.get(HttpHeaders.CONTENT_TYPE)), Consts.UTF_8);
+                    charset = partContentType.getCharset().toString();
+                } catch (ParseException | UnsupportedCharsetException ex) {
+                    // Use default charset of UTF-8.
+                }
 
                 final String body = response.getBody();
                 content = body != null ? new ByteArrayInputStream(body.getBytes(charset)) : null;
@@ -1009,29 +1059,48 @@ public final class Olingo2AppImpl implements Olingo2App {
 
         return result;
     }
-
+    
+    private static Map<String, String> headersToMap(final Header[] headers) {
+        final Map<String, String> responseHeaders = new HashMap<>();
+        for (Header header : headers) {
+            responseHeaders.put(header.getName(), header.getValue());
+        }
+        return responseHeaders;
+    }
+    
     /**
      * public for unit test, not to be used otherwise
      */
-    public void execute(HttpUriRequest httpUriRequest, ContentType contentType,
-                        FutureCallback<HttpResponse> callback) {
+    public void execute(final HttpUriRequest httpUriRequest, final ContentType contentType, 
+                        final Map<String, String> endpointHttpHeaders,
+                        final FutureCallback<HttpResponse> callback) {
 
         // add accept header when its not a form or multipart
-        final String contentTypeString = contentType.toString();
         if (!ContentType.APPLICATION_FORM_URLENCODED.getMimeType().equals(contentType.getMimeType())
             && !contentType.getMimeType().startsWith(MULTIPART_MIME_TYPE)) {
             // otherwise accept what is being sent
-            httpUriRequest.addHeader(HttpHeaders.ACCEPT, contentTypeString);
+            httpUriRequest.addHeader(HttpHeaders.ACCEPT, contentType.withCharset("").toString().toLowerCase());
+            final Charset charset = contentType.getCharset();
+            if (null != charset) {
+                httpUriRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, charset.name().toLowerCase());
+            }
         }
         // is something being sent?
         if (httpUriRequest instanceof HttpEntityEnclosingRequestBase
             && httpUriRequest.getFirstHeader(HttpHeaders.CONTENT_TYPE) == null) {
-            httpUriRequest.addHeader(HttpHeaders.CONTENT_TYPE, contentTypeString);
+            httpUriRequest.addHeader(HttpHeaders.CONTENT_TYPE, contentType.toString());
         }
 
         // set user specified custom headers
         if (httpHeaders != null && !httpHeaders.isEmpty()) {
             for (Map.Entry<String, String> entry : httpHeaders.entrySet()) {
+                httpUriRequest.setHeader(entry.getKey(), entry.getValue());
+            }
+        }
+        
+        // set user specified endpoint headers
+        if ((endpointHttpHeaders != null) && !endpointHttpHeaders.isEmpty()) {
+            for (Map.Entry<String, String> entry : endpointHttpHeaders.entrySet()) {
                 httpUriRequest.setHeader(entry.getKey(), entry.getValue());
             }
         }

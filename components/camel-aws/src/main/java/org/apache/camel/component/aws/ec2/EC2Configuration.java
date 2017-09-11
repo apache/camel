@@ -43,6 +43,8 @@ public class EC2Configuration {
     private String proxyHost;
     @UriParam(label = "producer")
     private Integer proxyPort;
+    @UriParam
+    private String region;
     
     public AmazonEC2Client getAmazonEc2Client() {
         return amazonEc2Client;
@@ -121,5 +123,16 @@ public class EC2Configuration {
 
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+    
+    /**
+     * The region in which EC2 client needs to work
+     */
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
     }
 }

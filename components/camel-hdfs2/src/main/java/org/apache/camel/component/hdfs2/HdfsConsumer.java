@@ -48,9 +48,6 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         this.config = config;
         this.hdfsPath = config.getFileSystemType().getHdfsPath(config);
         this.processor = processor;
-
-        setInitialDelay(config.getInitialDelay());
-        setDelay(config.getDelay());
         setUseFixedDelay(true);
     }
 
@@ -155,7 +152,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
                 Holder<Object> value = new Holder<Object>();
                 while (this.istream.next(key, value) >= 0) {
                     Exchange exchange = this.getEndpoint().createExchange();
-                    Message message = new DefaultMessage();
+                    Message message = new DefaultMessage(this.getEndpoint().getCamelContext());
                     String fileName = StringUtils.substringAfterLast(status.getPath().toString(), "/");
                     message.setHeader(Exchange.FILE_NAME, fileName);
                     if (key.value != null) {

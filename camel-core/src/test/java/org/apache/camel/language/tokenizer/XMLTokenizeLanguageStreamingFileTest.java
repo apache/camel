@@ -54,7 +54,7 @@ public class XMLTokenizeLanguageStreamingFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             Namespaces ns = new Namespaces("C", "urn:c");
             public void configure() {
-                from("file:target/xmltokenize")
+                from("file:target/xmltokenize?initialDelay=0&delay=10")
                     .split().xtokenize("//C:child", ns).streaming()
                         .to("mock:result")
                     .end();

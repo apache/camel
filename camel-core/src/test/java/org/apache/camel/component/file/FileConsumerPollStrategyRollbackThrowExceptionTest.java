@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -24,12 +27,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 
+import static org.awaitility.Awaitility.await;
+
 /**
  * Unit test for poll strategy
  */
 public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextTestSupport {
 
     private static volatile String event = "";
+
+    private static final CountDownLatch LATCH = new CountDownLatch(1);
 
     private String fileUrl = "file://target/pollstrategy/?pollStrategy=#myPoll&initialDelay=0&delay=10";
 
@@ -48,8 +55,7 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
     }
 
     public void testRollbackThrowException() throws Exception {
-        // let it run for a little, but it fails all the time
-        Thread.sleep(200);
+        await().atMost(2, TimeUnit.SECONDS).until(() -> LATCH.getCount() == 0);
 
         // and we should rollback X number of times
         assertTrue(event.startsWith("rollback"));
@@ -76,6 +82,7 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
 
         public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
             event += "rollback";
+            LATCH.countDown();
             throw cause;
         }
     }

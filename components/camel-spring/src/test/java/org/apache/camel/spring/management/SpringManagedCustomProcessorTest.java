@@ -34,6 +34,11 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 public class SpringManagedCustomProcessorTest extends SpringTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringManagedCustomProcessorTest.xml");
     }

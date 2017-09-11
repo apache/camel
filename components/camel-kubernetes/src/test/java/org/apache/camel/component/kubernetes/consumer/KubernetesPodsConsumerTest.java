@@ -35,8 +35,10 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Requires a running Kubernetes Cluster")
 public class KubernetesPodsConsumerTest extends KubernetesTestSupport {
 
     @EndpointInject(uri = "mock:result")
@@ -108,17 +110,17 @@ public class KubernetesPodsConsumerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list").toF("kubernetes://%s?oauthToken=%s&category=pods&operation=listPods", host,
+                from("direct:list").toF("kubernetes-pods://%s?oauthToken=%s&operation=listPods", host,
                         authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=listPodsByLabels", host, authToken);
-                from("direct:getPod").toF("kubernetes://%s?oauthToken=%s&category=pods&operation=getPod", host,
+                        .toF("kubernetes-pods://%s?oauthToken=%s&operation=listPodsByLabels", host, authToken);
+                from("direct:getPod").toF("kubernetes-pods://%s?oauthToken=%s&operation=getPod", host,
                         authToken);
-                from("direct:createPod").toF("kubernetes://%s?oauthToken=%s&category=pods&operation=createPod", host,
+                from("direct:createPod").toF("kubernetes-pods://%s?oauthToken=%s&operation=createPod", host,
                         authToken);
-                from("direct:deletePod").toF("kubernetes://%s?oauthToken=%s&category=pods&operation=deletePod", host,
+                from("direct:deletePod").toF("kubernetes-pods://%s?oauthToken=%s&operation=deletePod", host,
                         authToken);
-                fromF("kubernetes://%s?oauthToken=%s&category=pods&namespace=default&labelKey=this&labelValue=rocks", host, authToken)
+                fromF("kubernetes-pods://%s?oauthToken=%s&namespace=default&labelKey=this&labelValue=rocks", host, authToken)
                         .process(new KubernertesProcessor()).to(mockResultEndpoint);
             }
         };

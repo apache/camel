@@ -271,10 +271,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
                     redeliveryPolicy,
                     onRedeliveryRef,
                     onRedelivery,
-                    onExceptionOccurred
-                ).orElseThrow(
-                    () -> new IllegalArgumentException(this + " is not configured.")
-                );
+                    onExceptionOccurred)
+                .orElseThrow(() -> new IllegalArgumentException(this + " is not configured."));
         }
     }
 
@@ -709,7 +707,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
-     * Turn on exponential backk off
+     * Turn on exponential back off
      *
      * @return the builder
      */
@@ -788,8 +786,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * <p/>
      * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the {@link org.apache.camel.Exchange} is doomed for failure.
      * <br/>
-     * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN body we use the original IN body instead. This allows
-     * you to store the original input in the dead letter queue instead of the inprogress snapshot of the IN body.
+     * Instead of using the current in-progress {@link org.apache.camel.Exchange} IN body we use the original IN body instead. This allows
+     * you to store the original input in the dead letter queue instead of the in-progress snapshot of the IN body.
      * For instance if you route transform the IN body during routing and then failed. With the original exchange
      * store in the dead letter queue it might be easier to manually re submit the {@link org.apache.camel.Exchange} again as the IN body
      * is the same as when Camel received it. So you should be able to send the {@link org.apache.camel.Exchange} to the same input.

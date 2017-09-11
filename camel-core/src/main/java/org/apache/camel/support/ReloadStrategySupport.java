@@ -34,7 +34,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.XmlLineNumberParser;
@@ -46,10 +46,10 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ReloadStrategySupport extends ServiceSupport implements ReloadStrategy {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    private CamelContext camelContext;
 
-    // store state
-    private final Map<String, ResourceState> cache = new LRUCache<String, ResourceState>(100);
+    protected Map<String, Object> cache;
+
+    private CamelContext camelContext;
 
     private int succeeded;
     private int failed;
@@ -73,14 +73,14 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
         try {
             xml = camelContext.getTypeConverter().mandatoryConvertTo(String.class, resource);
             // the JAXB model expects the spring namespace (even for blueprint)
-            dom = XmlLineNumberParser.parseXml(new ByteArrayInputStream(xml.getBytes()), null, "camelContext,routes", "http://camel.apache.org/schema/spring");
+            dom = XmlLineNumberParser.parseXml(new ByteArrayInputStream(xml.getBytes()), null, "camelContext,routeContext,routes", "http://camel.apache.org/schema/spring");
         } catch (Exception e) {
             failed++;
             log.warn("Cannot load the resource " + name + " as XML");
             return;
         }
 
-        ResourceState state = cache.get(name);
+        ResourceState state = ObjectHelper.cast(ResourceState.class, cache.get(name));
         if (state == null) {
             state = new ResourceState(name, dom, xml);
             cache.put(name, state);
@@ -135,7 +135,7 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
                 CollectionStringBuffer csb = new CollectionStringBuffer(",");
                 // collect route ids and force assign ids if not in use
                 for (RouteDefinition route : routes) {
-                    unassignedRouteIds |= route.hasCustomIdAssigned();
+                    unassignedRouteIds |= !route.hasCustomIdAssigned();
                     String id = route.idOrCreate(camelContext.getNodeIdFactory());
                     csb.append(id);
                 }
@@ -181,6 +181,14 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
     public int getFailedCounter() {
         return failed;
     }
+    
+    public void setSucceeded(int succeeded) {
+        this.succeeded = succeeded;
+    }
+    
+    public void setFailed(int failed) {
+        this.failed = failed;
+    }
 
     @ManagedOperation(description = "Reset counters")
     public void resetCounters() {
@@ -189,8 +197,10 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         // noop
+        cache = LRUCacheFactory.newLRUCache(100);
     }
 
     @Override

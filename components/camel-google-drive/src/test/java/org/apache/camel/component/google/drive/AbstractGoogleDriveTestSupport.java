@@ -50,7 +50,6 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
     private static String propertyText;
 
     
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
     private static final String REFRESH_TOKEN_PROPERTY = "refreshToken";
     
@@ -91,7 +90,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         String line;
         while ((line = reader.readLine()) != null) {
-            builder.append(line).append(LINE_SEPARATOR);
+            builder.append(line).append(LS);
         }
         propertyText = builder.toString();
 
@@ -143,6 +142,11 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         return (T) template().requestBodyAndHeaders(endpointUri, body, headers);
     }
 
+    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type)
+        throws CamelExecutionException {
+        return (T) template().requestBodyAndHeaders(endpointUri, body, headers, type);
+    }
+    
     protected <T> T requestBody(String endpoint, Object body) throws CamelExecutionException {
         return (T) template().requestBody(endpoint, body);
     }

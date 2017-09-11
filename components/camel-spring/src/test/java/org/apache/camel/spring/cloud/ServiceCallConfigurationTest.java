@@ -20,7 +20,7 @@ import org.apache.camel.impl.cloud.ServiceCallConstants;
 import org.apache.camel.model.cloud.AggregatingServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.ChainedServiceCallServiceFilterConfiguration;
-import org.apache.camel.model.cloud.DefaultServiceCallLoadBalancerConfiguration;
+import org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration;
 import org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.cloud.ServiceCallExpressionConfiguration;
@@ -49,7 +49,7 @@ public class ServiceCallConfigurationTest {
         assertNotNull("No ServiceCallConfiguration (1)", conf);
         assertNotNull("No ServiceDiscoveryConfiguration (1)", conf.getServiceDiscoveryConfiguration());
         assertNotNull("No ServiceCallLoadBalancerConfiguration (1)", conf.getLoadBalancerConfiguration());
-        assertTrue(conf.getLoadBalancerConfiguration() instanceof DefaultServiceCallLoadBalancerConfiguration);
+        assertTrue(conf.getLoadBalancerConfiguration() instanceof DefaultServiceCallServiceLoadBalancerConfiguration);
 
         ServiceCallExpressionConfiguration expConf1 = conf.getExpressionConfiguration();
         assertNull(expConf1.getExpression());

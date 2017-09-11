@@ -90,7 +90,7 @@ public class OsgiClassResolver extends DefaultClassResolver {
             }
         }
 
-        // fallback to default as spring-dm may have issues loading resources
+        // fallback to default as OSGi may have issues loading resources
         if (answer == null) {
             answer = super.loadResourceAsStream(uri);
         }
@@ -103,7 +103,7 @@ public class OsgiClassResolver extends DefaultClassResolver {
         String resolvedName = resolveUriPath(uri);
         URL answer = bundleContext.getBundle().getResource(resolvedName);
 
-        // fallback to default as spring-dm may have issues loading resources
+        // fallback to default as OSGi may have issues loading resources
         if (answer == null) {
             answer = super.loadResourceAsURL(uri);
         }

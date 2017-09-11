@@ -25,6 +25,8 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 
+import org.apache.camel.cdi.transaction.JtaTransactionErrorHandlerBuilder;
+
 /**
  * Used to configure the errorHandler type
  */
@@ -54,7 +56,7 @@ public enum ErrorHandlerType {
         case NoErrorHandler:
             return NoErrorHandlerBuilder.class;
         case TransactionErrorHandler:
-            throw new UnsupportedOperationException("Unsupported error handler: " + this);
+            return JtaTransactionErrorHandlerBuilder.class;
         default:
             throw new IllegalArgumentException("Unknown error handler: " + this);
         }

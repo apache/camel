@@ -46,7 +46,7 @@ with the following path and query parameters:
 | **label** | *Required* Logical name |  | String
 |=======================================================================
 
-#### Query Parameters (8 parameters):
+#### Query Parameters (9 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -57,6 +57,7 @@ with the following path and query parameters:
 | **operation** (producer) | *Required* The operation to perform. It can be createAndRunInstances startInstances stopInstances terminateInstances describeInstances describeInstancesStatus rebootInstances monitorInstances unmonitorInstances createTags or deleteTags |  | EC2Operations
 | **proxyHost** (producer) | To define a proxy host when instantiating the SQS client |  | String
 | **proxyPort** (producer) | To define a proxy port when instantiating the SQS client |  | Integer
+| **region** (producer) | The region in which EC2 client needs to work |  | String
 | **secretKey** (producer) | Amazon AWS Secret Key |  | String
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================

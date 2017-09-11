@@ -79,6 +79,11 @@ public @interface CsvRecord {
      * Indicate if the values must be quoted when marshaling (optional)
      */
     boolean quoting() default false;
+    
+    /**
+     * Indicate if the values must be escaped when quoting (optional)
+     */
+    boolean quotingEscaped() default false;
 
     /**
      * Last record spans rest of line (optional)

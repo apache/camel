@@ -17,28 +17,30 @@
 package org.apache.camel.impl.cloud;
 
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.util.ObjectHelper;
 
 public class RandomServiceChooser implements ServiceChooser {
-    private final Random random;
-
-    public RandomServiceChooser() {
-        this.random = new Random();
-    }
-
     @Override
-    public ServiceDefinition choose(List<ServiceDefinition> servers) {
-        int size = servers.size();
-        int index = (size > 1) ? random.nextInt(size) : 0;
+    public ServiceDefinition choose(List<ServiceDefinition> definitions) {
+        // Fail if the service definition list is null or empty
+        if (ObjectHelper.isEmpty(definitions)) {
+            throw new IllegalArgumentException("The ServiceDefinition list should not be empty");
+        }
 
-        return servers.get(index);
+        int size = definitions.size();
+        if (size == 1) {
+            return  definitions.get(0);
+        } else {
+            return definitions.get(ThreadLocalRandom.current().nextInt(size));
+        }
     }
 
     @Override
     public String toString() {
-        return "RandomServiceCallServiceChooser";
+        return "RandomServiceChooser";
     }
 }

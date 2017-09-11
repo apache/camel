@@ -44,7 +44,7 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
         assertNotNull(receivedExchange);
         assertEquals(0, receivedIndex);
         assertEquals(3, receivedTotal);
-        assertEquals(1000, receivedTimeout);
+        assertEquals(100, receivedTimeout);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .split(body().tokenize(","), new MyAggregationStrategy())
-                        .parallelProcessing().timeout(1000)
+                        .parallelProcessing().timeout(100)
                         .choice()
                             .when(body().isEqualTo("A")).to("direct:a")
                             .when(body().isEqualTo("B")).to("direct:b")
@@ -63,11 +63,11 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
                     .end() // end split
                     .to("mock:result");
 
-                from("direct:a").delay(5000).setBody(constant("A"));
+                from("direct:a").delay(200).setBody(constant("A"));
 
                 from("direct:b").setBody(constant("B"));
 
-                from("direct:c").delay(500).setBody(constant("C"));
+                from("direct:c").delay(10).setBody(constant("C"));
             }
         };
     }

@@ -73,7 +73,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
     
     private static final Logger LOG = LoggerFactory.getLogger(BaseSSLContextParameters.class);
     
-    private static final String LS = System.getProperty("line.separator");
+    private static final String LS = System.lineSeparator();
     
     private static final String SSL_ENGINE_CIPHER_SUITE_LOG_MSG = createCipherSuiteLogMessage("SSLEngine");
     

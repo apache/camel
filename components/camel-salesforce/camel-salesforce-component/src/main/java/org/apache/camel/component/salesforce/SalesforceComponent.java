@@ -20,17 +20,24 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.VerifiableComponent;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.internal.OperationName;
+import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
+import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
@@ -56,7 +63,19 @@ import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAUL
  * Represents the component that manages {@link SalesforceEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class SalesforceComponent extends DefaultComponent implements VerifiableComponent {
+public class SalesforceComponent extends DefaultComponent implements VerifiableComponent, SSLContextParametersAware {
+
+    public static final String HTTP_PROXY_HOST = "httpProxyHost";
+    public static final String HTTP_PROXY_PORT = "httpProxyPort";
+    public static final String HTTP_PROXY_IS_SOCKS4 = "isHttpProxySocks4";
+    public static final String HTTP_PROXY_IS_SECURE = "isHttpProxySecure";
+    public static final String HTTP_PROXY_INCLUDE = "httpProxyInclude";
+    public static final String HTTP_PROXY_EXCLUDE = "httpProxyExclude";
+    public static final String HTTP_PROXY_USERNAME = "httpProxyUsername";
+    public static final String HTTP_PROXY_PASSWORD = "httpProxyPassword";
+    public static final String HTTP_PROXY_USE_DIGEST_AUTH = "httpProxyUseDigestAuth";
+    public static final String HTTP_PROXY_AUTH_URI = "httpProxyAuthUri";
+    public static final String HTTP_PROXY_REALM = "httpProxyRealm";
 
     static final int CONNECTION_TIMEOUT = 60000;
     static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
@@ -68,14 +87,18 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         + " directly on the component as well", label = "common,security")
     private SalesforceLoginConfig loginConfig;
 
+    @Metadata(description = "URL of the Salesforce instance used after authantication, by default received from"
+        + " Salesforce on successful authentication", label = "common,security")
+    private String instanceUrl;
+
     // allow fine grained login as well
-    @Metadata(description = "URL of the Salesforce instance, by default set to " + DEFAULT_LOGIN_URL,
-        label = "common,security", defaultValue = DEFAULT_LOGIN_URL, required = "true")
+    @Metadata(description = "URL of the Salesforce instance used for authentication, by default set to "
+    + DEFAULT_LOGIN_URL, label = "common,security", defaultValue = DEFAULT_LOGIN_URL, required = "true")
     private String loginUrl;
 
     @Metadata(description = "OAuth Consumer Key of the connected app configured in the Salesforce instance setup."
         + " Typically a connected app needs to be configured but one can be provided by installing a package.",
-        label = "common,security", secret = true, required = "true")
+        label = "common,security", required = "true")
     private String clientId;
 
     @Metadata(description = "OAuth Consumer Secret of the connected app configured in the Salesforce instance setup.",
@@ -93,8 +116,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
     @Metadata(description = "Username used in OAuth flow to gain access to access token. It's easy to get started with" 
         + " password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows.",
-        label = "common,security",
-        secret = true)
+        label = "common,security")
     private String userName;
 
     @Metadata(description = "Password used in OAuth flow to gain access to access token. It's easy to get started with"
@@ -112,7 +134,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     @Metadata(description = "Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT."
         + " Salesforce component can auto-determine the authentication method to use from the properties set, set this "
         + " property to eliminate any ambiguity.",
-        label = "common,security", secret = false, enums = "USERNAME_PASSWORD,REFRESH_TOKEN,JWT")
+        label = "common,security", enums = "USERNAME_PASSWORD,REFRESH_TOKEN,JWT")
     private AuthenticationType authenticationType;
 
     @Metadata(description = "If set to true prevents the component from authenticating to Salesforce with the start of"
@@ -132,6 +154,8 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     @Metadata(description = "SSL parameters to use, see SSLContextParameters class for all available options.",
         label = "common,security")
     private SSLContextParameters sslContextParameters;
+    @Metadata(description = "Enable usage of global SSL context parameters", label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     // Proxy host and port
     @Metadata(description = "Hostname of the HTTP proxy server to use.", label = "common,proxy")
@@ -157,7 +181,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
     // Proxy basic authentication
     @Metadata(description = "Username to use to authenticate against the HTTP proxy server.",
-        label = "common,proxy,security", secret = true)
+        label = "common,proxy,security")
     private String httpProxyUsername;
 
     @Metadata(description = "Password to use to authenticate against the HTTP proxy server.",
@@ -193,10 +217,14 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     private SubscriptionHelper subscriptionHelper;
 
     public SalesforceComponent() {
+        this(null);
     }
 
     public SalesforceComponent(CamelContext context) {
         super(context);
+
+        registerExtension(SalesforceComponentVerifierExtension::new);
+        registerExtension(SalesforceMetaDataExtension::new);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -273,6 +301,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     protected void doStart() throws Exception {
         if (loginConfig == null) {
             loginConfig = new SalesforceLoginConfig();
+            loginConfig.setInstanceUrl(instanceUrl);
             loginConfig.setClientId(clientId);
             loginConfig.setClientSecret(clientSecret);
             loginConfig.setKeystore(keystore);
@@ -289,67 +318,25 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         }
 
         // create a Jetty HttpClient if not already set
-        if (null == httpClient) {
-            if (config != null && config.getHttpClient() != null) {
-                httpClient = config.getHttpClient();
-            } else {
-                // set ssl context parameters if set
-                final SSLContextParameters contextParameters = sslContextParameters != null
-                    ? sslContextParameters : new SSLContextParameters();
-                final SslContextFactory sslContextFactory = new SslContextFactory();
-                sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
+        if (httpClient == null) {
+            final SSLContextParameters contextParameters = Optional.ofNullable(sslContextParameters)
+                .orElseGet(() -> Optional.ofNullable(retrieveGlobalSslContextParameters())
+                .orElseGet(() -> new SSLContextParameters()));
 
-                httpClient = new SalesforceHttpClient(sslContextFactory);
-                // default settings, use httpClientProperties to set other properties
-                httpClient.setConnectTimeout(CONNECTION_TIMEOUT);
-            }
+            final SslContextFactory sslContextFactory = new SslContextFactory();
+            sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
+
+            httpClient = createHttpClient(sslContextFactory);
         }
 
-        // set HTTP client parameters
-        if (httpClientProperties != null && !httpClientProperties.isEmpty()) {
-            IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(),
-                httpClient, new HashMap<String, Object>(httpClientProperties));
-        }
-
-        // set HTTP proxy settings
-        if (this.httpProxyHost != null && httpProxyPort != null) {
-            Origin.Address proxyAddress = new Origin.Address(this.httpProxyHost, this.httpProxyPort);
-            ProxyConfiguration.Proxy proxy; 
-            if (isHttpProxySocks4) {
-                proxy = new Socks4Proxy(proxyAddress, isHttpProxySecure);
-            } else {
-                proxy = new HttpProxy(proxyAddress, isHttpProxySecure);
-            }
-            if (httpProxyIncludedAddresses != null && !httpProxyIncludedAddresses.isEmpty()) {
-                proxy.getIncludedAddresses().addAll(httpProxyIncludedAddresses);
-            }
-            if (httpProxyExcludedAddresses != null && !httpProxyExcludedAddresses.isEmpty()) {
-                proxy.getExcludedAddresses().addAll(httpProxyExcludedAddresses);
-            }
-            httpClient.getProxyConfiguration().getProxies().add(proxy);
-        }
-        if (this.httpProxyUsername != null && httpProxyPassword != null) {
-
-            StringHelper.notEmpty(httpProxyAuthUri, "httpProxyAuthUri");
-            StringHelper.notEmpty(httpProxyRealm, "httpProxyRealm");
-
-            final Authentication authentication;
-            if (httpProxyUseDigestAuth) {
-                authentication = new DigestAuthentication(new URI(httpProxyAuthUri),
-                    httpProxyRealm, httpProxyUsername, httpProxyPassword);
-            } else {
-                authentication = new BasicAuthentication(new URI(httpProxyAuthUri),
-                    httpProxyRealm, httpProxyUsername, httpProxyPassword);
-            }
-            httpClient.getAuthenticationStore().addAuthentication(authentication);
-        }
+        setupHttpClient(httpClient, getCamelContext(), httpClientProperties);
 
         // support restarts
-        if (this.session == null) {
-            this.session = new SalesforceSession(getCamelContext(), httpClient, httpClient.getTimeout(), loginConfig);
+        if (session == null) {
+            session = new SalesforceSession(getCamelContext(), httpClient, httpClient.getTimeout(), loginConfig);
         }
         // set session before calling start()
-        httpClient.setSession(this.session);
+        httpClient.setSession(session);
 
         // start the Jetty client to initialize thread pool, etc.
         httpClient.start();
@@ -365,7 +352,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
             LOG.info("Found {} generated classes in packages: {}", classMap.size(), Arrays.asList(packages));
         } else {
             // use an empty map to avoid NPEs later
-            LOG.warn("Missing property packages, getSObject* operations will NOT work");
+            LOG.warn("Missing property packages, getSObject* operations will NOT work without property rawPayload=true");
             classMap = new HashMap<String, Class<?>>(0);
         }
 
@@ -432,6 +419,10 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
     public void setLoginConfig(SalesforceLoginConfig loginConfig) {
         this.loginConfig = loginConfig;
+    }
+
+    public void setInstanceUrl(String instanceUrl) {
+        this.instanceUrl = instanceUrl;
     }
 
     public void setLoginUrl(String loginUrl) {
@@ -517,6 +508,16 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public String getHttpProxyHost() {
@@ -630,7 +631,139 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         return classMap;
     }
 
+    @Override
     public ComponentVerifier getVerifier() {
-        return new SalesforceComponentVerifier(this);
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)
+            .orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
+    }
+
+    public RestClient createRestClientFor(final SalesforceEndpoint endpoint) throws SalesforceException {
+        final SalesforceEndpointConfig endpointConfig = endpoint.getConfiguration();
+
+        return createRestClientFor(endpointConfig);
+    }
+
+    RestClient createRestClientFor(SalesforceEndpointConfig endpointConfig) throws SalesforceException {
+        final String version = endpointConfig.getApiVersion();
+        final PayloadFormat format = endpointConfig.getFormat();
+
+        return new DefaultRestClient(httpClient, version, format, session);
+    }
+
+    RestClient createRestClient(final Map<String, Object> properties) throws Exception {
+        final SalesforceEndpointConfig modifiedConfig = Optional.ofNullable(config).map(SalesforceEndpointConfig::copy)
+            .orElseGet(() -> new SalesforceEndpointConfig());
+        final CamelContext camelContext = getCamelContext();
+        final TypeConverter typeConverter = camelContext.getTypeConverter();
+
+        IntrospectionSupport.setProperties(typeConverter, modifiedConfig, properties);
+
+        return createRestClientFor(modifiedConfig);
+    }
+
+    static RestClient createRestClient(final CamelContext camelContext, final Map<String, Object> properties)
+        throws Exception {
+        final TypeConverter typeConverter = camelContext.getTypeConverter();
+
+        final SalesforceEndpointConfig config = new SalesforceEndpointConfig();
+        // let's work with a copy for IntrospectionSupport so original properties are intact
+        IntrospectionSupport.setProperties(typeConverter, config, new HashMap<>(properties));
+
+        final SalesforceLoginConfig loginConfig = new SalesforceLoginConfig();
+        // let's work with a copy for IntrospectionSupport so original properties are intact
+        IntrospectionSupport.setProperties(typeConverter, loginConfig, new HashMap<>(properties));
+
+        final SSLContextParameters sslContextParameters = Optional.ofNullable(camelContext.getSSLContextParameters())
+            .orElseGet(() -> new SSLContextParameters());
+        // let's work with a copy for IntrospectionSupport so original properties are intact
+        IntrospectionSupport.setProperties(typeConverter, sslContextParameters, new HashMap<>(properties));
+
+        final SslContextFactory sslContextFactory = new SslContextFactory();
+        sslContextFactory.setSslContext(sslContextParameters.createSSLContext(camelContext));
+
+        final SalesforceHttpClient httpClient = createHttpClient(sslContextFactory);
+        setupHttpClient(httpClient, camelContext, properties);
+
+        final SalesforceSession session = new SalesforceSession(camelContext, httpClient, httpClient.getTimeout(),
+            loginConfig);
+        httpClient.setSession(session);
+
+        return new DefaultRestClient(httpClient, config.getApiVersion(), config.getFormat(), session);
+    }
+
+    static SalesforceHttpClient createHttpClient(final SslContextFactory sslContextFactory) throws Exception {
+        final SalesforceHttpClient httpClient = new SalesforceHttpClient(sslContextFactory);
+        // default settings, use httpClientProperties to set other
+        // properties
+        httpClient.setConnectTimeout(CONNECTION_TIMEOUT);
+
+        return httpClient;
+    }
+
+    static SalesforceHttpClient setupHttpClient(final SalesforceHttpClient httpClient, final CamelContext camelContext,
+        final Map<String, Object> httpClientProperties) throws Exception {
+
+        if (httpClientProperties == null || httpClientProperties.isEmpty()) {
+            return httpClient;
+        }
+
+        // set HTTP client parameters
+        final TypeConverter typeConverter = camelContext.getTypeConverter();
+        IntrospectionSupport.setProperties(typeConverter, httpClient,
+            new HashMap<String, Object>(httpClientProperties));
+
+        final String httpProxyHost = typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_HOST));
+        final Integer httpProxyPort = typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_PROXY_PORT));
+        final boolean isHttpProxySocks4 = typeConverter.convertTo(boolean.class,
+            httpClientProperties.get(HTTP_PROXY_IS_SOCKS4));
+        final boolean isHttpProxySecure = typeConverter.convertTo(boolean.class,
+            httpClientProperties.get(HTTP_PROXY_IS_SECURE));
+        @SuppressWarnings("unchecked")
+        final Set<String> httpProxyIncludedAddresses = (Set<String>) httpClientProperties.get(HTTP_PROXY_INCLUDE);
+        @SuppressWarnings("unchecked")
+        final Set<String> httpProxyExcludedAddresses = (Set<String>) httpClientProperties.get(HTTP_PROXY_EXCLUDE);
+        final String httpProxyUsername = typeConverter.convertTo(String.class,
+            httpClientProperties.get(HTTP_PROXY_USERNAME));
+        final String httpProxyPassword = typeConverter.convertTo(String.class,
+            httpClientProperties.get(HTTP_PROXY_PASSWORD));
+        final String httpProxyAuthUri = typeConverter.convertTo(String.class,
+            httpClientProperties.get(HTTP_PROXY_AUTH_URI));
+        final String httpProxyRealm = typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_REALM));
+        final boolean httpProxyUseDigestAuth = typeConverter.convertTo(boolean.class,
+            httpClientProperties.get(HTTP_PROXY_USE_DIGEST_AUTH));
+
+        // set HTTP proxy settings
+        if (httpProxyHost != null && httpProxyPort != null) {
+            Origin.Address proxyAddress = new Origin.Address(httpProxyHost, httpProxyPort);
+            ProxyConfiguration.Proxy proxy;
+            if (isHttpProxySocks4) {
+                proxy = new Socks4Proxy(proxyAddress, isHttpProxySecure);
+            } else {
+                proxy = new HttpProxy(proxyAddress, isHttpProxySecure);
+            }
+            if (httpProxyIncludedAddresses != null && !httpProxyIncludedAddresses.isEmpty()) {
+                proxy.getIncludedAddresses().addAll(httpProxyIncludedAddresses);
+            }
+            if (httpProxyExcludedAddresses != null && !httpProxyExcludedAddresses.isEmpty()) {
+                proxy.getExcludedAddresses().addAll(httpProxyExcludedAddresses);
+            }
+            httpClient.getProxyConfiguration().getProxies().add(proxy);
+        }
+        if (httpProxyUsername != null && httpProxyPassword != null) {
+            StringHelper.notEmpty(httpProxyAuthUri, "httpProxyAuthUri");
+            StringHelper.notEmpty(httpProxyRealm, "httpProxyRealm");
+
+            final Authentication authentication;
+            if (httpProxyUseDigestAuth) {
+                authentication = new DigestAuthentication(new URI(httpProxyAuthUri), httpProxyRealm, httpProxyUsername,
+                    httpProxyPassword);
+            } else {
+                authentication = new BasicAuthentication(new URI(httpProxyAuthUri), httpProxyRealm, httpProxyUsername,
+                    httpProxyPassword);
+            }
+            httpClient.getAuthenticationStore().addAuthentication(authentication);
+        }
+
+        return httpClient;
     }
 }

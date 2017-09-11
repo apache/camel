@@ -62,7 +62,7 @@ option.
 
 
 // component options: START
-The Restlet component supports 21 options which are listed below.
+The Restlet component supports 22 options which are listed below.
 
 
 
@@ -88,6 +88,7 @@ The Restlet component supports 21 options which are listed below.
 | **port** (consumer) | To configure the port number for the restlet consumer routes. This allows to configure this once to reuse the same port for these consumers. |  | int
 | **synchronous** (producer) | Whether to use synchronous Restlet Client for the producer. Setting this option to true can yield faster performance as it seems the Restlet synchronous Client works better. |  | Boolean
 | **enabledConverters** (advanced) | A list of converters to enable as full class name or simple class name. All the converters automatically registered are enabled if empty or null |  | List
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **headerFilterStrategy** (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================

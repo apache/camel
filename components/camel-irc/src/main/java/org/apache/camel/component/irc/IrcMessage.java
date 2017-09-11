@@ -18,6 +18,7 @@ package org.apache.camel.component.irc;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
@@ -32,17 +33,20 @@ public class IrcMessage extends DefaultMessage {
     private int num;
     private String value;
 
-    public IrcMessage() {
+    public IrcMessage(CamelContext camelContext) {
+        super(camelContext);
     }
 
-    public IrcMessage(String messageType, IRCUser user, String message) {
+    public IrcMessage(CamelContext camelContext, String messageType, IRCUser user, String message) {
+        super(camelContext);
         this.messageType = messageType;
         this.user = user;
         this.message = message;
         setBody(message);
     }
 
-    public IrcMessage(String messageType, String target, IRCUser user, String message) {
+    public IrcMessage(CamelContext camelContext, String messageType, String target, IRCUser user, String message) {
+        super(camelContext);
         this.messageType = messageType;
         this.target = target;
         this.user = user;
@@ -50,7 +54,8 @@ public class IrcMessage extends DefaultMessage {
         setBody(message);
     }
 
-    public IrcMessage(String messageType, String target, IRCUser user, String whoWasKickedNick, String message) {
+    public IrcMessage(CamelContext camelContext, String messageType, String target, IRCUser user, String whoWasKickedNick, String message) {
+        super(camelContext);
         this.messageType = messageType;
         this.target = target;
         this.user = user;
@@ -59,13 +64,15 @@ public class IrcMessage extends DefaultMessage {
         setBody(message);
     }
 
-    public IrcMessage(String messageType, String target, IRCUser user) {
+    public IrcMessage(CamelContext camelContext, String messageType, String target, IRCUser user) {
+        super(camelContext);
         this.messageType = messageType;
         this.target = target;
         this.user = user;
     }
 
-    public IrcMessage(String messageType, int num, String value, String message) {
+    public IrcMessage(CamelContext camelContext, String messageType, int num, String value, String message) {
+        super(camelContext);
         this.messageType = messageType;
         this.num = num;
         this.value = value;
@@ -122,7 +129,7 @@ public class IrcMessage extends DefaultMessage {
 
     @Override
     public IrcMessage newInstance() {
-        return new IrcMessage();
+        return new IrcMessage(getCamelContext());
     }
 
     @Override

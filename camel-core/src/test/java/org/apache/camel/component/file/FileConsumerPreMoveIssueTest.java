@@ -49,7 +49,7 @@ public class FileConsumerPreMoveIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/premove?preMove=before/${file:name.noext}-moved.${file:ext}")
+                from("file://target/premove?preMove=before/${file:name.noext}-moved.${file:ext}&initialDelay=0&delay=10")
                     .process(new MyPreMoveCheckerProcessor())
                     .to("mock:result");
             }

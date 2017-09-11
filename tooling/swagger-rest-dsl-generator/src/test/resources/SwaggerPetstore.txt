@@ -1,5 +1,6 @@
 package io.swagger.petstore;
 
+import javax.annotation.Generated;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
@@ -7,6 +8,7 @@ import org.apache.camel.model.rest.RestParamType;
 /**
  * Generated from Swagger specification by Camel REST DSL generator.
  */
+@Generated("org.apache.camel.generator.swagger.AppendableGenerator")
 public final class SwaggerPetstore extends RouteBuilder {
     /**
      * Defines Apache Camel routes using REST DSL fluent API.

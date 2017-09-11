@@ -37,6 +37,8 @@ public class StreamResequencerConfig extends ResequencerConfig {
     private Integer capacity;
     @XmlAttribute @Metadata(defaultValue = "1000")
     private Long timeout;
+    @XmlAttribute @Metadata(defaultValue = "1000")
+    private Long deliveryAttemptInterval;
     @XmlAttribute
     private Boolean ignoreInvalidExchanges;
     @XmlTransient
@@ -146,6 +148,18 @@ public class StreamResequencerConfig extends ResequencerConfig {
      */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    public Long getDeliveryAttemptInterval() {
+        return deliveryAttemptInterval;
+    }
+
+    /**
+     * Sets the interval in milli seconds the stream resequencer will at most wait
+     * while waiting for condition of being able to deliver.
+     */
+    public void setDeliveryAttemptInterval(Long deliveryAttemptInterval) {
+        this.deliveryAttemptInterval = deliveryAttemptInterval;
     }
 
     public Boolean getIgnoreInvalidExchanges() {

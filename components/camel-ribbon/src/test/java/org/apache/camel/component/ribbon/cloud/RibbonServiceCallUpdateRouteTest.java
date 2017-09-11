@@ -17,8 +17,6 @@
 
 package org.apache.camel.component.ribbon.cloud;
 
-import java.util.Collections;
-
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
@@ -76,12 +74,13 @@ public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 RibbonConfiguration configuration = new RibbonConfiguration();
                 // lets update quick so we do not have to sleep so much in the tests
-                configuration.setClientConfig(Collections.singletonMap("ServerListRefreshInterval", "250"));
-                RibbonLoadBalancer loadBalancer = new RibbonLoadBalancer(configuration);
+                configuration.addProperty("ServerListRefreshInterval", "250");
+                RibbonServiceLoadBalancer loadBalancer = new RibbonServiceLoadBalancer(configuration);
 
                 from("direct:start")
                     .serviceCall()
                         .name("myService")
+                        .component("jetty")
                         .loadBalancer(loadBalancer)
                         .serviceDiscovery(servers)
                         .end()

@@ -22,6 +22,10 @@ public class ParseRuntimeException extends RuntimeException {
         super(message);
     }
 
+    public ParseRuntimeException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
     public ParseRuntimeException(Throwable cause) {
         super(cause);
     }

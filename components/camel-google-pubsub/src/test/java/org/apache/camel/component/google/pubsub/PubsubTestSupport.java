@@ -45,7 +45,7 @@ public class PubsubTestSupport extends CamelTestSupport {
 
     private static Properties loadProperties() {
         Properties testProperties = new Properties();
-        InputStream fileIn = testProperties.getClass().getResourceAsStream("/simple.properties");
+        InputStream fileIn = PubsubTestSupport.class.getClassLoader().getResourceAsStream("simple.properties");
         try {
             testProperties.load(fileIn);
 

@@ -32,19 +32,30 @@ import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
+import org.apache.camel.util.LRUCache;
 
 /**
  * A parser to parse simple language as a Camel {@link Expression}
  */
 public class SimpleExpressionParser extends BaseSimpleParser {
 
+    // use caches to avoid re-parsing the same expressions over and over again
+    private LRUCache<String, Expression> cacheExpression;
+
     @Deprecated
     public SimpleExpressionParser(String expression) {
         super(expression, true);
     }
 
+    @Deprecated
     public SimpleExpressionParser(String expression, boolean allowEscape) {
         super(expression, allowEscape);
+    }
+
+    public SimpleExpressionParser(String expression, boolean allowEscape,
+                                  LRUCache<String, Expression> cacheExpression) {
+        super(expression, allowEscape);
+        this.cacheExpression = cacheExpression;
     }
 
     public Expression parseExpression() {
@@ -141,7 +152,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         if (token.getType().isFunctionStart()) {
             // starting a new function
             functions.incrementAndGet();
-            return new SimpleFunctionStart(token);
+            return new SimpleFunctionStart(token, cacheExpression);
         } else if (functions.get() > 0 && token.getType().isFunctionEnd()) {
             // there must be a start function already, to let this be a end function
             functions.decrementAndGet();

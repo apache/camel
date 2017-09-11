@@ -20,7 +20,7 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.codelibs.elasticsearch.runner.ElasticsearchClusterRunner;
 import org.elasticsearch.client.transport.TransportClient;
@@ -36,15 +36,20 @@ import static org.codelibs.elasticsearch.runner.ElasticsearchClusterRunner.newCo
 public class ElasticsearchClusterBaseTest extends CamelTestSupport {
 
     public static ElasticsearchClusterRunner runner;
-    public static String clusterName;  
+    public static String clusterName;
     public static TransportClient client;
 
+    protected static final int ES_BASE_TRANSPORT_PORT = AvailablePortFinder.getNextAvailable();
+    protected static final int ES_FIRST_NODE_TRANSPORT_PORT = AvailablePortFinder.getNextAvailable(ES_BASE_TRANSPORT_PORT + 1);
+    protected static final int ES_BASE_HTTP_PORT = AvailablePortFinder.getNextAvailable(ES_BASE_TRANSPORT_PORT + 10);
+
+    @SuppressWarnings("resource")
     @BeforeClass
     public static void cleanUpOnce() throws Exception {
         deleteDirectory("target/testcluster/");
         clusterName = "es-cl-run-" + System.currentTimeMillis();
         // create runner instance
-        
+
         runner = new ElasticsearchClusterRunner();
         // create ES nodes
         runner.onBuild(new ElasticsearchClusterRunner.Builder() {
@@ -53,28 +58,29 @@ public class ElasticsearchClusterBaseTest extends CamelTestSupport {
                 settingsBuilder.put("http.cors.enabled", true);
                 settingsBuilder.put("http.cors.allow-origin", "*");
             }
-        }).build(
-                newConfigs()
-                .clusterName(clusterName)
-                .numOfNode(3)
-                .basePath("target/testcluster/")
-                .useLogger());
+        }).build(newConfigs()
+                 .clusterName(clusterName)
+                 .numOfNode(3)
+                 .baseTransportPort(ES_BASE_TRANSPORT_PORT)
+                 .baseHttpPort(ES_BASE_HTTP_PORT)
+                 .basePath("target/testcluster/")
+                 .disableESLogger());
 
         // wait for green status
         runner.ensureGreen();
-        
-        client = new PreBuiltTransportClient(getSettings())
-                .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9301));
+
+        client = new PreBuiltTransportClient(getSettings()).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), ES_FIRST_NODE_TRANSPORT_PORT));
     }
-    
+
     private static Settings getSettings() {
         return Settings.builder()
-                .put("cluster.name", clusterName)
-                .put("client.transport.ignore_cluster_name", false)
-                .put("client.transport.sniff", true)
-                .build();
+            .put("cluster.name", clusterName)
+            .put("http.enabled", true)
+            .put("client.transport.ignore_cluster_name", false)
+            .put("client.transport.sniff", true)
+            .build();
     }
-    
+
     @AfterClass
     public static void teardownOnce() throws Exception {
         if (client != null) {
@@ -87,7 +93,7 @@ public class ElasticsearchClusterBaseTest extends CamelTestSupport {
             runner.clean();
         }
     }
-    
+
     @Override
     public boolean isCreateCamelContextPerClass() {
         // let's speed up the tests using the same context

@@ -19,7 +19,6 @@ package org.apache.camel.component.scp;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,6 +39,8 @@ import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResolverHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -224,7 +225,19 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             if (ObjectHelper.isNotEmpty(config.getPrivateKeyFile())) {
                 LOG.trace("Using private keyfile: {}", config.getPrivateKeyFile());
                 String pkfp = config.getPrivateKeyFilePassphrase();
-                jsch.addIdentity(config.getPrivateKeyFile(), ObjectHelper.isNotEmpty(pkfp) ? pkfp : null);
+
+                String name = config.getPrivateKeyFile();
+                // load from file system by default
+                if (!name.startsWith("classpath:")) {
+                    name = "file:" + name;
+                }
+                try {
+                    InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), name);
+                    byte[] data = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(byte[].class, is);
+                    jsch.addIdentity("camel-jsch", data, null, pkfp != null ? pkfp.getBytes() : null);
+                } catch (Exception e) {
+                    throw new GenericFileOperationFailedException("Cannot load private keyfile: " + config.getPrivateKeyFile(), e);
+                }
             }
 
             String knownHostsFile = config.getKnownHostsFile();
@@ -235,7 +248,21 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 }
                 knownHostsFile = userKnownHostFile;
             }
-            jsch.setKnownHosts(ObjectHelper.isEmpty(knownHostsFile) ? null : knownHostsFile);
+            // load file as input stream which can then load from classpath etc
+            if (ObjectHelper.isNotEmpty(knownHostsFile)) {
+                // load from file system by default
+                if (!knownHostsFile.startsWith("classpath:")) {
+                    knownHostsFile = "file:" + knownHostsFile;
+                }
+                try {
+                    InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), knownHostsFile);
+                    jsch.setKnownHosts(is);
+                } catch (Exception e) {
+                    throw new GenericFileOperationFailedException("Cannot load known host file: " + knownHostsFile, e);
+                }
+            } else {
+                jsch.setKnownHosts((String) null);
+            }
             session = jsch.getSession(config.getUsername(), config.getHost(), config.getPort());
             session.setTimeout(config.getTimeout());
             session.setUserInfo(new SessionUserInfo(config));

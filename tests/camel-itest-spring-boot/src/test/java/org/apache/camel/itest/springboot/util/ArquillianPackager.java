@@ -324,11 +324,14 @@ public final class ArquillianPackager {
         ignore.add("net.sourceforge.htmlunit:htmlunit-core-js"); // v 2.21 does not exist
         ignore.add("org.springframework.data");
         ignore.add("org.springframework.security:spring-security-jwt");
+        ignore.add("org.springframework.security:spring-security-rsa");
         ignore.add("org.springframework.social");
         ignore.add("org.webjars"); // No problem
         ignore.add("stax:stax-api");
         ignore.add("xml-apis:xml-apis-ext");
-
+        ignore.add("org.infinispan");
+        ignore.add("org.jboss.logging");
+        ignore.add("org.jboss.marshalling");
 
         Map<String, Map<String, String>> status = new TreeMap<>();
         Set<String> mismatches = new TreeSet<>();

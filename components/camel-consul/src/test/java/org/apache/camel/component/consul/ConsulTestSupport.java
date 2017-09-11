@@ -22,21 +22,34 @@ import java.util.UUID;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.KeyValueClient;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Rule;
 import org.junit.rules.TestName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ConsulTestSupport extends CamelTestSupport {
-    public static final Logger LOGGER = LoggerFactory.getLogger(ConsulTestSupport.class);
+    public static final String CONSUL_HOST = System.getProperty("camel.consul.host", Consul.DEFAULT_HTTP_HOST);
+    public static final int CONSUL_PORT = Integer.getInteger("camel.consul.port", Consul.DEFAULT_HTTP_PORT);
+    public static final String CONSUL_URL = String.format("http://%s:%d", CONSUL_HOST, CONSUL_PORT);
     public static final String KV_PREFIX = "/camel";
 
     @Rule
     public final TestName testName = new TestName();
 
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+
+        ConsulComponent component = new ConsulComponent();
+        component.setUrl(CONSUL_URL);
+
+        registry.bind("consul", component);
+
+        return registry;
+    }
+
     protected Consul getConsul() {
-        return Consul.builder().build();
+        return Consul.builder().withUrl(CONSUL_URL).build();
     }
 
     protected KeyValueClient getKeyValueClient() {

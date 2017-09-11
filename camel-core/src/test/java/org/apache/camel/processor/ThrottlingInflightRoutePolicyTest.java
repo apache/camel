@@ -35,7 +35,6 @@ public class ThrottlingInflightRoutePolicyTest extends ContextTestSupport {
 
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "Message " + i);
-            Thread.sleep(3);
         }
 
         assertMockEndpointsSatisfied();
@@ -51,6 +50,7 @@ public class ThrottlingInflightRoutePolicyTest extends ContextTestSupport {
 
                 from(url)
                     .routePolicy(policy)
+                    .delay(3)
                     .to("log:foo?groupSize=10").to("mock:result");
             }
         };

@@ -21,14 +21,19 @@ import java.io.IOException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.AmazonS3EncryptionClientBuilder;
 import com.amazonaws.services.s3.S3ClientOptions;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.StaticEncryptionMaterialsProvider;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -45,15 +50,14 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The aws-s3 component is used for storing and retrieving objecct from Amazon S3 Storage Service.
+ * The aws-s3 component is used for storing and retrieving objecct from Amazon
+ * S3 Storage Service.
  */
-@UriEndpoint(firstVersion = "2.8.0", scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3:bucketNameOrArn",
-    consumerClass = S3Consumer.class, label = "cloud,file")
+@UriEndpoint(firstVersion = "2.8.0", scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3:bucketNameOrArn", consumerClass = S3Consumer.class, label = "cloud,file")
 public class S3Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);
@@ -67,6 +71,8 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     private S3Configuration configuration;
     @UriParam(label = "consumer", defaultValue = "10")
     private int maxMessagesPerPoll = 10;
+    @UriParam(label = "consumer", defaultValue = "60")
+    private int maxConnections = 50 + maxMessagesPerPoll;
 
     @Deprecated
     public S3Endpoint(String uri, CamelContext context, S3Configuration configuration) {
@@ -98,8 +104,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        s3Client = configuration.getAmazonS3Client() != null
-                ? configuration.getAmazonS3Client() : createS3Client();
+        s3Client = configuration.getAmazonS3Client() != null ? configuration.getAmazonS3Client() : createS3Client();
 
         if (ObjectHelper.isNotEmpty(configuration.getAmazonS3Endpoint())) {
             s3Client.setEndpoint(configuration.getAmazonS3Endpoint());
@@ -132,9 +137,6 @@ public class S3Endpoint extends ScheduledPollEndpoint {
 
         // creates the new bucket because it doesn't exist yet
         CreateBucketRequest createBucketRequest = new CreateBucketRequest(getConfiguration().getBucketName());
-        if (getConfiguration().getRegion() != null) {
-            createBucketRequest.setRegion(getConfiguration().getRegion());
-        }
 
         LOG.trace("Creating bucket [{}] in region [{}] with request [{}]...", configuration.getBucketName(), configuration.getRegion(), createBucketRequest);
 
@@ -186,9 +188,10 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         message.setHeader(S3Constants.SERVER_SIDE_ENCRYPTION, objectMetadata.getSSEAlgorithm());
 
         /**
-         * If includeBody != true, it is safe to close the object here.  If includeBody == true,
-         * the caller is responsible for closing the stream and object once the body has been fully consumed.
-         * As of 2.17, the consumer does not close the stream or object on commit.
+         * If includeBody != true, it is safe to close the object here. If
+         * includeBody == true, the caller is responsible for closing the stream
+         * and object once the body has been fully consumed. As of 2.17, the
+         * consumer does not close the stream or object on commit.
          */
         if (!configuration.isIncludeBody()) {
             try {
@@ -229,41 +232,78 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * Provide the possibility to override this method for an mock implementation
+     * Provide the possibility to override this method for an mock
+     * implementation
      */
     AmazonS3 createS3Client() {
-    
-        AmazonS3Client client = null;
+
+        AmazonS3 client = null;
+        AmazonS3ClientBuilder clientBuilder = null;
+        AmazonS3EncryptionClientBuilder encClientBuilder = null;
         ClientConfiguration clientConfiguration = null;
         boolean isClientConfigFound = false;
         if (configuration.hasProxyConfiguration()) {
             clientConfiguration = new ClientConfiguration();
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
+            clientConfiguration.setMaxConnections(getMaxConnections());
+            isClientConfigFound = true;
+        } else {
+            clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setMaxConnections(getMaxConnections());
             isClientConfigFound = true;
         }
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-            if (isClientConfigFound) {
-                client = new AmazonS3Client(credentials, clientConfiguration);
+            AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
+            if (isClientConfigFound && !configuration.isUseEncryption()) {
+                clientBuilder = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+            } else if (isClientConfigFound && configuration.isUseEncryption()) {
+                StaticEncryptionMaterialsProvider encryptionMaterialsProvider = new StaticEncryptionMaterialsProvider(configuration.getEncryptionMaterials());
+                encClientBuilder = AmazonS3EncryptionClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider)
+                    .withEncryptionMaterials(encryptionMaterialsProvider);
             } else {
-                client = new AmazonS3Client(credentials);
+                clientBuilder = AmazonS3ClientBuilder.standard().withCredentials(credentialsProvider);
+            }
+            if (!configuration.isUseEncryption()) {
+                if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                    clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
+                }
+                clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
+                client = clientBuilder.build();
+            } else {
+                if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                    encClientBuilder = encClientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
+                }
+                encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
+                client = encClientBuilder.build();
             }
         } else {
-            if (isClientConfigFound) {
-                client = new AmazonS3Client();
+            if (isClientConfigFound && !configuration.isUseEncryption()) {
+                clientBuilder = AmazonS3ClientBuilder.standard();
+            } else if (isClientConfigFound && configuration.isUseEncryption()) {
+                StaticEncryptionMaterialsProvider encryptionMaterialsProvider = new StaticEncryptionMaterialsProvider(configuration.getEncryptionMaterials());
+                encClientBuilder = AmazonS3EncryptionClientBuilder.standard().withClientConfiguration(clientConfiguration).withEncryptionMaterials(encryptionMaterialsProvider);
             } else {
-                client = new AmazonS3Client(clientConfiguration);
+                clientBuilder = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration);
+            }
+            if (!configuration.isUseEncryption()) {
+                if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                    clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
+                }
+                clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
+                client = clientBuilder.build();
+            } else {
+                if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                    encClientBuilder = encClientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
+                }
+                encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
+                client = encClientBuilder.build();
             }
         }
 
-        S3ClientOptions clientOptions = S3ClientOptions.builder()
-            .setPathStyleAccess(configuration.isPathStyleAccess())
-            .build();
-        client.setS3ClientOptions(clientOptions);
         return client;
     }
-
 
     public int getMaxMessagesPerPoll() {
         return maxMessagesPerPoll;
@@ -272,9 +312,21 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     /**
      * Gets the maximum number of messages as a limit to poll at each polling.
      * <p/>
-     * Is default unlimited, but use 0 or negative number to disable it as unlimited.
+     * Is default unlimited, but use 0 or negative number to disable it as
+     * unlimited.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
+    public int getMaxConnections() {
+        return maxConnections;
+    }
+
+    /**
+     * Set the maxConnections parameter in the S3 client configuration
+     */
+    public void setMaxConnections(int maxConnections) {
+        this.maxConnections = maxConnections;
     }
 }

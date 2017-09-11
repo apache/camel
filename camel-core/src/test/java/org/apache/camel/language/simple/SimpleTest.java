@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -39,8 +40,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Language;
-
-import static org.apache.camel.TestSupport.getJavaMajorVersion;
 /**
  * @version
  */
@@ -480,13 +479,33 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public void testDateExpressions() throws Exception {
-        Calendar cal = Calendar.getInstance();
-        cal.set(1974, Calendar.APRIL, 20);
-        exchange.getIn().setHeader("birthday", cal.getTime());
+        Calendar inHeaderCalendar = Calendar.getInstance();
+        inHeaderCalendar.set(1974, Calendar.APRIL, 20);
+        exchange.getIn().setHeader("birthday", inHeaderCalendar.getTime());
+        
+        Calendar outHeaderCalendar = Calendar.getInstance();
+        outHeaderCalendar.set(1975, Calendar.MAY, 21);
+        exchange.getOut().setHeader("birthday", outHeaderCalendar.getTime());
 
-        assertExpression("date:header.birthday", cal.getTime());
+        Calendar propertyCalendar = Calendar.getInstance();
+        propertyCalendar.set(1976, Calendar.JUNE, 22);
+        exchange.setProperty("birthday", propertyCalendar.getTime());
+
+        assertExpression("date:header.birthday", inHeaderCalendar.getTime());
         assertExpression("date:header.birthday:yyyyMMdd", "19740420");
         assertExpression("date:header.birthday+24h:yyyyMMdd", "19740421");
+        
+        assertExpression("date:in.header.birthday", inHeaderCalendar.getTime());
+        assertExpression("date:in.header.birthday:yyyyMMdd", "19740420");
+        assertExpression("date:in.header.birthday+24h:yyyyMMdd", "19740421");
+        
+        assertExpression("date:out.header.birthday", outHeaderCalendar.getTime());
+        assertExpression("date:out.header.birthday:yyyyMMdd", "19750521");
+        assertExpression("date:out.header.birthday+24h:yyyyMMdd", "19750522");
+
+        assertExpression("date:property.birthday", propertyCalendar.getTime());
+        assertExpression("date:property.birthday:yyyyMMdd", "19760622");
+        assertExpression("date:property.birthday+24h:yyyyMMdd", "19760623");
 
         try {
             assertExpression("date:yyyyMMdd", "19740420");
@@ -515,6 +534,11 @@ public class SimpleTest extends LanguageTestSupport {
 
         assertExpression("date-with-timezone:header.birthday:GMT+8:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T08:55:47:123");
         assertExpression("date-with-timezone:header.birthday:GMT:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T00:55:47:123");
+    }
+
+    public void testDateNow() throws Exception {
+        Object out = evaluateExpression("${date:now:hh:mm:ss a}", null);
+        assertNotNull(out);
     }
 
     public void testDatePredicates() throws Exception {

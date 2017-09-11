@@ -57,7 +57,7 @@ public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport
                     .to("file://target/outbox")
                     .to("mock:error");
 
-                from("file://target/inbox").process(new Processor() {
+                from("file://target/inbox?initialDelay=0&delay=10").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         exchange.getIn().setBody("B");

@@ -33,12 +33,12 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
 
         StopWatch watch = new StopWatch();
         try {
-            template.sendBody("direct:suspended?block=true&timeout=2000", "hello world");
+            template.sendBody("direct:suspended?block=true&timeout=500", "hello world");
             fail("Expected CamelExecutionException");
         } catch (CamelExecutionException e) {
             DirectConsumerNotAvailableException cause = assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
             assertIsInstanceOf(CamelExchangeException.class, cause);
-            assertTrue(watch.taken() > 1500);
+            assertTrue(watch.taken() > 490);
         }
     }
 
@@ -48,13 +48,13 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
 
         StopWatch watch = new StopWatch();
         try {
-            template.sendBody("direct:start?block=true&timeout=2000", "hello world");
+            template.sendBody("direct:start?block=true&timeout=500", "hello world");
             fail("Expected CamelExecutionException");
         } catch (CamelExecutionException e) {
             DirectConsumerNotAvailableException cause = assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
             assertIsInstanceOf(CamelExchangeException.class, cause);
 
-            assertTrue(watch.taken() > 1500);
+            assertTrue(watch.taken() > 490);
         }
     }
 
@@ -66,7 +66,7 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(200);
                     log.info("Resuming consumer");
                     context.resumeRoute("foo");
                 } catch (Exception e) {
@@ -77,7 +77,7 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBody("direct:suspended?block=true&timeout=5000", "hello world");
+        template.sendBody("direct:suspended?block=true&timeout=1000", "hello world");
 
         assertMockEndpointsSatisfied();
 

@@ -86,13 +86,13 @@ public class BoxConfiguration {
     private IAccessTokenCache accessTokenCache;
 
     @UriParam(label = "advanced,security", defaultValue = "100")
-    private int maxCacheEntries;
+    private int maxCacheEntries = 100;
 
     @UriParam(label = "advanced,security", defaultValue = RSA_SHA_256)
-    private EncryptionAlgorithm encryptionAlgorithm;
+    private EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.RSA_SHA_256;
 
     @UriParam(label = "authentication", defaultValue = APP_USER_AUTHENTICATION)
-    private String authenticationType;
+    private String authenticationType = APP_USER_AUTHENTICATION;
 
     @UriParam(label = "advanced")
     private Map<String, Object> httpParams;

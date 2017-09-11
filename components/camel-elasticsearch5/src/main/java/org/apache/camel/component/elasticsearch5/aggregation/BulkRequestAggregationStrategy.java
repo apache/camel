@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.elasticsearch.action.ActionRequest;
+import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 
 /**
@@ -31,11 +32,11 @@ public class BulkRequestAggregationStrategy implements AggregationStrategy {
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         // Don't use getBody(Class<T>) here as we don't want to coerce the body type using a type converter.
         Object objBody = newExchange.getIn().getBody();
-        if (!(objBody instanceof ActionRequest)) {
-            throw new InvalidPayloadRuntimeException(newExchange, ActionRequest.class);
+        if (!(objBody instanceof DocWriteRequest[])) {
+            throw new InvalidPayloadRuntimeException(newExchange, DocWriteRequest[].class);
         }
 
-        ActionRequest newBody = (ActionRequest) objBody;
+        DocWriteRequest[] newBody = (DocWriteRequest[]) objBody;
         BulkRequest request;
         if (oldExchange == null) {
             request = new BulkRequest();

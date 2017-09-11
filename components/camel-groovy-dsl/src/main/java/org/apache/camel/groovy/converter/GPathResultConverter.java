@@ -20,14 +20,16 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
 import groovy.util.XmlSlurper;
 import groovy.util.slurpersupport.GPathResult;
+
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.StringSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 @Converter
 public class GPathResultConverter {

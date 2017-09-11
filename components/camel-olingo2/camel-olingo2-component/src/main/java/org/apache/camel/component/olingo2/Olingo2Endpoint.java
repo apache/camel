@@ -46,6 +46,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     private static final String KEY_PREDICATE_PROPERTY = "keyPredicate";
     private static final String QUERY_PARAMS_PROPERTY = "queryParams";
+    private static final String ENDPOINT_HTTP_HEADERS_PROPERTY = "endpointHttpHeaders";
 
     private static final String READ_METHOD = "read";
     private static final String EDM_PROPERTY = "edm";
@@ -72,6 +73,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
         endpointPropertyNames = new HashSet<String>(getPropertiesHelper().getValidEndpointProperties(configuration));
         // avoid adding edm as queryParam
         endpointPropertyNames.add(EDM_PROPERTY);
+        endpointPropertyNames.add(ENDPOINT_HTTP_HEADERS_PROPERTY);
     }
 
     public Producer createProducer() throws Exception {

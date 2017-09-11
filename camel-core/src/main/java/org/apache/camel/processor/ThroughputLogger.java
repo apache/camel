@@ -194,7 +194,7 @@ public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, 
         if (groupInterval != null) {
             ObjectHelper.notNull(camelContext, "CamelContext", this);
 
-            logSchedulerService = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "ThroughputLogger", 1);
+            logSchedulerService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ThroughputLogger");
             Runnable scheduledLogTask = new ScheduledLogTask();
             LOG.info("Scheduling throughput log to run every " + groupInterval + " millis.");
             // must use fixed rate to have it trigger at every X interval

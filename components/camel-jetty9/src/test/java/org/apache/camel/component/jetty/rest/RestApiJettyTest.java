@@ -32,8 +32,10 @@ public class RestApiJettyTest extends BaseJettyTest {
     public void testApi() throws Exception {
         String out = template.requestBody("jetty:http://localhost:{{port}}/api-doc", null, String.class);
         assertNotNull(out);
+
         assertTrue(out.contains("\"version\" : \"1.2.3\""));
         assertTrue(out.contains("\"title\" : \"The hello rest thing\""));
+        assertTrue(out.contains("\"host\" : \"localhost:" + getPort() + "\""));
         assertTrue(out.contains("\"/hello/bye/{name}\""));
         assertTrue(out.contains("\"/hello/hi/{name}\""));
         assertTrue(out.contains("\"summary\" : \"To update the greeting message\""));

@@ -128,6 +128,8 @@ public final class ResourceHelper {
      *     <il>http:uri - to load the resource using HTTP</il>
      *     <il>ref:nameOfBean - to lookup the resource in the {@link org.apache.camel.spi.Registry}</il>
      *     <il>bean:nameOfBean.methodName - to lookup a bean in the {@link org.apache.camel.spi.Registry} and call the method</il>
+     *     <il><customProtocol>:uri - to lookup the resource using a custom {@link java.net.URLStreamHandler} registered for the <customProtocol>,
+     *     on how to register it @see java.net.URL#URL(java.lang.String, java.lang.String, int, java.lang.String)</il>
      * </ul>
      * If no prefix has been given, then the resource is loaded from the classpath
      * <p/>
@@ -236,6 +238,11 @@ public final class ResourceHelper {
         } else if (uri.startsWith("classpath:")) {
             uri = ObjectHelper.after(uri, "classpath:");
             uri = tryDecodeUri(uri);
+        } else if (uri.contains(":")) {
+            LOG.trace("Loading resource: {} with UrlHandler for protocol {}", uri, uri.split(":")[0]);
+            URL url = new URL(uri);
+            URLConnection con = url.openConnection();
+            return con.getInputStream();
         }
 
         // load from classpath by default
@@ -288,6 +295,9 @@ public final class ResourceHelper {
         } else if (uri.startsWith("classpath:")) {
             uri = ObjectHelper.after(uri, "classpath:");
             uri = tryDecodeUri(uri);
+        } else if (uri.contains(":")) {
+            LOG.trace("Loading resource: {} with UrlHandler for protocol {}", uri, uri.split(":")[0]);
+            return new URL(uri);
         }
 
         // load from classpath by default

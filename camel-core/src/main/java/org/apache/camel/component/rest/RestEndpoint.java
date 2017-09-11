@@ -28,7 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
@@ -271,6 +270,12 @@ public class RestEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
+        if (ObjectHelper.isEmpty(host)) {
+            // hostname must be provided
+            throw new IllegalArgumentException("Hostname must be configured on either restConfiguration"
+                + " or in the rest endpoint uri as a query parameter with name host, eg rest:" + method + ":" + path + "?host=someserver");
+        }
+
         RestProducerFactory apiDocFactory = null;
         RestProducerFactory factory = null;
 

@@ -19,9 +19,12 @@ package org.apache.camel.converter.dozer;
 import java.util.List;
 import java.util.Map;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import org.dozer.CustomConverter;
 import org.dozer.CustomFieldMapper;
 import org.dozer.DozerEventListener;
+import org.dozer.loader.api.BeanMappingBuilder;
 
 public class DozerBeanMapperConfiguration {
 
@@ -30,6 +33,7 @@ public class DozerBeanMapperConfiguration {
     private List<DozerEventListener> eventListeners;
     private Map<String, CustomConverter> customConvertersWithId;
     private CustomFieldMapper customFieldMapper;
+    private List<BeanMappingBuilder> beanMappingBuilders;
 
     public List<String> getMappingFiles() {
         return mappingFiles;
@@ -69,5 +73,13 @@ public class DozerBeanMapperConfiguration {
 
     public void setCustomFieldMapper(CustomFieldMapper customFieldMapper) {
         this.customFieldMapper = customFieldMapper;
+    }
+
+    public List<BeanMappingBuilder> getBeanMappingBuilders() {
+        return beanMappingBuilders;
+    }
+
+    public void setBeanMappingBuilders(List<BeanMappingBuilder> beanMappingBuilders) {
+        this.beanMappingBuilders = beanMappingBuilders;
     }
 }

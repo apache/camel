@@ -36,9 +36,9 @@ public class TimerMultipleConsumerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:mytimer").to("mock:foo");
+                from("timer:mytimer?period=0&delay=10").to("mock:foo");
 
-                from("timer:mytimer").to("mock:bar");
+                from("timer:mytimer?period=0&delay=10").to("mock:bar");
             }
         };
     }

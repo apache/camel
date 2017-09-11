@@ -43,6 +43,24 @@ public final class TimePatternConverter {
     
     @Converter
     public static long toMilliSeconds(String source) throws IllegalArgumentException {
+        // quick conversion if its only digits
+        boolean digit = true;
+        for (int i = 0; i < source.length(); i++) {
+            char ch = source.charAt(i);
+            // special for fist as it can be negative number
+            if (i == 0 && ch == '-') {
+                continue;
+            }
+            // quick check if its 0..9
+            if (ch < '0' || ch > '9') {
+                digit = false;
+                break;
+            }
+        }
+        if (digit) {
+            return Long.valueOf(source);
+        }
+
         long milliseconds = 0;
         boolean foundFlag = false;
 

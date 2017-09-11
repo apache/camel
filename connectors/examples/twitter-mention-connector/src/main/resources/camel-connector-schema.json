@@ -7,14 +7,14 @@
     "title": "TwitterMention",
     "description": "Connection from twitter when anyone mention you",
     "label": "twitter",
-    "deprecated": false,
+    "deprecated": true,
     "async": false,
     "consumerOnly": true,
     "lenientProperties": false,
     "javaType": "org.foo.mention.TwitterMentionComponent",
     "groupId": "org.foo",
     "artifactId": "twitter-mention-connector",
-    "version": "2.19.0-SNAPSHOT"
+    "version": "2.20.0-SNAPSHOT"
   },
   "componentProperties": {
     "accessToken": { "kind": "property", "displayName": "Access Token", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The access token" },
@@ -23,5 +23,7 @@
     "consumerSecret": { "kind": "property", "displayName": "Consumer Secret", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The consumer secret" }
   },
   "properties": {
+  },
+  "connectorProperties": {
   }
 }

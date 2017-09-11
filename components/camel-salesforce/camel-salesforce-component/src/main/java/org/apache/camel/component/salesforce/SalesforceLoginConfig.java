@@ -27,6 +27,7 @@ public class SalesforceLoginConfig {
     public static final String DEFAULT_LOGIN_URL = "https://login.salesforce.com";
 
     private AuthenticationType type;
+    private String instanceUrl;
     private String loginUrl;
     private String clientId;
     private String clientSecret;
@@ -69,6 +70,14 @@ public class SalesforceLoginConfig {
 
     public SalesforceLoginConfig(String loginUrl, String clientId, String userName, KeyStoreParameters keystore, boolean lazyLogin) {
         this(AuthenticationType.JWT, loginUrl, clientId, null, null, userName, null, lazyLogin, keystore);
+    }
+
+    public String getInstanceUrl() {
+        return instanceUrl;
+    }
+
+    public void setInstanceUrl(final String instanceUrl) {
+        this.instanceUrl = instanceUrl;
     }
 
     public String getLoginUrl() {
@@ -145,7 +154,7 @@ public class SalesforceLoginConfig {
             return AuthenticationType.REFRESH_TOKEN;
         }
 
-        if (!hasPassword && hasRefreshToken && hasKeystore) {
+        if (!hasPassword && !hasRefreshToken && hasKeystore) {
             return AuthenticationType.JWT;
         }
 
@@ -228,9 +237,9 @@ public class SalesforceLoginConfig {
 
     @Override
     public String toString() {
-        return "SalesforceLoginConfig[" + "loginUrl='" + loginUrl + '\'' + ", clientId='" + clientId + '\''
-            + ", clientSecret='********'" + ", refreshToken='" + refreshToken + '\'' + ", userName='" + userName + '\''
-            + ", password=********'" + password + '\'' + ", keystore=********'" + keystore + '\'' + ", lazyLogin="
-            + lazyLogin + ']';
+        return "SalesforceLoginConfig[" + "instanceUrl= '" + instanceUrl + "', loginUrl='" + loginUrl + '\'' + ","
+            + "clientId='" + clientId + '\'' + ", clientSecret='********'" + ", refreshToken='" + refreshToken + '\''
+            + ", userName='" + userName + '\'' + ", password=********'" + password + '\'' + ", keystore=********'"
+            + keystore + '\'' + ", lazyLogin=" + lazyLogin + ']';
     }
 }

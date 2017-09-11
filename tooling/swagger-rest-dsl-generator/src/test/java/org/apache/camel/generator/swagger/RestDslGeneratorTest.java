@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Instant;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
@@ -34,6 +35,8 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RestDslGeneratorTest {
+
+    final Instant generated = Instant.parse("2017-10-17T00:00:00.000Z");
 
     final Swagger swagger = new SwaggerParser().read("petstore.json");
 
@@ -50,7 +53,7 @@ public class RestDslGeneratorTest {
     public void shouldGenerateSourceCodeWithDefaults() throws IOException, URISyntaxException {
         final StringBuilder code = new StringBuilder();
 
-        RestDslGenerator.toAppendable(swagger).generate(code);
+        RestDslGenerator.toAppendable(swagger).withGeneratedTime(generated).generate(code);
 
         final URI file = RestDslGeneratorTest.class.getResource("/SwaggerPetstore.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
@@ -62,8 +65,9 @@ public class RestDslGeneratorTest {
     public void shouldGenerateSourceCodeWithOptions() throws IOException, URISyntaxException {
         final StringBuilder code = new StringBuilder();
 
-        RestDslGenerator.toAppendable(swagger).withClassName("MyRestRoute").withPackageName("com.example")
-            .withIndent("\t").withDestinationGenerator(o -> "direct:rest-" + o.getOperationId()).generate(code);
+        RestDslGenerator.toAppendable(swagger).withGeneratedTime(generated).withClassName("MyRestRoute")
+            .withPackageName("com.example").withIndent("\t").withSourceCodeTimestamps()
+            .withDestinationGenerator(o -> "direct:rest-" + o.getOperationId()).generate(code);
 
         final URI file = RestDslGeneratorTest.class.getResource("/MyRestRoute.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);

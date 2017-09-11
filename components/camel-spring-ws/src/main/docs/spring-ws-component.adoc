@@ -81,7 +81,16 @@ You can append query *options* to the URI in the following format,
 
 
 // component options: START
-The Spring WebService component has no options.
+The Spring WebService component supports 2 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|=======================================================================
 // component options: END
 
 

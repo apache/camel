@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class TestSupport extends Assert {
 
-    protected static final String LS = System.getProperty("line.separator");
+    protected static final String LS = System.lineSeparator();
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
     protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -548,8 +548,7 @@ public abstract class TestSupport extends Assert {
      */
     @Deprecated
     public static boolean isJava15() {
-        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
-        return javaVersion.startsWith("1.5");
+        return getJavaMajorVersion() == 5;
     }
 
     /**
@@ -558,8 +557,8 @@ public abstract class TestSupport extends Assert {
      * @return <tt>true</tt> if its Java 1.6, <tt>false</tt> if its not (for example Java 1.7 or better)
      */
     public static boolean isJava16() {
-        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
-        return javaVersion.startsWith("1.6");
+        return getJavaMajorVersion() == 6;
+
     }
     
     /**
@@ -568,8 +567,8 @@ public abstract class TestSupport extends Assert {
      * @return <tt>true</tt> if its Java 1.7, <tt>false</tt> if its not (for example Java 1.6 or older)
      */
     public static boolean isJava17() {
-        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
-        return javaVersion.startsWith("1.7");
+        return getJavaMajorVersion() == 7;
+
     }
 
     /**
@@ -578,8 +577,24 @@ public abstract class TestSupport extends Assert {
      * @return <tt>true</tt> if its Java 1.8, <tt>false</tt> if its not (for example Java 1.7 or older)
      */
     public static boolean isJava18() {
-        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
-        return javaVersion.startsWith("1.8");
+        return getJavaMajorVersion() == 8;
+
+    }
+
+    /**
+     * Returns the current major Java version e.g 8.
+     * <p/>
+     * Uses <tt>java.specification.version</tt> from the system properties to determine the major version.
+
+     * @return the current major Java version.
+     */
+    public static int getJavaMajorVersion() {
+        String javaSpecVersion = System.getProperty("java.specification.version");
+        if (javaSpecVersion.contains(".")) { //before jdk 9
+            return Integer.parseInt(javaSpecVersion.split("\\.")[1]);
+        } else {
+            return Integer.parseInt(javaSpecVersion);
+        }
     }
 
     /**

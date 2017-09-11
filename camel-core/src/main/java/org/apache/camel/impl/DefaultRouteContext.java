@@ -37,10 +37,11 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.RestBindingAdvice;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -72,6 +73,8 @@ public class DefaultRouteContext implements RouteContext {
     private List<RoutePolicy> routePolicyList = new ArrayList<RoutePolicy>();
     private ShutdownRoute shutdownRoute;
     private ShutdownRunningTask shutdownRunningTask;
+    private RouteError routeError;
+    private RouteController routeController;
 
     public DefaultRouteContext(CamelContext camelContext, RouteDefinition route, FromDefinition from, Collection<Route> routes) {
         this.camelContext = camelContext;
@@ -216,6 +219,8 @@ public class DefaultRouteContext implements RouteContext {
                     contract.setValidateOutput(route.getOutputType().isValidate());
                 }
                 internal.addAdvice(new ContractAdvice(contract));
+                // make sure to enable data type as its in use when using input/output types on routes
+                camelContext.setUseDataType(true);
             }
 
             // and create the route that wraps the UoW
@@ -441,4 +446,23 @@ public class DefaultRouteContext implements RouteContext {
         return routePolicyList;
     }
 
+    @Override
+    public RouteError getLastError() {
+        return routeError;
+    }
+
+    @Override
+    public void setLastError(RouteError routeError) {
+        this.routeError = routeError;
+    }
+
+    @Override
+    public RouteController getRouteController() {
+        return routeController;
+    }
+
+    @Override
+    public void setRouteController(RouteController routeController) {
+        this.routeController = routeController;
+    }
 }

@@ -17,11 +17,8 @@
 package org.apache.camel.spring.boot.cloud;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
-import org.apache.camel.model.cloud.ServiceCallConstants;
-import org.apache.camel.model.language.RefExpression;
-import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.ObjectHelper;
@@ -45,8 +42,8 @@ public class CamelCloudServiceCallConfigurationAutoConfiguration {
     private CamelCloudConfigurationProperties configurationProperties;
 
     @Lazy
-    @Bean(name = ServiceCallConstants.DEFAULT_SERVICE_CALL_CONFIG_ID)
-    @ConditionalOnMissingBean(name = ServiceCallConstants.DEFAULT_SERVICE_CALL_CONFIG_ID)
+    @Bean(name = ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_CONFIG_ID)
+    @ConditionalOnMissingBean(name = ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_CONFIG_ID)
     public ServiceCallConfigurationDefinition serviceCallConfiguration() throws Exception {
         ServiceCallConfigurationDefinition definition = new ServiceCallConfigurationDefinition();
         ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getComponent(), definition::setComponent);

@@ -84,6 +84,9 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
     protected void doStop() throws Exception {
         log.info("Stopping Couchbase consumer");
         super.doStop();
+        if (client != null) {
+            client.shutdown();
+        }
     }
 
     @Override

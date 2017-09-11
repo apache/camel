@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "name": "endpoints.camelroutes.path",
+      "type": "java.lang.String",
+      "description": "The URL path to use for Camel Routes actuator endpoint.",
+      "defaultValue": "/camel/routes"
+    },
+    {
+      "name": "endpoints.camelroutes.enabled",
+      "type": "java.lang.Boolean",
+      "description": "To turn on or off information about Camel Routes via actuator endpoint.",
+      "defaultValue": true
+    }
+  ]
+}

@@ -33,6 +33,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.mllp.impl.Hl7Util;
 import org.apache.camel.component.mllp.impl.MllpBufferedSocketWriter;
 import org.apache.camel.component.mllp.impl.MllpSocketReader;
@@ -74,6 +76,7 @@ import static org.apache.camel.component.mllp.MllpEndpoint.SEGMENT_DELIMITER;
 /**
  * The MLLP consumer.
  */
+@ManagedResource(description = "MllpTcpServer Consumer")
 public class MllpTcpServerConsumer extends DefaultConsumer {
     public static final int SOCKET_STARTUP_TEST_WAIT = 100;
     public static final int SOCKET_STARTUP_TEST_READ_TIMEOUT = 250;
@@ -95,6 +98,33 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         log.debug("doStart() - creating acceptor thread");
 
+        startMllpConsumer();
+
+        super.doStart();
+    }
+
+    @ManagedOperation(description = "Check server connection")
+    public boolean managedCheckConnection() {
+        boolean isValid = true;
+        try {
+            InetSocketAddress socketAddress;
+            if (null == endpoint.getHostname()) {
+                socketAddress = new InetSocketAddress(endpoint.getPort());
+            } else {
+                socketAddress = new InetSocketAddress(endpoint.getHostname(), endpoint.getPort());
+            }
+            Socket checkSocket = new Socket();
+            checkSocket.connect(socketAddress, 100);
+            checkSocket.close();
+        } catch (Exception e) {
+            isValid = false;
+            log.debug("JMX check connection: {}", e);
+        }
+        return isValid;
+    }
+
+    @ManagedOperation(description = "Starts serverSocket thread and waits for requests")
+    public void startMllpConsumer() throws IOException, InterruptedException {
         ServerSocket serverSocket = new ServerSocket();
         if (null != endpoint.receiveBufferSize) {
             serverSocket.setReceiveBufferSize(endpoint.receiveBufferSize);
@@ -129,14 +159,19 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
         serverSocketThread = new ServerSocketThread(serverSocket);
         serverSocketThread.start();
-
-        super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
         log.debug("doStop()");
 
+        stopMllpConsumer();
+
+        super.doStop();
+    }
+
+    @ManagedOperation(description = "Stops client threads and serverSocket thread")
+    public void stopMllpConsumer() {
         // Close any client sockets that are currently open
         for (ClientSocketThread clientSocketThread: clientThreads) {
             clientSocketThread.interrupt();
@@ -158,8 +193,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         }
 
         serverSocketThread = null;
-
-        super.doStop();
     }
 
     /**

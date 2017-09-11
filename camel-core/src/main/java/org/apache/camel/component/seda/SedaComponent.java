@@ -36,13 +36,15 @@ import org.slf4j.LoggerFactory;
 public class SedaComponent extends UriEndpointComponent {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final int maxConcurrentConsumers = 500;
-    @Metadata(label = "advanced")
-    protected int queueSize;
+
     @Metadata(label = "consumer", defaultValue = "1")
     protected int concurrentConsumers = 1;
-    private final Map<String, QueueReference> queues = new HashMap<String, QueueReference>();
     @Metadata(label = "advanced")
-    private BlockingQueueFactory<Exchange> defaultQueueFactory = new LinkedBlockingQueueFactory<Exchange>();
+    protected int queueSize;
+    @Metadata(label = "advanced")
+    protected BlockingQueueFactory<Exchange> defaultQueueFactory = new LinkedBlockingQueueFactory<Exchange>();
+
+    private final Map<String, QueueReference> queues = new HashMap<String, QueueReference>();
 
     public SedaComponent() {
         super(SedaEndpoint.class);
@@ -169,8 +171,8 @@ public class SedaComponent extends UriEndpointComponent {
     @Override
     @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        int consumers = getAndRemoveParameter(parameters, "concurrentConsumers", Integer.class, concurrentConsumers);
-        boolean limitConcurrentConsumers = getAndRemoveParameter(parameters, "limitConcurrentConsumers", Boolean.class, true);
+        int consumers = getAndRemoveOrResolveReferenceParameter(parameters, "concurrentConsumers", Integer.class, concurrentConsumers);
+        boolean limitConcurrentConsumers = getAndRemoveOrResolveReferenceParameter(parameters, "limitConcurrentConsumers", Boolean.class, true);
         if (limitConcurrentConsumers && consumers >  maxConcurrentConsumers) {
             throw new IllegalArgumentException("The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than "
                     + maxConcurrentConsumers + " was " + consumers);

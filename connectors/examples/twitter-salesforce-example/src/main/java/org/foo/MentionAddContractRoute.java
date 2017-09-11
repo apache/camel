@@ -25,7 +25,7 @@ public class MentionAddContractRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("twitter-mention")
-            .log("I was mentioned by ${body}")
+            .log("Tweet id: ${body.id}. I was mentioned by: ${body}")
             .process("tweetToContactMapper")
             .to("salesforce-upsert-contact?sObjectIdName=TwitterScreenName__c");
     }

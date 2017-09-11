@@ -182,6 +182,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
         buffer.append("\n    \"label\": \"").append(getOrElse(componentModel.getLabel(), "")).append("\",");
         buffer.append("\n    \"deprecated\": ").append(componentModel.isDeprecated()).append(",");
+        buffer.append("\n    \"deprecationNote\": \"").append(getOrElse(componentModel.getDeprecationNode(), "")).append("\",");
         buffer.append("\n    \"async\": ").append(componentModel.isAsync()).append(",");
         buffer.append("\n    \"consumerOnly\": ").append(componentModel.isConsumerOnly()).append(",");
         buffer.append("\n    \"producerOnly\": ").append(componentModel.isProducerOnly()).append(",");
@@ -229,8 +230,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             boolean multiValue = false;
             boolean asPredicate = false;
 
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(),"property", required, entry.getType(), defaultValue, doc,
-                entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "property", required, entry.getType(), defaultValue, doc,
+                entry.isDeprecated(), entry.getDeprecationNode(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
                 false, null, asPredicate, optionalPrefix, prefix, multiValue));
         }
         buffer.append("\n  },");
@@ -281,8 +282,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             boolean multiValue = false;
             boolean asPredicate = false;
 
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(),"path", required, entry.getType(), defaultValue, doc,
-                entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "path", required, entry.getType(), defaultValue, doc,
+                entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
                 false, null, asPredicate, optionalPrefix, prefix, multiValue));
         }
 
@@ -328,7 +329,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             boolean asPredicate = false;
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "parameter", required, entry.getType(), defaultValue,
-                doc, entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
+                doc, entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
                 false, null, asPredicate, optionalPrefix, prefix, multiValue));
         }
         buffer.append("\n  }");
@@ -395,6 +396,12 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             }
             model.setDeprecated(deprecated);
 
+            String deprecationNote = null;
+            if (endpointClassElement.getAnnotation(Metadata.class) != null) {
+                deprecationNote = endpointClassElement.getAnnotation(Metadata.class).deprecationNode();
+            }
+            model.setDeprecationNode(deprecationNote);
+
             if (map.containsKey("groupId")) {
                 model.setGroupId(map.get("groupId"));
             } else {
@@ -444,6 +451,10 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 String methodName = method.getSimpleName().toString();
                 boolean deprecated = method.getAnnotation(Deprecated.class) != null;
                 Metadata metadata = method.getAnnotation(Metadata.class);
+                String deprecationNote = null;
+                if (metadata != null) {
+                    deprecationNote = metadata.deprecationNode();
+                }
 
                 // must be the setter
                 boolean isSetter = methodName.startsWith("set") && method.getParameters().size() == 1 & method.getReturnType().getKind().equals(TypeKind.VOID);
@@ -524,9 +535,14 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     }
                 }
 
+                // the field type may be overloaded by another type
+                if (metadata != null && !Strings.isNullOrEmpty(metadata.javaType())) {
+                    fieldTypeName = metadata.javaType();
+                }
+
                 String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                 ComponentOption option = new ComponentOption(name, displayName, fieldTypeName, required, defaultValue, defaultValueNote,
-                        docComment.trim(), deprecated, secret, group, label, isEnum, enums);
+                        docComment.trim(), deprecated, deprecationNote, secret, group, label, isEnum, enums);
                 componentOptions.add(option);
             }
 
@@ -555,6 +571,10 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
                 Metadata metadata = fieldElement.getAnnotation(Metadata.class);
                 boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+                String deprecationNote = null;
+                if (metadata != null) {
+                    deprecationNote = metadata.deprecationNode();
+                }
                 Boolean secret = metadata != null ? metadata.secret() : null;
 
                 UriPath path = fieldElement.getAnnotation(UriPath.class);
@@ -629,7 +649,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
                     String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                     boolean isSecret = secret != null ? secret : false;
-                    EndpointPath ep = new EndpointPath(name, displayName, fieldTypeName, required, defaultValue, docComment, deprecated, isSecret, group, label, isEnum, enums);
+                    EndpointPath ep = new EndpointPath(name, displayName, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote,
+                        isSecret, group, label, isEnum, enums);
                     endpointPaths.add(ep);
                 }
 
@@ -724,7 +745,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         boolean isSecret = secret != null ? secret : param.secret();
                         String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                         EndpointOption option = new EndpointOption(name, displayName, fieldTypeName, required, defaultValue, defaultValueNote,
-                                docComment.trim(), paramOptionalPrefix, paramPrefix, multiValue, deprecated, isSecret, group, label, isEnum, enums);
+                                docComment.trim(), paramOptionalPrefix, paramPrefix, multiValue, deprecated, deprecationNote, isSecret, group, label, isEnum, enums);
                         endpointOptions.add(option);
                     }
                 }

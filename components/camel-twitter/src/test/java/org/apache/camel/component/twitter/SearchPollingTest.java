@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class SearchPollingTest extends CamelTwitterConsumerTestSupport {
     @Override
     protected String getUri() {
-        return "twitter://search?type=polling&keywords=java&delay=5000&";
+        return "twitter-search://java?type=polling&delay=5000&";
     }
 
     @Override

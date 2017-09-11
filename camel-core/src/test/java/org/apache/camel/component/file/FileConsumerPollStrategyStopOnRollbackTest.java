@@ -34,7 +34,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
     private static int counter;
     private static volatile String event = "";
 
-    private String fileUrl = "file://target/pollstrategy/?pollStrategy=#myPoll";
+    private String fileUrl = "file://target/pollstrategy/?pollStrategy=#myPoll&initialDelay=0&delay=10";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -55,7 +55,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
         mock.expectedMessageCount(0);
 
         // let it run for a little while and since it fails first time we should never get a message
-        mock.assertIsSatisfied(2000);
+        mock.assertIsSatisfied(50);
 
         assertEquals("rollback", event);
     }

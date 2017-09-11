@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import org.apache.camel.component.sql.stored.template.TemplateParser;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -29,21 +30,21 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class CallableStatementWrapperFactory extends ServiceSupport {
 
     public static final int TEMPLATE_CACHE_DEFAULT_SIZE = 200;
-
     public static final int BATCH_TEMPLATE_CACHE_DEFAULT_SIZE = 200;
 
     final JdbcTemplate jdbcTemplate;
-
     final TemplateParser templateParser;
+    boolean function;
 
-    private final LRUCache<String, TemplateStoredProcedure> templateCache = new LRUCache<>(TEMPLATE_CACHE_DEFAULT_SIZE);
+    @SuppressWarnings("unchecked")
+    private final LRUCache<String, TemplateStoredProcedure> templateCache = LRUCacheFactory.newLRUCache(TEMPLATE_CACHE_DEFAULT_SIZE);
+    @SuppressWarnings("unchecked")
+    private final LRUCache<String, BatchCallableStatementCreatorFactory> batchTemplateCache = LRUCacheFactory.newLRUCache(BATCH_TEMPLATE_CACHE_DEFAULT_SIZE);
 
-    private final LRUCache<String, BatchCallableStatementCreatorFactory> batchTemplateCache = new LRUCache<>(BATCH_TEMPLATE_CACHE_DEFAULT_SIZE);
-
-    public CallableStatementWrapperFactory(JdbcTemplate jdbcTemplate, TemplateParser
-            templateParser) {
+    public CallableStatementWrapperFactory(JdbcTemplate jdbcTemplate, TemplateParser templateParser, boolean function) {
         this.jdbcTemplate = jdbcTemplate;
         this.templateParser = templateParser;
+        this.function = function;
     }
 
     public StatementWrapper create(String sql) throws SQLException {
@@ -68,7 +69,7 @@ public class CallableStatementWrapperFactory extends ServiceSupport {
             return templateStoredProcedure;
         }
 
-        templateStoredProcedure = new TemplateStoredProcedure(jdbcTemplate, templateParser.parseTemplate(sql));
+        templateStoredProcedure = new TemplateStoredProcedure(jdbcTemplate, templateParser.parseTemplate(sql), function);
 
         this.templateCache.put(sql, templateStoredProcedure);
 

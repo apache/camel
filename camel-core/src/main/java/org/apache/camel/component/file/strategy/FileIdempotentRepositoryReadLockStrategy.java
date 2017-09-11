@@ -43,7 +43,7 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
     private static final transient Logger LOG = LoggerFactory.getLogger(FileIdempotentRepositoryReadLockStrategy.class);
 
     private GenericFileEndpoint<File> endpoint;
-    private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
+    private LoggingLevel readLockLoggingLevel = LoggingLevel.DEBUG;
     private CamelContext camelContext;
     private IdempotentRepository<String> idempotentRepository;
     private boolean removeOnRollback = true;

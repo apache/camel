@@ -20,6 +20,8 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Supplier;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -28,6 +30,7 @@ import org.apache.camel.InvokeOnHeaders;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,30 +41,86 @@ import org.slf4j.LoggerFactory;
 public class HeaderSelectorProducer extends BaseSelectorProducer {
     private static final Logger LOGGER = LoggerFactory.getLogger(HeaderSelectorProducer.class);
 
-    private final String header;
-    private final String defaultHeaderValue;
+    private final Supplier<String> headerSupplier;
+    private final Supplier<String> defaultHeaderValueSupplier;
     private final Object target;
     private Map<String, Processor> handlers;
 
+    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier) {
+        this(endpoint, headerSupplier, () -> null, null);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, boolean caseSensitive) {
+        this(endpoint, headerSupplier, () -> null, null, caseSensitive);
+    }
+
     public HeaderSelectorProducer(Endpoint endpoint, String header) {
-        this(endpoint, header, null, null);
+        this(endpoint, () -> header, () -> null, null);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint, String header, boolean caseSensitive) {
+        this(endpoint, () -> header, () -> null, null, caseSensitive);
     }
 
     public HeaderSelectorProducer(Endpoint endpoint, String header, Object target) {
-        this(endpoint, header, null, target);
+        this(endpoint, () -> header, () -> null, target);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint, String header, Object target, boolean caseSensitive) {
+        this(endpoint, () -> header, () -> null, target, caseSensitive);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint,  Supplier<String> headerSupplier, Object target) {
+        this(endpoint, headerSupplier, () -> null, target);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint,  Supplier<String> headerSupplier, Object target, boolean caseSensitive) {
+        this(endpoint, headerSupplier, () -> null, target, caseSensitive);
     }
 
     public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue) {
-        this(endpoint, header, defaultHeaderValue, null);
+        this(endpoint, () -> header, () -> defaultHeaderValue, null);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, boolean caseSensitive) {
+        this(endpoint, () -> header, () -> defaultHeaderValue, null, caseSensitive);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint, String header, Supplier<String> defaultHeaderValueSupplier) {
+        this(endpoint, () -> header, defaultHeaderValueSupplier, null);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint, String header, Supplier<String> defaultHeaderValueSupplier, boolean caseSensitive) {
+        this(endpoint, () -> header, defaultHeaderValueSupplier, null, caseSensitive);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Supplier<String> defaultHeaderValueSupplier) {
+        this(endpoint, headerSupplier, defaultHeaderValueSupplier, null);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Supplier<String> defaultHeaderValueSupplier, boolean caseSensitive) {
+        this(endpoint, headerSupplier, defaultHeaderValueSupplier, null, caseSensitive);
     }
 
     public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, Object target) {
+        this(endpoint, () -> header, () -> defaultHeaderValue, target);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, Object target, boolean caseSensitive) {
+        this(endpoint, () -> header, () -> defaultHeaderValue, target, caseSensitive);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Supplier<String> defaultHeaderValueSupplier, Object target) {
+        this(endpoint, headerSupplier, defaultHeaderValueSupplier, target, true);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Supplier<String> defaultHeaderValueSupplier, Object target, boolean caseSensitive) {
         super(endpoint);
 
-        this.header = header;
-        this.defaultHeaderValue = defaultHeaderValue;
+        this.headerSupplier = ObjectHelper.notNull(headerSupplier, "headerSupplier");
+        this.defaultHeaderValueSupplier = ObjectHelper.notNull(defaultHeaderValueSupplier, "defaultHeaderValueSupplier");
         this.target = target != null ? target : this;
-        this.handlers = new HashMap<>();
+        this.handlers = caseSensitive ?  new HashMap<>() : new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     }
 
     @Override
@@ -84,7 +143,12 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
 
     @Override
     protected Processor getProcessor(Exchange exchange) throws Exception {
-        final String action = exchange.getIn().getHeader(header, defaultHeaderValue, String.class);
+        String header = headerSupplier.get();
+        String action = exchange.getIn().getHeader(header, String.class);
+
+        if (action == null) {
+            action = defaultHeaderValueSupplier.get();
+        }
         if (action == null) {
             throw new NoSuchHeaderException(exchange, header, String.class);
         }
@@ -94,7 +158,7 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
 
     protected void onMissingProcessor(Exchange exchange) throws Exception {
         throw new IllegalStateException(
-            "Unsupported operation " + exchange.getIn().getHeader(header)
+            "Unsupported operation " + exchange.getIn().getHeader(headerSupplier.get())
         );
     }
 

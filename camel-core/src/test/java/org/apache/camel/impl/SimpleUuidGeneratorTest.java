@@ -43,7 +43,7 @@ public class SimpleUuidGeneratorTest extends TestCase {
         }
         LOG.info("Last id:  " + uuidGenerator.generateUuid());
 
-        LOG.info("Took " + TimeUtils.printDuration(watch.stop()));
+        LOG.info("Took " + TimeUtils.printDuration(watch.taken()));
     }
 
 }

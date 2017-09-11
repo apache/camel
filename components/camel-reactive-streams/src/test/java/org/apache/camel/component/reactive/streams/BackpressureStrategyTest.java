@@ -69,7 +69,7 @@ public class BackpressureStrategyTest extends CamelTestSupport {
     public void testBackpressureDropStrategy() throws Exception {
 
         ReactiveStreamsComponent comp = (ReactiveStreamsComponent) context().getComponent("reactive-streams");
-        comp.setBackpressureStrategy(ReactiveStreamsBackpressureStrategy.DROP);
+        comp.setBackpressureStrategy(ReactiveStreamsBackpressureStrategy.OLDEST);
 
         new RouteBuilder() {
             @Override
@@ -164,7 +164,7 @@ public class BackpressureStrategyTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("timer:gen?period=20&repeatCount=20")
                         .setBody().header(Exchange.TIMER_COUNTER)
-                        .to("reactive-streams:integers?backpressureStrategy=DROP");
+                        .to("reactive-streams:integers?backpressureStrategy=OLDEST");
             }
         }.addRoutesToCamelContext(context);
 
@@ -197,10 +197,5 @@ public class BackpressureStrategyTest extends CamelTestSupport {
         assertEquals(3, sum); // 1 + 2 = 3
 
         subscriber.cancel();
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
     }
 }

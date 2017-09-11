@@ -73,7 +73,7 @@ public class XsltFromFileExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/xslt?moveFailed=error&move=ok")
+                from("file:target/xslt?moveFailed=error&move=ok&initialDelay=0&delay=10")
                     .onException(Exception.class)
                         .to("mock:error")
                     .end()

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ahc;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import org.apache.camel.Exchange;
@@ -103,6 +104,7 @@ public class AhcProducerSessionTest extends BaseAhcTest {
                                 session.setAttribute("foo", "bar");
                                 message.setBody("New " + body);
                             }
+                            message.getResponse().addCookie(new Cookie("othercookie", "value"));
                         }
                     });
             }

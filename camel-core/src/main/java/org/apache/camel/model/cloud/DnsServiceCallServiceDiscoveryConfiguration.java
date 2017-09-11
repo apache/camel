@@ -28,9 +28,9 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DnsServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlAttribute @Metadata(defaultValue = "_tcp")
-    String proto = "_tcp";
+    private String proto = "_tcp";
     @XmlAttribute
-    String domain;
+    private String domain;
 
     public DnsServiceCallServiceDiscoveryConfiguration() {
         this(null);

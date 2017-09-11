@@ -207,6 +207,11 @@ public class RouteService extends ChildServiceSupport {
 
             // add routes to camel context
             camelContext.addRouteCollection(routes);
+
+            // add the routes to the inflight registry so they are pre-installed
+            for (Route route : routes) {
+                camelContext.getInflightRepository().addRoute(route.getId());
+            }
         }
     }
 
@@ -301,6 +306,7 @@ public class RouteService extends ChildServiceSupport {
                         routePolicy.onRemove(route);
                     }
                 }
+
                 // fire event
                 EventHelper.notifyRouteRemoved(camelContext, route);
             }

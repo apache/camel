@@ -34,7 +34,7 @@ public class TestAnyOrderTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("test:seda:testme?anyOrder=true");
+                        .to("test:seda:testme?anyOrder=true&timeout=0");
             }
         });
         context.start();

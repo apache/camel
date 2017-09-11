@@ -21,21 +21,19 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.hazelcast.queue.HazelcastQueueConfiguration;
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaConfiguration;
 import org.apache.camel.component.hazelcast.topic.HazelcastTopicConfiguration;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
  * The hazelcast component allows you to work with the Hazelcast distributed data grid / cache.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast", title = "Hazelcast", syntax = "hazelcast:command:cacheName", consumerClass = HazelcastDefaultConsumer.class, label = "cache,datagrid")
 public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
     protected HazelcastCommand command;
     @UriPath @Metadata(required = "true")
     protected String cacheName;
@@ -43,13 +41,14 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
     protected HazelcastInstance hazelcastInstance;
     @UriParam
     protected String hazelcastInstanceName;
-    @UriParam(enums = "put,delete,get,update,query,getAll,clear,evict,evictAll,putIfAbsent,addAll,removeAll,retainAll,valueCount,containsKey,containsValue,keySet,removevalue,increment"
-        + ",decrement,setvalue,destroy,compareAndSet,getAndAdd,add,offer,peek,poll,remainingCapacity,drainTo,publish,capacity,readonceHead,readonceTail")
-    private String defaultOperation;
+    @UriParam
+    private HazelcastOperation defaultOperation;
     @UriParam
     private HazelcastSedaConfiguration hazelcastSedaConfiguration; // to include component schema docs
     @UriParam
     private HazelcastTopicConfiguration hazelcastTopicConfiguration; 
+    @UriParam
+    private HazelcastQueueConfiguration hazelcastQueueConfiguration; 
 
     public HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component) {
         this(hazelcastInstance, endpointUri, component, null);
@@ -117,11 +116,11 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
     /**
      * To specify a default operation to use, if no operation header has been provided.
      */
-    public void setDefaultOperation(String defaultOperation) {
+    public void setDefaultOperation(HazelcastOperation defaultOperation) {
         this.defaultOperation = defaultOperation;
     }
 
-    public String getDefaultOperation() {
+    public HazelcastOperation getDefaultOperation() {
         return defaultOperation;
     }
 

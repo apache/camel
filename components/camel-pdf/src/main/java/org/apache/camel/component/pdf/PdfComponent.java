@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.pdf;
 
- import java.net.URI;
+import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;

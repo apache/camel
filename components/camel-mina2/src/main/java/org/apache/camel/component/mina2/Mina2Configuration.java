@@ -51,6 +51,8 @@ public class Mina2Configuration implements Cloneable {
     private ProtocolCodecFactory codec;
     @UriParam(label = "codec")
     private String encoding;
+    @UriParam(defaultValue = "10000")
+    private long writeTimeout = 10000;
     @UriParam(defaultValue = "30000")
     private long timeout = 30000;
     @UriParam(label = "producer,advanced", defaultValue = "true")
@@ -198,6 +200,17 @@ public class Mina2Configuration implements Cloneable {
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
+    }
+
+    public long getWriteTimeout() {
+        return writeTimeout;
+    }
+
+    /**
+     * Maximum amount of time it should take to send data to the MINA session. Default is 10000 milliseconds.
+     */
+    public void setWriteTimeout(long writeTimeout) {
+        this.writeTimeout = writeTimeout;
     }
 
     public long getTimeout() {

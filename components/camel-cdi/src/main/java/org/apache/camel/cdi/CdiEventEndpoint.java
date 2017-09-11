@@ -165,7 +165,7 @@ public final class CdiEventEndpoint<T> extends DefaultEndpoint {
         AnyEvent instance = target.produce(ctx);
         target.inject(instance, ctx);
         return new CdiEventProducer<>(this, instance.event
-            .select(literal, qualifiers.stream().toArray(Annotation[]::new)));
+            .select(literal, qualifiers.toArray(new Annotation[0])));
     }
 
     @Vetoed

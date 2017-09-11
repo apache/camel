@@ -31,6 +31,7 @@ public class EndpointOptionModel {
     private String prefix;
     private String multiValue;
     private String deprecated;
+    private String deprecationNote;
     private String secret;
     private String defaultValue;
     private String description;
@@ -125,6 +126,14 @@ public class EndpointOptionModel {
 
     public void setDeprecated(String deprecated) {
         this.deprecated = deprecated;
+    }
+
+    public String getDeprecationNote() {
+        return deprecationNote;
+    }
+
+    public void setDeprecationNote(String deprecationNote) {
+        this.deprecationNote = deprecationNote;
     }
 
     public String getSecret() {

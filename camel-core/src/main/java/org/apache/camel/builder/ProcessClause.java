@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 
-// TODO: Document me
 public class ProcessClause<T> implements Processor {
     private final T parent;
     private Processor processor;
@@ -45,9 +44,7 @@ public class ProcessClause<T> implements Processor {
     // *******************************
 
     /**
-     * TODO: document
-     *
-     * Note: this is experimental and subject to changes in future releases.
+     * Define a {@link Processor} which targets the Exchange.
      */
     public T exchange(final Consumer<Exchange> consumer) {
         processor = consumer::accept;
@@ -58,11 +55,15 @@ public class ProcessClause<T> implements Processor {
     // *******************************
     // Message
     // *******************************
-
+    
     /**
-     * TODO: document
-     *
-     * Note: this is experimental and subject to changes in future releases.
+     * Define a {@link Processor} which targets the Exchange In Message.
+     *     
+     * <blockquote><pre>{@code
+     * from("direct:aggregate")
+     *     .process()
+     *         .message(m -> m.setHeader("HasBody", m.getBody() != null));
+     * }</pre></blockquote>
      */
     public T message(final Consumer<Message> consumer) {
         processor = e -> consumer.accept(e.getIn());
@@ -74,9 +75,13 @@ public class ProcessClause<T> implements Processor {
     // *******************************
 
     /**
-     * TODO: document
-     *
-     * Note: this is experimental and subject to changes in future releases.
+     * Define a {@link Processor} which targets the Exchange In Body.
+     *     
+     * <blockquote><pre>{@code
+     * from("direct:aggregate")
+     *     .process()
+     *         .body(System.out::println);
+     * }</pre></blockquote>
      */
     public T body(final Consumer<Object> consumer) {
         processor = e -> consumer.accept(e.getIn().getBody());
@@ -84,19 +89,27 @@ public class ProcessClause<T> implements Processor {
     }
 
     /**
-     * TODO: document
-     *
-     * Note: this is experimental and subject to changes in future releases.
+     * Define a {@link Processor} which targets the typed Exchange In Body.
+     *     
+     * <blockquote><pre>{@code
+     * from("direct:aggregate")
+     *     .process()
+     *         .body(MyObject.class, MyObject::dumpToStdOut);
+     * }</pre></blockquote>
      */
     public <B> T body(Class<B> type, final Consumer<B> consumer) {
         processor = e -> consumer.accept(e.getIn().getBody(type));
         return parent;
     }
-
+    
     /**
-     * TODO: document
-     *
-     * Note: this is experimental and subject to changes in future releases.
+     * Define a {@link Processor} which targets the Exchange In Body and its Headers.
+     *     
+     * <blockquote><pre>{@code
+     * from("direct:aggregate")
+     *     .process()
+     *         .body((b, h) -> h.put("ClassName", b.getClass().getName()));
+     * }</pre></blockquote>
      */
     public T body(final BiConsumer<Object, Map<String, Object>> consumer) {
         processor = e -> consumer.accept(
@@ -105,11 +118,19 @@ public class ProcessClause<T> implements Processor {
         );
         return parent;
     }
-
+    
     /**
-     * TODO: document
-     *
-     * Note: this is experimental and subject to changes in future releases.
+     * Define a {@link Processor} which targets the typed Exchange In Body and its Headers.
+     *     
+     * <blockquote><pre>{@code
+     * from("direct:aggregate")
+     *     .process()
+     *         .body(MyObject.class, (b, h) -> { 
+     *             if (h.containsKey("dump")) {
+     *                  b.dumpToStdOut();
+     *             }
+     *         });
+     * }</pre></blockquote>
      */
     public <B> T body(Class<B> type, final BiConsumer<B, Map<String, Object>> consumer) {
         processor = e -> consumer.accept(

@@ -48,6 +48,7 @@ public class ExceptionThrownFromOnExceptionNoEndlessLoopTest extends ContextTest
             @Override
             public void configure() throws Exception {
                 onException(IOException.class)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(3)
                     .to("mock:b")
                     .process(new Processor() {

@@ -91,7 +91,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
                 Future<File> future = futures.get(i);
                 future.get();
             }
-            stopWatch.stop();
+            stopWatch.taken();
 
             log.info(String.format("test%d.%s=%d\n", numberOfRequests, endpoint, stopWatch.taken()));
         }

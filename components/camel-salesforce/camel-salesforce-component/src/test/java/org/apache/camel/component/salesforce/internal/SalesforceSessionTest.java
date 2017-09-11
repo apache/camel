@@ -16,21 +16,32 @@
  */
 package org.apache.camel.component.salesforce.internal;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
+import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.eclipse.jetty.client.api.ContentResponse;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SalesforceSessionTest {
 
-    private KeyStoreParameters parameters;
+    private static final int TIMEOUT = 1;
+
+    private final KeyStoreParameters parameters;
 
     public SalesforceSessionTest() {
         parameters = new KeyStoreParameters();
@@ -40,15 +51,58 @@ public class SalesforceSessionTest {
     }
 
     @Test
-    public void shouldGenerateJwtTokens() throws GeneralSecurityException, IOException {
-        SalesforceLoginConfig config = new SalesforceLoginConfig("https://login.salesforce.com", "ABCD", "username",
-            parameters, true);
+    public void shouldGenerateJwtTokens() {
+        final SalesforceLoginConfig config = new SalesforceLoginConfig("https://login.salesforce.com", "ABCD",
+            "username", parameters, true);
 
-        SalesforceSession session = new SalesforceSession(new DefaultCamelContext(), mock(SalesforceHttpClient.class),
-            1, config);
+        final SalesforceSession session = new SalesforceSession(new DefaultCamelContext(),
+            mock(SalesforceHttpClient.class), TIMEOUT, config);
 
-        String jwtAssertion = session.generateJwtAssertion();
+        final String jwtAssertion = session.generateJwtAssertion();
 
         Assert.assertNotNull(jwtAssertion);
+    }
+
+    @Test
+    public void shouldUseTheOverridenInstanceUrl() throws Exception {
+        final SalesforceLoginConfig config = new SalesforceLoginConfig("https://login.salesforce.com", "clientId",
+            "clientSecret", "username", "password", true);
+        config.setInstanceUrl("https://custom.salesforce.com:8443");
+
+        final SalesforceSession session = login(config);
+
+        assertEquals("https://custom.salesforce.com:8443", session.getInstanceUrl());
+    }
+
+    @Test
+    public void shouldUseTheSalesforceSuppliedInstanceUrl() throws Exception {
+        final SalesforceLoginConfig config = new SalesforceLoginConfig("https://login.salesforce.com", "clientId",
+            "clientSecret", "username", "password", true);
+
+        final SalesforceSession session = login(config);
+
+        assertEquals("https://eu11.salesforce.com", session.getInstanceUrl());
+    }
+
+    static SalesforceSession login(final SalesforceLoginConfig config)
+        throws InterruptedException, TimeoutException, ExecutionException, SalesforceException {
+        final SalesforceHttpClient client = mock(SalesforceHttpClient.class);
+
+        final SalesforceSession session = new SalesforceSession(new DefaultCamelContext(), client, TIMEOUT, config);
+
+        final Request request = mock(Request.class);
+        when(client.POST(eq("https://login.salesforce.com/services/oauth2/token"))).thenReturn(request);
+
+        when(request.content(any())).thenReturn(request);
+        when(request.timeout(anyLong(), any())).thenReturn(request);
+
+        final ContentResponse response = mock(ContentResponse.class);
+        when(request.send()).thenReturn(response);
+
+        when(response.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(response.getContentAsString()).thenReturn("{\"instance_url\": \"https://eu11.salesforce.com\"}");
+
+        session.login(null);
+        return session;
     }
 }

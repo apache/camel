@@ -31,6 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class SedaPurgeWhenStoppingTest extends ContextTestSupport {
 
     private final CountDownLatch latch = new CountDownLatch(1);
+    private final CountDownLatch latch2 = new CountDownLatch(1);
 
     public void testPurgeWhenStopping() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -41,10 +42,11 @@ public class SedaPurgeWhenStoppingTest extends ContextTestSupport {
         }
 
         context.startRoute("myRoute");
-        latch.await(5, TimeUnit.SECONDS);
+        latch.await(2, TimeUnit.SECONDS);
         context.stopRoute("myRoute");
+        latch2.countDown();
 
-        mock.setAssertPeriod(2000);
+        mock.setAssertPeriod(500);
         mock.assertIsSatisfied();
     }
 
@@ -58,7 +60,7 @@ public class SedaPurgeWhenStoppingTest extends ContextTestSupport {
                         @Override
                         public void process(Exchange exchange) throws Exception {
                             latch.countDown();
-                            Thread.sleep(500);
+                            latch2.await(2, TimeUnit.SECONDS);
                         }
                     })
                     .to("mock:result");

@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
@@ -200,9 +201,16 @@ public class RestProducer extends DefaultAsyncProducer {
             // HTTP_PATH header will be present, we remove it here
             // as the REST_HTTP_URI contains the full URI for the
             // request and every other HTTP producer will concatenate
-            // REST_HTTP_URI with HTTP_PATH resulting in incorrect
-            // URIs
+            // REST_HTTP_URI with HTTP_PATH resulting in incorrect URIs
             inMessage.removeHeader(Exchange.HTTP_PATH);
+        }
+
+        // method
+        String method = getEndpoint().getMethod();
+        if (method != null) {
+            // the method should be in upper case 
+            String upper = method.toUpperCase(Locale.US);
+            inMessage.setHeader(Exchange.HTTP_METHOD, upper);
         }
 
         final String produces = getEndpoint().getProduces();

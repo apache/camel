@@ -55,7 +55,7 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/include/?include=^report.*txt$")
+                from("file://target/include/?initialDelay=0&delay=10&include=^report.*txt$")
                     .convertBodyTo(String.class).to("mock:result");
             }
         };

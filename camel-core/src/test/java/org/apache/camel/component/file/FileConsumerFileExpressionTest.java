@@ -56,7 +56,7 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/filelanguage/bean/"
-                      + "?fileName=${bean:counter.next}.txt&delete=true").to("mock:result");
+                      + "?initialDelay=0&delay=10&fileName=${bean:counter.next}.txt&delete=true").to("mock:result");
             }
         });
         context.start();
@@ -64,7 +64,6 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
         // we should only get one as we only poll a single file using the file expression
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Goodday World");
-        mock.setResultWaitTime(5000);
 
         assertMockEndpointsSatisfied();
     }
@@ -79,7 +78,7 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("file://target/filelanguage/date/"
-                      + "?fileName=myfile-${date:now:yyyyMMdd}.txt").convertBodyTo(String.class).to("mock:result");
+                      + "?initialDelay=0&delay=10&fileName=myfile-${date:now:yyyyMMdd}.txt").convertBodyTo(String.class).to("mock:result");
                 // END SNIPPET: e1
             }
         });
@@ -88,7 +87,6 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
         // we should only get one as we only poll a single file using the file expression
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Goodday World");
-        mock.setResultWaitTime(5000);
 
         assertMockEndpointsSatisfied();
     }

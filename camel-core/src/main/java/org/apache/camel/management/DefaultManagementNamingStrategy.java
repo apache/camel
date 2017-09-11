@@ -52,6 +52,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     public static final String KEY_TYPE = "type";
     public static final String KEY_CONTEXT = "context";
     public static final String TYPE_CONTEXT = "context";
+    public static final String TYPE_ROUTE_CONTROLLER = "routecontroller";
     public static final String TYPE_ENDPOINT = "endpoints";
     public static final String TYPE_DATAFORMAT = "dataformats";
     public static final String TYPE_PROCESSOR = "processors";
@@ -110,6 +111,23 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         }
         String name = context.getName();
         return getObjectNameForCamelContext(managementName, name);
+    }
+
+    @Override
+    public ObjectName getObjectNameForRouteController(CamelContext context) throws MalformedObjectNameException {
+        // prefer to use the given management name if previously assigned
+        String managementName = context.getManagementName();
+        if (managementName == null) {
+            managementName = context.getManagementNameStrategy().getName();
+        }
+
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(managementName)).append(",");
+        buffer.append(KEY_TYPE + "=" + TYPE_ROUTE_CONTROLLER + ",");
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(context.getName()));
+
+        return createObjectName(buffer);
     }
 
     public ObjectName getObjectNameForEndpoint(Endpoint endpoint) throws MalformedObjectNameException {

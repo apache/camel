@@ -71,7 +71,8 @@ with the following path and query parameters:
 The component supports producer endpoint only. An attempt to create a
 consumer endpoint will result in an `UnsupportedOperationException`. +
  The body of the message must be a map (an instance of `java.util.Map`).
-This map must contain at least an entry with the key *`dn`* (not needed for function_driven operation) that
+Unless a base DN is specified by in the configuration of your ContextSource,
+this map must contain at least an entry with the key *`dn`* (not needed for function_driven operation) that
 specifies the root node for the LDAP operation to be performed. Other
 entries of the map are operation-specific (see below).
 

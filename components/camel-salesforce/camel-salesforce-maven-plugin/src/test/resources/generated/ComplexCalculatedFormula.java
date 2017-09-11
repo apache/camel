@@ -7,6 +7,8 @@ package $packageName;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Generated;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
@@ -23,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Salesforce DTO for SObject ComplexCalculatedFormula
  */
+@Generated("org.apache.camel.maven.CamelSalesforceMojo")
 @XStreamAlias("ComplexCalculatedFormula")
 public class ComplexCalculatedFormula extends AbstractDescribedSObjectBase {
 
@@ -84,48 +87,8 @@ public class ComplexCalculatedFormula extends AbstractDescribedSObjectBase {
         final List<SObjectField> fields1 = new ArrayList<>();
         description.setFields(fields1);
 
-        final SObjectField sObjectField1 = new SObjectField();
+        final SObjectField sObjectField1 = createField("ComplexCalculatedFormula", "A complex calculated formula", "string", "xsd:string", 1300, false, true, false, false, true, false, false);
         fields1.add(sObjectField1);
-
-        sObjectField1.setWriteRequiresMasterRead(false);
-        sObjectField1.setNillable(true);
-        sObjectField1.setCreateable(false);
-        sObjectField1.setEncrypted(false);
-        sObjectField1.setDigits("0");
-        sObjectField1.setDependentPicklist(false);
-        sObjectField1.setLabel("A complex calculated formula");
-        sObjectField1.setHighScaleNumber(false);
-        sObjectField1.setDisplayLocationInDecimal(false);
-        sObjectField1.setName("ComplexCalculatedFormula");
-        sObjectField1.setHtmlFormatted(true);
-        sObjectField1.setDeprecatedAndHidden(false);
-        sObjectField1.setRestrictedPicklist(false);
-        sObjectField1.setNameField(false);
-        sObjectField1.setCaseSensitive(false);
-        sObjectField1.setPermissionable(true);
-        sObjectField1.setCascadeDelete(false);
-        sObjectField1.setDefaultedOnCreate(false);
-        sObjectField1.setExternalId(false);
-        sObjectField1.setSoapType("xsd:string");
-        sObjectField1.setGroupable(false);
-        sObjectField1.setCustom(true);
-        sObjectField1.setScale(0);
-        sObjectField1.setCalculated(true);
-        sObjectField1.setRestrictedDelete(false);
-        sObjectField1.setNamePointing(false);
-        sObjectField1.setIdLookup(false);
-        sObjectField1.setType("string");
-        sObjectField1.setSortable(true);
-        sObjectField1.setLength(1300);
-        sObjectField1.setPrecision(0);
-        sObjectField1.setByteLength(3900);
-        sObjectField1.setQueryByDistance(false);
-        sObjectField1.setFilterable(true);
-        sObjectField1.setCalculatedFormula("IF( RecordType.Id  = \"012F0000000rmbC\", \r\n\r\nIF(Case_Age__c > 30, \r\nIMAGE(\"/img/samples/color_red.gif\", \"red\", 30, 30),\r\nIF( Case_Age__c > 15,\r\nIMAGE(\"/img/samples/color_yellow.gif\", \"yellow\", 30, 30),\r\nIMAGE(\"/img/samples/color_green.gif\", \"green\", 30, 30)\r\n)),\r\n\r\n\r\nIF(Case_Age__c > 10, \r\nIMAGE(\"/img/samples/color_red.gif\", \"red\", 30, 30),\r\nIF( Case_Age__c > 5,\r\nIMAGE(\"/img/samples/color_yellow.gif\", \"yellow\", 30, 30),\r\nIMAGE(\"/img/samples/color_green.gif\", \"green\", 30, 30)\r\n))\r\n)");
-        sObjectField1.setUpdateable(false);
-        sObjectField1.setUnique(false);
-        sObjectField1.setAutoNumber(false);
-
 
         description.setActivateable(false);
         description.setLabelPlural("ComplexCalculatedFormulas");

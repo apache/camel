@@ -100,7 +100,7 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
         boolean copyNeeded = !(old.getClass().equals(DefaultMessage.class));
 
         if (copyNeeded) {
-            Message msg = new DefaultMessage();
+            Message msg = new DefaultMessage(exchange.getContext());
             msg.copyFromWithNewBody(old, value);
 
             // replace message on exchange

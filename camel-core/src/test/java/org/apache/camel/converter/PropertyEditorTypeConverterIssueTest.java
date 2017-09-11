@@ -37,6 +37,6 @@ public class PropertyEditorTypeConverterIssueTest extends ContextTestSupport {
             log.debug(s);
             assertNotNull(s);
         }
-        log.info("Time taken: " + watch.stop());
+        log.info("Time taken: " + watch.taken());
     }
 }

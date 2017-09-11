@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.validator;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -71,8 +71,8 @@ public class ValidatorBeanCallTest extends ContextTestSupport {
 
     public static class MyValidatorBean {
 
-        public InputStream loadFile() throws FileNotFoundException {
-            return new FileInputStream("src/test/resources/report.xsd");
+        public InputStream loadFile() throws Exception {
+            return Files.newInputStream(Paths.get("src/test/resources/report.xsd"));
         }
 
     }

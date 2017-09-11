@@ -30,10 +30,13 @@ public class FileProducerFileExistAppendTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/file");
         super.setUp();
-        template.sendBodyAndHeader("file://target/file", "Hello World\n", Exchange.FILE_NAME, "hello.txt");
     }
 
     public void testAppend() throws Exception {
+        template.sendBodyAndHeader("file://target/file", "Hello World\n", Exchange.FILE_NAME, "hello.txt");
+
+        context.startAllRoutes();
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World\nBye World");
         mock.expectedFileExists("target/file/hello.txt", "Hello World\nBye World");
@@ -48,7 +51,8 @@ public class FileProducerFileExistAppendTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file?noop=true&delay=1000").convertBodyTo(String.class).to("mock:result");
+                from("file://target/file?noop=true&initialDelay=0&delay=10").noAutoStartup()
+                    .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

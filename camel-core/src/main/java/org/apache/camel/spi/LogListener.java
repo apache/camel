@@ -18,8 +18,9 @@ package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.processor.CamelLogProcessor;
+import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.util.CamelLogger;
-import org.slf4j.Logger;
 import org.slf4j.Marker;
 
 /**

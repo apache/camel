@@ -16,13 +16,9 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.io.FileInputStream;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -37,7 +33,6 @@ import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportSta
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.SyncReportResults;
 import org.apache.camel.dataformat.csv.CsvDataFormat;
 import org.apache.commons.csv.CSVFormat;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;

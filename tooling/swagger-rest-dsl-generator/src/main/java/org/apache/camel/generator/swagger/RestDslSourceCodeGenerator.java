@@ -17,11 +17,14 @@
 package org.apache.camel.generator.swagger;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.function.Function;
 import java.util.stream.Collector;
 
+import javax.annotation.Generated;
 import javax.lang.model.element.Modifier;
 
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
@@ -35,17 +38,21 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.StringHelper.notEmpty;
 
 public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<RestDslSourceCodeGenerator<T>> {
-    private static final String DEFAULT_CLASS_NAME = "RestDslRoute";
+    static final String DEFAULT_CLASS_NAME = "RestDslRoute";
+
+    static final String DEFAULT_PACKAGE_NAME = "rest.dsl.generated";
 
     private static final String DEFAULT_INDENT = "    ";
 
-    private static final String DEFAULT_PACKAGE_NAME = "rest.dsl.generated";
-
     private Function<Swagger, String> classNameGenerator = RestDslSourceCodeGenerator::generateClassName;
+
+    private Instant generated = Instant.now();
 
     private String indent = DEFAULT_INDENT;
 
     private Function<Swagger, String> packageNameGenerator = RestDslSourceCodeGenerator::generatePackageName;
+
+    private boolean sourceCodeTimestamps;
 
     RestDslSourceCodeGenerator(final Swagger swagger) {
         super(swagger);
@@ -66,9 +73,21 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         return this;
     }
 
+    public RestDslSourceCodeGenerator<T> withoutSourceCodeTimestamps() {
+        sourceCodeTimestamps = false;
+
+        return this;
+    }
+
     public RestDslSourceCodeGenerator<T> withPackageName(final String packageName) {
         notEmpty(packageName, "packageName");
         this.packageNameGenerator = (s) -> packageName;
+
+        return this;
+    }
+
+    public RestDslSourceCodeGenerator<T> withSourceCodeTimestamps() {
+        sourceCodeTimestamps = true;
 
         return this;
     }
@@ -85,18 +104,36 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         return emitter.result();
     }
 
+    Instant generated() {
+        return generated;
+    }
+
     JavaFile generateSourceCode() {
         final MethodSpec methodSpec = generateConfigureMethod(swagger);
 
         final String classNameToUse = classNameGenerator.apply(swagger);
 
+        final AnnotationSpec.Builder generatedAnnotation = AnnotationSpec.builder(Generated.class).addMember("value",
+            "$S", getClass().getName());
+
+        if (sourceCodeTimestamps) {
+            generatedAnnotation.addMember("date", "$S", generated());
+        }
+
         final TypeSpec generatedRouteBulder = TypeSpec.classBuilder(classNameToUse).superclass(RouteBuilder.class)
             .addModifiers(Modifier.PUBLIC, Modifier.FINAL).addMethod(methodSpec)
+            .addAnnotation(generatedAnnotation.build())
             .addJavadoc("Generated from Swagger specification by Camel REST DSL generator.\n").build();
 
         final String packageNameToUse = packageNameGenerator.apply(swagger);
 
         return JavaFile.builder(packageNameToUse, generatedRouteBulder).indent(indent).build();
+    }
+
+    RestDslSourceCodeGenerator<T> withGeneratedTime(final Instant generated) {
+        this.generated = generated;
+
+        return this;
     }
 
     static String generateClassName(final Swagger swagger) {
@@ -110,8 +147,15 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
             return DEFAULT_CLASS_NAME;
         }
 
-        return title.chars().filter(Character::isJavaIdentifierPart).boxed().collect(Collector.of(StringBuilder::new,
-            StringBuilder::appendCodePoint, StringBuilder::append, StringBuilder::toString));
+        final String className = title.chars().filter(Character::isJavaIdentifierPart).filter(c -> c < 'z').boxed()
+            .collect(Collector.of(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append,
+                StringBuilder::toString));
+
+        if (className.isEmpty() || !Character.isJavaIdentifierStart(className.charAt(0))) {
+            return DEFAULT_CLASS_NAME;
+        }
+
+        return className;
     }
 
     static String generatePackageName(final Swagger swagger) {
@@ -120,7 +164,13 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         if (ObjectHelper.isNotEmpty(host)) {
             final StringBuilder packageName = new StringBuilder();
 
-            final String[] parts = host.split("\\.");
+            final String hostWithoutPort = host.replaceFirst(":.*", "");
+
+            if ("localhost".equalsIgnoreCase(hostWithoutPort)) {
+                return DEFAULT_PACKAGE_NAME;
+            }
+
+            final String[] parts = hostWithoutPort.split("\\.");
 
             for (int i = parts.length - 1; i >= 0; i--) {
                 packageName.append(parts[i]);

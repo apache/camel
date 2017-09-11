@@ -26,11 +26,12 @@ import org.apache.camel.impl.DefaultConsumer;
 /**
  * Camel DirectConsumer implementation.
  */
+@Deprecated
 public class TwitterConsumerDirect extends DefaultConsumer {
 
-    private final TwitterConsumer twitter4jConsumer;
+    private final AbstractTwitterConsumerHandler twitter4jConsumer;
 
-    public TwitterConsumerDirect(TwitterEndpoint endpoint, Processor processor, TwitterConsumer twitter4jConsumer) {
+    public TwitterConsumerDirect(TwitterEndpoint endpoint, Processor processor, AbstractTwitterConsumerHandler twitter4jConsumer) {
         super(endpoint, processor);
 
         this.twitter4jConsumer = twitter4jConsumer;

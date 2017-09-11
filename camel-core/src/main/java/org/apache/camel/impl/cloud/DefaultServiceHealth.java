@@ -23,8 +23,6 @@ import java.util.Map;
 import org.apache.camel.cloud.ServiceHealth;
 
 public class DefaultServiceHealth implements ServiceHealth {
-    public static final ServiceHealth INSTANCE = new DefaultServiceHealth();
-
     private final boolean healthy;
     private final Map<String, String> meta;
 

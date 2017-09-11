@@ -97,7 +97,10 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        // do nothing, the timer will be set when the first consumer will request it
+        if (timerName == null) {
+            timerName = getEndpointUri();
+        }
+        // do nothing in regards to setTimer, the timer will be set when the first consumer will request it
     }
 
     @Override
@@ -113,9 +116,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     @ManagedAttribute(description = "Timer Name")
     public String getTimerName() {
-        if (timerName == null) {
-            timerName = getEndpointUri();
-        }
         return timerName;
     }
 

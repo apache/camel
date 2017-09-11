@@ -37,6 +37,8 @@ import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 
+import static org.apache.camel.component.olingo4.api.impl.Olingo4Helper.getContentTypeHeader;
+
 /**
 * Helper implementation of {@link org.apache.http.concurrent.FutureCallback}
  * for {@link org.apache.camel.component.olingo4.api.impl.Olingo4AppImpl}
@@ -58,8 +60,7 @@ public abstract class AbstractFutureCallback<T> implements FutureCallback<HttpRe
         if (HttpStatusCode.BAD_REQUEST.getStatusCode() <= httpStatusCode.getStatusCode() && httpStatusCode.getStatusCode() <= NETWORK_CONNECT_TIMEOUT_ERROR) {
             if (response.getEntity() != null) {
                 try {
-                    final ContentType responseContentType = ContentType.parse(
-                        response.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
+                    final ContentType responseContentType = getContentTypeHeader(response);
                               
                     if (ODATA_MIME_TYPE_PATTERN.matcher(responseContentType.toContentTypeString()).matches()) {
                         final ODataReader reader = ODataClientFactory.getClient().getReader();

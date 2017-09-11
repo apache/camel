@@ -21,10 +21,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.catalog.CatalogHelper;
-import org.apache.camel.commands.internal.RegexUtil;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
+
+import static org.apache.camel.commands.internal.MatchUtil.matchWildcard;
+import static org.apache.camel.commands.internal.RegexUtil.wildcardAsRegex;
 
 /**
  * Abstract {@link org.apache.camel.commands.CamelController} that implementators should extend.
@@ -37,13 +38,13 @@ public abstract class AbstractCamelController implements CamelController {
 
         List<Map<String, String>> context = getCamelContexts();
         if (filter != null) {
-            filter = RegexUtil.wildcardAsRegex(filter);
+            filter = wildcardAsRegex(filter);
         } else {
             filter = "*";
         }
         for (Map<String, String> entry : context) {
             String name = entry.get("name");
-            if (name.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(name, filter) || name.matches(filter)) {
+            if (name.equalsIgnoreCase(filter) || matchWildcard(name, filter) || name.matches(filter)) {
                 answer.add(entry);
             }
         }

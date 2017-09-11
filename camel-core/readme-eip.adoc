@@ -92,7 +92,7 @@ Number of EIPs: 62 (2 deprecated)
 `<pollEnrich>` | Enriches messages with data polled from a secondary resource
 
 | link:src/main/docs/eips/process-eip.adoc[Process] +
-`<process>` | Calls a Camel processor.
+`<process>` | Calls a Camel processor
 
 | link:src/main/docs/eips/random-eip.adoc[Random] +
 `<random>` | Random load balancer
@@ -131,7 +131,7 @@ Number of EIPs: 62 (2 deprecated)
 `<script>` | Executes a script from a language which does not change the message body.
 
 | link:src/main/docs/eips/serviceCall-eip.adoc[Service Call] +
-`<serviceCall>` | Remote service call definition
+`<serviceCall>` | To call remote services
 
 | link:src/main/docs/eips/setBody-eip.adoc[Set Body] +
 `<setBody>` | Sets the contents of the message body

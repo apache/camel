@@ -18,10 +18,14 @@ package org.apache.camel.impl;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -29,6 +33,8 @@ import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.component.extension.ComponentExtension;
+import org.apache.camel.component.extension.ComponentExtensionHelper;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
@@ -37,8 +43,10 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.camel.util.function.Suppliers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * Default component to use for base for components implementations.
@@ -46,6 +54,8 @@ import org.slf4j.LoggerFactory;
 public abstract class DefaultComponent extends ServiceSupport implements Component {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultComponent.class);
     private static final Pattern RAW_PATTERN = Pattern.compile("RAW(.*&&.*)");
+
+    private final List<Supplier<ComponentExtension>> extensions = new ArrayList<>();
 
     private CamelContext camelContext;
 
@@ -476,4 +486,30 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         return null;
     }
 
+    protected void registerExtension(ComponentExtension extension) {
+        extensions.add(() -> extension);
+    }
+
+    protected void registerExtension(Supplier<ComponentExtension> supplier) {
+        extensions.add(Suppliers.memorize(supplier));
+    }
+
+    @Override
+    public Collection<Class<? extends ComponentExtension>> getSupportedExtensions() {
+        return extensions.stream()
+            .map(Supplier::get)
+            .map(ComponentExtension::getClass)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public <T extends ComponentExtension> Optional<T> getExtension(Class<T> extensionType) {
+        return extensions.stream()
+            .map(Supplier::get)
+            .filter(extensionType::isInstance)
+            .findFirst()
+            .map(extensionType::cast)
+            .map(e -> ComponentExtensionHelper.trySetComponent(e, this))
+            .map(e -> ComponentExtensionHelper.trySetCamelContext(e, getCamelContext()));
+    }
 }

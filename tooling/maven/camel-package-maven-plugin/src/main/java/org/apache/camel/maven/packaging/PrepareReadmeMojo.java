@@ -219,6 +219,12 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 }
                 if (add) {
                     models.add(model);
+
+                    // special for camel-mail where we want to refer its imap scheme to mail so its mail.adoc in the doc link
+                    if ("imap".equals(model.getScheme())) {
+                        model.setScheme("mail");
+                        model.setTitle("Mail");
+                    }
                 }
             }
 
@@ -341,7 +347,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
             List<DataFormatModel> models = new ArrayList<>();
             for (File file : dataFormatFiles) {
                 String json = loadText(new FileInputStream(file));
-                DataFormatModel model = generateDataFormatModel(json);
+                DataFormatModel model = generateDataFormatModel(json, coreOnly);
 
                 // special for bindy as we have one common file
                 if (model.getName().startsWith("bindy")) {
@@ -418,7 +424,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
             List<LanguageModel> models = new ArrayList<>();
             for (File file : languageFiles) {
                 String json = loadText(new FileInputStream(file));
-                LanguageModel model = generateLanguageModel(json);
+                LanguageModel model = generateLanguageModel(json, coreOnly);
                 models.add(model);
             }
 
@@ -769,6 +775,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         eip.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
         eip.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         eip.setDeprecated("true".equals(JSonSchemaHelper.getSafeValue("deprecated", rows)));
+        eip.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
         eip.setInput("true".equals(JSonSchemaHelper.getSafeValue("input", rows)));
         eip.setOutput("true".equals(JSonSchemaHelper.getSafeValue("output", rows)));
 
@@ -788,6 +795,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         component.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         component.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         component.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        component.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
         component.setConsumerOnly(JSonSchemaHelper.getSafeValue("consumerOnly", rows));
         component.setProducerOnly(JSonSchemaHelper.getSafeValue("producerOnly", rows));
         component.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
@@ -808,6 +816,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         other.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         other.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         other.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        other.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
         other.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
         other.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
         other.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
@@ -815,10 +824,10 @@ public class PrepareReadmeMojo extends AbstractMojo {
         return other;
     }
 
-    private DataFormatModel generateDataFormatModel(String json) {
+    private DataFormatModel generateDataFormatModel(String json, boolean coreOnly) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", json, false);
 
-        DataFormatModel dataFormat = new DataFormatModel();
+        DataFormatModel dataFormat = new DataFormatModel(coreOnly);
         dataFormat.setName(JSonSchemaHelper.getSafeValue("name", rows));
         dataFormat.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
         dataFormat.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
@@ -826,6 +835,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         dataFormat.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         dataFormat.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         dataFormat.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        dataFormat.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
         dataFormat.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
         dataFormat.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
         dataFormat.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
@@ -834,10 +844,10 @@ public class PrepareReadmeMojo extends AbstractMojo {
         return dataFormat;
     }
 
-    private LanguageModel generateLanguageModel(String json) {
+    private LanguageModel generateLanguageModel(String json, boolean coreOnly) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
 
-        LanguageModel language = new LanguageModel();
+        LanguageModel language = new LanguageModel(coreOnly);
         language.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
         language.setName(JSonSchemaHelper.getSafeValue("name", rows));
         language.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
@@ -845,6 +855,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         language.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         language.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         language.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        language.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
         language.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
         language.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
         language.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));

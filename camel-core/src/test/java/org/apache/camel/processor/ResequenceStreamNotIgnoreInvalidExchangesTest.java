@@ -95,7 +95,7 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .resequence(header("seqno")).stream().timeout(1000)
+                    .resequence(header("seqno")).stream().timeout(50).deliveryAttemptInterval(10)
                     .to("mock:result");
             }
         };

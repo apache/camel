@@ -20,8 +20,11 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 
 
 public class DateTimeSerializer extends JsonSerializer<ZonedDateTime> {
@@ -35,4 +38,13 @@ public class DateTimeSerializer extends JsonSerializer<ZonedDateTime> {
         jsonGenerator.writeString(DateTimeUtils.formatDateTime(dateTime));
     }
 
+    @Override
+    public Class<ZonedDateTime> handledType() {
+        return ZonedDateTime.class;
+    }
+
+    @Override
+    public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType type) throws JsonMappingException {
+        visitor.expectStringFormat(type);
+    }
 }

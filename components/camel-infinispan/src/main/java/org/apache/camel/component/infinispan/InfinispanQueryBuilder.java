@@ -20,5 +20,5 @@ import org.infinispan.query.dsl.Query;
 import org.infinispan.query.dsl.QueryFactory;
 
 public interface InfinispanQueryBuilder {
-    Query build(QueryFactory<Query> queryFactory);
+    Query build(QueryFactory queryFactory);
 }

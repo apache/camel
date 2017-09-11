@@ -76,7 +76,7 @@ public class MulticastParallelStreamingTest extends ContextTestSupport {
                     .end()
                     .to("mock:result");
 
-                from("direct:a").delay(500).setBody(constant("A"));
+                from("direct:a").delay(250).setBody(constant("A"));
 
                 from("direct:b").setBody(constant("B"));
             }

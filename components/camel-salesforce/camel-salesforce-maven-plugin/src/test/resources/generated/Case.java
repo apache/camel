@@ -7,6 +7,8 @@ package $packageName;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Generated;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
@@ -25,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Salesforce DTO for SObject Case
  */
+@Generated("org.apache.camel.maven.CamelSalesforceMojo")
 @XStreamAlias("Case")
 public class Case extends AbstractDescribedSObjectBase {
 
@@ -115,132 +118,12 @@ public class Case extends AbstractDescribedSObjectBase {
         final List<SObjectField> fields1 = new ArrayList<>();
         description.setFields(fields1);
 
-        final SObjectField sObjectField1 = new SObjectField();
+        final SObjectField sObjectField1 = createField("PickListAccentMark", "Accent Mark", "picklist", "xsd:string", 40, false, true, false, false, false, false, false);
         fields1.add(sObjectField1);
-
-        sObjectField1.setWriteRequiresMasterRead(false);
-        sObjectField1.setNillable(true);
-        sObjectField1.setCreateable(true);
-        sObjectField1.setEncrypted(false);
-        sObjectField1.setDigits("0");
-        sObjectField1.setDependentPicklist(false);
-        sObjectField1.setInlineHelpText("This is a picklist accent mark test \u00F3");
-        sObjectField1.setLabel("Accent Mark");
-        sObjectField1.setHighScaleNumber(false);
-        sObjectField1.setDisplayLocationInDecimal(false);
-        sObjectField1.setName("PickListAccentMark");
-        sObjectField1.setHtmlFormatted(false);
-        sObjectField1.setDeprecatedAndHidden(false);
-        sObjectField1.setRestrictedPicklist(false);
-        sObjectField1.setNameField(false);
-        sObjectField1.setCaseSensitive(false);
-        sObjectField1.setPermissionable(true);
-        sObjectField1.setCascadeDelete(false);
-        sObjectField1.setDefaultedOnCreate(false);
-        sObjectField1.setExternalId(false);
-        sObjectField1.setSoapType("xsd:string");
-        sObjectField1.setGroupable(true);
-        sObjectField1.setCustom(false);
-        sObjectField1.setScale(0);
-        sObjectField1.setCalculated(false);
-        sObjectField1.setRestrictedDelete(false);
-        sObjectField1.setNamePointing(false);
-        sObjectField1.setIdLookup(false);
-        sObjectField1.setType("picklist");
-        sObjectField1.setSortable(true);
-        sObjectField1.setLength(40);
-        sObjectField1.setPrecision(0);
-        sObjectField1.setByteLength(120);
-        sObjectField1.setQueryByDistance(false);
-        sObjectField1.setFilterable(true);
-        sObjectField1.setUpdateable(true);
-        sObjectField1.setUnique(false);
-        sObjectField1.setAutoNumber(false);
-
-        final SObjectField sObjectField2 = new SObjectField();
+        final SObjectField sObjectField2 = createField("PickListSlash", "Slash", "picklist", "xsd:string", 255, false, true, false, false, true, false, false);
         fields1.add(sObjectField2);
-
-        sObjectField2.setWriteRequiresMasterRead(false);
-        sObjectField2.setNillable(true);
-        sObjectField2.setCreateable(true);
-        sObjectField2.setEncrypted(false);
-        sObjectField2.setDigits("0");
-        sObjectField2.setDependentPicklist(false);
-        sObjectField2.setInlineHelpText("This is a picklist slash test /");
-        sObjectField2.setLabel("Slash");
-        sObjectField2.setHighScaleNumber(false);
-        sObjectField2.setDisplayLocationInDecimal(false);
-        sObjectField2.setName("PickListSlash");
-        sObjectField2.setHtmlFormatted(false);
-        sObjectField2.setDeprecatedAndHidden(false);
-        sObjectField2.setRestrictedPicklist(false);
-        sObjectField2.setNameField(false);
-        sObjectField2.setCaseSensitive(false);
-        sObjectField2.setPermissionable(true);
-        sObjectField2.setCascadeDelete(false);
-        sObjectField2.setDefaultedOnCreate(false);
-        sObjectField2.setExternalId(false);
-        sObjectField2.setSoapType("xsd:string");
-        sObjectField2.setGroupable(true);
-        sObjectField2.setCustom(true);
-        sObjectField2.setScale(0);
-        sObjectField2.setCalculated(false);
-        sObjectField2.setRestrictedDelete(false);
-        sObjectField2.setNamePointing(false);
-        sObjectField2.setIdLookup(false);
-        sObjectField2.setType("picklist");
-        sObjectField2.setSortable(true);
-        sObjectField2.setLength(255);
-        sObjectField2.setPrecision(0);
-        sObjectField2.setByteLength(765);
-        sObjectField2.setQueryByDistance(false);
-        sObjectField2.setFilterable(true);
-        sObjectField2.setUpdateable(true);
-        sObjectField2.setUnique(false);
-        sObjectField2.setAutoNumber(false);
-
-        final SObjectField sObjectField3 = new SObjectField();
+        final SObjectField sObjectField3 = createField("PickListQuotationMark", "QuotationMark", "picklist", "xsd:string", 255, false, true, false, false, true, false, false);
         fields1.add(sObjectField3);
-
-        sObjectField3.setWriteRequiresMasterRead(false);
-        sObjectField3.setNillable(true);
-        sObjectField3.setCreateable(true);
-        sObjectField3.setEncrypted(false);
-        sObjectField3.setDigits("0");
-        sObjectField3.setDependentPicklist(false);
-        sObjectField3.setInlineHelpText("This is a picklist quotation mark test \"");
-        sObjectField3.setLabel("QuotationMark");
-        sObjectField3.setHighScaleNumber(false);
-        sObjectField3.setDisplayLocationInDecimal(false);
-        sObjectField3.setName("PickListQuotationMark");
-        sObjectField3.setHtmlFormatted(false);
-        sObjectField3.setDeprecatedAndHidden(false);
-        sObjectField3.setRestrictedPicklist(false);
-        sObjectField3.setNameField(false);
-        sObjectField3.setCaseSensitive(false);
-        sObjectField3.setPermissionable(true);
-        sObjectField3.setCascadeDelete(false);
-        sObjectField3.setDefaultedOnCreate(false);
-        sObjectField3.setExternalId(false);
-        sObjectField3.setSoapType("xsd:string");
-        sObjectField3.setGroupable(true);
-        sObjectField3.setCustom(true);
-        sObjectField3.setScale(0);
-        sObjectField3.setCalculated(false);
-        sObjectField3.setRestrictedDelete(false);
-        sObjectField3.setNamePointing(false);
-        sObjectField3.setIdLookup(false);
-        sObjectField3.setType("picklist");
-        sObjectField3.setSortable(true);
-        sObjectField3.setLength(255);
-        sObjectField3.setPrecision(0);
-        sObjectField3.setByteLength(765);
-        sObjectField3.setQueryByDistance(false);
-        sObjectField3.setFilterable(true);
-        sObjectField3.setUpdateable(true);
-        sObjectField3.setUnique(false);
-        sObjectField3.setAutoNumber(false);
-
 
         description.setActivateable(false);
         description.setLabelPlural("Casos");

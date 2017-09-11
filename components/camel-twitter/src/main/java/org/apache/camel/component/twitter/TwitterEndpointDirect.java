@@ -23,27 +23,34 @@ import org.apache.camel.Producer;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.component.direct.DirectEndpoint;
-import org.apache.camel.component.twitter.consumer.TwitterConsumer;
+import org.apache.camel.component.twitter.consumer.AbstractTwitterConsumerHandler;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerDirect;
 import org.apache.camel.component.twitter.data.EndpointType;
 
 /**
- * Twitter direct endpoint
+ * Twitter direct endpoint.
+ * 
  */
-public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndpoint {
+@Deprecated
+public class TwitterEndpointDirect extends DirectEndpoint implements CommonPropertiesTwitterEndpoint {
+    private final String kind;
 
     // only TwitterEndpointPolling is annotated
-
     private TwitterConfiguration properties;
 
-    public TwitterEndpointDirect(String uri, TwitterComponent component, TwitterConfiguration properties) {
+    private String user;
+
+    private String keywords;
+
+    public TwitterEndpointDirect(String uri, String remaining, TwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
+        this.kind = remaining;
         this.properties = properties;
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        TwitterConsumer twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri());
+        AbstractTwitterConsumerHandler twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri(), kind);
         TwitterConsumerDirect answer = new TwitterConsumerDirect(this, processor, twitter4jConsumer);
         configureConsumer(answer);
         return answer;
@@ -51,7 +58,7 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
 
     @Override
     public Producer createProducer() throws Exception {
-        return TwitterHelper.createProducer(this, getEndpointUri());
+        return TwitterHelper.createProducer(this, getEndpointUri(), kind);
     }
 
     @ManagedAttribute
@@ -94,13 +101,23 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
     }
 
     @ManagedAttribute
+    public String getUser() {
+        return user;
+    }
+
+    @ManagedAttribute
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    @ManagedAttribute
     public String getKeywords() {
-        return getProperties().getKeywords();
+        return keywords;
     }
 
     @ManagedAttribute
     public void setKeywords(String keywords) {
-        getProperties().setKeywords(keywords);
+        this.keywords = keywords;
     }
 
     @ManagedAttribute

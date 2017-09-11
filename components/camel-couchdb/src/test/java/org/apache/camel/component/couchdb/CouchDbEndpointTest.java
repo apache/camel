@@ -19,7 +19,9 @@ package org.apache.camel.component.couchdb;
 import java.util.UUID;
 
 import com.google.gson.JsonObject;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -29,7 +31,7 @@ public class CouchDbEndpointTest {
 
     @Test
     public void testCreateCouchExchangeHeadersAreSet() throws Exception {
-        CouchDbEndpoint endpoint = new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent());
+        CouchDbEndpoint endpoint = new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent(new DefaultCamelContext()));
 
         String id = UUID.randomUUID().toString();
         String rev = UUID.randomUUID().toString();

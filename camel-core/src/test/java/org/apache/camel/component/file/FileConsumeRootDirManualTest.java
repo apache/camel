@@ -19,7 +19,9 @@ package org.apache.camel.component.file;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Ignore;
 
+@Ignore("Manual test")
 public class FileConsumeRootDirManualTest extends ContextTestSupport {
 
     public void testSkipMe() {

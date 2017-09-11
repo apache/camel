@@ -16,24 +16,20 @@
  */
 package org.apache.camel.spring;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
-import javax.xml.bind.JAXBContext;
 
 import junit.framework.TestCase;
-import org.apache.camel.impl.ActiveMQUuidGenerator;
 import org.apache.camel.impl.DefaultModelJAXBContextFactory;
+import org.apache.camel.impl.DefaultUuidGenerator;
 import org.apache.camel.impl.SimpleUuidGenerator;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.UuidGenerator;
-import org.apache.camel.util.IOHelper;
-import org.custommonkey.xmlunit.XMLAssert;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.springframework.context.support.StaticApplicationContext;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.builder.Input;
+import org.xmlunit.diff.Diff;
 
 /**
  * @version 
@@ -55,7 +51,7 @@ public class CamelContextFactoryBeanTest extends TestCase {
         
         UuidGenerator uuidGenerator = factory.getContext().getUuidGenerator();
         
-        assertTrue(uuidGenerator instanceof ActiveMQUuidGenerator);
+        assertTrue(uuidGenerator instanceof DefaultUuidGenerator);
     }
     
     public void testGetCustomUuidGenerator() throws Exception {
@@ -80,22 +76,10 @@ public class CamelContextFactoryBeanTest extends TestCase {
         camelContext.setEndpoints(endpoints);
 
         // Compare the new context with our reference context
-        Reader expectedContext = null;
-        try {
-            expectedContext = new InputStreamReader(getClass().getResourceAsStream("/org/apache/camel/spring/context-with-endpoint.xml"));
-            String createdContext = contextAsString(camelContext);
-            XMLUnit.setIgnoreWhitespace(true);
-            XMLAssert.assertXMLEqual(expectedContext, new StringReader(createdContext));
-        } finally {
-            IOHelper.close(expectedContext);
-        }
-    }
-
-    private String contextAsString(CamelContextFactoryBean context) throws Exception {
-        StringWriter stringOut = new StringWriter();
-        JAXBContext jaxb = JAXBContext.newInstance(CamelContextFactoryBean.class);
-        jaxb.createMarshaller().marshal(context, stringOut);
-        return stringOut.toString();
+        URL expectedContext = getClass().getResource("/org/apache/camel/spring/context-with-endpoint.xml");
+        Diff diff = DiffBuilder.compare(expectedContext).withTest(Input.fromJaxb(camelContext))
+                .ignoreWhitespace().ignoreComments().checkForSimilar().build();
+        assertFalse("Expected context and actual context differ:\n" + diff.toString(), diff.hasDifferences());
     }
 
     public void testCustomModelJAXBContextFactory() throws Exception {

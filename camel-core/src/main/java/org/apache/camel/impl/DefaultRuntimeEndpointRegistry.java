@@ -38,7 +38,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.EventNotifierSupport;
-import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
@@ -190,10 +190,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             outputs = new HashMap<String, Map<String, String>>();
         }
         if (getCamelContext().getManagementStrategy().getManagementAgent() != null) {
-            Boolean isEnabled = getCamelContext().getManagementStrategy().getManagementAgent().getEndpointRuntimeStatisticsEnabled();
-            boolean isExtended = getCamelContext().getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
-            // extended mode is either if we use Extended statistics level or the option is explicit enabled
-            extended = isExtended || isEnabled != null && isEnabled;
+            extended = getCamelContext().getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
         }
         if (extended) {
             inputUtilization = new DefaultEndpointUtilizationStatistics(limit);
@@ -201,6 +198,8 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         }
         if (extended) {
             log.info("Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: {})", limit);
+        } else {
+            log.info("Runtime endpoint registry is in normal mode gathering information of all incoming and outgoing endpoints (cache limit: {})", limit);
         }
         ServiceHelper.startServices(inputUtilization, outputUtilization);
     }
@@ -212,6 +211,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void notify(EventObject event) throws Exception {
         if (event instanceof RouteAddedEvent) {
             RouteAddedEvent rse = (RouteAddedEvent) event;
@@ -224,7 +224,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             inputs.put(routeId, uris);
             // use a LRUCache for outputs as we could potential have unlimited uris if dynamic routing is in use
             // and therefore need to have the limit in use
-            outputs.put(routeId, new LRUCache<String, String>(limit));
+            outputs.put(routeId, LRUCacheFactory.newLRUCache(limit));
         } else if (event instanceof RouteRemovedEvent) {
             RouteRemovedEvent rse = (RouteRemovedEvent) event;
             String routeId = rse.getRoute().getId();
@@ -280,6 +280,11 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             answer = exchange.getFromRouteId();
         }
         return answer;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return !enabled;
     }
 
     @Override

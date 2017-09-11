@@ -23,25 +23,29 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.hazelcast.HazelcastComponent;
+import org.apache.camel.component.hazelcast.HazelcastCommand;
+import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Hazelcast SEDA {@link Endpoint} implementation.
+ * The hazelcast-seda component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> {@link BlockingQueue}.
  */
+@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-seda", title = "Hazelcast SEDA", syntax = "hazelcast-seda:cacheName", label = "cache,datagrid")
 public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
 
     private final BlockingQueue<Object> queue;
     private final HazelcastSedaConfiguration configuration;
 
-    public HazelcastSedaEndpoint(final HazelcastInstance hazelcastInstance, final String uri, final HazelcastComponent component, final HazelcastSedaConfiguration configuration) {
+    public HazelcastSedaEndpoint(final HazelcastInstance hazelcastInstance, final String uri, final HazelcastDefaultComponent component, final HazelcastSedaConfiguration configuration) {
         super(hazelcastInstance, uri, component);
         this.queue = hazelcastInstance.getQueue(configuration.getQueueName());
         this.configuration = configuration;
         if (ObjectHelper.isEmpty(configuration.getQueueName())) {
             throw new IllegalArgumentException("Queue name is missing.");
         }
+        setCommand(HazelcastCommand.seda);
     }
 
     public Producer createProducer() throws Exception {

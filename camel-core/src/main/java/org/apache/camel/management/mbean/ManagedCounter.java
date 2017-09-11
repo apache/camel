@@ -25,37 +25,34 @@ import org.apache.camel.spi.ManagementStrategy;
 @ManagedResource(description = "Managed Counter")
 public abstract class ManagedCounter implements ManagedCounterMBean {
     protected Statistic exchangesTotal;
-    protected Statistic startTimestamp;
-    protected Statistic resetTimestamp;
+    protected Date startTimestamp;
+    protected Date resetTimestamp;
 
     public void init(ManagementStrategy strategy) {
-        this.exchangesTotal = new Statistic("org.apache.camel.exchangesTotal", this, Statistic.UpdateMode.COUNTER);
-        this.startTimestamp = new Statistic("org.apache.camel.startTimestamp", this, Statistic.UpdateMode.VALUE);
-        this.resetTimestamp = new Statistic("org.apache.camel.resetTimestamp", this, Statistic.UpdateMode.VALUE);
-        startTimestamp.updateValue(new Date().getTime());
-        resetTimestamp.updateValue(new Date().getTime());
+        this.exchangesTotal = new StatisticCounter();
+        Date now = new Date();
+        startTimestamp = now;
+        resetTimestamp = now;
     }
 
-    public synchronized void reset() {
+    public void reset() {
         exchangesTotal.reset();
-        resetTimestamp.updateValue(new Date().getTime());
+        resetTimestamp = new Date();
     }
 
     public Date getStartTimestamp() {
-        long value = startTimestamp.getValue();
-        return value > 0 ? new Date(value) : null;
+        return startTimestamp;
     }
 
     public Date getResetTimestamp() {
-        long value = resetTimestamp.getValue();
-        return value > 0 ? new Date(value) : null;
+        return resetTimestamp;
     }
 
     public long getExchangesTotal() throws Exception {
         return exchangesTotal.getValue();
     }
 
-    public synchronized void increment() {
+    public void increment() {
         exchangesTotal.increment();
     }
 }

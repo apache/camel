@@ -24,7 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.apache.camel.impl.ActiveMQUuidGenerator;
+import org.apache.camel.impl.DefaultUuidGenerator;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
@@ -40,7 +40,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-
 @DirtiesContext
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
@@ -55,10 +54,17 @@ import org.springframework.test.context.junit4.SpringRunner;
         "camel.springboot.xml-routes=false",
         "camel.rest.enabled=true",
         "camel.rest.component=dummy-rest",
-        "camel.rest.host=localhost"
+        "camel.rest.host=localhost",
+        "camel.rest.data-format-property.prettyPrint=true",
+        "camel.rest.api-property.api.title=My cool API",
+        "camel.rest.api-property.api.version=1.0.0",
+        "camel.rest.api-property.cors=true",
+        "camel.rest.cors-headers.foo=123",
+        "camel.rest.cors-headers.bar=456"
     }
 )
 public class CamelRestTest {
+
     @Autowired
     private CamelContext context;
 
@@ -68,6 +74,13 @@ public class CamelRestTest {
         String result = template.requestBody("seda:get-say-hello", "test", String.class);
 
         Assert.assertEquals("Hello World", result);
+
+        Assert.assertEquals("true", context.getRestConfiguration().getDataFormatProperties().get("prettyPrint"));
+        Assert.assertEquals("My cool API", context.getRestConfiguration().getApiProperties().get("api.title"));
+        Assert.assertEquals("1.0.0", context.getRestConfiguration().getApiProperties().get("api.version"));
+        Assert.assertEquals("true", context.getRestConfiguration().getApiProperties().get("cors"));
+        Assert.assertEquals("123", context.getRestConfiguration().getCorsHeaders().get("foo"));
+        Assert.assertEquals("456", context.getRestConfiguration().getCorsHeaders().get("bar"));
     }
 
     // ***********************************
@@ -125,9 +138,9 @@ public class CamelRestTest {
             // just use a seda endpoint for testing purpose
             String id;
             if (uriTemplate != null) {
-                id = ActiveMQUuidGenerator.generateSanitizedId(basePath + uriTemplate);
+                id = DefaultUuidGenerator.generateSanitizedId(basePath + uriTemplate);
             } else {
-                id = ActiveMQUuidGenerator.generateSanitizedId(basePath);
+                id = DefaultUuidGenerator.generateSanitizedId(basePath);
             }
             // remove leading dash as we add that ourselves
             if (id.startsWith("-")) {
@@ -154,7 +167,7 @@ public class CamelRestTest {
             Map<String, Object> parameters) throws Exception {
 
             // just use a seda endpoint for testing purpose
-            String id = ActiveMQUuidGenerator.generateSanitizedId(contextPath);
+            String id = DefaultUuidGenerator.generateSanitizedId(contextPath);
             // remove leading dash as we add that ourselves
             if (id.startsWith("-")) {
                 id = id.substring(1);

@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.CountDownLatch;
@@ -54,7 +53,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ExpressionComparator;
 import org.apache.camel.util.FileUtil;
@@ -516,14 +514,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * You can set multiple expectations for different header names.
      * If you set a value of <tt>null</tt> that means we accept either the header is absent, or its value is <tt>null</tt>
      * <p/>
-     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages, then
-     * there must be 3 values.
-     * <p/>
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedHeaderReceived(final String name, final Object value) {
         if (expectedHeaderValues == null) {
-            expectedHeaderValues = new CaseInsensitiveMap();
+            expectedHeaderValues = getCamelContext().getHeadersMapFactory().newMap();
             // we just wants to expects to be called once
             expects(new Runnable() {
                 public void run() {
@@ -610,12 +605,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      */
     public void expectedPropertyReceived(final String name, final Object value) {
         if (expectedPropertyValues == null) {
-            expectedPropertyValues = new ConcurrentHashMap<String, Object>();
+            expectedPropertyValues = new HashMap<String, Object>();
         }
-        if (value != null) {
-            // ConcurrentHashMap cannot store null values
-            expectedPropertyValues.put(name, value);
-        }
+        expectedPropertyValues.put(name, value);
 
         expects(new Runnable() {
             public void run() {
@@ -625,7 +617,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                         String key = entry.getKey();
                         Object expectedValue = entry.getValue();
 
-                        // we accept that an expectedValue of null also means that the header may be absent
+                        // we accept that an expectedValue of null also means that the property may be absent
                         if (expectedValue != null) {
                             assertTrue("Exchange " + i + " has no properties", !exchange.getProperties().isEmpty());
                             boolean hasKey = exchange.getProperties().containsKey(key);
@@ -641,6 +633,56 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             }
         });
     }
+
+    /**
+     * Adds an expectation that the given property values are received by this
+     * endpoint in any order.
+     * <p/>
+     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages, then
+     * there must be 3 values.
+     * <p/>
+     * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
+     */
+    public void expectedPropertyValuesReceivedInAnyOrder(final String name, final List<?> values) {
+        expectedMessageCount(values.size());
+
+        expects(new Runnable() {
+            public void run() {
+                // these are the expected values to find
+                final Set<Object> actualPropertyValues = new CopyOnWriteArraySet<Object>(values);
+
+                for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                    Exchange exchange = getReceivedExchange(i);
+
+                    Object actualValue = exchange.getProperty(name);
+                    for (Object expectedValue : actualPropertyValues) {
+                        actualValue = extractActualValue(exchange, actualValue, expectedValue);
+                        // remove any found values
+                        actualPropertyValues.remove(actualValue);
+                    }
+                }
+
+                // should be empty, as we should find all the values
+                assertTrue("Expected " + values.size() + " properties with key[" + name + "], received " + (values.size() - actualPropertyValues.size())
+                        + " properties. Expected property values: " + actualPropertyValues, actualPropertyValues.isEmpty());
+            }
+        });
+    }
+
+    /**
+     * Adds an expectation that the given property values are received by this
+     * endpoint in any order
+     * <p/>
+     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages, then
+     * there must be 3 values.
+     * <p/>
+     * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
+     */
+    public void expectedPropertyValuesReceivedInAnyOrder(String name, Object... values) {
+        List<Object> valueList = new ArrayList<Object>();
+        valueList.addAll(Arrays.asList(values));
+        expectedPropertyValuesReceivedInAnyOrder(name, valueList);
+    }    
 
     /**
      * Adds an expectation that the given body values are received by this
@@ -1310,7 +1352,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         if (expectedHeaderValues != null) {
             if (actualHeaderValues == null) {
-                actualHeaderValues = new CaseInsensitiveMap();
+                actualHeaderValues = getCamelContext().getHeadersMapFactory().newMap();
             }
             if (in.hasHeaders()) {
                 actualHeaderValues.putAll(in.getHeaders());
@@ -1319,7 +1361,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         if (expectedPropertyValues != null) {
             if (actualPropertyValues == null) {
-                actualPropertyValues = new ConcurrentHashMap<String, Object>();
+                actualPropertyValues = getCamelContext().getHeadersMapFactory().newMap();
             }
             actualPropertyValues.putAll(copy.getProperties());
         }
@@ -1411,7 +1453,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         StopWatch watch = new StopWatch();
         waitForCompleteLatch(resultWaitTime);
-        long delta = watch.stop();
+        long delta = watch.taken();
         LOG.debug("Took {} millis to complete latch", delta);
 
         if (resultMinimumWaitTime > 0 && delta < resultMinimumWaitTime) {

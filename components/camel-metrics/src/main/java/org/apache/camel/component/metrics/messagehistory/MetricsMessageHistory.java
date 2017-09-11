@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.metrics.messagehistory;
 
-import java.util.Date;
-
 import com.codahale.metrics.Timer;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
@@ -30,8 +28,8 @@ public class MetricsMessageHistory extends DefaultMessageHistory {
 
     private final Timer.Context context;
 
-    public MetricsMessageHistory(String routeId, NamedNode namedNode, Timer timer) {
-        super(routeId, namedNode, new Date());
+    public MetricsMessageHistory(String routeId, NamedNode namedNode, Timer timer, long timestamp) {
+        super(routeId, namedNode, timestamp);
         this.context = timer.time();
     }
 

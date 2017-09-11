@@ -59,11 +59,9 @@ public class ThrottlerTest extends ContextTestSupport {
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
-        resultEndpoint.setResultWaitTime(2000);
-        
+
         MockEndpoint errorEndpoint = resolveMandatoryEndpoint("mock:error", MockEndpoint.class);
         errorEndpoint.expectedMessageCount(4);
-        errorEndpoint.setResultWaitTime(2000);
 
         for (int i = 0; i < 6; i++) {
             template.sendBody("direct:start", "<message>" + i + "</message>");
@@ -71,8 +69,7 @@ public class ThrottlerTest extends ContextTestSupport {
 
         // lets pause to give the requests time to be processed
         // to check that the throttle really does kick in
-        resultEndpoint.assertIsSatisfied();
-        errorEndpoint.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
@@ -82,7 +79,7 @@ public class ThrottlerTest extends ContextTestSupport {
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         long elapsed = sendMessagesAndAwaitDelivery(MESSAGE_COUNT, "direct:a", MESSAGE_COUNT, resultEndpoint);
-        assertThrottlerTiming(elapsed, 1, INTERVAL, MESSAGE_COUNT);
+        assertThrottlerTiming(elapsed, 5, INTERVAL, MESSAGE_COUNT);
     }
 
     public void testConfigurationWithConstantExpression() throws Exception {
@@ -92,7 +89,7 @@ public class ThrottlerTest extends ContextTestSupport {
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         long elapsed = sendMessagesAndAwaitDelivery(MESSAGE_COUNT, "direct:expressionConstant", MESSAGE_COUNT, resultEndpoint);
-        assertThrottlerTiming(elapsed, 1, INTERVAL, MESSAGE_COUNT);
+        assertThrottlerTiming(elapsed, 5, INTERVAL, MESSAGE_COUNT);
     }
 
     public void testConfigurationWithHeaderExpression() throws Exception {
@@ -105,7 +102,7 @@ public class ThrottlerTest extends ContextTestSupport {
 
         ExecutorService executor = Executors.newFixedThreadPool(MESSAGE_COUNT);
         try {
-            sendMessagesWithHeaderExpression(executor, resultEndpoint, 1, INTERVAL, MESSAGE_COUNT);
+            sendMessagesWithHeaderExpression(executor, resultEndpoint, 5, INTERVAL, MESSAGE_COUNT);
         } finally {
             executor.shutdownNow();
         }
@@ -119,7 +116,7 @@ public class ThrottlerTest extends ContextTestSupport {
         ExecutorService executor = Executors.newFixedThreadPool(5);
         try {
             MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-            sendMessagesWithHeaderExpression(executor, resultEndpoint, 1, INTERVAL, MESSAGE_COUNT);
+            sendMessagesWithHeaderExpression(executor, resultEndpoint, 5, INTERVAL, MESSAGE_COUNT);
             Thread.sleep(INTERVAL + TOLERANCE); // sleep here to ensure the first throttle rate does not influence the next one.
 
             resultEndpoint.reset();
@@ -127,7 +124,7 @@ public class ThrottlerTest extends ContextTestSupport {
             Thread.sleep(INTERVAL + TOLERANCE); // sleep here to ensure the first throttle rate does not influence the next one.
 
             resultEndpoint.reset();
-            sendMessagesWithHeaderExpression(executor, resultEndpoint, 1, INTERVAL, MESSAGE_COUNT);
+            sendMessagesWithHeaderExpression(executor, resultEndpoint, 5, INTERVAL, MESSAGE_COUNT);
             Thread.sleep(INTERVAL + TOLERANCE); // sleep here to ensure the first throttle rate does not influence the next one.
 
             resultEndpoint.reset();
@@ -145,7 +142,7 @@ public class ThrottlerTest extends ContextTestSupport {
         int messageCount = 20000;
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         long elapsed = sendMessagesAndAwaitDelivery(messageCount, "direct:highThrottleRate", 5, resultEndpoint);
-        assertThrottlerTiming(elapsed, 1000, INTERVAL, messageCount);
+        assertThrottlerTiming(elapsed, 10000, INTERVAL, messageCount);
     }
 
     private void assertThrottlerTiming(final long elapsedTimeMs, final int throttle, final int intervalMs, final int messageCount) {
@@ -224,18 +221,18 @@ public class ThrottlerTest extends ContextTestSupport {
                     .to("mock:error");
                 
                 // START SNIPPET: ex
-                from("seda:a").throttle(3).timePeriodMillis(10000).to("log:result", "mock:result");
+                from("seda:a").throttle(3).timePeriodMillis(1000).to("log:result", "mock:result");
                 // END SNIPPET: ex
 
-                from("direct:a").throttle(1).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
+                from("direct:a").throttle(5).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
 
-                from("direct:expressionConstant").throttle(constant(1)).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
+                from("direct:expressionConstant").throttle(constant(5)).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
 
                 from("direct:expressionHeader").throttle(header("throttleValue")).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
 
-                from("direct:start").throttle(2).timePeriodMillis(10000).rejectExecution(true).to("log:result", "mock:result");
+                from("direct:start").throttle(2).timePeriodMillis(1000).rejectExecution(true).to("log:result", "mock:result");
 
-                from("direct:highThrottleRate").throttle(1000).timePeriodMillis(INTERVAL).to("mock:result");
+                from("direct:highThrottleRate").throttle(10000).timePeriodMillis(INTERVAL).to("mock:result");
             }
         };
     }

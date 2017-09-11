@@ -41,4 +41,9 @@ public class ReflectionInjector implements Injector {
         }
         return newInstance(type);
     }
+
+    @Override
+    public boolean supportsAutoWiring() {
+        return false;
+    }
 }

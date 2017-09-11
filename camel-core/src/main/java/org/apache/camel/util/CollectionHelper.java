@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +32,7 @@ import org.w3c.dom.NodeList;
 /**
  * A number of helper methods for working with collections
  *
- * @version 
+ * @version
  */
 public final class CollectionHelper {
 
@@ -50,18 +51,18 @@ public final class CollectionHelper {
     public static Integer size(Object value) {
         if (value != null) {
             if (value instanceof Collection) {
-                Collection<?> collection = (Collection<?>)value;
+                Collection<?> collection = (Collection<?>) value;
                 return collection.size();
             } else if (value instanceof Map) {
-                Map<?, ?> map = (Map<?, ?>)value;
+                Map<?, ?> map = (Map<?, ?>) value;
                 return map.size();
             } else if (value instanceof Object[]) {
-                Object[] array = (Object[])value;
+                Object[] array = (Object[]) value;
                 return array.length;
             } else if (value.getClass().isArray()) {
                 return Array.getLength(value);
             } else if (value instanceof NodeList) {
-                NodeList nodeList = (NodeList)value;
+                NodeList nodeList = (NodeList) value;
                 return nodeList.getLength();
             }
         }
@@ -83,7 +84,7 @@ public final class CollectionHelper {
         if (oldValue != null) {
             List<Object> list;
             if (oldValue instanceof List) {
-                list = (List<Object>)oldValue;
+                list = (List<Object>) oldValue;
             } else {
                 list = new ArrayList<Object>();
                 list.add(oldValue);
@@ -125,5 +126,33 @@ public final class CollectionHelper {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Traverses the given map recursively and flattern the keys by combining them with the optional separator.
+     *
+     * @param map  the map
+     * @param separator optional separator to use in key name, for example a hyphen or dot.
+     * @return the map with flattern keys
+     */
+    public static Map<String, Object> flatternKeysInMap(Map<String, Object> map, String separator) {
+        Map<String, Object> answer = new LinkedHashMap<>();
+        doFlatternKeysInMap(map, "", ObjectHelper.isNotEmpty(separator) ? separator : "", answer);
+        return answer;
+    }
+
+    private static void doFlatternKeysInMap(Map<String, Object> source, String prefix, String separator, Map<String, Object> target) {
+        for (Map.Entry<String, Object> entry : source.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            String newKey = prefix.isEmpty() ? key : prefix + separator + key;
+
+            if (value instanceof Map) {
+                Map map = (Map) value;
+                doFlatternKeysInMap(map, newKey, separator, target);
+            } else {
+                target.put(newKey, value);
+            }
+        }
     }
 }

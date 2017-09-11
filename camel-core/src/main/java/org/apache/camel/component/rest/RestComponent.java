@@ -24,7 +24,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.VerifiableComponent;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.model.rest.RestConstants;
 import org.apache.camel.spi.Metadata;
@@ -33,13 +36,13 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
  * Rest component.
  */
-public class RestComponent extends DefaultComponent {
+@Metadata(label = "verifiers", enums = "parameters,connectivity")
+public class RestComponent extends DefaultComponent implements VerifiableComponent {
 
     @Metadata(label = "common")
     private String componentName;
@@ -47,6 +50,10 @@ public class RestComponent extends DefaultComponent {
     private String apiDoc;
     @Metadata(label = "producer")
     private String host;
+
+    public RestComponent() {
+        registerExtension(RestComponentVerifierExtension::new);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -62,7 +69,7 @@ public class RestComponent extends DefaultComponent {
 
         // if no explicit host was given, then fallback and use default configured host
         String h = getAndRemoveOrResolveReferenceParameter(parameters, "host", String.class, host);
-        if (h == null && config != null) {
+        if (h == null) {
             h = config.getHost();
             int port = config.getPort();
             // is there a custom port number
@@ -116,7 +123,7 @@ public class RestComponent extends DefaultComponent {
         answer.setUriTemplate(uriTemplate);
 
         // if no explicit component name was given, then fallback and use default configured component name
-        if (answer.getComponentName() == null && config != null) {
+        if (answer.getComponentName() == null) {
             String name = config.getProducerComponent();
             if (name == null) {
                 // fallback and use the consumer name
@@ -125,7 +132,7 @@ public class RestComponent extends DefaultComponent {
             answer.setComponentName(name);
         }
         // if no explicit producer api was given, then fallback and use default configured
-        if (answer.getApiDoc() == null && config != null) {
+        if (answer.getApiDoc() == null) {
             answer.setApiDoc(config.getProducerApiDoc());
         }
 
@@ -186,6 +193,9 @@ public class RestComponent extends DefaultComponent {
     }
 
     private RestConfiguration mergeConfigurations(RestConfiguration conf, RestConfiguration from) throws Exception {
+        if (conf == from) {
+            return conf;
+        }
         if (from != null) {
             Map<String, Object> map = IntrospectionSupport.getNonNullProperties(from);
 
@@ -230,4 +240,8 @@ public class RestComponent extends DefaultComponent {
         }
     }
 
+    @Override
+    public ComponentVerifier getVerifier() {
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
+    }
 }
