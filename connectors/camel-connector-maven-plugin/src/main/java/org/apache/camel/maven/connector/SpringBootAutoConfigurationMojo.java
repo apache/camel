@@ -312,6 +312,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addImport("org.apache.camel.spi.HasId");
         javaClass.addImport("org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator");
         javaClass.addImport("org.apache.camel.util.ObjectHelper");
+        javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
 
         javaClass.addField()
             .setPrivate()
@@ -407,6 +408,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("\n");
         if (hasOptions) {
             sb.append("Map<String, Object> parameters = new HashMap<>();\n");
+            sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
             sb.append("CamelPropertiesHelper.setCamelProperties(camelContext, connector, parameters, false);\n");
             sb.append("connector.setOptions(parameters);\n");
         }
@@ -446,6 +448,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("connector.setCamelContext(camelContext);\n");
         sb.append("\n");
         sb.append("try {\n");
+        sb.append("IntrospectionSupport.getProperties(entry.getValue(), parameters, null, false);\n");
         sb.append("CamelPropertiesHelper.setCamelProperties(camelContext, connector, parameters, false);\n");
         sb.append("connector.setOptions(parameters);\n");
         sb.append("if (ObjectHelper.isNotEmpty(customizers)) {\n");
