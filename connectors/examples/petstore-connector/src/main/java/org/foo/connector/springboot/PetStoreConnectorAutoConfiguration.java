@@ -67,7 +67,7 @@ public class PetStoreConnectorAutoConfiguration {
     @Lazy
     @Bean(name = "petstore-component")
     @ConditionalOnClass(CamelContext.class)
-    @ConditionalOnMissingBean(name = "petstore-component")
+    @ConditionalOnMissingBean
     public PetStoreComponent configurePetStoreComponent() throws Exception {
         PetStoreComponent connector = new PetStoreComponent();
         connector.setCamelContext(camelContext);

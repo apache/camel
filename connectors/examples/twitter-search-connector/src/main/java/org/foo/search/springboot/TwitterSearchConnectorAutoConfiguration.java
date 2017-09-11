@@ -67,7 +67,7 @@ public class TwitterSearchConnectorAutoConfiguration {
     @Lazy
     @Bean(name = "twitter-search-component")
     @ConditionalOnClass(CamelContext.class)
-    @ConditionalOnMissingBean(name = "twitter-search-component")
+    @ConditionalOnMissingBean
     public TwitterSearchComponent configureTwitterSearchComponent()
             throws Exception {
         TwitterSearchComponent connector = new TwitterSearchComponent();

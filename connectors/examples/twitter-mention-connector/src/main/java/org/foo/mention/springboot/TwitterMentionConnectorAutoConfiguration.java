@@ -67,7 +67,7 @@ public class TwitterMentionConnectorAutoConfiguration {
     @Lazy
     @Bean(name = "twitter-mention-component")
     @ConditionalOnClass(CamelContext.class)
-    @ConditionalOnMissingBean(name = "twitter-mention-component")
+    @ConditionalOnMissingBean
     public TwitterMentionComponent configureTwitterMentionComponent()
             throws Exception {
         TwitterMentionComponent connector = new TwitterMentionComponent();
