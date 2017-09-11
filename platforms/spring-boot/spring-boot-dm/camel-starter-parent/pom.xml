@@ -33,6 +33,11 @@
   <packaging>pom</packaging>
   <name>Camel :: Platforms :: Spring-Boot :: Dependency Management :: Starter Parent</name>
 
+  <properties>
+    <spring-boot2-version>2.0.0.M3</spring-boot2-version>
+    <spring5-version>5.0.0.RC3</spring5-version>
+  </properties>
+
   <dependencies>
     <!-- Dependencies added for all starters -->
 
@@ -170,6 +175,37 @@
   </dependencyManagement>
 
   <profiles>
+
+    <!-- spring-boot2 experiment -->
+    <profile>
+      <id>spring-boot2</id>
+      <properties>
+        <spring-boot-version>${spring-boot2-version}</spring-boot-version>
+        <spring-version>${spring5-version}</spring-version>
+        <jackson2-version>2.9.1</jackson2-version>
+      </properties>
+       <repositories>
+        <repository>
+          <id>spring-milestones</id>
+          <name>Spring Milestones</name>
+          <url>https://repo.spring.io/libs-milestone</url>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>spring-milestones</id>
+          <name>Spring Milestones</name>
+          <url>https://repo.spring.io/libs-milestone</url>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+
     <profile>
       <id>nochecks</id>
       <activation>
