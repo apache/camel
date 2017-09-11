@@ -62,5 +62,11 @@
       <artifactId>camel-spring-boot-starter</artifactId>
     </dependency>
     <!--END OF GENERATED CODE-->
+    <!-- needed by spring boot 2 -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
