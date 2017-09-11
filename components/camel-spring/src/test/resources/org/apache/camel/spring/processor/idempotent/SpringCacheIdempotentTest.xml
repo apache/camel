@@ -27,7 +27,7 @@
     <!-- START SNIPPET: example -->
     <bean id="repo" class="org.apache.camel.spring.processor.idempotent.SpringCacheIdempotentRepository">
         <constructor-arg>
-            <bean class="org.springframework.cache.guava.GuavaCacheManager"/>
+            <bean class="org.apache.camel.spring.processor.idempotent.MySpringIdempotentCacheManager"/>
         </constructor-arg>
         <constructor-arg value="idempotent"/>
     </bean>
@@ -35,6 +35,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route id="idempotent-cache">
             <from uri="direct:start" />
+            <log message="Message id: ${header.MessageId}"/>
             <idempotentConsumer messageIdRepositoryRef="repo" skipDuplicate="true">
                 <header>MessageId</header>
                 <to uri="log:org.apache.camel.spring.processor.idempotent?level=INFO&amp;showAll=true&amp;multiline=true" />
