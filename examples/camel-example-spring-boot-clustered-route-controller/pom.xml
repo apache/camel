@@ -42,7 +42,8 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <spring.boot-version>${spring-boot-version}</spring.boot-version>
+    <!-- TODO: this example requires Spring Boot v1. Needs migration to run on v2 -->
+    <spring.boot-version>${spring-boot1-version}</spring.boot-version>
   </properties>
 
 

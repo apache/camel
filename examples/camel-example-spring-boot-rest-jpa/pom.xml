@@ -36,7 +36,8 @@
     <category>Database</category>
     <title>Spring Boot REST JPA</title>
 
-    <spring.boot-version>${spring-boot-version}</spring.boot-version>
+    <!-- TODO: this example requires Spring Boot v1. Needs migration to run on v2 -->
+    <spring.boot-version>${spring-boot1-version}</spring.boot-version>
     <!-- Spring Boot default profile in order to use an embedded database -->
     <run.profiles>dev</run.profiles>
   </properties>
