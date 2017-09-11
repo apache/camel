@@ -25,7 +25,6 @@ import org.apache.camel.component.twitter.TwitterHelper;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * The Twitter Search component consumes search results.
@@ -53,4 +52,7 @@ public class TwitterSearchEndpoint extends AbstractTwitterEndpoint {
         return TwitterHelper.createConsumer(processor, this, new SearchConsumerHandler(this, keywords));
     }
 
+    public String getKeywords() {
+        return keywords;
+    }
 }
