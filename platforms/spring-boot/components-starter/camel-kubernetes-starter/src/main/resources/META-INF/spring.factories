@@ -29,7 +29,9 @@ org.apache.camel.component.kubernetes.persistent_volumes.springboot.KubernetesPe
 org.apache.camel.component.kubernetes.build_configs.springboot.KubernetesBuildConfigsComponentAutoConfiguration,\
 org.apache.camel.component.kubernetes.config_maps.springboot.KubernetesConfigMapsComponentAutoConfiguration,\
 org.apache.camel.component.kubernetes.persistent_volumes_claims.springboot.KubernetesPersistentVolumesClaimsComponentAutoConfiguration,\
-org.apache.camel.component.kubernetes.deployments.springboot.KubernetesDeploymentsComponentAutoConfiguration
+org.apache.camel.component.kubernetes.deployments.springboot.KubernetesDeploymentsComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.service_accounts.springboot.KubernetesServiceAccountsComponentAutoConfiguration
+
 
 
 

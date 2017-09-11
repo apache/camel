@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
 /**
  * The Kubernetes Service Accounts component provides a producer to execute service account operations.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-service-account", title = "Kubernetes Servkce Account",
-    syntax = "kubernetes-service-account:masterUrl", producerOnly = true, label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-service-accounts", title = "Kubernetes Service Account",
+    syntax = "kubernetes-service-accounts:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesServiceAccountsEndpoint extends AbstractKubernetesEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesServiceAccountsEndpoint.class);
