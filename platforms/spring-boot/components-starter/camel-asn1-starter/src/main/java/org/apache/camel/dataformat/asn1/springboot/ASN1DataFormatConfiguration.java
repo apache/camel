@@ -38,7 +38,7 @@ public class ASN1DataFormatConfiguration
      */
     private Boolean usingIterator = false;
     /**
-     * Name of class to use when unarmshalling
+     * Name of class to use when unmarshalling
      */
     private String clazzName;
     /**
