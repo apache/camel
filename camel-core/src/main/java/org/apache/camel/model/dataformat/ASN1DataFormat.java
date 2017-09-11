@@ -80,7 +80,7 @@ public class ASN1DataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Name of class to use when unarmshalling
+     * Name of class to use when unmarshalling
      */
     public void setClazzName(String clazzName) {
         this.clazzName = clazzName;
