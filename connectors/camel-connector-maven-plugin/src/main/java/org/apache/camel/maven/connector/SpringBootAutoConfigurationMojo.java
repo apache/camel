@@ -353,7 +353,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         configureMethod.addAnnotation(Lazy.class);
         configureMethod.addAnnotation(Bean.class).setStringValue("name", beanName);
         configureMethod.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
-        configureMethod.addAnnotation(ConditionalOnMissingBean.class).setStringValue("name", beanName);
+        configureMethod.addAnnotation(ConditionalOnMissingBean.class);
 
         MethodSource<JavaClassSource> postProcessMethod = javaClass.addMethod()
             .setName("postConstruct" + shortJavaType)

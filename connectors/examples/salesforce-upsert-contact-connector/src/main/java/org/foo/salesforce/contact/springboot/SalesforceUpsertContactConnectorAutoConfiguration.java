@@ -67,7 +67,7 @@ public class SalesforceUpsertContactConnectorAutoConfiguration {
     @Lazy
     @Bean(name = "salesforce-upsert-contact-component")
     @ConditionalOnClass(CamelContext.class)
-    @ConditionalOnMissingBean(name = "salesforce-upsert-contact-component")
+    @ConditionalOnMissingBean
     public SalesforceUpsertContactComponent configureSalesforceUpsertContactComponent()
             throws Exception {
         SalesforceUpsertContactComponent connector = new SalesforceUpsertContactComponent();
