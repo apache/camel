@@ -32,7 +32,7 @@ and check the status of the pod
 ```
 kubectl get pods
 NAME                                        READY     STATUS             RESTARTS   AGE
-hazelcast-2400991854-1zk9g                  1/1       Running            0          29s
+hazelcast-414548760-fb5bh                   1/1       Running            0          29s
 ```
 
 Now you can decide to scale-up your Hazelcast cluster
@@ -46,59 +46,64 @@ and again check the status of your pods
 ```
 kubectl get pods
 NAME                                                  READY     STATUS    RESTARTS   AGE
-hazelcast-4281469091-5psd3                            1/1       Running   0          4m
-hazelcast-4281469091-j6p97                            1/1       Running   0          4m
-hazelcast-4281469091-p9w73                            1/1       Running   0          4m
-hazelcast-4281469091-xk13r                            1/1       Running   0          6m
+hazelcast-414548760-37ktz                             1/1       Running   0          23m
+hazelcast-414548760-fb5bh                             1/1       Running   0          1d
+hazelcast-414548760-qntg7                             1/1       Running   0          24m
+hazelcast-414548760-t38cp                             1/1       Running   0          23m
 ```
 
 You can also take a look at the logs from the pods:
 
 ```
-kubectl logs hazelcast-4281469091-5psd3
-2017-08-28 13:11:40.410  INFO 6 --- [           main] com.github.pires.hazelcast.Application   : Starting Application on hazelcast-4281469091-5psd3 with PID 6 (/bootstrapper.jar started by root in /)
-2017-08-28 13:11:40.418  INFO 6 --- [           main] com.github.pires.hazelcast.Application   : No active profile set, falling back to default profiles: default
-2017-08-28 13:11:40.517  INFO 6 --- [           main] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@14514713: startup date [Mon Aug 28 13:11:40 GMT 2017]; root of context hierarchy
-2017-08-28 13:11:41.235  INFO 6 --- [           main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
-2017-08-28 13:11:41.243  INFO 6 --- [           main] c.g.p.h.HazelcastDiscoveryController     : Asking k8s registry at https://kubernetes.default.svc.cluster.local..
-2017-08-28 13:11:41.601  INFO 6 --- [           main] c.g.p.h.HazelcastDiscoveryController     : Found 3 pods running Hazelcast.
-2017-08-28 13:11:41.673  INFO 6 --- [           main] c.h.instance.DefaultAddressPicker        : [LOCAL] [someGroup] [3.8.4] Interfaces is disabled, trying to pick one address from TCP-IP config addresses: [172.17.0.8, 172.17.0.7, 172.17.0.2]
-2017-08-28 13:11:41.673  INFO 6 --- [           main] c.h.instance.DefaultAddressPicker        : [LOCAL] [someGroup] [3.8.4] Prefer IPv4 stack is true.
-2017-08-28 13:11:41.679  INFO 6 --- [           main] c.h.instance.DefaultAddressPicker        : [LOCAL] [someGroup] [3.8.4] Picked [172.17.0.8]:5701, using socket ServerSocket[addr=/0:0:0:0:0:0:0:0,localport=5701], bind any local is true
-2017-08-28 13:11:41.708  INFO 6 --- [           main] com.hazelcast.system                     : [172.17.0.8]:5701 [someGroup] [3.8.4] Hazelcast 3.8.4 (20170809 - 297a77e) starting at [172.17.0.8]:5701
-2017-08-28 13:11:41.708  INFO 6 --- [           main] com.hazelcast.system                     : [172.17.0.8]:5701 [someGroup] [3.8.4] Copyright (c) 2008-2016, Hazelcast, Inc. All Rights Reserved.
-2017-08-28 13:11:41.708  INFO 6 --- [           main] com.hazelcast.system                     : [172.17.0.8]:5701 [someGroup] [3.8.4] Configured Hazelcast Serialization version : 1
-2017-08-28 13:11:41.982  INFO 6 --- [           main] c.h.s.i.o.impl.BackpressureRegulator     : [172.17.0.8]:5701 [someGroup] [3.8.4] Backpressure is disabled
-2017-08-28 13:11:42.504  INFO 6 --- [           main] com.hazelcast.instance.Node              : [172.17.0.8]:5701 [someGroup] [3.8.4] Creating TcpIpJoiner
-2017-08-28 13:11:42.635  INFO 6 --- [           main] c.h.s.i.o.impl.OperationExecutorImpl     : [172.17.0.8]:5701 [someGroup] [3.8.4] Starting 2 partition threads
-2017-08-28 13:11:42.641  INFO 6 --- [           main] c.h.s.i.o.impl.OperationExecutorImpl     : [172.17.0.8]:5701 [someGroup] [3.8.4] Starting 3 generic threads (1 dedicated for priority tasks)
-2017-08-28 13:11:42.646  INFO 6 --- [           main] com.hazelcast.core.LifecycleService      : [172.17.0.8]:5701 [someGroup] [3.8.4] [172.17.0.8]:5701 is STARTING
-2017-08-28 13:11:42.678  INFO 6 --- [cached.thread-2] c.hazelcast.nio.tcp.InitConnectionTask   : [172.17.0.8]:5701 [someGroup] [3.8.4] Connecting to /172.17.0.7:5701, timeout: 0, bind-any: true
-2017-08-28 13:11:42.678  INFO 6 --- [cached.thread-3] c.hazelcast.nio.tcp.InitConnectionTask   : [172.17.0.8]:5701 [someGroup] [3.8.4] Connecting to /172.17.0.2:5701, timeout: 0, bind-any: true
-2017-08-28 13:11:42.686  INFO 6 --- [cached.thread-3] c.h.nio.tcp.TcpIpConnectionManager       : [172.17.0.8]:5701 [someGroup] [3.8.4] Established socket connection between /172.17.0.8:49353 and /172.17.0.2:5701
-2017-08-28 13:11:42.688  INFO 6 --- [cached.thread-2] c.h.nio.tcp.TcpIpConnectionManager       : [172.17.0.8]:5701 [someGroup] [3.8.4] Established socket connection between /172.17.0.8:59023 and /172.17.0.7:5701
-2017-08-28 13:11:48.820  INFO 6 --- [ration.thread-1] com.hazelcast.system                     : [172.17.0.8]:5701 [someGroup] [3.8.4] Cluster version set to 3.8
-2017-08-28 13:11:48.832  INFO 6 --- [ration.thread-1] c.h.internal.cluster.ClusterService      : [172.17.0.8]:5701 [someGroup] [3.8.4] 
+kubectl logs hazelcast-414548760-fb5bh
+2017-09-12 12:06:17.638  INFO 7 --- [           main] com.github.pires.hazelcast.Application   : Starting Application on hazelcast-414548760-fb5bh with PID 7 (/bootstrapper.jar started by root in /)
+2017-09-12 12:06:17.658  INFO 7 --- [           main] com.github.pires.hazelcast.Application   : No active profile set, falling back to default profiles: default
+2017-09-12 12:06:17.712  INFO 7 --- [           main] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@14514713: startup date [Tue Sep 12 12:06:17 GMT 2017]; root of context hierarchy
+2017-09-12 12:06:18.663  INFO 7 --- [           main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+2017-09-12 12:06:18.675  INFO 7 --- [           main] c.g.p.h.HazelcastDiscoveryController     : Asking k8s registry at https://kubernetes.default.svc.cluster.local..
+2017-09-12 12:06:19.103  INFO 7 --- [           main] c.g.p.h.HazelcastDiscoveryController     : Found 1 pods running Hazelcast.
+2017-09-12 12:06:19.169  INFO 7 --- [           main] c.h.instance.DefaultAddressPicker        : [LOCAL] [someGroup] [3.8.5] Interfaces is disabled, trying to pick one address from TCP-IP config addresses: [172.17.0.4]
+2017-09-12 12:06:19.169  INFO 7 --- [           main] c.h.instance.DefaultAddressPicker        : [LOCAL] [someGroup] [3.8.5] Prefer IPv4 stack is true.
+2017-09-12 12:06:19.176  INFO 7 --- [           main] c.h.instance.DefaultAddressPicker        : [LOCAL] [someGroup] [3.8.5] Picked [172.17.0.4]:5701, using socket ServerSocket[addr=/0:0:0:0:0:0:0:0,localport=5701], bind any local is true
+2017-09-12 12:06:19.191  INFO 7 --- [           main] com.hazelcast.system                     : [172.17.0.4]:5701 [someGroup] [3.8.5] Hazelcast 3.8.5 (20170906 - e424927) starting at [172.17.0.4]:5701
+2017-09-12 12:06:19.191  INFO 7 --- [           main] com.hazelcast.system                     : [172.17.0.4]:5701 [someGroup] [3.8.5] Copyright (c) 2008-2016, Hazelcast, Inc. All Rights Reserved.
+2017-09-12 12:06:19.191  INFO 7 --- [           main] com.hazelcast.system                     : [172.17.0.4]:5701 [someGroup] [3.8.5] Configured Hazelcast Serialization version : 1
+2017-09-12 12:06:19.423  INFO 7 --- [           main] c.h.s.i.o.impl.BackpressureRegulator     : [172.17.0.4]:5701 [someGroup] [3.8.5] Backpressure is disabled
+2017-09-12 12:06:20.048  INFO 7 --- [           main] com.hazelcast.instance.Node              : [172.17.0.4]:5701 [someGroup] [3.8.5] Creating TcpIpJoiner
+2017-09-12 12:06:20.242  INFO 7 --- [           main] c.h.s.i.o.impl.OperationExecutorImpl     : [172.17.0.4]:5701 [someGroup] [3.8.5] Starting 2 partition threads
+2017-09-12 12:06:20.250  INFO 7 --- [           main] c.h.s.i.o.impl.OperationExecutorImpl     : [172.17.0.4]:5701 [someGroup] [3.8.5] Starting 3 generic threads (1 dedicated for priority tasks)
+2017-09-12 12:06:20.270  INFO 7 --- [           main] com.hazelcast.core.LifecycleService      : [172.17.0.4]:5701 [someGroup] [3.8.5] [172.17.0.4]:5701 is STARTING
+2017-09-12 12:06:20.296  INFO 7 --- [           main] com.hazelcast.system                     : [172.17.0.4]:5701 [someGroup] [3.8.5] Cluster version set to 3.8
+2017-09-12 12:06:20.297  INFO 7 --- [           main] com.hazelcast.cluster.impl.TcpIpJoiner   : [172.17.0.4]:5701 [someGroup] [3.8.5] 
 
-Members [3] {
-	Member [172.17.0.2]:5701 - 3625b0b6-9939-4188-8323-3e1f1f74b2e0
-	Member [172.17.0.7]:5701 - f7698972-1743-4d63-8e3f-3391d41882f9
-	Member [172.17.0.8]:5701 - 20072d52-7525-46a2-8cf2-226ad2fd4540 this
+
+Members [1] {
+	Member [172.17.0.4]:5701 - 929e9148-870d-4f43-ba1d-fcc8ff973ab3 this
 }
 
-2017-08-28 13:11:49.436  INFO 6 --- [thread-Acceptor] c.h.nio.tcp.SocketAcceptorThread         : [172.17.0.8]:5701 [someGroup] [3.8.4] Accepting socket connection from /172.17.0.6:36531
-2017-08-28 13:11:49.439  INFO 6 --- [cached.thread-3] c.h.nio.tcp.TcpIpConnectionManager       : [172.17.0.8]:5701 [someGroup] [3.8.4] Established socket connection between /172.17.0.8:5701 and /172.17.0.6:36531
-2017-08-28 13:11:50.719  INFO 6 --- [           main] com.hazelcast.core.LifecycleService      : [172.17.0.8]:5701 [someGroup] [3.8.4] [172.17.0.8]:5701 is STARTED
-2017-08-28 13:11:50.774  INFO 6 --- [           main] com.github.pires.hazelcast.Application   : Started Application in 11.009 seconds (JVM running for 11.45)
-2017-08-28 13:11:56.443  INFO 6 --- [ration.thread-0] c.h.internal.cluster.ClusterService      : [172.17.0.8]:5701 [someGroup] [3.8.4] 
+2017-09-12 12:06:20.340  INFO 7 --- [           main] com.hazelcast.core.LifecycleService      : [172.17.0.4]:5701 [someGroup] [3.8.5] [172.17.0.4]:5701 is STARTED
+2017-09-12 12:06:20.343  INFO 7 --- [           main] com.github.pires.hazelcast.Application   : Started Application in 3.325 seconds (JVM running for 3.747)
+2017-09-12 12:15:05.855  INFO 7 --- [thread-Acceptor] c.h.nio.tcp.SocketAcceptorThread         : [172.17.0.4]:5701 [someGroup] [3.8.5] Accepting socket connection from /172.17.0.7:54699
+2017-09-12 12:15:05.863  INFO 7 --- [cached.thread-3] c.h.nio.tcp.TcpIpConnectionManager       : [172.17.0.4]:5701 [someGroup] [3.8.5] Established socket connection between /172.17.0.4:5701 and /172.17.0.7:54699
+2017-09-12 12:15:12.856  INFO 7 --- [ration.thread-1] c.h.internal.cluster.ClusterService      : [172.17.0.4]:5701 [someGroup] [3.8.5] 
+
+Members [2] {
+	Member [172.17.0.4]:5701 - 929e9148-870d-4f43-ba1d-fcc8ff973ab3 this
+	Member [172.17.0.7]:5701 - 6d05a83b-2960-48b3-8dd2-63f6720115f5
+}
+
+2017-09-12 12:16:51.699  INFO 7 --- [thread-Acceptor] c.h.nio.tcp.SocketAcceptorThread         : [172.17.0.4]:5701 [someGroup] [3.8.5] Accepting socket connection from /172.17.0.8:48921
+2017-09-12 12:16:51.736  INFO 7 --- [cached.thread-3] c.h.nio.tcp.TcpIpConnectionManager       : [172.17.0.4]:5701 [someGroup] [3.8.5] Established socket connection between /172.17.0.4:5701 and /172.17.0.8:48921
+2017-09-12 12:16:56.258  INFO 7 --- [thread-Acceptor] c.h.nio.tcp.SocketAcceptorThread         : [172.17.0.4]:5701 [someGroup] [3.8.5] Accepting socket connection from /172.17.0.9:40459
+2017-09-12 12:16:56.259  INFO 7 --- [cached.thread-4] c.h.nio.tcp.TcpIpConnectionManager       : [172.17.0.4]:5701 [someGroup] [3.8.5] Established socket connection between /172.17.0.4:5701 and /172.17.0.9:40459
+2017-09-12 12:17:02.725  INFO 7 --- [ration.thread-0] c.h.internal.cluster.ClusterService      : [172.17.0.4]:5701 [someGroup] [3.8.5] 
 
 Members [4] {
-	Member [172.17.0.2]:5701 - 3625b0b6-9939-4188-8323-3e1f1f74b2e0
-	Member [172.17.0.7]:5701 - f7698972-1743-4d63-8e3f-3391d41882f9
-	Member [172.17.0.8]:5701 - 20072d52-7525-46a2-8cf2-226ad2fd4540 this
-	Member [172.17.0.6]:5701 - 67881b8b-04a2-4888-8283-f9e39f280282
+	Member [172.17.0.4]:5701 - 929e9148-870d-4f43-ba1d-fcc8ff973ab3 this
+	Member [172.17.0.7]:5701 - 6d05a83b-2960-48b3-8dd2-63f6720115f5
+	Member [172.17.0.8]:5701 - 50ddeb59-8f06-43c6-91a8-c36fd86f825c
+	Member [172.17.0.9]:5701 - e79a9a26-971d-4b67-8a46-1a78fee94324
 }
-
 
 ```
 
@@ -121,39 +126,33 @@ Then find the name of the pod that runs this quickstart, and output the logs fro
 and you should see something like this:
 
 ```
-INFO: hz.client_0 [someGroup] [3.8.2] HazelcastClient 3.8.2 (20170518 - a60f944) is CLIENT_CONNECTED
-2017-05-26 12:14:57,135 [main           ] INFO  SpringCamelContext             - Apache Camel 2.20.0-SNAPSHOT (CamelContext: camel-1) is starting
-2017-05-26 12:14:57,136 [main           ] INFO  ManagedManagementStrategy      - JMX is enabled
-2017-05-26 12:14:57,271 [main           ] INFO  DefaultTypeConverter           - Loaded 193 type converters
-2017-05-26 12:14:57,302 [main           ] INFO  DefaultRuntimeEndpointRegistry - Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: 1000)
-2017-05-26 12:14:57,405 [main           ] INFO  SpringCamelContext             - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html
-May 26, 2017 12:14:57 PM com.hazelcast.client.connection.ClientConnectionManager
-INFO: hz.client_0 [someGroup] [3.8.2] Authenticated with server [172.17.0.7]:5701, server version:3.8.2 Local address: /172.17.0.8:37538
-May 26, 2017 12:14:58 PM com.hazelcast.client.connection.ClientConnectionManager
-INFO: hz.client_0 [someGroup] [3.8.2] Authenticated with server [172.17.0.2]:5701, server version:3.8.2 Local address: /172.17.0.8:59990
-May 26, 2017 12:14:58 PM com.hazelcast.client.connection.ClientConnectionManager
-INFO: hz.client_0 [someGroup] [3.8.2] Authenticated with server [172.17.0.4]:5701, server version:3.8.2 Local address: /172.17.0.8:38928
-2017-05-26 12:14:59,956 [main           ] INFO  SpringCamelContext             - Route: route1 started and consuming from: timer://foo?period=5000
-2017-05-26 12:14:59,960 [main           ] INFO  SpringCamelContext             - Route: route2 started and consuming from: hazelcast-topic://foo
-2017-05-26 12:14:59,961 [main           ] INFO  SpringCamelContext             - Total 2 routes, of which 2 are started.
-2017-05-26 12:14:59,963 [main           ] INFO  SpringCamelContext             - Apache Camel 2.20.0-SNAPSHOT (CamelContext: camel-1) started in 2.825 seconds
-2017-05-26 12:15:00,972 [0 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
-2017-05-26 12:15:01,001 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
-2017-05-26 12:15:05,967 [0 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
-2017-05-26 12:15:05,974 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
-2017-05-26 12:15:10,961 [0 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
-2017-05-26 12:15:10,963 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
-2017-05-26 12:15:15,961 [0 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
-2017-05-26 12:15:15,963 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
-2017-05-26 12:15:20,962 [0 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
-2017-05-26 12:15:20,964 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
-2017-05-26 12:15:25,962 [0 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
-2017-05-26 12:15:25,963 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
-2017-05-26 12:15:30,962 [0 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
-2017-05-26 12:15:30,965 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
-2017-05-26 12:15:35,961 [0 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
-2017-05-26 12:15:35,963 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
-2017-05-26 12:15:40,962 [0 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
-2017-05-26 12:15:40,964 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
+INFO: hz.client_0 [someGroup] [3.8.5] HazelcastClient 3.8.5 (20170906 - e424927) is CLIENT_CONNECTED
+2017-09-12 12:42:22,764 [main           ] INFO  SpringCamelContext             - Apache Camel 2.20.0-SNAPSHOT (CamelContext: camel-1) is starting
+2017-09-12 12:42:22,765 [main           ] INFO  ManagedManagementStrategy      - JMX is enabled
+2017-09-12 12:42:22,880 [main           ] INFO  DefaultTypeConverter           - Type converters loaded (core: 192, classpath: 1)
+2017-09-12 12:42:23,012 [main           ] INFO  SpringCamelContext             - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html
+Sep 12, 2017 12:42:23 PM com.hazelcast.client.connection.ClientConnectionManager
+INFO: hz.client_0 [someGroup] [3.8.5] Authenticated with server [172.17.0.9]:5701, server version:3.8.5 Local address: /172.17.0.10:37452
+Sep 12, 2017 12:42:23 PM com.hazelcast.client.connection.ClientConnectionManager
+INFO: hz.client_0 [someGroup] [3.8.5] Authenticated with server [172.17.0.7]:5701, server version:3.8.5 Local address: /172.17.0.10:34884
+Sep 12, 2017 12:42:23 PM com.hazelcast.client.connection.ClientConnectionManager
+INFO: hz.client_0 [someGroup] [3.8.5] Authenticated with server [172.17.0.4]:5701, server version:3.8.5 Local address: /172.17.0.10:45126
+2017-09-12 12:42:25,250 [main           ] INFO  SpringCamelContext             - Route: route1 started and consuming from: timer://foo?period=5000
+2017-09-12 12:42:25,251 [main           ] INFO  SpringCamelContext             - Route: route2 started and consuming from: hazelcast-topic://foo
+2017-09-12 12:42:25,258 [main           ] INFO  SpringCamelContext             - Total 2 routes, of which 2 are started
+2017-09-12 12:42:25,260 [main           ] INFO  SpringCamelContext             - Apache Camel 2.20.0-SNAPSHOT (CamelContext: camel-1) started in 2.495 seconds
+2017-09-12 12:42:25,264 [main           ] INFO  DefaultLifecycleProcessor      - Starting beans in phase 2147483646
+2017-09-12 12:42:26,264 [2 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
+2017-09-12 12:42:26,335 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
+2017-09-12 12:42:31,258 [2 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
+2017-09-12 12:42:31,265 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
+2017-09-12 12:42:36,258 [2 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
+2017-09-12 12:42:36,260 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
+2017-09-12 12:42:41,258 [2 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
+2017-09-12 12:42:41,260 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
+2017-09-12 12:42:46,259 [2 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
+2017-09-12 12:42:46,261 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
+2017-09-12 12:42:51,260 [2 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
+2017-09-12 12:42:51,261 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
 
 ```
