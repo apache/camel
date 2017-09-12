@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.fusesource.hawtbuf.AsciiBuffer;
 import org.fusesource.stomp.client.BlockingConnection;
 import org.fusesource.stomp.client.Stomp;
 import org.fusesource.stomp.codec.StompFrame;
@@ -32,6 +33,9 @@ import static org.fusesource.stomp.client.Constants.ID;
 import static org.fusesource.stomp.client.Constants.SUBSCRIBE;
 
 public class StompProducerTest extends StompBaseTest {
+
+    private static final String HEADER = "testheader1";
+    private static final String HEADER_VALUE = "testheader1";
 
     @Test
     public void testProduce() throws Exception {
@@ -58,6 +62,8 @@ public class StompProducerTest extends StompBaseTest {
                     try {
                         StompFrame frame = subscribeConnection.receive();
                         frame.contentAsString().startsWith("test message ");
+                        assertTrue(frame.contentAsString().startsWith("test message "));
+                        assertTrue(frame.getHeader(new AsciiBuffer(HEADER)).ascii().toString().startsWith(HEADER_VALUE));
                         latch.countDown();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -72,6 +78,7 @@ public class StompProducerTest extends StompBaseTest {
         for (int i = 0; i < numberOfMessages; i++) {
             Exchange exchange = producer.createExchange();
             exchange.getIn().setBody(("test message " + i).getBytes("UTF-8"));
+            exchange.getIn().setHeader(HEADER, HEADER_VALUE);
             producer.process(exchange);
         }
         latch.await(20, TimeUnit.SECONDS);
