@@ -44,6 +44,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 import org.slf4j.Logger;
@@ -188,19 +189,13 @@ public class S3Endpoint extends ScheduledPollEndpoint {
          * As of 2.17, the consumer does not close the stream or object on commit.
          */
         if (!configuration.isIncludeBody()) {
-            try {
-                s3Object.close();
-            } catch (IOException e) {
-            }
+            IOHelper.close(s3Object);
         } else {
             if (configuration.isAutocloseBody()) {
                 exchange.addOnCompletion(new SynchronizationAdapter() {
                     @Override
                     public void onDone(Exchange exchange) {
-                        try {
-                            s3Object.close();
-                        } catch (IOException e) {
-                        }
+                        IOHelper.close(s3Object);
                     }
                 });
             }
