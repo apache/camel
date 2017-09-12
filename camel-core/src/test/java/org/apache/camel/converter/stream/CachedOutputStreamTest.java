@@ -17,6 +17,7 @@
 package org.apache.camel.converter.stream;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -284,4 +285,25 @@ public class CachedOutputStreamTest extends ContextTestSupport {
 
         IOHelper.close(cos);
     }
+
+    public void testCachedOutputStreamEmptyInput() throws Exception {
+        context.start();
+
+        CachedOutputStream cos = new CachedOutputStream(exchange, false);
+        // write an empty string
+        cos.write("".getBytes("UTF-8"));
+        InputStream is = cos.getWrappedInputStream();
+        assertNotNull(is);
+
+        // copy to output stream
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(16);
+        IOHelper.copy(is, bos);
+        assertNotNull(bos);
+        byte[] data = bos.toByteArray();
+        assertEquals(0, data.length);
+
+        IOHelper.close(bos);
+        IOHelper.close(cos);
+    }
+
 }
