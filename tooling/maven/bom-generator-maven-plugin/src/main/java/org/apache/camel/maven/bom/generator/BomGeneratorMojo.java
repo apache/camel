@@ -385,21 +385,50 @@ public class BomGeneratorMojo extends AbstractMojo {
     }
 
     private Set<String> getProvidedDependencyManagement(String groupId, String artifactId, String version) throws Exception {
+        return getProvidedDependencyManagement(groupId, artifactId, version, new TreeSet<>());
+    }
+
+    private Set<String> getProvidedDependencyManagement(String groupId, String artifactId, String version, Set<String> gaChecked) throws Exception {
+        String ga = groupId + ":" + artifactId;
+        gaChecked.add(ga);
         Artifact bom = resolveArtifact(groupId, artifactId, version, "pom");
         MavenProject bomProject = loadExternalProjectPom(bom.getFile());
 
         Set<String> provided = new HashSet<>();
         if (bomProject.getDependencyManagement() != null && bomProject.getDependencyManagement().getDependencies() != null) {
             for (Dependency dep : bomProject.getDependencyManagement().getDependencies()) {
-                provided.add(comparisonKey(dep));
+                if ("pom".equals(dep.getType()) && "import".equals(dep.getScope())) {
+                    String subGa = dep.getGroupId() + ":" + dep.getArtifactId();
+                    if (!gaChecked.contains(subGa)) {
+                        Set<String> sub = getProvidedDependencyManagement(dep.getGroupId(), dep.getArtifactId(), resolveVersion(bomProject, dep.getVersion()), gaChecked);
+                        provided.addAll(sub);
+                    }
+                } else {
+                    provided.add(comparisonKey(dep));
+                }
             }
         }
 
         return provided;
     }
 
+    private String resolveVersion(MavenProject project, String version) {
+        if (version.contains("${")) {
+            int start = version.indexOf("${");
+            int end = version.indexOf("}");
+            if (end > start) {
+                String prop = version.substring(start + 2, end);
+                String resolved = project.getProperties().getProperty(prop);
+                if (resolved != null) {
+                    version = version.substring(0, start) + resolved + version.substring(end + 1);
+                }
+            }
+        }
+        return version;
+    }
+
     private String comparisonKey(Dependency dependency) {
-        return dependency.getGroupId() + ":" + dependency.getArtifactId();
+        return dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + (dependency.getType() != null ? dependency.getType() : "jar");
     }
 
     private Artifact resolveArtifact(String groupId, String artifactId, String version, String type) throws Exception {

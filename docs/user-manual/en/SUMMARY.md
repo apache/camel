@@ -412,6 +412,7 @@
 	* [Spring Boot2](spring-boot2.adoc)
 	* [Spring Cloud](spring-cloud.adoc)
 	* [Spring Cloud Netflix](spring-cloud-netflix.adoc)
+	* [Spring DM](spring-dm.adoc)
 	* [Spring Java Configuration](spring-javaconfig.adoc)
 	* [Spring Security](spring-security.adoc)
 	* [Swagger](swagger.adoc)

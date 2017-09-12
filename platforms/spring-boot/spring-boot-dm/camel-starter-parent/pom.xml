@@ -33,16 +33,6 @@
   <packaging>pom</packaging>
   <name>Camel :: Platforms :: Spring-Boot :: Dependency Management :: Starter Parent</name>
 
-  <properties>
-    <!-- spring-boot -->
-    <spring-boot-version>2.0.0.M3</spring-boot-version>
-    <spring-version>5.0.0.RC3</spring-version>
-    <jackson2-version>2.9.1</jackson2-version>
-    <!-- spring-cloud -->
-    <spring-cloud-commons-version>2.0.0.M2</spring-cloud-commons-version>
-    <spring-cloud-netflix-version>2.0.0.M2</spring-cloud-netflix-version>
-  </properties>
-
   <dependencies>
     <!-- Dependencies added for all starters -->
 
@@ -78,7 +68,7 @@
         <scope>import</scope>
       </dependency>
 
-      <!-- What's in the user BOM is OK for the parent -->
+      <!--What's in the user BOM is OK for the parent-->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-boot-dependencies</artifactId>
@@ -88,44 +78,44 @@
       </dependency>
 
       <!-- Testing -->
-      <dependency>
-        <groupId>org.jboss.arquillian.junit</groupId>
-        <artifactId>arquillian-junit-container</artifactId>
-        <version>${arquillian-version}</version>
-        <scope>test</scope>
-      </dependency>
+      <!--<dependency>-->
+        <!--<groupId>org.jboss.arquillian.junit</groupId>-->
+        <!--<artifactId>arquillian-junit-container</artifactId>-->
+        <!--<version>${arquillian-version}</version>-->
+        <!--<scope>test</scope>-->
+      <!--</dependency>-->
 
-      <!-- Forcing Hadoop in starters -->
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-common</artifactId>
-        <version>${hadoop2-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-auth</artifactId>
-        <version>${hadoop2-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-mapreduce-client-core</artifactId>
-        <version>${hadoop2-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-yarn-common</artifactId>
-        <version>${hadoop2-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-annotations</artifactId>
-        <version>${hadoop2-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-hdfs</artifactId>
-        <version>${hadoop2-version}</version>
-      </dependency>
+      <!--&lt;!&ndash; Forcing Hadoop in starters &ndash;&gt;-->
+      <!--<dependency>-->
+        <!--<groupId>org.apache.hadoop</groupId>-->
+        <!--<artifactId>hadoop-common</artifactId>-->
+        <!--<version>${hadoop2-version}</version>-->
+      <!--</dependency>-->
+      <!--<dependency>-->
+        <!--<groupId>org.apache.hadoop</groupId>-->
+        <!--<artifactId>hadoop-auth</artifactId>-->
+        <!--<version>${hadoop2-version}</version>-->
+      <!--</dependency>-->
+      <!--<dependency>-->
+        <!--<groupId>org.apache.hadoop</groupId>-->
+        <!--<artifactId>hadoop-mapreduce-client-core</artifactId>-->
+        <!--<version>${hadoop2-version}</version>-->
+      <!--</dependency>-->
+      <!--<dependency>-->
+        <!--<groupId>org.apache.hadoop</groupId>-->
+        <!--<artifactId>hadoop-yarn-common</artifactId>-->
+        <!--<version>${hadoop2-version}</version>-->
+      <!--</dependency>-->
+      <!--<dependency>-->
+        <!--<groupId>org.apache.hadoop</groupId>-->
+        <!--<artifactId>hadoop-annotations</artifactId>-->
+        <!--<version>${hadoop2-version}</version>-->
+      <!--</dependency>-->
+      <!--<dependency>-->
+        <!--<groupId>org.apache.hadoop</groupId>-->
+        <!--<artifactId>hadoop-hdfs</artifactId>-->
+        <!--<version>${hadoop2-version}</version>-->
+      <!--</dependency>-->
 
       <!-- Netty cannot be forced at the moment -->
 
@@ -178,86 +168,5 @@
 
     </dependencies>
   </dependencyManagement>
-
-  <profiles>
-
-    <!-- spring-boot2 experiment -->
-    <profile>
-      <id>spring-boot2</id>
-      <properties>
-        <spring-boot-version>2.0.0.M3</spring-boot-version>
-        <spring-version>5.0.0.RC3</spring-version>
-        <jackson2-version>2.9.1</jackson2-version>
-        <!-- spring-cloud -->
-        <spring-cloud-commons-version>2.0.0.M2</spring-cloud-commons-version>
-        <spring-cloud-netflix-version>2.0.0.M2</spring-cloud-netflix-version>
-      </properties>
-       <repositories>
-        <repository>
-          <id>spring-milestones</id>
-          <name>Spring Milestones</name>
-          <url>https://repo.spring.io/libs-milestone</url>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-        </repository>
-      </repositories>
-      <pluginRepositories>
-        <pluginRepository>
-          <id>spring-milestones</id>
-          <name>Spring Milestones</name>
-          <url>https://repo.spring.io/libs-milestone</url>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-        </pluginRepository>
-      </pluginRepositories>
-    </profile>
-
-    <profile>
-      <id>nochecks</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-    </profile>
-
-    <profile>
-      <id>fastinstall</id>
-      <activation>
-        <property>
-          <name>fastinstall</name>
-        </property>
-      </activation>
-      <properties>
-        <maven.test.skip.exec>true</maven.test.skip.exec>
-        <assembly.skipAssembly>true</assembly.skipAssembly>
-        <noassembly>true</noassembly>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>sourcecheck</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>dependencycheck</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.owasp</groupId>
-            <artifactId>dependency-check-maven</artifactId>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
 </project>

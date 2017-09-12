@@ -222,6 +222,13 @@ public class SpringBootStarterMojo extends AbstractMojo {
             }
         }
 
+        Set<String> optionalProps = csvToSet(properties.getProperty("optional"));
+        for (String gp : optionalProps) {
+            String[] comps = gp.split("\\:");
+            String stdName = (comps[0] + ":" + comps[1]);
+            optionalProps.add(stdName);
+        }
+
         if (!inGlobal) {
             // add global properties for all modules not in global properties
             deps.addAll(globalProps);
@@ -243,6 +250,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
                     String groupIdStr = comps[0];
                     String artifactIdStr = comps[1];
                     String versionStr = comps.length > 2 ? comps[2] : null;
+                    boolean optionalDep = optionalProps.contains(groupIdStr + ":" + artifactIdStr);
 
                     Element groupId = pom.createElement("groupId");
                     groupId.setTextContent(groupIdStr);
@@ -256,6 +264,12 @@ public class SpringBootStarterMojo extends AbstractMojo {
                         Element version = pom.createElement("version");
                         version.setTextContent(versionStr);
                         dependency.appendChild(version);
+                    }
+
+                    if (optionalDep) {
+                        Element optional = pom.createElement("optional");
+                        optional.setTextContent("true");
+                        dependency.appendChild(optional);
                     }
 
                 }

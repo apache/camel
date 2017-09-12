@@ -46,12 +46,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring-boot-starter</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.mylyn.github</groupId>
-      <artifactId>org.eclipse.egit.github.core</artifactId>
-      <version>${egit-github-core-version}</version>
+      <artifactId>camel-spring-boot</artifactId>
+      <optional>true</optional>
     </dependency>
     <!--END OF GENERATED CODE-->
   </dependencies>

@@ -44,10 +44,6 @@
           <groupId>commons-logging</groupId>
           <artifactId>commons-logging</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>io.netty</groupId>
-          <artifactId>netty</artifactId>
-        </exclusion>
       </exclusions>
       <!--END OF GENERATED CODE-->
     </dependency>
@@ -58,7 +54,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring-boot-starter</artifactId>
+      <artifactId>camel-spring-boot</artifactId>
+      <optional>true</optional>
     </dependency>
     <!--END OF GENERATED CODE-->
   </dependencies>

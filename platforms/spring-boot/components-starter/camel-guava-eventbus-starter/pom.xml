@@ -41,18 +41,19 @@
     </dependency>
     <!--START OF GENERATED CODE-->
     <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${google-guava-version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-starter</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring-boot-starter</artifactId>
+      <artifactId>camel-spring-boot</artifactId>
+      <optional>true</optional>
     </dependency>
     <!--END OF GENERATED CODE-->
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${google-guava-version}</version>
+    </dependency>
   </dependencies>
 </project>

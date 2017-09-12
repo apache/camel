@@ -46,12 +46,13 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring-boot-starter</artifactId>
+      <artifactId>camel-spring-boot</artifactId>
+      <optional>true</optional>
     </dependency>
+    <!--END OF GENERATED CODE-->
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jms_2.0_spec</artifactId>
     </dependency>
-    <!--END OF GENERATED CODE-->
   </dependencies>
 </project>

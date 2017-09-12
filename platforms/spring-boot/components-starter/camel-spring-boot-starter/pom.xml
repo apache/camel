@@ -51,11 +51,5 @@
       </exclusions>
       <!--END OF GENERATED CODE-->
     </dependency>
-    <!--START OF GENERATED CODE-->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core-starter</artifactId>
-    </dependency>
-    <!--END OF GENERATED CODE-->
   </dependencies>
 </project>
