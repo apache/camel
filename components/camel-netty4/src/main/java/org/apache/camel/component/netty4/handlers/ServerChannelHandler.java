@@ -96,6 +96,9 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         if (consumer.getConfiguration().getCharsetName() != null) {
             exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(consumer.getConfiguration().getCharsetName()));
         }
+        if (consumer.getConfiguration().isReuseChannel()) {
+            exchange.setProperty(NettyConstants.NETTY_CHANNEL, ctx.channel());
+        }
 
         // we want to handle the UoW
         consumer.createUoW(exchange);
