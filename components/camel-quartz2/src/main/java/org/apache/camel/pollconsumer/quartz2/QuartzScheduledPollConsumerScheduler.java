@@ -33,8 +33,10 @@ import org.quartz.CronTrigger;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.ObjectAlreadyExistsException;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
@@ -193,7 +195,9 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
             // store additional information on job such as camel context etc
             QuartzHelper.updateJobDataMap(getCamelContext(), job, null);
 
-            trigger = TriggerBuilder.newTrigger().withIdentity(id, triggerGroup).withSchedule(CronScheduleBuilder.cronSchedule(getCron()).inTimeZone(getTimeZone())).build();
+            trigger = TriggerBuilder.newTrigger().withIdentity(id, triggerGroup)
+                .withSchedule(CronScheduleBuilder.cronSchedule(getCron()).inTimeZone(getTimeZone()))
+                .build();
 
             LOG.debug("Scheduling job: {} with trigger: {}", job, trigger.getKey());
             quartzScheduler.scheduleJob(job, trigger);
@@ -206,13 +210,43 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
             jobData.put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, getCron());
             jobData.put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, getTimeZone().getID());
 
+            // store additional information on job such as camel context etc
             QuartzHelper.updateJobDataMap(getCamelContext(), job, null);
             LOG.debug("Updated jobData map to {}", jobData);
-            
-            // Ensure the cron schedule is updated
-            CronTrigger newTrigger = existingTrigger.getTriggerBuilder().withSchedule(CronScheduleBuilder.cronSchedule(getCron()).inTimeZone(getTimeZone())).build();
 
-            quartzScheduler.rescheduleJob(triggerKey, newTrigger);
+            trigger = existingTrigger.getTriggerBuilder()
+                .withSchedule(CronScheduleBuilder.cronSchedule(getCron()).inTimeZone(getTimeZone()))
+                .build();
+
+            // Reschedule job if trigger settings were changed
+            if (hasTriggerChanged(existingTrigger, trigger)) {
+                LOG.debug("Re-scheduling job: {} with trigger: {}", job, trigger.getKey());
+                quartzScheduler.rescheduleJob(triggerKey, trigger);
+            } else {
+                // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
+                LOG.debug("Scheduling job: {} with trigger: {}", job, trigger.getKey());
+                try {
+                    // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
+                    quartzScheduler.scheduleJob(job, trigger);
+                } catch (ObjectAlreadyExistsException ex) {
+                    // some other VM might may have stored the job & trigger in DB in clustered mode, in the mean time
+                    QuartzComponent quartz = getCamelContext().getComponent("quartz2", QuartzComponent.class);
+                    if (!(quartz.isClustered())) {
+                        throw ex;
+                    } else {
+                        trigger = (CronTrigger) quartzScheduler.getTrigger(triggerKey);
+                        if (trigger == null) {
+                            throw new SchedulerException("Trigger could not be found in quartz scheduler.");
+                        }
+                    }
+                }
+            }
+        }
+
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
+                new Object[] {trigger.getKey(), trigger.getClass().getSimpleName(),
+                    job.getJobClass().getSimpleName(), trigger.getNextFireTime()});
         }
     }
 
@@ -233,6 +267,21 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
         String routeIdFromTrigger = jobDataMap.getString("routeId");
         if (routeIdFromTrigger != null && !routeIdFromTrigger.equals(routeId)) {
             throw new IllegalArgumentException("Trigger key " + trigger.getKey() + " is already used by route: " + routeIdFromTrigger + ". Cannot re-use it for another route: " + routeId);
+        }
+    }
+
+    private boolean hasTriggerChanged(Trigger oldTrigger, Trigger newTrigger) {
+        if (newTrigger instanceof CronTrigger && oldTrigger instanceof CronTrigger) {
+            CronTrigger newCron = (CronTrigger) newTrigger;
+            CronTrigger oldCron = (CronTrigger) oldTrigger;
+            return !newCron.getCronExpression().equals(oldCron.getCronExpression());
+        } else if (newTrigger instanceof SimpleTrigger && oldTrigger instanceof SimpleTrigger) {
+            SimpleTrigger newSimple = (SimpleTrigger) newTrigger;
+            SimpleTrigger oldSimple = (SimpleTrigger) oldTrigger;
+            return newSimple.getRepeatInterval() != oldSimple.getRepeatInterval()
+                || newSimple.getRepeatCount() != oldSimple.getRepeatCount();
+        } else {
+            return !newTrigger.getClass().equals(oldTrigger.getClass()) || !newTrigger.equals(oldTrigger);
         }
     }
 
