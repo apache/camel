@@ -65,7 +65,7 @@ public class S3Configuration implements Cloneable {
     private boolean pathStyleAccess;
     @UriParam(label = "producer", enums = "copyObject,deleteBucket,listBuckets")
     private S3Operations operation;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean autocloseBody = true;
     @UriParam(label = "common")
     private EncryptionMaterials encryptionMaterials;
@@ -77,7 +77,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * *Camel 2.15.0*: Setup the partSize which is used in multi part upload,
+     * Setup the partSize which is used in multi part upload,
      * the default size is 25M.
      */
     public void setPartSize(long partSize) {
@@ -89,7 +89,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * *Camel 2.15.0*: If it is true, camel will upload the file with multi part
+     * If it is true, camel will upload the file with multi part
      * format, the part size is decided by the option of `partSize`
      */
     public void setMultiPartUpload(boolean multiPartUpload) {
@@ -146,7 +146,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * *Camel 2.10.1*: The prefix which is used in the
+     * The prefix which is used in the
      * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
      * objects we are interested in.
      */
@@ -230,7 +230,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * *Camel 2.11.0*: Delete file object after the S3 file has been uploaded
+     * Delete file object after the S3 file has been uploaded
      */
     public void setDeleteAfterWrite(boolean deleteAfterWrite) {
         this.deleteAfterWrite = deleteAfterWrite;
@@ -241,7 +241,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * *Camel 2.8.4*: The policy for this queue to set in the
+     * The policy for this queue to set in the
      * `com.amazonaws.services.s3.AmazonS3#setBucketPolicy()` method.
      */
     public void setPolicy(String policy) {
@@ -253,7 +253,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * *Camel 2.8.4*: The storage class to set in the
+     * The storage class to set in the
      * `com.amazonaws.services.s3.model.PutObjectRequest` request.
      */
     public void setStorageClass(String storageClass) {
@@ -265,7 +265,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * *Camel 2.16*: Sets the server-side encryption algorithm when encrypting
+     * Sets the server-side encryption algorithm when encrypting
      * the object using AWS-managed keys. For example use <tt>AES256</tt>.
      */
     public void setServerSideEncryption(String serverSideEncryption) {
@@ -277,7 +277,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * *Camel 2.16*: To define a proxy host when instantiating the SQS client
+     * To define a proxy host when instantiating the SQS client
      */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
@@ -288,8 +288,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * *Camel 2.16*: Specify a proxy port to be used inside the client
-     * definition.
+     * Specify a proxy port to be used inside the client definition.
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
@@ -311,8 +310,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * *Camel 2.18*: The operation to do in case the user don't want to do only
-     * an upload
+     * The operation to do in case the user don't want to do only an upload
      */
     public void setOperation(S3Operations operation) {
         this.operation = operation;
@@ -324,7 +322,7 @@ public class S3Configuration implements Cloneable {
 
     /**
      * If this option is true and includeBody is true, then the S3Object.close()
-     * method will be called on exchange completion This option is strongly
+     * method will be called on exchange completion. This option is strongly
      * related to includeBody option. In case of setting includeBody to true and
      * autocloseBody to false, it will be up to the caller to close the S3Object
      * stream. Setting autocloseBody to true, will close the S3Object stream
