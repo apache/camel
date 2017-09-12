@@ -34,6 +34,9 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.maven.connector.util.FileHelper;
 import org.apache.camel.maven.connector.util.GitHelper;
 import org.apache.camel.maven.connector.util.JSonSchemaHelper;
@@ -68,6 +71,8 @@ public class ConnectorMojo extends AbstractJarMojo {
      */
     @Parameter(defaultValue = "false")
     private boolean includeGitUrl;
+
+    private CamelCatalog catalog = new DefaultCamelCatalog();
 
     @Override
     protected File getClassesDirectory() {
@@ -143,6 +148,8 @@ public class ConnectorMojo extends AbstractJarMojo {
                     rows = JSonSchemaHelper.parseJsonSchema("component", newJson, false);
                     String newScheme = getOption(rows, "scheme");
 
+                    checkConnectorScheme(newScheme);
+
                     // write the json file to the target directory as if camel apt would do it
                     String javaType = (String) dto.get("javaType");
                     String dir = javaType.substring(0, javaType.lastIndexOf("."));
@@ -176,6 +183,16 @@ public class ConnectorMojo extends AbstractJarMojo {
         }
 
         return super.createArchive();
+    }
+
+    private void checkConnectorScheme(String connectorScheme) {
+        List<String> componentNames = catalog.findComponentNames();
+        if (componentNames != null && componentNames.contains(connectorScheme)) {
+            String format = "Can't package a connector with scheme '%s' as a component with the same scheme is already registered in the catalog";
+            String message = String.format(format, connectorScheme);
+            getLog().error(message);
+            throw new IllegalArgumentException(message);
+        }
     }
 
     private String embedGitUrlInCamelConnectorJSon(ObjectMapper mapper, Map dto) throws MojoExecutionException {
