@@ -38,14 +38,10 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
       <version>${project.version}</version>
-      <!--START OF GENERATED CODE-->
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-      <!--END OF GENERATED CODE-->
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jms_1.1_spec</artifactId>
     </dependency>
     <!--START OF GENERATED CODE-->
     <dependency>
@@ -58,9 +54,5 @@
       <optional>true</optional>
     </dependency>
     <!--END OF GENERATED CODE-->
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jms_1.1_spec</artifactId>
-    </dependency>
   </dependencies>
 </project>

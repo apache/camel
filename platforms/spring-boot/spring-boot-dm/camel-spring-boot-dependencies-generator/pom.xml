@@ -190,6 +190,7 @@
               <exclude>org.apache.httpcomponents:httpclient-cache</exclude>
               <exclude>org.apache.httpcomponents:httpclient-osgi</exclude>
               <exclude>org.apache.httpcomponents:httpcore</exclude>
+              <exclude>org.apache.httpcomponents:httpcore-nio</exclude>
               <exclude>org.apache.httpcomponents:httpmime</exclude>
               <exclude>org.apache.derby:derby</exclude>
               <exclude>org.apache.logging.log4j:*</exclude>

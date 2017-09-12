@@ -39,6 +39,11 @@
       <artifactId>camel-guava-eventbus</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${google-guava-version}</version>
+    </dependency>
     <!--START OF GENERATED CODE-->
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -50,10 +55,5 @@
       <optional>true</optional>
     </dependency>
     <!--END OF GENERATED CODE-->
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${google-guava-version}</version>
-    </dependency>
   </dependencies>
 </project>

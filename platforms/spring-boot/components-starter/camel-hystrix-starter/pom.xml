@@ -53,6 +53,12 @@
       <version>${spring-boot-version}</version>
       <optional>true</optional>
     </dependency>
+    <!-- needed for spring-boot 2 -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>test</scope>
+    </dependency>
     <!--START OF GENERATED CODE-->
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -64,11 +70,5 @@
       <optional>true</optional>
     </dependency>
     <!--END OF GENERATED CODE-->
-    <!-- needed for spring-boot 2 -->
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 </project>
