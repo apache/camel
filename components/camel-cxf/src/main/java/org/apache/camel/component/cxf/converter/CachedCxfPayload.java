@@ -27,6 +27,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
@@ -38,7 +39,6 @@ import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
     private static final Logger LOG = LoggerFactory.getLogger(CachedCxfPayload.class);
@@ -69,17 +69,27 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
                 try {
                     StaxUtils.copy(reader, cos);
                     li.set(new StreamSourceCache(cos.newStreamCache()));
-                } catch (XMLStreamException e) {
-                    LOG.error("Transformation failed ", e);
-                } catch (IOException e) {
-                    LOG.error("Cannot Create StreamSourceCache ", e);
+                    // this worked so continue
+                    continue;
+                } catch (Exception e) {
+                    // fallback to trying to read the reader using another way
+                    StreamResult sr = new StreamResult(cos);
+                    try {
+                        xml.toResult(source, sr);
+                        li.set(new StreamSourceCache(cos.newStreamCache()));
+                        // this worked so continue
+                        continue;
+                    } catch (Exception e2) {
+                        // ignore did not work so we will fallback to DOM mode
+                        // this can happens in some rare cases such as reported by CAMEL-11681
+                        LOG.debug("Error during parsing XMLStreamReader from StaxSource/StAXSource. Will fallback to using DOM mode. This exception is ignored", e2);
+                    }
                 }
-
-            } else if (!(source instanceof DOMSource)) {
-                DOMSource document = exchange.getContext().getTypeConverter().convertTo(DOMSource.class, exchange, source);
-                if (document != null) {
-                    li.set(document);
-                }
+            }
+            // fallback to using DOM
+            DOMSource document = exchange.getContext().getTypeConverter().tryConvertTo(DOMSource.class, exchange, source);
+            if (document != null) {
+                li.set(document);
             }
         }
     }
