@@ -9,6 +9,12 @@ This example is based on:
 
 First thing you'll need to do is preparing the environment.
 
+Don't forget to use a bit more memory for your Minikube for running this example:
+
+```
+minikube start --memory 5120 --cpus=4
+```
+
 Once your Minikube node is up and running you'll need to run the following command.
 In your src/main/resource/fabric8/ folder you'll find two yaml file. Run the following command using them:
 
