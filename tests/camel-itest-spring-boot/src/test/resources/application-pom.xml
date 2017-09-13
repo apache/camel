@@ -36,7 +36,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot-version}</version>
+                <version>${spring-boot2-version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -52,6 +52,11 @@
     </dependencyManagement>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring-boot2-starter</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>

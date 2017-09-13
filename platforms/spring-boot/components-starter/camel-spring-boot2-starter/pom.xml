@@ -28,11 +28,15 @@
   <packaging>jar</packaging>
   <name>Spring-Boot Starter :: Camel :: Spring Boot 2</name>
   <description>Spring-Boot Starter for Using Camel with Spring Boot 2</description>
+  <properties>
+    <spring-boot-version>${spring-boot2-version}</spring-boot-version>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
       <version>${spring-boot-version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -55,11 +59,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-starter</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring-boot</artifactId>
-      <optional>true</optional>
     </dependency>
     <!--END OF GENERATED CODE-->
   </dependencies>
