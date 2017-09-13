@@ -165,6 +165,11 @@ public class ITestConfigBuilder {
         return this;
     }
 
+    public ITestConfigBuilder springBootMajorVersion(Integer springBootMajorVersion) {
+        config.setSpringBootMajorVersion(springBootMajorVersion);
+        return this;
+    }
+
     public ITestConfig build() {
 
         // Checking conditions
@@ -253,6 +258,10 @@ public class ITestConfigBuilder {
             config.setTestLibraryVersions(new HashMap<>());
         }
 
+        if (config.getSpringBootMajorVersion() == null) {
+            config.setSpringBootMajorVersion(integerPropertyOr("springBootMajorVersion", 1));
+        }
+
         return config;
     }
 
@@ -273,6 +282,16 @@ public class ITestConfigBuilder {
         Boolean res = defaultVal;
         if (prop != null) {
             res = Boolean.valueOf(prop);
+        }
+
+        return res;
+    }
+
+    private Integer integerPropertyOr(String name, Integer defaultVal) {
+        String prop = propertyOr(name, null);
+        Integer res = defaultVal;
+        if (prop != null) {
+            res = Integer.valueOf(prop);
         }
 
         return res;

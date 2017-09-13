@@ -462,7 +462,8 @@ public final class ArquillianPackager {
     private static File createUserPom(ITestConfig config, List<String> cleanTestProvidedDependencies) throws Exception {
 
         String pom;
-        try (InputStream pomTemplate = ArquillianPackager.class.getResourceAsStream("/application-pom.xml")) {
+        String template = "/application-pom-sb" + config.getSpringBootMajorVersion() + ".xml";
+        try (InputStream pomTemplate = ArquillianPackager.class.getResourceAsStream(template)) {
             pom = IOUtils.toString(pomTemplate);
         }
 
