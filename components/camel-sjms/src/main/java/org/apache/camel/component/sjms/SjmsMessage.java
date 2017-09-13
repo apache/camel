@@ -249,11 +249,10 @@ public class SjmsMessage extends DefaultMessage {
         }
         try {
             String id = getDestinationAsString(jmsMessage.getJMSDestination());
-            if(id != null) {
+            if (id != null) {
                 id += jmsMessage.getJMSMessageID();
-            }
-            else {
-                id = super.createMessageId();
+            } else {
+                id = jmsMessage.getJMSMessageID();
             }
             return getSanitizedString(id);
         } catch (JMSException e) {
