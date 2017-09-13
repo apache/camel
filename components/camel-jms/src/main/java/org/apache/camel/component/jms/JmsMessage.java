@@ -238,11 +238,10 @@ public class JmsMessage extends DefaultMessage {
         }
         try {
             String id = getDestinationAsString(jmsMessage.getJMSDestination());
-            if(id != null) {
+            if (id != null) {
                 id += jmsMessage.getJMSMessageID();
-            }
-            else {
-                id = super.createMessageId();
+            } else {
+                id = jmsMessage.getJMSMessageID();
             }
             return getSanitizedString(id);
         } catch (JMSException e) {
@@ -265,7 +264,7 @@ public class JmsMessage extends DefaultMessage {
             result = "null destination!" + File.separator;
         } else if (destination instanceof Topic) {
             result = "topic" + File.separator + ((Topic) destination).getTopicName() + File.separator;
-        } else if (destination instanceof Queue){
+        } else if (destination instanceof Queue) {
             result = "queue" + File.separator + ((Queue) destination).getQueueName() + File.separator;
         }
         return result;
