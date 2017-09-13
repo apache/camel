@@ -266,7 +266,6 @@
               <!-- Jetty -->
               <exclude>org.eclipse.jetty:jetty-rewrite</exclude>
               <exclude>org.eclipse.jetty:jetty-util-ajax</exclude>
-              <exclude>org.eclipse.jetty.websocket:websocket-servlet</exclude>
 
               <!-- Unrelated -->
               <exclude>org.apache.servicemix.bundles:*</exclude>
