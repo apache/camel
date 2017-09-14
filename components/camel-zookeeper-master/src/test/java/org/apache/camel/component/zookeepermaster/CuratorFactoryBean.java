@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.zookeepermaster;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -30,7 +30,7 @@ import org.springframework.beans.factory.FactoryBean;
  */
 public class CuratorFactoryBean implements FactoryBean<CuratorFramework>, DisposableBean {
 
-    private static final transient Log LOG = LogFactory.getLog(CuratorFactoryBean.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CuratorFactoryBean.class);
 
     private String connectString = "localhost:2181";
     private int timeout = 30000;

@@ -26,7 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -418,16 +417,16 @@ public class MultiMasterCuratorLeaderRoutePolicyTest extends ZooKeeperTestSuppor
         }
 
         public void shutdown() throws Exception {
-            LogFactory.getLog(getClass()).debug("stopping");
+            LoggerFactory.getLogger(getClass()).debug("stopping");
             controlledContext.stop();
-            LogFactory.getLog(getClass()).debug("stopped");
+            LoggerFactory.getLogger(getClass()).debug("stopped");
         }
 
 
         public void startup() throws Exception {
-            LogFactory.getLog(getClass()).debug("starting");
+            LoggerFactory.getLogger(getClass()).debug("starting");
             controlledContext.start();
-            LogFactory.getLog(getClass()).debug("started");
+            LoggerFactory.getLogger(getClass()).debug("started");
         }
     }
 
