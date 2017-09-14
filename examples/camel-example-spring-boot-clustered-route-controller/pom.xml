@@ -33,19 +33,18 @@
   <description>An example showing how to work with Camel's Clustered Route Controller and Spring Boot</description>
   <packaging>pom</packaging>
 
-  <modules>
-    <module>cluster-bootstrap</module>
-    <module>cluster-node</module>
-  </modules>
   <properties>
-    <category>Beginner</category>
+    <category>Clustering</category>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <spring.boot-version>${spring-boot-version}</spring.boot-version>
   </properties>
 
-
+  <modules>
+    <module>cluster-bootstrap</module>
+    <module>cluster-node</module>
+  </modules>
 
   <profiles>
     <profile>

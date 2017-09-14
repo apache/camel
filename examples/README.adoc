@@ -44,13 +44,9 @@ Number of Examples: 98 (8 deprecated)
 
 | link:camel-example-spring-boot/readme.adoc[Spring Boot] (camel-example-spring-boot) | Beginner | An example showing how to work with Camel and Spring Boot
 
-| link:camel-example-spring-boot-clustered-route-controller/readme.adoc[Spring Boot Clustered Route Controller] (camel-example-spring-boot-clustered-route-controller) | Beginner | An example showing how to work with Camel's Clustered Route Controller and Spring Boot
-
 | link:camel-example-spring-boot-live-reload/readme.adoc[Spring Boot Live Reload] (camel-example-spring-boot-live-reload) | Beginner | An example showing how to use the live reload feature of Spring Boot with Camel
 
 | link:camel-example-spring-boot-pojo/README.adoc[Spring Boot Pojo] (camel-example-spring-boot-pojo) | Beginner | An example showing how to work with Camel POJO routing with Spring Boot
-
-| link:camel-example-spring-boot-supervising-route-controller/readme.adoc[Spring Boot Supervising Route Controller] (camel-example-spring-boot-supervising-route-controller) | Beginner | An example showing how to work with Camel's Supervising Route Controller and Spring Boot
 
 | link:camel-example-spring-javaconfig/README.md[Spring Java Config] (camel-example-spring-javaconfig) | Beginner | An example showing how to work with Camel and Spring Java Config
 
@@ -79,6 +75,8 @@ Number of Examples: 98 (8 deprecated)
 | link:camel-example-spring-boot-servicecall/README.adoc[Spring Boot Servicecall] (camel-example-spring-boot-servicecall) | Cloud | An example showing how to work with Camel ServiceCall EIP and Spring Boot
 
 | link:camel-example-spring-cloud-servicecall/README.adoc[Spring Cloud Servicecall] (camel-example-spring-cloud-servicecall) | Cloud | An example showing how to work with Camel ServiceCall EIP and Spring Cloud
+
+| link:camel-example-spring-boot-clustered-route-controller/readme.adoc[Spring Boot Clustered Route Controller] (camel-example-spring-boot-clustered-route-controller) | Clustering | An example showing how to work with Camel's Clustered Route Controller and Spring Boot
 
 | link:camel-example-cdi-cassandraql/README.md[CDI Cassandra] (camel-example-cdi-cassandraql) | Database | Cassandraql CDI example
 
@@ -130,6 +128,8 @@ Number of Examples: 98 (8 deprecated)
 | link:camel-example-splunk/README.md[Splunk] (camel-example-splunk) | Management and Monitoring | An example using Splunk
 
 | link:camel-example-spring-boot-metrics/README.md[Spring Boot Metrics] (camel-example-spring-boot-metrics) | Management and Monitoring | An example showing how to work with Camel and Spring Boot and report metrics to Graphite
+
+| link:camel-example-spring-boot-supervising-route-controller/readme.adoc[Spring Boot Supervising Route Controller] (camel-example-spring-boot-supervising-route-controller) | Management and Monitoring | An example showing how to work with Camel's Supervising Route Controller and Spring Boot
 
 | link:camel-example-tracer/README.md[Tracer] (camel-example-tracer) | Management and Monitoring | *deprecated* An example showing how to persist Camel trace event messages using JPA
 
