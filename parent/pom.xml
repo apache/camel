@@ -756,7 +756,6 @@
       org.springframework.ws.*;version="[2,3)",
       org.springframework.xml.*;version="[2,3)",
       org.springframework.*;version="${spring-version-range}",
-      org.apache.commons.logging.*;version="[1.1,2)",
       org.apache.cxf.*;version="${cxf-version-range}",
       org.apache.qpid.*;version="[0.20,1)",
       org.apache.abdera.*;version="[0.4,2)",
