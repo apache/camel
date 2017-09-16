@@ -258,9 +258,6 @@
               <exclude>org.scala-lang:*</exclude>
               <exclude>org.apache.lucene:*</exclude>
 
-              <!-- Jetty -->
-              <exclude>org.eclipse.jetty:jetty-rewrite</exclude>
-              <exclude>org.eclipse.jetty:jetty-util-ajax</exclude>
 
               <!-- Unrelated -->
               <exclude>org.apache.servicemix.bundles:*</exclude>
