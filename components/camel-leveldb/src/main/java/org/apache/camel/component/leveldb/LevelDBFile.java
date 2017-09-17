@@ -180,8 +180,8 @@ public class LevelDBFile implements Service {
 
     private DBFactory getFactory() {
         String[] classNames = new String[] {
-                "org.fusesource.leveldbjni.JniDBFactory",
-                "org.iq80.leveldb.impl.Iq80DBFactory"
+            "org.fusesource.leveldbjni.JniDBFactory",
+            "org.iq80.leveldb.impl.Iq80DBFactory"
         };
         for (String cn : classNames) {
             try {
