@@ -31,10 +31,11 @@ public class HazelcastSedaRecoverableConsumerNewTransactionTest extends Hazelcas
                 .thenThrow(new HazelcastException("Could not obtain Connection!!!"))
                 .thenReturn(transactionContext);
         when(hazelcastInstance.getQueue("foo")).thenReturn(queue);
+        when(transactionContext.getQueue("foo")).thenReturn(tqueue);
     }
 
     protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        verify(hazelcastInstance).getQueue("foo");
+        verify(hazelcastInstance, times(2)).getQueue("foo");
         verify(hazelcastInstance, atLeastOnce()).newTransactionContext();
     }
 
