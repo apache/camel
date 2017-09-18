@@ -22,6 +22,7 @@ import java.util.List;
 
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxAPIException;
+import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxUser;
 import com.box.sdk.CreateUserParams;
 import com.box.sdk.EmailAlias;
@@ -330,4 +331,30 @@ public class BoxUsersManager {
         }
     }
 
+    /**
+     * Move root folder for specified user to current user.
+     *
+     * @param userId
+     *            - the id of user.
+     * @param sourceUserId
+     *            - the user id of the user whose files will be the source for this operation.
+     */
+    public BoxFolder.Info moveFolderToUser(String userId, String sourceUserId) {
+        try {
+            LOG.debug("Moving root folder for user(id=" + sourceUserId + ") to user(id=" + userId + ")");
+            if (userId == null) {
+                throw new IllegalArgumentException("Parameter 'userId' can not be null");
+            }
+            if (sourceUserId == null) {
+                throw new IllegalArgumentException("Parameter 'sourceUserId' can not be null");
+            }
+
+            BoxUser user = new BoxUser(boxConnection, userId);
+
+            return user.moveFolderToUser(sourceUserId);
+        } catch (BoxAPIException e) {
+            throw new RuntimeException(
+                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+        }
+    }
 }
