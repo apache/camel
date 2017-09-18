@@ -238,6 +238,17 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                 ((DefaultMessageListenerContainer) listenerContainer).setTransactionName(consumerName);
             }
         }
+
+        // now configure the JMS 2.0 API
+        if (configuration.getDurableSubscriptionName() != null) {
+            listenerContainer.setDurableSubscriptionName(configuration.getDurableSubscriptionName());
+        } else if (configuration.isSubscriptionDurable()) {
+            listenerContainer.setSubscriptionDurable(true);
+            if (configuration.getSubscriptionName() != null) {
+                listenerContainer.setSubscriptionName(configuration.getSubscriptionName());
+            }
+        }
+        listenerContainer.setSubscriptionShared(configuration.isSubscriptionShared());
     }
 
     private void setContainerTaskExecutor(AbstractMessageListenerContainer listenerContainer, Executor executor) {
@@ -770,12 +781,6 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @ManagedAttribute
-    @Deprecated
-    public boolean isSubscriptionDurable() {
-        return getConfiguration().isSubscriptionDurable();
-    }
-
-    @ManagedAttribute
     public boolean isTransacted() {
         return getConfiguration().isTransacted();
     }
@@ -1017,12 +1022,6 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         getConfiguration().setRequestTimeout(requestTimeout);
     }
 
-    @ManagedAttribute
-    @Deprecated
-    public void setSubscriptionDurable(boolean subscriptionDurable) {
-        getConfiguration().setSubscriptionDurable(subscriptionDurable);
-    }
-
     public void setTaskExecutor(TaskExecutor taskExecutor) {
         getConfiguration().setTaskExecutor(taskExecutor);
     }
@@ -1252,6 +1251,37 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         configuration.setMessageListenerContainerFactory(messageListenerContainerFactory);
         configuration.setConsumerType(ConsumerType.Custom);
     }
+
+    @ManagedAttribute
+    public boolean isSubscriptionDurable() {
+        return getConfiguration().isSubscriptionDurable();
+    }
+
+    @ManagedAttribute
+    public void setSubscriptionDurable(boolean subscriptionDurable) {
+        getConfiguration().setSubscriptionDurable(subscriptionDurable);
+    }
+
+    @ManagedAttribute
+    public boolean isSubscriptionShared() {
+        return getConfiguration().isSubscriptionShared();
+    }
+
+    @ManagedAttribute
+    public void setSubscriptionShared(boolean subscriptionShared) {
+        getConfiguration().setSubscriptionShared(subscriptionShared);
+    }
+
+    @ManagedAttribute
+    public String getSubscriptionName() {
+        return getConfiguration().getSubscriptionName();
+    }
+
+    @ManagedAttribute
+    public void setSubscriptionName(String subscriptionName) {
+        getConfiguration().setSubscriptionName(subscriptionName);
+    }
+
 
     @ManagedAttribute
     public String getReplyToType() {

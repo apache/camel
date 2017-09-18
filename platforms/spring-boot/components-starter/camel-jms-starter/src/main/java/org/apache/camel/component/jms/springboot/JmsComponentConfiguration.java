@@ -315,12 +315,6 @@ public class JmsComponentConfiguration
      */
     private Long recoveryInterval = 5000L;
     /**
-     * Deprecated: Enabled by default if you specify a durableSubscriptionName
-     * and a clientId.
-     */
-    @Deprecated
-    private Boolean subscriptionDurable = false;
-    /**
      * Allows you to specify a custom task executor for consuming messages.
      */
     @NestedConfigurationProperty
@@ -572,6 +566,38 @@ public class JmsComponentConfiguration
      * not supplied in the header of the message under the same name.
      */
     private String correlationProperty;
+    /**
+     * Set whether to make the subscription durable. The durable subscription
+     * name to be used can be specified through the subscriptionName property.
+     * Default is false. Set this to true to register a durable subscription
+     * typically in combination with a subscriptionName value (unless your
+     * message listener class name is good enough as subscription name). Only
+     * makes sense when listening to a topic (pub-sub domain) therefore this
+     * method switches the pubSubDomain flag as well.
+     */
+    private Boolean subscriptionDurable = false;
+    /**
+     * Set whether to make the subscription shared. The shared subscription name
+     * to be used can be specified through the subscriptionName property.
+     * Default is false. Set this to true to register a shared subscription
+     * typically in combination with a subscriptionName value (unless your
+     * message listener class name is good enough as subscription name). Note
+     * that shared subscriptions may also be durable so this flag can (and often
+     * will) be combined with subscriptionDurable as well. Only makes sense when
+     * listening to a topic (pub-sub domain) therefore this method switches the
+     * pubSubDomain flag as well. Requires a JMS 2.0 compatible message broker.
+     */
+    private Boolean subscriptionShared = false;
+    /**
+     * Set the name of a subscription to create. To be applied in case of a
+     * topic (pub-sub domain) with a shared or durable subscription. The
+     * subscription name needs to be unique within this client's JMS client id.
+     * Default is the class name of the specified message listener. Note: Only 1
+     * concurrent consumer (which is the default of this message listener
+     * container) is allowed for each subscription except for a shared
+     * subscription (which requires JMS 2.0).
+     */
+    private String subscriptionName;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
      * header to and from Camel message.
@@ -919,17 +945,6 @@ public class JmsComponentConfiguration
         this.recoveryInterval = recoveryInterval;
     }
 
-    @Deprecated
-    @DeprecatedConfigurationProperty
-    public Boolean getSubscriptionDurable() {
-        return subscriptionDurable;
-    }
-
-    @Deprecated
-    public void setSubscriptionDurable(Boolean subscriptionDurable) {
-        this.subscriptionDurable = subscriptionDurable;
-    }
-
     public TaskExecutor getTaskExecutor() {
         return taskExecutor;
     }
@@ -1194,6 +1209,30 @@ public class JmsComponentConfiguration
         this.correlationProperty = correlationProperty;
     }
 
+    public Boolean getSubscriptionDurable() {
+        return subscriptionDurable;
+    }
+
+    public void setSubscriptionDurable(Boolean subscriptionDurable) {
+        this.subscriptionDurable = subscriptionDurable;
+    }
+
+    public Boolean getSubscriptionShared() {
+        return subscriptionShared;
+    }
+
+    public void setSubscriptionShared(Boolean subscriptionShared) {
+        this.subscriptionShared = subscriptionShared;
+    }
+
+    public String getSubscriptionName() {
+        return subscriptionName;
+    }
+
+    public void setSubscriptionName(String subscriptionName) {
+        this.subscriptionName = subscriptionName;
+    }
+
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -1310,8 +1349,6 @@ public class JmsComponentConfiguration
          * default errorHandler.
          */
         private Boolean errorHandlerLogStackTrace = true;
-        @Deprecated
-        private Boolean subscriptionDurable;
         /**
          * The JMS acknowledgement name, which is one of: SESSION_TRANSACTED,
          * CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE
@@ -1835,6 +1872,51 @@ public class JmsComponentConfiguration
          * and use * as suffix for wildcard matching.
          */
         private String allowAdditionalHeaders;
+        /**
+         * Set whether to make the subscription durable. The durable
+         * subscription name to be used can be specified through the
+         * "subscriptionName" property.
+         * <p>
+         * Default is "false". Set this to "true" to register a durable
+         * subscription, typically in combination with a "subscriptionName"
+         * value (unless your message listener class name is good enough as
+         * subscription name).
+         * <p>
+         * Only makes sense when listening to a topic (pub-sub domain),
+         * therefore this method switches the "pubSubDomain" flag as well.
+         */
+        private Boolean subscriptionDurable = false;
+        /**
+         * Set whether to make the subscription shared. The shared subscription
+         * name to be used can be specified through the "subscriptionName"
+         * property.
+         * <p>
+         * Default is "false". Set this to "true" to register a shared
+         * subscription, typically in combination with a "subscriptionName"
+         * value (unless your message listener class name is good enough as
+         * subscription name). Note that shared subscriptions may also be
+         * durable, so this flag can (and often will) be combined with
+         * "subscriptionDurable" as well.
+         * <p>
+         * Only makes sense when listening to a topic (pub-sub domain),
+         * therefore this method switches the "pubSubDomain" flag as well.
+         * <p>
+         * <b>Requires a JMS 2.0 compatible message broker.</b>
+         */
+        private Boolean subscriptionShared = false;
+        /**
+         * Set the name of a subscription to create. To be applied in case of a
+         * topic (pub-sub domain) with a shared or durable subscription.
+         * <p>
+         * The subscription name needs to be unique within this client's JMS
+         * client id. Default is the class name of the specified message
+         * listener.
+         * <p>
+         * Note: Only 1 concurrent consumer (which is the default of this
+         * message listener container) is allowed for each subscription, except
+         * for a shared subscription (which requires JMS 2.0).
+         */
+        private String subscriptionName;
 
         public ConsumerType getConsumerType() {
             return consumerType;
@@ -1960,17 +2042,6 @@ public class JmsComponentConfiguration
         public void setErrorHandlerLogStackTrace(
                 Boolean errorHandlerLogStackTrace) {
             this.errorHandlerLogStackTrace = errorHandlerLogStackTrace;
-        }
-
-        @Deprecated
-        @DeprecatedConfigurationProperty
-        public Boolean getSubscriptionDurable() {
-            return subscriptionDurable;
-        }
-
-        @Deprecated
-        public void setSubscriptionDurable(Boolean subscriptionDurable) {
-            this.subscriptionDurable = subscriptionDurable;
         }
 
         public String getAcknowledgementModeName() {
@@ -2567,6 +2638,30 @@ public class JmsComponentConfiguration
 
         public void setAllowAdditionalHeaders(String allowAdditionalHeaders) {
             this.allowAdditionalHeaders = allowAdditionalHeaders;
+        }
+
+        public Boolean getSubscriptionDurable() {
+            return subscriptionDurable;
+        }
+
+        public void setSubscriptionDurable(Boolean subscriptionDurable) {
+            this.subscriptionDurable = subscriptionDurable;
+        }
+
+        public Boolean getSubscriptionShared() {
+            return subscriptionShared;
+        }
+
+        public void setSubscriptionShared(Boolean subscriptionShared) {
+            this.subscriptionShared = subscriptionShared;
+        }
+
+        public String getSubscriptionName() {
+            return subscriptionName;
+        }
+
+        public void setSubscriptionName(String subscriptionName) {
+            this.subscriptionName = subscriptionName;
         }
     }
 }
