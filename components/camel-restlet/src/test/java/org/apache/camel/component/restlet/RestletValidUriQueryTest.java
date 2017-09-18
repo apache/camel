@@ -69,4 +69,17 @@ public class RestletValidUriQueryTest extends RestletTestSupport {
         });
         assertEquals(200, ex.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));   
     }
+
+    @Test
+    public void testGetBodyByRestletProducerUnencodedHeader() throws Exception {
+        Exchange ex = template.request("direct:start", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_QUERY, QUERY_STRING);
+                exchange.getIn().setHeader("username", "homer &?#%+\"<>@=,;/:"); // header with unencoded characters
+
+            }
+        });
+        assertEquals(200, ex.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+    }
 }
