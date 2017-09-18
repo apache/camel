@@ -63,9 +63,10 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
     </dependency>
+    <!-- either use JMS 1.1 or 2.0 provided by JMS client -->
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jms_1.1_spec</artifactId>
+      <artifactId>geronimo-jms_2.0_spec</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
