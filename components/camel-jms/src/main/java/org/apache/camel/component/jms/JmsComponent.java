@@ -661,14 +661,6 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     }
 
     /**
-     * Deprecated: Enabled by default, if you specify a durableSubscriptionName and a clientId.
-     */
-    @Deprecated
-    public void setSubscriptionDurable(boolean subscriptionDurable) {
-        getConfiguration().setSubscriptionDurable(subscriptionDurable);
-    }
-
-    /**
      * Allows you to specify a custom task executor for consuming messages.
      */
     @Metadata(label = "consumer,advanced",
@@ -1138,6 +1130,87 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
                     + " will be generated if not supplied in the header of the message under the same name.")
     public void setCorrelationProperty(final String correlationProperty) {
         getConfiguration().setCorrelationProperty(correlationProperty);
+    }
+
+    // JMS 2.0 API
+    // -------------------------------------------------------------------------
+
+    public boolean isSubscriptionDurable() {
+        return getConfiguration().isSubscriptionDurable();
+    }
+
+    /**
+     * Set whether to make the subscription durable. The durable subscription name
+     * to be used can be specified through the "subscriptionName" property.
+     * <p>Default is "false". Set this to "true" to register a durable subscription,
+     * typically in combination with a "subscriptionName" value (unless
+     * your message listener class name is good enough as subscription name).
+     * <p>Only makes sense when listening to a topic (pub-sub domain),
+     * therefore this method switches the "pubSubDomain" flag as well.
+     */
+    @Metadata(label = "consumer", description = "Set whether to make the subscription durable. The durable subscription name"
+        + " to be used can be specified through the subscriptionName property."
+        + " Default is false. Set this to true to register a durable subscription,"
+        + " typically in combination with a subscriptionName value (unless"
+        + " your message listener class name is good enough as subscription name)."
+        + " Only makes sense when listening to a topic (pub-sub domain),"
+        + " therefore this method switches the pubSubDomain flag as well.")
+    public void setSubscriptionDurable(boolean subscriptionDurable) {
+        getConfiguration().setSubscriptionDurable(subscriptionDurable);
+    }
+
+    public boolean isSubscriptionShared() {
+        return getConfiguration().isSubscriptionShared();
+    }
+
+    /**
+     * Set whether to make the subscription shared. The shared subscription name
+     * to be used can be specified through the "subscriptionName" property.
+     * <p>Default is "false". Set this to "true" to register a shared subscription,
+     * typically in combination with a "subscriptionName" value (unless
+     * your message listener class name is good enough as subscription name).
+     * Note that shared subscriptions may also be durable, so this flag can
+     * (and often will) be combined with "subscriptionDurable" as well.
+     * <p>Only makes sense when listening to a topic (pub-sub domain),
+     * therefore this method switches the "pubSubDomain" flag as well.
+     * <p><b>Requires a JMS 2.0 compatible message broker.</b>
+     */
+    @Metadata(label = "consumer", description = "Set whether to make the subscription shared. The shared subscription name"
+        + " to be used can be specified through the subscriptionName property."
+        + " Default is false. Set this to true to register a shared subscription,"
+        + " typically in combination with a subscriptionName value (unless"
+        + " your message listener class name is good enough as subscription name)."
+        + " Note that shared subscriptions may also be durable, so this flag can"
+        + " (and often will) be combined with subscriptionDurable as well."
+        + " Only makes sense when listening to a topic (pub-sub domain),"
+        + " therefore this method switches the pubSubDomain flag as well."
+        + " Requires a JMS 2.0 compatible message broker.")
+    public void setSubscriptionShared(boolean subscriptionShared) {
+        getConfiguration().setSubscriptionShared(subscriptionShared);
+    }
+
+    public String getSubscriptionName() {
+        return getConfiguration().getSubscriptionName();
+    }
+
+    /**
+     * Set the name of a subscription to create. To be applied in case
+     * of a topic (pub-sub domain) with a shared or durable subscription.
+     * <p>The subscription name needs to be unique within this client's
+     * JMS client id. Default is the class name of the specified message listener.
+     * <p>Note: Only 1 concurrent consumer (which is the default of this
+     * message listener container) is allowed for each subscription,
+     * except for a shared subscription (which requires JMS 2.0).
+     */
+    @Metadata(label = "consumer", description = "Set the name of a subscription to create. To be applied in case"
+        + " of a topic (pub-sub domain) with a shared or durable subscription."
+        + " The subscription name needs to be unique within this client's"
+        + " JMS client id. Default is the class name of the specified message listener."
+        + " Note: Only 1 concurrent consumer (which is the default of this"
+        + " message listener container) is allowed for each subscription,"
+        + " except for a shared subscription (which requires JMS 2.0).")
+    public void setSubscriptionName(String subscriptionName) {
+        getConfiguration().setSubscriptionName(subscriptionName);
     }
 
     // Implementation methods
