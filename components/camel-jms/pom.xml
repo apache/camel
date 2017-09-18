@@ -64,10 +64,10 @@
       <artifactId>spring-beans</artifactId>
     </dependency>
     <!-- either use JMS 1.1 or 2.0 provided by JMS client -->
+    <!-- here we use JMS 2.0 API but using JMS 1.1 should work as well -->
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jms_2.0_spec</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -105,6 +105,13 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-client</artifactId>
+      <!-- lets use JMS 2.0 api but camel-jms still works with ActiveMQ 5.x that is JMS 1.1 only -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jms_1.1_spec</artifactId>
+        </exclusion>
+      </exclusions>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -123,6 +130,13 @@
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-pool</artifactId>
       <scope>test</scope>
+      <!-- lets use JMS 2.0 api but camel-jms still works with ActiveMQ 5.x that is JMS 1.1 only -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jms_1.1_spec</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
