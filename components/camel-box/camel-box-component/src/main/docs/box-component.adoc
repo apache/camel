@@ -652,6 +652,8 @@ follows:
 |getUserInfo |info  | userId |com.box.sdk.BoxUser.Info
 
 |updateUserInfo |updateInfo |userId, info |com.box.sdk.BoxUser
+
+|moveFolderToUser |- |userId, sourceUserId |com.box.sdk.BoxFolder.Info
 |=======================================================================
 
 URI Options for _users_
