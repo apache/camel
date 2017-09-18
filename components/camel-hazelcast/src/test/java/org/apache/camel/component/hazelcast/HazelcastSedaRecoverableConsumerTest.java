@@ -19,6 +19,7 @@ package org.apache.camel.component.hazelcast;
 import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.core.IQueue;
+import com.hazelcast.core.TransactionalQueue;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -34,12 +35,19 @@ public abstract class HazelcastSedaRecoverableConsumerTest extends HazelcastCame
     @Mock
     protected IQueue<Object> queue;
 
+    @Mock
+    protected TransactionalQueue<Object> tqueue;
+
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint mock;
 
     @Test
     public void testRecovery() throws InterruptedException {
         when(queue.poll(any(Long.class), any(TimeUnit.class)))
+                .thenReturn("bar")
+                .thenReturn(null);
+
+        when(tqueue.poll(any(Long.class), any(TimeUnit.class)))
                 .thenReturn("bar")
                 .thenReturn(null);
 
