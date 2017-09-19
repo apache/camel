@@ -1,6 +1,5 @@
 [[EventMessage-EventMessage]]
-Event Message
-~~~~~~~~~~~~~
+== Event Message
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/EventMessage.html[Event
@@ -16,71 +15,56 @@ The default behaviour of many link:components.html[Components] is InOnly
 such as for link:jms.html[JMS], link:file2.html[File] or
 link:seda.html[SEDA]
 
-[TIP]
-====
-*Related*
-
-See the related link:request-reply.html[Request Reply] message.
-====
+TIP: See the related link:request-reply.html[Request Reply] message.
 
 [[EventMessage-ExplicitlyspecifyingInOnly]]
-Explicitly specifying InOnly
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+=== Explicitly specifying InOnly
 
 If you are using a component which defaults to InOut you can override
 the link:exchange-pattern.html[Exchange Pattern] for an endpoint using
 the pattern property.
 
-[source,java]
-------------------------------
+[source]
+----
 foo:bar?exchangePattern=InOnly
-------------------------------
+----
+
+
+=== Samples
 
 From 2.0 onwards on Camel you can specify the
 link:exchange-pattern.html[Exchange Pattern] using the DSL.
 
-*Using the link:fluent-builders.html[Fluent Builders]*
-
 [source,java]
----------------------------------------------
+----
 from("mq:someQueue").
   setExchangePattern(ExchangePattern.InOnly).
   bean(Foo.class);
----------------------------------------------
+----
 
 or you can invoke an endpoint with an explicit pattern
 
 [source,java]
-----------------------------
+----
 from("mq:someQueue").
   inOnly("mq:anotherQueue");
-----------------------------
+----
 
-*Using the link:spring-xml-extensions.html[Spring XML Extensions]*
+And with XML:
 
-[source,java]
-------------------------------
+[source,xml]
+----
 <route>
     <from uri="mq:someQueue"/>
     <inOnly uri="bean:foo"/>
 </route>
-------------------------------
+----
 
-[source,java]
------------------------------------
+[source,xml]
+----
 <route>
     <from uri="mq:someQueue"/>
     <inOnly uri="mq:anotherQueue"/>
 </route>
------------------------------------
+----
 
-[[EventMessage-UsingThisPattern]]
-Using This Pattern
-++++++++++++++++++
-
-If you would like to use this EIP Pattern then please read the
-link:getting-started.html[Getting Started], you may also find the
-link:architecture.html[Architecture] useful particularly the description
-of link:endpoint.html[Endpoint] and link:uris.html[URIs]. Then you could
-try out some of the link:examples.html[Examples] first before trying
-this pattern out.

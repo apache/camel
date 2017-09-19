@@ -4,10 +4,10 @@ The *bean:* EIP binds beans to Camel message exchanges.
 
 === URI Format
 
-[source,java]
----------------------
+[source]
+----
 bean:beanID[?options]
----------------------
+----
 
 Where *beanID* can be any string which is used to look up the bean in
 the link:registry.html[Registry]
@@ -19,14 +19,14 @@ The Bean EIP supports 5 options which are listed below:
 
 
 [width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Java Type | Description
 | ref | String | Sets a reference to a bean to use
 | method | String | Sets the method name on the bean to use
 | beanType | String | Sets the Class of the bean
 | cache | Boolean | Caches the bean lookup to avoid lookup up bean on every usage.
 | multiParameterArray | Boolean | *Deprecated* Whether the message body is an array type.
-|=======================================================================
+|===
 // eip options: END
 
 === Bean as endpoint
@@ -49,7 +49,7 @@ component. Instead of specifying the bean explicitly as the endpoint
 (i.e. `to("bean:beanName")`) you can use the following syntax:
 
 [source,java]
--------------------------------------------------------
+----
 // Send message to the bean endpoint
 // and invoke method resolved using Bean Binding.
 from("direct:start").beanRef("beanName");
@@ -57,13 +57,13 @@ from("direct:start").beanRef("beanName");
 // Send message to the bean endpoint
 // and invoke given method.
 from("direct:start").beanRef("beanName", "methodName");
--------------------------------------------------------
+----
 
 Instead of passing name of the reference to the bean (so that Camel will
 lookup for it in the registry), you can specify the bean itself:
 
 [source,java]
----------------------------------------------------------------
+----
 // Send message to the given bean instance.
 from("direct:start").bean(new ExampleBean());
 
@@ -72,7 +72,7 @@ from("direct:start").bean(new ExampleBean(), "methodName");
 
 // Camel will create the instance of bean and cache it for you.
 from("direct:start").bean(ExampleBean.class);
----------------------------------------------------------------
+----
 
 === Bean binding
 
@@ -84,11 +84,6 @@ all of the various link:bean-integration.html[Bean Integration]
 mechanisms in Camel.
 
 === See also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
 
 * link:class.html[Class] component
 * link:bean-binding.html[Bean Binding]
