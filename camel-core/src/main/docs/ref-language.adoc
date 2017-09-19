@@ -7,7 +7,7 @@ link:expression.html[Expression] or link:predicate.html[Predicate] from the link
 
 This is particular useable in XML DSLs.
 
-### Ref Language options
+=== Ref Language options
 
 // language options: START
 The Ref language supports 1 options which are listed below.
@@ -21,7 +21,7 @@ The Ref language supports 1 options which are listed below.
 |===
 // language options: END
 
-### Example usage
+=== Example usage
 
 The link:splitter.html[Splitter] in XML DSL can utilize a custom
 expression using `<ref>` like:
@@ -53,6 +53,6 @@ And the same example using Java DSL:
 from("seda:a").split().ref("myExpression").to("seda:b");
 --------------------------------------------------------
 
-### Dependencies
+=== Dependencies
 
 The Ref language is part of *camel-core*.

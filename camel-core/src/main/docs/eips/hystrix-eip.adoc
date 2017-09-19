@@ -1,4 +1,4 @@
-## Hystrix EIP
+== Hystrix EIP
 
 Available as of Camel 2.18
 
@@ -15,7 +15,7 @@ Maven users will need to add the following dependency to their pom.xml to use th
 </dependency>
 ---------------------
 
-### Configuration options
+=== Configuration options
 
 // eip options: START
 The Hystrix EIP supports 2 options which are listed below:
@@ -29,7 +29,7 @@ The Hystrix EIP supports 2 options which are listed below:
 |=======================================================================
 // eip options: END
 
-### Example
+=== Example
 Below is an example route showing an Hystrix endpoint that protects against slow operation by falling back to the in-lined fallback route. By default the timeout request is just *1000ms* so the HTTP endpoint has to be fairly quick to succeed.
 [source,java]
 ---------------------
@@ -61,7 +61,7 @@ And in XML DSL:
 </camelContext>
 ---------------------
 
-### onFallback vs onFallbackViaNetwork
+=== onFallback vs onFallbackViaNetwork
 If you are using *onFallback* then that is intended to be local processing only where you can do a message transformation or call a bean or something as the fallback. If you need to call an external service over the network then you should use *onFallbackViaNetwork* that runs in another independent *HystrixCommand* that uses its own thread pool to not exhaust the first command.
 Configuring Hystrix Example
 Hystrix has many options as listed in the table above. For example to set a higher timeout to *5* seconds, and also let the circuit breaker wait *10* seconds before attempting a request again when the state was tripped to be open.
@@ -124,5 +124,5 @@ You can also configure hystrix globally and then refer to that configuration:
 </camelContext>
 ---------------------
 
-### Example
+=== Example
 You can find an example in the source code: link:https://github.com/apache/camel/tree/master/examples/camel-example-hystrix[camel-example-hystrix].

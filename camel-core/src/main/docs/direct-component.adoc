@@ -15,7 +15,7 @@ TIP:*Connection to other camel contexts*
 The link:vm.html[VM] component provides connections between Camel
 contexts as long they run in the same *JVM*.
 
-### URI format
+=== URI format
 
 [source,text]
 -------------------------
@@ -24,7 +24,7 @@ direct:someName[?options]
 
 Where *someName* can be any string to uniquely identify the endpoint
 
-### Options
+=== Options
 
 
 
@@ -78,7 +78,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-### Samples
+=== Samples
 
 In the route below we use the direct component to link the two routes
 together:
@@ -114,7 +114,7 @@ And the sample using spring DSL:
 See also samples from the link:seda.html[SEDA] component, how they can
 be used together.
 
-### See Also
+=== See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

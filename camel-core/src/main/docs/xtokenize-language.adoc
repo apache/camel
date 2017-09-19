@@ -12,7 +12,7 @@ Tokenizer. 
 
 For more details see link:splitter.html[Splitter].
 
-### XML Tokenizer Options
+=== XML Tokenizer Options
 
 // language options: START
 The XML Tokenize language supports 4 options which are listed below.

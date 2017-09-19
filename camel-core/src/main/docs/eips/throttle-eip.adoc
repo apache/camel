@@ -1,7 +1,7 @@
-## Throttle EIP
+== Throttle EIP
 The Throttler Pattern allows you to ensure that a specific endpoint does not get overloaded, or that we don't exceed an agreed SLA with some external service.
 
-### Options
+=== Options
 
 // eip options: START
 The Throttle EIP supports 5 options which are listed below:
@@ -18,8 +18,8 @@ The Throttle EIP supports 5 options which are listed below:
 |=======================================================================
 // eip options: END
 
-### Examples
-#### Using the Fluent Builders
+=== Examples
+#=== Using the Fluent Builders
 
 [source,java]
 ---------------------
@@ -36,8 +36,8 @@ from("seda:a").throttle(100).to("seda:b");
 
 For further examples of this pattern in use you could look at the junit test case.
 
-#### Using the Spring XML Extensions
-##### Camel 2.7.x or older
+#=== Using the Spring XML Extensions
+##=== Camel 2.7.x or older
 [source,xml]
 ---------------------
 <route>
@@ -48,7 +48,7 @@ For further examples of this pattern in use you could look at the junit test cas
 </route>
 ---------------------
 
-##### Camel 2.8 onwards
+##=== Camel 2.8 onwards
 In Camel 2.8 onwards you must set the maximum period as an Expression as shown below where we use a Constant expression:
 [source,xml]
 ---------------------
@@ -63,7 +63,7 @@ In Camel 2.8 onwards you must set the maximum period as an Expression as shown b
 </route>
 ---------------------
 
-### Dynamically changing maximum requests per period
+=== Dynamically changing maximum requests per period
 *Available as of Camel 2.8*
 
 Since we use an Expression you can adjust this value at runtime, for example you can provide a header with the value. At runtime Camel evaluates the expression and converts the result to a `java.lang.Long` type. In the example below we use a header from the message to determine the maximum requests per period. If the header is absent, then the Throttler uses the old value. So that allows you to only provide a header if the value is to be changed:
@@ -80,7 +80,7 @@ Since we use an Expression you can adjust this value at runtime, for example you
 </route>
 ---------------------
 
-### Asynchronous delaying
+=== Asynchronous delaying
 *Available as of Camel 2.4*
 
 You can let the Throttler use non blocking asynchronous delaying, which means Camel will use a scheduler to schedule a task to be executed in the future. The task will then continue routing. This allows the caller thread to not block and be able to service other messages, etc.
@@ -90,5 +90,5 @@ You can let the Throttler use non blocking asynchronous delaying, which means Ca
 from("seda:a").throttle(100).asyncDelayed().to("seda:b");
 ---------------------
 
-### Using This Pattern
+=== Using This Pattern
 If you would like to use this EIP Pattern then please read the Getting Started, you may also find the Architecture useful particularly the description of Endpoint and URIs. Then you could try out some of the Examples first before trying this pattern out.

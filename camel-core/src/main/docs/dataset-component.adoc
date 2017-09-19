@@ -20,7 +20,7 @@ data set is received.
 Camel will use the link:log.html[throughput logger] when sending
 dataset's.
 
-### URI format
+=== URI format
 
 [source,java]
 ----------------------
@@ -40,7 +40,7 @@ some implementations that can be used for testing:
 and `org.apache.camel.component.dataset.FileDataSet`, all of which
 extend `DataSetSupport`.
 
-### Options
+=== Options
 
 
 // component options: START
@@ -97,7 +97,7 @@ with the following path and query parameters:
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Configuring DataSet
+=== Configuring DataSet
 
 Camel will lookup in the link:registry.html[Registry] for a bean
 implementing the DataSet interface. So you can register your own DataSet
@@ -110,7 +110,7 @@ as:
    </bean>
 --------------------------------------------------------
 
-### Example
+=== Example
 
 For example, to test that a set of messages are sent to a queue and then
 consumed from the queue without losing any messages:
@@ -133,12 +133,12 @@ data set is and what the messages look like etc.  
 
  
 
-### `DataSetSupport` (abstract class)
+=== `DataSetSupport` (abstract class)
 
 The DataSetSupport abstract class is a nice starting point for new
 DataSets, and provides some useful features to derived classes.
 
-### Properties on DataSetSupport
+=== Properties on DataSetSupport
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
 |Property |Type |Default |Description
@@ -156,11 +156,11 @@ progress. Useful for showing progress of a large load test. If < 0, then
 `size` / 5, if is 0 then `size`, else set to `reportCount` value.
 |=======================================================================
 
-### `SimpleDataSet`
+=== `SimpleDataSet`
 
 The `SimpleDataSet` extends `DataSetSupport`, and adds a default body.
 
-### Additional Properties on SimpleDataSet
+=== Additional Properties on SimpleDataSet
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -173,12 +173,12 @@ configure the `SimpleDataSet` to use it by setting the
 `outputTransformer` property.
 |=======================================================================
 
-### `ListDataSet (Camel 2.17)`
+=== `ListDataSet (Camel 2.17)`
 
 The List`DataSet` extends `DataSetSupport`, and adds a list of default
 bodies.
 
-### Additional Properties on ListDataSet
+=== Additional Properties on ListDataSet
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -199,12 +199,12 @@ the payload for the exchange will be selected using the modulus of the
 `CamelDataSetIndex % defaultBodies.size()` )
 |=======================================================================
 
-### FileDataSet (Camel 2.17)
+=== FileDataSet (Camel 2.17)
 
 The `SimpleDataSet` extends `ListDataSet`, and adds support for loading
 the bodies from a file.
 
-### Additional Properties on FileDataSet
+=== Additional Properties on FileDataSet
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -216,7 +216,7 @@ the bodies from a file.
 the file into multiple payloads.
 |=======================================================================
 
-### See Also
+=== See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

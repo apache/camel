@@ -15,7 +15,7 @@ from("file://foo/bar").
   to("activemq:Some.Queue");
 ------------------------------
 
-### Options
+=== Options
 
 // dataformat options: START
 The Java Object Serialization dataformat supports 1 options which are listed below.
@@ -29,7 +29,7 @@ The Java Object Serialization dataformat supports 1 options which are listed bel
 |===
 // dataformat options: END
 
-### Dependencies
+=== Dependencies
 
 This data format is provided in *camel-core* so no additional
 dependencies is needed.

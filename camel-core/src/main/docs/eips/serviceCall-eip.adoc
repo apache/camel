@@ -1,4 +1,4 @@
-## Service Call EIP
+== Service Call EIP
 
 The serviceCall EIP allows to call remote services in a distributed system. The service to call is looked up in a service registry of some sorts such as Kubernetes, Consul, Etcd, Zookeeper, DNS. The EIP separates the configuration of the service registry from the calling of the service.
 
@@ -39,7 +39,7 @@ By default the Service Call EIP uses camel-http4 so assuming that the selected s
     http4:myhost.com:80
 ----
 
-### Service Name to Camel URI Examples
+=== Service Name to Camel URI Examples
 
 It is often needed to build more complex Camel URI which may include options or paths which is possible through different options:name: value
 
@@ -89,7 +89,7 @@ from("direct:start")
             .simple("undertow:http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/hello");
 ----
 
-### Options
+=== Options
 // eip options: START
 The Service Call EIP supports 14 options which are listed below:
 
@@ -439,7 +439,7 @@ from("direct:start")
 </camelContext>
 ----
 
-### Load Balancer
+=== Load Balancer
 
 The Service Call EIP comes with its own Load Balancer which is istantiated by default if a custome one is not configured and glues Service Discovery, Service Filer, Service Chooser and Service Expression togheter to load balance requests among the available services.
 
@@ -522,7 +522,7 @@ Or leveraging XML specific configuration:
 </camelContext>
 ----
 
-### Shared configurations
+=== Shared configurations
 
 The Service CAll EIP can be configured straight on the route definition or through shared configurations, here an example with two configurations registered in the Camel Context:
 
@@ -575,7 +575,7 @@ rom("direc_:start")
     .to("mock:result");
 ----
 
-### Spring Boot support
+=== Spring Boot support
 
 In a Spring-Boot application you can externalize most of the configuration options:
 
@@ -607,7 +607,7 @@ public class MyRouteBuilder implements RouteBuilder {
 }
 ----
 
-### Spring Cloud support
+=== Spring Cloud support
 
 If you are using Camel in an application based on Spring Cloud, you can leverage Spring Cloud service discovery and load balancing capabilities by adding the Spring Cloud related dependencies (i.e. spring-cloud-consul, spring-cloud-kubernetes) as any Spring Boot/Cloud application in addition to Camel's own camel-spring-cloud dependency.
 

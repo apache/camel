@@ -78,7 +78,7 @@ You can have multiple functions in the same expression:
 having another $\{ } placeholder in an existing, is not allowed). +
  From *Camel 2.9* onwards you can nest functions.
 
-### Simple Language options
+=== Simple Language options
 
 // language options: START
 The Simple language supports 2 options which are listed below.
@@ -93,7 +93,7 @@ The Simple language supports 2 options which are listed below.
 |===
 // language options: END
 
-### Variables
+=== Variables
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -286,7 +286,7 @@ includes the route strack-trace). This can be used if you do not want to
 log sensitive data from the message itself.
 |=======================================================================
 
-### OGNL expression support
+=== OGNL expression support
 
 *Available as of Camel 2.3*
 
@@ -421,7 +421,7 @@ And yes you can combine this with the operator support as shown below:
 simple("${body.address.zip} > 1000")
 ------------------------------------
 
-### Operator support
+=== Operator support
 
 The parser is limited to only support a single operator.
 
@@ -721,7 +721,7 @@ order:
     </from>
 ------------------------------------------------------------
 
-#### Using and / or
+#=== Using and / or
 
 If you have two expressions you can combine them with the `and` or `or`
 operator.
@@ -753,7 +753,7 @@ language expression. This might change in the future. +
 simple("${in.header.title} contains 'Camel' and ${in.header.type'} == 'gold' and ${in.header.number} range 100..200")
 ---------------------------------------------------------------------------------------------------------------------
 
-### Samples
+=== Samples
 
 In the Spring XML sample below we filter based on a header value:
 
@@ -868,7 +868,7 @@ From Camel 2.9 onwards you can nest functions, such as shown below:
 </setHeader>
 --------------------------------------------------
 
-#### Referring to constants or enums
+#=== Referring to constants or enums
 
 *Available as of Camel 2.11*
 
@@ -878,7 +878,7 @@ And in a link:content-based-router.html[Content Based Router] we can use
 the link:simple.html[Simple] language to refer to this enum, to check
 the message which enum it matches.
 
-### Using new lines or tabs in XML DSLs
+=== Using new lines or tabs in XML DSLs
 
 *Available as of Camel 2.9.3*
 
@@ -892,7 +892,7 @@ XML DSLs as you can escape the value now
 </transform>
 -------------------------------------------------------
 
-### Leading and trailing whitespace handling
+=== Leading and trailing whitespace handling
 
 *Available as of Camel 2.10.0*
 
@@ -908,7 +908,7 @@ whitespace characters.
 </setBody>
 ---------------------------------------------------------------------------------
 
-### Setting result type
+=== Setting result type
 
 *Available as of Camel 2.8*
 
@@ -934,7 +934,7 @@ And in XML DSL
       </setHeader>
 ---------------------------------------------------------------------------------------
 
-### Changing function start and end tokens
+=== Changing function start and end tokens
 
 *Available as of Camel 2.9.1*
 
@@ -959,7 +959,7 @@ applications which share the same *camel-core* on their classpath. +
  For example in an OSGi server this may affect many applications, where
 as a Web Application as a WAR file it only affects the Web Application.
 
-### Loading script from external resource
+=== Loading script from external resource
 
 *Available as of Camel 2.11*
 
@@ -973,7 +973,7 @@ eg to refer to a file on the classpath you can do:
 .setHeader("myHeader").simple("resource:classpath:mysimple.txt")
 ----------------------------------------------------------------
 
-### Setting Spring beans to Exchange properties
+=== Setting Spring beans to Exchange properties
 
 *Available as of Camel 2.6*
 
@@ -992,6 +992,6 @@ You can set a spring bean into an exchange property as shown below:
 </route>
 -------------------------------------------------------
 
-### Dependencies
+=== Dependencies
 
 The link:simple.html[Simple] language is part of *camel-core*.

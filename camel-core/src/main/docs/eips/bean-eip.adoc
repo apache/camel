@@ -1,9 +1,8 @@
-## Bean EIP
-### Message Filter
+== Bean EIP
 
-The *bean:* component binds beans to Camel message exchanges.
+The *bean:* EIP binds beans to Camel message exchanges.
 
-### URI Format
+=== URI Format
 
 [source,java]
 ---------------------
@@ -13,7 +12,7 @@ bean:beanID[?options]
 Where *beanID* can be any string which is used to look up the bean in
 the link:registry.html[Registry]
 
-### EIP options
+=== EIP options
 
 // eip options: START
 The Bean EIP supports 5 options which are listed below:
@@ -30,7 +29,7 @@ The Bean EIP supports 5 options which are listed below:
 |=======================================================================
 // eip options: END
 
-### Bean as endpoint
+=== Bean as endpoint
 
 Camel also supports invoking link:bean.html[Bean] as an Endpoint. In the
 route below:
@@ -43,7 +42,7 @@ Camel will use link:bean-binding.html[Bean Binding] to invoke the
 `sayHello` method, by converting the Exchange's In body to the `String`
 type and storing the output of the method on the Exchange Out body.
 
-### Java DSL bean syntax
+=== Java DSL bean syntax
 
 Java DSL comes with syntactic sugar for the link:bean.html[Bean]
 component. Instead of specifying the bean explicitly as the endpoint
@@ -75,7 +74,7 @@ from("direct:start").bean(new ExampleBean(), "methodName");
 from("direct:start").bean(ExampleBean.class);
 ---------------------------------------------------------------
 
-### Bean binding
+=== Bean binding
 
 How bean methods to be invoked are chosen (if they are not specified
 explicitly through the *method* parameter) and how parameter values are
@@ -84,7 +83,7 @@ link:bean-binding.html[Bean Binding] mechanism which is used throughout
 all of the various link:bean-integration.html[Bean Integration]
 mechanisms in Camel.
 
-### See also
+=== See also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
