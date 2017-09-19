@@ -1,4 +1,4 @@
-## JacksonXML DataFormat
+== JacksonXML DataFormat
 
 *Available as of Camel version 2.16*
 
@@ -37,7 +37,7 @@ The JacksonXML dataformat supports 15 options which are listed below.
 
 
 [width="100%",cols="2s,1m,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Default | Java Type | Description
 | xmlMapper |  | String | Lookup and use the existing XmlMapper with the given id.
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
@@ -54,7 +54,7 @@ The JacksonXML dataformat supports 15 options which are listed below.
 | disableFeatures |  | String | Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature com.fasterxml.jackson.databind.DeserializationFeature or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma
 | allowUnmarshallType | false | Boolean | If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
-|=======================================================================
+|===
 // dataformat options: END
 
 

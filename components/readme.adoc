@@ -5,7 +5,7 @@ Components
 Number of Components: 280 in 192 JAR artifacts (17 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
-|=======================================================================
+|===
 | Component | Available From | Description
 
 | link:camel-ahc/src/main/docs/ahc-component.adoc[AHC] (camel-ahc) +
@@ -848,7 +848,7 @@ Number of Components: 280 in 192 JAR artifacts (17 deprecated)
 | link:camel-zookeeper-master/src/main/docs/zookeeper-master-component.adoc[ZooKeeper Master] (camel-zookeeper-master) +
 `zookeeper-master:groupName:consumerEndpointUri` | 2.19 | Represents an endpoint which only becomes active when it obtains the master lock
 
-|=======================================================================
+|===
 // components: END
 
 
@@ -859,7 +859,7 @@ Data Formats
 Number of Data Formats: 48 in 39 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
-|=======================================================================
+|===
 | Data Format | Available From | Description
 
 | link:camel-asn1/src/main/docs/asn1-dataformat.adoc[ASN.1 File] (camel-asn1) | 2.20 | Camel ASN.1 support
@@ -957,7 +957,7 @@ Number of Data Formats: 48 in 39 JAR artifacts (0 deprecated)
 | link:../camel-core/src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | 2.12 | Zip compression data format (not for zip files)
 
 | link:camel-zipfile/src/main/docs/zipfile-dataformat.adoc[Zip File] (camel-zipfile) | 2.11 | Camel Zip file support
-|=======================================================================
+|===
 // dataformats: END
 
 
@@ -968,7 +968,7 @@ Expression Languages
 Number of Languages: 24 in 12 JAR artifacts (6 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
-|=======================================================================
+|===
 | Language | Available From | Description
 
 | link:../camel-core/src/main/docs/bean-language.adoc[Bean method] (camel-core) | 1.3 | For expressions and predicates using a java bean (aka method call)
@@ -1018,7 +1018,7 @@ Number of Languages: 24 in 12 JAR artifacts (6 deprecated)
 | link:../camel-core/src/main/docs/xpath-language.adoc[XPath] (camel-core) | 1.1 | For XPath expressions and predicates
 
 | link:camel-saxon/src/main/docs/xquery-language.adoc[XQuery] (camel-saxon) | 1.0 | For XQuery expressions and predicates
-|=======================================================================
+|===
 // languages: END
 
 
@@ -1029,7 +1029,7 @@ Miscellaneous Components
 Number of Miscellaneous Components: 37 in 37 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
-|=======================================================================
+|===
 | Component | Available From | Description
 
 | link:camel-bam/src/main/docs/bam.adoc[BAM] (camel-bam) | 1.0 | *deprecated* Business Activity Monitoring
@@ -1105,6 +1105,6 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (13 deprecated)
 | link:camel-urlrewrite/src/main/docs/urlrewrite.adoc[URLRewrite] (camel-urlrewrite) | 2.11 | *deprecated* URL rewrite support for HTTP components
 
 | link:camel-zipkin/src/main/docs/zipkin.adoc[Zipkin] (camel-zipkin) | 2.18 | Distributed message tracing using Zipkin
-|=======================================================================
+|===
 // others: END
 

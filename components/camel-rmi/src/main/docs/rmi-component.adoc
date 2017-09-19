@@ -1,4 +1,4 @@
-## RMI Component
+== RMI Component
 
 *Available as of Camel version 1.0*
 
@@ -55,32 +55,34 @@ The RMI component has no options.
 // endpoint options: START
 The RMI endpoint is configured using URI syntax:
 
-    rmi:hostname:port/name
+----
+rmi:hostname:port/name
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (3 parameters):
+==== Path Parameters (3 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **hostname** | Hostname of RMI server | localhost | String
-| **name** | *Required* Name to use when binding to RMI server |  | String
-| **port** | Port number of RMI server | 1099 | int
-|=======================================================================
+| *hostname* | Hostname of RMI server | localhost | String
+| *name* | *Required* Name to use when binding to RMI server |  | String
+| *port* | Port number of RMI server | 1099 | int
+|===
 
-#### Query Parameters (6 parameters):
+==== Query Parameters (6 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **method** (common) | You can set the name of the method to invoke. |  | String
-| **remoteInterfaces** (common) | To specific the remote interfaces. |  | List
-| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-|=======================================================================
+| *method* (common) | You can set the name of the method to invoke. |  | String
+| *remoteInterfaces* (common) | To specific the remote interfaces. |  | List
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
 // endpoint options: END
 
 

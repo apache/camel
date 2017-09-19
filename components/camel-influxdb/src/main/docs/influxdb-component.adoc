@@ -1,4 +1,4 @@
-## InfluxDB Component
+== InfluxDB Component
 
 *Available as of Camel version 2.18*
 
@@ -50,30 +50,32 @@ The InfluxDB component has no options.
 // endpoint options: START
 The InfluxDB endpoint is configured using URI syntax:
 
-    influxdb:connectionBean
+----
+influxdb:connectionBean
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (1 parameters):
+==== Path Parameters (1 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **connectionBean** | *Required* Connection to the influx database of class InfluxDB.class |  | String
-|=======================================================================
+| *connectionBean* | *Required* Connection to the influx database of class InfluxDB.class |  | String
+|===
 
-#### Query Parameters (6 parameters):
+==== Query Parameters (6 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **batch** (producer) | Define if this operation is a batch operation or not | false | boolean
-| **databaseName** (producer) | The name of the database where the time series will be stored |  | String
-| **operation** (producer) | Define if this operation is an insert or a query | insert | String
-| **query** (producer) | Define the query in case of operation query |  | String
-| **retentionPolicy** (producer) | The string that defines the retention policy to the data created by the endpoint | default | String
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-|=======================================================================
+| *batch* (producer) | Define if this operation is a batch operation or not | false | boolean
+| *databaseName* (producer) | The name of the database where the time series will be stored |  | String
+| *operation* (producer) | Define if this operation is an insert or a query | insert | String
+| *query* (producer) | Define the query in case of operation query |  | String
+| *retentionPolicy* (producer) | The string that defines the retention policy to the data created by the endpoint | default | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
 // endpoint options: END
 
 

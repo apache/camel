@@ -1,4 +1,4 @@
-## Ganglia Component
+== Ganglia Component
 
 *Available as of Camel version 2.15*
 
@@ -55,11 +55,11 @@ The Ganglia component supports 2 options which are listed below.
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **configuration** (advanced) | To use the shared configuration |  | GangliaConfiguration
-| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
-|=======================================================================
+| *configuration* (advanced) | To use the shared configuration |  | GangliaConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
@@ -70,38 +70,40 @@ The Ganglia component supports 2 options which are listed below.
 // endpoint options: START
 The Ganglia endpoint is configured using URI syntax:
 
-    ganglia:host:port
+----
+ganglia:host:port
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (2 parameters):
+==== Path Parameters (2 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **host** | Host name for Ganglia server | 239.2.11.71 | String
-| **port** | Port for Ganglia server | 8649 | int
-|=======================================================================
+| *host* | Host name for Ganglia server | 239.2.11.71 | String
+| *port* | Port for Ganglia server | 8649 | int
+|===
 
-#### Query Parameters (13 parameters):
+==== Query Parameters (13 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **dmax** (producer) | Minumum time in seconds before Ganglia will purge the metric value if it expires. Set to 0 and the value will remain in Ganglia indefinitely until a gmond agent restart. | 0 | int
-| **groupName** (producer) | The group that the metric belongs to. | java | String
-| **metricName** (producer) | The name to use for the metric. | metric | String
-| **mode** (producer) | Send the UDP metric packets using MULTICAST or UNICAST | MULTICAST | UDPAddressingMode
-| **prefix** (producer) | Prefix the metric name with this string and an underscore. |  | String
-| **slope** (producer) | The slope | BOTH | GMetricSlope
-| **spoofHostname** (producer) | Spoofing information IP:hostname |  | String
-| **tmax** (producer) | Maximum time in seconds that the value can be considered current. After this Ganglia considers the value to have expired. | 60 | int
-| **ttl** (producer) | If using multicast set the TTL of the packets | 5 | int
-| **type** (producer) | The type of value | STRING | GMetricType
-| **units** (producer) | Any unit of measurement that qualifies the metric e.g. widgets litres bytes. Do not include a prefix such as k (kilo) or m (milli) other tools may scale the units later. The value should be unscaled. |  | String
-| **wireFormat31x** (producer) | Use the wire format of Ganglia 3.1.0 and later versions. Set this to false to use Ganglia 3.0.x or earlier. | true | boolean
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-|=======================================================================
+| *dmax* (producer) | Minumum time in seconds before Ganglia will purge the metric value if it expires. Set to 0 and the value will remain in Ganglia indefinitely until a gmond agent restart. | 0 | int
+| *groupName* (producer) | The group that the metric belongs to. | java | String
+| *metricName* (producer) | The name to use for the metric. | metric | String
+| *mode* (producer) | Send the UDP metric packets using MULTICAST or UNICAST | MULTICAST | UDPAddressingMode
+| *prefix* (producer) | Prefix the metric name with this string and an underscore. |  | String
+| *slope* (producer) | The slope | BOTH | GMetricSlope
+| *spoofHostname* (producer) | Spoofing information IP:hostname |  | String
+| *tmax* (producer) | Maximum time in seconds that the value can be considered current. After this Ganglia considers the value to have expired. | 60 | int
+| *ttl* (producer) | If using multicast set the TTL of the packets | 5 | int
+| *type* (producer) | The type of value | STRING | GMetricType
+| *units* (producer) | Any unit of measurement that qualifies the metric e.g. widgets litres bytes. Do not include a prefix such as k (kilo) or m (milli) other tools may scale the units later. The value should be unscaled. |  | String
+| *wireFormat31x* (producer) | Use the wire format of Ganglia 3.1.0 and later versions. Set this to false to use Ganglia 3.0.x or earlier. | true | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
 // endpoint options: END
 
 

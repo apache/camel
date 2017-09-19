@@ -1,4 +1,4 @@
-## AWS Kinesis Firehose Component
+== AWS Kinesis Firehose Component
 
 *Available as of Camel version 2.19*
 
@@ -37,26 +37,28 @@ The AWS Kinesis Firehose component has no options.
 // endpoint options: START
 The AWS Kinesis Firehose endpoint is configured using URI syntax:
 
-    aws-kinesis-firehose:streamName
+----
+aws-kinesis-firehose:streamName
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (1 parameters):
+==== Path Parameters (1 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **streamName** | *Required* Name of the stream |  | String
-|=======================================================================
+| *streamName* | *Required* Name of the stream |  | String
+|===
 
-#### Query Parameters (2 parameters):
+==== Query Parameters (2 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **amazonKinesisFirehoseClient** (producer) | *Required* Amazon Kinesis Firehose client to use for all requests for this endpoint |  | AmazonKinesisFirehose
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-|=======================================================================
+| *amazonKinesisFirehoseClient* (producer) | *Required* Amazon Kinesis Firehose client to use for all requests for this endpoint |  | AmazonKinesisFirehose
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
 // endpoint options: END
 
 

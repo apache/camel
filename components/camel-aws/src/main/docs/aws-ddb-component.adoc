@@ -1,4 +1,4 @@
-## AWS DynamoDB Component
+== AWS DynamoDB Component
 
 *Available as of Camel version 2.10*
 
@@ -34,38 +34,40 @@ The AWS DynamoDB component has no options.
 // endpoint options: START
 The AWS DynamoDB endpoint is configured using URI syntax:
 
-    aws-ddb:tableName
+----
+aws-ddb:tableName
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (1 parameters):
+==== Path Parameters (1 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **tableName** | *Required* The name of the table currently worked with. |  | String
-|=======================================================================
+| *tableName* | *Required* The name of the table currently worked with. |  | String
+|===
 
-#### Query Parameters (14 parameters):
+==== Query Parameters (14 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **accessKey** (producer) | Amazon AWS Access Key |  | String
-| **amazonDDBClient** (producer) | To use the AmazonDynamoDB as the client |  | AmazonDynamoDB
-| **amazonDdbEndpoint** (producer) | The endpoint with which the AWS-DDB client wants to work with. |  | String
-| **consistentRead** (producer) | Determines whether or not strong consistency should be enforced when data is read. | false | boolean
-| **keyAttributeName** (producer) | Attribute name when creating table |  | String
-| **keyAttributeType** (producer) | Attribute type when creating table |  | String
-| **operation** (producer) | What operation to perform | PutItem | DdbOperations
-| **proxyHost** (producer) | To define a proxy host when instantiating the DDB client |  | String
-| **proxyPort** (producer) | To define a proxy port when instantiating the DDB client |  | Integer
-| **readCapacity** (producer) | The provisioned throughput to reserve for reading resources from your table |  | Long
-| **region** (producer) | The region in which DDB client needs to work |  | String
-| **secretKey** (producer) | Amazon AWS Secret Key |  | String
-| **writeCapacity** (producer) | The provisioned throughput to reserved for writing resources to your table |  | Long
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-|=======================================================================
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *amazonDDBClient* (producer) | To use the AmazonDynamoDB as the client |  | AmazonDynamoDB
+| *amazonDdbEndpoint* (producer) | The endpoint with which the AWS-DDB client wants to work with. |  | String
+| *consistentRead* (producer) | Determines whether or not strong consistency should be enforced when data is read. | false | boolean
+| *keyAttributeName* (producer) | Attribute name when creating table |  | String
+| *keyAttributeType* (producer) | Attribute type when creating table |  | String
+| *operation* (producer) | What operation to perform | PutItem | DdbOperations
+| *proxyHost* (producer) | To define a proxy host when instantiating the DDB client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the DDB client |  | Integer
+| *readCapacity* (producer) | The provisioned throughput to reserve for reading resources from your table |  | Long
+| *region* (producer) | The region in which DDB client needs to work |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *writeCapacity* (producer) | The provisioned throughput to reserved for writing resources to your table |  | Long
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
 // endpoint options: END
 
 

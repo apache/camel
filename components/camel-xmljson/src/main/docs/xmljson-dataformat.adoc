@@ -1,4 +1,4 @@
-## XML JSon DataFormat
+== XML JSon DataFormat
 
 *Available as of Camel version 2.10*
 
@@ -25,7 +25,7 @@ The XML JSon dataformat supports 13 options which are listed below.
 
 
 [width="100%",cols="2s,1m,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Default | Java Type | Description
 | encoding |  | String | Sets the encoding. Used for unmarshalling (JSON to XML conversion).
 | elementName |  | String | Specifies the name of the XML elements representing each array element. Used for unmarshalling (JSON to XML conversion).
@@ -40,7 +40,7 @@ The XML JSon dataformat supports 13 options which are listed below.
 | expandableProperties |  | List | With expandable properties JSON array elements are converted to XML as a sequence of repetitive XML elements with the local name equal to the JSON key for example: number: 123 normally converted to: 123 (where e can be modified by setting elementName) would instead translate to 123 if number is set as an expandable property Used for unmarshalling (JSON to XML conversion).
 | typeHints |  | String | Adds type hints to the resulting XML to aid conversion back to JSON. Used for unmarshalling (JSON to XML conversion).
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
-|=======================================================================
+|===
 // dataformat options: END
 
 ### Basic Usage with Java DSL

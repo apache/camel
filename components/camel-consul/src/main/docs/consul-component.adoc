@@ -1,4 +1,4 @@
-## Consul Component
+== Consul Component
 
 *Available as of Camel version 2.18*
 
@@ -40,18 +40,18 @@ The Consul component supports 9 options which are listed below.
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **url** (common) | The Consul agent URL |  | String
-| **datacenter** (common) | The data center |  | String
-| **sslContextParameters** (common) | SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters instance. |  | SSLContextParameters
-| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
-| **aclToken** (common) | Sets the ACL token to be used with Consul |  | String
-| **userName** (common) | Sets the username to be used for basic authentication |  | String
-| **password** (common) | Sets the password to be used for basic authentication |  | String
-| **configuration** (advanced) | Sets the common configuration shared among endpoints |  | ConsulConfiguration
-| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
-|=======================================================================
+| *url* (common) | The Consul agent URL |  | String
+| *datacenter* (common) | The data center |  | String
+| *sslContextParameters* (common) | SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters instance. |  | SSLContextParameters
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *aclToken* (common) | Sets the ACL token to be used with Consul |  | String
+| *userName* (common) | Sets the username to be used for basic authentication |  | String
+| *password* (common) | Sets the password to be used for basic authentication |  | String
+| *configuration* (advanced) | Sets the common configuration shared among endpoints |  | ConsulConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
@@ -62,28 +62,30 @@ The Consul component supports 9 options which are listed below.
 // endpoint options: START
 The Consul endpoint is configured using URI syntax:
 
-    consul:apiEndpoint
+----
+consul:apiEndpoint
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (1 parameters):
+==== Path Parameters (1 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **apiEndpoint** | *Required* The API endpoint |  | String
-|=======================================================================
+| *apiEndpoint* | *Required* The API endpoint |  | String
+|===
 
-#### Query Parameters (4 parameters):
+==== Query Parameters (4 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-|=======================================================================
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
 // endpoint options: END
 
 

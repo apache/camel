@@ -1,4 +1,4 @@
-## OPC UA Client Component
+== OPC UA Client Component
 
 *Available as of Camel version 2.19*
 
@@ -26,15 +26,15 @@ The OPC UA Client component supports 6 options which are listed below.
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **defaultConfiguration** (common) | All default options for client |  | MiloClientConfiguration
-| **applicationName** (common) | Default application name |  | String
-| **applicationUri** (common) | Default application URI |  | String
-| **productUri** (common) | Default product URI |  | String
-| **reconnectTimeout** (common) | Default reconnect timeout |  | Long
-| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
-|=======================================================================
+| *defaultConfiguration* (common) | All default options for client |  | MiloClientConfiguration
+| *applicationName* (common) | Default application name |  | String
+| *applicationUri* (common) | Default application URI |  | String
+| *productUri* (common) | Default product URI |  | String
+| *reconnectTimeout* (common) | Default reconnect timeout |  | Long
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
@@ -80,47 +80,49 @@ In other words, shared connections located by the combination of endpoint URI an
 // endpoint options: START
 The OPC UA Client endpoint is configured using URI syntax:
 
-    milo-client:endpointUri
+----
+milo-client:endpointUri
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (1 parameters):
+==== Path Parameters (1 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **endpointUri** | *Required* The OPC UA server endpoint |  | String
-|=======================================================================
+| *endpointUri* | *Required* The OPC UA server endpoint |  | String
+|===
 
-#### Query Parameters (23 parameters):
+==== Query Parameters (23 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **clientId** (common) | A virtual client id to force the creation of a new connection instance |  | String
-| **defaultAwaitWrites** (common) | Default await setting for writes | false | boolean
-| **node** (common) | The node definition (see Node ID) |  | ExpandedNodeId
-| **samplingInterval** (common) | The sampling interval in milliseconds |  | Double
-| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| **applicationName** (client) | The application name | Apache Camel adapter for Eclipse Milo | String
-| **applicationUri** (client) | The application URI | http://camel.apache.org/EclipseMilo/Client | String
-| **channelLifetime** (client) | Channel lifetime in milliseconds |  | Long
-| **keyAlias** (client) | The name of the key in the keystore file |  | String
-| **keyPassword** (client) | The key password |  | String
-| **keyStorePassword** (client) | The keystore password |  | String
-| **keyStoreType** (client) | The key store type |  | String
-| **keyStoreUrl** (client) | The URL where the key should be loaded from |  | URL
-| **maxPendingPublishRequests** (client) | The maximum number of pending publish requests |  | Long
-| **maxResponseMessageSize** (client) | The maximum number of bytes a response message may have |  | Long
-| **productUri** (client) | The product URI | http://camel.apache.org/EclipseMilo | String
-| **requestTimeout** (client) | Request timeout in milliseconds |  | Long
-| **secureChannel ReauthenticationEnabled** (client) | Whether secure channel re-authentication is enabled |  | Boolean
-| **sessionName** (client) | Session name |  | String
-| **sessionTimeout** (client) | Session timeout in milliseconds |  | Long
-|=======================================================================
+| *clientId* (common) | A virtual client id to force the creation of a new connection instance |  | String
+| *defaultAwaitWrites* (common) | Default await setting for writes | false | boolean
+| *node* (common) | The node definition (see Node ID) |  | ExpandedNodeId
+| *samplingInterval* (common) | The sampling interval in milliseconds |  | Double
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *applicationName* (client) | The application name | Apache Camel adapter for Eclipse Milo | String
+| *applicationUri* (client) | The application URI | http://camel.apache.org/EclipseMilo/Client | String
+| *channelLifetime* (client) | Channel lifetime in milliseconds |  | Long
+| *keyAlias* (client) | The name of the key in the keystore file |  | String
+| *keyPassword* (client) | The key password |  | String
+| *keyStorePassword* (client) | The keystore password |  | String
+| *keyStoreType* (client) | The key store type |  | String
+| *keyStoreUrl* (client) | The URL where the key should be loaded from |  | URL
+| *maxPendingPublishRequests* (client) | The maximum number of pending publish requests |  | Long
+| *maxResponseMessageSize* (client) | The maximum number of bytes a response message may have |  | Long
+| *productUri* (client) | The product URI | http://camel.apache.org/EclipseMilo | String
+| *requestTimeout* (client) | Request timeout in milliseconds |  | Long
+| *secureChannel ReauthenticationEnabled* (client) | Whether secure channel re-authentication is enabled |  | Boolean
+| *sessionName* (client) | Session name |  | String
+| *sessionTimeout* (client) | Session timeout in milliseconds |  | Long
+|===
 // endpoint options: END
 
 

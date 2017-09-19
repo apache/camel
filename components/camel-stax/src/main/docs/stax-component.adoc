@@ -1,4 +1,4 @@
-## StAX Component
+== StAX Component
 
 *Available as of Camel version 2.9*
 
@@ -56,25 +56,27 @@ The StAX component has no options.
 // endpoint options: START
 The StAX endpoint is configured using URI syntax:
 
-    stax:contentHandlerClass
+----
+stax:contentHandlerClass
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (1 parameters):
+==== Path Parameters (1 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **contentHandlerClass** | *Required* The FQN class name for the ContentHandler implementation to use. |  | String
-|=======================================================================
+| *contentHandlerClass* | *Required* The FQN class name for the ContentHandler implementation to use. |  | String
+|===
 
-#### Query Parameters (1 parameters):
+==== Query Parameters (1 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-|=======================================================================
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
 // endpoint options: END
 
 

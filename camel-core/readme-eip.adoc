@@ -7,7 +7,7 @@ Camel supports most of the link:http://www.eaipatterns.com/toc.html[Enterprise I
 Number of EIPs: 62 (2 deprecated)
 
 [width="100%",cols="4,6",options="header"]
-|=======================================================================
+|===
 | EIP | Description
 
 | link:src/main/docs/eips/aggregate-eip.adoc[Aggregate] +
@@ -196,5 +196,5 @@ Number of EIPs: 62 (2 deprecated)
 | link:src/main/docs/eips/wireTap-eip.adoc[Wire Tap] +
 `<wireTap>` | Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.
 
-|=======================================================================
+|===
 // eips: END
