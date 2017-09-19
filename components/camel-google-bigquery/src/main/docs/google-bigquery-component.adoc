@@ -1,4 +1,4 @@
-## Google BigQuery Component
+== Google BigQuery Component
 
 *Available as of Camel version 2.20*
 
@@ -63,41 +63,43 @@ The Google BigQuery component supports 4 options which are listed below.
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **projectId** (producer) | Google Cloud Project Id |  | String
-| **datasetId** (producer) | BigQuery Dataset Id |  | String
-| **connectionFactory** (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used |  | GoogleBigQuery ConnectionFactory
-| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
-|=======================================================================
+| *projectId* (producer) | Google Cloud Project Id |  | String
+| *datasetId* (producer) | BigQuery Dataset Id |  | String
+| *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used |  | GoogleBigQuery ConnectionFactory
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 // endpoint options: START
 The Google BigQuery endpoint is configured using URI syntax:
 
-    google-bigquery:projectId:datasetId:tableName
+----
+google-bigquery:projectId:datasetId:tableName
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (3 parameters):
+==== Path Parameters (3 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **projectId** | *Required* Google Cloud Project Id |  | String
-| **datasetId** | *Required* BigQuery Dataset Id |  | String
-| **tableId** | BigQuery table id |  | String
-|=======================================================================
+| *projectId* | *Required* Google Cloud Project Id |  | String
+| *datasetId* | *Required* BigQuery Dataset Id |  | String
+| *tableId* | BigQuery table id |  | String
+|===
 
-#### Query Parameters (3 parameters):
+==== Query Parameters (3 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **connectionFactory** (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default will be used. |  | GoogleBigQuery ConnectionFactory
-| **useAsInsertId** (producer) | Field name to use as insert id |  | String
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-|=======================================================================
+| *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default will be used. |  | GoogleBigQuery ConnectionFactory
+| *useAsInsertId* (producer) | Field name to use as insert id |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
 // endpoint options: END
 
 ### Message Headers
@@ -157,6 +159,3 @@ A insert id can be set on the exchange with the header `GoogleBigQueryConstants.
 query parameter `useAsInsertId`. As an insert id need to be specified per row inserted the exchange header can't
 be used when the payload is a list - if the payload is a list the `GoogleBigQueryConstants.INSERT_ID` will
 be ignored. In that case use the query parameter `useAsInsertId`.
-
-
-

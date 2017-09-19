@@ -1,4 +1,4 @@
-## Bean method Language
+== Bean method Language
 
 *Available as of Camel version 1.3*
 
@@ -28,14 +28,14 @@ The Bean method language supports 5 options which are listed below.
 
 
 [width="100%",cols="2,1m,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Default | Java Type | Description
 | bean |  | String | *Deprecated* Either a reference or a class name of the bean to use
 | ref |  | String | Reference to bean to lookup in the registry
 | method |  | String | Name of method to call
 | beanType |  | String | Class name of the bean to use
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|=======================================================================
+|===
 // language options: END
 
 

@@ -1,4 +1,4 @@
-## Velocity Component
+== Velocity Component
 
 *Available as of Camel version 1.2*
 
@@ -44,11 +44,11 @@ The Velocity component supports 2 options which are listed below.
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **velocityEngine** (advanced) | To use the VelocityEngine otherwise a new engine is created |  | VelocityEngine
-| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
-|=======================================================================
+| *velocityEngine* (advanced) | To use the VelocityEngine otherwise a new engine is created |  | VelocityEngine
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
@@ -57,29 +57,31 @@ The Velocity component supports 2 options which are listed below.
 // endpoint options: START
 The Velocity endpoint is configured using URI syntax:
 
-    velocity:resourceUri
+----
+velocity:resourceUri
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (1 parameters):
+==== Path Parameters (1 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **resourceUri** | *Required* Path to the resource. You can prefix with: classpath file http ref or bean. classpath file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot eg bean:myBean.myMethod. |  | String
-|=======================================================================
+| *resourceUri* | *Required* Path to the resource. You can prefix with: classpath file http ref or bean. classpath file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot eg bean:myBean.myMethod. |  | String
+|===
 
-#### Query Parameters (5 parameters):
+==== Query Parameters (5 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **contentCache** (producer) | Sets whether to use resource content cache or not | false | boolean
-| **encoding** (producer) | Character encoding of the resource content. |  | String
-| **loaderCache** (producer) | Enables / disables the velocity resource loader cache which is enabled by default | true | boolean
-| **propertiesFile** (producer) | The URI of the properties file which is used for VelocityEngine initialization. |  | String
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-|=======================================================================
+| *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
+| *encoding* (producer) | Character encoding of the resource content. |  | String
+| *loaderCache* (producer) | Enables / disables the velocity resource loader cache which is enabled by default | true | boolean
+| *propertiesFile* (producer) | The URI of the properties file which is used for VelocityEngine initialization. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
 // endpoint options: END
 
 

@@ -9,7 +9,7 @@ Components
 Number of Components: 25 in 1 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
-|=======================================================================
+|===
 | Component | Available From | Description
 
 | link:src/main/docs/bean-component.adoc[Bean] (camel-core) +
@@ -87,7 +87,7 @@ Number of Components: 25 in 1 JAR artifacts (1 deprecated)
 | link:src/main/docs/xslt-component.adoc[XSLT] (camel-core) +
 `xslt:resourceUri` | 1.3 | Transforms the message using a XSLT template.
 
-|=======================================================================
+|===
 // components: END
 
 
@@ -106,7 +106,7 @@ Data Formats
 Number of Data Formats: 4 in 39 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
-|=======================================================================
+|===
 | Data Format | Available From | Description
 
 | link:src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0 | GZip compression data format
@@ -116,7 +116,7 @@ Number of Data Formats: 4 in 39 JAR artifacts (0 deprecated)
 | link:src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | 2.12 | String (text based) data format
 
 | link:src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | 2.12 | Zip compression data format (not for zip files)
-|=======================================================================
+|===
 // dataformats: END
 
 
@@ -136,7 +136,7 @@ Expression Languages
 Number of Languages: 10 in 1 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
-|=======================================================================
+|===
 | Language | Available From | Description
 
 | link:src/main/docs/bean-language.adoc[Bean method] (camel-core) | 1.3 | For expressions and predicates using a java bean (aka method call)
@@ -158,7 +158,7 @@ Number of Languages: 10 in 1 JAR artifacts (0 deprecated)
 | link:src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-core) | 2.14 | For expressions and predicates using a body or header XML tokenizer
 
 | link:src/main/docs/xpath-language.adoc[XPath] (camel-core) | 1.1 | For XPath expressions and predicates
-|=======================================================================
+|===
 // languages: END
 
 

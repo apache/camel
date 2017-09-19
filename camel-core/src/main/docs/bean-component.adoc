@@ -1,4 +1,4 @@
-## Bean Component
+== Bean Component
 
 *Available as of Camel version 1.0*
 
@@ -26,29 +26,31 @@ The Bean component has no options.
 // endpoint options: START
 The Bean endpoint is configured using URI syntax:
 
-    bean:beanName
+----
+bean:beanName
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (1 parameters):
+==== Path Parameters (1 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **beanName** | *Required* Sets the name of the bean to invoke |  | String
-|=======================================================================
+| *beanName* | *Required* Sets the name of the bean to invoke |  | String
+|===
 
-#### Query Parameters (5 parameters):
+==== Query Parameters (5 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **method** (producer) | Sets the name of the method to invoke on the bean |  | String
-| **cache** (advanced) | If enabled Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. | false | boolean
-| **multiParameterArray** (advanced) | *Deprecated* How to treat the parameters which are passed from the message body; if it is true the message body should be an array of parameters. Note: This option is used internally by Camel and is not intended for end users to use. Deprecation note: This option is used internally by Camel, and is not intended for end users to use. | false | boolean
-| **parameters** (advanced) | Used for configuring additional properties on the bean |  | Map
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-|=======================================================================
+| *method* (producer) | Sets the name of the method to invoke on the bean |  | String
+| *cache* (advanced) | If enabled Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. | false | boolean
+| *multiParameterArray* (advanced) | *Deprecated* How to treat the parameters which are passed from the message body; if it is true the message body should be an array of parameters. Note: This option is used internally by Camel and is not intended for end users to use. Deprecation note: This option is used internally by Camel, and is not intended for end users to use. | false | boolean
+| *parameters* (advanced) | Used for configuring additional properties on the bean |  | Map
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
 // endpoint options: END
 
 
