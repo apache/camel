@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,48 +16,86 @@
  */
 package org.apache.camel.spring.boot.actuate.endpoint;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StatefulService;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.RouteError;
+import org.springframework.boot.actuate.endpoint.DefaultEnablement;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.endpoint.annotation.Selector;
+import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
-import org.apache.camel.StatefulService;
-import org.apache.camel.api.management.mbean.ManagedRouteMBean;
-import org.apache.camel.spi.RouteError;
-import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.RouteEndpointInfo;
-import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
-import org.springframework.boot.actuate.endpoint.Endpoint;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
  * {@link Endpoint} to expose {@link org.apache.camel.Route} information.
  */
-@ConfigurationProperties(prefix = "endpoints." + CamelRoutesEndpoint.ENDPOINT_ID)
-public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo>> {
-
-    public static final String ENDPOINT_ID = "camelroutes";
+@Endpoint(id = "camelroutes", defaultEnablement = DefaultEnablement.ENABLED)
+public class CamelRoutesEndpoint {
 
     private CamelContext camelContext;
 
     public CamelRoutesEndpoint(CamelContext camelContext) {
-        super(ENDPOINT_ID);
         this.camelContext = camelContext;
-        // is enabled by default
-        this.setEnabled(true);
     }
 
-    @Override
-    public List<RouteEndpointInfo> invoke() {
+    @ReadOperation
+    public List<RouteEndpointInfo> readRoutes() {
         return getRoutesInfo();
     }
 
-    public RouteEndpointInfo getRouteInfo(String id) {
+    @ReadOperation
+    public Object doReadAction(@Selector String id, @Selector ReadAction action) {
+        switch (action) {
+            case DETAIL:
+                return getRouteDetailsInfo(id);
+            case INFO:
+                return getRouteInfo(id);
+            default:
+                throw new IllegalArgumentException("Unsupported read action " + action);
+        }
+    }
+
+    @WriteOperation
+    public void doWriteAction(@Selector String id, @Selector WriteAction action, TimeInfo timeInfo) {
+        switch (action) {
+            case STOP:
+                stopRoute(
+                        id,
+                        Optional.ofNullable(timeInfo).flatMap(ti -> Optional.ofNullable(ti.getTimeout())),
+                        Optional.of(TimeUnit.SECONDS),
+                        Optional.ofNullable(timeInfo).flatMap(ti -> Optional.ofNullable(ti.getAbortAfterTimeout())));
+                break;
+            case START:
+                startRoute(id);
+                break;
+            case RESET:
+                resetRoute(id);
+                break;
+            case SUSPEND:
+                suspendRoute(id,
+                        Optional.ofNullable(timeInfo).flatMap(ti -> Optional.ofNullable(ti.getTimeout())),
+                        Optional.of(TimeUnit.SECONDS));
+                break;
+            case RESUME:
+                resumeRoute(id);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported write action " + action);
+        }
+    }
+
+    private RouteEndpointInfo getRouteInfo(String id) {
         Route route = camelContext.getRoute(id);
         if (route != null) {
             return new RouteEndpointInfo(route);
@@ -72,7 +110,7 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
                 .collect(Collectors.toList());
     }
 
-    public RouteDetailsEndpointInfo getRouteDetailsInfo(String id) {
+    private RouteDetailsEndpointInfo getRouteDetailsInfo(String id) {
         Route route = camelContext.getRoute(id);
         if (route != null) {
             return new RouteDetailsEndpointInfo(camelContext, route);
@@ -81,35 +119,55 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
         return null;
     }
 
-    public void startRoute(String id) throws Exception {
-        camelContext.getRouteController().startRoute(id);
-    }
-
-    public void resetRoute(String id) throws Exception {
-        ManagedRouteMBean managedRouteMBean = camelContext.getManagedRoute(id, ManagedRouteMBean.class);
-        if (managedRouteMBean != null) {
-            managedRouteMBean.reset(true);
-        } 
-    }
-
-    public void stopRoute(String id, Optional<Long> timeout, Optional<TimeUnit> timeUnit, Optional<Boolean> abortAfterTimeout) throws Exception {
-        if (timeout.isPresent()) {
-            camelContext.getRouteController().stopRoute(id, timeout.get(), timeUnit.orElse(TimeUnit.SECONDS), abortAfterTimeout.orElse(Boolean.TRUE));
-        } else {
-            camelContext.getRouteController().stopRoute(id);
+    private void startRoute(String id) {
+        try {
+            camelContext.getRouteController().startRoute(id);
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
         }
     }
 
-    public void suspendRoute(String id, Optional<Long> timeout, Optional<TimeUnit> timeUnit) throws Exception {
-        if (timeout.isPresent()) {
-            camelContext.getRouteController().suspendRoute(id, timeout.get(), timeUnit.orElse(TimeUnit.SECONDS));
-        } else {
-            camelContext.getRouteController().suspendRoute(id);
+    private void resetRoute(String id) {
+        try {
+            ManagedRouteMBean managedRouteMBean = camelContext.getManagedRoute(id, ManagedRouteMBean.class);
+            if (managedRouteMBean != null) {
+                managedRouteMBean.reset(true);
+            }
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
         }
     }
 
-    public void resumeRoute(String id) throws Exception {
-        camelContext.getRouteController().resumeRoute(id);
+    private void stopRoute(String id, Optional<Long> timeout, Optional<TimeUnit> timeUnit, Optional<Boolean> abortAfterTimeout) {
+        try {
+            if (timeout.isPresent()) {
+                camelContext.getRouteController().stopRoute(id, timeout.get(), timeUnit.orElse(TimeUnit.SECONDS), abortAfterTimeout.orElse(Boolean.TRUE));
+            } else {
+                camelContext.getRouteController().stopRoute(id);
+            }
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
+    private void suspendRoute(String id, Optional<Long> timeout, Optional<TimeUnit> timeUnit) {
+        try {
+            if (timeout.isPresent()) {
+                camelContext.getRouteController().suspendRoute(id, timeout.get(), timeUnit.orElse(TimeUnit.SECONDS));
+            } else {
+                camelContext.getRouteController().suspendRoute(id);
+            }
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
+    private void resumeRoute(String id) {
+        try {
+            camelContext.getRouteController().resumeRoute(id);
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     /**
@@ -371,6 +429,49 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
             public boolean getHasRouteController() {
                 return hasRouteController;
             }
+        }
+    }
+
+    /**
+     * List of write actions available for the endpoint
+     */
+    public enum WriteAction {
+        STOP,
+        START,
+        RESET,
+        SUSPEND,
+        RESUME
+    }
+
+    /*
+     * List of read actions available for the endpoint
+     */
+    public enum ReadAction {
+        DETAIL,
+        INFO
+    }
+
+    /**
+     * Optional time information for the actions
+     */
+    public static class TimeInfo {
+        private Long timeout;
+        private Boolean abortAfterTimeout;
+
+        public Long getTimeout() {
+            return timeout;
+        }
+
+        public void setTimeout(Long timeout) {
+            this.timeout = timeout;
+        }
+
+        public Boolean getAbortAfterTimeout() {
+            return abortAfterTimeout;
+        }
+
+        public void setAbortAfterTimeout(Boolean abortAfterTimeout) {
+            this.abortAfterTimeout = abortAfterTimeout;
         }
     }
 

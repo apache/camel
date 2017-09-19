@@ -16,36 +16,31 @@
  */
 package org.apache.camel.spring.boot.actuate.endpoint;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
+import org.apache.camel.spi.RouteController;
+import org.springframework.boot.actuate.endpoint.DefaultEnablement;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
-import org.apache.camel.spi.RouteController;
-import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
-import org.springframework.boot.actuate.endpoint.Endpoint;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
  * {@link Endpoint} to expose {@link RouteController} information.
  */
-@ConfigurationProperties(prefix = "endpoints." + CamelRouteControllerEndpoint.ENDPOINT_ID)
-public class CamelRouteControllerEndpoint extends AbstractEndpoint<List<String>> {
-
-    public static final String ENDPOINT_ID = "camelroutecontroller";
+@Endpoint(id = "camelroutecontroller", defaultEnablement = DefaultEnablement.ENABLED)
+public class CamelRouteControllerEndpoint {
 
     private CamelContext camelContext;
 
     public CamelRouteControllerEndpoint(CamelContext camelContext) {
-        super(ENDPOINT_ID);
         this.camelContext = camelContext;
-        // is enabled by default
-        this.setEnabled(true);
     }
 
-    @Override
-    public List<String> invoke() {
+    @ReadOperation
+    public List<String> getControlledRoutes() {
         RouteController controller = camelContext.getRouteController();
 
         if (controller != null) {

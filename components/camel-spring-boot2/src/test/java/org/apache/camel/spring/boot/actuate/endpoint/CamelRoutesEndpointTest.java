@@ -49,7 +49,7 @@ public class CamelRoutesEndpointTest extends Assert {
 
     @Test
     public void testRoutesEndpoint() throws Exception {
-        List<RouteEndpointInfo> routes = endpoint.invoke();
+        List<RouteEndpointInfo> routes = endpoint.readRoutes();
 
         assertFalse(routes.isEmpty());
         assertEquals(routes.size(), camelContext.getRoutes().size());

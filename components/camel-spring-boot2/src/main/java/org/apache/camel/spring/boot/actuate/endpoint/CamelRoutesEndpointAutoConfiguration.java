@@ -40,10 +40,4 @@ public class CamelRoutesEndpointAutoConfiguration {
         return new CamelRoutesEndpoint(camelContext);
     }
 
-    @Bean
-    @ConditionalOnClass(CamelContext.class)
-    @ConditionalOnMissingBean
-    public CamelRoutesMvcEndpoint camelMvcEndpoint(CamelRoutesEndpoint delegate) {
-        return new CamelRoutesMvcEndpoint(delegate);
-    }
 }
