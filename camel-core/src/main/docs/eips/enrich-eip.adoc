@@ -1,62 +1,59 @@
 == Enrich EIP
+
 Camel supports the Content Enricher from the EIP patterns using a Message Translator, an arbitrary Processor in the routing logic, or using the enrich DSL element to enrich the message.
 
 image:http://www.enterpriseintegrationpatterns.com/img/DataEnricher.gif[image]
 
 === Content enrichment using a Message Translator or a Processor
 
-*Using the Fluent Builders*
 You can use Templating to consume a message from one destination, transform it with something like Velocity or XQuery, and then send it on to another destination. For example using InOnly (one way messaging)
 
+=== Samples
+
 [source,java]
---------------------------------------------------------
+----
 from("activemq:My.Queue").
   to("velocity:com/acme/MyResponse.vm").
   to("activemq:Another.Queue");
---------------------------------------------------------
+----
 
 If you want to use InOut (request-reply) semantics to process requests on the *My.Queue* queue on ActiveMQ with a template generated response, then sending responses back to the JMSReplyTo Destination you could use this:
 
 [source,java]
---------------------------------------------------------
+----
 from("activemq:My.Queue").
   to("velocity:com/acme/MyResponse.vm");
---------------------------------------------------------
+----
 
 Here is a simple example using the DSL directly to transform the message body
 
 [source,java]
---------------------------------------------------------
+----
 from("direct:start").setBody(body().append(" World!")).to("mock:result");
---------------------------------------------------------
+----
 
 In this example we add our own Processor using explicit Java code
 
 [source,java]
---------------------------------------------------------
+----
 from("direct:start").process(new Processor() {
     public void process(Exchange exchange) {
         Message in = exchange.getIn();
         in.setBody(in.getBody(String.class) + " World!");
     }
 }).to("mock:result");
---------------------------------------------------------
+----
 
 Finally we can use Bean Integration to use any Java method on any bean to act as the transformer
 
 [source,java]
---------------------------------------------------------
+----
 from("activemq:My.Queue").
   beanRef("myBeanName", "myMethodName").
   to("activemq:Another.Queue");
---------------------------------------------------------
+----
 
-For further examples of this pattern in use you could look at one of the JUnit tests
-
-* TransformTest
-* TransformViaDSLTest
-
-*Using Spring XML*
+==== Using Spring XML
 
 [source,xml]
 --------------------------------------------------------
@@ -92,7 +89,7 @@ From *Camel 2.16* onwards both `enrich` and `pollEnrich` supports dynamic endpoi
 
 === Enrich Options
 [width="100%",cols="3,2,6",options="header"]
-|=======================================================================
+|===
 | Option | Default Value | Description
 | `uri` |  | The endpoint uri for the external service to enrich from. You must use either uri or ref. *Important:* From Camel 2.16 onwards, this option is removed, and you use an Expression to configure the uri, such as Simple or Constant or any other dynamic language that can compute the uri dynamically using values from the current Exchange.
 | `ref` |  | Refers to the endpoint for the external service to enrich from. You must use either `uri` or `ref`.  *Important:* From *Camel 2.16* onwards, this option is removed, and you use an Expression to configure the uri, such as Simple or Constant or any other dynamic language that can compute the uri dynamically using values from the current  Exchange.
@@ -104,28 +101,28 @@ From *Camel 2.16* onwards both `enrich` and `pollEnrich` supports dynamic endpoi
 | `shareUnitOfWork` | `false` | *Camel 2.16*:  Shares the unit of work with the parent and the resource exchange. Enrich will by default not share unit of work between the parent exchange and the resource exchange. This means the resource exchange has its own individual unit of work. See Splitter for more information and example.
 | `cacheSize` |  | *Camel 2.16*: Allows to configure the cache size for the ProducerCache which caches producers for reuse in the enrich. Will by default use the default cache size which is 1000. Setting the value to -1 allows to turn off the cache all together.
 | `ignoreInvalidEndpoint` | false | *Camel 2.16*: Whether to ignore an endpoint URI that could not be resolved. If disabled, Camel will throw an exception identifying the invalid endpoint URI.
-|=======================================================================
+|===
 
-*Using the Fluent Builders*
+A little enrich example using Java:
 
 [source,java]
---------------------------------------------------------
+----
 AggregationStrategy aggregationStrategy = ...
 
 from("direct:start")
-.enrich("direct:resource", aggregationStrategy)
-.to("direct:result");
+  .enrich("direct:resource", aggregationStrategy)
+  .to("direct:result");
 
 from("direct:resource")
 ...
---------------------------------------------------------
+----
 
 The content enricher (`enrich`) retrieves additional data from a _resource endpoint_ in order to enrich an incoming message (contained in the _original exchange_).
 An aggregation strategy is used to combine the original exchange and the _resource exchange_. The first parameter of the `AggregationStrategy.aggregate(Exchange, Exchange)` method corresponds to the the original exchange, the second parameter the resource exchange.
 The results from the resource endpoint are stored in the resource exchange's out-message. Here's an example template for implementing an aggregation strategy:
 
 [source,java]
---------------------------------------------------------
+----
 public class ExampleAggregationStrategy implements AggregationStrategy {
 
     public Exchange aggregate(Exchange original, Exchange resource) {
@@ -141,14 +138,16 @@ public class ExampleAggregationStrategy implements AggregationStrategy {
     }
 
 }
---------------------------------------------------------
+----
 
 Using this template the original exchange can be of any pattern. The resource exchange created by the enricher is always an in-out exchange.
 
-*Using Spring XML*
+==== Enrich example using XML
+
 The same example in the Spring DSL (Camel 2.15 or older)
+
 [source,xml]
---------------------------------------------------------
+----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
   <route>
     <from uri="direct:start"/>
@@ -162,11 +161,11 @@ The same example in the Spring DSL (Camel 2.15 or older)
 </camelContext>
 
 <bean id="aggregationStrategy" class="..." />
---------------------------------------------------------
+----
 
 The same example in the Spring DSL (Camel 2.16 or newer)
 [source,xml]
---------------------------------------------------------
+----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
   <route>
     <from uri="direct:start"/>
@@ -182,31 +181,31 @@ The same example in the Spring DSL (Camel 2.16 or newer)
 </camelContext>
 
 <bean id="aggregationStrategy" class="..." />
---------------------------------------------------------
+----
 
 === Aggregation strategy is optional
 The aggregation strategy is optional. If you do not provide it Camel will by default just use the body obtained from the resource.
 [source,java]
---------------------------------------------------------
+----
 from("direct:start")
   .enrich("direct:resource")
   .to("direct:result");
---------------------------------------------------------
+----
 
 In the route above the message sent to the direct:result endpoint will contain the output from the direct:resource as we do not use any custom aggregation.
 And for Spring DSL (Camel 2.15 or older) just omit the strategyRef attribute:
 [source,xml]
---------------------------------------------------------
+----
 <route>
   <from uri="direct:start"/>
   <enrich uri="direct:resource"/>
   <to uri="direct:result"/>
 </route>
---------------------------------------------------------
+----
 
 And for Spring DSL (Camel 2.16 or newer) just omit the strategyRef attribute:
 [source,xml]
---------------------------------------------------------
+----
 <route>
   <from uri="direct:start"/>
   <enrich>
@@ -214,21 +213,22 @@ And for Spring DSL (Camel 2.16 or newer) just omit the strategyRef attribute:
   </enrich>
   <to uri="direct:result"/>
 </route>
---------------------------------------------------------
+----
 
 === Using dynamic uris
 *Available as of Camel 2.16*
+
 From Camel 2.16 onwards `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current Exchange. For example to enrich from a HTTP endpoint where the header with key orderId is used as part of the content-path of the HTTP url:
 [source,java]
---------------------------------------------------------
+----
 from("direct:start")
   .enrich().simple("http:myserver/${header.orderId}/order")
   .to("direct:result");
---------------------------------------------------------
+----
 
 And in XML DSL
 [source,xml]
---------------------------------------------------------
+----
 <route>
   <from uri="direct:start"/>
   <enrich>
@@ -236,9 +236,9 @@ And in XML DSL
   </enrich>
   <to uri="direct:result"/>
 </route>
---------------------------------------------------------
+----
 
-=== Content enrichment using `pollEnrich`
+=== Content enrichment using pollEnrich
 The `pollEnrich` works just as the `enrich` however as it uses a Polling Consumer we have 3 methods when polling
 
 * `receive`
@@ -287,29 +287,29 @@ The timeout values is in millis.
 From *Camel 2.16* onwards both `enrich` and `pollEnrich` supports dynamic endpoints that uses an Expression to compute the uri, which allows to use data from the current Exchange. In other words all what is told above no longer apply and it just works.
 ====
 
-=== Example
+=== PollEnrich Example
 
 In this example we enrich the message by loading the content from the file named inbox/data.txt.
 [source,java]
---------------------------------------------------------
+----
 from("direct:start")
   .pollEnrich("file:inbox?fileName=data.txt")
   .to("direct:result");
---------------------------------------------------------
+----
 
 And in XML DSL (Camel 2.15 or older) you do:
 [source,xml]
---------------------------------------------------------
+----
 <route>
   <from uri="direct:start"/>
   <pollEnrich uri="file:inbox?fileName=data.txt"/>
   <to uri="direct:result"/>
 </route>
---------------------------------------------------------
+----
 
 And in XML DSL (Camel 2.16 or newer) you do:
 [source,xml]
---------------------------------------------------------
+----
 <route>
   <from uri="direct:start"/>
   <pollEnrich>
@@ -317,23 +317,23 @@ And in XML DSL (Camel 2.16 or newer) you do:
   </pollEnrich>
   <to uri="direct:result"/>
 </route>
---------------------------------------------------------
+----
 
 If there is no file then the message is empty. We can use a timeout to either wait (potentially forever) until a file exists, or use a timeout to wait a certain period.
 
 For example to wait up to 5 seconds you can do (Camel 2.15 or older):
 [source,xml]
---------------------------------------------------------
+----
 <route>
   <from uri="direct:start"/>
   <pollEnrich uri="file:inbox?fileName=data.txt" timeout="5000"/>
   <to uri="direct:result"/>
 </route>
---------------------------------------------------------
+----
 
 For example to wait up to 5 seconds you can do (Camel 2.16 or newer):
 [source,xml]
---------------------------------------------------------
+----
 <route>
   <from uri="direct:start"/>
   <pollEnrich timeout="5000">
@@ -341,21 +341,23 @@ For example to wait up to 5 seconds you can do (Camel 2.16 or newer):
   </pollEnrich>
   <to uri="direct:result"/>
 </route>
---------------------------------------------------------
+----
 
 === Using dynamic uris
+
 *Available as of Camel 2.16*
+
 From Camel 2.16 onwards `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current Exchange. For example to `pollEnrich` from an endpoint that uses a header to indicate a SEDA queue name:
 [source,java]
---------------------------------------------------------
+----
 from("direct:start")
   .pollEnrich().simple("seda:${header.name}")
   .to("direct:result");
---------------------------------------------------------
+----
 
 And in XML DSL
 [source,xml]
---------------------------------------------------------
+----
 <route>
   <from uri="direct:start"/>
   <pollEnrich>
@@ -363,7 +365,5 @@ And in XML DSL
   </pollEnrich>
   <to uri="direct:result"/>
 </route>
---------------------------------------------------------
+----
 
-=== Using This Pattern
-If you would like to use this EIP Pattern then please read the Getting Started, you may also find the Architecture useful particularly the description of Endpoint and URIs. Then you could try out some of the Examples first before trying this pattern out.

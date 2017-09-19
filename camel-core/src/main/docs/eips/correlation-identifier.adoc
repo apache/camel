@@ -1,6 +1,5 @@
 [[CorrelationIdentifier-CorrelationIdentifier]]
-Correlation Identifier
-^^^^^^^^^^^^^^^^^^^^^^
+== Correlation Identifier
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/CorrelationIdentifier.html[Correlation
@@ -34,31 +33,23 @@ The following example demonstrates using the Camel JMSMessageID as the
 Correlation Identifier within a request/reply pattern in
 the link:jms.html[JMS] component
 
-*Using the link:fluent-builders.html[Fluent Builders]*
+=== Samples
 
 [source,java]
--------------------------------------------------------------------------------
+----
 from("direct:start")
-    .to(ExchangePattern.InOut,"jms:queue:foo?useMessageIDAsCorrelationID=true")
+    .to(ExchangePattern.InOut, "jms:queue:foo?useMessageIDAsCorrelationID=true")
     .to("mock:result");
--------------------------------------------------------------------------------
+----
 
- 
-
-**Using the link:spring-xml-extensions.html[Spring XML Extensions]**
+And with XML:
 
 [source,xml]
 ------------------------------------------------------------------------------
 <route>
     <from uri="direct:start"/>
-    <to uri="jms:queue:foo?useMessageIDAsCorrelationID=true" pattern="InOut"/>
+    <to pattern="InOut" uri="jms:queue:foo?useMessageIDAsCorrelationID=true"/>
     <to uri="mock:result"/>
 </route>
 ------------------------------------------------------------------------------
-
-[[CorrelationIdentifier-SeeAlso]]
-See Also
-++++++++
-
-* link:bam.html[BAM]
 
