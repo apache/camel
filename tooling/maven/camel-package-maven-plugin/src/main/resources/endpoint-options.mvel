@@ -1,21 +1,23 @@
 The @{title} endpoint is configured using URI syntax:
 
-    @{syntax}
+----
+@{syntax}
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (@{endpointPathOptions.size()} parameters):
+==== Path Parameters (@{endpointPathOptions.size()} parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-@foreach{row : endpointPathOptions}| **@{row.getShortName(30)}** | @{row.description} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
-@end{}|=======================================================================
+@foreach{row : endpointPathOptions}| *@{row.getShortName(30)}* | @{row.description} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
+@end{}|===
 
-#### Query Parameters (@{endpointOptions.size()} parameters):
+==== Query Parameters (@{endpointOptions.size()} parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-@foreach{row : endpointOptions}| **@{row.getShortName(30)}** (@{row.shortGroup}) | @{row.description} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
-@end{}|=======================================================================
+@foreach{row : endpointOptions}| *@{row.getShortName(30)}* (@{row.shortGroup}) | @{row.description} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
+@end{}|===
