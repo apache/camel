@@ -260,7 +260,6 @@ From *Camel 2.19.0* onwards, the _camel-servlet-starter_ library binds automatic
 The following table summarizes the additional configuration properties available in the camel-servlet-starter library.
 The automatic mapping of the Camel servlet can also be disabled.
 
-{% raw %}
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
 | Spring-Boot Property | Default | Description
@@ -268,7 +267,6 @@ The automatic mapping of the Camel servlet can also be disabled.
 | camel.component.servlet.mapping.context-path | /camel/* | Context path used by the servlet component for automatic mapping
 | camel.component.servlet.mapping.servlet-name | CamelServlet | The name of the Camel servlet
 |=======================================================================
-{% endraw %}
 
 ### See Also
 
