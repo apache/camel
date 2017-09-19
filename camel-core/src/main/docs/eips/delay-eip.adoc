@@ -1,4 +1,4 @@
-## Delay EIP
+== Delay EIP
 The Delayer Pattern allows you to delay the delivery of messages to some destination.
 
 [NOTE]
@@ -16,7 +16,7 @@ See the Spring DSL samples for Delayer.
 See this ticket: link:https://issues.apache.org/jira/browse/CAMEL-2654[https://issues.apache.org/jira/browse/CAMEL-2654]
 ====
 
-## Options
+== Options
 
 // eip options: START
 The Delay EIP supports 3 options which are listed below:
@@ -67,7 +67,7 @@ And to delay processing using the Simple language you can use the following DSL:
 from("activemq:someQueue").delay(simple("${body.delayProperty}")).to("activemq:aDelayedQueue");
 --------------------------------------------------------
 
-## Spring DSL
+== Spring DSL
 The sample below demonstrates the delay in Spring DSL:
 
 [source,xml]
@@ -109,11 +109,11 @@ The sample below demonstrates the delay in Spring DSL:
 
 For further examples of this pattern in use you could look at the link:http://svn.apache.org/viewvc/camel/trunk/camel-core/src/test/java/org/apache/camel/processor/DelayerTest.java?view=markup[junit test case].
 
-## Asynchronous delaying
+== Asynchronous delaying
 *Available as of Camel 2.4*
 You can let the Delayer use non blocking asynchronous delaying, which means Camel will use a scheduler to schedule a task to be executed in the future. The task will then continue routing. This allows the caller thread to not block and be able to service other messages etc.
 
-### From Java DSL
+=== From Java DSL
 You use the `asyncDelayed()` to enable the async behavior.
 
 [source,java]
@@ -121,7 +121,7 @@ You use the `asyncDelayed()` to enable the async behavior.
 from("activemq:queue:foo").delay(1000).asyncDelayed().to("activemq:aDelayedQueue");
 --------------------------------------------------------
 
-### From Spring XML
+=== From Spring XML
 You use the `asyncDelayed="true"` attribute to enable the async behavior.
 
 [source,xml]
@@ -135,7 +135,7 @@ You use the `asyncDelayed="true"` attribute to enable the async behavior.
 </route>
 --------------------------------------------------------
 
-### Creating a custom delay
+=== Creating a custom delay
 You can use an expression to determine when to send a message using something like this
 
 [source,java]
@@ -158,8 +158,8 @@ public class SomeBean {
 }
 --------------------------------------------------------
 
-## Using This Pattern
+== Using This Pattern
 If you would like to use this EIP Pattern then please read the Getting Started, you may also find the Architecture useful particularly the description of Endpoint and URIs. Then you could try out some of the Examples first before trying this pattern out.
 
-## See Also
+== See Also
 Delay Interceptor

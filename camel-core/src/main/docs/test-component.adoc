@@ -39,7 +39,7 @@ for this component when using *Camel 2.8* or older:
 From Camel 2.9 onwards the link:test.html[Test] component is provided
 directly in the camel-core.
 
-### URI format
+=== URI format
 
 [source,java]
 --------------------------------
@@ -50,7 +50,7 @@ Where *expectedMessagesEndpointUri* refers to some other
 link:component.html[Component] URI that the expected message bodies are
 pulled from before starting the test.
 
-### URI Options
+=== URI Options
 
 // component options: START
 The Test component has no options.
@@ -97,7 +97,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-### Example
+=== Example
 
 For example, you could write a test case as follows:
 
@@ -114,7 +114,7 @@ method], your test case will perform the necessary assertions.
 To see how you can set other expectations on the test endpoint, see the
 link:mock.html[Mock] component.
 
-### See Also
+=== See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

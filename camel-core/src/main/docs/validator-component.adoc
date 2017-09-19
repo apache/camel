@@ -17,7 +17,7 @@ Syntax]
 The link:msv.html[MSV] component also supports
 http://relaxng.org/[RelaxNG XML Syntax].
 
-### URI format
+=== URI format
 
 [source,java]
 -----------------------------------
@@ -49,7 +49,7 @@ for this component when using *Camel 2.8* or older:
 From Camel 2.9 onwards the link:validation.html[Validation] component is
 provided directly in the camel-core.
 
-### Options
+=== Options
 
 // component options: START
 The Validator component supports 2 options which are listed below.
@@ -102,7 +102,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-### Example
+=== Example
 
 The following
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/resources/org/apache/camel/component/validator/camelContext.xml[example]
@@ -111,7 +111,7 @@ goes to one of two endpoints, either *mock:valid* or *mock:invalid*
 based on whether or not the XML matches the given schema (which is
 supplied on the classpath).
 
-### Advanced: JMX method clearCachedSchema
+=== Advanced: JMX method clearCachedSchema
 
 Since *Camel 2.17*, you can force that the cached schema in the
 validator endpoint is cleared and reread with the next process call with
@@ -119,7 +119,7 @@ the JMX operation `clearCachedSchema. `You can also use this method to
 programmatically clear the cache. This method is available on the
 `ValidatorEndpoint `class`.`
 
-### See Also
+=== See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

@@ -7,7 +7,7 @@ link:browsableendpoint.html[BrowsableEndpoint] which can be useful for
 testing, visualisation tools or debugging. The exchanges sent to the
 endpoint are all available to be browsed.
 
-### URI format
+=== URI format
 
 [source,java]
 -------------------------
@@ -17,7 +17,7 @@ browse:someName[?options]
 Where *someName* can be any string to uniquely identify the endpoint.
 
 
-### Options
+=== Options
 
 
 // component options: START
@@ -56,7 +56,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-### Sample
+=== Sample
 
 In the route below, we insert a `browse:` component to be able to browse
 the Exchanges that are passing through:
@@ -84,7 +84,7 @@ We can now inspect the received exchanges from within the Java code:
    }
 --------------------------------------------------------------------------------------------------------
 
-### See Also
+=== See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

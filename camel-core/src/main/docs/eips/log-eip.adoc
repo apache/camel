@@ -1,4 +1,4 @@
-## Log EIP
+== Log EIP
 
 How can I log the processing of a link:message.html[Message]?
 
@@ -24,7 +24,7 @@ The Log EIP supports 5 options which are listed below:
 // eip options: END
 
 
-## Using log DSL
+== Using log DSL
 
 In *Camel 2.2* you can use the log DSL which allows you to use link:simple.html[Simple] language to construct a dynamic message which gets logged.
 
@@ -70,7 +70,7 @@ For example you can use this to log the file name being processed if you consume
 from("file://target/files").log(LoggingLevel.DEBUG, "Processing file ${file:name}").to("bean:foo");
 --------------------------------------------------------
 
-### Using log DSL from Spring
+=== Using log DSL from Spring
 
 In Spring DSL it is also easy to use log DSL as shown below:
 [source,xml]
@@ -106,7 +106,7 @@ Since Camel *2.12.4/2.13.1* it is possible to reference logger instance. For exa
 </route>
 --------------------------------------------------------
 
-### Configuring log name globally
+=== Configuring log name globally
 *Available as of Camel 2.17*
 
 By default the log name is the route id. If you want to use a different log name, you would need to configure the logName option. However if you have many logs and you want all of them to use the same log name, then you would need to set that logName option on all of them.
@@ -127,7 +127,7 @@ And in XML
   </properties>
 --------------------------------------------------------
 
-### Using slf4j Marker
+=== Using slf4j Marker
 *Available as of Camel 2.9*
 
 You can specify a marker name in the DSL
@@ -140,14 +140,14 @@ You can specify a marker name in the DSL
 </route>
 --------------------------------------------------------
 
-### Using log DSL in OSGi
+=== Using log DSL in OSGi
 *Improvement as of Camel 2.12.4/2.13.1*
 
 When using log DSL inside OSGi (e.g., in Karaf), the underlying logging mechanisms are provided by PAX logging. It searches for a bundle which invokes org.slf4j.LoggerFactory.getLogger() method and associates the bundle with the logger instance. Passing only logger name to log DSL results in associating camel-core bundle with the logger instance created.
 
 In some scenarios it is required that the bundle associated with logger should be the bundle which contains route definition. This is possible using provided logger instance both for Java DSL and Spring DSL (see the examples above).
 
-### Masking sensitive information like password
+=== Masking sensitive information like password
 *Available as of Camel 2.19*
 
 You can enable security masking for logging by setting `logMask` flag to `true`.
@@ -186,5 +186,5 @@ If you want to use a custom masking formatter, put it into registry with the nam
 Note that the masking formatter must implement `org.apache.camel.spi.MaskingFormatter`.
 
 
-### Using This Pattern
+=== Using This Pattern
 If you would like to use this EIP Pattern then please read the link:getting-started.html[Getting Started], you may also find the link:architecture.html[Architecture] useful particularly the description of link:endpoint.html[Endpoint] and link:uris.html[URIs]. Then you could try out some of the link:examples.html[Examples] first before trying this pattern out.

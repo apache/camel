@@ -5,7 +5,7 @@
 The Constant Expression Language is really just a way to specify
 constant strings as a type of expression.
 
-### Constant Options
+=== Constant Options
 
 
 // language options: START
@@ -21,7 +21,7 @@ The Constant language supports 1 options which are listed below.
 // language options: END
 
 
-### Example usage
+=== Example usage
 
 The setHeader element of the Spring DSL can utilize a constant
 expression like:
@@ -48,6 +48,6 @@ And the same example using Java DSL:
 from("seda:a").setHeader("theHeader", constant("the value")).to("mock:b");
 --------------------------------------------------------------------------
 
-### Dependencies
+=== Dependencies
 
 The Constant language is part of *camel-core*.

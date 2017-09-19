@@ -1,11 +1,11 @@
-## Recipient List EIP
+== Recipient List EIP
 The link:http://www.enterpriseintegrationpatterns.com/RecipientList.html[Recipient List] from the EIP patterns allows you to route messages to a number of dynamically specified recipients.
 
 image:http://www.enterpriseintegrationpatterns.com/img/RecipientList.gif[image]
 
 The recipients will receive a copy of the *same* Exchange, and Camel will execute them sequentially.
 
-### Options
+=== Options
 
 // eip options: START
 The Recipient List EIP supports 15 options which are listed below:
@@ -33,13 +33,13 @@ The Recipient List EIP supports 15 options which are listed below:
 // eip options: END
 
 
-### Static Recipient List
+=== Static Recipient List
 The following example shows how to route a request from an input *queue:a* endpoint to a static list of destinations
 
-#### Using Annotations
+#=== Using Annotations
 You can use the RecipientList Annotation on a POJO to create a Dynamic Recipient List. For more details see the Bean Integration.
 
-#### Using the Fluent Builders
+#=== Using the Fluent Builders
 
 [source,java]
 ---------------------
@@ -53,7 +53,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ---------------------
 
-#### Using the Spring XML Extensions
+#=== Using the Spring XML Extensions
 
 [source,xml]
 ---------------------
@@ -69,10 +69,10 @@ RouteBuilder builder = new RouteBuilder() {
 </camelContext>
 ---------------------
 
-### Dynamic Recipient List
+=== Dynamic Recipient List
 Usually one of the main reasons for using the Recipient List pattern is that the list of recipients is dynamic and calculated at runtime. The following example demonstrates how to create a dynamic recipient list using an Expression (which in this case extracts a named header value dynamically) to calculate the list of endpoints which are either of type Endpoint or are converted to a String and then resolved using the endpoint URIs.
 
-#### Using the Fluent Builders
+#=== Using the Fluent Builders
 
 [source,java]
 ---------------------
@@ -94,7 +94,7 @@ from("direct:a").recipientList(
         header("recipientListHeader").tokenize(","));
 ---------------------
 
-##### Iteratable value
+##=== Iteratable value
 The dynamic list of recipients that are defined in the header must be iterable such as:
 
 * `java.util.Collection`
@@ -104,7 +104,7 @@ The dynamic list of recipients that are defined in the header must be iterable s
 * a single String with values separated by comma
 * any other type will be regarded as a single value
 
-#### Using the Spring XML Extensions
+#=== Using the Spring XML Extensions
 [source,xml]
 ---------------------
 <camelContext errorHandlerRef="errorHandler" xmlns="http://camel.apache.org/schema/spring">
@@ -119,7 +119,7 @@ The dynamic list of recipients that are defined in the header must be iterable s
 
 For further examples of this pattern in action you could take a look at one of the junit test cases.
 
-##### Using delimiter in Spring XML
+##=== Using delimiter in Spring XML
 In Spring DSL you can set the delimiter attribute for setting a delimiter to be used if the header value is a single String with multiple separated endpoints. By default Camel uses comma as delimiter, but this option lets you specify a custom delimiter to use instead.
 
 [source,xml]
@@ -150,7 +150,7 @@ In *Camel 2.1* its a bit easier as you can pass in the delimiter as 2nd paramete
 from("direct:a").recipientList(header("myHeader"), "#");
 ---------------------
 
-### Sending to multiple recipients in parallel
+=== Sending to multiple recipients in parallel
 *Available as of Camel 2.2* +
 The Recipient List now supports `parallelProcessing` that for example Splitter also supports. You can use it to use a thread pool to have concurrent tasks sending the Exchange to multiple recipients concurrently.
 
@@ -171,7 +171,7 @@ And in Spring XML it is an attribute on the recipient list tag.
 </route>
 ---------------------
 
-### Stop continuing in case one recipient failed
+=== Stop continuing in case one recipient failed
 *Available as of Camel 2.2* +
 The Recipient List now supports `stopOnException` that for example Splitter also supports. You can use it to stop sending to any further recipients in case any recipient failed.
 
@@ -195,7 +195,7 @@ And in Spring XML its an attribute on the recipient list tag.
 [NOTE]
 You can combine parallelProcessing and stopOnException and have them both true.
 
-### Ignore invalid endpoints
+=== Ignore invalid endpoints
 *Available as of Camel 2.3* +
 The Recipient List now supports `ignoreInvalidEndpoints` (like the Routing Slip). You can use it to skip endpoints which are invalid.
 
@@ -219,7 +219,7 @@ And in Spring XML it is an attribute on the recipient list tag.
 Then let us say the `myHeader` contains the following two endpoints `direct:foo,xxx:bar`. The first endpoint is valid and works. However the second one is invalid and will just be ignored. Camel logs at INFO level about it, so you can see why the endpoint was invalid.
 
 
-### Using custom `AggregationStrategy`
+=== Using custom `AggregationStrategy`
 *Available as of Camel 2.2*
 
 You can now use your own `AggregationStrategy` with the Recipient List. However this is rarely needed.
@@ -249,7 +249,7 @@ And in Spring XML it is again an attribute on the recipient list tag.
 <bean id="myStrategy" class="com.mycompany.MyOwnAggregationStrategy"/>
 ---------------------
 
-### Knowing which endpoint when using custom `AggregationStrategy`
+=== Knowing which endpoint when using custom `AggregationStrategy`
 Available as of Camel 2.12
 
 When using a custom `AggregationStrategy` then the `aggregate` method is always invoked in sequential order (also if parallel processing is enabled) of the endpoints the Recipient List is using.
@@ -265,12 +265,12 @@ public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
 }
 ---------------------
 
-### Using custom thread pool
+=== Using custom thread pool
 *Available as of Camel 2.2* +
 A thread pool is only used for `parallelProcessing`. You supply your own custom thread pool via the `ExecutorServiceStrategy` (see Camel's Threading Model),
 the same way you would do it for the `aggregationStrategy`. By default Camel uses a thread pool with 10 threads (subject to change in future versions).
 
-### Using method call as recipient list
+=== Using method call as recipient list
 You can use a Bean to provide the recipients, for example:
 
 [source,java]
@@ -315,7 +315,7 @@ from("activemq:queue:test").bean(MessageRouter.class, "routeTo");
 
 Which then would invoke the routeTo method and detect that it is annotated with `@RecipientList` and then act accordingly as if it was a recipient list EIP.
 
-### Using timeout
+=== Using timeout
 *Available as of Camel 2.5* +
 If you use `parallelProcessing` then you can configure a total `timeout` value in millis. Camel will then process the messages in parallel until the timeout is hit. This allows you to continue processing if one message consumer is slow. For example you can set a timeout value of 20 sec.
 
@@ -386,11 +386,11 @@ The timeout is total, which means that after X time, Camel will aggregate the me
 The remainders will be cancelled. Camel will also only invoke the `timeout` method in the `TimeoutAwareAggregationStrategy` once, for the first index which caused the timeout.
 ====
 
-### Using onPrepare to execute custom logic when preparing messages
+=== Using onPrepare to execute custom logic when preparing messages
 *Available as of Camel 2.8* +
 See details at Multicast
 
-### Using ExchangePattern in recipients
+=== Using ExchangePattern in recipients
 *Available as of Camel 2.15*
 
 The recipient list will by default use the current Exchange Pattern. Though one can imagine use-cases where one wants to send a message to a recipient using a different exchange pattern. For example you may have a route that initiates as an InOnly route, but want to use InOut exchange pattern with a recipient list. To do this in earlier Camel releases, you would need to change the exchange pattern before the recipient list, or use onPrepare option to alter the pattern. From Camel 2.15 onwards, you can configure the exchange pattern directly in the recipient endpoints. +
@@ -410,5 +410,5 @@ The recipient list will not alter the original exchange pattern. So in the examp
 If you want to alter the exchange pattern permanently then use the .setExchangePattern option. See more details at Request Reply and Event Message.
 ====
 
-### Using This Pattern
+=== Using This Pattern
 If you would like to use this EIP Pattern then please read the Getting Started, you may also find the Architecture useful particularly the description of Endpoint and URIs. Then you could try out some of the Examples first before trying this pattern out.

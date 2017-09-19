@@ -1,4 +1,4 @@
-## Hystrix Configuration EIP
+== Hystrix Configuration EIP
 
 
 // eip options: START

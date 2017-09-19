@@ -1,4 +1,4 @@
-## Return Address
+== Return Address
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/ReturnAddress.html[Return
@@ -55,7 +55,7 @@ test case]
 
 [[ReturnAddress-UsingThisPattern]]
 
-### Using This Pattern
+=== Using This Pattern
 
 If you would like to use this EIP Pattern then please read the
 link:getting-started.html[Getting Started], you may also find the
