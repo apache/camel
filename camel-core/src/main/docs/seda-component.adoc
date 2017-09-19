@@ -24,10 +24,10 @@ of any consumers when a producer sends a message exchange.
 
 === URI format
 
-[source,java]
------------------------
+[source]
+----
 seda:someName[?options]
------------------------
+----
 
 Where *someName* can be any string that uniquely identifies the endpoint
 within the current link:camelcontext.html[CamelContext].
@@ -103,30 +103,32 @@ By default, the SEDA component always intantiates LinkedBlockingQueue,
 but you can use different implementation, you can reference your own
 BlockingQueue implementation, in this case the size option is not used
 
-[source,java]
------------------------------------------------------------
+[source,xml]
+----
 <bean id="arrayQueue" class="java.util.ArrayBlockingQueue">
-<constructor-arg index="0" value="10" ><!-- size -->
-<constructor-arg index="1" value="true" ><!-- fairness -->
+  <constructor-arg index="0" value="10" ><!-- size -->
+  <constructor-arg index="1" value="true" ><!-- fairness -->
 </bean>
+
 <!-- ... and later -->
 <from>seda:array?queue=#arrayQueue</from>
------------------------------------------------------------
+----
 
 Or you can reference a BlockingQueueFactory implementation, 3
 implementations are provided LinkedBlockingQueueFactory,
 ArrayBlockingQueueFactory and PriorityBlockingQueueFactory:
 
-[source,java]
------------------------------------------------------------------------------------------------------
+[source,xml]
+----
 <bean id="priorityQueueFactory" class="org.apache.camel.component.seda.PriorityBlockingQueueFactory">
-<property name="comparator">
-<bean class="org.apache.camel.demo.MyExchangeComparator" />
-</property>
+  <property name="comparator">
+    <bean class="org.apache.camel.demo.MyExchangeComparator" />
+  </property>
 </bean>
+
 <!-- ... and later -->
 <from>seda:priority?queueFactory=#priorityQueueFactory&size=100</from>
------------------------------------------------------------------------------------------------------
+----
 
 === Use of Request Reply
 
@@ -135,11 +137,11 @@ link:request-reply.html[Request Reply], where the caller will wait for
 the link:async.html[Async] route to complete. For instance:
 
 [source,java]
--------------------------------------------------------------------------
+----
 from("mina:tcp://0.0.0.0:9876?textline=true&sync=true").to("seda:input");
 
 from("seda:input").to("bean:processInput").to("bean:createResponse");
--------------------------------------------------------------------------
+----
 
 In the route above, we have a TCP listener on port 9876 that accepts
 incoming requests. The request is routed to the `seda:input` queue. As
@@ -147,7 +149,7 @@ it is a link:request-reply.html[Request Reply] message, we wait for the
 response. When the consumer on the `seda:input` queue is complete, it
 copies the response to the original message response.
 
-NOTE:*until 2.2: Works only with 2 endpoints*
+NOTE: *until 2.2: Works only with 2 endpoints*
 Using link:request-reply.html[Request Reply] over link:seda.html[SEDA]
 or link:vm.html[VM] only works with 2 endpoints. You *cannot* chain
 endpoints by sending to A -> B -> C etc. Only between A -> B. The reason
@@ -164,9 +166,9 @@ configure it to use concurrent consumer threads. So instead of thread
 pools you can use:
 
 [source,java]
----------------------------------------------------------
+----
 from("seda:stageName?concurrentConsumers=5").process(...)
----------------------------------------------------------
+----
 
 As for the difference between the two, note a _thread pool_ can
 increase/shrink dynamically at runtime depending on load, whereas the
@@ -178,9 +180,9 @@ Be aware that adding a thread pool to a SEDA endpoint by doing something
 like:
 
 [source,java]
----------------------------------------------
+----
 from("seda:stageName").thread(5).process(...)
----------------------------------------------
+----
 
 Can wind up with two `BlockQueues`: one from the SEDA endpoint, and one
 from the workqueue of the thread pool, which may not be what you want.
@@ -189,9 +191,9 @@ with a thread pool, which can process messages both synchronously and
 asynchronously. For example:
 
 [source,java]
------------------------------------------------
+----
 from("direct:stageName").thread(5).process(...)
------------------------------------------------
+----
 
 You can also directly configure number of threads that process messages
 on a SEDA endpoint using the `concurrentConsumers` option.
@@ -231,17 +233,12 @@ If needed, information such as queue size, etc. can be obtained without
 using JMX in this fashion:
 
 [source,java]
------------------------------------------------------
+----
 SedaEndpoint seda = context.getEndpoint("seda:xxxx");
 int size = seda.getExchanges().size();
------------------------------------------------------
+----
 
 === See Also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
 
 * link:vm.html[VM]
 * link:disruptor.html[Disruptor]

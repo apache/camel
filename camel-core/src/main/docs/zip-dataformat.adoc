@@ -38,17 +38,17 @@ payload employing zip compression `Deflater.BEST_COMPRESSION` and send
 it an ActiveMQ queue called MY_QUEUE.
 
 [source,java]
---------------------------------------------------------------------------------------------
+----
 from("direct:start").marshal().zip(Deflater.BEST_COMPRESSION).to("activemq:queue:MY_QUEUE");
---------------------------------------------------------------------------------------------
+----
 
 Alternatively if you would like to use the default setting you could
 send it as
 
 [source,java]
--------------------------------------------------------------------
+----
 from("direct:start").marshal().zip().to("activemq:queue:MY_QUEUE");
--------------------------------------------------------------------
+----
 
 === Unmarshal
 
@@ -59,9 +59,9 @@ during the marshalling should be identical to the one employed during
 unmarshalling to avoid errors.
 
 [source,java]
--------------------------------------------------------------------------------------------
+----
 from("activemq:queue:MY_QUEUE").unmarshal().zip().process(new UnZippedMessageProcessor()); 
--------------------------------------------------------------------------------------------
+----
 
 === Dependencies
 

@@ -22,18 +22,18 @@ link:stream-caching.html[Stream Caching] or convert the message body to
 a `String` prior which is safe to be re-read multiple times.
 
 [source,java]
----------------------------
+----
 from("queue:foo").
   filter().xpath("//foo")).
   to("queue:bar")
----------------------------
+----
 
 [source,java]
--------------------------------------------
+----
 from("queue:foo").
   choice().xpath("//foo")).to("queue:bar").
   otherwise().to("queue:others");
--------------------------------------------
+----
 
 === XPath Language options
 
@@ -67,7 +67,7 @@ Variables in XPath is defined in different namespaces. The default
 namespace is `http://camel.apache.org/schema/spring`.
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
+|===
 |Namespace URI |Local part |Type |Description
 
 |http://camel.apache.org/xml/in/[http://camel.apache.org/xml/in/] |in |Message |the exchange.in message
@@ -81,21 +81,21 @@ namespace is `http://camel.apache.org/schema/spring`.
 |http://camel.apache.org/xml/variables/system-properties[http://camel.apache.org/xml/variables/system-properties] |system |Object |Java System properties
 
 |http://camel.apache.org/xml/variables/exchange-property[http://camel.apache.org/xml/variables/exchange-property] |  | Object |the exchange property
-|=======================================================================
+|===
 
 Camel will resolve variables according to either:
 
 * namespace given
 * no namespace given
 
-#=== Namespace given
+==== Namespace given
 
 If the namespace is given then Camel is instructed exactly what to
 return. However when resolving either *in* or *out* Camel will try to
 resolve a header with the given local part first, and return it. If the
 local part has the value *body* then the body is returned instead.
 
-#=== No namespace given
+==== No namespace given
 
 If there is no namespace given then Camel resolves only based on the
 local part. Camel will try to resolve a variable in the following steps:
@@ -111,7 +111,7 @@ Camel adds the following XPath functions that can be used to access the
 exchange:
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
+|===
 |Function |Argument |Type |Description
 
 |in:body |none |Object |Will return the *in* message body.
@@ -126,9 +126,9 @@ exchange:
 link:properties.html[Properties] component (property placeholders).
 
 |function:simple |simple expression |Object |*Camel 2.5:* To evaluate a link:simple.html[Simple] expression.
-|=======================================================================
+|===
 
-*Notice:* `function:properties` and `function:simple` is not supported
+CAUTION: `function:properties` and `function:simple` is not supported
 when the return type is a `NodeSet`, such as when using with a
 link:splitter.html[Splitter] EIP.
 
@@ -142,7 +142,7 @@ If you prefer to configure your routes in your link:spring.html[Spring]
 XML file then you can use XPath expressions as follows
 
 [source,xml]
-------------------------------------------------------------------------------------------------------------------------
+----
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
@@ -159,7 +159,7 @@ XML file then you can use XPath expressions as follows
     </route>
   </camelContext>
 </beans>
-------------------------------------------------------------------------------------------------------------------------
+----
 
 Notice how we can reuse the namespace prefixes, *foo* in this case, in
 the XPath expression for easier namespace based XPath expressions!
@@ -178,25 +178,25 @@ link:xpath.html[XPath] which result type to use.
 In Java DSL:
 
 [source,java]
---------------------------------------
+----
 xpath("/foo:person/@id", String.class)
---------------------------------------
+----
 
 In Spring DSL you use the *resultType* attribute to provide a fully
 qualified classname:
 
 [source,xml]
-------------------------------------------------------------
+----
 <xpath resultType="java.lang.String">/foo:person/@id</xpath>
-------------------------------------------------------------
+----
 
 In @XPath: +
  *Available as of Camel 2.1*
 
 [source,java]
---------------------------------------------------------------------------------------
+----
 @XPath(value = "concat('foo-',//order/name/)", resultType = String.class) String name)
---------------------------------------------------------------------------------------
+----
 
 Where we use the xpath function concat to prefix the order name with
 `foo-`. In this case we have to specify that we want a String as result
@@ -209,15 +209,13 @@ type so the concat function works.
 Some users may have XML stored in a header. To apply an XPath to a
 header's value you can do this by defining the 'headerName' attribute.
 
-In XML DSL:
-
 And in Java DSL you specify the headerName as the 2nd parameter as
 shown:
 
 [source,java]
-------------------------------------------------------------
+----
   xpath("/invoice/@orderType = 'premium'", "invoiceDetails")
-------------------------------------------------------------
+----
 
 === Examples
 
@@ -261,7 +259,7 @@ want will be available for use in your XPath expression.
 For example
 
 [source,java]
-----------------------------------------------------------------------------------------------------------
+----
 public class Foo {
     
     @MessageDriven(uri = "activemq:my.queue")
@@ -269,7 +267,7 @@ public class Foo {
         // process the inbound message here
     }
 }
-----------------------------------------------------------------------------------------------------------
+----
 
 === Using XPathBuilder without an Exchange
 
@@ -287,9 +285,9 @@ link:camelcontext.html[CamelContext] is needed.
 For example you can do something like this:
 
 [source,java]
-----------------------------------------------------------------------------------------------------------
+----
 boolean matches = XPathBuilder.xpath("/foo/bar/@xyz").matches(context, "<foo><bar xyz='cheese'/></foo>"));
-----------------------------------------------------------------------------------------------------------
+----
 
 This will match the given predicate.
 
@@ -297,19 +295,19 @@ You can also evaluate for example as shown in the following three
 examples:
 
 [source,java]
------------------------------------------------------------------------------------------------------------------
-    String name = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>cheese</bar></foo>", String.class);
-    Integer number = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>123</bar></foo>", Integer.class);
-    Boolean bool = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>true</bar></foo>", Boolean.class);
------------------------------------------------------------------------------------------------------------------
+----
+String name = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>cheese</bar></foo>", String.class);
+Integer number = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>123</bar></foo>", Integer.class);
+Boolean bool = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>true</bar></foo>", Boolean.class);
+----
 
 Evaluating with a String result is a common requirement and thus you can
 do it a bit simpler:
 
 [source,java]
---------------------------------------------------------------------------------------------------
-    String name = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>cheese</bar></foo>");
---------------------------------------------------------------------------------------------------
+----
+String name = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>cheese</bar></foo>");
+----
 
 === Using Saxon with XPathBuilder
 
@@ -321,9 +319,8 @@ Its now easier to use http://saxon.sourceforge.net/[Saxon] with the
 XPathBuilder which can be done in several ways as shown below. +
  Where as the latter ones are the easiest ones.
 
-Using a factory
-
-Using ObjectModel
+* Using a factory
+* Using ObjectModel
 
 The easy one
 
@@ -341,18 +338,18 @@ This unit test shows how this can be done to use Saxon instead:
 Camel will log at `INFO` level if it uses a non default XPathFactory
 such as:
 
-[source,java]
---------------------------------------------------------------------------------------------------------------------
+[source]
+----
 XPathBuilder  INFO  Using system property javax.xml.xpath.XPathFactory:http://saxon.sf.net/jaxp/xpath/om with value:
                     net.sf.saxon.xpath.XPathFactoryImpl when creating XPathFactory
---------------------------------------------------------------------------------------------------------------------
+----
 
 To use Apache Xerces you can configure the system property
 
-[source,java]
----------------------------------------------------------------------
+[source]
+----
 -Djavax.xml.xpath.XPathFactory=org.apache.xpath.jaxp.XPathFactoryImpl
----------------------------------------------------------------------
+----
 
 === Enabling Saxon from Spring DSL
 
@@ -364,23 +361,23 @@ options:
 Specifying the factory
 
 [source,xml]
------------------------------------------------------------------------------------------
+----
 <xpath factoryRef="saxonFactory" resultType="java.lang.String">current-dateTime()</xpath>
------------------------------------------------------------------------------------------
+----
 
 Specifying the object model
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------
+----
 <xpath objectModel="http://saxon.sf.net/jaxp/xpath/om" resultType="java.lang.String">current-dateTime()</xpath>
----------------------------------------------------------------------------------------------------------------
+----
 
 Shortcut
 
 [source,xml]
-----------------------------------------------------------------------------
+----
 <xpath saxon="true" resultType="java.lang.String">current-dateTime()</xpath>
-----------------------------------------------------------------------------
+----
 
 === Namespace auditing to aid debugging
 
@@ -412,10 +409,10 @@ represents Namespace Contexts in a hierarchical fashion (parent-child
 relationships), the entire tree is output in a recursive manner with the
 following format:
 
-[source,java]
--------------------------------------------------------------------------------------------------------------------------------------------------------
+[source]
+----
 [me: {prefix -> namespace}, {prefix -> namespace}], [parent: [me: {prefix -> namespace}, {prefix -> namespace}], [parent: [me: {prefix -> namespace}]]]
--------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 Any of these options can be used to activate this logging:
 
@@ -426,7 +423,7 @@ logger such as `org.apache.camel` or the root logger
 link:xpath.html[Auditing Namespaces], in which case the logging will
 occur on the INFO level
 
-#=== Auditing namespaces
+=== Auditing namespaces
 
 Camel is able to discover and dump all namespaces present on every
 incoming message before evaluating an XPath expression, providing all
@@ -454,27 +451,27 @@ You can enable this option in Java DSL and Spring DSL.
 Java DSL:
 
 [source,java]
--------------------------------------------------------------------
+----
 XPathBuilder.xpath("/foo:person/@id", String.class).logNamespaces()
--------------------------------------------------------------------
+----
 
 Spring DSL:
 
 [source,xml]
------------------------------------------------------------------------
+----
 <xpath logNamespaces="true" resultType="String">/foo:person/@id</xpath>
------------------------------------------------------------------------
+----
 
 The result of the auditing will be appear at the INFO level under the
 `org.apache.camel.builder.xml.XPathBuilder` logger and will look like
 the following:
 
-[source,java]
---------------------------------------------------------------------------------------------------
+[source]
+----
 2012-01-16 13:23:45,878 [stSaxonWithFlag] INFO  XPathBuilder  - Namespaces discovered in message: 
 {xmlns:a=[http://apache.org/camel], DEFAULT=[http://apache.org/default], 
 xmlns:b=[http://apache.org/camelA, http://apache.org/camelB]}
---------------------------------------------------------------------------------------------------
+----
 
 === Loading script from external resource
 
@@ -486,9 +483,9 @@ such as `"classpath:"`, `"file:"`, or `"http:"`. +
 eg to refer to a file on the classpath you can do:
 
 [source,java]
-----------------------------------------------------------------------------
+----
 .setHeader("myHeader").xpath("resource:classpath:myxpath.txt", String.class)
-----------------------------------------------------------------------------
+----
 
 === Dependencies
 

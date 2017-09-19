@@ -10,10 +10,10 @@ From Camel 2.18 onwards the rest component can also be used as a client (produce
 
 === URI format
 
-[source,java]
---------------------------------------------
-  rest://method:path[:uriTemplate]?[options]
---------------------------------------------
+[source]
+----
+rest://method:path[:uriTemplate]?[options]
+----
 
 === URI Options
 
@@ -109,31 +109,31 @@ practice with REST.
 The following is a Camel route using a a path only
 
 [source,java]
----------------------------------------
-  from("rest:get:hello")
-    .transform().constant("Bye World");
----------------------------------------
+----
+from("rest:get:hello")
+  .transform().constant("Bye World");
+----
 
 And the following route uses a parameter which is mapped to a Camel
 header with the key "me".
 
 [source,java]
---------------------------------------------
-  from("rest:get:hello/{me}")
-    .transform().simple("Bye ${header.me}");
---------------------------------------------
+----
+from("rest:get:hello/{me}")
+  .transform().simple("Bye ${header.me}");
+----
 
 The following examples have configured a base path as "hello" and then
 have two REST services configured using uriTemplates.
 
 [source,java]
-------------------------------------------------
-  from("rest:get:hello:/{me}")
-    .transform().simple("Hi ${header.me}");
- 
-  from("rest:get:hello:/french/{me}")
-    .transform().simple("Bonjour ${header.me}");
-------------------------------------------------
+----
+from("rest:get:hello:/{me}")
+  .transform().simple("Hi ${header.me}");
+
+from("rest:get:hello:/french/{me}")
+  .transform().simple("Bonjour ${header.me}");
+----
 
 === Rest producer examples
 
@@ -142,48 +142,48 @@ You can use the rest component to call REST services like any other Camel compon
 For example to call a REST service on using `hello/{me}` you can do
 
 [source,java]
---------------------------------------------
-  from("direct:start")
-    .to("rest:get:hello/{me}");
---------------------------------------------
+----
+from("direct:start")
+  .to("rest:get:hello/{me}");
+----
 
 And then the dynamic value `{me}` is mapped to Camel message with the same name.
 So to call this REST service you can send an empty message body and a header as shown:
 
 [source,java]
---------------------------------------------
-  template.sendBodyAndHeader("direct:start", null, "me", "Donald Duck");
---------------------------------------------
+----
+template.sendBodyAndHeader("direct:start", null, "me", "Donald Duck");
+----
 
 The Rest producer needs to know the hostname and port of the REST service, which you can configure
 using the host option as shown:
 
 [source,java]
---------------------------------------------
-  from("direct:start")
-    .to("rest:get:hello/{me}?host=myserver:8080/foo");
---------------------------------------------
+----
+from("direct:start")
+  .to("rest:get:hello/{me}?host=myserver:8080/foo");
+----
 
 Instead of using the host option, you can configure the host on the `restConfiguration` as shown:
 
 [source,java]
---------------------------------------------
-  restConfiguration().host("myserver:8080/foo");
+----
+restConfiguration().host("myserver:8080/foo");
 
-  from("direct:start")
-    .to("rest:get:hello/{me}");
---------------------------------------------
+from("direct:start")
+  .to("rest:get:hello/{me}");
+----
 
 You can use the `producerComponent` to select which Camel component to use as the HTTP client, for example
 to use http4 you can do:
 
 [source,java]
---------------------------------------------
-  restConfiguration().host("myserver:8080/foo").producerComponent("http4");
+----
+restConfiguration().host("myserver:8080/foo").producerComponent("http4");
 
-  from("direct:start")
-    .to("rest:get:hello/{me}");
---------------------------------------------
+from("direct:start")
+  .to("rest:get:hello/{me}");
+----
 
 
 === Rest producer binding
@@ -193,23 +193,23 @@ The REST producer supports binding using JSon or XML like the rest-dsl does.
 For example to use jetty with json binding mode turned on you can configure this in the rest configuration:
 
 [source,java]
---------------------------------------------
-  restConfiguration().component("jetty").host("localhost").port(8080).bindingMode(RestBindingMode.json);
+----
+restConfiguration().component("jetty").host("localhost").port(8080).bindingMode(RestBindingMode.json);
 
-  from("direct:start")
-    .to("rest:post:user");
---------------------------------------------
+from("direct:start")
+  .to("rest:post:user");
+----
 
 Then when calling the REST service using rest producer it will automatic bind any POJOs to json before calling the REST service:
 
 [source,java]
---------------------------------------------
+----
   UserPojo user = new UserPojo();
   user.setId(123);
   user.setName("Donald Duck");
 
   template.sendBody("direct:start", user);
---------------------------------------------
+----
 
 In the example above we send a POJO instance `UserPojo` as the message body. And because we have turned on JSon binding
 in the rest configuration, then the POJO will be marshalled from POJO to JSon before calling the REST service.
@@ -220,12 +220,12 @@ would need to configure the `outType` option to specify what is the classname of
 For example if the REST service returns a JSon payload that binds to `com.foo.MyResponsePojo` you can configure this as shown:
 
 [source,java]
---------------------------------------------
+----
   restConfiguration().component("jetty").host("localhost").port(8080).bindingMode(RestBindingMode.json);
 
   from("direct:start")
     .to("rest:post:user?outType=com.foo.MyResponsePojo");
---------------------------------------------
+----
 
 IMPORTANT: You must configure `outType` option if you want POJO binding to happen for the response messages received from calling the REST service.
 
@@ -242,11 +242,6 @@ transport that can be deployed on Apache Tomcat, or similar web
 containers.
 
 === See Also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
 
 * link:rest-dsl.html[Rest DSL]
 * link:servlet.html[SERVLET]

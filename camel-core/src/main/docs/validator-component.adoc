@@ -19,10 +19,10 @@ http://relaxng.org/[RelaxNG XML Syntax].
 
 === URI format
 
-[source,java]
------------------------------------
+[source]
+----
 validator:someLocalOrRemoteResource
------------------------------------
+----
 
 Where *someLocalOrRemoteResource* is some URL to a local resource on the
 classpath or a full URL to a remote resource or resource on the file
@@ -37,14 +37,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component when using *Camel 2.8* or older:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-spring</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 From Camel 2.9 onwards the link:validation.html[Validation] component is
 provided directly in the camel-core.
@@ -119,9 +119,3 @@ the JMX operation `clearCachedSchema. `You can also use this method to
 programmatically clear the cache. This method is available on the
 `ValidatorEndpoint `class`.`
 
-=== See Also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]

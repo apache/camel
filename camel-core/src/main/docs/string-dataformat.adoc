@@ -26,9 +26,9 @@ In this example we marshal the file content to String object in UTF-8
 encoding.
 
 [source,java]
-----------------------------------------------------------------------
+----
 from("file://data.csv").marshal().string("UTF-8").to("jms://myqueue");
-----------------------------------------------------------------------
+----
 
 === Unmarshal
 
@@ -37,9 +37,9 @@ object using UTF-8 encoding, before its processed by the newOrder
 processor.
 
 [source,java]
------------------------------------------------------------------------------
+----
 from("jms://queue/order").unmarshal().string("UTF-8").processRef("newOrder");
------------------------------------------------------------------------------
+----
 
 === Dependencies
 

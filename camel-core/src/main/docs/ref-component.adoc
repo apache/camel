@@ -7,10 +7,10 @@ the link:registry.html[Registry].
 
 === URI format
 
-[source,java]
-----------------------
+[source]
+----
 ref:someName[?options]
-----------------------
+----
 
 Where *someName* is the name of an endpoint in the
 link:registry.html[Registry] (usually, but not always, the Spring
@@ -61,30 +61,28 @@ in the link:registry.html[Registry] where you can compute the URI at
 runtime. Then you can look up the endpoint using the following code:
 
 [source,java]
--------------------------------------------------------------------
-   // lookup the endpoint
-   String myEndpointRef = "bigspenderOrder";
-   Endpoint endpoint = context.getEndpoint("ref:" + myEndpointRef);
-   
-   Producer producer = endpoint.createProducer();
-   Exchange exchange = producer.createExchange();
-   exchange.getIn().setBody(payloadToSend);
-   // send the exchange
-   producer.process(exchange);
-   ...
--------------------------------------------------------------------
+----
+// lookup the endpoint
+String myEndpointRef = "bigspenderOrder";
+Endpoint endpoint = context.getEndpoint("ref:" + myEndpointRef);
+
+Producer producer = endpoint.createProducer();
+Exchange exchange = producer.createExchange();
+exchange.getIn().setBody(payloadToSend);
+// send the exchange
+producer.process(exchange);
+----
 
 And you could have a list of endpoints defined in the
 link:registry.html[Registry] such as:
 
 [source,xml]
-----------------------------------------------------------------------------------
-  <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
-      <endpoint id="normalOrder" uri="activemq:order.slow"/>
-      <endpoint id="bigspenderOrder" uri="activemq:order.high"/>
-      ...
-  </camelContext>
-----------------------------------------------------------------------------------
+----
+<camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <endpoint id="normalOrder" uri="activemq:order.slow"/>
+    <endpoint id="bigspenderOrder" uri="activemq:order.high"/>
+</camelContext>
+----
 
 === Sample
 
@@ -94,15 +92,9 @@ endpoint with the spring ID, `endpoint2`:
 You could, of course, have used the `ref` attribute instead:
 
 [source,xml]
----------------------------
-      <to ref="endpoint2"/>
----------------------------
+----
+<to ref="endpoint2"/>
+----
 
 Which is the more common way to write it.
 
-=== See Also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]

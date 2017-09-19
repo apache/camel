@@ -45,31 +45,31 @@ A simple REST service can be define as follows, where we use rest() to
 define the services as shown below:
 
 [source,java]
-------------------------------------------------------------------------------
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                rest("/say")
-                    .get("/hello").to("direct:hello")
-                    .get("/bye").consumes("application/json").to("direct:bye")
-                    .post("/bye").to("mock:update");
+----
+protected RouteBuilder createRouteBuilder() throws Exception {
+    return new RouteBuilder() {
+        @Override
+        public void configure() throws Exception {
+            rest("/say")
+                .get("/hello").to("direct:hello")
+                .get("/bye").consumes("application/json").to("direct:bye")
+                .post("/bye").to("mock:update");
 
-                from("direct:hello")
-                    .transform().constant("Hello World");
-                from("direct:bye")
-                    .transform().constant("Bye World");
-            }
-        };
-    }
-------------------------------------------------------------------------------
+            from("direct:hello")
+                .transform().constant("Hello World");
+            from("direct:bye")
+                .transform().constant("Bye World");
+        }
+    };
+}
+----
 
  
 
 This defines a REST service with the following url mappings:
 
 [width="100%",cols="25%,25%,25%,25%",options="header",]
-|=======================================================================
+|===
 |Base Path |Uri template |Verb |Consumes
 
 |/say |/hello |get |_all_
@@ -77,7 +77,7 @@ This defines a REST service with the following url mappings:
 |/say |/bye |get |application/json
 
 |/say |/bye |post |_all_
-|=======================================================================
+|===
 
 Notice that in the REST service we route directly to a Camel endpoint
 using the to(). This is because the Rest DSL has a short-hand for
@@ -90,36 +90,34 @@ below.
 The REST DSL supports the XML DSL also using either Spring or Blueprint.
 The example above can be define in XML as shown below:
 
-[source,java]
---------------------------------------------------------------
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <rest path="/say">
-      <get uri="/hello">
-        <to uri="direct:hello"/>
-      </get>
-      <get uri="/bye" consumes="application/json">
-        <to uri="direct:bye"/>
-      </get>
-      <post uri="/bye">
-        <to uri="mock:update"/>
-      </post>
-    </rest>
-    <route>
-      <from uri="direct:hello"/>
-      <transform>
-        <constant>Hello World</constant>
-      </transform>
-    </route>
-    <route>
-      <from uri="direct:bye"/>
-      <transform>
-        <constant>Bye World</constant>
-      </transform>
-    </route>
-  </camelContext>
---------------------------------------------------------------
-
- 
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <rest path="/say">
+    <get uri="/hello">
+      <to uri="direct:hello"/>
+    </get>
+    <get uri="/bye" consumes="application/json">
+      <to uri="direct:bye"/>
+    </get>
+    <post uri="/bye">
+      <to uri="mock:update"/>
+    </post>
+  </rest>
+  <route>
+    <from uri="direct:hello"/>
+    <transform>
+      <constant>Hello World</constant>
+    </transform>
+  </route>
+  <route>
+    <from uri="direct:bye"/>
+    <transform>
+      <constant>Bye World</constant>
+    </transform>
+  </route>
+</camelContext>
+----
 
 === Using base path
 
@@ -129,31 +127,29 @@ rest("/customer") and then provide the uri templates in the verbs, as
 shown below:
 
 [source,java]
--------------------------------------------------------
-  rest("/customers/")
-      .get("/{id}").to("direct:customerDetail")
-      .get("/{id}/orders").to("direct:customerOrders")
-      .post("/neworder").to("direct:customerNewOrder");
--------------------------------------------------------
-
- 
+----
+rest("/customers/")
+    .get("/{id}").to("direct:customerDetail")
+    .get("/{id}/orders").to("direct:customerOrders")
+    .post("/neworder").to("direct:customerNewOrder");
+----
 
 And using XML DSL it becomes:
 
-[source,java]
--------------------------------------------
-    <rest path="/customers/">
-      <get uri="/{id}">
-        <to uri="direct:customerDetail"/>
-      </get>
-      <get uri="/{id}/orders">
-        <to uri="direct:customerOrders"/>
-      </get>
-      <post uri="/neworder">
-        <to uri="direct:customerNewOrder"/>
-      </post>
-    </rest>
--------------------------------------------
+[source,xml]
+----
+<rest path="/customers/">
+  <get uri="/{id}">
+    <to uri="direct:customerDetail"/>
+  </get>
+  <get uri="/{id}/orders">
+    <to uri="direct:customerOrders"/>
+  </get>
+  <post uri="/neworder">
+    <to uri="direct:customerNewOrder"/>
+  </post>
+</rest>
+----
 
 TIP:The REST DSL will take care of duplicate path separators when using base
 path and uri templates. In the example above the rest base path ends
@@ -164,22 +160,22 @@ It is not required to use both base path and uri templates. You can omit
 the bast path and define the base path and uri template in the verbs
 only. The example above can be defined as:
 
-[source,java]
--------------------------------------------
-    <rest>
-      <get uri="/customers/{id}">
-        <to uri="direct:customerDetail"/>
-      </get>
-      <get uri="/customers/{id}/orders">
-        <to uri="direct:customerOrders"/>
-      </get>
-      <post uri="/customers/neworder">
-        <to uri="direct:customerNewOrder"/>
-      </post>
-    </rest>
--------------------------------------------
+[source,xml]
+----
+<rest>
+  <get uri="/customers/{id}">
+    <to uri="direct:customerDetail"/>
+  </get>
+  <get uri="/customers/{id}/orders">
+    <to uri="direct:customerOrders"/>
+  </get>
+  <post uri="/customers/neworder">
+    <to uri="direct:customerNewOrder"/>
+  </post>
+</rest>
+----
 
-=== Using Dynamic To
+=== Using Dynamic To in Rest DSL
 
 *Available as of Camel 2.16*
 
@@ -187,26 +183,24 @@ The link:rest-dsl.html[Rest DSL] supports the new .toD <toD> as dynamic
 to in the rest-dsl. For example to do a request/reply
 over link:jms.html[JMS] where the queue name is dynamic defined
 
-[source,xml]
--------------------------------------------------------------------------
+[source,java]
+----
  public void configure() throws Exception {
    rest("/say")
      .get("/hello/{language}").toD("jms:queue:hello-${header.language}");
 }
--------------------------------------------------------------------------
+----
 
 === And in XML DSL
 
 [source,xml]
----------------------------------------------------
+----
 <rest uri="/say">
   <get uri="/hello//{language}">
     <toD uri="jms:queue:hello-${header.language}"/>
   </get>
 <rest>
----------------------------------------------------
-
- 
+----
 
 See more details at link:message-endpoint.html[Message Endpoint] about
 the dynamic to, and what syntax it supports. By default it uses
@@ -230,33 +224,37 @@ why we end up with 3 + 2 = 5 total routes.
 The same example could use embedded Camel routes, which is shown below:
 
 [source,java]
------------------------------------------------------------------------------------------------------------
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                rest("/say/hello")
-                    .get().route().transform().constant("Hello World");
-                rest("/say/bye")
-                    .get().consumes("application/json").route().transform().constant("Bye World").endRest()
-                    .post().to("mock:update");
-        };
-    }
------------------------------------------------------------------------------------------------------------
+----
+protected RouteBuilder createRouteBuilder() throws Exception {
+    return new RouteBuilder() {
+        @Override
+        public void configure() throws Exception {
+            rest("/say/hello")
+                .get().route().transform().constant("Hello World");
+            rest("/say/bye")
+                .get().consumes("application/json").route().transform().constant("Bye World").endRest()
+                .post().to("mock:update");
+    };
+}
+----
 
 In the example above, we are embedding routes directly in the rest
 service using .route(). Notice we need to use .endRest() to tell Camel
 where the route ends, so we can _go back_ to the Rest DSL and continue
 defining REST services.
 
-TIP:*Configuring route options*
+#### Configuring route options
 
 In the embedded route you can configure the route settings such as
 routeId, autoStartup and various other options you can set on routes
 today.
----------------------------------------------------------------------------------------------
-.get().route().routeId("myRestRoute").autoStartup(false).transform().constant("Hello World");
----------------------------------------------------------------------------------------------
+
+[source,java]
+----
+.get()
+  .route().routeId("myRestRoute").autoStartup(false)
+  .transform().constant("Hello World");
+----
 
 
 === Managing Rest services
@@ -288,7 +286,7 @@ work with the POJOs in Java code.
 The binding modes are:
 
 [width="100%",cols="10%,90%",options="header",]
-|=======================================================================
+|===
 |Binding Mode |Description
 
 |off |Binding is turned off. This is the default option.
@@ -307,7 +305,7 @@ classpath. See the INFO box below for more details.
 
 |json_xml |Binding to/from json and xml is enabled and requires both data formats to
 be on the classpath. See the INFO box below for more details.
-|=======================================================================
+|===
 
 TIP:From *Camel 2.14.1* onwards when using camel-jaxb for xml bindings, then
 you can use the option `mustBeJAXBElement` to relax the output message
@@ -332,18 +330,16 @@ rest configuration, and then override per rest service as well.
 To enable binding you configure this in Java DSL as shown below
 
 [source,java]
------------------------------------------------------------------------------------------------------------
+----
 restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
------------------------------------------------------------------------------------------------------------
+----
 
 And in XML DSL
 
-[source,java]
----------------------------------------------------------------------------
-    <restConfiguration bindingMode="auto" component="restlet" port="8080"/>
----------------------------------------------------------------------------
-
- 
+[source,xml]
+----
+<restConfiguration bindingMode="auto" component="restlet" port="8080"/>
+----
 
 When binding is enabled Camel will bind the incoming and outgoing
 messages automatic, accordingly to the content type of the message. If
@@ -353,7 +349,7 @@ messages. The table below summaries what binding occurs for incoming and
 reply messages. 
 
 [width="100%",cols="25%,25%,25%,25%",options="header",]
-|=======================================================================
+|===
 |Message Body |Direction |Binding Mode |Message Body
 
 |XML |Incoming |auto,
@@ -370,7 +366,7 @@ json_xml |POJO
 |POJO |Outgoing |auto,
 json, 
 json_xml |JSON
-|=======================================================================
+|===
  
 When using binding you must also configure what POJO type to map to.
 This is mandatory for incoming messages, and optional for outgoing. 
@@ -379,7 +375,7 @@ For example to map from xml/json to a pojo class `UserPojo` you do this
 in Java DSL as shown below:
 
 [source,java]
------------------------------------------------------------------------------------------------------------
+----
 // configure to use restlet on localhost with the given port
 // and enable auto binding mode
 restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
@@ -388,7 +384,7 @@ restConfiguration().component("restlet").host("localhost").port(portNum).binding
 rest("/users/")
     .post().type(UserPojo.class)
         .to("direct:newUser");
------------------------------------------------------------------------------------------------------------
+----
 
 Notice we use `type` to define the incoming type. We can optionally
 define an outgoing type (which can be a good idea, to make it known from
@@ -397,7 +393,7 @@ outgoing types of the REST services.). To define the outgoing type, we
 use `outType` as shown below:
 
 [source,java]
------------------------------------------------------------------------------------------------------------
+----
 // configure to use restlet on localhost with the given port
 // and enable auto binding mode
 restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
@@ -406,13 +402,13 @@ restConfiguration().component("restlet").host("localhost").port(portNum).binding
 rest("/users/")
     .post().type(UserPojo.class).outType(CountryPojo.class)
         .to("direct:newUser");
------------------------------------------------------------------------------------------------------------
+----
 
 To specify input and/or output using an array, append `[]` to the end
 of the canonical class name as shown in the following Java DSL:
 
 [source,java]
------------------------------------------------------------------------------------------------------------
+----
 // configure to use restlet on localhost with the given port
 // and enable auto binding mode
 restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
@@ -421,12 +417,12 @@ restConfiguration().component("restlet").host("localhost").port(portNum).binding
 rest("/users/")
     .post().type(UserPojo[].class).outType(CountryPojo[].class)
         .to("direct:newUser");
------------------------------------------------------------------------------------------------------------
+----
 
 The `UserPojo` is just a plain pojo with getter/setter as shown:
 
 [source,java]
---------------------------------------
+----
 public class UserPojo {
     private int id;
     private String name;
@@ -443,14 +439,14 @@ public class UserPojo {
         this.name = name;
     }
 }
---------------------------------------
+----
 
 The `UserPojo` only supports json, as XML requires to use JAXB
 annotations, so we can add those annotations if we want to support XML
 also
 
 [source,java]
---------------------------------------
+----
 @XmlRootElement(name = "user")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserPojo {
@@ -471,7 +467,7 @@ public class UserPojo {
         this.name = name;
     }
 }
---------------------------------------
+----
 
 By having the JAXB annotations the POJO supports both json and xml
 bindings.
@@ -548,27 +544,27 @@ input has a property which cannot be mapped to a POJO) then configure
 this using the dataFormatProperty as shown below:
 
 [source,java]
-----------------------------------------------------------------------------------------------------------
+----
 restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json)
    .dataFormatProperty("json.in.disableFeatures", "FAIL_ON_UNKNOWN_PROPERTIES");
-----------------------------------------------------------------------------------------------------------
+----
 
 You can disable more features by separating the values using comma, such
 as:
 
 [source,java]
-------------------------------------------------------------------------------------------------------------------
-   .dataFormatProperty("json.in.disableFeatures", "FAIL_ON_UNKNOWN_PROPERTIES,ADJUST_DATES_TO_CONTEXT_TIME_ZONE");
-------------------------------------------------------------------------------------------------------------------
+----
+.dataFormatProperty("json.in.disableFeatures", "FAIL_ON_UNKNOWN_PROPERTIES,ADJUST_DATES_TO_CONTEXT_TIME_ZONE");
+----
 
 Likewise you can enable features using the enableFeatures such as:
 
 [source,java]
------------------------------------------------------------------------------------------------------------------
+----
 restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json)
    .dataFormatProperty("json.in.disableFeatures", "FAIL_ON_UNKNOWN_PROPERTIES,ADJUST_DATES_TO_CONTEXT_TIME_ZONE")
    .dataFormatProperty("json.in.enableFeatures", "FAIL_ON_NUMBERS_FOR_ENUMS,USE_BIG_DECIMAL_FOR_FLOATS");
------------------------------------------------------------------------------------------------------------------
+----
 
 The values that can be used for enabling and disabling features on
 Jackson are the names of the enums from the following three Jackson
@@ -578,19 +574,15 @@ classes
 * com.fasterxml.jackson.databind.DeserializationFeature
 * com.fasterxml.jackson.databind.MapperFeature
 
- 
-
 The rest configuration is of course also possible using XML DSL
 
 [source,xml]
---------------------------------------------------------------------------------------------------------------------------
+----
 <restConfiguration component="jetty" host="localhost" port="9090" bindingMode="json">
   <dataFormatProperty key="json.in.disableFeatures" value="FAIL_ON_UNKNOWN_PROPERTIES,ADJUST_DATES_TO_CONTEXT_TIME_ZONE"/>
   <dataFormatProperty key="json.in.enableFeatures" value="FAIL_ON_NUMBERS_FOR_ENUMS,USE_BIG_DECIMAL_FOR_FLOATS"/>
 </restConfiguration>
---------------------------------------------------------------------------------------------------------------------------
-
- 
+----
 
 === Default CORS headers
 
@@ -601,7 +593,7 @@ configure custom CORS headers which takes precedence over the default
 value.
 
 [width="100%",cols="50%,50%",options="header",]
-|=======================================================================
+|===
 |Key |Value
 
 |Access-Control-Allow-Origin |*
@@ -612,7 +604,7 @@ value.
 Access-Control-Request-Method, Access-Control-Request-Headers
 
 |Access-Control-Max-Age |3600
-|=======================================================================
+|===
  
 === Defining a custom error message as-is
 
@@ -625,25 +617,25 @@ set the content-type header as well. There is a little example shown
 below:
 
 [source,java]
----------------------------------------------------------------------------------------------------------------------------
-                restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.json);
-                // use the rest DSL to define the rest services
-                rest("/users/")
-                    .post("lives").type(UserPojo.class).outType(CountryPojo.class)
-                        .route()
-                            .choice()
-                                .when().simple("${body.id} < 100")
-                                    .bean(new UserErrorService(), "idToLowError")
-                                .otherwise()
-                                    .bean(new UserService(), "livesWhere");
----------------------------------------------------------------------------------------------------------------------------
+----
+restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.json);
+// use the rest DSL to define the rest services
+rest("/users/")
+    .post("lives").type(UserPojo.class).outType(CountryPojo.class)
+        .route()
+            .choice()
+                .when().simple("${body.id} < 100")
+                    .bean(new UserErrorService(), "idToLowError")
+                .otherwise()
+                    .bean(new UserService(), "livesWhere");
+----
 
 In this example if the input id is a number that is below 100, we want
 to send back a custom error message, using the UserErrorService bean,
 which is implemented as shown:
 
 [source,java]
-------------------------------------------------------------------------
+----
 public class UserErrorService {
     public void idToLowError(Exchange exchange) {
         exchange.getIn().setBody("id value is too low");
@@ -651,7 +643,7 @@ public class UserErrorService {
         exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
     }
 }
-------------------------------------------------------------------------
+----
 
 In the UserErrorService bean we build our custom error message, and set
 the HTTP error code to 400. This is important, as that tells rest-dsl
@@ -667,15 +659,13 @@ response message. For example to return a HTTP error code 400 with a
 hardcoded message, we can do as shown below:
 
 [source,java]
--------------------------------------------------------------
+----
 onException(JsonParseException.class)
     .handled(true)
     .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(400))
     .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))
     .setBody().constant("Invalid json data");
--------------------------------------------------------------
-
- 
+----
 
 === Query Parameter default Values
 
@@ -683,14 +673,14 @@ You can specify default values for parameters in the rest-dsl, such as
 the verbose parameter below:
 
 [source,java]
---------------------------------------------------------------------------------------------------------------------------------
+----
   rest("/customers/")
       .get("/{id}").to("direct:customerDetail")
       .get("/{id}/orders")
         .param().name("verbose").type(RestParamType.query).defaultValue("false").description("Verbose order details").endParam()
           .to("direct:customerOrders")
       .post("/neworder").to("direct:customerNewOrder");
---------------------------------------------------------------------------------------------------------------------------------
+----
 
 From *Camel 2.17* onwards then the default value is automatic set as
 header on the incoming Camel `Message`. So if the call
@@ -724,56 +714,48 @@ on, using the <param>. For example to define the id path parameter you
 can do as shown below:
 
 [source,xml]
----------------------------------------------------------------------------------------
+----
 <!-- this is a rest GET to view an user by the given id -->
 <get uri="/{id}" outType="org.apache.camel.example.rest.User">
   <description>Find user by id</description>
   <param name="id" type="path" description="The id of the user to get" dataType="int"/>
   <to uri="bean:userService?method=getUser(${header.id})"/>
 </get>
----------------------------------------------------------------------------------------
+----
 
 And in Java DSL
 
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 .get("/{id}").description("Find user by id").outType(User.class)
     .param().name("id").type(path).description("The id of the user to get").dataType("int").endParam()
     .to("bean:userService?method=getUser(${header.id})")
-------------------------------------------------------------------------------------------------------
+----
 
 The body parameter type requires to use body as well for the name. For
 example a REST PUT operation to create/update an user could be done as:
 
 [source,xml]
------------------------------------------------------------------------------
+----
 <!-- this is a rest PUT to create/update an user -->
 <put type="org.apache.camel.example.rest.User">
   <description>Updates or create a user</description>
   <param name="body" type="body" description="The user to update or create"/>
   <to uri="bean:userService?method=updateUser"/>
 </put>
------------------------------------------------------------------------------
+----
 
 And in Java DSL
 
 [source,java]
--------------------------------------------------------------------------------------------
+----
 .put().description("Updates or create a user").type(User.class)
     .param().name("body").type(body).description("The user to update or create").endParam()
     .to("bean:userService?method=updateUser")
--------------------------------------------------------------------------------------------
+----
 
- 
-
-For an example see the `examples/camel-example-servlet-rest-tomcat` of
-the Apache Camel distribution.
 
 === See Also
 
-* link:dsl.html[DSL]
 * link:rest.html[Rest]
 * link:swagger-java.html[Swagger Java]
-* link:spark-rest.html[Spark-rest]
-* link:how-do-i-import-rests-from-other-xml-files.html[How do I import
-rests from other XML files]

@@ -1,6 +1,5 @@
 [[RequestReply-RequestReply]]
-Request Reply
-~~~~~~~~~~~~~
+== Request Reply
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/RequestReply.html[Request
@@ -23,16 +22,10 @@ by default perform these actions
 using the JMSCorrelationID (as you may be performing many concurrent
 request/responses).
 
-[TIP]
-====
-*Related*
-
-See the related link:event-message.html[Event Message] message
-====
+TIP: *Related* See the related link:event-message.html[Event Message] message
 
 [[RequestReply-ExplicitlyspecifyingInOut]]
-Explicitly specifying InOut
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+=== Explicitly specifying InOut
 
 When consuming messages from link:jms.html[JMS] a Request-Reply is
 indicated by the presence of the *JMSReplyTo* header.
@@ -40,21 +33,11 @@ indicated by the presence of the *JMSReplyTo* header.
 You can explicitly force an endpoint to be in Request Reply mode by
 setting the exchange pattern on the URI. e.g.
 
-[source,java]
----------------------------------
+[source]
+----
 jms:MyQueue?exchangePattern=InOut
----------------------------------
+----
 
 You can specify the exchange pattern in DSL rule or Spring
 configuration.
 
-[[RequestReply-UsingThisPattern]]
-Using This Pattern
-++++++++++++++++++
-
-If you would like to use this EIP Pattern then please read the
-link:getting-started.html[Getting Started], you may also find the
-link:architecture.html[Architecture] useful particularly the description
-of link:endpoint.html[Endpoint] and link:uris.html[URIs]. Then you could
-try out some of the link:examples.html[Examples] first before trying
-this pattern out.
