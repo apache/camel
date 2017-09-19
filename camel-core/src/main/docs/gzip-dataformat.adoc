@@ -33,9 +33,9 @@ payload employing gzip compression format and send it an ActiveMQ queue
 called MY_QUEUE.
 
 [source,java]
---------------------------------------------------------------------
+----
 from("direct:start").marshal().gzip().to("activemq:queue:MY_QUEUE");
---------------------------------------------------------------------
+----
 
 === Unmarshal
 
@@ -44,9 +44,9 @@ called MY_QUEUE to its original format, and forward it for processing to
 the `UnGZippedMessageProcessor`.
 
 [source,java]
----------------------------------------------------------------------------------------------
+----
 from("activemq:queue:MY_QUEUE").unmarshal().gzip().process(new UnGZippedMessageProcessor()); 
----------------------------------------------------------------------------------------------
+----
 
 === Dependencies
 

@@ -34,9 +34,9 @@ fullest (i.e. avoid using parameters but using stacked operations,
 notice that header is not a parameter but a stacked method call)
 
 [source,java]
-------------------------------------------------------
-  from("direct:a").recipientList().header("myHeader");
-------------------------------------------------------
+----
+from("direct:a").recipientList().header("myHeader");
+----
 
 === Dependencies
 

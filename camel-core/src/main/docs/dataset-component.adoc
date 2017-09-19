@@ -22,10 +22,10 @@ dataset's.
 
 === URI format
 
-[source,java]
-----------------------
+[source]
+----
 dataset:name[?options]
-----------------------
+----
 
 Where *name* is used to find the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/dataset/DataSet.html[DataSet
@@ -104,11 +104,11 @@ implementing the DataSet interface. So you can register your own DataSet
 as:
 
 [source,xml]
---------------------------------------------------------
-   <bean id="myDataSet" class="com.mycompany.MyDataSet">
-      <property name="size" value="100"/>
-   </bean>
---------------------------------------------------------
+----
+<bean id="myDataSet" class="com.mycompany.MyDataSet">
+  <property name="size" value="100"/>
+</bean>
+----
 
 === Example
 
@@ -116,13 +116,13 @@ For example, to test that a set of messages are sent to a queue and then
 consumed from the queue without losing any messages:
 
 [source,java]
----------------------------------------------------------
+----
 // send the dataset to a queue
 from("dataset:foo").to("activemq:SomeQueue");
 
 // now lets test that the messages are consumed correctly
 from("activemq:SomeQueue").to("dataset:foo");
----------------------------------------------------------
+----
 
 The above would look in the link:registry.html[Registry] to find the
 *foo* DataSet instance which is used to create the messages.
@@ -130,17 +130,17 @@ The above would look in the link:registry.html[Registry] to find the
 Then you create a DataSet implementation, such as using the
 `SimpleDataSet` as described below, configuring things like how big the
 data set is and what the messages look like etc.  
-
  
 
-=== `DataSetSupport` (abstract class)
+=== DataSetSupport (abstract class)
 
 The DataSetSupport abstract class is a nice starting point for new
 DataSets, and provides some useful features to derived classes.
 
-=== Properties on DataSetSupport
+==== Properties on DataSetSupport
+
 [width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
+|===
 |Property |Type |Default |Description
 
 |`defaultHeaders` |`Map<String,Object>` |`null` |Specifies the default message body. For SimpleDataSet it is a constant
@@ -154,16 +154,16 @@ create your own derivation of `DataSetSupport`.
 |`reportCount` |`long` |`-1` |Specifies the number of messages to be received before reporting
 progress. Useful for showing progress of a large load test. If < 0, then
 `size` / 5, if is 0 then `size`, else set to `reportCount` value.
-|=======================================================================
+|===
 
-=== `SimpleDataSet`
+=== SimpleDataSet
 
 The `SimpleDataSet` extends `DataSetSupport`, and adds a default body.
 
-=== Additional Properties on SimpleDataSet
+==== Additional Properties on SimpleDataSet
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
+|===
 |Property |Type |Default |Description
 
 |`defaultBody` |`Object` |`<hello>world!</hello>` |Specifies the default message body. By default, the `SimpleDataSet`
@@ -171,17 +171,19 @@ produces the same constant payload for each exchange. If you want to
 customize the payload for each exchange, create a Camel `Processor` and
 configure the `SimpleDataSet` to use it by setting the
 `outputTransformer` property.
-|=======================================================================
+|===
 
-=== `ListDataSet (Camel 2.17)`
+=== ListDataSet
+
+*Available since Camel 2.17*
 
 The List`DataSet` extends `DataSetSupport`, and adds a list of default
 bodies.
 
-=== Additional Properties on ListDataSet
+==== Additional Properties on ListDataSet
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
+|===
 |Property |Type |Default |Description
 
 |`defaultBodies` |`List<Object>` |`empty LinkedList<Object>` |Specifies the default message body. By default, the `ListDataSet`
@@ -197,29 +199,24 @@ used. If the value is greater than the size of the `defaultBodies` list,
 the payload for the exchange will be selected using the modulus of the
 `CamelDataSetIndex` and the size of the `defaultBodies` list (i.e.
 `CamelDataSetIndex % defaultBodies.size()` )
-|=======================================================================
+|===
 
-=== FileDataSet (Camel 2.17)
+=== FileDataSet
 
-The `SimpleDataSet` extends `ListDataSet`, and adds support for loading
+*Available since Camel 2.17*
+
+The `FileDataSet` extends `ListDataSet`, and adds support for loading
 the bodies from a file.
 
-=== Additional Properties on FileDataSet
+==== Additional Properties on FileDataSet
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
+|===
 |Property |Type |Default |Description
 
 |`sourceFile` |`File` |null |Specifies the source file for payloads
 
 |`delimiter` |`String` |\z |Specifies the delimiter pattern used by a `java.util.Scanner` to split
 the file into multiple payloads.
-|=======================================================================
+|===
 
-=== See Also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
-* link:spring-testing.html[Spring Testing]

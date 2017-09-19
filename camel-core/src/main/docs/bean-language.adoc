@@ -42,16 +42,16 @@ The Bean method language supports 5 options which are listed below.
 === Using Bean Expressions from the Java DSL
 
 [source,java]
-----------------------------------------------
+----
 from("activemq:topic:OrdersTopic").
   filter().method("myBean", "isGoldCustomer").
     to("activemq:BigSpendersQueue");
-----------------------------------------------
+----
 
 === Using Bean Expressions from XML
 
 [source,xml]
---------------------------------------------------
+----
 <route>
   <from uri="activemq:topic:OrdersTopic"/>
   <filter>
@@ -59,11 +59,9 @@ from("activemq:topic:OrdersTopic").
     <to uri="activemq:BigSpendersQueue"/>
   </filter>
 </route>
---------------------------------------------------
+----
 
-*Bean attribute now deprecated*
-
-Note, the `bean` attribute of the method expression element is now
+CAUTION: Bean attribute is now deprecated. The `bean` attribute of the method expression element is now
 deprecated. You should now make use of `ref` attribute instead.
 
 === Writing the expression bean
@@ -75,28 +73,32 @@ converted to a *boolean* value in this case, as its used as a predicate.
 So we could implement it like this...
 
 [source,java]
-----------------------------------------------------
+----
 public class MyBean {
   public boolean isGoldCustomer(Exchange exchange) {
     ...
   }
 }
-----------------------------------------------------
+----
 
 We can also use the link:bean-integration.html[Bean Integration]
 annotations. For example you could do...
 
 [source,java]
-------------------------------------------------
-public boolean isGoldCustomer(String body) {...}
-------------------------------------------------
+----
+public boolean isGoldCustomer(String body) {
+  // do something
+}
+----
 
 or
 
 [source,java]
-----------------------------------------------------------------------------
-public boolean isGoldCustomer(@Header(name = "foo") Integer fooHeader) {...}
-----------------------------------------------------------------------------
+----
+public boolean isGoldCustomer(@Header(name = "foo") Integer fooHeader) {
+  // do something
+}
+----
 
 So you can bind parameters of the method to the Exchange, the
 link:message.html[Message] or individual headers, properties, the body
@@ -115,11 +117,11 @@ invoke an already existing instance. This is illustrated from the
 example below:
 
 [source,java]
-----------------------------------------------------------------------------------
-        from("activemq:topic:OrdersTopic").
-                filter().expression(BeanLanguage(MyBean.class, "isGoldCustomer")).
-                to("activemq:BigSpendersQueue");
-----------------------------------------------------------------------------------
+----
+from("activemq:topic:OrdersTopic").
+        filter().expression(BeanLanguage(MyBean.class, "isGoldCustomer")).
+        to("activemq:BigSpendersQueue");
+----
 
 The 2nd parameter `isGoldCustomer` is an optional parameter to explicit
 set the method name to invoke. If not provided Camel will try to invoke
@@ -129,36 +131,36 @@ Also the code is more readable if the method name is provided. The 1st
 parameter can also be an existing instance of a Bean such as:
 
 [source,java]
------------------------------------------------------------------------------
-   private MyBean my;
+----
+private MyBean my;
 
-        from("activemq:topic:OrdersTopic").
-                filter().expression(BeanLanguage.bean(my, "isGoldCustomer")).
-                to("activemq:BigSpendersQueue");
------------------------------------------------------------------------------
+    from("activemq:topic:OrdersTopic").
+        filter().expression(BeanLanguage.bean(my, "isGoldCustomer")).
+            to("activemq:BigSpendersQueue");
+----
 
 In Camel 2.2 onwards you can avoid the `BeanLanguage` and have it just
 as:
 
 [source,java]
-----------------------------------------------------------------
-   private MyBean my;
+----
+private MyBean my;
 
-        from("activemq:topic:OrdersTopic").
-                filter().expression(bean(my, "isGoldCustomer")).
-                to("activemq:BigSpendersQueue");
-----------------------------------------------------------------
+    from("activemq:topic:OrdersTopic").
+        filter().expression(bean(my, "isGoldCustomer")).
+            to("activemq:BigSpendersQueue");
+----
 
 Which also can be done in a bit shorter and nice way:
 
 [source,java]
-------------------------------------------------------
-   private MyBean my;
+----
+private MyBean my;
 
-        from("activemq:topic:OrdersTopic").
-                filter().method(my, "isGoldCustomer").
-                to("activemq:BigSpendersQueue");
-------------------------------------------------------
+    from("activemq:topic:OrdersTopic").
+        filter().method(my, "isGoldCustomer").
+            to("activemq:BigSpendersQueue");
+----
 
 === Dependencies
 

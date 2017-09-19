@@ -18,19 +18,19 @@ link:groovy.html[Groovy] or link:javascript.html[JavaScript] languages.
 
 === URI format
 
-[source,java]
-------------------------------------------
+[source]
+----
 language://languageName[:script][?options]
-------------------------------------------
+----
 
 And from Camel 2.11 onwards you can refer to an external resource for
 the script using same notation as supported by the other
 link:language.html[Language]s in Camel
 
-[source,java]
------------------------------------------------------------
+[source]
+----
 language://languageName:resource:scheme:location][?options]
------------------------------------------------------------
+----
 
 === URI Options
 
@@ -80,12 +80,12 @@ The following message headers can be used to affect the behavior of the
 component
 
 [width="100%",cols="10%,90%",options="header",]
-|=======================================================================
+|===
 |Header |Description
 
 |`CamelLanguageScript` |The script to execute provided in the header. Takes precedence over
 script configured on the endpoint.
-|=======================================================================
+|===
 
 === Examples
 
@@ -103,10 +103,10 @@ link:xpath.html[XPath] language to extract the text from the `<foo>`
 tag.
 
 [source,java]
---------------------------------------------------------------------------------------------------------------------------------
+----
 Object out = producer.requestBodyAndHeader("language:xpath", "<foo>Hello World</foo>", Exchange.LANGUAGE_SCRIPT, "/foo/text()");
 assertEquals("Hello World", out);
---------------------------------------------------------------------------------------------------------------------------------
+----
 
 === Loading scripts from resources
 
@@ -129,13 +129,3 @@ From *Camel 2.11* onwards you can refer to the resource similar to the
 other link:language.html[Language]s in Camel by prefixing with
 `"resource:"` as shown below:
 
-=== See Also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
-* link:languages.html[Languages]
-* link:routing-slip.html[Routing Slip]
-* link:dynamic-router.html[Dynamic Router]
-* link:script.html[Script]

@@ -9,7 +9,7 @@ endpoint are all available to be browsed.
 
 === URI format
 
-[source,java]
+[source]
 -------------------------
 browse:someName[?options]
 -------------------------
@@ -62,27 +62,27 @@ In the route below, we insert a `browse:` component to be able to browse
 the Exchanges that are passing through:
 
 [source,java]
--------------------------------------------------------------------------------
-  from("activemq:order.in").to("browse:orderReceived").to("bean:processOrder");
--------------------------------------------------------------------------------
+----
+from("activemq:order.in").to("browse:orderReceived").to("bean:processOrder");
+----
 
 We can now inspect the received exchanges from within the Java code:
 
 [source,java]
---------------------------------------------------------------------------------------------------------
-    private CamelContext context;
+----
+private CamelContext context;
 
-    public void inspectRecievedOrders() {
-        BrowsableEndpoint browse = context.getEndpoint("browse:orderReceived", BrowsableEndpoint.class);
-        List<Exchange> exchanges = browse.getExchanges();
-        ...
-        // then we can inspect the list of received exchanges from Java
-        for (Exchange exchange : exchanges) {
-            String payload = exchange.getIn().getBody();
-            ...
-        }
-   }
---------------------------------------------------------------------------------------------------------
+public void inspectRecievedOrders() {
+    BrowsableEndpoint browse = context.getEndpoint("browse:orderReceived", BrowsableEndpoint.class);
+    List<Exchange> exchanges = browse.getExchanges();
+
+    // then we can inspect the list of received exchanges from Java
+    for (Exchange exchange : exchanges) {
+        String payload = exchange.getIn().getBody();
+        // do something with payload
+    }
+}
+----
 
 === See Also
 
