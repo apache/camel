@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.camel.itest.springboot.ITestConfig;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -43,6 +44,7 @@ import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactDescriptorException;
 import org.eclipse.aether.resolution.ArtifactDescriptorRequest;
 import org.eclipse.aether.resolution.ArtifactDescriptorResult;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
@@ -58,13 +60,16 @@ public final class BOMResolver {
 
     private static final File CACHE_FILE = LocationUtils.camelRoot("tests/camel-itest-spring-boot/target/bom-versions-cache");
 
-    private static final BOMResolver INSTANCE = new BOMResolver();
+    private static BOMResolver INSTANCE;
+
+    private ITestConfig config;
 
     private Map<String, String> versions;
 
     @SuppressWarnings("unchecked")
-    private BOMResolver() {
+    private BOMResolver(ITestConfig config) {
         try {
+            this.config = config;
             cleanupLocalRepo();
 
             if (canUseCache()) {
@@ -107,19 +112,21 @@ public final class BOMResolver {
         String camelVersion = DependencyResolver.resolveCamelParentProperty("${project.version}");
 
         List<Artifact> neededArtifacts = new LinkedList<>();
-        neededArtifacts.add(new DefaultArtifact("org.apache.camel:camel:pom:"
-            + camelVersion).setFile(camelRoot("pom.xml")));
-        neededArtifacts.add(new DefaultArtifact("org.apache.camel:camel-parent:pom:"
-            + camelVersion).setFile(camelRoot("parent/pom.xml")));
+        Artifact camelRoot = new DefaultArtifact("org.apache.camel:camel:pom:"
+                + camelVersion).setFile(camelRoot("pom.xml"));
+        neededArtifacts.add(camelRoot);
+        Artifact camelParent = new DefaultArtifact("org.apache.camel:camel-parent:pom:"
+                + camelVersion).setFile(camelRoot("parent/pom.xml"));
+        neededArtifacts.add(camelParent);
         neededArtifacts.add(new DefaultArtifact("org.apache.camel:spring-boot:pom:"
             + camelVersion).setFile(camelRoot("platforms/spring-boot/pom.xml")));
         neededArtifacts.add(new DefaultArtifact("org.apache.camel:camel-spring-boot-dm:pom:"
             + camelVersion).setFile(camelRoot("platforms/spring-boot/spring-boot-dm/pom.xml")));
         neededArtifacts.add(new DefaultArtifact("org.apache.camel:camel-spring-boot-dependencies:pom:"
             + camelVersion).setFile(camelRoot("platforms/spring-boot/spring-boot-dm/camel-spring-boot-dependencies/pom.xml")));
-        Artifact camelSpringBootParent = new DefaultArtifact("org.apache.camel:camel-starter-parent:pom:"
+        Artifact camelStarterParent = new DefaultArtifact("org.apache.camel:camel-starter-parent:pom:"
             + camelVersion).setFile(camelRoot("platforms/spring-boot/spring-boot-dm/camel-starter-parent/pom.xml"));
-        neededArtifacts.add(camelSpringBootParent);
+        neededArtifacts.add(camelStarterParent);
 
         RemoteRepository localRepoDist = new RemoteRepository.Builder("org.apache.camel.itest.springboot", "default", new File(LOCAL_REPO).toURI().toString()).build();
 
@@ -131,22 +138,34 @@ public final class BOMResolver {
             system.deploy(session, deployRequest);
         }
 
-
         RemoteRepository mavenCentral = new RemoteRepository.Builder("central", "default", "http://repo1.maven.org/maven2/").build();
         RemoteRepository apacheSnapshots = new RemoteRepository.Builder("apache-snapshots", "default", "http://repository.apache.org/snapshots/").build();
-
-        ArtifactDescriptorRequest dReq = new ArtifactDescriptorRequest(camelSpringBootParent, Arrays.asList(localRepoDist, mavenCentral, apacheSnapshots), null);
-        ArtifactDescriptorResult dRes = system.readArtifactDescriptor(session, dReq);
+        RemoteRepository springMilestones = new RemoteRepository.Builder("spring-milestones", "default", "https://repo.spring.io/libs-milestone/").build();
 
         this.versions = new TreeMap<>();
-        for (Dependency dependency : dRes.getManagedDependencies()) {
+
+        ArtifactDescriptorRequest springBootParentReq = new ArtifactDescriptorRequest(camelStarterParent, Arrays.asList(localRepoDist, mavenCentral, apacheSnapshots, springMilestones), null);
+        ArtifactDescriptorResult springBootParentRes = system.readArtifactDescriptor(session, springBootParentReq);
+        for (Dependency dependency : springBootParentRes.getManagedDependencies()) {
+            Artifact a = dependency.getArtifact();
+            String key = a.getGroupId() + ":" + a.getArtifactId();
+            versions.put(key, dependency.getArtifact().getVersion());
+        }
+
+        Artifact springBootDependencies = new DefaultArtifact("org.springframework.boot:spring-boot-dependencies:pom:" + config.getSpringBootVersion());
+        ArtifactDescriptorRequest springBootDependenciesReq = new ArtifactDescriptorRequest(springBootDependencies, Arrays.asList(localRepoDist, mavenCentral, apacheSnapshots, springMilestones), null);
+        ArtifactDescriptorResult springBootDependenciesRes = system.readArtifactDescriptor(session, springBootDependenciesReq);
+        for (Dependency dependency : springBootDependenciesRes.getManagedDependencies()) {
             Artifact a = dependency.getArtifact();
             String key = a.getGroupId() + ":" + a.getArtifactId();
             versions.put(key, dependency.getArtifact().getVersion());
         }
     }
 
-    public static BOMResolver getInstance() {
+    public static BOMResolver getInstance(ITestConfig config) {
+        if (INSTANCE == null) {
+            INSTANCE = new BOMResolver(config);
+        }
         return INSTANCE;
     }
 

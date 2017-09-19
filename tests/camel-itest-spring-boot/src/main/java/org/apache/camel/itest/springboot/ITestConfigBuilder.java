@@ -165,8 +165,8 @@ public class ITestConfigBuilder {
         return this;
     }
 
-    public ITestConfigBuilder springBootMajorVersion(Integer springBootMajorVersion) {
-        config.setSpringBootMajorVersion(springBootMajorVersion);
+    public ITestConfigBuilder springBootVersion(String springBootVersion) {
+        config.setSpringBootVersion(springBootVersion);
         return this;
     }
 
@@ -258,8 +258,8 @@ public class ITestConfigBuilder {
             config.setTestLibraryVersions(new HashMap<>());
         }
 
-        if (config.getSpringBootMajorVersion() == null) {
-            config.setSpringBootMajorVersion(integerPropertyOr("springBootMajorVersion", 1));
+        if (config.getSpringBootVersion() == null) {
+            config.setSpringBootVersion(propertyOr("springBootVersion", null));
         }
 
         return config;

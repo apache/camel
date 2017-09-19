@@ -300,8 +300,11 @@ public final class ArquillianPackager {
         ignore.add("com.github.jnr");
         ignore.add("com.sun.xml.bind:jaxb-xjc");
         ignore.add("commons-beanutils:commons-beanutils");
+        ignore.add("io.dropwizard.metrics:metrics-json"); // PR to spring-boot
+        ignore.add("io.dropwizard.metrics:metrics-jvm"); // PR to spring-boot
         ignore.add("io.fabric8:kubernetes-");
         ignore.add("io.netty:netty:jar"); // an old version
+        ignore.add("io.netty:netty-tcnative-boringssl-static");
         ignore.add("io.swagger:swagger-parser");
         ignore.add("org.apache.commons");
         ignore.add("org.apache.curator");
@@ -309,19 +312,27 @@ public final class ArquillianPackager {
         ignore.add("org.apache.geronimo.specs");
         ignore.add("org.apache.maven");
         ignore.add("org.apache.parquet");
+        ignore.add("org.apache.solr:solr-solrj"); // PR to spring-boot
         ignore.add("org.apache.velocity");
         ignore.add("org.apache.qpid:qpid-jms-client");
         ignore.add("org.opensaml");
         ignore.add("org.ow2.asm"); // No problem
         ignore.add("org.codehaus.plexus");
+        ignore.add("org.eclipse.jetty.websocket:websocket-api"); // PR to spring-boot
+        ignore.add("org.infinispan");
         ignore.add("org.jboss.arquillian.container");
+        ignore.add("org.jboss.logging");
+        ignore.add("org.jboss.marshalling");
         ignore.add("org.jboss:");
         ignore.add("org.hibernate:hibernate-validator"); // does not match with hibernate-core
         ignore.add("org.mortbay.jetty:servlet-api-2.5");
         ignore.add("org.scala-lang:scala-compiler");
+        ignore.add("org.slf4j:slf4j-ext"); // PR to spring-boot
         ignore.add("org.easytesting");
+        ignore.add("net.java.dev.jna:jna-platform"); // PR to spring-boot
         ignore.add("net.openhft");
         ignore.add("net.sourceforge.htmlunit:htmlunit-core-js"); // v 2.21 does not exist
+        ignore.add("org.springframework.cloud"); // too many different versions
         ignore.add("org.springframework.data");
         ignore.add("org.springframework.security:spring-security-jwt");
         ignore.add("org.springframework.security:spring-security-rsa");
@@ -329,9 +340,8 @@ public final class ArquillianPackager {
         ignore.add("org.webjars"); // No problem
         ignore.add("stax:stax-api");
         ignore.add("xml-apis:xml-apis-ext");
-        ignore.add("org.infinispan");
-        ignore.add("org.jboss.logging");
-        ignore.add("org.jboss.marshalling");
+
+
 
         Map<String, Map<String, String>> status = new TreeMap<>();
         Set<String> mismatches = new TreeSet<>();
@@ -487,6 +497,8 @@ public final class ArquillianPackager {
             pom = pom.replace(property, resolvedProperties.get(property));
         }
 
+
+
         pom = pom.replace("#{module}", config.getModuleName());
 
         File pomFile = new File(config.getModuleBasePath() + "/target/itest-spring-boot-pom.xml");
@@ -577,22 +589,28 @@ public final class ArquillianPackager {
         String groupId = textBetween(dependencyXml, "<groupId>", "</groupId>");
         String artifactId = textBetween(dependencyXml, "<artifactId>", "</artifactId>");
 
-        String bomVersion = config.getTestLibraryVersions().get(groupId + ":" + artifactId);
-        if (bomVersion == null) {
-            bomVersion = BOMResolver.getInstance().getBOMVersion(groupId, artifactId);
+        String version = config.getTestLibraryVersions().get(groupId + ":" + artifactId);
+        boolean stripVersion = false;
+        if (version == null) {
+            boolean testsLib = dependencyXml.contains("<classifier>tests");
+            stripVersion = !testsLib && BOMResolver.getInstance(config).getBOMVersion(groupId, artifactId) != null;
         }
 
-        if (bomVersion != null) {
+        if (version != null) {
             if (dependencyXml.contains("<version>")) {
                 int from = dependencyXml.indexOf("<version>") + 9;
                 int to = dependencyXml.indexOf("</version>");
 
-                dependencyXml = dependencyXml.substring(0, from) + bomVersion + dependencyXml.substring(to);
+                dependencyXml = dependencyXml.substring(0, from) + version + dependencyXml.substring(to);
             } else {
                 String kw = "</artifactId>";
                 int pos = dependencyXml.indexOf(kw) + kw.length();
-                dependencyXml = dependencyXml.substring(0, pos) + "<version>" + bomVersion + "</version>" + dependencyXml.substring(pos);
+                dependencyXml = dependencyXml.substring(0, pos) + "<version>" + version + "</version>" + dependencyXml.substring(pos);
             }
+        } else if (stripVersion && dependencyXml.contains("<version>")) {
+            int from = dependencyXml.indexOf("<version>");
+            int to = dependencyXml.indexOf("</version>") + 10;
+            dependencyXml = dependencyXml.substring(0, from) + dependencyXml.substring(to);
         }
 
         return dependencyXml;

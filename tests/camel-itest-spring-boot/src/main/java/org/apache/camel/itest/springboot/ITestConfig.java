@@ -71,7 +71,7 @@ public class ITestConfig implements Serializable {
 
     private Map<String, String> testLibraryVersions;
 
-    private Integer springBootMajorVersion;
+    private String springBootVersion;
 
     public ITestConfig() {
     }
@@ -252,12 +252,16 @@ public class ITestConfig implements Serializable {
         this.testLibraryVersions = testLibraryVersions;
     }
 
-    public Integer getSpringBootMajorVersion() {
-        return springBootMajorVersion;
+    public String getSpringBootVersion() {
+        return springBootVersion;
     }
 
-    public void setSpringBootMajorVersion(Integer springBootMajorVersion) {
-        this.springBootMajorVersion = springBootMajorVersion;
+    public Integer getSpringBootMajorVersion() {
+        return Integer.parseInt(springBootVersion.substring(0, 1));
+    }
+
+    public void setSpringBootVersion(String springBootVersion) {
+        this.springBootVersion = springBootVersion;
     }
 
     @Override
@@ -285,7 +289,7 @@ public class ITestConfig implements Serializable {
                 ", useCustomLog=" + useCustomLog +
                 ", ignoreLibraryMismatch=" + ignoreLibraryMismatch +
                 ", testLibraryVersions=" + testLibraryVersions +
-                ", springBootMajorVersion=" + springBootMajorVersion +
+                ", springBootVersion=" + springBootVersion +
                 '}';
     }
 }

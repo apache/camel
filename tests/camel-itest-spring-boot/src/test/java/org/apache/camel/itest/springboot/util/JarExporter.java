@@ -24,7 +24,7 @@ import org.jboss.shrinkwrap.impl.base.exporter.zip.ZipExporterImpl;
 import org.junit.Test;
 
 /**
- * Utililty to export a spring-boot jar and check the content.
+ * Utility to export a spring-boot jar and check the content.
  */
 public class JarExporter {
 
@@ -32,7 +32,7 @@ public class JarExporter {
     public void exportJar() throws Exception {
 
         Archive<?> archive = ArquillianPackager.springBootPackage(new ITestConfigBuilder()
-                .module("camel-sjms2")
+                .module("camel-websocket")
                 .build());
 
         new ZipExporterImpl(archive).exportTo(new File("target/export.zip"), true);

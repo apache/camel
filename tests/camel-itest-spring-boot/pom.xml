@@ -193,6 +193,10 @@
               <name>itest.springboot.mavenOfflineResolution</name>
               <value>false</value>
             </property>
+            <property>
+              <name>itest.springboot.springBootVersion</name>
+              <value>${spring-boot-version}</value>
+            </property>
 
           </systemProperties>
         </configuration>
@@ -217,49 +221,6 @@
     </profile>
     <profile>
       <id>spring-boot2</id>
-
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <childDelegation>false</childDelegation>
-              <forkedProcessTimeoutInSeconds>15000</forkedProcessTimeoutInSeconds>
-              <rerunFailingTestsCount>1</rerunFailingTestsCount>
-              <includes>
-                <include>**/*Test.java</include>
-              </includes>
-              <systemProperties>
-                <!-- Test configuration -->
-                <!--
-                It is better disabling unit testing in surefire, as some of them fail for various reasons
-                (unrelated to spring-boot) when running in the arquillian jar.
-
-                Tests are enabled when running from IDE. See org.apache.camel.itest.springboot.ITestConfigBuilder
-                for property names and defaults values.
-                -->
-                <property>
-                  <name>itest.springboot.unitTestEnabled</name>
-                  <value>false</value>
-                </property>
-                <property>
-                  <name>itest.springboot.includeTestDependencies</name>
-                  <value>true</value>
-                </property>
-                <property>
-                  <name>itest.springboot.mavenOfflineResolution</name>
-                  <value>false</value>
-                </property>
-                <!-- Adding spring-boot version -->
-                <property>
-                  <name>itest.springboot.springBootMajorVersion</name>
-                  <value>2</value>
-                </property>
-              </systemProperties>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
 
       <dependencies>
         <dependency>
