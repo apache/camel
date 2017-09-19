@@ -1,4 +1,4 @@
-== REST API Component
+== REST DSL Component
 
 *Available as of Camel version 2.16*
 
@@ -19,7 +19,6 @@ others that has native REST integration.
 The following Camel components supports the Rest DSL. See the bottom of
 this page for how to integrate a component with the Rest DSL.
 
-* camel-coap
 * link:netty-http.html[camel-netty-http] (also
 supports link:swagger-java.html[Swagger Java])
 * link:netty4-http.html[camel-netty4-http] (also
@@ -243,7 +242,7 @@ service using .route(). Notice we need to use .endRest() to tell Camel
 where the route ends, so we can _go back_ to the Rest DSL and continue
 defining REST services.
 
-#### Configuring route options
+=== Configuring route options
 
 In the embedded route you can configure the route settings such as
 routeId, autoStartup and various other options you can set on routes
@@ -307,7 +306,7 @@ classpath. See the INFO box below for more details.
 be on the classpath. See the INFO box below for more details.
 |===
 
-TIP:From *Camel 2.14.1* onwards when using camel-jaxb for xml bindings, then
+TIP: From *Camel 2.14.1* onwards when using camel-jaxb for xml bindings, then
 you can use the option `mustBeJAXBElement` to relax the output message
 body must be a class with JAXB annotations. You can use this in
 situations where the message body is already in XML format, and you want
@@ -315,7 +314,7 @@ to use the message body as-is as the output type. If that is the case,
 then set the dataFormatProperty option `mustBeJAXBElement` to `false`
 value.
 
-INFO:From *Camel 2.16.3* onwards the binding from POJO to JSon/JAXB will only
+NOTE: From *Camel 2.16.3* onwards the binding from POJO to JSon/JAXB will only
 happen if the `content-type` header includes the
 word `json` or `xml` representatively. This allows you to specify a
 custom content-type if the message body should not attempt to be
