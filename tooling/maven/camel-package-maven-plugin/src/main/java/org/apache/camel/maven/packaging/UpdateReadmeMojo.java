@@ -400,7 +400,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
                 if (i == 0) {
                     // first line is the title to make the text less noisy we use level 2
-                    String newLine = "## " + title;
+                    String newLine = "== " + title;
                     newLines.add(newLine);
                     updated = !line.equals(newLine);
                     continue;
@@ -408,7 +408,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
                 // use single line headers with # as level instead of the cumbersome adoc weird style
                 if (line.startsWith("^^^") || line.startsWith("~~~") || line.startsWith("+++")) {
-                    String level = line.startsWith("+++") ? "####" : "###";
+                    String level = line.startsWith("+++") ? "====" : "===";
 
                     // transform legacy heading into new style
                     int idx = newLines.size() - 1;
@@ -471,7 +471,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
             newLines.addAll(Arrays.asList(lines));
 
             // check the first four lines
-            boolean title = lines[0].startsWith("##");
+            boolean title = lines[0].startsWith("##") || lines[0].startsWith("==");
             boolean empty = lines[1].trim().isEmpty();
             boolean availableFrom = lines[2].trim().contains("Available as of") || lines[2].trim().contains("Available in");
             boolean empty2 = lines[3].trim().isEmpty();
