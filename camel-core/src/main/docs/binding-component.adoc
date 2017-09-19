@@ -70,9 +70,9 @@ You can prefix any endpoint URI with *binding:nameOfBinding:* where
 _nameOfBinding_ is the name of the Binding bean in your registry.
 
 [source,java]
-------------------------------------------------------------------------------
+----
 from("binding:jaxb:activemq:myQueue").to("binding:jaxb:activemq:anotherQueue")
-------------------------------------------------------------------------------
+----
 
 Here we are using the "jaxb" binding which may, for example, use the
 JAXB link:data-format.html[Data Format] to marshal and unmarshal
@@ -89,17 +89,17 @@ For example if you registered a new component called "jsonmq" in your
 registry using code like this
 
 [source,java]
------------------------------------------------------------------------------------------------------
-        JacksonDataFormat format = new JacksonDataFormat(MyBean.class);
-        context.bind("jsonmq", new BindingComponent(new DataFormatBinding(format), "activemq:foo."));
------------------------------------------------------------------------------------------------------
+----
+JacksonDataFormat format = new JacksonDataFormat(MyBean.class);
+context.bind("jsonmq", new BindingComponent(new DataFormatBinding(format), "activemq:foo."));
+----
 
 Then you could use the endpoint as if it were any other endpoint.
 
 [source,java]
-------------------------------------------------
+----
 from("jsonmq:myQueue").to("jsonmq:anotherQueue")
-------------------------------------------------
+----
 
 which would be using the queueus "foo.myQueue" and "foo.anotherQueue"
 and would use the given Jackson link:data-format.html[Data Format] to

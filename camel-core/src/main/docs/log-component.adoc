@@ -16,10 +16,10 @@ Util Logging logging]
 
 === URI format
 
-[source,java]
------------------------------
+[source]
+----
 log:loggingCategory[?options]
------------------------------
+----
 
 Where *loggingCategory* is the name of the logging category to use. You
 can append query options to the URI in the following format,
@@ -37,10 +37,10 @@ using *loggingCategory*.
 For example, a log endpoint typically specifies the logging level using
 the `level` option, as follows:
 
-[source,java]
-----------------------------------------
+[source]
+----
 log:org.apache.camel.example?level=DEBUG
-----------------------------------------
+----
 
 The default logger logs every exchange (_regular logging_). But Camel
 also ships with the `Throughput` logger, which is used whenever the
@@ -129,20 +129,20 @@ In the route below we log the incoming orders at `DEBUG` level before
 the order is processed:
 
 [source,java]
-------------------------------------------------------------------------------------------
+----
 from("activemq:orders").to("log:com.mycompany.order?level=DEBUG").to("bean:processOrder");
-------------------------------------------------------------------------------------------
+----
 
 Or using Spring XML to define the route:
 
 [source,xml]
----------------------------------------------------
-  <route>
-    <from uri="activemq:orders"/>
-    <to uri="log:com.mycompany.order?level=DEBUG"/>
-    <to uri="bean:processOrder"/>
-  </route> 
----------------------------------------------------
+----
+<route>
+  <from uri="activemq:orders"/>
+  <to uri="log:com.mycompany.order?level=DEBUG"/>
+  <to uri="bean:processOrder"/>
+</route>
+----
 
 === Regular logger with formatter sample
 
@@ -150,10 +150,10 @@ In the route below we log the incoming orders at `INFO` level before the
 order is processed.
 
 [source,java]
---------------------------------------------------------------------------------------
+----
 from("activemq:orders").
     to("log:com.mycompany.order?showAll=true&multiline=true").to("bean:processOrder");
---------------------------------------------------------------------------------------
+----
 
 === Throughput logger with groupSize sample
 
@@ -161,10 +161,10 @@ In the route below we log the throughput of the incoming orders at
 `DEBUG` level grouped by 10 messages.
 
 [source,java]
------------------------------------------------------------------------------------
+----
 from("activemq:orders").
     to("log:com.mycompany.order?level=DEBUG&groupSize=10").to("bean:processOrder");
------------------------------------------------------------------------------------
+----
 
 === Throughput logger with groupInterval sample
 
@@ -173,17 +173,17 @@ initial 60s delay and stats should be displayed even if there isn't any
 message traffic.
 
 [source,java]
------------------------------------------------------------------------------------------------------------------------------
+----
 from("activemq:orders").
-to("log:com.mycompany.order?level=DEBUG&groupInterval=10000&groupDelay=60000&groupActiveOnly=false").to("bean:processOrder");
------------------------------------------------------------------------------------------------------------------------------
+    to("log:com.mycompany.order?level=DEBUG&groupInterval=10000&groupDelay=60000&groupActiveOnly=false").to("bean:processOrder");
+----
 
 The following will be logged:
 
-[source,java]
-------------------------------------------------------------------------------------------------------------------------------------
+[source]
+----
 "Received: 1000 new messages, with total 2000 so far. Last group took: 10000 millis which is: 100 messages per second. average: 100"
-------------------------------------------------------------------------------------------------------------------------------------
+----
 
 === Masking sensitive information like password
 *Available as of Camel 2.19*
@@ -193,39 +193,36 @@ Note that this option also affects link:logeip.html[Log EIP].
 
 To enable mask in Java DSL at CamelContext level:
 [source,java]
---------------------------------------------------------
-CamelContext context = ...
-context.setLogMask(true);
---------------------------------------------------------
+----
+camelContext.setLogMask(true);
+----
 
 And in XML:
-[source,java]
---------------------------------------------------------
+[source,xml]
+----
 <camelContext logMask="true">
-...
---------------------------------------------------------
-
+----
 
 You can also turn it on|off at endpoint level. To enable mask in Java DSL at endpoint level,
 add logMask=true option in the URI for the log endpoint:
+
 [source,java]
---------------------------------------------------------
+----
 from("direct:start").to("log:foo?logMask=true");
---------------------------------------------------------
+----
 
 And in XML:
-[source,java]
---------------------------------------------------------
+[source,xml]
+----
 <route>
   <from uri="direct:foo"/>
   <to uri="log:foo?logMask=true"/>
-...
---------------------------------------------------------
+</route>
+----
 
 `org.apache.camel.processor.DefaultMaskingFormatter` is used for the masking by default.
 If you want to use a custom masking formatter, put it into registry with the name `CamelCustomLogMask`.
 Note that the masking formatter must implement `org.apache.camel.spi.MaskingFormatter`.
-
 
 === Full customization of the logging output
 
@@ -235,13 +232,13 @@ With the options outlined in the link:log.html[#Formatting] section, you
 can control much of the output of the logger. However, log lines will
 always follow this structure:
 
-[source,java]
---------------------------------------------------------------------------------------------------------------
+[source]
+----
 Exchange[Id:ID-machine-local-50656-1234567901234-1-2, ExchangePattern:InOut, 
 Properties:{CamelToEndpoint=log://org.apache.camel.component.log.TEST?showAll=true, 
 CamelCreatedTimestamp=Thu Mar 28 00:00:00 WET 2013}, 
 Headers:{breadcrumbId=ID-machine-local-50656-1234567901234-1-1}, BodyType:String, Body:Hello World, Out: null]
---------------------------------------------------------------------------------------------------------------
+----
 
 This format is unsuitable in some cases, perhaps because you need to...
 
@@ -267,21 +264,21 @@ in either of two ways:
 *Explicitly instantiating the LogComponent in your Registry:*
 
 [source,java]
----------------------------------------------------------------------
+----
 <bean name="log" class="org.apache.camel.component.log.LogComponent">
    <property name="exchangeFormatter" ref="myCustomFormatter" />
 </bean>
----------------------------------------------------------------------
+----
 
-*Convention over configuration:*
+#### Convention over configuration:*
 
 Simply by registering a bean with the name `logFormatter`; the Log
 Component is intelligent enough to pick it up automatically.
 
-[source,java]
-----------------------------------------------------------------------
+[source,xml]
+-----
 <bean name="logFormatter" class="com.xyz.MyCustomExchangeFormatter" />
-----------------------------------------------------------------------
+-----
 
 NOTE: the `ExchangeFormatter` gets applied to *all Log endpoints within
 that Camel Context*. If you need different ExchangeFormatters for
@@ -294,22 +291,22 @@ custom log formatter. Though when you do that you should define the
 "logFormatter" as prototype scoped so its not shared if you have
 different parameters, eg:
 
-[source,java]
----------------------------------------------------------------------------------------
+[source,xml]
+----
 <bean name="logFormatter" class="com.xyz.MyCustomExchangeFormatter" scope="prototype"/>
----------------------------------------------------------------------------------------
+----
 
 And then we can have Camel routes using the log uri with different
 options:
 
-[source,java]
+[source,xml]
 ---------------------------------------------
 <to uri="log:foo?param1=foo&amp;param2=100"/>
-...
+
 <to uri="log:bar?param1=bar&amp;param2=200"/>
 ---------------------------------------------
 
-#=== Using Log component in OSGi
+=== Using Log component in OSGi
 
 *Improvement as of Camel 2.12.4/2.13.1*
 
@@ -326,11 +323,6 @@ register single instance of `org.slf4j.Logger` in the Registry or
 reference it using `logger` URI parameter.
 
 === See Also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
 
 * link:tracer.html[Tracer]
 * link:how-do-i-use-log4j.html[How do I use log4j]

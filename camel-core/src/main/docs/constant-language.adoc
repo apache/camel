@@ -27,7 +27,7 @@ The setHeader element of the Spring DSL can utilize a constant
 expression like:
 
 [source,xml]
-------------------------------------------
+----
 <route>
   <from uri="seda:a"/>
   <setHeader headerName="theHeader">
@@ -35,7 +35,7 @@ expression like:
   </setHeader>
   <to uri="mock:b"/>     
 </route>
-------------------------------------------
+----
 
 in this case, the link:message.html[Message] coming from the seda:a
 link:endpoint.html[Endpoint] will have 'theHeader' header set to the
@@ -44,9 +44,9 @@ constant value 'the value'.
 And the same example using Java DSL:
 
 [source,java]
---------------------------------------------------------------------------
+----
 from("seda:a").setHeader("theHeader", constant("the value")).to("mock:b");
---------------------------------------------------------------------------
+----
 
 === Dependencies
 

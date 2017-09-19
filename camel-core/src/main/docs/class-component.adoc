@@ -9,10 +9,10 @@ based on the class name.
 
 === URI format
 
-[source,java]
--------------------------
+[source]
+----
 class:className[?options]
--------------------------
+----
 
 Where *className* is the fully qualified class name to create and use as
 bean.

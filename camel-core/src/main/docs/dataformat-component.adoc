@@ -7,10 +7,10 @@ Format] as a Camel link:component.html[Component].
 
 === URI format
 
-[source,java]
----------------------------------------------
+[source]
+----
 dataformat:name:(marshal|unmarshal)[?options]
----------------------------------------------
+----
 
 Where *name* is the name of the link:data-format.html[Data Format]. And
 then followed by the operation which must either be `marshal` or
@@ -61,16 +61,16 @@ For example to use the link:jaxb.html[JAXB] link:data-format.html[Data
 Format] we can do as follows:
 
 [source,java]
--------------------------------------------------------------
+----
 from("activemq:My.Queue").
   to("dataformat:jaxb:unmarshal?contextPath=com.acme.model").
   to("mqseries:Another.Queue");
--------------------------------------------------------------
+----
 
 And in XML DSL you do:
 
 [source,xml]
------------------------------------------------------------------------
+----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
   <route>
     <from uri="activemq:My.Queue"/>
@@ -78,12 +78,5 @@ And in XML DSL you do:
     <to uri="mqseries:Another.Queue"/>
   </route>
 </camelContext>
------------------------------------------------------------------------
+----
 
-=== See Also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
-* link:data-format.html[Data Format]

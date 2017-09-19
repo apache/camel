@@ -28,10 +28,10 @@ image:direct-vm.data/camel-direct-vm.png[image]
 
 === URI format
 
-[source,java]
-------------------
+[source]
+----
 direct-vm:someName
-------------------
+----
 
 Where *someName* can be any string to uniquely identify the endpoint
 
@@ -99,44 +99,39 @@ In the route below we use the direct component to link the two routes
 together:
 
 [source,java]
--------------------------------------------
+----
 from("activemq:queue:order.in")
     .to("bean:orderServer?method=validate")
     .to("direct-vm:processOrder");
--------------------------------------------
+----
 
 And now in another CamelContext, such as another OSGi bundle
 
 [source,java]
--------------------------------------------
+----
 from("direct-vm:processOrder")
     .to("bean:orderService?method=process")
     .to("activemq:queue:order.out");
--------------------------------------------
+----
 
 And the sample using spring DSL:
 
 [source,xml]
---------------------------------------------------
-   <route>
-     <from uri="activemq:queue:order.in"/>
-     <to uri="bean:orderService?method=validate"/>
-     <to uri="direct-vm:processOrder"/>
-  </route>
+----
+<route>
+ <from uri="activemq:queue:order.in"/>
+ <to uri="bean:orderService?method=validate"/>
+ <to uri="direct-vm:processOrder"/>
+</route>
 
-  <route>
-     <from uri="direct-vm:processOrder"/>
-     <to uri="bean:orderService?method=process"/>
-     <to uri="activemq:queue:order.out"/>
-  </route>    
---------------------------------------------------
+<route>
+ <from uri="direct-vm:processOrder"/>
+ <to uri="bean:orderService?method=process"/>
+ <to uri="activemq:queue:order.out"/>
+</route>
+----
 
 === See Also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
 
 * link:direct.html[Direct]
 * link:seda.html[SEDA]
