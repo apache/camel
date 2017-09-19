@@ -240,6 +240,9 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
     }
 
     <T> Optional<T> tryToReadResponse(final Class<T> expectedType, final InputStream responseStream) {
+        if (responseStream == null) {           
+            return Optional.empty();
+        } 
         try {
             if (format == PayloadFormat.JSON) {
                 return Optional.of(fromJson(expectedType, responseStream));
