@@ -108,7 +108,6 @@ You can use Camel simple language in the right operator, eg
 
 Camel JSonPath supports message body using the following types:
 
-{% raw %}
 [width="100%",cols="3m,7",options="header"]
 |=======================================================================
 | Type | Comment
@@ -121,7 +120,6 @@ Camel JSonPath supports message body using the following types:
   which is supported by JSonPath. For example you can add `camel-jackson` as dependency to include Jackson.
 | InputStream | If none of the above types matches, then Camel will attempt to read the message body as an `java.io.InputStream`.
 |=======================================================================
-{% endraw %}
 
 If a message body is of unsupported type then an exception is thrown by default, however you
 can configure JSonPath to suppress exceptions (see below)

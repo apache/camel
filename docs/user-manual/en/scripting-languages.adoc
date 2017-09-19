@@ -93,12 +93,10 @@ script to lookup property placeholders, then its a bit cumbersome to do
 so. For example to set a header name myHeader with a value from a property
 placeholder, which key is provided in a header named "foo".
 
-{% raw %}
 [source,java]
 --------------------------------------------------------------------------------------------------------------
 .setHeader("myHeader").groovy("context.resolvePropertyPlaceholders('{{' + request.headers.get('foo') + '}}')")
 --------------------------------------------------------------------------------------------------------------
-{% endraw %}
 
 From Camel 2.9 onwards you can now use the properties function and the
 same example is simpler:

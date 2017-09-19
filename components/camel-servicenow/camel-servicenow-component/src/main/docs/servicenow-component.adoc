@@ -277,7 +277,6 @@ NOTE: https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/integ
 
 ### Usage examples:
  
-{% raw %}
 [source,java]
 .Retrieve 10 Incidents
 -------------------------------------------------------------------------------------------------------------------
@@ -302,4 +301,3 @@ FluentProducerTemplate.on(context)
     .to("direct:servicenow")
     .send();
 -------------------------------------------------------------------------------------------------------------------
-{% endraw %}

@@ -36,9 +36,6 @@ You can append query options to the URI in the following format,
 ### Options
 
 
-{% raw %}
-
-
 // component options: START
 The Mustache component supports 2 options which are listed below.
 
@@ -88,8 +85,6 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
-
-{% endraw %}
 
 
 ### Mustache Context
