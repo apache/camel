@@ -18,10 +18,10 @@ route temporarily.
 
 === URI format
 
-[source,java]
-------------
+[source]
+----
 stub:someUri
-------------
+----
 
 Where *`someUri`* can be any URI with any query parameters.
 
@@ -87,15 +87,11 @@ with the following path and query parameters:
 
 === Examples
 
-Here are a few samples:
+Here are a few samples of stubbing endpoint uris
 
-* stub:smtp://somehost.foo.com?user=whatnot&something=else
-*
-stub:http://somehost.bar.com/something[http://somehost.bar.com/something]
+[source]
+----
+stub:smtp://somehost.foo.com?user=whatnot&something=else
+stub:http://somehost.bar.com/something
+----
 
-=== See Also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]

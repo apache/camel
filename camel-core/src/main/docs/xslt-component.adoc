@@ -8,10 +8,10 @@ link:templating.html[Templating] to generate respopnses for requests.
 
 === URI format
 
-[source,java]
----------------------------
+[source]
+----
 xslt:templateName[?options]
----------------------------
+----
 
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template. Refer to the
@@ -27,24 +27,24 @@ URI
 
 Description
 
-[source,java]
------------------------------
+[source]
+----
 xslt:com/acme/mytransform.xsl
------------------------------
+----
 
 refers to the file com/acme/mytransform.xsl on the classpath
 
-[source,java]
-------------------------
+[source]
+----
 xslt:file:///foo/bar.xsl
-------------------------
+----
 
 refers to the file /foo/bar.xsl
 
-[source,java]
------------------------------------
+[source]
+----
 xslt:http://acme.com/cheese/foo.xsl
------------------------------------
+----
 
 refers to the remote http resource
 
@@ -52,14 +52,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component when using *Camel 2.8* or older:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-spring</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 From Camel 2.9 onwards the link:xslt.html[XSLT] component is provided
 directly in the camel-core.
@@ -135,10 +135,10 @@ with the following path and query parameters:
 For example you could use something like
 
 [source,java]
---------------------------------------
+----
 from("activemq:My.Queue").
   to("xslt:com/acme/mytransform.xsl");
---------------------------------------
+----
 
 To use an XSLT template to formulate a response for a message for InOut
 message exchanges (where there is a `JMSReplyTo` header).
@@ -147,11 +147,11 @@ If you want to use InOnly and consume the message and send it to another
 destination you could use the following route:
 
 [source,java]
---------------------------------------
+----
 from("activemq:My.Queue").
   to("xslt:com/acme/mytransform.xsl").
   to("activemq:Another.Queue");
---------------------------------------
+----
 
 === Getting Parameters into the XSLT to work with
 
@@ -161,29 +161,29 @@ the XSLT. +
 _useable_.
 
 [source,xml]
--------------------------------------------------------------------
+----
 <setHeader headerName="myParam"><constant>42</constant></setHeader>
 <to uri="xslt:MyTransform.xsl"/>
--------------------------------------------------------------------
+----
 
 And the XSLT just needs to declare it at the top level for it to be
 available:
 
 [source,xml]
-------------------------------
+----
 <xsl: ...... >
 
    <xsl:param name="myParam"/>
   
     <xsl:template ...>
-------------------------------
+----
 
 === Spring XML versions
 
 To use the above examples in Spring XML you would use something like
 
 [source,xml]
------------------------------------------------------------------------
+----
   <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="activemq:My.Queue"/>
@@ -191,7 +191,7 @@ To use the above examples in Spring XML you would use something like
       <to uri="activemq:Another.Queue"/>
     </route>
   </camelContext>
------------------------------------------------------------------------
+----
 
 There is a
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/java/org/apache/camel/spring/processor/XsltTest.java[test
@@ -210,9 +210,9 @@ JVM starting folder.
 For example this include:
 
 [source,xml]
-----------------------------------------
+----
 <xsl:include href="staff_template.xsl"/>
-----------------------------------------
+----
 
 Will lookup the `staff_tempkalte.xsl` file from the starting folder
 where the application was started.
@@ -225,17 +225,17 @@ than before.
 For example this include:
 
 [source,xml]
-----------------------------------------
+----
 <xsl:include href="staff_template.xsl"/>
-----------------------------------------
+----
 
 Will now be located relative from the starting endpoint, which for
 example could be:
 
 [source,java]
-----------------------------------------------------------------------
+----
 .to("xslt:org/apache/camel/component/xslt/staff_include_relative.xsl")
-----------------------------------------------------------------------
+----
 
 Which means Camel will locate the file in the *classpath* as
 `org/apache/camel/component/xslt/staff_template.xsl`. +
@@ -251,20 +251,20 @@ If that neither has one, then classpath is assumed.
 You can also refer back in the paths such as
 
 [source,java]
------------------------------------------------------
+----
     <xsl:include href="../staff_other_template.xsl"/>
------------------------------------------------------
+----
 
 Which then will resolve the xsl file under `org/apache/camel/component`.
 
-#=== Using xsl:include and default prefix
+=== Using xsl:include and default prefix
 
 When using xsl:include such as:
 
 [source,xml]
-----------------------------------------
+----
 <xsl:include href="staff_template.xsl"/>
-----------------------------------------
+----
 
 Then in Camel 2.10.3 and older, then Camel will use "classpath:" as the
 default prefix, and load the resource from the classpath. This works for
@@ -272,25 +272,25 @@ most cases, but if you configure the starting resource to load from
 file,
 
 [source,java]
-----------------------------------------------------
+----
 .to("xslt:file:etc/xslt/staff_include_relative.xsl")
-----------------------------------------------------
+----
 
 .. then you would have to prefix all your includes with "file:" as well.
 
 [source,xml]
----------------------------------------------
+----
 <xsl:include href="file:staff_template.xsl"/>
----------------------------------------------
+----
 
 From Camel 2.10.4 onwards we have made this easier as Camel will use the
 prefix from the endpoint configuration as the default prefix. So from
 Camel 2.10.4 onwards you can do:
 
 [source,xml]
-----------------------------------------
+----
 <xsl:include href="staff_template.xsl"/>
-----------------------------------------
+----
 
 Which will load the staff_template.xsl resource from the file system, as
 the endpoint was configured with "file:" as prefix. +
@@ -303,14 +303,10 @@ unusual, as most people either use file or classpath based resources.
 Since Saxon 9.2, writing extension functions has been supplemented by a
 new mechanism, referred to
 as http://www.saxonica.com/html/documentation/extensibility/integratedfunctions[integrated
-extension functions] you can now easily use camel:
-
- 
-
-- Java example:
+extension functions] you can now easily use camel as shown in the below example:
 
 [source,java]
----------------------------------------------------------------------------------------------------------------------------------
+----
 SimpleRegistry registry = new SimpleRegistry();
 registry.put("function1", new MyExtensionFunction1());
 registry.put("function2", new MyExtensionFunction2());
@@ -323,29 +319,24 @@ context.addRoutes(new RouteBuilder() {
             .to("xslt:org/apache/camel/component/xslt/extensions/extensions.xslt?saxonExtensionFunctions=#function1,#function2");
     }
 });
----------------------------------------------------------------------------------------------------------------------------------
+----
 
- 
 
-Spring example:
+And with Spring XML:
 
 [source,xml]
------------------------------------------------------------------------------------------------------------------------------
+----
+<bean id="function1" class="org.apache.camel.component.xslt.extensions.MyExtensionFunction1"/>
+<bean id="function2" class="org.apache.camel.component.xslt.extensions.MyExtensionFunction2"/>
+
 <camelContext xmlns="http://camel.apache.org/schema/spring">
   <route>
     <from uri="direct:extensions"/>
     <to uri="xslt:org/apache/camel/component/xslt/extensions/extensions.xslt?saxonExtensionFunctions=#function1,#function2"/>
   </route>
 </camelContext>
+----
 
-
-<bean id="function1" class="org.apache.camel.component.xslt.extensions.MyExtensionFunction1"/>
-<bean id="function2" class="org.apache.camel.component.xslt.extensions.MyExtensionFunction2"/>
------------------------------------------------------------------------------------------------------------------------------
-
- 
-
- 
 
 === Dynamic stylesheets
 
@@ -372,22 +363,22 @@ For example in the stylesheet below, we want to terminate if a staff has
 an empty dob field. And to include a custom error message using
 xsl:message.
 
-[source,java]
----------------------------------------------------------------------------------------
-  <xsl:template match="/">
-    <html>
-      <body>
-        <xsl:for-each select="staff/programmer">
-          <p>Name: <xsl:value-of select="name"/><br />
-            <xsl:if test="dob=''">
-              <xsl:message terminate="yes">Error: DOB is an empty string!</xsl:message>
-            </xsl:if>
-          </p>
-        </xsl:for-each>
-      </body>
-    </html>
-  </xsl:template>
----------------------------------------------------------------------------------------
+[source,xml]
+----
+<xsl:template match="/">
+  <html>
+    <body>
+      <xsl:for-each select="staff/programmer">
+        <p>Name: <xsl:value-of select="name"/><br />
+          <xsl:if test="dob=''">
+            <xsl:message terminate="yes">Error: DOB is an empty string!</xsl:message>
+          </xsl:if>
+        </p>
+      </xsl:for-each>
+    </body>
+  </html>
+</xsl:template>
+----
 
 This information is not available on the Exchange stored as an Exception
 that contains the message in the `getMessage()` method on the exception.
@@ -399,7 +390,6 @@ key `Exchange.XSLT_WARNING.`
 Here are some observations from Sameer, a Camel user, which he kindly
 shared with us:
 
-________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
 In case anybody faces issues with the XSLT endpoint please review these
 points.
 
@@ -416,11 +406,11 @@ After a few hours of cranking my mind, I had to do the following to get
 it to work (thanks to some posts on the users forum that gave some
 clue):
 
-\1. Use the transformerFactory option in the route
+1. Use the transformerFactory option in the route
 `("xslt:my-transformer.xsl?transformerFactory=tFactory")` with the
 `tFactory` bean having bean defined in the spring context for
 `class="org.apache.xalan.xsltc.trax.TransformerFactoryImpl"`. +
- 2. Added the Xalan jar into my maven pom.
+2. Added the Xalan jar into my maven pom.
 
 My guess is that the default xml parsing mechanism supplied within the
 JDK (I am using 1.6.0_03) does not work right in this context and does
@@ -433,7 +423,6 @@ One workaround is to add the 2.1 jar to the `jre/lib/endorsed` directory
 for the jvm or as specified by the container.
 
 Hope this post saves newbie Camel riders some time.
-________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 === See Also
 

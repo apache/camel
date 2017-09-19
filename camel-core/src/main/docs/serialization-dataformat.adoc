@@ -9,11 +9,11 @@ Java objects or to marshal Java objects into a binary blob. +
 file then send it as an ObjectMessage to link:activemq.html[ActiveMQ]
 
 [source,java]
-------------------------------
+----
 from("file://foo/bar").
   unmarshal().serialization().
   to("activemq:Some.Queue");
-------------------------------
+----
 
 === Options
 

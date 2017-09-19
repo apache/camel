@@ -12,10 +12,10 @@ You can only consume events from this endpoint.
 
 === URI format
 
-[source,java]
-------------------------
+[source]
+----
 scheduler:name[?options]
-------------------------
+----
 
 Where `name` is the name of the scheduler, which is created and shared
 across endpoints. So if you use the same name for all your timer
@@ -104,24 +104,22 @@ When the timer is fired, it adds the following information as properties
 to the `Exchange`:
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Name |Type |Description
 
 |`Exchange.TIMER_NAME` |`String` |The value of the `name` option.
 
 |`Exchange.TIMER_FIRED_TIME` |`Date` |The time when the consumer fired.
-|=======================================================================
+|===
 
 === Sample
 
 To set up a route that generates an event every 60 seconds:
 
 [source,java]
-------------------------------------------------------------------------------
-   from("scheduler://foo?period=60s").to("bean:myBean?method=someMethodName");
-------------------------------------------------------------------------------
-
- 
+----
+from("scheduler://foo?period=60s").to("bean:myBean?method=someMethodName");
+----
 
 The above route will generate an event and then invoke the
 `someMethodName` method on the bean called `myBean` in the
@@ -130,19 +128,17 @@ link:registry.html[Registry] such as JNDI or link:spring.html[Spring].
 And the route in Spring DSL:
 
 [source,xml]
--------------------------------------------------
-  <route>
-    <from uri="scheduler://foo?period=60s"/>
-    <to uri="bean:myBean?method=someMethodName"/>
-  </route>
--------------------------------------------------
-
- 
+----
+<route>
+  <from uri="scheduler://foo?period=60s"/>
+  <to uri="bean:myBean?method=someMethodName"/>
+</route>
+----
 
 === Forcing the scheduler to trigger immediately when completed
 
 To let the scheduler trigger as soon as the previous task is complete,
-you can set the option greedy=true. But beware then the scheduler will
+you can set the option `greedy=true`. But beware then the scheduler will
 keep firing all the time. So use this with caution.
 
 === Forcing the scheduler to be idle
@@ -159,14 +155,7 @@ The consumer will otherwise as by default return 1 message polled to the
 scheduler, every time the consumer has completed processing the
 exchange.
 
- 
-
 === See Also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
 
 * link:timer.html[Timer]
 * link:quartz.html[Quartz]

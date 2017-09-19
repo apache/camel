@@ -17,10 +17,10 @@ VM is an extension to the link:seda.html[Seda] component.
 
 === URI format
 
-[source,java]
-----------------------
+[source]
+----
 vm:queueName[?options]
-----------------------
+----
 
 Where *`queueName`* can be any string to uniquely identify the endpoint
 within the JVM (or at least within the classloader that loaded
@@ -29,20 +29,17 @@ camel-core.jar)
 You can append query options to the URI in the following format:
 `?option=value&option=value&...`
 
-*Before Camel 2.3 - Same URI must be used for both producer and
-consumer*
-
 An exactly identical link:vm.html[VM] endpoint URI *must* be used for
 both the producer and the consumer endpoint. Otherwise, Camel will
 create a second link:vm.html[VM] endpoint despite that the `queueName`
 portion of the URI is identical. For example:
 
 [source,java]
----------------------------------------------------------
+----
 from("direct:foo").to("vm:bar?concurrentConsumers=5");
 
 from("vm:bar?concurrentConsumers=5").to("file://output");
----------------------------------------------------------
+----
 
 Notice that we have to use the full URI, including options in both the
 producer and consumer.
@@ -52,11 +49,11 @@ Using the queue name `bar`, we could rewrite the previous exmple as
 follows:
 
 [source,java]
----------------------------------------------------------
+----
 from("direct:foo").to("vm:bar");
 
 from("vm:bar?concurrentConsumers=5").to("file://output");
----------------------------------------------------------
+----
 
 === Options
 
@@ -127,22 +124,18 @@ In the route below we send exchanges across CamelContext instances to a
 VM queue named `order.email`:
 
 [source,java]
----------------------------------------------------------------
+----
 from("direct:in").bean(MyOrderBean.class).to("vm:order.email");
----------------------------------------------------------------
+----
 
 And then we receive exchanges in some other Camel context (such as
 deployed in another `.war` application):
 
 [source,java]
-------------------------------------------------------
+----
 from("vm:order.email").bean(MyOrderEmailSender.class);
-------------------------------------------------------
+----
 
 === See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
 * link:seda.html[Seda]

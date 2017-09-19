@@ -7,10 +7,10 @@ timer fires You can only consume events from this endpoint.
 
 === URI format
 
-[source,java]
---------------------
+[source]
+----
 timer:name[?options]
---------------------
+----
 
 Where `name` is the name of the `Timer` object, which is created and
 shared across endpoints. So if you use the same name for all your timer
@@ -83,7 +83,7 @@ When the timer is fired, it adds the following information as properties
 to the `Exchange`:
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Name |Type |Description
 
 |`Exchange.TIMER_NAME` |`String` |The value of the `name` option.
@@ -95,18 +95,18 @@ to the `Exchange`:
 |`Exchange.TIMER_FIRED_TIME` |`Date` |The time when the consumer fired.
 
 |`Exchange.TIMER_COUNTER` |`Long` |*Camel 2.8:* The current fire counter. Starts from 1.
-|=======================================================================
+|===
 
 === Sample
 
 To set up a route that generates an event every 60 seconds:
 
 [source,java]
--------------------------------------------------------------------------------------------
-   from("timer://foo?fixedRate=true&period=60000").to("bean:myBean?method=someMethodName");
--------------------------------------------------------------------------------------------
+----
+from("timer://foo?fixedRate=true&period=60000").to("bean:myBean?method=someMethodName");
+----
 
-TIP:Instead of 60000 you can use period=60s which is more friendly to read.
+TIP: Instead of 60000 you can use period=60s which is more friendly to read.
 
 The above route will generate an event and then invoke the
 `someMethodName` method on the bean called `myBean` in the
@@ -115,27 +115,27 @@ link:registry.html[Registry] such as JNDI or link:spring.html[Spring].
 And the route in Spring DSL:
 
 [source,xml]
--------------------------------------------------------------
-  <route>
-    <from uri="timer://foo?fixedRate=true&amp;period=60000"/>
-    <to uri="bean:myBean?method=someMethodName"/>
-  </route>
--------------------------------------------------------------
+-----
+<route>
+  <from uri="timer://foo?fixedRate=true&amp;period=60000"/>
+  <to uri="bean:myBean?method=someMethodName"/>
+</route>
+-----
 
-#=== Firing as soon as possible
+=== Firing as soon as possible
 
-#=== Available as of Camel 2.17
+*Available as of Camel 2.17*
 
 You may want to fire messages in a Camel route as soon as possible you
 can use a negative delay:
 
 [source,xml]
--------------------------------------------------
-  <route>
-    <from uri="timer://foo?delay=-1"/>
-    <to uri="bean:myBean?method=someMethodName"/>
-  </route>
--------------------------------------------------
+----
+<route>
+  <from uri="timer://foo?delay=-1"/>
+  <to uri="bean:myBean?method=someMethodName"/>
+</route>
+----
 
 In this way the timer will fire messages immediately.
 
@@ -146,7 +146,7 @@ reached.
 If you don't specify a repeatCount then the timer will continue firing
 messages until the route will be stopped. 
 
-#=== Firing only once
+=== Firing only once
 
 *Available as of Camel 2.8*
 
@@ -154,18 +154,14 @@ You may want to fire a message in a Camel route only once, such as when
 starting the route. To do that you use the repeatCount option as shown:
 
 [source,xml]
--------------------------------------------------
-  <route>
-    <from uri="timer://foo?repeatCount=1"/>
-    <to uri="bean:myBean?method=someMethodName"/>
-  </route>
--------------------------------------------------
+----
+<route>
+  <from uri="timer://foo?repeatCount=1"/>
+  <to uri="bean:myBean?method=someMethodName"/>
+</route>
+----
 
 === See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
-
+* link:scheduler.html[Scheduler]
 * link:quartz.html[Quartz]

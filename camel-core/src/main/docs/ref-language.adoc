@@ -27,10 +27,8 @@ The link:splitter.html[Splitter] in XML DSL can utilize a custom
 expression using `<ref>` like:
 
 [source,xml]
-------------------------------------------------------------------
+----
 <bean id="myExpression" class="com.mycompany.MyCustomExpression"/>
-
-...
 
 <route>
   <from uri="seda:a"/>
@@ -39,7 +37,7 @@ expression using `<ref>` like:
     <to uri="mock:b"/>
   </split>     
 </route>
-------------------------------------------------------------------
+----
 
 in this case, the link:message.html[Message] coming from the seda:a
 link:endpoint.html[Endpoint] will be splitted using a custom
@@ -49,9 +47,9 @@ link:registry.html[Registry].
 And the same example using Java DSL:
 
 [source,java]
---------------------------------------------------------
+----
 from("seda:a").split().ref("myExpression").to("seda:b");
---------------------------------------------------------
+----
 
 === Dependencies
 
