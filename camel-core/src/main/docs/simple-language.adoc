@@ -27,28 +27,13 @@ The simple language uses `${body`} placeholders for complex expressions
 where the expression contains constant literals. The $\{ } placeholders
 can be omitted if the expression is only the token itself.
 
-TIP:*Alternative syntax*
-
-From Camel 2.5 onwards you can also use the alternative syntax which
+TIP: *Alternative syntax* From Camel 2.5 onwards you can also use the alternative syntax which
 uses $simple\{ } as placeholders. +
  This can be used in situations to avoid clashes when using for example
 Spring property placeholder together with Camel.
 
 
-TIP:*Configuring result type*
-
-From Camel 2.8 onwards you can configure the result type of the
-link:simple.html[Simple] expression. For example to set the type as a
-`java.lang.Boolean` or a `java.lang.Integer` etc.
-
-INFO:*File language is now merged with Simple language*
-
-From Camel 2.2 onwards, the link:file-language.html[File Language] is
-now merged with link:simple.html[Simple] language which means you can
-use all the file syntax directly within the simple language.
-
-
-INFO:*Simple Language Changes in Camel 2.9 onwards*
+=== Simple Language Changes in Camel 2.9 onwards
 
 The link:simple.html[Simple] language have been improved from Camel 2.9
 onwards to use a better syntax parser, which can do index precise error
@@ -427,7 +412,7 @@ The parser is limited to only support a single operator.
 
 To enable it the left value must be enclosed in $\{ }. The syntax is:
 
-[source,java]
+[source]
 --------------------------
 ${leftValue} OP rightValue
 --------------------------
@@ -435,10 +420,7 @@ ${leftValue} OP rightValue
 Where the `rightValue` can be a String literal enclosed in `' '`,
 `null`, a constant value or another expression enclosed in $\{ }.
 
-INFO:*Important*
-
-There *must* be spaces around the operator.
-
+IMPORTANT: There *must* be spaces around the operator.
 
 Camel will automatically type convert the rightValue type to the
 leftValue type, so it is able to eg. convert a string into a numeric so
@@ -447,8 +429,7 @@ you can use > comparison for numeric values.
 The following operators are supported:
 
 [width="100%",cols="50%,50%",options="header",]
-{% raw %}
-|=======================================================================
+|===
 |Operator |Description
 
 |== |equals
@@ -503,14 +484,12 @@ with the right hand string.
 
 |ends with |*Camel 2.17.1, 2.18*: For testing if the left hand side string ends with
 the right hand string.
-{% endraw %}
-|=======================================================================
+|===
 
 And the following unary operators can be used:
 
 [width="100%",cols="50%,50%",options="header",]
-{% raw %}
-|=======================================================================
+|===
 |Operator |Description
 
 |++ |*Camel 2.9:* To increment a number by one. The left hand side must be a
@@ -533,14 +512,12 @@ following three special escaping.
 |\r |*Camel 2.11:* To use carriage return character.
 
 |\} |*Camel 2.18:* To use the } character as text
-{% endraw %}
-|=======================================================================
+|===
 
 And the following logical operators can be used to group expressions:
 
 [width="100%",cols="50%,50%",options="header",]
-{% raw %}
-|=======================================================================
+|===
 |Operator |Description
 
 |and |*deprecated* use && instead. The logical and operator is used to group
@@ -552,25 +529,22 @@ two expressions.
 |&& |*Camel 2.9:* The logical and operator is used to group two expressions.
 
 | \|\| |*Camel 2.9:* The logical or operator is used to group two expressions.
-{% endraw %}
-|=======================================================================
+|===
 
-INFO:*Using and,or operators*
-
-In *Camel 2.4 or older* the `and` or `or` can only be used *once* in a
+IMPORTANT: *Using and,or operators* In *Camel 2.4 or older* the `and` or `or` can only be used *once* in a
 simple language expression. From *Camel 2.5* onwards you can use these
 operators multiple times.
 
 The syntax for AND is:
 
-[source,java]
+[source]
 ----------------------------------------------------------
 ${leftValue} OP rightValue and ${leftValue} OP rightValue 
 ----------------------------------------------------------
 
 And the syntax for OR is:
 
-[source,java]
+[source]
 ---------------------------------------------------------
 ${leftValue} OP rightValue or ${leftValue} OP rightValue 
 ---------------------------------------------------------
@@ -578,10 +552,10 @@ ${leftValue} OP rightValue or ${leftValue} OP rightValue
 Some examples:
 
 [source,java]
----------------------------------------------------------------------------------------------------------------------------------------
+----
 // exact equals match
 simple("${in.header.foo} == 'foo'")
- 
+
 // ignore case when comparing, so if the header has value FOO this will match
 simple("${in.header.foo} =~ 'foo'")
 
@@ -592,9 +566,9 @@ simple("${in.header.bar} == 100")
 
 // 100 will be converter to the type of in.header.bar so we can do > comparison
 simple("${in.header.bar} > 100")
----------------------------------------------------------------------------------------------------------------------------------------
+----
 
-*Comparing with different types*
+==== Comparing with different types
 
 When you compare with different types such as String and int, then you
 have to take a bit care. Camel will use the type from the left hand side
@@ -604,9 +578,9 @@ couldn't be compared based on that type. +
 the bar value above is a String. Then you can flip the equation:
 
 [source,java]
---------------------------------
+----
 simple("100 < ${in.header.bar}")
---------------------------------
+----
 
 which then ensures the int type is used as 1st priority.
 
@@ -616,39 +590,39 @@ most often the String type which causes problem when comparing with
 numbers.
 
 [source,java]
-----------------------------------
+----
 // testing for null
 simple("${in.header.baz} == null")
 
 // testing for not null
 simple("${in.header.baz} != null")
-----------------------------------
+----
 
 And a bit more advanced example where the right value is another
 expression
 
 [source,java]
------------------------------------------------------------------------
+----
 simple("${in.header.date} == ${date:now:yyyyMMdd}")
 
 simple("${in.header.type} == ${bean:orderService?method=getOrderType}")
------------------------------------------------------------------------
+----
 
 And an example with contains, testing if the title contains the word
 Camel
 
 [source,java]
----------------------------------------------
+----
 simple("${in.header.title} contains 'Camel'")
----------------------------------------------
+----
 
 And an example with regex, testing if the number header is a 4 digit
 value:
 
 [source,java]
---------------------------------------------
+----
 simple("${in.header.number} regex '\\d{4}'")
---------------------------------------------
+----
 
 And finally an example if the header equals any of the values in the
 list. Each element must be separated by comma, and no space around. +
@@ -656,41 +630,41 @@ list. Each element must be separated by comma, and no space around. +
 into the type of the left hand side.
 
 [source,java]
---------------------------------------------
+----
 simple("${in.header.type} in 'gold,silver'")
---------------------------------------------
+----
 
 And for all the last 3 we also support the negate test using not:
 
 [source,java]
-------------------------------------------------
+----
 simple("${in.header.type} not in 'gold,silver'")
-------------------------------------------------
+----
 
 And you can test if the type is a certain instance, eg for instance a
 String
 
 [source,java]
--------------------------------------------------
+----
 simple("${in.header.type} is 'java.lang.String'")
--------------------------------------------------
+----
 
 We have added a shorthand for all `java.lang` types so you can write it
 as:
 
 [source,java]
----------------------------------------
+----
 simple("${in.header.type} is 'String'")
----------------------------------------
+----
 
 Ranges are also supported. The range interval requires numbers and both
 from and end are inclusive. For instance to test whether a value is
 between 100 and 199:
 
 [source,java]
---------------------------------------------
+----
 simple("${in.header.number} range 100..199")
---------------------------------------------
+----
 
 Notice we use `..` in the range without spaces. It is based on the same
 syntax as Groovy.
@@ -698,60 +672,58 @@ syntax as Groovy.
 From *Camel 2.9* onwards the range value must be in single quotes
 
 [source,java]
-----------------------------------------------
+----
 simple("${in.header.number} range '100..199'")
-----------------------------------------------
+----
 
-*Can be used in Spring XML*
+==== Using Spring XML
 
 As the Spring XML does not have all the power as the Java DSL with all
 its various builder methods, you have to resort to use some other
-languages +
- for testing with simple operators. Now you can do this with the simple
+languages for testing with simple operators. Now you can do this with the simple
 language. In the sample below we want to test if the header is a widget
 order:
 
 [source,xml]
-------------------------------------------------------------
-    <from uri="seda:orders">
-       <filter>
-           <simple>${in.header.type} == 'widget'</simple>
-           <to uri="bean:orderService?method=handleWidget"/>
-       </filter>
-    </from>
-------------------------------------------------------------
+----
+<from uri="seda:orders">
+   <filter>
+       <simple>${in.header.type} == 'widget'</simple>
+       <to uri="bean:orderService?method=handleWidget"/>
+   </filter>
+</from>
+----
 
-#=== Using and / or
+=== Using and / or
 
 If you have two expressions you can combine them with the `and` or `or`
 operator.
 
-TIP:*Camel 2.9 onwards*
-
-Use && or || from Camel 2.9 onwards.
+TIP: *Camel 2.9 onwards* Use && or || from Camel 2.9 onwards.
 
 For instance:
 
 [source,java]
-------------------------------------------------------------------------------
+-----
 simple("${in.header.title} contains 'Camel' and ${in.header.type'} == 'gold'")
-------------------------------------------------------------------------------
+-----
 
 And of course the `or` is also supported. The sample would be:
 
 [source,java]
------------------------------------------------------------------------------
+-----
 simple("${in.header.title} contains 'Camel' or ${in.header.type'} == 'gold'")
------------------------------------------------------------------------------
+-----
 
 *Notice:* Currently `and` or `or` can only be used *once* in a simple
 language expression. This might change in the future. +
  So you *cannot* do:
 
 [source,java]
----------------------------------------------------------------------------------------------------------------------
+-----
 simple("${in.header.title} contains 'Camel' and ${in.header.type'} == 'gold' and ${in.header.number} range 100..200")
----------------------------------------------------------------------------------------------------------------------
+-----
+
 
 === Samples
 
@@ -759,36 +731,38 @@ In the Spring XML sample below we filter based on a header value:
 
 [source,xml]
 --------------------------------------------
-    <from uri="seda:orders">
-       <filter>
-           <simple>${in.header.foo}</simple>
-           <to uri="mock:fooOrders"/>
-       </filter>
-    </from>
+<from uri="seda:orders">
+   <filter>
+       <simple>${in.header.foo}</simple>
+       <to uri="mock:fooOrders"/>
+   </filter>
+</from>
 --------------------------------------------
 
 The Simple language can be used for the predicate test above in the
 link:message-filter.html[Message Filter] pattern, where we test if the
 in message has a `foo` header (a header with the key `foo` exists). If
 the expression evaluates to *true* then the message is routed to the
-`mock:fooOrders` endpoint, otherwise it is lost in the deep blue sea
-image:https://cwiki.apache.org/confluence/s/en_GB/5982/f2b47fb3d636c8bc9fd0b11c0ec6d0ae18646be7.1/_/images/icons/emoticons/wink.png[(wink)].
+`mock:fooOrders` endpoint, otherwise the message is dropped.
 
 The same example in Java DSL:
 
 [source,java]
-------------------------------------------------------------------
-    from("seda:orders")
-        .filter().simple("${in.header.foo}").to("seda:fooOrders");
-------------------------------------------------------------------
+----
+from("seda:orders")
+    .filter().simple("${in.header.foo}")
+        .to("seda:fooOrders");
+----
 
 You can also use the simple language for simple text concatenations such
 as:
 
 [source,java]
-----------------------------------------------------------------------------------------------------
-   from("direct:hello").transform().simple("Hello ${in.header.user} how are you?").to("mock:reply");
-----------------------------------------------------------------------------------------------------
+----
+from("direct:hello")
+    .transform().simple("Hello ${in.header.user} how are you?")
+    .to("mock:reply");
+----
 
 Notice that we must use $\{ } placeholders in the expression now to
 allow Camel to parse it correctly.
@@ -796,17 +770,21 @@ allow Camel to parse it correctly.
 And this sample uses the date command to output current date.
 
 [source,java]
-------------------------------------------------------------------------------------------------------------------------
-   from("direct:hello").transform().simple("The today is ${date:now:yyyyMMdd} and it is a great day.").to("mock:reply");
-------------------------------------------------------------------------------------------------------------------------
+----
+from("direct:hello")
+    .transform().simple("The today is ${date:now:yyyyMMdd} and it is a great day.")
+    .to("mock:reply");
+----
 
 And in the sample below we invoke the bean language to invoke a method
 on a bean to be included in the returned string:
 
 [source,java]
--------------------------------------------------------------------------------------------------
-   from("direct:order").transform().simple("OrderId: ${bean:orderIdGenerator}").to("mock:reply");
--------------------------------------------------------------------------------------------------
+----
+from("direct:order")
+    .transform().simple("OrderId: ${bean:orderIdGenerator}")
+    .to("mock:reply");
+----
 
 Where `orderIdGenerator` is the id of the bean registered in the
 link:registry.html[Registry]. If using Spring then it is the Spring bean
@@ -817,27 +795,31 @@ bean we must prepend `.method name` such as below where we invoke the
 `generateId` method.
 
 [source,java]
-------------------------------------------------------------------------------------------------------------
-   from("direct:order").transform().simple("OrderId: ${bean:orderIdGenerator.generateId}").to("mock:reply");
-------------------------------------------------------------------------------------------------------------
+----
+from("direct:order")
+    .transform().simple("OrderId: ${bean:orderIdGenerator.generateId}")
+    .to("mock:reply");
+----
 
 We can use the `?method=methodname` option that we are familiar with the
 link:bean.html[Bean] component itself:
 
 [source,java]
--------------------------------------------------------------------------------------------------------------------
-   from("direct:order").transform().simple("OrderId: ${bean:orderIdGenerator?method=generateId}").to("mock:reply");
--------------------------------------------------------------------------------------------------------------------
+----
+from("direct:order")
+    .transform().simple("OrderId: ${bean:orderIdGenerator?method=generateId}")
+    .to("mock:reply");
+----
 
 And from Camel 2.3 onwards you can also convert the body to a given
 type, for example to ensure that it is a String you can do:
 
 [source,xml]
----------------------------------------------------------
-  <transform>
-    <simple>Hello ${bodyAs(String)} how are you?</simple>
-  </transform>
----------------------------------------------------------
+----
+<transform>
+  <simple>Hello ${bodyAs(String)} how are you?</simple>
+</transform>
+----
 
 There are a few types which have a shorthand notation, so we can use
 `String` instead of `java.lang.String`. These are:
@@ -848,11 +830,11 @@ It is also possible to lookup a value from a header `Map` in *Camel 2.3*
 onwards:
 
 [source,xml]
------------------------------------------------------------
-  <transform>
-    <simple>The gold value is ${header.type[gold]}</simple>
-  </transform>
------------------------------------------------------------
+----
+<transform>
+  <simple>The gold value is ${header.type[gold]}</simple>
+</transform>
+----
 
 In the code above we lookup the header with name `type` and regard it as
 a `java.util.Map` and we then lookup with the key `gold` and return the
@@ -862,13 +844,13 @@ header with name `type` does not exist `null` is returned.
 From Camel 2.9 onwards you can nest functions, such as shown below:
 
 [source,xml]
---------------------------------------------------
+----
 <setHeader headerName="myHeader">
   <simple>${properties:${header.someKey}}</simple>
 </setHeader>
---------------------------------------------------
+----
 
-#=== Referring to constants or enums
+=== Referring to constants or enums
 
 *Available as of Camel 2.11*
 
@@ -886,11 +868,11 @@ From Camel 2.9.3 onwards it is easier to specify new lines or tabs in
 XML DSLs as you can escape the value now
 
 [source,xml]
--------------------------------------------------------
+----
 <transform>
   <simple>The following text\nis on a new line</simple>
 </transform>
--------------------------------------------------------
+----
 
 === Leading and trailing whitespace handling
 
@@ -902,11 +884,11 @@ are removed or preserved. The default value is true, which removes the
 whitespace characters.
 
 [source,xml]
----------------------------------------------------------------------------------
+----
 <setBody>
   <simple trim="false">You get some trailing whitespace characters.     </simple>
 </setBody>
----------------------------------------------------------------------------------
+----
 
 === Setting result type
 
@@ -920,19 +902,19 @@ booleans, integers, etc.
 For example to set a header as a boolean type you can do:
 
 [source,java]
--------------------------------------------------
+----
 .setHeader("cool", simple("true", Boolean.class))
--------------------------------------------------
+----
 
 And in XML DSL
 
 [source,xml]
----------------------------------------------------------------------------------------
-      <setHeader headerName="cool">
-        <!-- use resultType to indicate that the type should be a java.lang.Boolean -->
-        <simple resultType="java.lang.Boolean">true</simple>
-      </setHeader>
----------------------------------------------------------------------------------------
+----
+<setHeader headerName="cool">
+  <!-- use resultType to indicate that the type should be a java.lang.Boolean -->
+  <simple resultType="java.lang.Boolean">true</simple>
+</setHeader>
+----
 
 === Changing function start and end tokens
 
@@ -944,13 +926,13 @@ setters `changeFunctionStartToken` and `changeFunctionEndToken` on
 <bean> tag with the new changed tokens in the properties as shown below:
 
 [source,xml]
-------------------------------------------------------------------------------
-    <!-- configure Simple to use custom prefix/suffix tokens -->
-    <bean id="simple" class="org.apache.camel.language.simple.SimpleLanguage">
-      <property name="functionStartToken" value="["/>
-      <property name="functionEndToken" value="]"/>
-    </bean>
-------------------------------------------------------------------------------
+----
+<!-- configure Simple to use custom prefix/suffix tokens -->
+<bean id="simple" class="org.apache.camel.language.simple.SimpleLanguage">
+  <property name="functionStartToken" value="["/>
+  <property name="functionEndToken" value="]"/>
+</bean>
+----
 
 In the example above we use [ ] as the changed tokens.
 
@@ -969,9 +951,9 @@ such as `"classpath:"`, `"file:"`, or `"http:"`. +
 eg to refer to a file on the classpath you can do:
 
 [source,java]
-----------------------------------------------------------------
+----
 .setHeader("myHeader").simple("resource:classpath:mysimple.txt")
-----------------------------------------------------------------
+----
 
 === Setting Spring beans to Exchange properties
 
@@ -980,7 +962,7 @@ eg to refer to a file on the classpath you can do:
 You can set a spring bean into an exchange property as shown below:
 
 [source,xml]
--------------------------------------------------------
+----
 <bean id="myBeanId" class="my.package.MyCustomClass" />
 ...
 <route>
@@ -990,7 +972,7 @@ You can set a spring bean into an exchange property as shown below:
   </setProperty>
   ...
 </route>
--------------------------------------------------------
+----
 
 === Dependencies
 
