@@ -9,10 +9,10 @@ Sort will by default sort the body using a default comparator that handles numer
 The Sort EIP supports 1 options which are listed below:
 
 
-[width="100%",cols="3,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |===
-| Name | Java Type | Description
-| comparatorRef | String | Sets a reference to lookup for the comparator to use for sorting
+| Name | Description | Default | Type
+| *comparatorRef* | Sets a reference to lookup for the comparator to use for sorting |  | String
 |===
 // eip options: END
 

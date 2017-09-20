@@ -70,11 +70,11 @@ If you use streaming then you should enable Stream caching when using the failov
 The Load Balance EIP supports 2 options which are listed below:
 
 
-[width="100%",cols="3,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |===
-| Name | Java Type | Description
-| loadBalancerType | LoadBalancerDefinition | *Required* The load balancer to be used
-| inheritErrorHandler | Boolean | Sets whether or not to inherit the configured error handler. The default value is true. You can use this to disable using the inherited error handler for a given DSL such as a load balancer where you want to use a custom error handler strategy.
+| Name | Description | Default | Type
+| *loadBalancerType* | *Required* The load balancer to be used |  | LoadBalancerDefinition
+| *inheritErrorHandler* | Sets whether or not to inherit the configured error handler. The default value is true. You can use this to disable using the inherited error handler for a given DSL such as a load balancer where you want to use a custom error handler strategy. | false | Boolean
 |===
 // eip options: END
 

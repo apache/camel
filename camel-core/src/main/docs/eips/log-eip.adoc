@@ -12,14 +12,14 @@ Camel provides many ways to log the fact that you are processing a message. Here
 The Log EIP supports 5 options which are listed below:
 
 
-[width="100%",cols="3,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |===
-| Name | Java Type | Description
-| message | String | *Required* Sets the log message (uses simple language)
-| loggingLevel | LoggingLevel | Sets the logging level. The default value is INFO
-| logName | String | Sets the name of the logger
-| marker | String | To use slf4j marker
-| loggerRef | String | To refer to a custom logger instance to lookup from the registry.
+| Name | Description | Default | Type
+| *message* | *Required* Sets the log message (uses simple language) |  | String
+| *loggingLevel* | Sets the logging level. The default value is INFO | INFO | LoggingLevel
+| *logName* | Sets the name of the logger |  | String
+| *marker* | To use slf4j marker |  | String
+| *loggerRef* | To refer to a custom logger instance to lookup from the registry. |  | String
 |===
 // eip options: END
 
