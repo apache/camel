@@ -499,6 +499,21 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     /**
      * Evaluates a <a
      * href="http://camel.apache.org/jsonpath.html">Json Path
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @param resultType the return type expected by the expression
+     * @param headerName the name of the header to apply the expression to
+     * @return the builder to continue processing the DSL
+     */
+    public T jsonpath(String text, boolean suppressExceptions, Class<?> resultType, String headerName) {
+        return delegate.jsonpath(text, suppressExceptions, true, resultType, headerName);
+    }
+
+    /**
+     * Evaluates a <a
+     * href="http://camel.apache.org/jsonpath.html">Json Path
      * expression</a> with writeAsString enabled.
      *
      * @param text the expression to be evaluated
@@ -519,6 +534,20 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      */
     public T jsonpathWriteAsString(String text, boolean suppressExceptions) {
         return delegate.jsonpathWriteAsString(text, suppressExceptions);
+    }
+
+    /**
+     * Evaluates a <a
+     * href="http://camel.apache.org/jsonpath.html">Json Path
+     * expression</a> with writeAsString enabled.
+     *
+     * @param text the expression to be evaluated
+     * @param suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @param headerName the name of the header to apply the expression to
+     * @return the builder to continue processing the DSL
+     */
+    public T jsonpathWriteAsString(String text, boolean suppressExceptions, String headerName) {
+        return delegate.jsonpathWriteAsString(text, suppressExceptions, true, headerName);
     }
 
     /**
