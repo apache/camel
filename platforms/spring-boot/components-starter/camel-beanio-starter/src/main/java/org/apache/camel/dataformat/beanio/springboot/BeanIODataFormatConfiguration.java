@@ -66,6 +66,13 @@ public class BeanIODataFormatConfiguration
      */
     private String beanReaderErrorHandlerType;
     /**
+     * This options controls whether to unmarshal as a list of objects or as a
+     * single object only. The former is the default mode and the latter is only
+     * intended in special use-cases where beanio maps the Camel message to a
+     * single POJO bean.
+     */
+    private Boolean unmarshalSingleObject = false;
+    /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
      * example application/xml for data formats marshalling to XML or
@@ -127,6 +134,14 @@ public class BeanIODataFormatConfiguration
 
     public void setBeanReaderErrorHandlerType(String beanReaderErrorHandlerType) {
         this.beanReaderErrorHandlerType = beanReaderErrorHandlerType;
+    }
+
+    public Boolean getUnmarshalSingleObject() {
+        return unmarshalSingleObject;
+    }
+
+    public void setUnmarshalSingleObject(Boolean unmarshalSingleObject) {
+        this.unmarshalSingleObject = unmarshalSingleObject;
     }
 
     public Boolean getContentTypeHeader() {
