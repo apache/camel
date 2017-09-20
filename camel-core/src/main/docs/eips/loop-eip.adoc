@@ -1,4 +1,5 @@
 == Loop EIP
+
 The Loop allows for processing a message a number of times, possibly in a different way for each iteration. Useful mostly during testing.
 
 [NOTE]
@@ -23,40 +24,48 @@ The Loop EIP supports 2 options which are listed below:
 
 
 === Exchange properties
+
 For each iteration two properties are set on the Exchange. Processors can rely on these properties to process the Message in different ways.
+
 [width="100%",cols="3,6",options="header"]
-|=======================================================================
+|===
 | Property | Description
 | CamelLoopSize | Total number of loops. This is not available if running the loop in while loop mode.
 | CamelLoopIndex | Index of the current iteration (0 based)
-|=======================================================================
+|===
 
-=== Examples
+=== Samples
 The following example shows how to take a request from the *direct:x* endpoint, then send the message repetitively to *mock:result*. The number of times the message is sent is either passed as an argument to `loop()`, or determined at runtime by evaluating an expression. The expression *must* evaluate to an int, otherwise a `RuntimeCamelException` is thrown.
 
-#=== Using the Fluent Builders
 Pass loop count as an argument
 [source,java]
----------------------
-from("direct:a").loop(8).to("mock:result");
----------------------
+----
+from("direct:a")
+    .loop(8)
+        .to("mock:result");
+----
 
 Use expression to determine loop count
 [source,java]
----------------------
-from("direct:b").loop(header("loop")).to("mock:result");
----------------------
+----
+from("direct:b")
+    .loop(header("loop"))
+        .to("mock:result");
+----
 
 Use expression to determine loop count
 [source,java]
----------------------
-from("direct:c").loop().xpath("/hello/@times").to("mock:result");
----------------------
+----
+from("direct:c")
+    .loop(xpath("/hello/@times"))
+        .to("mock:result");
+----
 
-#=== Using the Spring XML Extensions
+And examples in XML:
+
 Pass loop count as an argument
 [source,xml]
----------------------
+----
 <route>
   <from uri="direct:a"/>
   <loop>
@@ -64,11 +73,11 @@ Pass loop count as an argument
     <to uri="mock:result"/>
   </loop>
 </route>
----------------------
+----
 
 Use expression to determine loop count
 [source,xml]
----------------------
+----
 <route>
   <from uri="direct:b"/>
   <loop>
@@ -76,45 +85,44 @@ Use expression to determine loop count
     <to uri="mock:result"/>
   </loop>
 </route>
----------------------
+----
 
-For further examples of this pattern in use you could look at one of the junit test case.
-
-#=== Using copy mode
+=== Using copy mode
 *Available as of Camel 2.8* +
+
 Now suppose we send a message to "direct:start" endpoint containing the letter A. +
 The output of processing this route will be that, each "mock:loop" endpoint will receive "AB" as message.
 
 [source,java]
----------------------
+----
 from("direct:start")
     // instruct loop to use copy mode, which mean it will use a copy of the input exchange
     // for each loop iteration, instead of keep using the same exchange all over
     .loop(3).copy()
         .transform(body().append("B"))
         .to("mock:loop")
-    .end()
+    .end() // end loop
     .to("mock:result");
----------------------
+----
 
 However if we do *not* enable copy mode then "mock:loop" will receive "AB", "ABB", "ABBB", etc. messages.
 
 [source,java]
----------------------
+----
 from("direct:start")
     // by default loop will keep using the same exchange so on the 2nd and 3rd iteration its
     // the same exchange that was previous used that are being looped all over
     .loop(3)
         .transform(body().append("B"))
         .to("mock:loop")
-    .end()
+    .end() // end loop
     .to("mock:result");
----------------------
+----
 
 The equivalent example in XML DSL in copy mode is as follows:
 
 [source,xml]
----------------------
+----
 <route>
   <from uri="direct:start"/>
   <!-- enable copy mode for loop eip -->
@@ -127,26 +135,27 @@ The equivalent example in XML DSL in copy mode is as follows:
   </loop>
   <to uri="mock:result"/>
 </route>
----------------------
+----
 
-#=== Using while mode
+=== Using while mode
 *Available as of Camel 2.17* +
+
 The loop can act like a while loop that loops until the expression evaluates to false or null. +
 For example the route below loops while the length of the message body is 5 or less characters. Notice that the DSL uses *loopDoWhile*.
 
 [source,java]
----------------------
+----
 from("direct:start")
     .loopDoWhile(simple("${body.length} <= 5"))
         .to("mock:loop")
         .transform(body().append("A"))
-    .end()
+    .end() // end loop
     .to("mock:result");
----------------------
+----
 
 And the same example in XML:
 [source,xml]
----------------------
+----
 <route>
   <from uri="direct:start"/>
   <loop doWhile="true">
@@ -158,9 +167,7 @@ And the same example in XML:
   </loop>
   <to uri="mock:result"/>
 </route>
----------------------
+----
 
 Notice in XML that the while loop is turned on using the *doWhile* attribute.
 
-=== Using This Pattern
-If you would like to use this EIP Pattern then please read the Getting Started, you may also find the Architecture useful particularly the description of Endpoint and URIs. Then you could try out some of the Examples first before trying this pattern out.
