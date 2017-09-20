@@ -1,6 +1,6 @@
-== Control Bus
+== Control Bus Component
 
-*Available as of Camel version 2.11.0*
+*Available as of Camel version 2.11*
 
 The http://www.eaipatterns.com/ControlBus.html[Control Bus] from the
 link:enterprise-integration-patterns.html[EIP patterns] allows for the
@@ -185,4 +185,3 @@ would be trying to stop Camel while it was in-flight processing the
 message we sent to the control bus component.
 
 TIP: You can also use other languages such as link:groovy.html[Groovy], etc.
-
