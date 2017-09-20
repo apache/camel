@@ -16,7 +16,14 @@
  */
 package org.apache.camel.component.consul;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,8 +42,6 @@ import com.orbitz.consul.model.session.SessionCreatedResponse;
 
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.SerializationUtils;
 
 /**
  * Apache Camel Plug-in for Consul Registry (Objects stored under kv/key as well
@@ -78,8 +83,8 @@ public class ConsulRegistry implements Registry {
         kvClient = consul.keyValueClient();
         Optional<String> result = kvClient.getValueAsString(key);
         if (result.isPresent()) {
-            byte[] postDecodedValue = Base64.decodeBase64(result.get());
-            return SerializationUtils.deserialize(postDecodedValue);
+            byte[] postDecodedValue = ConsulRegistryUtils.decodeBase64(result.get());
+            return ConsulRegistryUtils.deserialize(postDecodedValue);
         }
         return null;
     }
@@ -188,11 +193,10 @@ public class ConsulRegistry implements Registry {
         if (lookupByName(key) != null) {
             remove(key);
         }
-        Object clone = SerializationUtils.clone((Serializable) object);
-        byte[] serializedObject = SerializationUtils.serialize((Serializable) clone);
+        Object clone = ConsulRegistryUtils.clone((Serializable) object);
+        byte[] serializedObject = ConsulRegistryUtils.serialize((Serializable) clone);
         // pre-encode due native encoding issues
-        byte[] preEncodedValue = Base64.encodeBase64(serializedObject);
-        String value = new String(preEncodedValue);
+        String value = ConsulRegistryUtils.encodeBase64(serializedObject);
         // store the actual class
         kvClient.putValue(key, value);
         // store just as a bookmark
@@ -249,6 +253,67 @@ public class ConsulRegistry implements Registry {
     @Override
     public <T> Map<String, T> lookupByType(Class<T> type) {
         return lookupByType(type);
+    }
+
+    static class ConsulRegistryUtils {
+        /**
+         * Decodes using Base64.
+         *
+         * @param base64String the {@link String} to decode
+         * @return a decoded data as a byte array
+         */
+        static byte[] decodeBase64(final String base64String) {
+            return Base64.getDecoder().decode(base64String.getBytes(StandardCharsets.ISO_8859_1));
+        }
+
+        /**
+         * Encodes using Base64.
+         * 
+         * @param binaryData the data to encode
+         * @return an encoded data as a {@link String}
+         */
+        static String encodeBase64(final byte[] binaryData) {
+            final byte[] encoded = Base64.getEncoder().encode(binaryData);
+            return new String(encoded, StandardCharsets.ISO_8859_1);
+        }
+
+        /**
+         * Deserializes an object out of the given byte array.
+         *
+         * @param bytes the byte array to deserialize from
+         * @return an {@link Object} deserialized from the given byte array
+         */
+        static Object deserialize(byte[] bytes) {
+            try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
+                return in.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        /**
+         * A deep serialization based clone
+         *
+         * @param object the object to clone
+         * @return a deep clone
+         */
+        static Object clone(Serializable object) {
+            return deserialize(serialize(object));
+        }
+
+        /**
+         * Serializes the given {@code serializable} using Java Serialization
+         * @param serializable
+         * @return the serialized object as a byte array
+         */
+        static byte[] serialize(Serializable serializable) {
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream(512); ObjectOutputStream out = new ObjectOutputStream(baos)) {
+                out.writeObject(serializable);
+                return baos.toByteArray();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 }
