@@ -49,6 +49,10 @@ public class JsonPathLanguageConfiguration
      */
     private Boolean writeAsString = false;
     /**
+     * Name of header to use as input instead of the message body
+     */
+    private String headerName;
+    /**
      * Whether to trim the value to remove leading and trailing whitespaces and
      * line breaks
      */
@@ -84,6 +88,14 @@ public class JsonPathLanguageConfiguration
 
     public void setWriteAsString(Boolean writeAsString) {
         this.writeAsString = writeAsString;
+    }
+
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    public void setHeaderName(String headerName) {
+        this.headerName = headerName;
     }
 
     public Boolean getTrim() {
