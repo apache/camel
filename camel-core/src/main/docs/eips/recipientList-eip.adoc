@@ -12,7 +12,7 @@ The Recipient List EIP supports 15 options which are listed below:
 
 
 [width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Java Type | Description
 | delimiter | String | Delimiter used if the Expression returned multiple endpoints. Can be turned off using the value false. The default value is
 | parallelProcessing | Boolean | If enabled then sending messages to the recipients occurs concurrently. Note the caller thread will still wait until all messages has been fully processed before it continues. Its only the sending and processing the replies from the recipients which happens concurrently.
@@ -29,7 +29,7 @@ The Recipient List EIP supports 15 options which are listed below:
 | cacheSize | Integer | Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producers when using this recipient list when uris are reused.
 | parallelAggregate | Boolean | If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe.
 | stopOnAggregateException | Boolean | If enabled unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used. Currently aggregation time exceptions do not stop the route processing when parallelProcessing is used. Enabling this option allows to work around this behavior. The default value is false for the sake of backward compatibility.
-|=======================================================================
+|===
 // eip options: END
 
 

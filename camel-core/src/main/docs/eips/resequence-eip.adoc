@@ -11,10 +11,10 @@ The Resequence EIP supports 1 options which are listed below:
 
 
 [width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Java Type | Description
 | resequencerConfig | ResequencerConfig | To configure the resequencer in using either batch or stream configuration. Will by default use batch configuration.
-|=======================================================================
+|===
 // eip options: END
 
 

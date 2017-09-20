@@ -8,12 +8,12 @@ The Delay EIP supports 3 options which are listed below:
 
 
 [width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Java Type | Description
 | executorServiceRef | String | Refers to a custom Thread Pool if asyncDelay has been enabled.
 | asyncDelayed | Boolean | Enables asynchronous delay which means the thread will noy block while delaying.
 | callerRunsWhenRejected | Boolean | Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true
-|=======================================================================
+|===
 // eip options: END
 
 [NOTE]

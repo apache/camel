@@ -95,7 +95,7 @@ The Service Call EIP supports 14 options which are listed below:
 
 
 [width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Java Type | Description
 | name | String | *Required* Sets the name of the service to use
 | uri | String | The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression.
@@ -111,7 +111,7 @@ The Service Call EIP supports 14 options which are listed below:
 | serviceFilterConfiguration | ServiceCallServiceFilterConfiguration | *Required* Configures the ServiceFilter using the given configuration.
 | loadBalancerConfiguration | ServiceCallServiceLoadBalancerConfiguration | *Required* Configures the LoadBalancer using the given configuration.
 | expressionConfiguration | ServiceCallExpressionConfiguration | *Required* Configures the Expression using the given configuration.
-|=======================================================================
+|===
 // eip options: END
 
 In addition to ref/binding configuration style you can leverage specific configuration DSL to customize specific options:

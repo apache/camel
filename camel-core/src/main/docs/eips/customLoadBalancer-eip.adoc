@@ -7,10 +7,10 @@ The Custom Load Balancer EIP supports 1 options which are listed below:
 
 
 [width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Java Type | Description
 | ref | String | *Required* Refers to the custom load balancer to lookup from the registry
-|=======================================================================
+|===
 // eip options: END
 
 

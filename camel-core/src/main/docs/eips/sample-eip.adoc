@@ -11,12 +11,12 @@ The Sample EIP supports 3 options which are listed below:
 
 
 [width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Java Type | Description
 | samplePeriod | Long | Sets the sample period during which only a single Exchange will pass through.
 | messageFrequency | Long | Sets the sample message count which only a single Exchange will pass through after this many received.
 | units | TimeUnit | Sets the time units for the sample period defaulting to seconds.
-|=======================================================================
+|===
 // eip options: END
 
 
