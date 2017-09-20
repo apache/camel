@@ -1,6 +1,5 @@
 [[MessageTranslator-MessageTranslator]]
-Message Translator
-^^^^^^^^^^^^^^^^^^
+== Message Translator
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message
@@ -13,7 +12,7 @@ in different encodings.
 
 image:http://www.enterpriseintegrationpatterns.com/img/MessageTranslator.gif[image]
 
-*Using the link:fluent-builders.html[Fluent Builders]*
+=== Samples
 
 You can transform a message using Camel's
 link:bean-integration.html[Bean Integration] to call any method on a
@@ -21,11 +20,11 @@ bean in your link:registry.html[Registry] such as your
 link:spring.html[Spring] XML configuration file as follows
 
 [source,java]
------------------------------------------------
-from("activemq:SomeQueue").
-  beanRef("myTransformerBean", "myMethodName").
-  to("mqseries:AnotherQueue");
------------------------------------------------
+----
+from("activemq:SomeQueue")
+  .bean("myTransformerBean", "myMethodName")
+  .to("mqseries:AnotherQueue");
+----
 
 Where the "myTransformerBean" would be defined in a Spring XML file or
 defined in JNDI etc. You can omit the method name parameter from
@@ -37,8 +36,6 @@ the transformation
 
 or you can use the DSL to explicitly configure the transformation
 
-*Use Spring XML*
-
 You can also use link:spring-xml-extensions.html[Spring XML Extensions]
 to do a transformation. Basically any link:expression.html[Expression]
 language can be substituted inside the transform element as shown below
@@ -46,14 +43,14 @@ language can be substituted inside the transform element as shown below
 Or you can use the link:bean-integration.html[Bean Integration] to
 invoke a bean
 
-[source,java]
------------------------------------------------
+[source,xml]
+----
 <route>
-  <from uri="activemq:Input"/>
-  <bean ref="myBeanName" method="doTransform"/>
-  <to uri="activemq:Output"/>
+  <from uri="activemq:SomeQueue"/>
+  <bean ref="myTransformerBean" method="myMethodName"/>
+  <to uri="mqseries:AnotherQueue"/>
 </route>
------------------------------------------------
+----
 
 You can also use link:templating.html[Templating] to consume a message
 from one destination, transform it with something like
@@ -62,11 +59,11 @@ it on to another destination. For example using InOnly (one way
 messaging)
 
 [source,java]
-----------------------------------------
-from("activemq:My.Queue").
-  to("velocity:com/acme/MyResponse.vm").
-  to("activemq:Another.Queue");
-----------------------------------------
+----
+from("activemq:My.Queue")
+    .to("velocity:com/acme/MyResponse.vm")
+    .to("activemq:Another.Queue");
+----
 
 If you want to use InOut (request-reply) semantics to process requests
 on the *My.Queue* queue on link:activemq.html[ActiveMQ] with a template
@@ -74,23 +71,8 @@ generated response, then sending responses back to the JMSReplyTo
 Destination you could use this.
 
 [source,java]
-----------------------------------------
-from("activemq:My.Queue").
-  to("velocity:com/acme/MyResponse.vm");
-----------------------------------------
-
-[[MessageTranslator-UsingThisPattern]]
-Using This Pattern
-++++++++++++++++++
-
-If you would like to use this EIP Pattern then please read the
-link:getting-started.html[Getting Started], you may also find the
-link:architecture.html[Architecture] useful particularly the description
-of link:endpoint.html[Endpoint] and link:uris.html[URIs]. Then you could
-try out some of the link:examples.html[Examples] first before trying
-this pattern out.
-
-* link:content-enricher.html[Content Enricher]
-* link:using-getin-or-getout-methods-on-exchange.html[Using getIn or
-getOut methods on Exchange]
+----
+from("activemq:My.Queue")
+    .to("velocity:com/acme/MyResponse.vm");
+----
 
