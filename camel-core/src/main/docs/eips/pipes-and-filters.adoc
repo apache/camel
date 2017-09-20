@@ -1,6 +1,5 @@
 [[PipesandFilters-PipesandFilters]]
-Pipes and Filters
-^^^^^^^^^^^^^^^^^
+== Pipes and Filters
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes
@@ -13,9 +12,8 @@ With Camel you can split your processing across multiple independent
 link:endpoint.html[Endpoint] instances which can then be chained
 together.
 
-[[PipesandFilters-UsingRoutingLogic]]
-Using Routing Logic
-+++++++++++++++++++
+[[PipesandFilters-Samples]]
+=== Samples
 
 You can create pipelines of logic using multiple
 link:endpoint.html[Endpoint] or link:message-translator.html[Message
@@ -26,10 +24,30 @@ multiple outputs in Camel. The opposite to pipeline is multicast; which
 fires the same message into each of its outputs. (See the example
 below).
 
-In Spring XML you can use the <pipeline/> element
+In Java you do:
+[source,java]
+----
+from("activemq:SomeQueue")
+    .pipeline()
+    .bean("foo")
+    .bean("bar")
+    .to("acitvemq:OutputQueueu");
+----
+
+The pipeline is the default mode, which can be omitted, and therefore you almost often write as:
 
 [source,java]
-------------------------------------
+----
+from("activemq:SomeQueue")
+    .bean("foo")
+    .bean("bar")
+    .to("acitvemq:OutputQueueu");
+----
+
+In XML you can use the `<pipeline>` element
+
+[source,xml]
+----
 <route>
   <from uri="activemq:SomeQueue"/>
   <pipeline>
@@ -38,27 +56,26 @@ In Spring XML you can use the <pipeline/> element
     <to uri="activemq:OutputQueue"/>
   </pipeline>
 </route>
-------------------------------------
+----
 
-In the above the pipeline element is actually unnecessary, you could use
-this...
+In the above the pipeline element is actually unnecessary, you could use this:
 
-[source,java]
-----------------------------------
+[source,xml]
+----
 <route>
   <from uri="activemq:SomeQueue"/>
   <bean ref="foo"/>
   <bean ref="bar"/>
   <to uri="activemq:OutputQueue"/>
 </route>
-----------------------------------
+----
 
-Its just a bit more explicit. However if you wish to use <multicast/> to
+Its just a bit more explicit. However if you wish to use `<multicast/>` to
 avoid a pipeline - to send the same message into multiple pipelines -
-then the <pipeline/> element comes into its own.
+then the `<pipeline>` element comes into its own.
 
-[source,java]
---------------------------------------
+[source,xml]
+----
 <route>
   <from uri="activemq:SomeQueue"/>
   <multicast>
@@ -73,21 +90,5 @@ then the <pipeline/> element comes into its own.
     </pipeline>
   </multicast>
 </route>
---------------------------------------
+----
 
-In the above example we are routing from a single
-link:endpoint.html[Endpoint] to a list of different endpoints specified
-using link:uris.html[URIs]. If you find the above a bit confusing, try
-reading about the link:architecture.html[Architecture] or try the
-link:examples.html[Examples]
-
-[[PipesandFilters-UsingThisPattern]]
-Using This Pattern
-++++++++++++++++++
-
-If you would like to use this EIP Pattern then please read the
-link:getting-started.html[Getting Started], you may also find the
-link:architecture.html[Architecture] useful particularly the description
-of link:endpoint.html[Endpoint] and link:uris.html[URIs]. Then you could
-try out some of the link:examples.html[Examples] first before trying
-this pattern out.
