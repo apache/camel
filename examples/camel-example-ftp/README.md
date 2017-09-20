@@ -14,7 +14,7 @@ This example is implemented in Java code, and there is a client and a server app
 The client is used for uploading files from the local file system (from target/upload) to the FTP server.
 The server is used for downloading files from the FTP server to the local file system (to target/download).
 You can see the Java implementation by opening the src/main/java/org/apache/camel/example/ftp/MyFtpClientRouteBuilder.java for the client Java route.
-And the server example is implemented in the src/main/java/org/apache/camel/example/ftp/MyFtpClientRouteBuilder.java file.
+And the server example is implemented in the src/main/java/org/apache/camel/example/ftp/MyFtpServerRouteBuilder.java file.
 
 ### Prerequisites
 
