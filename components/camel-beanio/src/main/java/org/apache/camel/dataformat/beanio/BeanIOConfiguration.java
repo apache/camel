@@ -35,6 +35,7 @@ public class BeanIOConfiguration {
     private Properties properties;
     private BeanReaderErrorHandler beanReaderErrorHandler;
     private String beanReaderErrorHandlerType;
+    private boolean unmarshalSingleObject;
 
     public String getMapping() {
         return mapping;
@@ -110,5 +111,13 @@ public class BeanIOConfiguration {
 
     public void setBeanReaderErrorHandlerType(Class<?> beanReaderErrorHandlerType) {
         this.beanReaderErrorHandlerType = beanReaderErrorHandlerType.getName();
+    }
+
+    public boolean isUnmarshalSingleObject() {
+        return unmarshalSingleObject;
+    }
+
+    public void setUnmarshalSingleObject(boolean unmarshalSingleObject) {
+        this.unmarshalSingleObject = unmarshalSingleObject;
     }
 }
