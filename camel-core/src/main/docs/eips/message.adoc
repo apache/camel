@@ -1,6 +1,5 @@
 [[Message-Message]]
-Message
-^^^^^^^
+== Message
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/Message.html[Message] from
@@ -20,32 +19,45 @@ link:request-reply.html[Request Reply] where there is an inbound and
 outbound message.
 
 Here is a basic example of sending a Message to a route in *InOnly* and
-*InOut* modes
-
-*Requestor Code*
+*InOut* modes using a `ProducerTemplate`
 
 [source,java]
----------------------------------------------------------------------------------------------------------------
+----
 //InOnly
 getContext().createProducerTemplate().sendBody("direct:startInOnly", "Hello World");
 
 //InOut
-String result = (String) getContext().createProducerTemplate().requestBody("direct:startInOut", "Hello World");
----------------------------------------------------------------------------------------------------------------
+Object result = getContext().createProducerTemplate().requestBody("direct:startInOut", "Hello World");
+----
 
-*Route Using the link:fluent-builders.html[Fluent Builders]*
-
-[source,java]
---------------------------------------------------
-from("direct:startInOnly").inOnly("bean:process");
-
-from("direct:startInOut").inOut("bean:process");
---------------------------------------------------
-
-*Route Using the link:spring-xml-extensions.html[Spring XML Extensions]*
+And an example with routes:
 
 [source,java]
-----------------------------------
+----
+from("direct:startInOnly")
+  .inOnly("bean:process");
+
+from("direct:startInOut")
+  .inOut("bean:process");
+----
+
+Instead of using `inOnly` and `inOut` you may want to keep using `to`
+where you can specify the exchange pattern as shown:
+
+[source,java]
+----
+from("direct:startInOnly")
+  .to(ExchangePattern.InOnly, "bean:process");
+
+from("direct:startInOut")
+  .to(ExchangePattern.InOut, "bean:process");
+----
+
+
+And here is how to do it in XML:
+
+[source,xml]
+----
 <route>
   <from uri="direct:startInOnly"/>
   <inOnly uri="bean:process"/>
@@ -55,15 +67,19 @@ from("direct:startInOut").inOut("bean:process");
   <from uri="direct:startInOut"/>
   <inOut uri="bean:process"/>
 </route>
-----------------------------------
+----
 
-[[Message-UsingThisPattern]]
-Using This Pattern
-++++++++++++++++++
+And here we use `<to>` with the `pattern` attribute to set the exchange pattern:
 
-If you would like to use this EIP Pattern then please read the
-link:getting-started.html[Getting Started], you may also find the
-link:architecture.html[Architecture] useful particularly the description
-of link:endpoint.html[Endpoint] and link:uris.html[URIs]. Then you could
-try out some of the link:examples.html[Examples] first before trying
-this pattern out.
+[source,xml]
+----
+<route>
+  <from uri="direct:startInOnly"/>
+  <to pattern="InOnly" uri="bean:process"/>
+</route>
+
+<route>
+  <from uri="direct:startInOut"/>
+  <to pattern="InOut" uri="bean:process"/>
+</route>
+----
