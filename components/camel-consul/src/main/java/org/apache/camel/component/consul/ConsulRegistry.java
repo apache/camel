@@ -16,7 +16,14 @@
  */
 package org.apache.camel.component.consul;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,8 +42,6 @@ import com.orbitz.consul.model.session.SessionCreatedResponse;
 
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.SerializationUtils;
 
 /**
  * Apache Camel Plug-in for Consul Registry (Objects stored under kv/key as well
@@ -258,7 +263,7 @@ public class ConsulRegistry implements Registry {
          * @return a decoded data as a byte array
          */
         static byte[] decodeBase64(final String base64String) {
-            return Base64.decodeBase64(base64String);
+            return Base64.getDecoder().decode(base64String.getBytes(StandardCharsets.ISO_8859_1));
         }
 
         /**
@@ -268,8 +273,8 @@ public class ConsulRegistry implements Registry {
          * @return an encoded data as a {@link String}
          */
         static String encodeBase64(final byte[] binaryData) {
-            final byte[] encoded = Base64.encodeBase64(binaryData);
-            return new String(encoded);
+            final byte[] encoded = Base64.getEncoder().encode(binaryData);
+            return new String(encoded, StandardCharsets.ISO_8859_1);
         }
 
         /**
@@ -279,7 +284,11 @@ public class ConsulRegistry implements Registry {
          * @return an {@link Object} deserialized from the given byte array
          */
         static Object deserialize(byte[] bytes) {
-            return SerializationUtils.deserialize(bytes);
+            try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
+                return in.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         /**
@@ -289,7 +298,7 @@ public class ConsulRegistry implements Registry {
          * @return a deep clone
          */
         static Object clone(Serializable object) {
-            return SerializationUtils.clone(object);
+            return deserialize(serialize(object));
         }
 
         /**
@@ -298,7 +307,12 @@ public class ConsulRegistry implements Registry {
          * @return the serialized object as a byte array
          */
         static byte[] serialize(Serializable serializable) {
-            return SerializationUtils.serialize(serializable);
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream(512); ObjectOutputStream out = new ObjectOutputStream(baos)) {
+                out.writeObject(serializable);
+                return baos.toByteArray();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
