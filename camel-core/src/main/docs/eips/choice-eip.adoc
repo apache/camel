@@ -15,11 +15,11 @@ The Choice EIP supports 2 options which are listed below:
 
 
 [width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Java Type | Description
 | whenClauses | List | Sets the when clauses
 | otherwise | OtherwiseDefinition | Sets the otherwise node
-|=======================================================================
+|===
 // eip options: END
 
 === Examples

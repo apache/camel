@@ -22,11 +22,11 @@ The Hystrix EIP supports 2 options which are listed below:
 
 
 [width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Java Type | Description
 | hystrixConfiguration | HystrixConfigurationDefinition | Configures the Hystrix EIP Use end when configuration is complete to return back to the Hystrix EIP.
 | hystrixConfigurationRef | String | Refers to a Hystrix configuration to use for configuring the Hystrix EIP.
-|=======================================================================
+|===
 // eip options: END
 
 === Example

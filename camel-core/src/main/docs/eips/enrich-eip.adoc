@@ -252,7 +252,7 @@ The Enrich EIP supports 7 options which are listed below:
 
 
 [width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Java Type | Description
 | strategyRef | String | Refers to an AggregationStrategy to be used to merge the reply from the external service into a single outgoing message. By default Camel will use the reply from the external service as outgoing message.
 | strategyMethodName | String | This option can be used to explicit declare the method name to use when using POJOs as the AggregationStrategy.
@@ -261,7 +261,7 @@ The Enrich EIP supports 7 options which are listed below:
 | shareUnitOfWork | Boolean | Shares the org.apache.camel.spi.UnitOfWork with the parent and the resource exchange. Enrich will by default not share unit of work between the parent exchange and the resource exchange. This means the resource exchange has its own individual unit of work.
 | cacheSize | Integer | Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producer when uris are reused.
 | ignoreInvalidEndpoint | Boolean | Ignore the invalidate endpoint exception when try to create a producer with that endpoint
-|=======================================================================
+|===
 // eip options: END
 
 [NOTE]

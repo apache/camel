@@ -11,12 +11,12 @@ The Routing Slip EIP supports 3 options which are listed below:
 
 
 [width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Java Type | Description
 | uriDelimiter | String | Sets the uri delimiter to use
 | ignoreInvalidEndpoints | Boolean | Ignore the invalidate endpoint exception when try to create a producer with that endpoint
 | cacheSize | Integer | Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producers when using this recipient list when uris are reused.
-|=======================================================================
+|===
 // eip options: END
 
 === Example
