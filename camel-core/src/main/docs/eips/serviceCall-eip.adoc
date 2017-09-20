@@ -94,23 +94,23 @@ from("direct:start")
 The Service Call EIP supports 14 options which are listed below:
 
 
-[width="100%",cols="3,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |===
-| Name | Java Type | Description
-| name | String | *Required* Sets the name of the service to use
-| uri | String | The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression.
-| component | String | The component to use.
-| pattern | ExchangePattern | Sets the optional ExchangePattern used to invoke this endpoint
-| configurationRef | String | Refers to a ServiceCall configuration to use
-| serviceDiscoveryRef | String | Sets a reference to a custom ServiceDiscovery to use.
-| serviceFilterRef | String | Sets a reference to a custom ServiceFilter to use.
-| serviceChooserRef | String | Sets a reference to a custom ServiceChooser to use.
-| loadBalancerRef | String | Sets a reference to a custom ServiceLoadBalancer to use.
-| expressionRef | String | Set a reference to a custom Expression to use.
-| serviceDiscoveryConfiguration | ServiceCallServiceDiscoveryConfiguration | *Required* Configures the ServiceDiscovery using the given configuration.
-| serviceFilterConfiguration | ServiceCallServiceFilterConfiguration | *Required* Configures the ServiceFilter using the given configuration.
-| loadBalancerConfiguration | ServiceCallServiceLoadBalancerConfiguration | *Required* Configures the LoadBalancer using the given configuration.
-| expressionConfiguration | ServiceCallExpressionConfiguration | *Required* Configures the Expression using the given configuration.
+| Name | Description | Default | Type
+| *name* | *Required* Sets the name of the service to use |  | String
+| *uri* | The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression. |  | String
+| *component* | The component to use. | http4 | String
+| *pattern* | Sets the optional ExchangePattern used to invoke this endpoint |  | ExchangePattern
+| *configurationRef* | Refers to a ServiceCall configuration to use |  | String
+| *serviceDiscoveryRef* | Sets a reference to a custom ServiceDiscovery to use. |  | String
+| *serviceFilterRef* | Sets a reference to a custom ServiceFilter to use. |  | String
+| *serviceChooserRef* | Sets a reference to a custom ServiceChooser to use. |  | String
+| *loadBalancerRef* | Sets a reference to a custom ServiceLoadBalancer to use. |  | String
+| *expressionRef* | Set a reference to a custom Expression to use. |  | String
+| *serviceDiscovery Configuration* | *Required* Configures the ServiceDiscovery using the given configuration. |  | ServiceCallService DiscoveryConfiguration
+| *serviceFilterConfiguration* | *Required* Configures the ServiceFilter using the given configuration. |  | ServiceCallService FilterConfiguration
+| *loadBalancerConfiguration* | *Required* Configures the LoadBalancer using the given configuration. |  | ServiceCallServiceLoad BalancerConfiguration
+| *expressionConfiguration* | *Required* Configures the Expression using the given configuration. |  | ServiceCallExpression Configuration
 |===
 // eip options: END
 

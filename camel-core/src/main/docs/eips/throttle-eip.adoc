@@ -7,14 +7,14 @@ The Throttler Pattern allows you to ensure that a specific endpoint does not get
 The Throttle EIP supports 5 options which are listed below:
 
 
-[width="100%",cols="3,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |===
-| Name | Java Type | Description
-| executorServiceRef | String | To use a custom thread pool (ScheduledExecutorService) by the throttler.
-| timePeriodMillis | Long | Sets the time period during which the maximum request count is valid for
-| asyncDelayed | Boolean | Enables asynchronous delay which means the thread will not block while delaying.
-| callerRunsWhenRejected | Boolean | Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true
-| rejectExecution | Boolean | Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is by default false
+| Name | Description | Default | Type
+| *executorServiceRef* | To use a custom thread pool (ScheduledExecutorService) by the throttler. |  | String
+| *timePeriodMillis* | Sets the time period during which the maximum request count is valid for | 1000 | Long
+| *asyncDelayed* | Enables asynchronous delay which means the thread will not block while delaying. | false | Boolean
+| *callerRunsWhenRejected* | Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true | true | Boolean
+| *rejectExecution* | Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is by default false | false | Boolean
 |===
 // eip options: END
 

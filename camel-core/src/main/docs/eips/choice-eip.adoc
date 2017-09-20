@@ -14,11 +14,11 @@ image:http://www.enterpriseintegrationpatterns.com/img/ContentBasedRouter.gif[im
 The Choice EIP supports 2 options which are listed below:
 
 
-[width="100%",cols="3,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |===
-| Name | Java Type | Description
-| whenClauses | List | Sets the when clauses
-| otherwise | OtherwiseDefinition | Sets the otherwise node
+| Name | Description | Default | Type
+| *whenClauses* | Sets the when clauses |  | List
+| *otherwise* | Sets the otherwise node |  | OtherwiseDefinition
 |===
 // eip options: END
 

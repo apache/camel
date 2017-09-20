@@ -10,10 +10,10 @@ image:http://www.enterpriseintegrationpatterns.com/img/Resequencer.gif[image]
 The Resequence EIP supports 1 options which are listed below:
 
 
-[width="100%",cols="3,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |===
-| Name | Java Type | Description
-| resequencerConfig | ResequencerConfig | To configure the resequencer in using either batch or stream configuration. Will by default use batch configuration.
+| Name | Description | Default | Type
+| *resequencerConfig* | To configure the resequencer in using either batch or stream configuration. Will by default use batch configuration. |  | ResequencerConfig
 |===
 // eip options: END
 

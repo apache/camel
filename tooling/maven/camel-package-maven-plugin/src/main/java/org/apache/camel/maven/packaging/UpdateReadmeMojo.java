@@ -1020,6 +1020,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
             option.setRequired(getSafeValue("required", row));
             option.setDeprecated("true".equals(getSafeValue("deprecated", row)));
             option.setDeprecationNote(getSafeValue("deprecationNote", row));
+            option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setDescription(getSafeValue("description", row));
             option.setInput("true".equals(getSafeValue("input", row)));
             option.setOutput("true".equals(getSafeValue("output", row)));

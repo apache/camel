@@ -18,12 +18,12 @@ You must ensure the expression used for the `dynamicRouter` such as a bean, will
 The Dynamic Router EIP supports 3 options which are listed below:
 
 
-[width="100%",cols="3,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |===
-| Name | Java Type | Description
-| uriDelimiter | String | Sets the uri delimiter to use
-| ignoreInvalidEndpoints | Boolean | Ignore the invalidate endpoint exception when try to create a producer with that endpoint
-| cacheSize | Integer | Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producers when using this recipient list when uris are reused.
+| Name | Description | Default | Type
+| *uriDelimiter* | Sets the uri delimiter to use | , | String
+| *ignoreInvalidEndpoints* | Ignore the invalidate endpoint exception when try to create a producer with that endpoint | false | Boolean
+| *cacheSize* | Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producers when using this recipient list when uris are reused. |  | Integer
 |===
 // eip options: END
 
