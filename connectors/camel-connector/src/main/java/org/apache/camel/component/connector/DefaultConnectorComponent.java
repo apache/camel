@@ -69,15 +69,15 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         this(componentName, loadConnectorClass(className));
     }
 
-    protected DefaultConnectorComponent(String componentName, Class<?> className) {
-        this.model = new ConnectorModel(componentName, className);
+    protected DefaultConnectorComponent(String componentName, Class<?> componentClass) {
+        this.model = new ConnectorModel(componentName, componentClass);
         this.baseScheme = this.model.getBaseScheme();
         this.componentName = componentName;
         this.componentScheme = componentName + "-component";
         this.options = new HashMap<>();
 
         // add to catalog
-        this.catalog.addComponent(componentName, className.getName());
+        this.catalog.addComponent(componentName, componentClass.getName());
 
         // It may be a custom component so we need to register this in the camel catalog also
         if (!catalog.findComponentNames().contains(baseScheme)) {
