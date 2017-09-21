@@ -566,9 +566,8 @@ public final class MessageHelper {
         }
 
         String goMessageHistoryOutput = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_OUTPUT_FORMAT);
-        sb.append(String.format(
-                        goMessageHistoryOutput == null ? MESSAGE_HISTORY_OUTPUT : goMessageHistoryOutput,
-                        routeId, id, label, elapsed));
+        goMessageHistoryOutput = goMessageHistoryOutput == null ? MESSAGE_HISTORY_OUTPUT : goMessageHistoryOutput;
+        sb.append(String.format(goMessageHistoryOutput, routeId, id, label, elapsed));
         sb.append("\n");
 
         // and then each history
@@ -582,7 +581,7 @@ public final class MessageHelper {
             label =  URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 100));
             elapsed = history.getElapsed();
 
-            sb.append(String.format(MESSAGE_HISTORY_OUTPUT, routeId, id, label, elapsed));
+            sb.append(String.format(goMessageHistoryOutput, routeId, id, label, elapsed));
             sb.append("\n");
         }
 
