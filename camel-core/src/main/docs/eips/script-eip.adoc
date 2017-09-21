@@ -14,21 +14,20 @@ If the return value should be used as a changed message body then use link:./mes
 The Script EIP supports 0 options which are listed below:
 // eip options: END
 
-=== Using from Java DSL
+=== Samples
 The route below will read the file contents and validate them against a regular expression.
 
 [source,java]
----------------------
+----
 from("file://inbox")
   .script().groovy("// some groovy code goes here")
   .to("bean:MyServiceBean.processLine");
----------------------
+----
 
-=== Using from Spring DSL
 And from XML its easy as well
 
 [source,xml]
----------------------
+----
 <route>
   <from uri="file://inbox"/>
   <script>
@@ -38,12 +37,12 @@ And from XML its easy as well
 </route>
 
 <bean id="myServiceBean" class="com.mycompany.MyServiceBean"/>
----------------------
+----
 
-Mind that you can use CDATA in XML if the groovy scrip uses < > etc
+Mind that you can use _CDATA_ in XML if the groovy scrip uses `< >` etc
 
 [source,xml]
----------------------
+----
 <route>
   <from uri="file://inbox"/>
   <script>
@@ -53,13 +52,14 @@ Mind that you can use CDATA in XML if the groovy scrip uses < > etc
 </route>
 
 <bean id="myServiceBean" class="com.mycompany.MyServiceBean"/>
----------------------
+----
 
 === Using external script files
-You can refer to external script files instead of inlining the script. For example to load a groovy script from the classpath you need to prefix the value with *resource:* as shown:
+You can refer to external script files instead of inlining the script.
+For example to load a groovy script from the classpath you need to prefix the value with `resource:` as shown:
 
 [source,xml]
----------------------
+----
 <route>
   <from uri="file://inbox"/>
   <script>
@@ -69,9 +69,8 @@ You can refer to external script files instead of inlining the script. For examp
 </route>
 
 <bean id="myServiceBean" class="com.mycompany.MyServiceBean"/>
----------------------
+----
 
-You can also refer to the script from the file system with file: instead of classpath: such as file:/var/myscript.groovy
+You can also refer to the script from the file system with `file:` instead of `classpath:`
+such as `file:/var/myscript.groovy`
 
-=== Using This Pattern
-If you would like to use this EIP Pattern then please read the Getting Started, you may also find the Architecture useful particularly the description of Endpoint and URIs. Then you could try out some of the Examples first before trying this pattern out.
