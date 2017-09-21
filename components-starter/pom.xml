@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-starter-parent</artifactId>
-    <version>2.18.5-SNAPSHOT</version>
+    <version>2.18.5</version>
     <relativePath>../spring-boot-dm/camel-starter-parent</relativePath>
   </parent>
   <artifactId>components-starter</artifactId>
