@@ -23,11 +23,10 @@ The Sample EIP supports 3 options which are listed below:
 === Samples
 You use this EIP with the `sample` DSL as show in these samples.
 
-#=== Using the Fluent Builders
 These samples also show how you can use the different syntax to configure the sampling period:
 
 [source,java]
----------------------
+----
 from("direct:sample")
     .sample()
     .to("mock:result");
@@ -47,13 +46,12 @@ from("direct:sample-messageFrequency")
 from("direct:sample-messageFrequency-via-dsl")
     .sample().sampleMessageFrequency(5)
     .to("mock:result");
----------------------
+----
 
-#=== Using the Spring XML Extensions
 And the same example in Spring XML is:
 
 [source,xml]
----------------------
+----
 <route>
     <from uri="direct:sample"/>
     <sample samplePeriod="1" units="seconds">
@@ -72,11 +70,11 @@ And the same example in Spring XML is:
         <to uri="mock:result"/>
     </sample>
 </route>
----------------------
+----
 
 And since it uses a default of 1 second you can omit this configuration in case you also want to use 1 second
 [source,xml]
----------------------
+----
 <route>
     <from uri="direct:sample"/>
     <!-- will by default use 1 second period -->
@@ -84,12 +82,5 @@ And since it uses a default of 1 second you can omit this configuration in case 
         <to uri="mock:result"/>
     </sample>
 </route>
----------------------
+----
 
-=== Using This Pattern
-If you would like to use this EIP Pattern then please read the Getting Started, you may also find the Architecture useful particularly the description of Endpoint and URIs. Then you could try out some of the Examples first before trying this pattern out.
-
-=== See Also
-
-* link:./throttle-eip.adoc[Throttler]
-* link:/aggregator-eip.adoc[Aggregator]
