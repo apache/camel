@@ -32,6 +32,7 @@ public class XPathLanguage extends LanguageSupport {
     private XPathFactory xpathFactory;
     private Boolean useSaxon;
     private String objectModelUri;
+    private Boolean threadSafety;
 
     public Predicate createPredicate(String expression) {
         expression = loadResource(expression);
@@ -85,7 +86,18 @@ public class XPathLanguage extends LanguageSupport {
         this.objectModelUri = objectModelUri;
     }
 
+    public Boolean getThreadSafety() {
+        return threadSafety;
+    }
+
+    public void setThreadSafety(Boolean threadSafety) {
+        this.threadSafety = threadSafety;
+    }
+
     protected void configureBuilder(XPathBuilder builder) {
+        if (threadSafety != null) {
+            builder.setThreadSafety(threadSafety);
+        }
         if (resultType != null) {
             builder.setResultQName(resultType);
         }
