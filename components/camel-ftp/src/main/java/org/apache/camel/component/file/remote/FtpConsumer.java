@@ -235,7 +235,11 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
         // create a pseudo absolute name
         String dir = FileUtil.stripTrailingSeparator(absolutePath);
-        String absoluteFileName = FileUtil.stripLeadingSeparator(dir + "/" + file.getName());
+        String fileName = file.getName();
+        if (((FtpConfiguration)endpoint.getConfiguration()).isHandleDirectoryParserAbsoluteResult()) {
+            fileName = FtpUtils.extractDirNameFromAbsolutePath(file.getName());
+        }
+        String absoluteFileName =  FileUtil.stripLeadingSeparator(dir + "/" + fileName);
         // if absolute start with a leading separator otherwise let it be relative
         if (absolute) {
             absoluteFileName = "/" + absoluteFileName;
