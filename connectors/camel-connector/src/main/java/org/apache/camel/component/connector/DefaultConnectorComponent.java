@@ -57,11 +57,15 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
     private Processor afterConsumer;
 
     protected DefaultConnectorComponent(String componentName, String className) {
+        this(componentName, loadConnectorComponent(className));
+    }
+
+    protected DefaultConnectorComponent(String componentName, Class<?> componentClass) {
         this.componentName = componentName;
-        this.model = new ConnectorModel(componentName, className);
+        this.model = new ConnectorModel(componentName, componentClass);
 
         // add to catalog
-        this.catalog.addComponent(componentName, className);
+        this.catalog.addComponent(componentName, componentClass.getName());
     }
 
     @Override
@@ -425,6 +429,15 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
             }
         }
         return null;
+    }
+
+    private static Class<?> loadConnectorComponent(String className) {
+        try {
+            ClassLoader classLoader = DefaultConnectorComponent.class.getClassLoader();
+            return classLoader.loadClass(className);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }
 
