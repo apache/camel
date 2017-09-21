@@ -52,6 +52,18 @@ public class XPathLanguageConfiguration
      */
     private Boolean logNamespaces = false;
     /**
+     * Whether to enable thread-safety for the returned result of the xpath
+     * expression. This applies to when using NODESET as the result type and the
+     * returned set has multiple elements. In this situation there can be
+     * thread-safety issues if you process the NODESET concurrently such as from
+     * a Camel Splitter EIP in parallel processing mode. This option prevents
+     * concurrency issues by doing defensive copies of the nodes. It is
+     * recommended to turn this option on if you are using camel-saxon or Saxon
+     * in your application. Saxon has thread-safety issues which can be
+     * prevented by turning this option on.
+     */
+    private Boolean threadSafety = false;
+    /**
      * Whether to trim the value to remove leading and trailing whitespaces and
      * line breaks
      */
@@ -95,6 +107,14 @@ public class XPathLanguageConfiguration
 
     public void setLogNamespaces(Boolean logNamespaces) {
         this.logNamespaces = logNamespaces;
+    }
+
+    public Boolean getThreadSafety() {
+        return threadSafety;
+    }
+
+    public void setThreadSafety(Boolean threadSafety) {
+        this.threadSafety = threadSafety;
     }
 
     public Boolean getTrim() {
