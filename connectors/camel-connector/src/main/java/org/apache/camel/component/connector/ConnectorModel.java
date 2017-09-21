@@ -65,10 +65,10 @@ final class ConnectorModel {
     private List<String> componentOptions;
     private List<String> connectorOptions;
 
-    ConnectorModel(String componentName, String className) {
+    ConnectorModel(String componentName, Class<?> componentClass) {
         this.componentName = componentName;
-        this.className = className;
-        this.lines = Suppliers.memorize(() -> findCamelConnectorJSonSchema());
+        this.className = componentClass.getName();
+        this.lines = Suppliers.memorize(() -> findCamelConnectorJSonSchema(componentClass));
     }
 
     public String getComponentName() {
@@ -183,12 +183,12 @@ final class ConnectorModel {
     // Helpers
     // ***************************************
 
-    private List<String> findCamelConnectorJSonSchema() {
+    private List<String> findCamelConnectorJSonSchema(Class<?> componentClass) {
         LOGGER.debug("Finding camel-connector.json in classpath for connector: {}", componentName);
 
         Enumeration<URL> urls;
         try {
-            urls = ConnectorModel.class.getClassLoader().getResources("camel-connector.json");
+            urls = componentClass.getClassLoader().getResources("camel-connector.json");
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot open camel-connector.json in classpath for connector " + componentName);
         }
