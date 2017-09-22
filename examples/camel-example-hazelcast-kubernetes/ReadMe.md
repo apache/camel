@@ -15,14 +15,14 @@ Once your Minikube node is up and running you'll need to run the following comma
 In your src/main/resources/fabric8/ folder you'll find two yaml file. Run the following command using them:
 
 ```
-kubectl create -f src/main/resources/fabric8/hazelcast-service.yaml
-kubectl create -f src/main/resources/fabric8/hazelcast-deployment.yaml
+$ kubectl create -f src/main/resources/fabric8/hazelcast-service.yaml
+$ kubectl create -f src/main/resources/fabric8/hazelcast-deployment.yaml
 ```
 
 To check the correct startup of the Hazelcast instance run the following command:
 
 ```
-kubectl get deployment
+$ kubectl get deployment
 NAME        DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 hazelcast   1         1         1            1           1m
 ```
@@ -30,7 +30,7 @@ hazelcast   1         1         1            1           1m
 and check the status of the pod
 
 ```
-kubectl get pods
+$ kubectl get pods
 NAME                                        READY     STATUS             RESTARTS   AGE
 hazelcast-414548760-fb5bh                   1/1       Running            0          29s
 ```
@@ -38,13 +38,13 @@ hazelcast-414548760-fb5bh                   1/1       Running            0      
 Now you can decide to scale-up your Hazelcast cluster
 
 ```
-kubectl scale deployment hazelcast --replicas 4
+$ kubectl scale deployment hazelcast --replicas 4
 ```
 
 and again check the status of your pods
 
 ```
-kubectl get pods
+$ kubectl get pods
 NAME                                                  READY     STATUS    RESTARTS   AGE
 hazelcast-414548760-37ktz                             1/1       Running   0          23m
 hazelcast-414548760-fb5bh                             1/1       Running   0          1d
@@ -111,17 +111,17 @@ Members [4] {
 
 Navigate to the project folder and the example can be built with
 
-    mvn clean -Pkubernetes-install fabric8:deploy
+    $ mvn clean -Pkubernetes-install fabric8:deploy
 
 When the example runs in fabric8, you can use the Kubectl command tool to inspect the status
 
 To list all the running pods:
 
-    kubectl get pods
+    $ kubectl get pods
 
 Then find the name of the pod that runs this quickstart, and output the logs from the running pods with:
 
-    kubectl logs <name of pod>
+    $ kubectl logs <name of pod>
 
 and you should see something like this:
 
@@ -155,4 +155,18 @@ INFO: hz.client_0 [someGroup] [3.8.5] Authenticated with server [172.17.0.4]:570
 2017-09-12 12:42:51,260 [2 - timer://foo] INFO  route1                         - Producer side: Sending data to Hazelcast topic..
 2017-09-12 12:42:51,261 [lient_0.event-3] INFO  route2                         - Consumer side: Detected following action: received
 
+```
+
+### Cleanup
+
+Run following to undeploy
+```
+$ mvn -Pkubernetes-install fabric8:undeploy
+$ kubectl delete -f src/main/resources/fabric8/hazelcast-deployment.yaml
+$ kubectl delete -f src/main/resources/fabric8/hazelcast-service.yaml
+```
+Make sure no pod is running
+```
+$ kubectl get pods
+No resources found.
 ```

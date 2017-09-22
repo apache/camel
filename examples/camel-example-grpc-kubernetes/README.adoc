@@ -106,6 +106,21 @@ And you should see this output in the console.
 
 ----
 
+### Cleanup
+
+Undeploy server and client
+```
+$ cd hello-camel-grpc-client-kubernetes
+$ mvn -Pkubernetes-install fabric8:undeploy
+$ cd ../hello-camel-grpc-server-kubernetes
+$ mvn -Pkubernetes-install fabric8:undeploy
+```
+Make sure no pod is running
+```
+$ kubectl get pods
+No resources found.
+```
+
 ### Help
 
 If you hit any problems please let us know on the http://camel.apache.org/discussion-forums.html[Camel Forums].
