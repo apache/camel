@@ -46,7 +46,7 @@
     <spring-boot-version>1.5.7.RELEASE</spring-boot-version>
 
     <!-- The following dependencies should be aligned with the ones in standard camel parent -->
-    <avro-version>1.8.1</avro-version>
+    <avro-version>1.8.2</avro-version>
     <cassandra-driver-guava-version>18.0</cassandra-driver-guava-version>
     <jackson-version>1.9.12</jackson-version>
 
@@ -54,7 +54,7 @@
     <google-guava-version>19.0</google-guava-version>
     <lucene3-version>3.6.0</lucene3-version>
     <scala-version>2.11.7</scala-version>
-    <scalaxml-version>1.0.4</scalaxml-version>
+    <scalaxml-version>1.0.6</scalaxml-version>
 
     <maven-checkstyle-plugin-version>2.17</maven-checkstyle-plugin-version>
     <maven-checkstyle-version>7.6.1</maven-checkstyle-version>
@@ -66,12 +66,11 @@
     <ahc-netty-version>4.0.46.Final</ahc-netty-version>
     <cassandra-netty-version-testing>4.0.44.Final</cassandra-netty-version-testing>
     <infinispan-spring-boot-version>1.0.0.Final</infinispan-spring-boot-version>
-    <groovy-version>2.4.10</groovy-version>
+    <groovy-version>2.4.12</groovy-version>
 
     <!-- The following versions should be aligned with the ones in spring-boot-repo/spring-boot-dependencies/pom.xml (for the targeted version of spring-boot) -->
-    <!-- for example: https://github.com/spring-projects/spring-boot/blob/v1.5.6.RELEASE/spring-boot-dependencies/pom.xml -->
-    <jackson2-version>2.8.8</jackson2-version>
-    <scala-jackson2-version>2.8.9</scala-jackson2-version>
+    <!-- for example: https://github.com/spring-projects/spring-boot/blob/v1.5.7.RELEASE/spring-boot-dependencies/pom.xml -->
+    <jackson2-version>2.8.10</jackson2-version>
     <jetty9-version>9.4.6.v20170531</jetty9-version>
     <jetty-version>${jetty9-version}</jetty-version>
     <jna-version>4.2.2</jna-version>
@@ -79,9 +78,9 @@
     <htmlunit-version>2.21</htmlunit-version>
     <log4j2-version>2.7</log4j2-version>
     <slf4j-version>1.7.25</slf4j-version>
-    <spring-version>4.3.10.RELEASE</spring-version>
-    <spring-data-releasetrain-version>Ingalls-SR6</spring-data-releasetrain-version>
-    <spring-integration-version>4.3.11.RELEASE</spring-integration-version>
+    <spring-version>4.3.11.RELEASE</spring-version>
+    <spring-data-releasetrain-version>Ingalls-SR7</spring-data-releasetrain-version>
+    <spring-integration-version>4.3.12.RELEASE</spring-integration-version>
     <spring-security-version>4.2.3.RELEASE</spring-security-version>
   </properties>
 
