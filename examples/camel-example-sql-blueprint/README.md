@@ -34,10 +34,8 @@ You will need to install this example first to your local maven repository with:
 Then you can install this example from the shell using this example's `features.xml`
 for easy provisioning:
 
-	feature:repo-add camel ${project.version}
-	feature:install camel
-  feature:repo-add mvn:org.apache.camel.example/camel-example-sql-blueprint/${version}/xml/features
-  feature:install camel-example-sql-blueprint
+	feature:repo-add mvn:org.apache.camel.example/camel-example-sql-blueprint/${version}/xml/features
+	feature:install camel-example-sql-blueprint
 
 And you can see the application running by tailing the logs:
 

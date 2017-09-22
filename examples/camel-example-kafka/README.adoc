@@ -15,39 +15,43 @@ This project consists of the following examples:
 
 This example requires that Kafka Server is up and running.
 
+    $ ${KAFKA}/bin/zookeeper-server-start.sh ${KAFKA}/config/zookeeper.properties
+
+    $ ${KAFKA}/bin/kafka-server-start.sh ${KAFKA}/config/server.properties
+
 You will need to create following topics before you run the examples.
 
 On windows run
 
-    kafka-topics.bat --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 2 --topic TestLog
+    $ ${KAFKA}/bin/kafka-topics.bat --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 2 --topic TestLog
     
-    kafka-topics.bat --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 1 --topic AccessLog
+    $ ${KAFKA}/bin/kafka-topics.bat --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 1 --topic AccessLog
 
 On linux run
     
-    kafka-topics.sh --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 2 --topic TestLog
+    $ ${KAFKA}/bin/kafka-topics.sh --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 2 --topic TestLog
     
-    kafka-topics.sh --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 1 --topic AccessLog
+    $ ${KAFKA}/bin/kafka-topics.sh --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 1 --topic AccessLog
 
 
 ### Build
 
 You will need to compile this example first:
 
-    mvn compile
+    $ mvn compile
 
 ### Run
 
 Run the consumer first in separate shell 
 
     
-    mvn compile exec:java -Pkafka-consumer
+    $ mvn compile exec:java -Pkafka-consumer
 
 
 Run the message producer in the seperate shell
 
     
-    mvn compile exec:java -Pkafka-producer
+    $ mvn compile exec:java -Pkafka-producer
 
 Initially, some messages are sent programmatically. 
 On the command prompt, type the messages. Each line is sent as one message to kafka
