@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For JavaScript expressions and predicates
+ * To use JavaScript in Camel expressions or predicates.
  *
  * @version 
  */

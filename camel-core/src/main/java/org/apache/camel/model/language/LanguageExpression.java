@@ -24,8 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Represents a parameterised language expression which can support any language
- * at runtime using the language attribute.
+ * To use the specified language in Camel expressions or predicates.
  *
  * @version 
  */

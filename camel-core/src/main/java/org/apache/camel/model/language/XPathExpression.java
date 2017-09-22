@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * For XPath expressions and predicates
+ * To use XPath (XML) in Camel expressions or predicates.
  */
 @Metadata(firstVersion = "1.1.0", label = "language,core,xml", title = "XPath")
 @XmlRootElement(name = "xpath")
@@ -43,9 +43,9 @@ public class XPathExpression extends NamespaceAwareExpression {
     private String resultTypeName;
     @XmlAttribute
     private Boolean saxon;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String factoryRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String objectModel;
     @XmlAttribute
     private Boolean logNamespaces;
@@ -57,7 +57,7 @@ public class XPathExpression extends NamespaceAwareExpression {
     private Class<?> resultType;
     @XmlTransient
     private XPathFactory xpathFactory;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private Boolean threadSafety;
 
     public XPathExpression() {

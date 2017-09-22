@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
- * For expressions and predicates using a body or header tokenizer
+ * To use Camel message body or header with a tokenizer in Camel expressions or predicates.
  *
  * @see TokenizeLanguage
  */

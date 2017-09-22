@@ -27,7 +27,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For JXPath expressions and predicates
+ * To use JXPath in Camel expressions or predicates.
  *
  * @version 
  */
@@ -37,7 +37,7 @@ import org.apache.camel.spi.Metadata;
 @Deprecated
 public class JXPathExpression extends ExpressionDefinition {
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "false")
     private Boolean lenient;
 
     public JXPathExpression() {

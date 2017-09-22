@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * An expression which extracts the named exchange header
+ * To use a Camel Message header in expressions or predicates.
  *
  * @version 
  */
