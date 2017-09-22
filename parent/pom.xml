@@ -3627,12 +3627,6 @@
         <version>${fastjson-version}</version>
       </dependency>
 
-      <dependency>
-        <groupId>io.netty</groupId>
-        <artifactId>netty-all</artifactId>
-        <version>${netty-version}</version>
-      </dependency>
-
       <!-- abdera dependencies-->
       <dependency>
         <groupId>org.apache.abdera</groupId>
