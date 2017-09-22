@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Base64 data format
+ * The Base64 data format is used for base64 encoding and decoding.
  *
  * @version 
  */

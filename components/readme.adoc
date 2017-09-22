@@ -856,7 +856,7 @@ Data Formats
 ^^^^^^^^^^^^
 
 // dataformats: START
-Number of Data Formats: 48 in 39 JAR artifacts (0 deprecated)
+Number of Data Formats: 48 in 39 JAR artifacts (2 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -888,9 +888,9 @@ Number of Data Formats: 48 in 39 JAR artifacts (0 deprecated)
 
 | link:camel-flatpack/src/main/docs/flatpack-dataformat.adoc[Flatpack] (camel-flatpack) | 2.1 | Camel FlatPack support
 
-| link:../camel-core/src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0 | GZip compression data format
+| link:../camel-core/src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0 | The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).
 
-| link:camel-hessian/src/main/docs/hessian-dataformat.adoc[Hessian] (camel-hessian) | 2.17 | Hessian serialization support
+| link:camel-hessian/src/main/docs/hessian-dataformat.adoc[Hessian] (camel-hessian) | 2.17 | *deprecated* Hessian serialization support
 
 | link:camel-hl7/src/main/docs/hl7-dataformat.adoc[HL7] (camel-hl7) | 2.0 | Camel HL7 support
 
@@ -898,7 +898,7 @@ Number of Data Formats: 48 in 39 JAR artifacts (0 deprecated)
 
 | link:camel-jacksonxml/src/main/docs/jacksonxml-dataformat.adoc[JacksonXML] (camel-jacksonxml) | 2.16 | Camel Jackson XML support
 
-| link:../camel-core/src/main/docs/serialization-dataformat.adoc[Java Object Serialization] (camel-core) | 2.12 | Java Object Serialization data format
+| link:../camel-core/src/main/docs/serialization-dataformat.adoc[Java Object Serialization] (camel-core) | 2.12 | Serialization is a data format which uses the standard Java Serialization mechanism to unmarshal a binary payload into Java objects or to marshal Java objects into a binary blob.
 
 | link:camel-jaxb/src/main/docs/jaxb-dataformat.adoc[JAXB] (camel-jaxb) | 1.0 | Camel JAXB support
 
@@ -926,7 +926,7 @@ Number of Data Formats: 48 in 39 JAR artifacts (0 deprecated)
 
 | link:camel-soap/src/main/docs/soapjaxb-dataformat.adoc[SOAP] (camel-soap) | 2.3 | Camel SOAP support
 
-| link:../camel-core/src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | 2.12 | String (text based) data format
+| link:../camel-core/src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | 2.12 | String data format is a textual based format that supports character encoding.
 
 | link:camel-syslog/src/main/docs/syslog-dataformat.adoc[Syslog] (camel-syslog) | 2.6 | Camel Syslog support
 
@@ -942,7 +942,7 @@ Number of Data Formats: 48 in 39 JAR artifacts (0 deprecated)
 
 | link:camel-univocity-parsers/src/main/docs/univocity-tsv-dataformat.adoc[uniVocity TSV] (camel-univocity-parsers) | 2.15 | Camel UniVocity parsers data format support
 
-| link:camel-xmlbeans/src/main/docs/xmlBeans-dataformat.adoc[XML Beans] (camel-xmlbeans) | 1.2 | Camel XMLBeans support
+| link:camel-xmlbeans/src/main/docs/xmlBeans-dataformat.adoc[XML Beans] (camel-xmlbeans) | 1.2 | *deprecated* Camel XMLBeans support
 
 | link:camel-xmljson/src/main/docs/xmljson-dataformat.adoc[XML JSon] (camel-xmljson) | 2.10 | Camel XML JSON Data Format
 
@@ -954,7 +954,7 @@ Number of Data Formats: 48 in 39 JAR artifacts (0 deprecated)
 
 | link:camel-snakeyaml/src/main/docs/yaml-snakeyaml-dataformat.adoc[YAML SnakeYAML] (camel-snakeyaml) | 2.17 | Camel SnakeYAML support
 
-| link:../camel-core/src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | 2.12 | Zip compression data format (not for zip files)
+| link:../camel-core/src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | 2.12 | Zip Deflate Compression data format is a message compression and de-compression format (not zip files).
 
 | link:camel-zipfile/src/main/docs/zipfile-dataformat.adoc[Zip File] (camel-zipfile) | 2.11 | Camel Zip file support
 |===

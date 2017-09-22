@@ -103,19 +103,19 @@ Data Formats
 
 
 // dataformats: START
-Number of Data Formats: 4 in 39 JAR artifacts (0 deprecated)
+Number of Data Formats: 4 in 39 JAR artifacts (2 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
 | Data Format | Available From | Description
 
-| link:src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0 | GZip compression data format
+| link:src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0 | The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).
 
-| link:src/main/docs/serialization-dataformat.adoc[Java Object Serialization] (camel-core) | 2.12 | Java Object Serialization data format
+| link:src/main/docs/serialization-dataformat.adoc[Java Object Serialization] (camel-core) | 2.12 | Serialization is a data format which uses the standard Java Serialization mechanism to unmarshal a binary payload into Java objects or to marshal Java objects into a binary blob.
 
-| link:src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | 2.12 | String (text based) data format
+| link:src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | 2.12 | String data format is a textual based format that supports character encoding.
 
-| link:src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | 2.12 | Zip compression data format (not for zip files)
+| link:src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | 2.12 | Zip Deflate Compression data format is a message compression and de-compression format (not zip files).
 |===
 // dataformats: END
 

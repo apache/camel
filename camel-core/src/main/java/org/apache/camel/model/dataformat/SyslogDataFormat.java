@@ -24,11 +24,11 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Syslog data format
+ * The Syslog dataformat is used for working with RFC3164 and RFC5424 messages (logging and monitoring).
  *
  * @version 
  */
-@Metadata(firstVersion = "2.6.0", label = "dataformat,transformation", title = "Syslog")
+@Metadata(firstVersion = "2.6.0", label = "dataformat,transformation,monitoring", title = "Syslog")
 @XmlRootElement(name = "syslog")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SyslogDataFormat extends DataFormatDefinition {

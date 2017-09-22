@@ -26,7 +26,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * UniVocity CSV data format
+ * The uniVocity CSV data format is used for working with CSV (Comma Separated Values) flat payloads.
  */
 @Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity CSV")
 @XmlRootElement(name = "univocity-csv")
