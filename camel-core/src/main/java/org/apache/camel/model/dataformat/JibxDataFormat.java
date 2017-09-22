@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * JiBX data format
+ * JiBX data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
  */
 @Metadata(firstVersion = "2.6.0", label = "dataformat,transformation,xml", title = "JiBX")
 @XmlRootElement(name = "jibx")

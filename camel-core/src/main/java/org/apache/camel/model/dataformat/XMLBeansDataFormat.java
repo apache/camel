@@ -25,13 +25,14 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * XMLBeans data format
+ * XML Beans data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
  *
  * @version 
  */
 @Metadata(firstVersion = "1.2.0", label = "dataformat,transformation,xml", title = "XML Beans")
 @XmlRootElement(name = "xmlBeans")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class XMLBeansDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private Boolean prettyPrint;

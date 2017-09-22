@@ -31,7 +31,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * CSV data format
+ * The CSV data format is used for handling CSV payloads.
  */
 @Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,csv", title = "CSV")
 @XmlRootElement(name = "csv")

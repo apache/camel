@@ -32,7 +32,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Crypto data format
+ * Crypto data format is used for encrypting and decrypting of messages using Java Cryptographic Extension.
  *
  * @version
  */

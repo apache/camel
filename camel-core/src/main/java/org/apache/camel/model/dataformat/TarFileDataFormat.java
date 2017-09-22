@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * TAR file data format
+ * The Tar File data format is a message compression and de-compression format of tar files.
  */
 @Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,file", title = "Tar File")
 @XmlRootElement(name = "tarfile")

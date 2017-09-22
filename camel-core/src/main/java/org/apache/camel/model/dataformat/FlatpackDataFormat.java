@@ -30,7 +30,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Flatpack data format
+ * The Flatpack data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).
  */
 @Metadata(firstVersion = "2.1.0", label = "dataformat,transformation,csv", title = "Flatpack")
 @XmlRootElement(name = "flatpack")
