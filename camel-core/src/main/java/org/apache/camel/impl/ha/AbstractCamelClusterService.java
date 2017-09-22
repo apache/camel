@@ -16,7 +16,9 @@
  */
 package org.apache.camel.impl.ha;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.locks.StampedLock;
 
@@ -141,6 +143,52 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
         );
     }
 
+    @Override
+    public Collection<String> getNamespaces() {
+        return LockHelper.supplyWithReadLock(
+            lock,
+            () -> {
+                // copy the key set so it is not modifiable and thread safe
+                // thus a little inefficient.
+                return new HashSet<>(views.keySet());
+            }
+        );
+    }
+
+    @Override
+    public void startView(String namespace) throws Exception {
+        LockHelper.doWithWriteLockT(
+            lock,
+            () -> {
+                ViewHolder<T> holder = views.get(namespace);
+
+                if (holder != null) {
+                    LOGGER.info("Force start of view {}", namespace);
+                    holder.startView();
+                } else {
+                    LOGGER.warn("Error forcing start of view {}: it does not exist", namespace);
+                }
+            }
+        );
+    }
+
+    @Override
+    public void stopView(String namespace) throws Exception {
+        LockHelper.doWithWriteLockT(
+            lock,
+            () -> {
+                ViewHolder<T> holder = views.get(namespace);
+
+                if (holder != null) {
+                    LOGGER.info("Force stop of view {}", namespace);
+                    holder.stopView();
+                } else {
+                    LOGGER.warn("Error forcing stop of view {}: it does not exist", namespace);
+                }
+            }
+        );
+    }
+
     // **********************************
     // Implementation
     // **********************************
@@ -157,14 +205,28 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
 
         ViewHolder(V view) {
             this.view = view;
-            this.count = ReferenceCount.on(this::startView, this::stopView);
+            this.count = ReferenceCount.on(
+                () -> {
+                    try {
+                        this.startView();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                () -> {
+                    try {
+                        this.stopView();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
         }
 
-        public V get() {
+        V get() {
             return view;
         }
 
-        public V retain() {
+        V retain() {
             LOGGER.debug("Retain view {}, old-refs={}", view.getNamespace(), count.get());
 
             count.retain();
@@ -172,30 +234,24 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
             return get();
         }
 
-        public void release() {
+        void release() {
             LOGGER.debug("Release view {}, old-refs={}", view.getNamespace(), count.get());
 
             count.release();
         }
 
-        private void startView() {
+        void startView() throws Exception {
             if (AbstractCamelClusterService.this.isRunAllowed()) {
-                try {
-                    LOGGER.debug("Start view {}", view.getNamespace());
-                    view.start();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                LOGGER.debug("Start view {}", view.getNamespace());
+                view.start();
+            } else {
+                LOGGER.debug("Can't start view {} as cluster service is not running, view will be started on service start-up", view.getNamespace());
             }
         }
 
-        private void stopView() {
-            try {
-                LOGGER.debug("Stop view {}", view.getNamespace());
-                view.stop();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        void stopView() throws Exception {
+            LOGGER.debug("Stop view {}", view.getNamespace());
+            view.stop();
         }
     }
 }

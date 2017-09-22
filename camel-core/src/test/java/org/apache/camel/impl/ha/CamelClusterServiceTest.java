@@ -25,10 +25,10 @@ import org.apache.camel.ha.CamelClusterService;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class CamelClusterViewTest {
+public class CamelClusterServiceTest {
 
     @Test
-    public void testEquality() throws Exception {
+    public void testViewEquality() throws Exception {
         TestClusterService service = new TestClusterService();
         TestClusterView view1 = service.getView("ns1").unwrap(TestClusterView.class);
         TestClusterView view2 = service.getView("ns1").unwrap(TestClusterView.class);
@@ -39,7 +39,7 @@ public class CamelClusterViewTest {
     }
 
     @Test
-    public void testReferences() throws Exception {
+    public void testViewReferences() throws Exception {
         TestClusterService service = new TestClusterService();
         service.start();
 
@@ -83,6 +83,33 @@ public class CamelClusterViewTest {
         Assert.assertEquals(ServiceStatus.Stopped, view3.getStatus());
         Assert.assertEquals(ServiceStatus.Stopped, newView1.getStatus());
         Assert.assertEquals(ServiceStatus.Stopped, newView2.getStatus());
+    }
+
+    @Test
+    public void testViewForceOperations() throws Exception {
+        TestClusterService service = new TestClusterService();
+        TestClusterView view = service.getView("ns1").unwrap(TestClusterView.class);
+
+        Assert.assertEquals(ServiceStatus.Stopped, view.getStatus());
+
+        // This should not start the view as the service has not yet started.
+        service.startView(view.getNamespace());
+
+        Assert.assertEquals(ServiceStatus.Stopped, view.getStatus());
+
+        // This should start the view.
+        service.start();
+
+        Assert.assertEquals(ServiceStatus.Started, view.getStatus());
+
+        service.stopView(view.getNamespace());
+        Assert.assertEquals(ServiceStatus.Stopped, view.getStatus());
+
+        service.startView(view.getNamespace());
+        Assert.assertEquals(ServiceStatus.Started, view.getStatus());
+
+        service.releaseView(view);
+        Assert.assertEquals(ServiceStatus.Stopped, view.getStatus());
     }
 
     // *********************************

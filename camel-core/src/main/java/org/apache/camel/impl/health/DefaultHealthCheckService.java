@@ -250,7 +250,7 @@ public final class DefaultHealthCheckService extends ServiceSupport implements H
     }
 
     private HealthCheck.Result invoke(HealthCheck check, Map<String, Object> options) {
-        return LockHelper.suppliWithWriteLock(
+        return LockHelper.supplyWithWriteLock(
             lock,
             () -> {
                 LOGGER.debug("Invoke health-check {}", check.getId());

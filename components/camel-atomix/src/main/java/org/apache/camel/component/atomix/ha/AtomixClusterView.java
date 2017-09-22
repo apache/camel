@@ -175,8 +175,16 @@ final class AtomixClusterView extends AbstractCamelClusterView {
 
         AtomixLocalMember leave() {
             if (member != null) {
-                LOGGER.debug("Leaving group {}", group);
-                member.leave();
+                String id = member.id();
+
+                LOGGER.debug("Member {} : leave group {}", id, group);
+
+                member.leave().join();
+                group.remove(id).join();
+
+                member = null;
+
+                fireLeadershipChangedEvent(null);
             }
 
             return this;
