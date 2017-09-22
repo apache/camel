@@ -57,7 +57,7 @@ public final class LockHelper {
         }
     }
 
-    public static <R> R suppliWithReadLock(StampedLock lock, Supplier<R> task)  {
+    public static <R> R supplyWithReadLock(StampedLock lock, Supplier<R> task)  {
         long stamp = lock.readLock();
 
         try {
@@ -67,7 +67,7 @@ public final class LockHelper {
         }
     }
 
-    public static <R, T extends Throwable> R suppliWithReadLockT(StampedLock lock, ThrowingSupplier<R, T> task) throws T {
+    public static <R, T extends Throwable> R supplyWithReadLockT(StampedLock lock, ThrowingSupplier<R, T> task) throws T {
         long stamp = lock.readLock();
 
         try {
@@ -97,7 +97,7 @@ public final class LockHelper {
         }
     }
 
-    public static <R> R suppliWithWriteLock(StampedLock lock, Supplier<R> task)  {
+    public static <R> R supplyWithWriteLock(StampedLock lock, Supplier<R> task)  {
         long stamp = lock.writeLock();
 
         try {
@@ -117,7 +117,7 @@ public final class LockHelper {
         }
     }
 
-    public static <R, T extends Throwable> R suppliWithWriteLockT(StampedLock lock, ThrowingSupplier<R, T> task) throws T {
+    public static <R, T extends Throwable> R supplyWithWriteLockT(StampedLock lock, ThrowingSupplier<R, T> task) throws T {
         long stamp = lock.writeLock();
 
         try {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.ha;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 

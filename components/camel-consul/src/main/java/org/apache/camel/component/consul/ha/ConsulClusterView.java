@@ -44,12 +44,12 @@ final class ConsulClusterView extends AbstractCamelClusterView {
     private final ConsulClusterConfiguration configuration;
     private final ConsulLocalMember localMember;
     private final ConsulClusterMember nullMember;
+    private final AtomicReference<String> sessionId;
     private final Watcher watcher;
 
     private Consul client;
     private SessionClient sessionClient;
     private KeyValueClient keyValueClient;
-    private String sessionId;
     private String path;
 
     ConsulClusterView(ConsulClusterService service, ConsulClusterConfiguration configuration, String namespace) throws Exception {
@@ -58,6 +58,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
         this.configuration = configuration;
         this.localMember = new ConsulLocalMember();
         this.nullMember = new ConsulClusterMember();
+        this.sessionId = new AtomicReference<>();
         this.watcher = new Watcher();
         this.path = configuration.getRootPath() + "/" + namespace;
     }
@@ -94,22 +95,24 @@ final class ConsulClusterView extends AbstractCamelClusterView {
 
     @Override
     protected void doStart() throws Exception {
-        if (sessionId == null) {
+        if (sessionId.get() == null) {
             client = configuration.createConsulClient(getCamelContext());
             sessionClient = client.sessionClient();
             keyValueClient = client.keyValueClient();
 
-            sessionId = sessionClient.createSession(
-                ImmutableSession.builder()
-                    .name(getNamespace())
-                    .ttl(configuration.getSessionTtl() + "s")
-                    .lockDelay(configuration.getSessionLockDelay() + "s")
-                    .build()
-            ).getId();
+            sessionId.set(
+                sessionClient.createSession(
+                    ImmutableSession.builder()
+                        .name(getNamespace())
+                        .ttl(configuration.getSessionTtl() + "s")
+                        .lockDelay(configuration.getSessionLockDelay() + "s")
+                        .build()
+                ).getId()
+            );
 
-            LOGGER.debug("Acquired session with id '{}'", sessionId);
-            boolean lock = keyValueClient.acquireLock(this.path, sessionId);
-            LOGGER.debug("Acquire lock on path '{}' with id '{}' result '{}'", path, sessionId, lock);
+            LOGGER.debug("Acquired session with id '{}'", sessionId.get());
+            boolean lock = acquireLock();
+            LOGGER.debug("Acquire lock on path '{}' with id '{}' result '{}'", path, sessionId.get(), lock);
 
             localMember.setMaster(lock);
             watcher.watch();
@@ -118,14 +121,22 @@ final class ConsulClusterView extends AbstractCamelClusterView {
 
     @Override
     protected void doStop() throws Exception {
-        if (sessionId != null) {
-            if (keyValueClient.releaseLock(this.path, sessionId)) {
-                LOGGER.debug("Successfully released lock on path '{}' with id '{}'", path, sessionId);
+        if (sessionId.get() != null) {
+            if (keyValueClient.releaseLock(this.path, sessionId.get())) {
+                LOGGER.debug("Successfully released lock on path '{}' with id '{}'", path, sessionId.get());
             }
 
-            sessionClient.destroySession(sessionId);
+            sessionClient.destroySession(sessionId.getAndSet(null));
             localMember.setMaster(false);
         }
+    }
+
+    private boolean acquireLock() {
+        String sid = sessionId.get();
+
+        return (sid != null)
+            ? keyValueClient.acquireLock(this.path, sid)
+            : false;
     }
 
     // ***********************************************
@@ -137,12 +148,12 @@ final class ConsulClusterView extends AbstractCamelClusterView {
 
         void setMaster(boolean master) {
             if (master && this.master.compareAndSet(false, true)) {
-                LOGGER.debug("Leadership taken for session id {}", sessionId);
+                LOGGER.debug("Leadership taken for session id {}", sessionId.get());
                 fireLeadershipChangedEvent(this);
                 return;
             }
             if (!master && this.master.compareAndSet(true, false)) {
-                LOGGER.debug("Leadership lost for session id {}", sessionId);
+                LOGGER.debug("Leadership lost for session id {}", sessionId.get());
                 fireLeadershipChangedEvent(getMaster().orElse(nullMember));
                 return;
             }
@@ -155,7 +166,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
 
         @Override
         public String getId() {
-            return sessionId;
+            return sessionId.get();
         }
 
         @Override
@@ -219,19 +230,24 @@ final class ConsulClusterView extends AbstractCamelClusterView {
 
         @Override
         public void onComplete(ConsulResponse<com.google.common.base.Optional<Value>> consulResponse) {
-            if (isRunAllowed()) {
+            if (isStarting() || isStarted()) {
                 com.google.common.base.Optional<Value> value = consulResponse.getResponse();
                 if (value.isPresent()) {
                     com.google.common.base.Optional<String> sid = value.get().getSession();
                     if (!sid.isPresent()) {
                         // If the key is not held by any session, try acquire a
                         // lock (become leader)
-                        boolean lock = keyValueClient.acquireLock(configuration.getRootPath(), sessionId);
-                        LOGGER.debug("Try to acquire lock on path '{}' with id '{}', result '{}'", path, sessionId, lock);
+                        boolean lock = acquireLock();
+                        LOGGER.debug("Try to acquire lock on path '{}' with id '{}', result '{}'", path, sessionId.get(), lock);
 
                         localMember.setMaster(lock);
                     } else {
-                        localMember.setMaster(sessionId.equals(sid.get()));
+                        boolean master = sid.get().equals(sessionId.get());
+                        if (!master) {
+                            LOGGER.debug("Path {} is held by session {}, local session is {}", path, sid.get(), sessionId.get());
+                        }
+
+                        localMember.setMaster(sid.get().equals(sessionId.get()));
                     }
                 }
 
@@ -244,8 +260,8 @@ final class ConsulClusterView extends AbstractCamelClusterView {
         public void onFailure(Throwable throwable) {
             LOGGER.debug("", throwable);
 
-            if (sessionId != null) {
-                keyValueClient.releaseLock(configuration.getRootPath(), sessionId);
+            if (sessionId.get() != null) {
+                keyValueClient.releaseLock(configuration.getRootPath(), sessionId.get());
             }
 
             localMember.setMaster(false);
@@ -253,7 +269,11 @@ final class ConsulClusterView extends AbstractCamelClusterView {
         }
 
         public void watch() {
-            if (isRunAllowed()) {
+            if (sessionId.get() == null) {
+                return;
+            }
+
+            if (isStarting() || isStarted()) {
                 // Watch for changes
                 keyValueClient.getValue(
                     path,
@@ -262,7 +282,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
                 );
 
                 // Refresh session
-                sessionClient.renewSession(sessionId);
+                sessionClient.renewSession(sessionId.get());
             }
         }
     }
