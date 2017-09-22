@@ -302,6 +302,7 @@ public final class ArquillianPackager {
         ignore.add("commons-beanutils:commons-beanutils");
         ignore.add("io.fabric8:kubernetes-");
         ignore.add("io.netty:netty:jar"); // an old version
+        ignore.add("io.netty:netty-tcnative-boringssl-static");
         ignore.add("io.swagger:swagger-parser");
         ignore.add("org.apache.commons");
         ignore.add("org.apache.curator");
@@ -322,6 +323,7 @@ public final class ArquillianPackager {
         ignore.add("org.easytesting");
         ignore.add("net.openhft");
         ignore.add("net.sourceforge.htmlunit:htmlunit-core-js"); // v 2.21 does not exist
+        ignore.add("org.springframework.cloud"); // too many different versions
         ignore.add("org.springframework.data");
         ignore.add("org.springframework.security:spring-security-jwt");
         ignore.add("org.springframework.security:spring-security-rsa");

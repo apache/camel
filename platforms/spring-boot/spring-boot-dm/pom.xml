@@ -63,7 +63,6 @@
     <hadoop2-version>2.7.2</hadoop2-version>
 
     <!-- Custom dependency required by some modules -->
-    <ahc-netty-version>4.0.46.Final</ahc-netty-version>
     <cassandra-netty-version-testing>4.0.44.Final</cassandra-netty-version-testing>
     <infinispan-spring-boot-version>1.0.0.Final</infinispan-spring-boot-version>
     <groovy-version>2.4.12</groovy-version>
