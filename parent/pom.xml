@@ -306,6 +306,7 @@
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.7</ical4j-version>
+    <immutables-version>2.1.19</immutables-version> <!-- keep in sync with consul-client -->
     <ignite-version>1.9.0</ignite-version>
     <infinispan-version>9.1.1.Final</infinispan-version>
     <infinispan-spring-boot-version>1.0.0.Final</infinispan-spring-boot-version>
@@ -3631,6 +3632,13 @@
         <groupId>io.netty</groupId>
         <artifactId>netty-all</artifactId>
         <version>${netty-version}</version>
+      </dependency>
+
+      <!-- Immutables -->
+      <dependency>
+        <groupId>org.immutables</groupId>
+        <artifactId>value</artifactId>
+        <version>${immutables-version}</version>
       </dependency>
 
       <!-- abdera dependencies-->
