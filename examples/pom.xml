@@ -52,7 +52,6 @@
     <module>camel-example-cdi-xml</module>
     <module>camel-example-cxf</module>
     <module>camel-example-cxf-blueprint</module>
-    <module>camel-example-cxf-osgi</module>
     <module>camel-example-cxf-proxy</module>
     <module>camel-example-cxf-tomcat</module>
     <module>camel-example-console</module>

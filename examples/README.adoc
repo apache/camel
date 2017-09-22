@@ -153,8 +153,6 @@ Number of Examples: 98 (8 deprecated)
 
 | link:camel-example-cxf-blueprint/README.md[CXF Blueprint] (camel-example-cxf-blueprint) | OSGi | An example which use a CXF consumer and the OSGI HTTP Service
 
-| link:camel-example-cxf-osgi/README.md[CXF OSGi] (camel-example-cxf-osgi) | OSGi | An example which use a CXF consumer and the OSGI HTTP Service
-
 | link:camel-example-netty-http/README.md[Netty HTTP] (camel-example-netty-http) | OSGi | An example showing how to use a shared Netty HTTP server with multiple Camel applications in OSGi container
 
 | link:camel-example-servlet-rest-blueprint/README.md[Servlet REST Blueprint] (camel-example-servlet-rest-blueprint) | OSGi | An example using Servlet REST with OSGi Blueprint
