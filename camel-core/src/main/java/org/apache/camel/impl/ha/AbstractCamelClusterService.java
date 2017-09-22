@@ -24,10 +24,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.ha.CamelClusterView;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ReferenceCount;
 import org.apache.camel.util.concurrent.LockHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractCamelClusterService<T extends CamelClusterView> extends ServiceSupport implements CamelClusterService {
-    private final Map<String, T> views;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCamelClusterService.class);
+
+    private final Map<String, ViewHolder<T>> views;
     private final StampedLock lock;
     private String id;
     private CamelContext camelContext;
@@ -64,8 +69,8 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
         LockHelper.doWithWriteLock(
             lock,
             () -> {
-                for (T view : views.values()) {
-                    view.setCamelContext(camelContext);
+                for (ViewHolder<T> holder : views.values()) {
+                    holder.get().setCamelContext(camelContext);
                 }
             }
         );
@@ -81,8 +86,8 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
         LockHelper.doWithReadLockT(
             lock,
             () -> {
-                for (T view : views.values()) {
-                    view.start();
+                for (ViewHolder<T> holder : views.values()) {
+                    holder.get().start();
                 }
             }
         );
@@ -93,8 +98,8 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
         LockHelper.doWithReadLockT(
             lock,
             () -> {
-                for (T view : views.values()) {
-                    view.stop();
+                for (ViewHolder<T> holder : views.values()) {
+                    holder.get().stop();
                 }
             }
         );
@@ -105,20 +110,33 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
         return LockHelper.callWithWriteLock(
             lock,
             () -> {
-                T view = views.get(namespace);
+                ViewHolder<T> holder = views.get(namespace);
 
-                if (view == null) {
-                    view = createView(namespace);
+                if (holder == null) {
+                    T view = createView(namespace);
                     view.setCamelContext(this.camelContext);
 
-                    views.put(namespace, view);
+                    holder = new ViewHolder<>(view);
 
-                    if (AbstractCamelClusterService.this.isRunAllowed()) {
-                        view.start();
-                    }
+                    views.put(namespace, holder);
                 }
 
-                return view;
+                // Add reference and eventually start the route.
+                return holder.retain();
+            }
+        );
+    }
+
+    @Override
+    public void releaseView(CamelClusterView view) throws Exception {
+        LockHelper.doWithWriteLock(
+            lock,
+            () -> {
+                ViewHolder<T> holder = views.get(view.getNamespace());
+
+                if (holder != null) {
+                    holder.release();
+                }
             }
         );
     }
@@ -128,4 +146,56 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
     // **********************************
 
     protected abstract T createView(String namespace) throws Exception;
+
+    // **********************************
+    // Helpers
+    // **********************************
+
+    private final class ViewHolder<V extends CamelClusterView> {
+        private final V view;
+        private final ReferenceCount count;
+
+        ViewHolder(V view) {
+            this.view = view;
+            this.count = ReferenceCount.on(this::startView, this::stopView);
+        }
+
+        public V get() {
+            return view;
+        }
+
+        public V retain() {
+            LOGGER.debug("Retain view {}, old-refs={}", view.getNamespace(), count.get());
+
+            count.retain();
+
+            return get();
+        }
+
+        public void release() {
+            LOGGER.debug("Release view {}, old-refs={}", view.getNamespace(), count.get());
+
+            count.release();
+        }
+
+        private void startView() {
+            if (AbstractCamelClusterService.this.isRunAllowed()) {
+                try {
+                    LOGGER.debug("Start view {}", view.getNamespace());
+                    view.start();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        private void stopView() {
+            try {
+                LOGGER.debug("Stop view {}", view.getNamespace());
+                view.stop();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 }

@@ -87,8 +87,18 @@ public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelCon
                 }
             }
 
-            clusterView.removeEventListener(leadershipEventListener);
-            setLeader(false);
+            try {
+                // Remove event listener
+                clusterView.removeEventListener(leadershipEventListener);
+
+                // If all the routes have been shut down then the view and its
+                // resources can eventually be released.
+                clusterView.getClusterService().releaseView(clusterView);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                setLeader(false);
+            }
         });
     }
 
