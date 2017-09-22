@@ -35,13 +35,21 @@ public interface CamelClusterService extends Service, CamelContextAware, IdAware
     CamelClusterView getView(String namespace) throws Exception;
 
     /**
+     * Release a view if it has no references.
+     *
+     * @param view the view.
+     * @throws Exception
+     */
+    void releaseView(CamelClusterView view) throws Exception;
+
+    /**
      * Access the underlying concrete CamelClusterService implementation to
      * provide access to further features.
      *
      * @param clazz the proprietary class or interface of the underlying concrete CamelClusterService.
      * @return an instance of the underlying concrete CamelClusterService as the required type.
      */
-    default <T> T unwrap(Class<T> clazz) {
+    default <T extends CamelClusterService> T unwrap(Class<T> clazz) {
         if (CamelClusterService.class.isAssignableFrom(clazz)) {
             return clazz.cast(this);
         }
