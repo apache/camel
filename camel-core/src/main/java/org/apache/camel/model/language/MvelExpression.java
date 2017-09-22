@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For MVEL expressions and predicates
+ * To use MVEL scripts in Camel expressions or predicates.
  *
  * @version 
  */
