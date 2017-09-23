@@ -631,6 +631,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ldif</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-leveldb</artifactId>
     </dependency>
     <dependency>
@@ -1803,6 +1807,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-ldap-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ldif-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
