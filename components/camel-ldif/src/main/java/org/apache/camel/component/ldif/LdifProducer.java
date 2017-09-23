@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.ldif;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
@@ -29,6 +28,8 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.directory.api.ldap.model.exception.LdapException;
 import org.apache.directory.api.ldap.model.ldif.LdifEntry;
 import org.apache.directory.api.ldap.model.ldif.LdifReader;
@@ -36,12 +37,6 @@ import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.api.ldap.model.name.Rdn;
 import org.apache.directory.ldap.client.api.LdapConnection;
 
-/**
- * LDIF Producer. This is the main processor that reads LDIF data/URLs and
- * executes them against an LdapConnection.
- *
- * @version $
- */
 public class LdifProducer extends DefaultProducer {
     // Constants
     private static final String LDIF_HEADER = "version: 1";
@@ -49,13 +44,8 @@ public class LdifProducer extends DefaultProducer {
     // properties
     private String ldapConnectionName;
 
-    /**
-     * @param endpoint
-     * @throws Exception
-     */
     public LdifProducer(LdifEndpoint endpoint, String ldapConnectionName) throws Exception {
         super(endpoint);
-
         this.ldapConnectionName = ldapConnectionName;
     }
 
@@ -66,8 +56,6 @@ public class LdifProducer extends DefaultProducer {
      * "version: 1".</li>
      * <li>A String body that is a URL to ready the LDIF content from</li>
      * </ol>
-     *
-     * @see org.apache.camel.impl.DefaultProducer#process(Exchange)
      */
     public void process(Exchange exchange) throws Exception {
         String body = exchange.getIn().getBody(String.class);
@@ -77,20 +65,16 @@ public class LdifProducer extends DefaultProducer {
         exchange.setOut(exchange.getIn());
 
         // If nothing to do, then return an empty body
-        if (null == body || "".equals(body)) {
+        if (ObjectHelper.isEmpty(body)) {
             exchange.getOut().setBody("");
         } else if (body.startsWith(LDIF_HEADER)) {
-            if (log.isDebugEnabled()) {
-                log.debug("reading from LDIF body");
-            }
+            log.debug("Reading from LDIF body");
             result = processLdif(new StringReader(body));
         } else {
-            URL loc = null;
+            URL loc;
             try {
                 loc = new URL(body);
-                if (log.isDebugEnabled()) {
-                    log.debug("reading from URL: " + loc);
-                }
+                log.debug("Reading from URL: {}", loc);
                 result = processLdif(new InputStreamReader(loc.openStream()));
             } catch (MalformedURLException e) {
                 if (log.isDebugEnabled()) {
@@ -117,13 +101,11 @@ public class LdifProducer extends DefaultProducer {
 
     /**
      * Process an LDIF file from a reader.
-     *
-     * @param ldifReader
-     * @return
      */
     private List<String> processLdif(Reader reader) throws CamelException {
         LdapConnection conn = getLdapConnection();
-        LdifReader ldifReader = null;
+        LdifReader ldifReader;
+
         List<String> results = new ArrayList<String>();
 
         // Create the reader
@@ -138,21 +120,7 @@ public class LdifProducer extends DefaultProducer {
             results.add(processLdifEntry(conn, e));
         }
 
-        // Cleanup
-        try {
-            conn.close();
-        } catch (IOException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("failed to close the LDAP connection", e);
-            }
-        }
-        try {
-            ldifReader.close();
-        } catch (IOException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("failed to close LDIF reader", e);
-            }
-        }
+        IOHelper.close(conn, ldifReader, reader);
 
         return results;
     }
@@ -160,8 +128,6 @@ public class LdifProducer extends DefaultProducer {
     /**
      * Figure out the change is and what to do about it.
      *
-     * @param conn
-     * @param ldifEntry
      * @return A success/failure message
      */
     private String processLdifEntry(LdapConnection conn, LdifEntry ldifEntry) {
@@ -193,23 +159,16 @@ public class LdifProducer extends DefaultProducer {
                 conn.rename(ldifEntry.getDn(), new Rdn(ldifEntry.getNewRdn()), ldifEntry.isDeleteOldRdn());
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("ldif success");
-            }
+            log.debug("ldif success");
             return "success";
         } catch (LdapException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("failed to apply ldif", e);
-            }
+            log.debug("failed to apply ldif", e);
             return getRootCause(e);
         }
     }
 
     /**
      * Get the root cause of an exception
-     *
-     * @param e
-     * @return
      */
     private String getRootCause(LdapException e) {
         Throwable oldt;

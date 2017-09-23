@@ -21,17 +21,15 @@ import java.net.URISyntaxException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
 /**
- * The ldif component allows you to process an LDIF body content on an LDAP
- * servers.
+ * The ldif component allows you to do updates on an LDAP server from a LDIF body content.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "ldif", title = "LDIF", syntax = "ldif:ldapConnectionName", producerOnly = true, label = "ldif")
+@UriEndpoint(firstVersion = "2.20.0", scheme = "ldif", title = "LDIF", syntax = "ldif:ldapConnectionName", producerOnly = true, label = "ldap")
 public class LdifEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = "true")
@@ -44,7 +42,7 @@ public class LdifEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new RuntimeCamelException("An LDIF Consumer would be the LDAP server itself! No such support here");
+        throw new UnsupportedOperationException("An LDIF Consumer would be the LDAP server itself! No such support here");
     }
 
     @Override
@@ -65,8 +63,6 @@ public class LdifEndpoint extends DefaultEndpoint {
      * The name of the LdapConnection bean to pull from the registry. Note that
      * this must be of scope "prototype" to avoid it being shared among threads
      * or using a connection that has timed out.
-     *
-     * @param ldapConnectionName
      */
     public void setLdapConnectionName(String ldapConnectionName) {
         this.ldapConnectionName = ldapConnectionName;

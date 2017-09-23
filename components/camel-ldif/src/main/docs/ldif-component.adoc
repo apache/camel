@@ -1,36 +1,38 @@
 == LDIF Component
 
-*Available as of Camel version 1.0*
+*Available as of Camel version 2.20*
 
 The *ldif* component allows you to do updates on an LDAP server
-from a LDIF body content. +
- This component uses a basic URL syntax to access the server. It uses
+from a LDIF body content.
+
+This component uses a basic URL syntax to access the server. It uses
 the Apache DS LDAP library to process the LDIF. After processing the LDIF,
 the response body will be a list of statuses for success/failure of each
 entry.
 
-Note that the Apache LDAP API is very sensitive to LDIF syntax errors. If in doubt,
+[NOTE]
+The Apache LDAP API is very sensitive to LDIF syntax errors. If in doubt,
 refer to the unit tests to see an example of each change type.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-ldif</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
-### URI format
+=== URI format
 
-[source,java]
-----------------------------------------
+[source]
+----
 ldap:ldapServerBean[?options]
-----------------------------------------
+----
 
 The _ldapServerBean_ portion of the URI refers to a
 https://directory.apache.org/api/gen-docs/latest/apidocs/org/apache/directory/ldap/client/api/LdapConnection.html[LdapConnection].
@@ -44,7 +46,7 @@ of setting up a custom SocketFactory instance.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+=== Options
 
 // component options: START
 The LDIF component has no options.
@@ -76,24 +78,24 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-### Body types:
+=== Body types:
 
 The body can be a URL to an LDIF file or an inline LDIF file. To signify the difference
 in body types, an inline LDIF must start with:
 
-[source,ldif]
------------
+[source]
+----
 version: 1
------------
+----
 
 If not, the component will try to parse the body as a URL.
 
-### Result
+=== Result
 
 The result is returned in the Out body as a `ArrayList<java.lang.String>` object.
 This contains either "success" or an Exception message for each LDIF entry.
 
-### LdapConnection
+=== LdapConnection
 
 The URI, `ldif:ldapConnectionName`, references a bean with the ID,
 `ldapConnectionName`. The ldapConnection can be configured using a
@@ -104,7 +106,7 @@ stale connection.
 The `LdapConnection` bean may be defined as follows in Spring XML:
 
 [source,xml]
---------------------------------------------------------------------------------------------------
+----
 <bean id="ldapConnectionOptions" class="org.apache.directory.ldap.client.api.LdapConnectionConfig">
   <property name="ldapHost" value="${ldap.host}"/>
   <property name="ldapPort" value="${ldap.port}"/>
@@ -119,10 +121,10 @@ The `LdapConnection` bean may be defined as follows in Spring XML:
 </bean>
 
 <bean id="ldapConnection" factory-bean="ldapConnectionFactory" factory-method="newLdapConnection" scope="prototype"/>
---------------------------------------------------------------------------------------------------
+----
 
-or in a blueprint.xml:
---------------------------------------------------------------------------------------------------
+or in a OSGi blueprint.xml:
+----
 <bean id="ldapConnectionOptions" class="org.apache.directory.ldap.client.api.LdapConnectionConfig">
   <property name="ldapHost" value="${ldap.host}"/>
   <property name="ldapPort" value="${ldap.port}"/>
@@ -137,29 +139,25 @@ or in a blueprint.xml:
 </bean>
 
 <bean id="ldapConnection" factory-ref="ldapConnectionFactory" factory-method="newLdapConnection" scope="prototype"/>
---------------------------------------------------------------------------------------------------
+----
 
 
-### Samples
+=== Samples
 
 Following on from the Spring configuration above, the code sample below
 sends an LDAP request to filter search a group for a member. The Common
 Name is then extracted from the response.
 
 [source,java]
-----------------------------------------------------------
-ProducerTemplate<Exchange> template = exchange
-  .getContext().createProducerTemplate();
+----
+ProducerTemplate<Exchange> template = exchange.getContext().createProducerTemplate();
 
-List<?> results = (Collection<?>) (template
-  .sendBody(
-    "ldap:ldapConnection,
-    "FIXME - inline LDIF"));
+List<?> results = (Collection<?>) template.sendBody("ldap:ldapConnection, "LDiff goes here");
 
 if (results.size() > 0) {
   // Check for no errors
 
-  for (String result: results) {
+  for (String result : results) {
     if ("success".equalTo(result)) {
       // LDIF entry success
     } else {
@@ -167,12 +165,5 @@ if (results.size() > 0) {
     }
   }
 }
-----------------------------------------------------------
+----
 
-### See Also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-
-* link:getting-started.html[Getting Started]
