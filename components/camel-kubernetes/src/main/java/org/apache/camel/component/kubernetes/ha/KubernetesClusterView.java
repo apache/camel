@@ -95,7 +95,7 @@ public class KubernetesClusterView extends AbstractCamelClusterView {
                     // New leader
                     Optional<String> leader = KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent.class.cast(event).getData();
                     currentLeader = leader.map(this::toMember);
-                    fireLeadershipChangedEvent(currentLeader.orElse(null));
+                    fireLeadershipChangedEvent(currentLeader);
                 } else if (event instanceof KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent) {
                     Set<String> members = KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent.class.cast(event).getData();
                     Set<String> oldMembers = currentMembers.stream().map(CamelClusterMember::getId).collect(Collectors.toSet());
@@ -153,10 +153,14 @@ public class KubernetesClusterView extends AbstractCamelClusterView {
         }
 
         @Override
+        public boolean isLocal() {
+            return ObjectHelper.equal(lockConfiguration.getPodName(), podName);
+        }
+
+        @Override
         public String getId() {
             return podName;
         }
-
 
         @Override
         public String toString() {

@@ -19,6 +19,7 @@ package org.apache.camel.impl.ha;
 import java.time.Duration;
 import java.util.EventObject;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -262,7 +263,7 @@ public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelCon
 
     private class CamelClusterLeadershipListener implements CamelClusterEventListener.Leadership {
         @Override
-        public void leadershipChanged(CamelClusterView view, CamelClusterMember leader) {
+        public void leadershipChanged(CamelClusterView view, Optional<CamelClusterMember> leader) {
             setLeader(clusterView.getLocalMember().isLeader());
         }
     }

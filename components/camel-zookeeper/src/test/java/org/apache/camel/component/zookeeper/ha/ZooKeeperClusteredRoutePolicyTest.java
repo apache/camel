@@ -79,7 +79,8 @@ public final class ZooKeeperClusteredRoutePolicyTest {
 
     private static void run(String id) {
         try {
-            CountDownLatch contextLatch = new CountDownLatch(1);
+            int events = ThreadLocalRandom.current().nextInt(2, 6);
+            CountDownLatch contextLatch = new CountDownLatch(events);
 
             ZooKeeperClusterService service = new ZooKeeperClusterService();
             service.setId("node-" + id);
@@ -94,15 +95,10 @@ public final class ZooKeeperClusteredRoutePolicyTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:zookeeper?delay=1s&period=1s&repeatCount=1")
+                    from("timer:zookeeper?delay=1s&period=1s")
                         .routeId("route-" + id)
-                        .process(e -> {
-                            LOGGER.debug("Node {} done", id);
-                            RESULTS.add(id);
-                            // Shutdown the context later on to give a chance to
-                            // other members to catch-up
-                            SCHEDULER.schedule(contextLatch::countDown, 2 + ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS);
-                        });
+                        .log("From ${routeId}")
+                        .process(e -> contextLatch.countDown());
                 }
             });
 
@@ -112,6 +108,10 @@ public final class ZooKeeperClusteredRoutePolicyTest {
             context.start();
 
             contextLatch.await();
+
+            LOGGER.debug("Shutting down node {}", id);
+            RESULTS.add(id);
+
             context.stop();
 
             LATCH.countDown();

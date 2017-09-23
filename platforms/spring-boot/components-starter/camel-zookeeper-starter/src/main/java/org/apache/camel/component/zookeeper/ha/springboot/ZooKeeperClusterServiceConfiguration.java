@@ -19,7 +19,7 @@ package org.apache.camel.component.zookeeper.ha.springboot;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "camel.clustered.service.zookeeper")
+@ConfigurationProperties(prefix = "camel.component.zookeeper.cluster.service")
 public class ZooKeeperClusterServiceConfiguration extends ZooKeeperCuratorConfiguration {
     /**
      * Sets if the zookeeper cluster service should be enabled or not, default is false.

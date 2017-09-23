@@ -44,7 +44,7 @@ public class KubernetesLockConfiguration implements Cloneable {
     private String configMapName = DEFAULT_CONFIGMAP_NAME;
 
     /**
-     * Name of the lock group (or namespace according to the Camel cluster convention) within the chosen ConfgMap.
+     * Name of the lock group (or namespace according to the Camel cluster convention) within the chosen ConfigMap.
      */
     private String groupName;
 
