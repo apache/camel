@@ -148,7 +148,7 @@ public class KubernetesClusterView extends AbstractCamelClusterView {
         }
 
         @Override
-        public boolean isMaster() {
+        public boolean isLeader() {
             return currentLeader.isPresent() && currentLeader.get().getId().equals(podName);
         }
 

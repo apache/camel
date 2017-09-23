@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.locks.StampedLock;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ha.CamelClusterMember;
 import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.ha.CamelClusterView;
 import org.apache.camel.support.ServiceSupport;
@@ -185,6 +186,24 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
                 } else {
                     LOGGER.warn("Error forcing stop of view {}: it does not exist", namespace);
                 }
+            }
+        );
+    }
+
+    @Override
+    public boolean isLeader(String namespace) {
+        return LockHelper.supplyWithReadLock(
+            lock,
+            () -> {
+                ViewHolder<T> holder = views.get(namespace);
+                if (holder != null) {
+                    CamelClusterMember member = holder.get().getLocalMember();
+                    if (member != null) {
+                        return member.isLeader();
+                    }
+                }
+
+                return false;
             }
         );
     }

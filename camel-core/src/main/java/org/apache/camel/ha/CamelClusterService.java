@@ -60,6 +60,14 @@ public interface CamelClusterService extends Service, CamelContextAware, IdAware
     void stopView(String namespace) throws Exception;
 
     /**
+     * Check if the service is the leader on the given namespace.
+     *
+     * @param namespace the namespace.
+     * @return
+     */
+    boolean isLeader(String namespace);
+
+    /**
      * Access the underlying concrete CamelClusterService implementation to
      * provide access to further features.
      *

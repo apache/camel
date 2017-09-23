@@ -253,7 +253,7 @@ public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelCon
         );
 
         clusterView.addEventListener(leadershipEventListener);
-        setLeader(clusterView.getLocalMember().isMaster());
+        setLeader(clusterView.getLocalMember().isLeader());
     }
 
     // ****************************************************
@@ -263,7 +263,7 @@ public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelCon
     private class CamelClusterLeadershipListener implements CamelClusterEventListener.Leadership {
         @Override
         public void leadershipChanged(CamelClusterView view, CamelClusterMember leader) {
-            setLeader(clusterView.getLocalMember().isMaster());
+            setLeader(clusterView.getLocalMember().isLeader());
         }
     }
 
