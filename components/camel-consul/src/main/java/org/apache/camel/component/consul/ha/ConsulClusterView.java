@@ -160,7 +160,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
         }
 
         @Override
-        public boolean isMaster() {
+        public boolean isLeader() {
             return master.get();
         }
 
@@ -198,7 +198,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
         }
 
         @Override
-        public boolean isMaster() {
+        public boolean isLeader() {
             if (keyValueClient == null) {
                 return false;
             }

@@ -145,7 +145,7 @@ final class AtomixClusterView extends AbstractCamelClusterView {
         }
 
         @Override
-        public boolean isMaster() {
+        public boolean isLeader() {
             if (member == null) {
                 return false;
             }
@@ -212,7 +212,7 @@ final class AtomixClusterView extends AbstractCamelClusterView {
         }
 
         @Override
-        public boolean isMaster() {
+        public boolean isLeader() {
             if (group == null) {
                 return false;
             }

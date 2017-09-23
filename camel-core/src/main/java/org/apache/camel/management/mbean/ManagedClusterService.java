@@ -104,4 +104,11 @@ public class ManagedClusterService implements ManagedClusterServiceMBean {
             service.get().stopView(namespace);
         }
     }
+
+    @Override
+    public boolean isLeader(String namespace) {
+        return CamelClusterServiceHelper.lookupService(context)
+            .map(s -> s.isLeader(namespace))
+            .orElse(false);
+    }
 }

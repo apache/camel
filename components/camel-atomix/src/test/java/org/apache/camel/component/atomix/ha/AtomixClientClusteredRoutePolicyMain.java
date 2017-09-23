@@ -27,7 +27,9 @@ import org.apache.camel.impl.ha.ClusteredRoutePolicyFactory;
 import org.apache.camel.main.Main;
 import org.apache.camel.main.MainListenerSupport;
 
-public class AtomixClientClusteredRoutePolicyMain {
+public final class AtomixClientClusteredRoutePolicyMain {
+    private AtomixClientClusteredRoutePolicyMain() {
+    }
 
     public static void main(String[] args) throws Exception {
         final String id = UUID.randomUUID().toString();

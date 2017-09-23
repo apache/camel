@@ -42,4 +42,7 @@ public interface ManagedClusterServiceMBean {
 
     @ManagedOperation(description = "Stop the View")
     void stopView(String namespace) throws Exception;
+
+    @ManagedOperation(description = "If the local view is leader")
+    boolean isLeader(String namespace);
 }

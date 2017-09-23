@@ -137,7 +137,7 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
         }
 
         @Override
-        public boolean isMaster() {
+        public boolean isLeader() {
             return master.get();
         }
 
@@ -160,7 +160,7 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
         }
 
         @Override
-        public boolean isMaster() {
+        public boolean isLeader() {
             try {
                 return leaderSelector.getLeader().equals(this.participant);
             } catch (Exception e) {

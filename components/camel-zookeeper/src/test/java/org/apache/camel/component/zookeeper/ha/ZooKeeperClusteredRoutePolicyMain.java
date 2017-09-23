@@ -26,9 +26,11 @@ import org.apache.camel.main.Main;
 import org.apache.camel.main.MainListenerSupport;
 
 public final class ZooKeeperClusteredRoutePolicyMain {
+    private ZooKeeperClusteredRoutePolicyMain() {        
+    }
 
     public static void main(String[] args) throws Exception {
-        final  String id = UUID.randomUUID().toString();
+        final String id = UUID.randomUUID().toString();
 
         Main main = new Main();
         main.addMainListener(new MainListenerSupport() {
