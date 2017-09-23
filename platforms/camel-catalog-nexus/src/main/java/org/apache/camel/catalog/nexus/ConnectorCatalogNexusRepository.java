@@ -140,6 +140,7 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
             }
         } catch (Throwable e) {
             logger.warn("Error loading " + path + " file", e);
+            return null;
         }
 
         path = "camel-connector-schema.json";
@@ -150,6 +151,7 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
             }
         } catch (Throwable e) {
             logger.warn("Error loading " + path + " file", e);
+            return null;
         }
 
         path = "camel-component-schema.json";
@@ -160,6 +162,7 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
             }
         } catch (Throwable e) {
             logger.warn("Error loading " + path + " file", e);
+            return null;
         }
 
         return answer;
