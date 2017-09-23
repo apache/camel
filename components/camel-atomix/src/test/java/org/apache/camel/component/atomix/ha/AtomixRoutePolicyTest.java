@@ -47,7 +47,7 @@ public final class AtomixRoutePolicyTest {
     );
 
     private final Set<Address> results = new HashSet<>();
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(addresses.size() * 2);
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(addresses.size());
     private final CountDownLatch latch = new CountDownLatch(addresses.size());
 
     // ************************************
@@ -73,7 +73,8 @@ public final class AtomixRoutePolicyTest {
 
     private void run(Address address) {
         try {
-            CountDownLatch contextLatch = new CountDownLatch(1);
+            int events = ThreadLocalRandom.current().nextInt(2, 6);
+            CountDownLatch contextLatch = new CountDownLatch(events);
 
             AtomixClusterService service = new AtomixClusterService();
             service.setId("node-" + address.port());
@@ -89,15 +90,10 @@ public final class AtomixRoutePolicyTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:atomix?delay=1s&period=1s&repeatCount=1")
+                    from("timer:atomix?delay=1s&period=1s")
                         .routeId("route-" + address.port())
-                        .process(e -> {
-                            LOGGER.debug("Node {} done", address);
-                            results.add(address);
-                            // Shutdown the context later on to give a chance to
-                            // other members to catch-up
-                            scheduler.schedule(contextLatch::countDown, 2 + ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS);
-                        });
+                        .log("From ${routeId}")
+                        .process(e -> contextLatch.countDown());
                 }
             });
 
@@ -107,6 +103,10 @@ public final class AtomixRoutePolicyTest {
             context.start();
 
             contextLatch.await();
+
+            LOGGER.debug("Shutting down node {}", address);
+            results.add(address);
+
             context.stop();
 
             latch.countDown();

@@ -18,6 +18,7 @@ package org.apache.camel.impl.ha;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Consumer;
 
@@ -92,7 +93,7 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
         );
     }
 
-    protected void fireLeadershipChangedEvent(CamelClusterMember leader) {
+    protected void fireLeadershipChangedEvent(Optional<CamelClusterMember> leader) {
         doWithListener(
             CamelClusterEventListener.Leadership.class,
             listener -> listener.leadershipChanged(this, leader)

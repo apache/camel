@@ -22,7 +22,7 @@ import java.util.Set;
 import io.atomix.copycat.server.storage.StorageLevel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "camel.clustered.service.atomix")
+@ConfigurationProperties(prefix = "camel.component.atomix.cluster.service")
 public class AtomixClusterServiceConfiguration {
     enum Mode {
         node,
