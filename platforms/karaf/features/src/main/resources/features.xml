@@ -1280,6 +1280,11 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-ldap/${project.version}</bundle>
   </feature>
+  <feature name='camel-ldif' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.directory.server/apacheds-core-api/${apacheds-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-ldif/${project.version}</bundle>
+  </feature>
   <feature name='camel-linkedin' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature>aries-blueprint</feature>
     <feature version='${project.version}'>camel-core</feature>

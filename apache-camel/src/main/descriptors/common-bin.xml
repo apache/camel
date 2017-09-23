@@ -166,6 +166,7 @@
         <include>org.apache.camel:camel-kura</include>
         <include>org.apache.camel:camel-kubernetes</include>
         <include>org.apache.camel:camel-ldap</include>
+        <include>org.apache.camel:camel-ldif</include>
         <include>org.apache.camel:camel-leveldb</include>
         <include>org.apache.camel:camel-linkedin-api</include>
         <include>org.apache.camel:camel-linkedin</include>
@@ -458,6 +459,7 @@
         <include>org.apache.camel:camel-kubernetes-starter</include>
         <include>org.apache.camel:camel-kura-starter</include>
         <include>org.apache.camel:camel-ldap-starter</include>
+        <include>org.apache.camel:camel-ldif-starter</include>
         <include>org.apache.camel:camel-leveldb-starter</include>
         <include>org.apache.camel:camel-linkedin-starter</include>
         <include>org.apache.camel:camel-lucene-starter</include>
