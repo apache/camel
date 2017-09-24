@@ -34,7 +34,13 @@
 
   <dependencies>
 
-    <!-- no dependency -->
+    <!-- required dependencies by camel-catalog -->
+    <!-- which we shade into camel-catalog so its available for everybody out of the box -->
+    <dependency>
+      <groupId>com.github.cliftonlabs</groupId>
+      <artifactId>json-simple</artifactId>
+      <version>2.1.2</version>
+    </dependency>
 
     <!-- testing -->
     <dependency>
@@ -160,6 +166,34 @@
             </replacement>
           </replacements>
         </configuration>
+      </plugin>
+
+      <!-- shade caffeine cache for faster Camel and spi-annotations as needed by everybody -->
+      <!-- shade json-simple for parsing Camel component JSon schema files -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>com.github.cliftonlabs:json-simple</include>
+                </includes>
+              </artifactSet>
+              <relocations>
+                <relocation>
+                  <pattern>org.json.simple</pattern>
+                  <shadedPattern>org.apache.camel.org.json.simple</shadedPattern>
+                </relocation>
+              </relocations>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <!-- generate and include all components in the catalog -->

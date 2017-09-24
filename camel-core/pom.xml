@@ -43,6 +43,7 @@
       org.apache.camel.tools.*;resolution:=optional,
       !org.apache.camel.*,
       !com.github.benmanes.caffeine.cache,
+      !org.json.simple,
       ${camel.osgi.import.defaults},
       org.springframework.transaction;resolution:=optional,
       org.apache.camel.spring.spi;resolution:=optional,
@@ -132,6 +133,11 @@
     <dependency>
       <groupId>com.github.ben-manes.caffeine</groupId>
       <artifactId>caffeine</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.github.cliftonlabs</groupId>
+      <artifactId>json-simple</artifactId>
+      <version>2.1.2</version>
     </dependency>
 
     <!-- required dependencies by camel-core -->
@@ -246,6 +252,7 @@
     <plugins>
 
       <!-- shade caffeine cache for faster Camel and spi-annotations as needed by everybody -->
+      <!-- shade json-simple for parsing Camel component JSon schema files -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -259,6 +266,7 @@
               <artifactSet>
                 <includes>
                   <include>com.github.ben-manes.caffeine:caffeine</include>
+                  <include>com.github.cliftonlabs:json-simple</include>
                   <include>org.apache.camel:spi-annotations</include>
                 </includes>
                 <excludes>
@@ -269,6 +277,10 @@
                 <relocation>
                   <pattern>com.github.benmanes.caffeine</pattern>
                   <shadedPattern>org.apache.camel.com.github.benmanes.caffeine</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.json.simple</pattern>
+                  <shadedPattern>org.apache.camel.org.json.simple</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
