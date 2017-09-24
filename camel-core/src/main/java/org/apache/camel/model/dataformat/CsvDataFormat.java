@@ -394,7 +394,7 @@ public class CsvDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Sets the record separator (aka new line) which by default is \r\n (CRLF)
+     * Sets the record separator (aka new line) which by default is new line characters (CRLF)
      */
     public void setRecordSeparator(String recordSeparator) {
         this.recordSeparator = recordSeparator;

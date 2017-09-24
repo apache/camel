@@ -295,9 +295,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     /**
      * Sets optional site command(s) to be executed after successful login.
      * <p/>
-     * Multiple site commands can be separated using a new line character (\n).
-     *
-     * @param siteCommand the site command(s).
+     * Multiple site commands can be separated using a new line character.
      */
     public void setSiteCommand(String siteCommand) {
         this.siteCommand = siteCommand;

@@ -379,18 +379,16 @@ public final class JsonSchemaHelper {
                 }
                 newValue = csb.toString();
             }
-            answer.put(rowEntry.getKey().toString(), newValue.toString());
+            // ensure value is escaped
+            String value = escapeJson(newValue.toString());
+            answer.put(rowEntry.getKey().toString(), value);
         }
 
         return answer;
     }
 
-    private static String decodeJson(String value) {
-        // json encodes a \ as \\ so we need to decode from \\ back to \
-        if ("\\\\".equals(value)) {
-            value = "\\";
-        }
-        return value;
+    private static String escapeJson(String value) {
+        return Jsoner.escape(value);
     }
 
     /**

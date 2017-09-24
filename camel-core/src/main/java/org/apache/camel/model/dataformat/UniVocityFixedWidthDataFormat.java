@@ -36,7 +36,7 @@ public class UniVocityFixedWidthDataFormat extends UniVocityAbstractDataFormat {
     protected Boolean skipTrailingCharsUntilNewline;
     @XmlAttribute
     protected Boolean recordEndsOnNewline;
-    @XmlAttribute @Metadata(defaultValue = " ")
+    @XmlAttribute
     protected String padding;
 
     public UniVocityFixedWidthDataFormat() {
