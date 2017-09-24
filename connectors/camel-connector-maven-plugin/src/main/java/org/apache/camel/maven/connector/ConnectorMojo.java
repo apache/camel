@@ -74,6 +74,12 @@ public class ConnectorMojo extends AbstractJarMojo {
     @Parameter(defaultValue = "false")
     private boolean includeGitUrl;
 
+    /**
+     * Whether to output JSon connector schema files in pretty print mode or not
+     */
+    @Parameter(defaultValue = "true")
+    private boolean prettyPrint;
+
     private CamelCatalog catalog = new DefaultCamelCatalog();
 
     @Override
@@ -162,14 +168,14 @@ public class ConnectorMojo extends AbstractJarMojo {
 
                     FileOutputStream fos = new FileOutputStream(out, false);
                     // output as pretty print
-                    String pretty = prettyPrint(newJson);
-                    fos.write(pretty.getBytes());
+                    newJson = prettyPrint ? prettyPrint(newJson) : newJson;
+                    fos.write(newJson.getBytes());
                     fos.close();
 
                     // also write the file in the root folder so its easier to find that for tooling
                     out = new File(classesDirectory, "camel-connector-schema.json");
                     fos = new FileOutputStream(out, false);
-                    fos.write(pretty.getBytes());
+                    fos.write(newJson.getBytes());
                     fos.close();
 
                     if (generateToSources) {
