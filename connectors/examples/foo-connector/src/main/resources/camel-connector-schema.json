@@ -20,6 +20,17 @@
 		
 	},
 	"properties":{
+		"timerName":{
+			"kind":"path",
+			"displayName":"Timer Name",
+			"group":"consumer",
+			"required":true,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":false,
+			"description":"The name of the timer"
+		},
 		"period":{
 			"kind":"parameter",
 			"displayName":"Period",
@@ -31,17 +42,6 @@
 			"secret":false,
 			"defaultValue":5000,
 			"description":"If greater than 0 generate periodic events every period milliseconds. The default value is 1000. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour)."
-		},
-		"timerName":{
-			"kind":"path",
-			"displayName":"Timer Name",
-			"group":"consumer",
-			"required":true,
-			"type":"string",
-			"javaType":"java.lang.String",
-			"deprecated":false,
-			"secret":false,
-			"description":"The name of the timer"
 		},
 		"repeatCount":{
 			"kind":"parameter",
