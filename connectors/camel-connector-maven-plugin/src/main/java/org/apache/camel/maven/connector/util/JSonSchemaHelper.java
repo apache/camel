@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Set;
 
-import org.apache.camel.org.json.simple.Jsoner;
+import org.apache.camel.json.simple.Jsoner;
 
 /**
  * A helper class for <a href="http://json-schema.org/">JSON schema</a>.

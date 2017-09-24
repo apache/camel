@@ -23,7 +23,7 @@ The Tokenize language supports 10 options which are listed below.
 [width="100%",cols="2,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| token |  | String | The (start) token to use as tokenizer for example \n for a new line token. You can use simple language as the token to support dynamic tokens.
+| token |  | String | The (start) token to use as tokenizer for example you can use the new line token. You can use simple language as the token to support dynamic tokens.
 | endToken |  | String | The end token to use as tokenizer if using start/end token pairs. You can use simple language as the token to support dynamic tokens.
 | inheritNamespaceTagName |  | String | To inherit namespaces from a root/parent tag name when using XML You can use simple language as the tag name to support dynamic names.
 | headerName |  | String | Name of header to tokenize instead of using the message body.

@@ -82,7 +82,7 @@ public class Base64DataFormat extends DataFormatDefinition {
     /**
      * The line separators to use.
      * <p/>
-     * By default \r\n is used.
+     * Uses new line characters by default.
      */
     public void setLineSeparator(String lineSeparator) {
         this.lineSeparator = lineSeparator;
