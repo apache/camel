@@ -90,9 +90,10 @@ public class UniVocityCsvDataFormatConfiguration
      */
     private String lineSeparator;
     /**
-     * The normalized line separator of the files The default value is \n
+     * The normalized line separator of the files The default value is a new
+     * line character.
      */
-    private String normalizedLineSeparator = "\\n";
+    private String normalizedLineSeparator;
     /**
      * The comment symbol. The default value is
      */

@@ -38,9 +38,9 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CsvDataFormat extends DataFormatDefinition {
     // Format options
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String formatRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(enums = "DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MYSQL,RFC4180")
     private String formatName;
     @XmlAttribute
     private Boolean commentMarkerDisabled;

@@ -37,8 +37,6 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FlatpackDataFormat extends DataFormatDefinition {
     @XmlAttribute
-    private String parserFactoryRef;
-    @XmlAttribute
     private String definition;
     @XmlAttribute
     private Boolean fixed;
@@ -52,20 +50,11 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     private Boolean allowShortLines;
     @XmlAttribute
     private Boolean ignoreExtraColumns;
+    @XmlAttribute @Metadata(label = "advanced")
+    private String parserFactoryRef;
 
     public FlatpackDataFormat() {
         super("flatpack");
-    }
-
-    public String getParserFactoryRef() {
-        return parserFactoryRef;
-    }
-
-    /**
-     * References to a custom parser factory to lookup in the registry
-     */
-    public void setParserFactoryRef(String parserFactoryRef) {
-        this.parserFactoryRef = parserFactoryRef;
     }
 
     public String getDefinition() {
@@ -148,6 +137,17 @@ public class FlatpackDataFormat extends DataFormatDefinition {
      */
     public void setIgnoreExtraColumns(Boolean ignoreExtraColumns) {
         this.ignoreExtraColumns = ignoreExtraColumns;
+    }
+
+    public String getParserFactoryRef() {
+        return parserFactoryRef;
+    }
+
+    /**
+     * References to a custom parser factory to lookup in the registry
+     */
+    public void setParserFactoryRef(String parserFactoryRef) {
+        this.parserFactoryRef = parserFactoryRef;
     }
 
     @Override

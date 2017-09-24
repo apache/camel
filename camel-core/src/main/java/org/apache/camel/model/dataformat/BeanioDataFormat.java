@@ -48,9 +48,9 @@ public class BeanioDataFormat extends DataFormatDefinition {
     private Boolean ignoreInvalidRecords;
     @XmlAttribute
     private String encoding;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String beanReaderErrorHandlerType;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private Boolean unmarshalSingleObject;
 
     public BeanioDataFormat() {

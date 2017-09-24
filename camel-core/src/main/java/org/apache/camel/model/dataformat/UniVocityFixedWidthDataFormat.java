@@ -33,11 +33,11 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityFixedWidthDataFormat extends UniVocityAbstractDataFormat {
     @XmlAttribute
-    protected Boolean skipTrailingCharsUntilNewline;
+    private Boolean skipTrailingCharsUntilNewline;
     @XmlAttribute
-    protected Boolean recordEndsOnNewline;
+    private Boolean recordEndsOnNewline;
     @XmlAttribute
-    protected String padding;
+    private String padding;
 
     public UniVocityFixedWidthDataFormat() {
         super("univocity-fixed");

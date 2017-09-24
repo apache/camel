@@ -32,10 +32,6 @@ public class FlatpackDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
-     * References to a custom parser factory to lookup in the registry
-     */
-    private String parserFactoryRef;
-    /**
      * The flatpack pzmap configuration file. Can be omitted in simpler
      * situations but its preferred to use the pzmap.
      */
@@ -50,9 +46,10 @@ public class FlatpackDataFormatConfiguration
      */
     private Boolean ignoreFirstRecord = true;
     /**
-     * If the text is qualified with a char such as "
+     * If the text is qualified with a character. Uses quote character by
+     * default.
      */
-    private String textQualifier = "\"";
+    private String textQualifier;
     /**
      * The delimiter char (could be ; or similar)
      */
@@ -68,20 +65,16 @@ public class FlatpackDataFormatConfiguration
      */
     private Boolean ignoreExtraColumns = false;
     /**
+     * References to a custom parser factory to lookup in the registry
+     */
+    private String parserFactoryRef;
+    /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
      * example application/xml for data formats marshalling to XML or
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;
-
-    public String getParserFactoryRef() {
-        return parserFactoryRef;
-    }
-
-    public void setParserFactoryRef(String parserFactoryRef) {
-        this.parserFactoryRef = parserFactoryRef;
-    }
 
     public String getDefinition() {
         return definition;
@@ -137,6 +130,14 @@ public class FlatpackDataFormatConfiguration
 
     public void setIgnoreExtraColumns(Boolean ignoreExtraColumns) {
         this.ignoreExtraColumns = ignoreExtraColumns;
+    }
+
+    public String getParserFactoryRef() {
+        return parserFactoryRef;
+    }
+
+    public void setParserFactoryRef(String parserFactoryRef) {
+        this.parserFactoryRef = parserFactoryRef;
     }
 
     public Boolean getContentTypeHeader() {

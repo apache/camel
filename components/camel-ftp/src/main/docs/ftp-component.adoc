@@ -153,7 +153,7 @@ with the following path and query parameters:
 | *ftpClientParameters* (advanced) | Used by FtpComponent to provide additional parameters for the FTPClient |  | Map
 | *maximumReconnectAttempts* (advanced) | Specifies the maximum reconnect attempts Camel performs when it tries to connect to the remote FTP server. Use 0 to disable this behavior. |  | int
 | *reconnectDelay* (advanced) | Delay in millis Camel will wait before performing a reconnect attempt. |  | long
-| *siteCommand* (advanced) | Sets optional site command(s) to be executed after successful login. Multiple site commands can be separated using a new line character (\n). |  | String
+| *siteCommand* (advanced) | Sets optional site command(s) to be executed after successful login. Multiple site commands can be separated using a new line character. |  | String
 | *soTimeout* (advanced) | Sets the so timeout Used only by FTPClient | 300000 | int
 | *stepwise* (advanced) | Sets whether we should stepwise change directories while traversing file structures when downloading files or as well when uploading a file to a directory. You can disable this if you for example are in a situation where you cannot change directory on the FTP server due security reasons. | true | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
