@@ -93,18 +93,22 @@ public final class JSonSchemaHelper {
                 }
                 newValue = csb.toString();
             }
-            answer.put(rowEntry.getKey().toString(), newValue.toString());
+            // ensure value is escaped
+            String value = escapeJson(newValue.toString());
+            answer.put(rowEntry.getKey().toString(), value);
         }
 
         return answer;
     }
 
-    private static String decodeJson(String value) {
-        // json encodes a \ as \\ so we need to decode from \\ back to \
-        if ("\\\\".equals(value)) {
-            value = "\\";
-        }
-        return value;
+    private static String escapeJson(String value) {
+        // need to safe encode \r as \\r so its escaped
+        // need to safe encode \n as \\n so its escaped
+        // need to safe encode \t as \\t so its escaped
+        return value
+            .replaceAll("\\\\r", "\\\\\\r")
+            .replaceAll("\\\\n", "\\\\\\n")
+            .replaceAll("\\\\t", "\\\\\\t");
     }
 
     public static boolean isComponentLenientProperties(List<Map<String, String>> rows) {

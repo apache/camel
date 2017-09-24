@@ -44,7 +44,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     private Boolean fixed;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean ignoreFirstRecord;
-    @XmlAttribute @Metadata(defaultValue = "\"")
+    @XmlAttribute
     private String textQualifier;
     @XmlAttribute @Metadata(defaultValue = ",")
     private String delimiter;
@@ -109,7 +109,9 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * If the text is qualified with a char such as double quote character
+     * If the text is qualified with a character.
+     * <p/>
+     * Uses quote character by default.
      */
     public void setTextQualifier(String textQualifier) {
         this.textQualifier = textQualifier;
