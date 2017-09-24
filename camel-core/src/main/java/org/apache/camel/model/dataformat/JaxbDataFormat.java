@@ -64,13 +64,13 @@ public class JaxbDataFormat extends DataFormatDefinition {
     private String partNamespace;
     @XmlAttribute
     private String namespacePrefixRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String xmlStreamWriterWrapper;
     @XmlAttribute
     private String schemaLocation;
     @XmlAttribute
     private String noNamespaceSchemaLocation;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String jaxbProviderProperties;
 
     public JaxbDataFormat() {

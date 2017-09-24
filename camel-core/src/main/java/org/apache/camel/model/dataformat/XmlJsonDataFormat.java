@@ -73,7 +73,7 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
     private Boolean skipNamespaces;
     @XmlAttribute
     private Boolean removeNamespacePrefixes;
-    @XmlAttribute @XmlList
+    @XmlAttribute @XmlList @Metadata(label = "advanced")
     private List<String> expandableProperties;
     @XmlAttribute
     private String typeHints;

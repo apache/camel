@@ -102,7 +102,8 @@ public class CsvDataFormatConfiguration
      */
     private String recordSeparatorDisabled;
     /**
-     * Sets the record separator (aka new line) which by default is \r\n (CRLF)
+     * Sets the record separator (aka new line) which by default is new line
+     * characters (CRLF)
      */
     private String recordSeparator;
     /**

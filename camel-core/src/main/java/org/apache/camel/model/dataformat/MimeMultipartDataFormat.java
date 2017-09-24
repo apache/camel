@@ -39,15 +39,12 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "mixed")
     private String multipartSubType = "mixed";
     @XmlAttribute
-    @Metadata(defaultValue = "false")
     private Boolean multipartWithoutAttachment;
     @XmlAttribute
-    @Metadata(defaultValue = "false")
     private Boolean headersInline;
     @XmlAttribute
     private String includeHeaders;
     @XmlAttribute
-    @Metadata(defaultValue = "false")
     private Boolean binaryContent;
 
     public MimeMultipartDataFormat() {

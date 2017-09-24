@@ -33,7 +33,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityTsvDataFormat extends UniVocityAbstractDataFormat {
     @XmlAttribute @Metadata(defaultValue = "\\")
-    protected String escapeChar;
+    private String escapeChar;
 
     public UniVocityTsvDataFormat() {
         super("univocity-tsv");

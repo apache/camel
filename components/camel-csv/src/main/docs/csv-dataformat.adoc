@@ -35,7 +35,7 @@ The CSV dataformat supports 27 options which are listed below.
 | quoteDisabled | false | Boolean | Used to disable quotes
 | quote |  | String | Sets the quote which by default is
 | recordSeparatorDisabled |  | String | Used for disabling record separator
-| recordSeparator |  | String | Sets the record separator (aka new line) which by default is \r\n (CRLF)
+| recordSeparator |  | String | Sets the record separator (aka new line) which by default is new line characters (CRLF)
 | skipHeaderRecord | false | Boolean | Whether to skip the header record in the output
 | quoteMode |  | String | Sets the quote mode
 | ignoreHeaderCase | false | Boolean | Sets whether or not to ignore case when accessing header names.
