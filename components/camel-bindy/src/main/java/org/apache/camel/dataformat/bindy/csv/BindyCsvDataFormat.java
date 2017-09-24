@@ -97,7 +97,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
         for (Map<String, Object> model : models) {
 
-            String result = factory.unbind(model);
+            String result = factory.unbind(getCamelContext(), model);
 
             byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
             outputStream.write(bytes);
@@ -195,7 +195,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                     }
     
                     // Bind data from CSV record with model classes
-                    factory.bind(result, model, count);
+                    factory.bind(getCamelContext(), result, model, count);
     
                     // Link objects together
                     factory.link(model);

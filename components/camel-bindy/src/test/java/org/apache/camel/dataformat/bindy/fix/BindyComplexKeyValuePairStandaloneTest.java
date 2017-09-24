@@ -23,11 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Header;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Trailer;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,7 +78,8 @@ public class BindyComplexKeyValuePairStandaloneTest {
 
         List<String> data = Arrays.asList(message.split("\\u0001"));
 
-        factory.bind(data, model, counter);
+        CamelContext camelContext = new DefaultCamelContext();
+        factory.bind(camelContext, data, model, counter);
 
         LOG.info(">>> Model : " + model.toString());
 
@@ -94,7 +97,8 @@ public class BindyComplexKeyValuePairStandaloneTest {
 
         List<String> data = Arrays.asList(message.split("\\u0001"));
 
-        factory.bind(data, model, counter);
+        CamelContext camelContext = new DefaultCamelContext();
+        factory.bind(camelContext, data, model, counter);
 
         LOG.info(">>> Model : " + model.toString());
 
@@ -112,7 +116,8 @@ public class BindyComplexKeyValuePairStandaloneTest {
 
         List<String> data = Arrays.asList(message.split("\\u0001"));
 
-        factory.bind(data, model, counter);
+        CamelContext camelContext = new DefaultCamelContext();
+        factory.bind(camelContext, data, model, counter);
 
         LOG.info(">>> Model : " + model.toString());
 
