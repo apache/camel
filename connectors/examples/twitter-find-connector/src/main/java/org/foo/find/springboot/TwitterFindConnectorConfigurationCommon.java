@@ -27,39 +27,47 @@ import javax.annotation.Generated;
 public class TwitterFindConnectorConfigurationCommon {
 
     /**
+     * The consumer secret
+     */
+    private String consumerSecret;
+    /**
      * The access token
      */
     private String accessToken;
-    /**
-     * The access token secret
-     */
-    private String accessTokenSecret;
     /**
      * The consumer key
      */
     private String consumerKey;
     /**
-     * The consumer secret
+     * The access token secret
      */
-    private String consumerSecret;
+    private String accessTokenSecret;
     /**
-     * Filter out old tweets that has previously been polled. This state is
-     * stored in memory only and based on last tweet id.
+     * Milliseconds before the next poll.
      */
-    private boolean filterOld = true;
+    private long delay = 5000L;
     /**
      * Can be used for search and streaming/filter. Multiple values can be
      * separated with comma.
      */
     private String keywords;
     /**
-     * Milliseconds before the next poll.
+     * Filter out old tweets that has previously been polled. This state is
+     * stored in memory only and based on last tweet id.
      */
-    private long delay = 5000L;
+    private boolean filterOld = true;
     /**
      * A prefix
      */
     private String prefix;
+
+    public String getConsumerSecret() {
+        return consumerSecret;
+    }
+
+    public void setConsumerSecret(String consumerSecret) {
+        this.consumerSecret = consumerSecret;
+    }
 
     public String getAccessToken() {
         return accessToken;
@@ -67,14 +75,6 @@ public class TwitterFindConnectorConfigurationCommon {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
-    }
-
-    public String getAccessTokenSecret() {
-        return accessTokenSecret;
-    }
-
-    public void setAccessTokenSecret(String accessTokenSecret) {
-        this.accessTokenSecret = accessTokenSecret;
     }
 
     public String getConsumerKey() {
@@ -85,20 +85,20 @@ public class TwitterFindConnectorConfigurationCommon {
         this.consumerKey = consumerKey;
     }
 
-    public String getConsumerSecret() {
-        return consumerSecret;
+    public String getAccessTokenSecret() {
+        return accessTokenSecret;
     }
 
-    public void setConsumerSecret(String consumerSecret) {
-        this.consumerSecret = consumerSecret;
+    public void setAccessTokenSecret(String accessTokenSecret) {
+        this.accessTokenSecret = accessTokenSecret;
     }
 
-    public boolean isFilterOld() {
-        return filterOld;
+    public long getDelay() {
+        return delay;
     }
 
-    public void setFilterOld(boolean filterOld) {
-        this.filterOld = filterOld;
+    public void setDelay(long delay) {
+        this.delay = delay;
     }
 
     public String getKeywords() {
@@ -109,12 +109,12 @@ public class TwitterFindConnectorConfigurationCommon {
         this.keywords = keywords;
     }
 
-    public long getDelay() {
-        return delay;
+    public boolean isFilterOld() {
+        return filterOld;
     }
 
-    public void setDelay(long delay) {
-        this.delay = delay;
+    public void setFilterOld(boolean filterOld) {
+        this.filterOld = filterOld;
     }
 
     public String getPrefix() {

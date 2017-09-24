@@ -1,29 +1,75 @@
 {
-  "component": {
-    "kind": "component",
-    "baseScheme": "twitter",
-    "scheme": "twitter-mention",
-    "syntax": "twitter-mention:kind",
-    "title": "TwitterMention",
-    "description": "Connection from twitter when anyone mention you",
-    "label": "twitter",
-    "deprecated": true,
-    "async": false,
-    "consumerOnly": true,
-    "lenientProperties": false,
-    "javaType": "org.foo.mention.TwitterMentionComponent",
-    "groupId": "org.foo",
-    "artifactId": "twitter-mention-connector",
-    "version": "2.20.0-SNAPSHOT"
-  },
-  "componentProperties": {
-    "accessToken": { "kind": "property", "displayName": "Access Token", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The access token" },
-    "accessTokenSecret": { "kind": "property", "displayName": "Access Token Secret", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The access token secret" },
-    "consumerKey": { "kind": "property", "displayName": "Consumer Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The consumer key" },
-    "consumerSecret": { "kind": "property", "displayName": "Consumer Secret", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The consumer secret" }
-  },
-  "properties": {
-  },
-  "connectorProperties": {
-  }
+	"component":{
+		"kind":"component",
+		"baseScheme":"twitter",
+		"scheme":"twitter-mention",
+		"syntax":"twitter-mention:kind",
+		"title":"TwitterMention",
+		"description":"Connection from twitter when anyone mention you",
+		"label":"twitter",
+		"deprecated":true,
+		"async":false,
+		"consumerOnly":true,
+		"lenientProperties":false,
+		"javaType":"org.foo.mention.TwitterMentionComponent",
+		"groupId":"org.foo",
+		"artifactId":"twitter-mention-connector",
+		"version":"2.20.0-SNAPSHOT"
+	},
+	"componentProperties":{
+		"consumerSecret":{
+			"kind":"property",
+			"displayName":"Consumer Secret",
+			"group":"security",
+			"label":"security",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":true,
+			"description":"The consumer secret"
+		},
+		"accessToken":{
+			"kind":"property",
+			"displayName":"Access Token",
+			"group":"security",
+			"label":"security",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":true,
+			"description":"The access token"
+		},
+		"consumerKey":{
+			"kind":"property",
+			"displayName":"Consumer Key",
+			"group":"security",
+			"label":"security",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":true,
+			"description":"The consumer key"
+		},
+		"accessTokenSecret":{
+			"kind":"property",
+			"displayName":"Access Token Secret",
+			"group":"security",
+			"label":"security",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":true,
+			"description":"The access token secret"
+		}
+	},
+	"properties":{
+		
+	},
+	"connectorProperties":{
+		
+	}
 }
