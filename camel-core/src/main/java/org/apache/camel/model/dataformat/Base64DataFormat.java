@@ -38,7 +38,7 @@ public class Base64DataFormat extends DataFormatDefinition {
 
     @XmlAttribute @Metadata(defaultValue = "76")
     private Integer lineLength;
-    @XmlAttribute @Metadata(defaultValue = "\\r\\n")
+    @XmlAttribute
     private String lineSeparator;
     @XmlAttribute
     private Boolean urlSafe;
@@ -82,7 +82,7 @@ public class Base64DataFormat extends DataFormatDefinition {
     /**
      * The line separators to use.
      * <p/>
-     * Uses new line characters by default.
+     * Uses new line characters (CRLF) by default.
      */
     public void setLineSeparator(String lineSeparator) {
         this.lineSeparator = lineSeparator;

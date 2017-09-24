@@ -100,7 +100,13 @@ public final class JSonSchemaHelper {
     }
 
     private static String escapeJson(String value) {
-        return Jsoner.escape(value);
+        // need to safe encode \r as \\r so its escaped
+        // need to safe encode \n as \\n so its escaped
+        // need to safe encode \t as \\t so its escaped
+        return value
+            .replaceAll("\\\\r", "\\\\\\r")
+            .replaceAll("\\\\n", "\\\\\\n")
+            .replaceAll("\\\\t", "\\\\\\t");
     }
 
     /**
