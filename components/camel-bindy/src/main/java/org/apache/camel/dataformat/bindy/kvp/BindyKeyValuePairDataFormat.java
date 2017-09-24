@@ -80,7 +80,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
                 row = Collections.singletonMap(model.getClass().getName(), model);
             }
 
-            String result = factory.unbind(row);
+            String result = factory.unbind(getCamelContext(), row);
 
             outputStream.write(converter.convertTo(byte[].class, exchange, result));
             outputStream.write(crlf);
@@ -136,7 +136,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
                 if (result.size() > 0) {
                     // Bind data from message with model classes
                     // Counter is used to detect line where error occurs
-                    factory.bind(result, model, count, lists);
+                    factory.bind(getCamelContext(), result, model, count, lists);
 
                     // Link objects together
                     factory.link(model);

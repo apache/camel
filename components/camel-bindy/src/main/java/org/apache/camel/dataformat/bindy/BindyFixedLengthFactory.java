@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.bindy;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.dataformat.bindy.annotation.BindyConverter;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
@@ -34,6 +36,7 @@ import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,11 +157,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     // as we provide the content of the record and
     // we don't split it as this is the case for a CSV record
     @Override
-    public void bind(List<String> data, Map<String, Object> model, int line) throws Exception {
+    public void bind(CamelContext camelContext, List<String> data, Map<String, Object> model, int line) throws Exception {
         // noop
     }
 
-    public void bind(String record, Map<String, Object> model, int line) throws Exception {
+    public void bind(CamelContext camelContext, String record, Map<String, Object> model, int line) throws Exception {
 
         int pos = 1;
         int counterMandatoryFields = 0;
@@ -277,6 +280,31 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             } else {
                 value = getDefaultValueForPrimitive(field.getType());
             }
+            
+            if (value != null && !dataField.method().isEmpty()) {
+                Class<?> clazz;
+                if (dataField.method().contains(".")) {
+                    clazz = camelContext.getClassResolver().resolveMandatoryClass(dataField.method().substring(0, dataField.method().lastIndexOf(".")));
+                } else {
+                    clazz = field.getType();
+                }
+                
+                String methodName = dataField.method().substring(dataField.method().lastIndexOf(".") + 1,
+                                                                   dataField.method().length());
+                
+                Method m = ReflectionHelper.findMethod(clazz, methodName, field.getType());
+                if (m != null) {
+                    // this method must be static and return type
+                    // must be the same as the datafield and 
+                    // must receive only the datafield value 
+                    // as the method argument
+                    value = ObjectHelper.invokeMethod(m, null, value);
+                } else {
+                    // fallback to method without parameter, that is on the value itself
+                    m = ReflectionHelper.findMethod(clazz, methodName);
+                    value = ObjectHelper.invokeMethod(m, value);
+                }
+            }
 
             field.set(modelField, value);
 
@@ -337,7 +365,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     }
 
     @Override
-    public String unbind(Map<String, Object> model) throws Exception {
+    public String unbind(CamelContext camelContext, Map<String, Object> model) throws Exception {
 
         StringBuilder buffer = new StringBuilder();
         Map<Integer, List<String>> results = new HashMap<Integer, List<String>>();
