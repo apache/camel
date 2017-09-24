@@ -134,10 +134,11 @@
       <groupId>com.github.ben-manes.caffeine</groupId>
       <artifactId>caffeine</artifactId>
     </dependency>
+    <!-- we shade our patched ordered json-simple parser -->
     <dependency>
-      <groupId>com.github.cliftonlabs</groupId>
-      <artifactId>json-simple</artifactId>
-      <version>${json-simple2-version}</version>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>json-simple-ordered</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- required dependencies by camel-core -->
@@ -266,7 +267,7 @@
               <artifactSet>
                 <includes>
                   <include>com.github.ben-manes.caffeine:caffeine</include>
-                  <include>com.github.cliftonlabs:json-simple</include>
+                  <include>org.apache.camel:json-simple-ordered</include>
                   <include>org.apache.camel:spi-annotations</include>
                 </includes>
                 <excludes>
