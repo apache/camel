@@ -222,7 +222,7 @@
         <configuration>
           <instructions>
             <Export-Package>org.apache.camel.catalog*</Export-Package>
-            <Import-Package>org.apache.camel.language.simple;resolution:=optional,*</Import-Package>
+            <Import-Package>org.apache.camel.language.simple;resolution:=optional,!org.json.simple,*</Import-Package>
           </instructions>
         </configuration>
       </plugin>
