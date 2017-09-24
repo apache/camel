@@ -43,6 +43,12 @@ public class XsltIncludeClasspathDotInDirectoryTest extends ContextTestSupport {
         super.setUp();
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        deleteDirectory("target/classes/com.mycompany");
+        super.tearDown();
+    }
+
     public void testXsltIncludeClasspath() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
