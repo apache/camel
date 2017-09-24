@@ -35,11 +35,11 @@
   <dependencies>
 
     <!-- required dependencies by camel-catalog -->
-    <!-- which we shade into camel-catalog so its available for everybody out of the box -->
+    <!-- we shade our patched ordered json-simple parser -->
     <dependency>
-      <groupId>com.github.cliftonlabs</groupId>
-      <artifactId>json-simple</artifactId>
-      <version>${json-simple2-version}</version>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>json-simple-ordered</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- testing -->
@@ -182,7 +182,7 @@
             <configuration>
               <artifactSet>
                 <includes>
-                  <include>com.github.cliftonlabs:json-simple</include>
+                  <include>org.apache.camel:json-simple-ordered</include>
                 </includes>
               </artifactSet>
               <relocations>

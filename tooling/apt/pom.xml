@@ -44,11 +44,11 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- json parser -->
+    <!-- use our patched ordered json-simple parser -->
     <dependency>
-      <groupId>com.github.cliftonlabs</groupId>
-      <artifactId>json-simple</artifactId>
-      <version>${json-simple2-version}</version>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>json-simple-ordered</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- logging -->
