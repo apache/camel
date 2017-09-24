@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -99,9 +100,9 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      */
     public abstract void initAnnotatedFields() throws Exception;
 
-    public abstract void bind(List<String> data, Map<String, Object> model, int line) throws Exception;
+    public abstract void bind(CamelContext camelContext, List<String> data, Map<String, Object> model, int line) throws Exception;
     
-    public abstract String unbind(Map<String, Object> model) throws Exception;
+    public abstract String unbind(CamelContext camelContext, Map<String, Object> model) throws Exception;
 
     /**
      * Link objects together
