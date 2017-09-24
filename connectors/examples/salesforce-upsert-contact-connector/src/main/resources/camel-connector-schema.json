@@ -1,31 +1,97 @@
 {
-  "component": {
-    "kind": "component",
-    "baseScheme": "salesforce",
-    "scheme": "salesforce-upsert-contact",
-    "syntax": "salesforce-upsert-contact:operationName:topicName",
-    "title": "SalesforceUpsertContact",
-    "description": "Create or update Salesforce Contact SObject",
-    "label": "salesforce",
-    "deprecated": false,
-    "async": false,
-    "producerOnly": true,
-    "lenientProperties": false,
-    "javaType": "org.foo.salesforce.contact.SalesforceUpsertContactComponent",
-    "groupId": "org.foo",
-    "artifactId": "salesforce-upsert-contact-connector",
-    "version": "2.20.0-SNAPSHOT"
-  },
-  "componentProperties": {
-    "loginUrl": { "kind": "property", "displayName": "Login Url", "group": "security", "label": "common,security", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "https://login.salesforce.com", "description": "URL of the Salesforce instance used for authentication by default set to https://login.salesforce.com" },
-    "clientId": { "kind": "property", "displayName": "Client Id", "group": "security", "label": "common,security", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package." },
-    "clientSecret": { "kind": "property", "displayName": "Client Secret", "group": "security", "label": "common,security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "OAuth Consumer Secret of the connected app configured in the Salesforce instance setup." },
-    "refreshToken": { "kind": "property", "displayName": "Refresh Token", "group": "security", "label": "common,security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web application and configure a callback URL to receive the refresh token or configure using the builtin callback at https://login.salesforce.com/services/oauth2/success or https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the end of the flow. Note that in development organizations Salesforce allows hosting the callback web application at localhost." }
-  },
-  "properties": {
-    "sObjectIdName": { "kind": "parameter", "displayName": "SObject Id Name", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "SObject external ID field name" },
-    "sObjectIdValue": { "kind": "parameter", "displayName": "SObject Id Value", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "SObject external ID field value" }
-  },
-  "connectorProperties": {
-  }
+	"component":{
+		"kind":"component",
+		"baseScheme":"salesforce",
+		"scheme":"salesforce-upsert-contact",
+		"syntax":"salesforce-upsert-contact:operationName:topicName",
+		"title":"SalesforceUpsertContact",
+		"description":"Create or update Salesforce Contact SObject",
+		"label":"salesforce",
+		"deprecated":false,
+		"async":false,
+		"producerOnly":true,
+		"lenientProperties":false,
+		"javaType":"org.foo.salesforce.contact.SalesforceUpsertContactComponent",
+		"groupId":"org.foo",
+		"artifactId":"salesforce-upsert-contact-connector",
+		"version":"2.20.0-SNAPSHOT"
+	},
+	"componentProperties":{
+		"loginUrl":{
+			"kind":"property",
+			"displayName":"Login Url",
+			"group":"security",
+			"label":"common,security",
+			"required":true,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":false,
+			"defaultValue":"https:\/\/login.salesforce.com",
+			"description":"URL of the Salesforce instance used for authentication by default set to https:\/\/login.salesforce.com"
+		},
+		"clientSecret":{
+			"kind":"property",
+			"displayName":"Client Secret",
+			"group":"security",
+			"label":"common,security",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":true,
+			"description":"OAuth Consumer Secret of the connected app configured in the Salesforce instance setup."
+		},
+		"clientId":{
+			"kind":"property",
+			"displayName":"Client Id",
+			"group":"security",
+			"label":"common,security",
+			"required":true,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":false,
+			"description":"OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package."
+		},
+		"refreshToken":{
+			"kind":"property",
+			"displayName":"Refresh Token",
+			"group":"security",
+			"label":"common,security",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":true,
+			"description":"Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web application and configure a callback URL to receive the refresh token or configure using the builtin callback at https:\/\/login.salesforce.com\/services\/oauth2\/success or https:\/\/test.salesforce.com\/services\/oauth2\/success and then retrive the refresh_token from the URL at the end of the flow. Note that in development organizations Salesforce allows hosting the callback web application at localhost."
+		}
+	},
+	"properties":{
+		"sObjectIdValue":{
+			"kind":"parameter",
+			"displayName":"SObject Id Value",
+			"group":"common",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":false,
+			"description":"SObject external ID field value"
+		},
+		"sObjectIdName":{
+			"kind":"parameter",
+			"displayName":"SObject Id Name",
+			"group":"common",
+			"required":true,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":false,
+			"description":"SObject external ID field name"
+		}
+	},
+	"connectorProperties":{
+		
+	}
 }

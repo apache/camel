@@ -1,33 +1,124 @@
 {
-  "component": {
-    "kind": "component",
-    "baseScheme": "twitter",
-    "scheme": "twitter-find",
-    "syntax": "twitter-find:kind",
-    "title": "TwitterFind",
-    "description": "Find for twitter",
-    "label": "twitter",
-    "deprecated": true,
-    "async": false,
-    "consumerOnly": true,
-    "lenientProperties": false,
-    "javaType": "org.foo.find.TwitterFindComponent",
-    "groupId": "org.foo",
-    "artifactId": "twitter-find-connector",
-    "version": "2.20.0-SNAPSHOT"
-  },
-  "componentProperties": {
-    "accessToken": { "kind": "property", "displayName": "Access Token", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The access token" },
-    "accessTokenSecret": { "kind": "property", "displayName": "Access Token Secret", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The access token secret" },
-    "consumerKey": { "kind": "property", "displayName": "Consumer Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The consumer key" },
-    "consumerSecret": { "kind": "property", "displayName": "Consumer Secret", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The consumer secret" }
-  },
-  "properties": {
-    "filterOld": { "kind": "parameter", "displayName": "Filter Old", "group": "filter", "label": "consumer,filter", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Filter out old tweets that has previously been polled. This state is stored in memory only and based on last tweet id." },
-    "keywords": { "kind": "parameter", "displayName": "Keywords", "group": "filter", "label": "consumer,filter", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Can be used for search and streaming/filter. Multiple values can be separated with comma." },
-    "delay": { "kind": "parameter", "displayName": "Delay", "group": "scheduler", "label": "consumer,scheduler", "required": false, "type": "integer", "javaType": "long", "optionalPrefix": "consumer.", "deprecated": false, "secret": false, "defaultValue": 5000, "description": "Milliseconds before the next poll." }
-  },
-  "connectorProperties": {
-    "prefix": { "kind": "parameter", "displayName": "Keyword prefix", "group": "filter", "label": "consumer,filter", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "A prefix" }
-  }
+	"component":{
+		"kind":"component",
+		"baseScheme":"twitter",
+		"scheme":"twitter-find",
+		"syntax":"twitter-find:kind",
+		"title":"TwitterFind",
+		"description":"Find for twitter",
+		"label":"twitter",
+		"deprecated":true,
+		"async":false,
+		"consumerOnly":true,
+		"lenientProperties":false,
+		"javaType":"org.foo.find.TwitterFindComponent",
+		"groupId":"org.foo",
+		"artifactId":"twitter-find-connector",
+		"version":"2.20.0-SNAPSHOT"
+	},
+	"componentProperties":{
+		"consumerSecret":{
+			"kind":"property",
+			"displayName":"Consumer Secret",
+			"group":"security",
+			"label":"security",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":true,
+			"description":"The consumer secret"
+		},
+		"accessToken":{
+			"kind":"property",
+			"displayName":"Access Token",
+			"group":"security",
+			"label":"security",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":true,
+			"description":"The access token"
+		},
+		"consumerKey":{
+			"kind":"property",
+			"displayName":"Consumer Key",
+			"group":"security",
+			"label":"security",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":true,
+			"description":"The consumer key"
+		},
+		"accessTokenSecret":{
+			"kind":"property",
+			"displayName":"Access Token Secret",
+			"group":"security",
+			"label":"security",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":true,
+			"description":"The access token secret"
+		}
+	},
+	"properties":{
+		"keywords":{
+			"kind":"parameter",
+			"displayName":"Keywords",
+			"group":"filter",
+			"label":"consumer,filter",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":false,
+			"description":"Can be used for search and streaming\/filter. Multiple values can be separated with comma."
+		},
+		"delay":{
+			"kind":"parameter",
+			"displayName":"Delay",
+			"group":"scheduler",
+			"label":"consumer,scheduler",
+			"required":false,
+			"type":"integer",
+			"javaType":"long",
+			"optionalPrefix":"consumer.",
+			"deprecated":false,
+			"secret":false,
+			"defaultValue":5000,
+			"description":"Milliseconds before the next poll."
+		},
+		"filterOld":{
+			"kind":"parameter",
+			"displayName":"Filter Old",
+			"group":"filter",
+			"label":"consumer,filter",
+			"required":false,
+			"type":"boolean",
+			"javaType":"boolean",
+			"deprecated":false,
+			"secret":false,
+			"defaultValue":true,
+			"description":"Filter out old tweets that has previously been polled. This state is stored in memory only and based on last tweet id."
+		}
+	},
+	"connectorProperties":{
+		"prefix":{
+			"kind":"parameter",
+			"displayName":"Keyword prefix",
+			"group":"filter",
+			"label":"consumer,filter",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":false,
+			"description":"A prefix"
+		}
+	}
 }

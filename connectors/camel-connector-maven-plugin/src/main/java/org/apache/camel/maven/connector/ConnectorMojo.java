@@ -49,6 +49,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.plugins.jar.AbstractJarMojo;
 
+import static org.apache.camel.maven.connector.util.JSonSchemaHelper.prettyPrint;
+
 @Mojo(name = "jar", defaultPhase = LifecyclePhase.PREPARE_PACKAGE, requiresProject = true, threadSafe = true,
         requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class ConnectorMojo extends AbstractJarMojo {
@@ -159,13 +161,15 @@ public class ConnectorMojo extends AbstractJarMojo {
                     File out = new File(subDir, name);
 
                     FileOutputStream fos = new FileOutputStream(out, false);
-                    fos.write(newJson.getBytes());
+                    // output as pretty print
+                    String pretty = prettyPrint(newJson);
+                    fos.write(pretty.getBytes());
                     fos.close();
 
                     // also write the file in the root folder so its easier to find that for tooling
                     out = new File(classesDirectory, "camel-connector-schema.json");
                     fos = new FileOutputStream(out, false);
-                    fos.write(newJson.getBytes());
+                    fos.write(pretty.getBytes());
                     fos.close();
 
                     if (generateToSources) {

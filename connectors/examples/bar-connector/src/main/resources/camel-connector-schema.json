@@ -1,28 +1,67 @@
 {
-  "component": {
-    "kind": "component",
-    "baseScheme": "beverage",
-    "scheme": "bar",
-    "syntax": "bar:drink",
-    "title": "Bar",
-    "description": "To order drinks from the bar",
-    "label": "bar",
-    "deprecated": false,
-    "async": false,
-    "producerOnly": true,
-    "lenientProperties": false,
-    "javaType": "org.foo.connector.BarComponent",
-    "groupId": "org.foo",
-    "artifactId": "bar-connector",
-    "version": "2.20.0-SNAPSHOT"
-  },
-  "componentProperties": {
-  },
-  "properties": {
-    "drink": { "kind": "path", "displayName": "Drink", "group": "producer", "required": true, "type": "object", "javaType": "org.beverage.Beverages", "enum": [ "Wine", "GinTonic", "Beer" ], "deprecated": false, "secret": false, "description": "What drink to order" },
-    "amount": { "kind": "parameter", "displayName": "Amount", "group": "producer", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "secret": false, "defaultValue": 2, "description": "Number of drinks in the order" },
-    "celebrity": { "kind": "parameter", "displayName": "Celebrity", "group": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Is this a famous person ordering" }
-  },
-  "connectorProperties": {
-  }
+	"component":{
+		"kind":"component",
+		"baseScheme":"beverage",
+		"scheme":"bar",
+		"syntax":"bar:drink",
+		"title":"Bar",
+		"description":"To order drinks from the bar",
+		"label":"bar",
+		"deprecated":false,
+		"async":false,
+		"producerOnly":true,
+		"lenientProperties":false,
+		"javaType":"org.foo.connector.BarComponent",
+		"groupId":"org.foo",
+		"artifactId":"bar-connector",
+		"version":"2.20.0-SNAPSHOT"
+	},
+	"componentProperties":{
+		
+	},
+	"properties":{
+		"celebrity":{
+			"kind":"parameter",
+			"displayName":"Celebrity",
+			"group":"producer",
+			"required":false,
+			"type":"boolean",
+			"javaType":"boolean",
+			"deprecated":false,
+			"secret":false,
+			"defaultValue":false,
+			"description":"Is this a famous person ordering"
+		},
+		"amount":{
+			"kind":"parameter",
+			"displayName":"Amount",
+			"group":"producer",
+			"required":false,
+			"type":"integer",
+			"javaType":"int",
+			"deprecated":false,
+			"secret":false,
+			"defaultValue":2,
+			"description":"Number of drinks in the order"
+		},
+		"drink":{
+			"kind":"path",
+			"displayName":"Drink",
+			"group":"producer",
+			"required":true,
+			"type":"object",
+			"javaType":"org.beverage.Beverages",
+			"enum":[
+				"Wine",
+				"GinTonic",
+				"Beer"
+			],
+			"deprecated":false,
+			"secret":false,
+			"description":"What drink to order"
+		}
+	},
+	"connectorProperties":{
+		
+	}
 }

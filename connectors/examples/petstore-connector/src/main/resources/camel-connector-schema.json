@@ -1,28 +1,63 @@
 {
-  "component": {
-    "kind": "component",
-    "baseScheme": "rest-swagger",
-    "scheme": "petstore",
-    "syntax": "petstore:specificationUri#operationId",
-    "title": "PetStore",
-    "description": "Pets in the store",
-    "label": "api,rest",
-    "deprecated": false,
-    "async": false,
-    "consumerOnly": true,
-    "lenientProperties": false,
-    "javaType": "org.foo.connector.PetStoreComponent",
-    "groupId": "org.foo",
-    "artifactId": "petstore-connector",
-    "version": "2.20.0-SNAPSHOT"
-  },
-  "componentProperties": {
-    "specificationUri": { "kind": "property", "displayName": "Specification Uri", "group": "producer", "label": "producer", "required": false, "type": "string", "javaType": "java.net.URI", "deprecated": false, "secret": false, "defaultValue": "http://petstore.swagger.io/v2/swagger.json", "description": "Path to the Swagger specification file. The scheme host base path are taken from this specification but these can be overriden with properties on the component or endpoint level. If not given the component tries to load swagger.json resource. Note that the host defined on the component and endpoint of this Component should contain the scheme hostname and optionally the port in the URI syntax (i.e. https://api.example.com:8080). Can be overriden in endpoint configuration." }
-  },
-  "properties": {
-    "operationId": { "kind": "path", "displayName": "Operation Id", "group": "producer", "label": "producer", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "ID of the operation from the Swagger specification." },
-    "schedulerPeriod": { "kind": "parameter", "displayName": "Period", "group": "consumer", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "secret": false, "defaultValue": 5000, "description": "Delay in milli seconds between scheduling (executing)" }
-  },
-  "connectorProperties": {
-  }
+	"component":{
+		"kind":"component",
+		"baseScheme":"rest-swagger",
+		"scheme":"petstore",
+		"syntax":"petstore:specificationUri#operationId",
+		"title":"PetStore",
+		"description":"Pets in the store",
+		"label":"api,rest",
+		"deprecated":false,
+		"async":false,
+		"consumerOnly":true,
+		"lenientProperties":false,
+		"javaType":"org.foo.connector.PetStoreComponent",
+		"groupId":"org.foo",
+		"artifactId":"petstore-connector",
+		"version":"2.20.0-SNAPSHOT"
+	},
+	"componentProperties":{
+		"specificationUri":{
+			"kind":"property",
+			"displayName":"Specification Uri",
+			"group":"producer",
+			"label":"producer",
+			"required":false,
+			"type":"string",
+			"javaType":"java.net.URI",
+			"deprecated":false,
+			"secret":false,
+			"defaultValue":"http:\/\/petstore.swagger.io\/v2\/swagger.json",
+			"description":"Path to the Swagger specification file. The scheme host base path are taken from this specification but these can be overriden with properties on the component or endpoint level. If not given the component tries to load swagger.json resource. Note that the host defined on the component and endpoint of this Component should contain the scheme hostname and optionally the port in the URI syntax (i.e. https:\/\/api.example.com:8080). Can be overriden in endpoint configuration."
+		}
+	},
+	"properties":{
+		"operationId":{
+			"kind":"path",
+			"displayName":"Operation Id",
+			"group":"producer",
+			"label":"producer",
+			"required":true,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":false,
+			"description":"ID of the operation from the Swagger specification."
+		},
+		"schedulerPeriod":{
+			"kind":"parameter",
+			"displayName":"Period",
+			"group":"consumer",
+			"required":false,
+			"type":"integer",
+			"javaType":"long",
+			"deprecated":false,
+			"secret":false,
+			"defaultValue":5000,
+			"description":"Delay in milli seconds between scheduling (executing)"
+		}
+	},
+	"connectorProperties":{
+		
+	}
 }

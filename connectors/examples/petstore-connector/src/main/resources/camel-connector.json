@@ -2,7 +2,7 @@
   "baseScheme" : "rest-swagger",
   "baseGroupId" : "org.apache.camel",
   "baseArtifactId" : "camel-rest-swagger",
-  "baseVersion" : "2.20.0-20170911.120853-191",
+  "baseVersion" : "2.20.0-SNAPSHOT",
   "baseJavaType" : "org.apache.camel.component.rest.swagger.RestSwaggerComponent",
   "name" : "PetStore",
   "scheme" : "petstore",

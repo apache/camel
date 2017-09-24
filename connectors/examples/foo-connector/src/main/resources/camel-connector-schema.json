@@ -1,28 +1,62 @@
 {
-  "component": {
-    "kind": "component",
-    "baseScheme": "timer",
-    "scheme": "foo",
-    "syntax": "foo:timerName",
-    "title": "Foo",
-    "description": "Something cool",
-    "label": "foo,timer",
-    "deprecated": false,
-    "async": false,
-    "consumerOnly": true,
-    "lenientProperties": false,
-    "javaType": "org.foo.connector.FooComponent",
-    "groupId": "org.foo",
-    "artifactId": "foo-connector",
-    "version": "2.20.0-SNAPSHOT"
-  },
-  "componentProperties": {
-  },
-  "properties": {
-    "timerName": { "kind": "path", "displayName": "Timer Name", "group": "consumer", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The name of the timer" },
-    "period": { "kind": "parameter", "displayName": "Period", "group": "consumer", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "secret": false, "defaultValue": 5000, "description": "If greater than 0 generate periodic events every period milliseconds. The default value is 1000. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour)." },
-    "repeatCount": { "kind": "parameter", "displayName": "Repeat Count", "group": "consumer", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "secret": false, "defaultValue": 0, "description": "Specifies a maximum limit of number of fires. So if you set it to 1 the timer will only fire once. If you set it to 5 it will only fire five times. A value of zero or negative means fire forever." }
-  },
-  "connectorProperties": {
-  }
+	"component":{
+		"kind":"component",
+		"baseScheme":"timer",
+		"scheme":"foo",
+		"syntax":"foo:timerName",
+		"title":"Foo",
+		"description":"Something cool",
+		"label":"foo,timer",
+		"deprecated":false,
+		"async":false,
+		"consumerOnly":true,
+		"lenientProperties":false,
+		"javaType":"org.foo.connector.FooComponent",
+		"groupId":"org.foo",
+		"artifactId":"foo-connector",
+		"version":"2.20.0-SNAPSHOT"
+	},
+	"componentProperties":{
+		
+	},
+	"properties":{
+		"period":{
+			"kind":"parameter",
+			"displayName":"Period",
+			"group":"consumer",
+			"required":false,
+			"type":"integer",
+			"javaType":"long",
+			"deprecated":false,
+			"secret":false,
+			"defaultValue":5000,
+			"description":"If greater than 0 generate periodic events every period milliseconds. The default value is 1000. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour)."
+		},
+		"timerName":{
+			"kind":"path",
+			"displayName":"Timer Name",
+			"group":"consumer",
+			"required":true,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":false,
+			"description":"The name of the timer"
+		},
+		"repeatCount":{
+			"kind":"parameter",
+			"displayName":"Repeat Count",
+			"group":"consumer",
+			"required":false,
+			"type":"integer",
+			"javaType":"long",
+			"deprecated":false,
+			"secret":false,
+			"defaultValue":0,
+			"description":"Specifies a maximum limit of number of fires. So if you set it to 1 the timer will only fire once. If you set it to 5 it will only fire five times. A value of zero or negative means fire forever."
+		}
+	},
+	"connectorProperties":{
+		
+	}
 }

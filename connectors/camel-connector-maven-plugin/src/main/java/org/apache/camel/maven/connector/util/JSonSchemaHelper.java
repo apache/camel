@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,8 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Date;
 import java.util.Set;
+
+import org.apache.camel.org.json.simple.Jsoner;
 
 /**
  * A helper class for <a href="http://json-schema.org/">JSON schema</a>.
@@ -156,14 +158,25 @@ public final class JSonSchemaHelper {
         }
 
         sb.append(" }");
-        return sb.toString();
+
+        // output in pretty print
+        return prettyPrint(sb.toString());
+    }
+
+    /**
+     * Pretty print the json
+     * @param json existing json
+     * @return output in pretty printed format
+     */
+    public static String prettyPrint(String json) {
+        return Jsoner.prettyPrint(json);
     }
 
     /**
      * Gets the JSon schema type.
      *
      * @param   type the java type
-     * @return  the json schema type, is never null, but returns <tt>object</tt> as the generic type
+     * @return the json schema type, is never null, but returns <tt>object</tt> as the generic type
      */
     public static String getType(String type, boolean enumType) {
         if (enumType) {
@@ -195,7 +208,7 @@ public final class JSonSchemaHelper {
      * Gets the JSon schema primitive type.
      *
      * @param   name the java type
-     * @return  the json schema primitive type, or <tt>null</tt> if not a primitive
+     * @return the json schema primitive type, or <tt>null</tt> if not a primitive
      */
     public static String getPrimitiveType(String name) {
 

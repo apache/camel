@@ -27,16 +27,16 @@ import javax.annotation.Generated;
 public class SalesforceUpsertContactConnectorConfigurationCommon {
 
     /**
-     * URL of the Salesforce instance used for authentication by default set to
-     * https://login.salesforce.com
-     */
-    private String loginUrl = "https://login.salesforce.com";
-    /**
      * OAuth Consumer Key of the connected app configured in the Salesforce
      * instance setup. Typically a connected app needs to be configured but one
      * can be provided by installing a package.
      */
     private String clientId;
+    /**
+     * URL of the Salesforce instance used for authentication by default set to
+     * https://login.salesforce.com
+     */
+    private String loginUrl = "https://login.salesforce.com";
     /**
      * OAuth Consumer Secret of the connected app configured in the Salesforce
      * instance setup.
@@ -54,21 +54,13 @@ public class SalesforceUpsertContactConnectorConfigurationCommon {
      */
     private String refreshToken;
     /**
-     * SObject external ID field name
-     */
-    private String sObjectIdName;
-    /**
      * SObject external ID field value
      */
     private String sObjectIdValue;
-
-    public String getLoginUrl() {
-        return loginUrl;
-    }
-
-    public void setLoginUrl(String loginUrl) {
-        this.loginUrl = loginUrl;
-    }
+    /**
+     * SObject external ID field name
+     */
+    private String sObjectIdName;
 
     public String getClientId() {
         return clientId;
@@ -76,6 +68,14 @@ public class SalesforceUpsertContactConnectorConfigurationCommon {
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public String getLoginUrl() {
+        return loginUrl;
+    }
+
+    public void setLoginUrl(String loginUrl) {
+        this.loginUrl = loginUrl;
     }
 
     public String getClientSecret() {
@@ -94,19 +94,19 @@ public class SalesforceUpsertContactConnectorConfigurationCommon {
         this.refreshToken = refreshToken;
     }
 
-    public String getSObjectIdName() {
-        return sObjectIdName;
-    }
-
-    public void setSObjectIdName(String sObjectIdName) {
-        this.sObjectIdName = sObjectIdName;
-    }
-
     public String getSObjectIdValue() {
         return sObjectIdValue;
     }
 
     public void setSObjectIdValue(String sObjectIdValue) {
         this.sObjectIdValue = sObjectIdValue;
+    }
+
+    public String getSObjectIdName() {
+        return sObjectIdName;
+    }
+
+    public void setSObjectIdName(String sObjectIdName) {
+        this.sObjectIdName = sObjectIdName;
     }
 }

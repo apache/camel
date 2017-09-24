@@ -1,27 +1,54 @@
 {
-  "component": {
-    "kind": "component",
-    "baseScheme": "beverage",
-    "scheme": "wine",
-    "syntax": "wine:drink",
-    "title": "Wine",
-    "description": "To order wine from the bar",
-    "label": "bar",
-    "deprecated": false,
-    "async": false,
-    "producerOnly": true,
-    "lenientProperties": false,
-    "javaType": "org.foo.connector.WineComponent",
-    "groupId": "org.foo",
-    "artifactId": "wine-connector",
-    "version": "2.20.0-SNAPSHOT"
-  },
-  "componentProperties": {
-  },
-  "properties": {
-    "drink": { "kind": "path", "displayName": "Wine Bottle", "group": "producer", "required": true, "type": "object", "javaType": "org.beverage.Beverages", "enum": [ "Wine" ], "deprecated": false, "secret": false, "defaultValue": "Wine", "description": "You can only order wine" },
-    "amount": { "kind": "parameter", "displayName": "Amount", "group": "producer", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "secret": false, "defaultValue": 1, "description": "Number of drinks in the order" }
-  },
-  "connectorProperties": {
-  }
+	"component":{
+		"kind":"component",
+		"baseScheme":"beverage",
+		"scheme":"wine",
+		"syntax":"wine:drink",
+		"title":"Wine",
+		"description":"To order wine from the bar",
+		"label":"bar",
+		"deprecated":false,
+		"async":false,
+		"producerOnly":true,
+		"lenientProperties":false,
+		"javaType":"org.foo.connector.WineComponent",
+		"groupId":"org.foo",
+		"artifactId":"wine-connector",
+		"version":"2.20.0-SNAPSHOT"
+	},
+	"componentProperties":{
+		
+	},
+	"properties":{
+		"amount":{
+			"kind":"parameter",
+			"displayName":"Amount",
+			"group":"producer",
+			"required":false,
+			"type":"integer",
+			"javaType":"int",
+			"deprecated":false,
+			"secret":false,
+			"defaultValue":1,
+			"description":"Number of drinks in the order"
+		},
+		"drink":{
+			"kind":"path",
+			"displayName":"Wine Bottle",
+			"group":"producer",
+			"required":true,
+			"type":"object",
+			"javaType":"org.beverage.Beverages",
+			"enum":[
+				"Wine"
+			],
+			"deprecated":false,
+			"secret":false,
+			"defaultValue":"Wine",
+			"description":"You can only order wine"
+		}
+	},
+	"connectorProperties":{
+		
+	}
 }
