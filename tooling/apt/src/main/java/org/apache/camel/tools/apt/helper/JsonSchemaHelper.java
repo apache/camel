@@ -332,32 +332,37 @@ public final class JsonSchemaHelper {
         }
 
         // convert into a List<Map<String, String>> structure which is expected as output from this parser
-        JsonObject output = Jsoner.deserialize(json, new JsonObject());
-        for (String key : output.keySet()) {
-            Map row = output.getMap(key);
-            if (key.equals(group)) {
-                if (parseProperties) {
-                    // flattern each entry in the row with name as they key, and its value as the content (its a map also)
-                    for (Object obj : row.entrySet()) {
-                        Map.Entry entry = (Map.Entry) obj;
-                        Map<String, String> newRow = new LinkedHashMap();
-                        newRow.put("name", entry.getKey().toString());
+        try {
+            JsonObject output = (JsonObject) Jsoner.deserialize(json);
+            for (String key : output.keySet()) {
+                Map row = output.getMap(key);
+                if (key.equals(group)) {
+                    if (parseProperties) {
+                        // flattern each entry in the row with name as they key, and its value as the content (its a map also)
+                        for (Object obj : row.entrySet()) {
+                            Map.Entry entry = (Map.Entry) obj;
+                            Map<String, String> newRow = new LinkedHashMap();
+                            newRow.put("name", entry.getKey().toString());
 
-                        Map newData = transformMap((Map) entry.getValue());
-                        newRow.putAll(newData);
-                        answer.add(newRow);
-                    }
-                } else {
-                    // flattern each entry in the row as a list of single Map<key, value> elements
-                    Map newData = transformMap(row);
-                    for (Object obj : newData.entrySet()) {
-                        Map.Entry entry = (Map.Entry) obj;
-                        Map<String, String> newRow = new LinkedHashMap<>();
-                        newRow.put(entry.getKey().toString(), entry.getValue().toString());
-                        answer.add(newRow);
+                            Map newData = transformMap((Map) entry.getValue());
+                            newRow.putAll(newData);
+                            answer.add(newRow);
+                        }
+                    } else {
+                        // flattern each entry in the row as a list of single Map<key, value> elements
+                        Map newData = transformMap(row);
+                        for (Object obj : newData.entrySet()) {
+                            Map.Entry entry = (Map.Entry) obj;
+                            Map<String, String> newRow = new LinkedHashMap<>();
+                            newRow.put(entry.getKey().toString(), entry.getValue().toString());
+                            answer.add(newRow);
+                        }
                     }
                 }
             }
+        } catch (Exception e) {
+            // wrap parsing exceptions as runtime
+            throw new RuntimeException("Cannot parse json", e);
         }
 
         return answer;

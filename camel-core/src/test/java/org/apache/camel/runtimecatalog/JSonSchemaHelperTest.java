@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,5 +57,15 @@ public class JSonSchemaHelperTest extends ContextTestSupport {
         assertEquals("multiParameterArray", rows.get(3).values().iterator().next());
         assertEquals("parameters", rows.get(4).values().iterator().next());
         assertEquals("synchronous", rows.get(5).values().iterator().next());
+    }
+
+    public void testParseInvalidJson() throws Exception {
+        String json = "{ \"name\": this is invalid }";
+        try {
+            JSonSchemaHelper.parseJsonSchema("foo", json, false);
+            fail("Should fail");
+        } catch (Exception e) {
+            assertEquals("Cannot parse json", e.getMessage());
+        }
     }
 }
