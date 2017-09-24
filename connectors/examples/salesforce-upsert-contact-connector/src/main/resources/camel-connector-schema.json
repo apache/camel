@@ -30,18 +30,6 @@
 			"defaultValue":"https:\/\/login.salesforce.com",
 			"description":"URL of the Salesforce instance used for authentication by default set to https:\/\/login.salesforce.com"
 		},
-		"clientSecret":{
-			"kind":"property",
-			"displayName":"Client Secret",
-			"group":"security",
-			"label":"common,security",
-			"required":false,
-			"type":"string",
-			"javaType":"java.lang.String",
-			"deprecated":false,
-			"secret":true,
-			"description":"OAuth Consumer Secret of the connected app configured in the Salesforce instance setup."
-		},
 		"clientId":{
 			"kind":"property",
 			"displayName":"Client Id",
@@ -53,6 +41,18 @@
 			"deprecated":false,
 			"secret":false,
 			"description":"OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package."
+		},
+		"clientSecret":{
+			"kind":"property",
+			"displayName":"Client Secret",
+			"group":"security",
+			"label":"common,security",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":true,
+			"description":"OAuth Consumer Secret of the connected app configured in the Salesforce instance setup."
 		},
 		"refreshToken":{
 			"kind":"property",
@@ -68,17 +68,6 @@
 		}
 	},
 	"properties":{
-		"sObjectIdValue":{
-			"kind":"parameter",
-			"displayName":"SObject Id Value",
-			"group":"common",
-			"required":false,
-			"type":"string",
-			"javaType":"java.lang.String",
-			"deprecated":false,
-			"secret":false,
-			"description":"SObject external ID field value"
-		},
 		"sObjectIdName":{
 			"kind":"parameter",
 			"displayName":"SObject Id Name",
@@ -89,6 +78,17 @@
 			"deprecated":false,
 			"secret":false,
 			"description":"SObject external ID field name"
+		},
+		"sObjectIdValue":{
+			"kind":"parameter",
+			"displayName":"SObject Id Value",
+			"group":"common",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":false,
+			"description":"SObject external ID field value"
 		}
 	},
 	"connectorProperties":{

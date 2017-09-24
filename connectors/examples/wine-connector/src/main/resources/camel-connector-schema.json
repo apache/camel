@@ -20,18 +20,6 @@
 		
 	},
 	"properties":{
-		"amount":{
-			"kind":"parameter",
-			"displayName":"Amount",
-			"group":"producer",
-			"required":false,
-			"type":"integer",
-			"javaType":"int",
-			"deprecated":false,
-			"secret":false,
-			"defaultValue":1,
-			"description":"Number of drinks in the order"
-		},
 		"drink":{
 			"kind":"path",
 			"displayName":"Wine Bottle",
@@ -46,6 +34,18 @@
 			"secret":false,
 			"defaultValue":"Wine",
 			"description":"You can only order wine"
+		},
+		"amount":{
+			"kind":"parameter",
+			"displayName":"Amount",
+			"group":"producer",
+			"required":false,
+			"type":"integer",
+			"javaType":"int",
+			"deprecated":false,
+			"secret":false,
+			"defaultValue":1,
+			"description":"Number of drinks in the order"
 		}
 	},
 	"connectorProperties":{

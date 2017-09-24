@@ -27,47 +27,39 @@ import javax.annotation.Generated;
 public class TwitterFindConnectorConfigurationCommon {
 
     /**
-     * The consumer secret
-     */
-    private String consumerSecret;
-    /**
      * The access token
      */
     private String accessToken;
-    /**
-     * The consumer key
-     */
-    private String consumerKey;
     /**
      * The access token secret
      */
     private String accessTokenSecret;
     /**
-     * Milliseconds before the next poll.
+     * The consumer key
      */
-    private long delay = 5000L;
+    private String consumerKey;
     /**
-     * Can be used for search and streaming/filter. Multiple values can be
-     * separated with comma.
+     * The consumer secret
      */
-    private String keywords;
+    private String consumerSecret;
     /**
      * Filter out old tweets that has previously been polled. This state is
      * stored in memory only and based on last tweet id.
      */
     private boolean filterOld = true;
     /**
+     * Can be used for search and streaming/filter. Multiple values can be
+     * separated with comma.
+     */
+    private String keywords;
+    /**
+     * Milliseconds before the next poll.
+     */
+    private long delay = 5000L;
+    /**
      * A prefix
      */
     private String prefix;
-
-    public String getConsumerSecret() {
-        return consumerSecret;
-    }
-
-    public void setConsumerSecret(String consumerSecret) {
-        this.consumerSecret = consumerSecret;
-    }
 
     public String getAccessToken() {
         return accessToken;
@@ -75,14 +67,6 @@ public class TwitterFindConnectorConfigurationCommon {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
-    }
-
-    public String getConsumerKey() {
-        return consumerKey;
-    }
-
-    public void setConsumerKey(String consumerKey) {
-        this.consumerKey = consumerKey;
     }
 
     public String getAccessTokenSecret() {
@@ -93,12 +77,28 @@ public class TwitterFindConnectorConfigurationCommon {
         this.accessTokenSecret = accessTokenSecret;
     }
 
-    public long getDelay() {
-        return delay;
+    public String getConsumerKey() {
+        return consumerKey;
     }
 
-    public void setDelay(long delay) {
-        this.delay = delay;
+    public void setConsumerKey(String consumerKey) {
+        this.consumerKey = consumerKey;
+    }
+
+    public String getConsumerSecret() {
+        return consumerSecret;
+    }
+
+    public void setConsumerSecret(String consumerSecret) {
+        this.consumerSecret = consumerSecret;
+    }
+
+    public boolean isFilterOld() {
+        return filterOld;
+    }
+
+    public void setFilterOld(boolean filterOld) {
+        this.filterOld = filterOld;
     }
 
     public String getKeywords() {
@@ -109,12 +109,12 @@ public class TwitterFindConnectorConfigurationCommon {
         this.keywords = keywords;
     }
 
-    public boolean isFilterOld() {
-        return filterOld;
+    public long getDelay() {
+        return delay;
     }
 
-    public void setFilterOld(boolean filterOld) {
-        this.filterOld = filterOld;
+    public void setDelay(long delay) {
+        this.delay = delay;
     }
 
     public String getPrefix() {

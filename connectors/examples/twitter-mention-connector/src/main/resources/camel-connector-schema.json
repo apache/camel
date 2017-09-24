@@ -17,18 +17,6 @@
 		"version":"2.20.0-SNAPSHOT"
 	},
 	"componentProperties":{
-		"consumerSecret":{
-			"kind":"property",
-			"displayName":"Consumer Secret",
-			"group":"security",
-			"label":"security",
-			"required":false,
-			"type":"string",
-			"javaType":"java.lang.String",
-			"deprecated":false,
-			"secret":true,
-			"description":"The consumer secret"
-		},
 		"accessToken":{
 			"kind":"property",
 			"displayName":"Access Token",
@@ -40,6 +28,18 @@
 			"deprecated":false,
 			"secret":true,
 			"description":"The access token"
+		},
+		"accessTokenSecret":{
+			"kind":"property",
+			"displayName":"Access Token Secret",
+			"group":"security",
+			"label":"security",
+			"required":false,
+			"type":"string",
+			"javaType":"java.lang.String",
+			"deprecated":false,
+			"secret":true,
+			"description":"The access token secret"
 		},
 		"consumerKey":{
 			"kind":"property",
@@ -53,9 +53,9 @@
 			"secret":true,
 			"description":"The consumer key"
 		},
-		"accessTokenSecret":{
+		"consumerSecret":{
 			"kind":"property",
-			"displayName":"Access Token Secret",
+			"displayName":"Consumer Secret",
 			"group":"security",
 			"label":"security",
 			"required":false,
@@ -63,7 +63,7 @@
 			"javaType":"java.lang.String",
 			"deprecated":false,
 			"secret":true,
-			"description":"The access token secret"
+			"description":"The consumer secret"
 		}
 	},
 	"properties":{

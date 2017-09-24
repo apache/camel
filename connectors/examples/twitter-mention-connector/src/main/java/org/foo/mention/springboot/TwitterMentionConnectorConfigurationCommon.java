@@ -27,29 +27,21 @@ import javax.annotation.Generated;
 public class TwitterMentionConnectorConfigurationCommon {
 
     /**
-     * The consumer secret
-     */
-    private String consumerSecret;
-    /**
      * The access token
      */
     private String accessToken;
+    /**
+     * The access token secret
+     */
+    private String accessTokenSecret;
     /**
      * The consumer key
      */
     private String consumerKey;
     /**
-     * The access token secret
+     * The consumer secret
      */
-    private String accessTokenSecret;
-
-    public String getConsumerSecret() {
-        return consumerSecret;
-    }
-
-    public void setConsumerSecret(String consumerSecret) {
-        this.consumerSecret = consumerSecret;
-    }
+    private String consumerSecret;
 
     public String getAccessToken() {
         return accessToken;
@@ -57,6 +49,14 @@ public class TwitterMentionConnectorConfigurationCommon {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public String getAccessTokenSecret() {
+        return accessTokenSecret;
+    }
+
+    public void setAccessTokenSecret(String accessTokenSecret) {
+        this.accessTokenSecret = accessTokenSecret;
     }
 
     public String getConsumerKey() {
@@ -67,11 +67,11 @@ public class TwitterMentionConnectorConfigurationCommon {
         this.consumerKey = consumerKey;
     }
 
-    public String getAccessTokenSecret() {
-        return accessTokenSecret;
+    public String getConsumerSecret() {
+        return consumerSecret;
     }
 
-    public void setAccessTokenSecret(String accessTokenSecret) {
-        this.accessTokenSecret = accessTokenSecret;
+    public void setConsumerSecret(String consumerSecret) {
+        this.consumerSecret = consumerSecret;
     }
 }
