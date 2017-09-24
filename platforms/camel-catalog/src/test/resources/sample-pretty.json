@@ -1,0 +1,693 @@
+{
+  "properties": {
+    "host": {
+      "value": "someserver",
+      "kind": "path",
+      "required": "true",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": "false",
+      "description": "Hostname of the FTP server"
+    },
+    "port": {
+      "value": "21",
+      "kind": "path",
+      "type": "integer",
+      "javaType": "int",
+      "deprecated": "false",
+      "description": "Port of the FTP server"
+    },
+    "directoryName": {
+      "value": "foo",
+      "kind": "path",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": "false",
+      "description": "The starting directory"
+    },
+    "username": {
+      "kind": "parameter",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": "false",
+      "description": "Username to use for login"
+    },
+    "password": {
+      "kind": "parameter",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": "false",
+      "description": "Password to use for login"
+    },
+    "binary": {
+      "kind": "parameter",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false"
+    },
+    "passiveMode": {
+      "kind": "parameter",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "description": "Sets passive mode connections. Default is active mode connections."
+    },
+    "connectTimeout": {
+      "value": "5000",
+      "kind": "parameter",
+      "type": "integer",
+      "javaType": "int",
+      "deprecated": "false",
+      "defaultValue": "10000",
+      "description": "Sets the connect timeout for waiting for a connection to be established Used by both FTPClient and JSCH"
+    },
+    "timeout": {
+      "kind": "parameter",
+      "type": "integer",
+      "javaType": "int",
+      "deprecated": "false",
+      "defaultValue": "30000",
+      "description": "Sets the data timeout for waiting for reply Used only by FTPClient"
+    },
+    "soTimeout": {
+      "kind": "parameter",
+      "type": "integer",
+      "javaType": "int",
+      "deprecated": "false",
+      "description": "Sets the so timeout Used only by FTPClient"
+    },
+    "throwExceptionOnConnectFailed": {
+      "kind": "parameter",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "description": "Should an exception be thrown if connection failed (exhausted) By default exception is not thrown and a WARN is logged. You can use this to enable exception being thrown and handle the thrown exception from the org.apache.camel.spi.PollingConsumerPollStrategy rollback method."
+    },
+    "siteCommand": {
+      "kind": "parameter",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": "false",
+      "description": "Sets optional site command(s) to be executed after successful login. Multiple site commands can be separated using a new line character (\n)."
+    },
+    "stepwise": {
+      "kind": "parameter",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "true",
+      "description": "Sets whether we should stepwise change directories while traversing file structures when downloading files or as well when uploading a file to a directory. You can disable this if you for example are in a situation where you cannot change directory on the FTP server due security reasons."
+    },
+    "separator": {
+      "kind": "parameter",
+      "type": "object",
+      "javaType": "org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator",
+      "deprecated": "false",
+      "defaultValue": "Auto",
+      "description": "Sets the path separator to be used. UNIX = Uses unix style path separator Windows = Uses windows style path separator Auto = (is default) Use existing path separator in file name"
+    },
+    "streamDownload": {
+      "kind": "parameter",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "description": "Sets the download method to use when not using a local working directory. If set to true the remote files are streamed to the route as they are read. When set to false the remote files are loaded into memory before being sent into the route."
+    },
+    "useList": {
+      "kind": "parameter",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "true",
+      "description": "Whether to allow using LIST command when downloading a file. Default is true. In some use cases you may want to download a specific file and are not allowed to use the LIST command and therefore you can set this option to false."
+    },
+    "ignoreFileNotFoundOrPermissionError": {
+      "kind": "parameter",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "description": "Whether to ignore when trying to download a file which does not exist or due to permission error. By default when a file does not exists or insufficient permission then an exception is thrown. Setting this option to true allows to ignore that instead."
+    },
+    "dataTimeout": {
+      "kind": "parameter",
+      "type": "integer",
+      "javaType": "int",
+      "deprecated": "false"
+    },
+    "maximumReconnectAttempts": {
+      "kind": "parameter",
+      "type": "integer",
+      "javaType": "int",
+      "deprecated": "false"
+    },
+    "reconnectDelay": {
+      "kind": "parameter",
+      "type": "integer",
+      "javaType": "long",
+      "deprecated": "false"
+    },
+    "disconnect": {
+      "kind": "parameter",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false"
+    },
+    "fastExistsCheck": {
+      "kind": "parameter",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false"
+    },
+    "download": {
+      "kind": "parameter",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false"
+    },
+    "autoCreate": {
+      "kind": "parameter",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "true"
+    },
+    "bufferSize": {
+      "kind": "parameter",
+      "type": "integer",
+      "javaType": "int",
+      "deprecated": "false",
+      "defaultValue": "131072"
+    },
+    "flatten": {
+      "kind": "parameter",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false"
+    },
+    "charset": {
+      "kind": "parameter",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": "false"
+    },
+    "fileName": {
+      "kind": "parameter",
+      "type": "object",
+      "javaType": "org.apache.camel.Expression",
+      "deprecated": "false"
+    },
+    "fileExist": {
+      "kind": "parameter",
+      "label": "producer",
+      "type": "string",
+      "javaType": "org.apache.camel.component.file.GenericFileExist",
+      "enum": [
+        "Override",
+        "Append",
+        "Fail",
+        "Ignore",
+        "Move",
+        "TryRename"
+      ],
+      "deprecated": "false",
+      "defaultValue": "Override"
+    },
+    "tempPrefix": {
+      "kind": "parameter",
+      "label": "producer",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": "false"
+    },
+    "tempFileName": {
+      "kind": "parameter",
+      "label": "producer",
+      "type": "object",
+      "javaType": "org.apache.camel.Expression",
+      "deprecated": "false"
+    },
+    "eagerDeleteTargetFile": {
+      "kind": "parameter",
+      "label": "producer",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "true"
+    },
+    "keepLastModified": {
+      "kind": "parameter",
+      "label": "producer",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "false"
+    },
+    "doneFileName": {
+      "kind": "parameter",
+      "label": "producer",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": "false"
+    },
+    "allowNullBody": {
+      "kind": "parameter",
+      "label": "producer",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "false"
+    },
+    "chmod": {
+      "kind": "parameter",
+      "label": "producer",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": "false"
+    },
+    "processStrategy": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "object",
+      "javaType": "org.apache.camel.component.file.GenericFileProcessStrategy<T>",
+      "deprecated": "false"
+    },
+    "inProgressRepository": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "object",
+      "javaType": "org.apache.camel.spi.IdempotentRepository<java.lang.String>",
+      "deprecated": "false"
+    },
+    "localWorkDirectory": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": "false"
+    },
+    "startingDirectoryMustExist": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "false"
+    },
+    "directoryMustExist": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "false"
+    },
+    "noop": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "false"
+    },
+    "recursive": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "false"
+    },
+    "delete": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "false"
+    },
+    "maxMessagesPerPoll": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "integer",
+      "javaType": "int",
+      "deprecated": "false"
+    },
+    "eagerMaxMessagesPerPoll": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "true"
+    },
+    "maxDepth": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "integer",
+      "javaType": "int",
+      "deprecated": "false",
+      "defaultValue": "2147483647"
+    },
+    "minDepth": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "integer",
+      "javaType": "int",
+      "deprecated": "false"
+    },
+    "include": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": "false"
+    },
+    "exclude": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": "false"
+    },
+    "move": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "object",
+      "javaType": "org.apache.camel.Expression",
+      "deprecated": "false"
+    },
+    "moveFailed": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "object",
+      "javaType": "org.apache.camel.Expression",
+      "deprecated": "false"
+    },
+    "preMove": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "object",
+      "javaType": "org.apache.camel.Expression",
+      "deprecated": "false"
+    },
+    "moveExisting": {
+      "kind": "parameter",
+      "label": "producer",
+      "type": "object",
+      "javaType": "org.apache.camel.Expression",
+      "deprecated": "false"
+    },
+    "idempotent": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": "false"
+    },
+    "idempotentKey": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "object",
+      "javaType": "org.apache.camel.Expression",
+      "deprecated": "false"
+    },
+    "idempotentRepository": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "object",
+      "javaType": "org.apache.camel.spi.IdempotentRepository<java.lang.String>",
+      "deprecated": "false"
+    },
+    "filter": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "object",
+      "javaType": "org.apache.camel.component.file.GenericFileFilter<T>",
+      "deprecated": "false"
+    },
+    "antInclude": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": "false"
+    },
+    "antExclude": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": "false"
+    },
+    "sorter": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "object",
+      "javaType": "java.util.Comparator<org.apache.camel.component.file.GenericFile<T>>",
+      "deprecated": "false"
+    },
+    "sortBy": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "object",
+      "javaType": "java.util.Comparator<org.apache.camel.Exchange>",
+      "deprecated": "false"
+    },
+    "readLock": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "string",
+      "javaType": "java.lang.String",
+      "enum": [
+        "none",
+        "markerFile",
+        "fileLock",
+        "rename",
+        "changed"
+      ],
+      "deprecated": "false"
+    },
+    "readLockCheckInterval": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "integer",
+      "javaType": "long",
+      "deprecated": "false",
+      "defaultValue": "1000"
+    },
+    "readLockTimeout": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "integer",
+      "javaType": "long",
+      "deprecated": "false",
+      "defaultValue": "10000"
+    },
+    "readLockMarkerFile": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "true"
+    },
+    "readLockLoggingLevel": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "string",
+      "javaType": "org.apache.camel.LoggingLevel",
+      "enum": [
+        "DEBUG",
+        "ERROR",
+        "INFO",
+        "TRACE",
+        "WARN",
+        "OFF"
+      ],
+      "deprecated": "false",
+      "defaultValue": "WARN"
+    },
+    "readLockMinLength": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "integer",
+      "javaType": "long",
+      "deprecated": "false",
+      "defaultValue": "1"
+    },
+    "readLockMinAge": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "integer",
+      "javaType": "long",
+      "deprecated": "false",
+      "defaultValue": "0"
+    },
+    "exclusiveReadLockStrategy": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "object",
+      "javaType": "org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy<T>",
+      "deprecated": "false"
+    },
+    "startScheduler": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "true"
+    },
+    "initialDelay": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "integer",
+      "javaType": "long",
+      "deprecated": "false",
+      "defaultValue": "1000"
+    },
+    "delay": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "integer",
+      "javaType": "long",
+      "deprecated": "false",
+      "defaultValue": "500"
+    },
+    "timeUnit": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "string",
+      "javaType": "java.util.concurrent.TimeUnit",
+      "enum": [
+        "NANOSECONDS",
+        "MICROSECONDS",
+        "MILLISECONDS",
+        "SECONDS",
+        "MINUTES",
+        "HOURS",
+        "DAYS"
+      ],
+      "deprecated": "false",
+      "defaultValue": "MILLISECONDS"
+    },
+    "useFixedDelay": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "true"
+    },
+    "pollStrategy": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "object",
+      "javaType": "org.apache.camel.spi.PollingConsumerPollStrategy",
+      "deprecated": "false"
+    },
+    "runLoggingLevel": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "string",
+      "javaType": "org.apache.camel.LoggingLevel",
+      "enum": [
+        "DEBUG",
+        "ERROR",
+        "INFO",
+        "TRACE",
+        "WARN",
+        "OFF"
+      ],
+      "deprecated": "false",
+      "defaultValue": "TRACE"
+    },
+    "sendEmptyMessageWhenIdle": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false"
+    },
+    "greedy": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false"
+    },
+    "scheduler": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "string",
+      "javaType": "org.apache.camel.spi.ScheduledPollConsumerScheduler",
+      "enum": [
+        "spring",
+        "quartz2"
+      ],
+      "deprecated": "false"
+    },
+    "schedulerProperties": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "object",
+      "javaType": "java.util.Map<java.lang.String,java.lang.Object>",
+      "deprecated": "false"
+    },
+    "scheduledExecutorService": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "object",
+      "javaType": "java.util.concurrent.ScheduledExecutorService",
+      "deprecated": "false"
+    },
+    "backoffMultiplier": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "integer",
+      "javaType": "int",
+      "deprecated": "false"
+    },
+    "backoffIdleThreshold": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "integer",
+      "javaType": "int",
+      "deprecated": "false"
+    },
+    "backoffErrorThreshold": {
+      "kind": "parameter",
+      "label": "consumer",
+      "type": "integer",
+      "javaType": "int",
+      "deprecated": "false"
+    },
+    "exchangePattern": {
+      "kind": "parameter",
+      "type": "string",
+      "javaType": "org.apache.camel.ExchangePattern",
+      "enum": [
+        "InOnly",
+        "RobustInOnly",
+        "InOut",
+        "InOptionalOut",
+        "OutOnly",
+        "RobustOutOnly",
+        "OutIn",
+        "OutOptionalIn"
+      ],
+      "deprecated": "false",
+      "defaultValue": "InOnly",
+      "description": "Sets the default exchange pattern when creating an exchange"
+    },
+    "synchronous": {
+      "kind": "parameter",
+      "type": "boolean",
+      "javaType": "boolean",
+      "deprecated": "false",
+      "defaultValue": "false",
+      "description": "Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported)."
+    }
+  }
+}
+
