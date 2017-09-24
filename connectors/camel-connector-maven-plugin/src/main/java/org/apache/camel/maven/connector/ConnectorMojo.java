@@ -118,15 +118,15 @@ public class ConnectorMojo extends AbstractJarMojo {
                 if (schema != null) {
                     String json = FileHelper.loadText(new FileInputStream(schema));
 
-                    List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+                    List<Map<String, String>> rows = org.apache.camel.catalog.JSonSchemaHelper.parseJsonSchema("component", json, false);
                     String header = buildComponentHeaderSchema(rows, dto, gitUrl);
                     getLog().debug(header);
 
-                    rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+                    rows = org.apache.camel.catalog.JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
                     String componentOptions = buildComponentOptionsSchema(rows, dto);
                     getLog().debug(componentOptions);
 
-                    rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+                    rows = org.apache.camel.catalog.JSonSchemaHelper.parseJsonSchema("properties", json, true);
                     String endpointOptions = buildEndpointOptionsSchema(rows, dto);
                     getLog().debug(endpointOptions);
 
@@ -145,7 +145,7 @@ public class ConnectorMojo extends AbstractJarMojo {
                     String newJson = jsonSchema.toString();
 
                     // parse ourselves
-                    rows = JSonSchemaHelper.parseJsonSchema("component", newJson, false);
+                    rows = org.apache.camel.catalog.JSonSchemaHelper.parseJsonSchema("component", newJson, false);
                     String newScheme = getOption(rows, "scheme");
 
                     checkConnectorScheme(newScheme);
