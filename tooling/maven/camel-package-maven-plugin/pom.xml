@@ -46,6 +46,13 @@
 
   <dependencies>
 
+    <!-- json parser -->
+    <dependency>
+      <groupId>com.github.cliftonlabs</groupId>
+      <artifactId>json-simple</artifactId>
+      <version>${json-simple2-version}</version>
+    </dependency>
+
     <dependency>
       <groupId>org.mvel</groupId>
       <artifactId>mvel2</artifactId>

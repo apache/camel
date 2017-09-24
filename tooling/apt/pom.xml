@@ -36,10 +36,19 @@
   </properties>
 
   <dependencies>
+
+    <!-- camel annotations -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
       <version>${project.version}</version>
+    </dependency>
+
+    <!-- json parser -->
+    <dependency>
+      <groupId>com.github.cliftonlabs</groupId>
+      <artifactId>json-simple</artifactId>
+      <version>${json-simple2-version}</version>
     </dependency>
 
     <!-- logging -->
@@ -58,7 +67,11 @@
       <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <!-- testing -->
     <dependency>
@@ -67,12 +80,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- logging -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -82,7 +89,7 @@
         <configuration>
           <source>${jdk.version}</source>
           <target>${jdk.version}</target>
-          <!-- Disable annotation processing for ourselves. -->
+          <!-- Disable annotation processing for ourselves -->
           <proc>none</proc>
           <verbose>false</verbose>
         </configuration>
