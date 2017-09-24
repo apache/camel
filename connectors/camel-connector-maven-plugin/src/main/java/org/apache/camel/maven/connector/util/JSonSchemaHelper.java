@@ -159,12 +159,12 @@ public final class JSonSchemaHelper {
 
         sb.append(" }");
 
-        // output in pretty print
-        return prettyPrint(sb.toString());
+        return sb.toString();
     }
 
     /**
-     * Pretty print the json
+     * Pretty print the json.
+     *
      * @param json existing json
      * @return output in pretty printed format
      */
