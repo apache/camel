@@ -188,7 +188,8 @@
               <relocations>
                 <relocation>
                   <pattern>org.json.simple</pattern>
-                  <shadedPattern>org.apache.camel.org.json.simple</shadedPattern>
+                  <!-- scala compiler do not like org.apache.camel.org so its just json.simple instead of org.json.simple -->
+                  <shadedPattern>org.apache.camel.json.simple</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
