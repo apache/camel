@@ -543,6 +543,10 @@ public final class ArquillianPackager {
 
     private static String enforceExclusions(ITestConfig config, String dependencyXml, List<MavenDependencyExclusion> exclusions) {
 
+        if (dependencyXml.contains("<groupId>org.springframework.boot</groupId>") && dependencyXml.contains("<artifactId>spring-boot-starter")) {
+            return dependencyXml;
+        }
+
         if (!dependencyXml.contains("<exclusions>")) {
             dependencyXml = dependencyXml.replace("</dependency>", "<exclusions></exclusions></dependency>");
         }
