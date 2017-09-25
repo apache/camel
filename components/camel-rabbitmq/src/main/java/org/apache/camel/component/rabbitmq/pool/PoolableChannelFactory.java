@@ -41,7 +41,11 @@ public class PoolableChannelFactory implements PoolableObjectFactory<Channel> {
 
     @Override
     public void destroyObject(Channel t) throws Exception {
-        t.close();
+        try {
+            t.close();
+        } catch (Exception e) {
+            //no-op
+        }
     }
 
     @Override
