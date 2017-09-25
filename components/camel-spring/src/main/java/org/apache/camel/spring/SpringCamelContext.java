@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.event.EventComponent;
@@ -60,7 +62,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
         ApplicationListener<ApplicationEvent>, Ordered {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringCamelContext.class);
-    private static final ThreadLocal<Boolean> NO_START = new ThreadLocal<Boolean>();
+    private static final AtomicBoolean NO_START = new AtomicBoolean();
     private ApplicationContext applicationContext;
     private EventComponent eventComponent;
     private boolean shutdownEager = true;
@@ -73,11 +75,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
     }
 
     public static void setNoStart(boolean b) {
-        if (b) {
-            NO_START.set(b);
-        } else {
-            NO_START.remove();
-        }
+        NO_START.set(b);
     }
 
     /**
