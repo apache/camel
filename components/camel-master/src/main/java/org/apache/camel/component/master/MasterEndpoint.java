@@ -23,14 +23,22 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
 @ManagedResource(description = "Managed Master Endpoint")
-@UriEndpoint(firstVersion = "2.20.0", scheme = "master", syntax = "master:namespace:delegateUri", consumerClass = MasterConsumer.class, consumerOnly = true,
-    title = "Master", lenientProperties = true, label = "clustering")
+@UriEndpoint(
+    firstVersion = "2.20.0",
+    scheme = "master",
+    syntax = "master:namespace:delegateUri",
+    consumerClass = MasterConsumer.class,
+    consumerOnly = true,
+    title = "Master",
+    lenientProperties = true,
+    label = "clustering")
 public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private final Endpoint delegateEndpoint;
@@ -43,8 +51,12 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
     @Metadata(required = "true")
     private final String delegateUri;
 
-    public MasterEndpoint(String uri, MasterComponent component, String namespace, String delegateUri) {
+    private final CamelClusterService clusterService;
+
+    public MasterEndpoint(String uri, MasterComponent component, CamelClusterService clusterService, String namespace, String delegateUri) {
         super(uri, component);
+
+        this.clusterService = clusterService;
         this.namespace = namespace;
         this.delegateUri = delegateUri;
         this.delegateEndpoint = getCamelContext().getEndpoint(delegateUri);
@@ -52,12 +64,13 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
 
     @Override
     public Producer createProducer() throws Exception {
+        getComponent();
         throw new UnsupportedOperationException("Cannot produce from this endpoint");
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new MasterConsumer(this, processor);
+        return new MasterConsumer(this, processor, clusterService);
     }
 
     @Override

@@ -34,8 +34,7 @@
 
   <properties>
     <camel.osgi.import>
-      !com.google.common.base;,
-      !org.apache.camel.component.master.group,
+      !org.apache.camel.component.master,
       *
     </camel.osgi.import>
     <camel.osgi.export.pkg>
@@ -55,12 +54,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jgroups</groupId>
-      <artifactId>jgroups</artifactId>
-      <version>${jgroups-version}</version>
       <scope>test</scope>
     </dependency>
 

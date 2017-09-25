@@ -20,7 +20,11 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.ha.ClusterServiceHelper;
+import org.apache.camel.impl.ha.ClusterServiceSelectors;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -31,6 +35,10 @@ import org.apache.camel.util.StringHelper;
  * a single consumer.
  */
 public class MasterComponent extends DefaultComponent {
+    @Metadata(label = "advanced")
+    private CamelClusterService service;
+    @Metadata(label = "advanced")
+    private CamelClusterService.Selector serviceSelector;
 
     public MasterComponent() {
         this(null);
@@ -38,6 +46,8 @@ public class MasterComponent extends DefaultComponent {
 
     public MasterComponent(CamelContext context) {
         super(context);
+
+        this.serviceSelector = ClusterServiceSelectors.DEFAULT_SELECTOR;
     }
 
     @Override
@@ -55,6 +65,53 @@ public class MasterComponent extends DefaultComponent {
             delegateUri = delegateUri + "?" + uri.substring(uri.indexOf('?') + 1);
         }
 
-        return new MasterEndpoint(uri, this, namespace, delegateUri);
+        return new MasterEndpoint(
+            uri,
+            this,
+            getClusterService(),
+            namespace,
+            delegateUri
+        );
+    }
+
+    public CamelClusterService getService() {
+        return service;
+    }
+
+    /**
+     * Inject the service to use.
+     */
+    public void setService(CamelClusterService service) {
+        this.service = service;
+    }
+
+    public CamelClusterService.Selector getServiceSelector() {
+        return serviceSelector;
+    }
+
+    /**
+     *
+     * Inject the service selector used to lookup the {@link CamelClusterService} to use.
+     */
+    public void setServiceSelector(CamelClusterService.Selector serviceSelector) {
+        this.serviceSelector = serviceSelector;
+    }
+
+    // ********************************
+    // Helpers
+    // ********************************
+
+    private CamelClusterService getClusterService() throws Exception {
+        if (service == null) {
+            CamelContext context = getCamelContext();
+
+            ObjectHelper.notNull(context, "Camel Context");
+
+            service = ClusterServiceHelper.lookupService(context, serviceSelector).orElseThrow(
+                () -> new IllegalStateException("No cluster service found")
+            );
+        }
+
+        return service;
     }
 }

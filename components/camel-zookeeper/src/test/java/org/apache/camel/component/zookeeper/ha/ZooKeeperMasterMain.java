@@ -21,6 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
 import org.apache.camel.main.Main;
 import org.apache.camel.main.MainListenerSupport;
 
@@ -29,16 +30,17 @@ public final class ZooKeeperMasterMain {
         final String nodeId = UUID.randomUUID().toString();
         final String address = args[0];
 
-        ZooKeeperClusterService service = new ZooKeeperClusterService();
-        service.setId("node-" + nodeId);
-        service.setNodes(address);
-        service.setBasePath("/camel/master");
-
         Main main = new Main();
         main.addMainListener(new MainListenerSupport() {
             @Override
             public void configure(CamelContext context) {
                 try {
+                    ZooKeeperClusterService service = new ZooKeeperClusterService();
+                    service.setId("node-" + nodeId);
+                    service.setNodes(address);
+                    service.setBasePath("/camel/master");
+
+                    context.setNameStrategy(new ExplicitCamelContextNameStrategy("camel-" + nodeId));
                     context.addService(service);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
