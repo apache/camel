@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.master;
 
-import org.apache.camel.CamelContext;
+import java.util.Optional;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
@@ -36,19 +37,20 @@ import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Managed Master Consumer")
 public class MasterConsumer extends DefaultConsumer {
-    private static final transient Logger LOGER = LoggerFactory.getLogger(MasterConsumer.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(MasterConsumer.class);
 
+    private final CamelClusterService clusterService;
     private final MasterEndpoint masterEndpoint;
     private final Endpoint delegatedEndpoint;
     private final Processor processor;
     private final CamelClusterEventListener.Leadership leadershipListener;
     private Consumer delegatedConsumer;
-    private CamelClusterService service;
-    private CamelClusterView view;
+    private volatile CamelClusterView view;
 
-    public MasterConsumer(MasterEndpoint masterEndpoint, Processor processor) {
+    public MasterConsumer(MasterEndpoint masterEndpoint, Processor processor, CamelClusterService clusterService) {
         super(masterEndpoint, processor);
 
+        this.clusterService = clusterService;
         this.masterEndpoint = masterEndpoint;
         this.delegatedEndpoint = masterEndpoint.getEndpoint();
         this.processor = processor;
@@ -59,14 +61,9 @@ public class MasterConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        CamelContext context = super.getEndpoint().getCamelContext();
-        service = context.hasService(CamelClusterService.class);
+        LOGGER.debug("Using ClusterService instance {} (id={}, type={})", clusterService, clusterService.getId(), clusterService.getClass().getName());
 
-        if (service == null) {
-            throw new IllegalStateException("No cluster service found");
-        }
-
-        view = service.getView(masterEndpoint.getNamespace());
+        view = clusterService.getView(masterEndpoint.getNamespace());
         view.addEventListener(leadershipListener);
 
         if (isMaster()) {
@@ -80,6 +77,9 @@ public class MasterConsumer extends DefaultConsumer {
 
         if (view != null) {
             view.removeEventListener(leadershipListener);
+            clusterService.releaseView(view);
+
+            view = null;
         }
 
         ServiceHelper.stopAndShutdownServices(delegatedConsumer);
@@ -107,7 +107,7 @@ public class MasterConsumer extends DefaultConsumer {
     @ManagedAttribute(description = "Are we the master")
     public boolean isMaster() {
         return view != null
-            ? view.getLocalMember().isMaster()
+            ? view.getLocalMember().isLeader()
             : false;
     }
 
@@ -132,7 +132,7 @@ public class MasterConsumer extends DefaultConsumer {
         ServiceHelper.startService(delegatedEndpoint);
         ServiceHelper.startService(delegatedConsumer);
 
-        LOGER.info("Leadership taken: consumer started: {}", delegatedEndpoint);
+        LOGGER.info("Leadership taken: consumer started: {}", delegatedEndpoint);
     }
 
     private synchronized void onLeadershipLost() throws Exception {
@@ -141,7 +141,7 @@ public class MasterConsumer extends DefaultConsumer {
 
         delegatedConsumer = null;
 
-        LOGER.info("Leadership lost: consumer stopped: {}", delegatedEndpoint);
+        LOGGER.info("Leadership lost: consumer stopped: {}", delegatedEndpoint);
     }
 
     // **************************************
@@ -150,13 +150,13 @@ public class MasterConsumer extends DefaultConsumer {
 
     private final class LeadershipListener implements CamelClusterEventListener.Leadership {
         @Override
-        public void leadershipChanged(CamelClusterView view, CamelClusterMember leader) {
+        public void leadershipChanged(CamelClusterView view, Optional<CamelClusterMember> leader) {
             if (!isRunAllowed()) {
                 return;
             }
 
             try {
-                if (view.getLocalMember().isMaster()) {
+                if (view.getLocalMember().isLeader()) {
                     onLeadershipTaken();
                 } else if (delegatedConsumer != null) {
                     onLeadershipLost();

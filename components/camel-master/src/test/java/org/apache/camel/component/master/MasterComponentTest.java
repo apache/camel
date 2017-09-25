@@ -27,9 +27,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.master.util.InMemoryClusterService;
+import org.apache.camel.component.file.ha.FileLockClusterService;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -39,17 +38,14 @@ import org.slf4j.LoggerFactory;
 public class MasterComponentTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterComponentTest.class);
     private static final List<String> INSTANCES = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
-    private static final List<Integer> PORTS = INSTANCES.stream().map(i -> AvailablePortFinder.getNextAvailable()).collect(Collectors.toList());
     private static final List<String> RESULTS = new ArrayList<>();
-    private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(INSTANCES.size() * 2);
+    private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(INSTANCES.size());
     private static final CountDownLatch LATCH = new CountDownLatch(INSTANCES.size());
 
     @Test
     public void test()  throws Exception {
-        for (int i = 0; i < INSTANCES.size(); i++) {
-            int index = i;
-            SCHEDULER.submit(() -> run(INSTANCES.get(index), index, PORTS));
-            Thread.sleep(1000);
+        for (String instance: INSTANCES) {
+            SCHEDULER.submit(() -> run(instance));
         }
 
         LATCH.await(1, TimeUnit.MINUTES);
@@ -63,13 +59,16 @@ public class MasterComponentTest {
     // Run a Camel node
     // ************************************
 
-    private static void run(String id, int index, List<Integer> ports) {
+    private static void run(String id) {
         try {
-            CountDownLatch contextLatch = new CountDownLatch(1);
+            int events = ThreadLocalRandom.current().nextInt(2, 6);
+            CountDownLatch contextLatch = new CountDownLatch(events);
 
-            InMemoryClusterService service = new InMemoryClusterService();
-            service.setIndex(index);
-            service.setPorts(ports);
+            FileLockClusterService service = new FileLockClusterService();
+            service.setId(id);
+            service.setRoot("target/ha");
+            service.setAcquireLockDelay(1, TimeUnit.SECONDS);
+            service.setAcquireLockInterval(1, TimeUnit.SECONDS);
 
             DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
@@ -78,15 +77,10 @@ public class MasterComponentTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("master:ns:timer:test?delay=1s&period=1s&repeatCount=1")
+                    from("master:ns:timer:test?delay=1s&period=1s")
                         .routeId("route-" + id)
-                        .process(e -> {
-                            LOGGER.info("Node {} done", id);
-                            RESULTS.add(id);
-                            // Shutdown the context later on to give a chance to
-                            // other members to catch-up
-                            SCHEDULER.schedule(contextLatch::countDown, 2 + ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS);
-                        });
+                        .log("From ${routeId}")
+                        .process(e -> contextLatch.countDown());
                 }
             });
 
@@ -96,6 +90,10 @@ public class MasterComponentTest {
             context.start();
 
             contextLatch.await();
+
+            LOGGER.debug("Shutting down node {}", id);
+            RESULTS.add(id);
+
             context.stop();
 
             LATCH.countDown();
