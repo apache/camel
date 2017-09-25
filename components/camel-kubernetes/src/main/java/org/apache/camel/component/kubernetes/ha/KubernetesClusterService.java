@@ -19,8 +19,6 @@ package org.apache.camel.component.kubernetes.ha;
 import java.net.InetAddress;
 import java.util.Map;
 
-import io.fabric8.kubernetes.client.KubernetesClient;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
@@ -127,14 +125,14 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
         configuration.setMasterUrl(masterUrl);
     }
 
-    public Integer getConnectionTimeout() {
+    public Integer getConnectionTimeoutMillis() {
         return configuration.getConnectionTimeout();
     }
 
     /**
      * Connection timeout in milliseconds to use when making requests to the Kubernetes API server.
      */
-    public void setConnectionTimeout(Integer connectionTimeout) {
+    public void setConnectionTimeoutMillis(Integer connectionTimeout) {
         configuration.setConnectionTimeout(connectionTimeout);
     }
 
@@ -184,21 +182,6 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
 
     public void addToClusterLabels(String key, String value) {
         lockConfiguration.addToClusterLabels(key, value);
-    }
-
-    public String getKubernetesResourcesNamespace() {
-        return lockConfiguration.getKubernetesResourcesNamespace();
-    }
-
-    /**
-     * Kubernetes namespace containing the pods and the ConfigMap used for locking.
-     */
-    public void setKubernetesResourcesNamespace(String kubernetesResourcesNamespace) {
-        lockConfiguration.setKubernetesResourcesNamespace(kubernetesResourcesNamespace);
-    }
-
-    public String getKubernetesResourcesNamespaceOrDefault(KubernetesClient kubernetesClient) {
-        return lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient);
     }
 
     public double getJitterFactor() {
