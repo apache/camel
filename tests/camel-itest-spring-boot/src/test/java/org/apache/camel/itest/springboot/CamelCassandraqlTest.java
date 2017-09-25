@@ -36,13 +36,7 @@ public class CamelCassandraqlTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelCassandraqlTest.class))
-                .dependency("io.netty:netty-all:" + DependencyResolver.resolveParentProperty("${cassandra-netty-version-testing}"))
-                //.dependency(DependencyResolver.withVersion("io.netty:netty-all"))
-//                .dependency(DependencyResolver.withVersion("io.dropwizard.metrics:metrics-core"))
-//                .exclusion("com.codahale.metrics:*")
                 .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|CassandraComponentProducerTest$|CassandraComponentBeanRefTest$|CassandraComponentConsumerTest$)")
-                //.unitTestInclusionPattern(".*NamedCassandraAggregationRepositoryTest$")
-                // excluded tests have been checked manually (they need to run on their own JVM)
                 .build();
     }
 

@@ -464,7 +464,8 @@ public final class ArquillianPackager {
     private static File createUserPom(ITestConfig config, List<String> cleanTestProvidedDependencies) throws Exception {
 
         String pom;
-        try (InputStream pomTemplate = ArquillianPackager.class.getResourceAsStream("/application-pom.xml")) {
+        String template = "/application-pom-sb" + config.getSpringBootMajorVersion() + ".xml";
+        try (InputStream pomTemplate = ArquillianPackager.class.getResourceAsStream(template)) {
             pom = IOUtils.toString(pomTemplate);
         }
 
@@ -578,22 +579,28 @@ public final class ArquillianPackager {
         String groupId = textBetween(dependencyXml, "<groupId>", "</groupId>");
         String artifactId = textBetween(dependencyXml, "<artifactId>", "</artifactId>");
 
-        String bomVersion = config.getTestLibraryVersions().get(groupId + ":" + artifactId);
-        if (bomVersion == null) {
-            bomVersion = BOMResolver.getInstance().getBOMVersion(groupId, artifactId);
+        String version = config.getTestLibraryVersions().get(groupId + ":" + artifactId);
+        boolean stripVersion = false;
+        if (version == null) {
+            boolean testsLib = dependencyXml.contains("<classifier>tests");
+            stripVersion = !testsLib && BOMResolver.getInstance(config).getBOMVersion(groupId, artifactId) != null;
         }
 
-        if (bomVersion != null) {
+        if (version != null) {
             if (dependencyXml.contains("<version>")) {
                 int from = dependencyXml.indexOf("<version>") + 9;
                 int to = dependencyXml.indexOf("</version>");
 
-                dependencyXml = dependencyXml.substring(0, from) + bomVersion + dependencyXml.substring(to);
+                dependencyXml = dependencyXml.substring(0, from) + version + dependencyXml.substring(to);
             } else {
                 String kw = "</artifactId>";
                 int pos = dependencyXml.indexOf(kw) + kw.length();
-                dependencyXml = dependencyXml.substring(0, pos) + "<version>" + bomVersion + "</version>" + dependencyXml.substring(pos);
+                dependencyXml = dependencyXml.substring(0, pos) + "<version>" + version + "</version>" + dependencyXml.substring(pos);
             }
+        } else if (stripVersion && dependencyXml.contains("<version>")) {
+            int from = dependencyXml.indexOf("<version>");
+            int to = dependencyXml.indexOf("</version>") + 10;
+            dependencyXml = dependencyXml.substring(0, from) + dependencyXml.substring(to);
         }
 
         return dependencyXml;
