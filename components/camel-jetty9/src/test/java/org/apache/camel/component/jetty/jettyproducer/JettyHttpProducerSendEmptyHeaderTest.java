@@ -30,7 +30,7 @@ public class JettyHttpProducerSendEmptyHeaderTest extends BaseJettyTest {
     public void testHttpProducerSendEmptyHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        String expectedValue = isJetty8() ? "" : null; 
+        String expectedValue = "";
         mock.expectedHeaderReceived("foo", expectedValue);
 
         template.sendBodyAndHeader("jetty:http://localhost:{{port}}/myapp/mytest", "Hello World", "foo", "");
