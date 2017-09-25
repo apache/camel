@@ -34,12 +34,17 @@ public class ServiceCallConsumerAutoConfiguration {
 
                 from("direct:service-call")
                     .setBody().constant(null)
+                    .removeHeaders("CamelHttp*")
                     .to("log:service-call?level=INFO&showAll=true&multiline=true")
                     .choice()
                         .when(header("serviceId").isEqualTo("service1"))
                             .serviceCall("service-1")
+                            .convertBodyTo(String.class)
+                            .log("service-1 : ${body}")
                         .when(header("serviceId").isEqualTo("service2"))
-                            .serviceCall("service-2");
+                            .serviceCall("service-2")
+                            .convertBodyTo(String.class)
+                            .log("service-2 : ${body}");
             }
         };
     }
