@@ -79,9 +79,11 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
             channel = channelPool.borrowObject();
         }
         if (!channel.isOpen()) {
-            log.warn("Got a closed channel from the pool");
+            log.warn("Got a closed channel from the pool. Invalidating and borrowing a new one from the pool.");
+            channelPool.invalidateObject(channel);
             // Reconnect if another thread hasn't yet
             checkConnectionAndChannelPool();
+            attemptDeclaration();
             channel = channelPool.borrowObject();
         }
         try {
@@ -103,6 +105,10 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         log.trace("Creating channel pool...");
         channelPool = new GenericObjectPool<Channel>(new PoolableChannelFactory(this.conn), getEndpoint().getChannelPoolMaxSize(),
                 GenericObjectPool.WHEN_EXHAUSTED_BLOCK, getEndpoint().getChannelPoolMaxWait());
+        attemptDeclaration();
+    }
+
+    private synchronized void attemptDeclaration() throws Exception {
         if (getEndpoint().isDeclare()) {
             execute(new ChannelCallback<Void>() {
                 @Override

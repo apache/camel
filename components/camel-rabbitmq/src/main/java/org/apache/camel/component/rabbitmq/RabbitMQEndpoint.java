@@ -112,7 +112,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam(label = "advanced")
     private Boolean automaticRecoveryEnabled;
     @UriParam(label = "advanced")
-    private Integer networkRecoveryInterval;
+    private Integer networkRecoveryInterval = 5000;
     @UriParam(label = "advanced")
     private Boolean topologyRecoveryEnabled;
     @UriParam(label = "consumer")
