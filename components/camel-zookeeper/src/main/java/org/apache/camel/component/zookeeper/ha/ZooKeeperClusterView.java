@@ -94,6 +94,8 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
             leaderSelector = new LeaderSelector(client, configuration.getBasePath(), new CamelLeaderElectionListener());
             leaderSelector.setId(getClusterService().getId());
             leaderSelector.start();
+        } else {
+            leaderSelector.requeue();
         }
     }
 
@@ -102,8 +104,6 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
         if (leaderSelector != null) {
             leaderSelector.interruptLeadership();
             fireLeadershipChangedEvent(getMaster());
-        } else {
-            leaderSelector.requeue();
         }
     }
 
