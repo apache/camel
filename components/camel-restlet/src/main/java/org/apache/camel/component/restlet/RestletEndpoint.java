@@ -35,7 +35,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.data.Method;
 

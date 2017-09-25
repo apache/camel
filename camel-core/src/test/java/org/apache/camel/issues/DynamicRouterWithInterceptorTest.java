@@ -26,7 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.slf4j.Logger;

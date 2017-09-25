@@ -18,10 +18,8 @@ package org.apache.camel.component.restlet.converter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.camel.Converter;
-import org.apache.camel.util.StringHelper;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 
