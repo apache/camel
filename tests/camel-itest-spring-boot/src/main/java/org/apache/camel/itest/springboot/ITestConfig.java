@@ -25,6 +25,8 @@ import java.util.Set;
  */
 public class ITestConfig implements Serializable {
 
+    private static final int DEFAULT_SPRING_BOOT_MAJOR_VERSION = 1;
+
     private static final long serialVersionUID = -3641997669166217595L;
 
     private String moduleName;
@@ -257,7 +259,11 @@ public class ITestConfig implements Serializable {
     }
 
     public Integer getSpringBootMajorVersion() {
-        return Integer.parseInt(springBootVersion.substring(0, 1));
+        if (springBootVersion != null) {
+            return Integer.parseInt(springBootVersion.substring(0, 1));
+        } else {
+            return DEFAULT_SPRING_BOOT_MAJOR_VERSION;
+        }
     }
 
     public void setSpringBootVersion(String springBootVersion) {

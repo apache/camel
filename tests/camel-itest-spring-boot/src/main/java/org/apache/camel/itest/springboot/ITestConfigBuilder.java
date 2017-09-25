@@ -89,7 +89,7 @@ public class ITestConfigBuilder {
 
     public ITestConfigBuilder resource(String file, String dest) {
         if (config.getResources() == null) {
-            config.setResources(new HashMap<String, String>());
+            config.setResources(new HashMap<>());
         }
         config.getResources().put(file, dest);
         return this;
@@ -97,7 +97,7 @@ public class ITestConfigBuilder {
 
     public ITestConfigBuilder dependency(String dependencyCanonicalForm) {
         if (config.getAdditionalDependencies() == null) {
-            config.setAdditionalDependencies(new HashSet<String>());
+            config.setAdditionalDependencies(new HashSet<>());
         }
         config.getAdditionalDependencies().add(dependencyCanonicalForm);
         return this;

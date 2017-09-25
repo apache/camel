@@ -77,14 +77,6 @@
         <scope>import</scope>
       </dependency>
 
-      <!-- Testing -->
-      <dependency>
-        <groupId>org.jboss.arquillian.junit</groupId>
-        <artifactId>arquillian-junit-container</artifactId>
-        <version>${arquillian-version}</version>
-        <scope>test</scope>
-      </dependency>
-
       <!-- Forcing Hadoop in starters -->
       <dependency>
         <groupId>org.apache.hadoop</groupId>
