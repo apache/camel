@@ -11,10 +11,10 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 98 (8 deprecated)
+Number of Examples: 97 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
-|=======================================================================
+|===
 | Example | Category | Description
 
 | link:camel-example-cdi/README.md[CDI] (camel-example-cdi) | Beginner | An example showing how to work with Camel and CDI for dependency injection
@@ -43,6 +43,8 @@ Number of Examples: 98 (8 deprecated)
 | link:camel-example-spring/README.md[Spring] (camel-example-spring) | Beginner | An example showing how to work with Camel and Spring
 
 | link:camel-example-spring-boot/readme.adoc[Spring Boot] (camel-example-spring-boot) | Beginner | An example showing how to work with Camel and Spring Boot
+
+| link:camel-example-spring-boot-health-checks/readme.adoc[Spring Boot Health Checks] (camel-example-spring-boot-health-checks) | Beginner | An example showing how to work with Camel's Health Checks and Spring Boot
 
 | link:camel-example-spring-boot-live-reload/readme.adoc[Spring Boot Live Reload] (camel-example-spring-boot-live-reload) | Beginner | An example showing how to use the live reload feature of Spring Boot with Camel
 
@@ -217,7 +219,7 @@ Number of Examples: 98 (8 deprecated)
 | link:camel-example-cxf-tomcat/README.md[CXF Tomcat] (camel-example-cxf-tomcat) | WebService | An example using Camel CXF (code first) with Apache Tomcat
 
 | link:camel-example-spring-ws/README.md[Spring WebService] (camel-example-spring-ws) | WebService | An example showing how to work with Camel and Spring Web Services
-|=======================================================================
+|===
 // examples: END
 
 
