@@ -116,7 +116,6 @@
     <module>camel-example-spring-security</module>
     <module>camel-example-ssh</module>
     <module>camel-example-ssh-security</module>
-    <module>camel-example-sql</module>
     <module>camel-example-sql-blueprint</module>
     <module>camel-example-swagger-cdi</module>
     <module>camel-example-swagger-osgi</module>

@@ -86,8 +86,6 @@ Number of Examples: 98 (8 deprecated)
 
 | link:camel-example-spring-boot-rest-jpa/README.md[Spring Boot REST JPA] (camel-example-spring-boot-rest-jpa) | Database | An example demonstrating how to use Camel REST DSL with JPA to expose a RESTful API that performs CRUD operations on a database
 
-| link:camel-example-sql/README.md[SQL] (camel-example-sql) | Database | An example for showing Camel using SQL component
-
 | link:camel-example-aggregate/README.md[Aggregate] (camel-example-aggregate) | EIP | Demonstrates the persistent support for the Camel aggregator
 
 | link:camel-example-cafe/README.md[Cafe] (camel-example-cafe) | EIP | A cafe example showing how to work with Camel
