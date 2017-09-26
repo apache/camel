@@ -44,8 +44,12 @@ public class HttpComponentSSLAutoConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(HttpComponentSSLAutoConfiguration.class);
 
     @Bean
-    public HttpSSLPostProcessor cacheAutoConfigurationValidatorPostProcessor(CamelContext context, HttpComponentConfiguration config) {
+    public static HttpSSLPostProcessor cacheAutoConfigurationValidatorPostProcessor(CamelContext context, HttpComponentConfiguration config) {
         return new HttpSSLPostProcessor(context, config);
+    }
+
+    private void dummy() {
+        // checkstyle issue
     }
 
     static class HttpSSLPostProcessor implements BeanFactoryPostProcessor {
