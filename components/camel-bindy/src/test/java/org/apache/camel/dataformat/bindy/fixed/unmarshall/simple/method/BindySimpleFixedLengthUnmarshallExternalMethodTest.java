@@ -89,7 +89,7 @@ public class BindySimpleFixedLengthUnmarshallExternalMethodTest extends Abstract
         @DataField(pos = 3, length = 2)
         private String clientNr;
 
-        @DataField(pos = 5, length = 9, method = "org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.function.BindySimpleFixedLengthUnmarshallExternalMethodTest.replaceToBar")
+        @DataField(pos = 5, length = 9, method = "org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.method.BindySimpleFixedLengthUnmarshallExternalMethodTest.replaceToBar")
         private String firstName;
 
         @DataField(pos = 14, length = 5, align = "L")
