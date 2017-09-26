@@ -368,7 +368,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         // Route controller
         RouteController routeController = getBeanForType(RouteController.class);
-        if (clusterService != null) {
+        if (routeController != null) {
             LOG.info("Using RouteController: " + routeController);
             getContext().setRouteController(routeController);
         }
