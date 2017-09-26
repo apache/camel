@@ -71,7 +71,7 @@ public class JsonSimpleOrderedTest extends TestCase {
         try {
             BufferedReader reader = new BufferedReader(isr);
 
-            while(true) {
+            while (true) {
                 String line = reader.readLine();
                 if (line == null) {
                     line = builder.toString();
