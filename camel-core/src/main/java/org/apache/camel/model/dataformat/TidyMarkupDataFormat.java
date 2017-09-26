@@ -32,7 +32,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Tidymark (wellformed HTML) data format
+ * TidyMarkup data format is used for parsing HTML and return it as pretty well-formed HTML.
  */
 @Metadata(firstVersion = "2.0.0", label = "dataformat,transformation", title = "TidyMarkup")
 @XmlRootElement(name = "tidyMarkup")

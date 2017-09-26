@@ -23,10 +23,10 @@ public class FtpUtilsExtractDirNameFromAbsolutePathTest {
 
     @Test
     public void testExtractDirNameFromAbsolutePath() {
-        String path = "/test/depth1";
-        assertEquals("depth1", FtpUtils.extractDirNameFromAbsolutePath(path));
-        path = "/test/depth1/";
-        assertEquals("depth1", FtpUtils.extractDirNameFromAbsolutePath(path));
+        String path = "/test/depth1/myfile.txt";
+        assertEquals("myfile.txt", FtpUtils.extractDirNameFromAbsolutePath(path));
+        path = "/test/depth1/myfile.txt/";
+        assertEquals("myfile.txt", FtpUtils.extractDirNameFromAbsolutePath(path));
         path = "test/depth1/";
         assertEquals("depth1", FtpUtils.extractDirNameFromAbsolutePath(path));
         path = "test/depth1";
@@ -34,10 +34,10 @@ public class FtpUtilsExtractDirNameFromAbsolutePathTest {
         path = "depth1";
         assertEquals("depth1", FtpUtils.extractDirNameFromAbsolutePath(path));
 
-        path = "C:\\test\\depth1";
-        assertEquals("depth1", FtpUtils.extractDirNameFromAbsolutePath(path));
-        path = "C:\\test\\depth1\\";
-        assertEquals("depth1", FtpUtils.extractDirNameFromAbsolutePath(path));
+        path = "\\test\\depth1\\myfile.txt";
+        assertEquals("myfile.txt", FtpUtils.extractDirNameFromAbsolutePath(path));
+        path = "\\test\\depth1\\myfile.txt\\";
+        assertEquals("myfile.txt", FtpUtils.extractDirNameFromAbsolutePath(path));
         path = "test\\depth1\\";
         assertEquals("depth1", FtpUtils.extractDirNameFromAbsolutePath(path));
         path = "test\\depth1";

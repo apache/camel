@@ -28,7 +28,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Avro data format
+ * The Avro data format is used for serialization and deserialization of messages using Apache Avro binary dataformat.
  *
  * @version 
  */

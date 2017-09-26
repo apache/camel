@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * For XQuery expressions and predicates
+ * To use XQuery (XML) in Camel expressions or predicates.
  *
  * @version 
  */

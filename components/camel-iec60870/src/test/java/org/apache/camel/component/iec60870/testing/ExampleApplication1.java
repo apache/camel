@@ -21,6 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
 public class ExampleApplication1 {
+
     public static void main(final String[] args) throws Exception {
         new ExampleApplication1().run();
     }

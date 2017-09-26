@@ -62,7 +62,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
 
         // the default value is a bit tricky as its ", which is written escaped as \"
         assertTrue(json.contains("\"textQualifier\": { \"kind\": \"attribute\", \"displayName\": \"Text Qualifier\", \"required\": false, \"type\": \"string\""
-            + ", \"javaType\": \"java.lang.String\", \"deprecated\": false, \"secret\": false, \"defaultValue\": \"\\\"\""));
+            + ", \"javaType\": \"java.lang.String\", \"deprecated\": false, \"secret\": false"));
 
         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
         assertEquals(10, rows.size());
@@ -82,8 +82,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
         assertEquals("java.lang.String", found.get("javaType"));
         assertEquals("false", found.get("deprecated"));
         assertEquals("false", found.get("secret"));
-        assertEquals("\"", found.get("defaultValue"));
-        assertEquals("If the text is qualified with a char such as \"", found.get("description"));
+        assertEquals("If the text is qualified with a character. Uses quote character by default.", found.get("description"));
     }
 
     @Test

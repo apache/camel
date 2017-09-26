@@ -19,11 +19,9 @@ package org.apache.camel.spring.boot.actuate.health;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckFilter;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.health.HealthConstants;

@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Barcode data format
+ * The Barcode data format is used for creating barccode images (such as QR-Code)
  *
  * @version 
  */

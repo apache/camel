@@ -57,7 +57,7 @@ with the following path and query parameters:
 | *directoryName* | The starting directory |  | String
 |===
 
-==== Query Parameters (110 parameters):
+==== Query Parameters (111 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -82,6 +82,7 @@ with the following path and query parameters:
 | *download* (consumer) | Whether the FTP consumer should download the file. If this option is set to false then the message body will be null but the consumer will still trigger a Camel Exchange that has details about the file such as file name file size etc. It's just that the file will not be downloaded. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *handleDirectoryParser AbsoluteResult* (consumer) | Allows you to set how the consumer will handle subfolders and files in the path if the directory parser results in with absolute paths The reason for this is that some FTP servers may return file names with absolute paths and if so then the FTP component needs to handle this by converting the returned path into a relative path. | false | boolean
 | *ignoreFileNotFoundOr PermissionError* (consumer) | Whether to ignore when trying to download a file which does not exist or due to permission error. By default when a file does not exists or insufficient permission then an exception is thrown. Setting this option to true allows to ignore that instead. | false | boolean
 | *inProgressRepository* (consumer) | A pluggable in-progress repository org.apache.camel.spi.IdempotentRepository. The in-progress repository is used to account the current in progress files being consumed. By default a memory based repository is used. |  | String>
 | *localWorkDirectory* (consumer) | When consuming a local work directory can be used to store the remote file content directly in local files to avoid loading the content into memory. This is beneficial if you consume a very big remote file and thus can conserve memory. |  | String
@@ -112,7 +113,7 @@ with the following path and query parameters:
 | *ftpClientParameters* (advanced) | Used by FtpComponent to provide additional parameters for the FTPClient |  | Map
 | *maximumReconnectAttempts* (advanced) | Specifies the maximum reconnect attempts Camel performs when it tries to connect to the remote FTP server. Use 0 to disable this behavior. |  | int
 | *reconnectDelay* (advanced) | Delay in millis Camel will wait before performing a reconnect attempt. |  | long
-| *siteCommand* (advanced) | Sets optional site command(s) to be executed after successful login. Multiple site commands can be separated using a new line character (\n). |  | String
+| *siteCommand* (advanced) | Sets optional site command(s) to be executed after successful login. Multiple site commands can be separated using a new line character. |  | String
 | *soTimeout* (advanced) | Sets the so timeout Used only by FTPClient | 300000 | int
 | *stepwise* (advanced) | Sets whether we should stepwise change directories while traversing file structures when downloading files or as well when uploading a file to a directory. You can disable this if you for example are in a situation where you cannot change directory on the FTP server due security reasons. | true | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean

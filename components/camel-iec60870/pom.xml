@@ -34,7 +34,6 @@
 
   <properties>
     <camel.osgi.export.pkg>
-      !*.internal.*,
       org.apache.camel.component.iec60870.*
     </camel.osgi.export.pkg>
     <camel.osgi.export.service>
@@ -44,6 +43,7 @@
   </properties>
 
   <dependencies>
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -54,31 +54,26 @@
       <artifactId>org.eclipse.neoscada.protocol.iec60870</artifactId>
       <version>${neoscada-version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.eclipse.neoscada.protocols</groupId>
       <artifactId>org.eclipse.neoscada.protocol.iec60870.client</artifactId>
       <version>${neoscada-version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.eclipse.neoscada.protocols</groupId>
       <artifactId>org.eclipse.neoscada.protocol.iec60870.client.data</artifactId>
       <version>${neoscada-version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.eclipse.neoscada.protocols</groupId>
       <artifactId>org.eclipse.neoscada.protocol.iec60870.server</artifactId>
       <version>${neoscada-version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.eclipse.neoscada.protocols</groupId>
       <artifactId>org.eclipse.neoscada.protocol.iec60870.server.data</artifactId>
       <version>${neoscada-version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.eclipse.neoscada.utils</groupId>
       <artifactId>org.eclipse.scada.utils</artifactId>
@@ -90,25 +85,21 @@
       <artifactId>netty-buffer</artifactId>
       <version>${netty-version}</version>
     </dependency>
-
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-codec</artifactId>
       <version>${netty-version}</version>
     </dependency>
-
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-common</artifactId>
       <version>${netty-version}</version>
     </dependency>
-
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-handler</artifactId>
       <version>${netty-version}</version>
     </dependency>
-
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-transport</artifactId>

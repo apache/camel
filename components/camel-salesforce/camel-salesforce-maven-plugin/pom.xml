@@ -246,9 +246,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
+        <version>3.5</version>
         <configuration>
-          <goalPrefix>camel-salesforce</goalPrefix>
-          <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+          <goalPrefix>camel-salesforce</goalPrefix>         
         </configuration>
         <executions>
           <execution>
@@ -256,12 +256,14 @@
             <goals>
               <goal>descriptor</goal>
             </goals>
+            <phase>process-classes</phase>
           </execution>
           <execution>
             <id>help-goal</id>
             <goals>
               <goal>helpmojo</goal>
             </goals>
+            <phase>process-classes</phase>
           </execution>
         </executions>
       </plugin>

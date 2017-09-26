@@ -318,6 +318,13 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testAsEndpointUriJsonPrettyJson() throws Exception {
+        String json = loadText(CamelCatalogTest.class.getClassLoader().getResourceAsStream("sample-pretty.json"));
+        String uri = catalog.asEndpointUri("ftp", json, true);
+        assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri);
+    }
+
+    @Test
     public void testEndpointProperties() throws Exception {
         Map<String, String> map = catalog.endpointProperties("ftp:someserver:21/foo?connectTimeout=5000");
         assertNotNull(map);
@@ -898,6 +905,23 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testAddComponentWithPrettyJson() throws Exception {
+        String json = loadText(new FileInputStream("src/test/resources/org/foo/camel/dummy-pretty.json"));
+        assertNotNull(json);
+        catalog.addComponent("dummy", "org.foo.camel.DummyComponent", json);
+
+        assertTrue(catalog.findComponentNames().contains("dummy"));
+
+        json = catalog.componentJSonSchema("dummy");
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
     public void testAddDataFormat() throws Exception {
         catalog.addDataFormat("dummyformat", "org.foo.camel.DummyDataFormat");
 
@@ -915,6 +939,23 @@ public class CamelCatalogTest {
     @Test
     public void testAddDataFormatWithJSon() throws Exception {
         String json = loadText(new FileInputStream("src/test/resources/org/foo/camel/dummyformat.json"));
+        assertNotNull(json);
+        catalog.addDataFormat("dummyformat", "org.foo.camel.DummyDataFormat", json);
+
+        assertTrue(catalog.findDataFormatNames().contains("dummyformat"));
+
+        json = catalog.dataFormatJSonSchema("dummyformat");
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
+    public void testAddDataFormatWithPrettyJSon() throws Exception {
+        String json = loadText(new FileInputStream("src/test/resources/org/foo/camel/dummyformat-pretty.json"));
         assertNotNull(json);
         catalog.addDataFormat("dummyformat", "org.foo.camel.DummyDataFormat", json);
 

@@ -27,7 +27,6 @@ import org.apache.camel.health.HealthCheckService;
 import org.apache.camel.impl.health.DefaultHealthCheckService;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.util.GroupCondition;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -43,14 +42,12 @@ import org.springframework.context.annotation.Scope;
 @Conditional(HealthCheckServiceAutoConfiguration.Condition.class)
 @EnableConfigurationProperties(HealthCheckServiceConfiguration.class)
 public class HealthCheckServiceAutoConfiguration {
-    @Autowired
-    private HealthCheckServiceConfiguration configuration;
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     @ConditionalOnBean(HealthCheckRegistry.class)
     @ConditionalOnMissingBean
-    public HealthCheckService healthCheckService() {
+    public HealthCheckService healthCheckService(HealthCheckServiceConfiguration configuration) {
         final DefaultHealthCheckService service = new DefaultHealthCheckService();
 
         Optional.ofNullable(configuration.getCheckInterval())

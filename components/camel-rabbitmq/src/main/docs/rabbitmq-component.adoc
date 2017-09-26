@@ -111,14 +111,14 @@ with the following path and query parameters:
 | *connectionFactory* (advanced) | To use a custom RabbitMQ connection factory. When this option is set all connection options (connectionTimeout requestedChannelMax...) set on URI are not used |  | ConnectionFactory
 | *exchangeArgs* (advanced) | *Deprecated* Key/value args for configuring the exchange parameters when declare=true |  | Map
 | *exchangeArgsConfigurer* (advanced) | *Deprecated* Set the configurer for setting the exchange args in Channel.exchangeDeclare |  | ArgsConfigurer
-| *networkRecoveryInterval* (advanced) | Network recovery interval in milliseconds (interval used when recovering from network failure) |  | Integer
+| *networkRecoveryInterval* (advanced) | Network recovery interval in milliseconds (interval used when recovering from network failure) | 5000 | Integer
 | *queueArgs* (advanced) | *Deprecated* Key/value args for configuring the queue parameters when declare=true |  | Map
 | *queueArgsConfigurer* (advanced) | *Deprecated* Set the configurer for setting the queue args in Channel.queueDeclare |  | ArgsConfigurer
 | *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 0 | int
 | *requestedFrameMax* (advanced) | Connection requested frame max (max size of frame offered) | 0 | int
 | *requestedHeartbeat* (advanced) | Connection requested heartbeat (heart-beat in seconds offered) | 60 | int
-| *requestTimeout* (advanced) | Set timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds) |  | long
-| *requestTimeoutChecker Interval* (advanced) | Set requestTimeoutCheckerInterval for inOut exchange |  | long
+| *requestTimeout* (advanced) | Set timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds) | 20000 | long
+| *requestTimeoutChecker Interval* (advanced) | Set requestTimeoutCheckerInterval for inOut exchange | 1000 | long
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *topologyRecoveryEnabled* (advanced) | Enables connection topology recovery (should topology recovery be performed) |  | Boolean
 | *transferException* (advanced) | When true and an inOut Exchange failed on the consumer side send the caused Exception back in the response | false | boolean

@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 280 in 192 JAR artifacts (17 deprecated)
+Number of Components: 281 in 193 JAR artifacts (17 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -354,10 +354,10 @@ Number of Components: 280 in 192 JAR artifacts (17 deprecated)
 `ibatis:statement` | 1.2 | *deprecated* Performs a query poll insert update or delete in a relational database using Apache iBATIS.
 
 | link:camel-iec60870/src/main/docs/iec60870-client-component.adoc[IEC 60870 Client] (camel-iec60870) +
-`iec60870-client:endpointUri` | 2.20 | Camel IEC 60870-5-104 support
+`iec60870-client:endpointUri` | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
 
-| link:camel-iec60870/src/main/docs/iec60870-server-component.adoc[IEC 60870-5-104 server] (camel-iec60870) +
-`iec60870-server:endpointUri` | 2.20 | Camel IEC 60870-5-104 support
+| link:camel-iec60870/src/main/docs/iec60870-server-component.adoc[IEC 60870 Server] (camel-iec60870) +
+`iec60870-server:endpointUri` | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
 
 | link:camel-ignite/src/main/docs/ignite-cache-component.adoc[Ignite Cache] (camel-ignite) +
 `ignite-cache:cacheName` | 2.17 | The Ignite Cache endpoint is one of camel-ignite endpoints which allows you to interact with an Ignite Cache.
@@ -499,6 +499,9 @@ Number of Components: 280 in 192 JAR artifacts (17 deprecated)
 
 | link:camel-ldap/src/main/docs/ldap-component.adoc[LDAP] (camel-ldap) +
 `ldap:dirContextName` | 1.5 | The ldap component allows you to perform searches in LDAP servers using filters as the message payload.
+
+| link:camel-ldif/src/main/docs/ldif-component.adoc[LDIF] (camel-ldif) +
+`ldif:ldapConnectionName` | 2.20 | The ldif component allows you to do updates on an LDAP server from a LDIF body content.
 
 | link:camel-linkedin/camel-linkedin-component/src/main/docs/linkedin-component.adoc[Linkedin] (camel-linkedin) +
 `linkedin:apiName/methodName` | 2.14 | The linkedin component is uses for retrieving LinkedIn user profiles connections companies groups posts etc.
@@ -856,7 +859,7 @@ Data Formats
 ^^^^^^^^^^^^
 
 // dataformats: START
-Number of Data Formats: 48 in 39 JAR artifacts (0 deprecated)
+Number of Data Formats: 48 in 39 JAR artifacts (2 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -888,9 +891,9 @@ Number of Data Formats: 48 in 39 JAR artifacts (0 deprecated)
 
 | link:camel-flatpack/src/main/docs/flatpack-dataformat.adoc[Flatpack] (camel-flatpack) | 2.1 | Camel FlatPack support
 
-| link:../camel-core/src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0 | GZip compression data format
+| link:../camel-core/src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0 | The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).
 
-| link:camel-hessian/src/main/docs/hessian-dataformat.adoc[Hessian] (camel-hessian) | 2.17 | Hessian serialization support
+| link:camel-hessian/src/main/docs/hessian-dataformat.adoc[Hessian] (camel-hessian) | 2.17 | *deprecated* Hessian serialization support
 
 | link:camel-hl7/src/main/docs/hl7-dataformat.adoc[HL7] (camel-hl7) | 2.0 | Camel HL7 support
 
@@ -898,7 +901,7 @@ Number of Data Formats: 48 in 39 JAR artifacts (0 deprecated)
 
 | link:camel-jacksonxml/src/main/docs/jacksonxml-dataformat.adoc[JacksonXML] (camel-jacksonxml) | 2.16 | Camel Jackson XML support
 
-| link:../camel-core/src/main/docs/serialization-dataformat.adoc[Java Object Serialization] (camel-core) | 2.12 | Java Object Serialization data format
+| link:../camel-core/src/main/docs/serialization-dataformat.adoc[Java Object Serialization] (camel-core) | 2.12 | Serialization is a data format which uses the standard Java Serialization mechanism to unmarshal a binary payload into Java objects or to marshal Java objects into a binary blob.
 
 | link:camel-jaxb/src/main/docs/jaxb-dataformat.adoc[JAXB] (camel-jaxb) | 1.0 | Camel JAXB support
 
@@ -926,7 +929,7 @@ Number of Data Formats: 48 in 39 JAR artifacts (0 deprecated)
 
 | link:camel-soap/src/main/docs/soapjaxb-dataformat.adoc[SOAP] (camel-soap) | 2.3 | Camel SOAP support
 
-| link:../camel-core/src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | 2.12 | String (text based) data format
+| link:../camel-core/src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | 2.12 | String data format is a textual based format that supports character encoding.
 
 | link:camel-syslog/src/main/docs/syslog-dataformat.adoc[Syslog] (camel-syslog) | 2.6 | Camel Syslog support
 
@@ -942,7 +945,7 @@ Number of Data Formats: 48 in 39 JAR artifacts (0 deprecated)
 
 | link:camel-univocity-parsers/src/main/docs/univocity-tsv-dataformat.adoc[uniVocity TSV] (camel-univocity-parsers) | 2.15 | Camel UniVocity parsers data format support
 
-| link:camel-xmlbeans/src/main/docs/xmlBeans-dataformat.adoc[XML Beans] (camel-xmlbeans) | 1.2 | Camel XMLBeans support
+| link:camel-xmlbeans/src/main/docs/xmlBeans-dataformat.adoc[XML Beans] (camel-xmlbeans) | 1.2 | *deprecated* Camel XMLBeans support
 
 | link:camel-xmljson/src/main/docs/xmljson-dataformat.adoc[XML JSon] (camel-xmljson) | 2.10 | Camel XML JSON Data Format
 
@@ -954,7 +957,7 @@ Number of Data Formats: 48 in 39 JAR artifacts (0 deprecated)
 
 | link:camel-snakeyaml/src/main/docs/yaml-snakeyaml-dataformat.adoc[YAML SnakeYAML] (camel-snakeyaml) | 2.17 | Camel SnakeYAML support
 
-| link:../camel-core/src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | 2.12 | Zip compression data format (not for zip files)
+| link:../camel-core/src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | 2.12 | Zip Deflate Compression data format is a message compression and de-compression format (not zip files).
 
 | link:camel-zipfile/src/main/docs/zipfile-dataformat.adoc[Zip File] (camel-zipfile) | 2.11 | Camel Zip file support
 |===
@@ -971,53 +974,53 @@ Number of Languages: 24 in 12 JAR artifacts (6 deprecated)
 |===
 | Language | Available From | Description
 
-| link:../camel-core/src/main/docs/bean-language.adoc[Bean method] (camel-core) | 1.3 | For expressions and predicates using a java bean (aka method call)
+| link:../camel-core/src/main/docs/bean-language.adoc[Bean method] (camel-core) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
 
-| link:../camel-core/src/main/docs/constant-language.adoc[Constant] (camel-core) | 1.5 | For expressions and predicates using a constant
+| link:../camel-core/src/main/docs/constant-language.adoc[Constant] (camel-core) | 1.5 | To use a constant value in Camel expressions or predicates.
 
-| link:camel-juel/src/main/docs/el-language.adoc[EL] (camel-juel) | 1.1 | *deprecated* For EL expressions and predicates
+| link:camel-juel/src/main/docs/el-language.adoc[EL] (camel-juel) | 1.1 | *deprecated* To use EL scripts in Camel expressions or predicates.
 
-| link:../camel-core/src/main/docs/exchangeProperty-language.adoc[ExchangeProperty] (camel-core) | 2.0 | An expression which extracts the named exchange property
+| link:../camel-core/src/main/docs/exchangeProperty-language.adoc[ExchangeProperty] (camel-core) | 2.0 | To use a Camel Exchange property in expressions or predicates.
 
 | link:../camel-core/src/main/docs/file-language.adoc[File] (camel-core) | 1.1 | For expressions and predicates using the file/simple language
 
-| link:camel-groovy/src/main/docs/groovy-language.adoc[Groovy] (camel-groovy) | 1.3 | For Groovy expressions and predicates
+| link:camel-groovy/src/main/docs/groovy-language.adoc[Groovy] (camel-groovy) | 1.3 | To use Groovy scripts in Camel expressions or predicates.
 
-| link:../camel-core/src/main/docs/header-language.adoc[Header] (camel-core) | 1.5 | An expression which extracts the named exchange header
+| link:../camel-core/src/main/docs/header-language.adoc[Header] (camel-core) | 1.5 | To use a Camel Message header in expressions or predicates.
 
-| link:camel-hl7/src/main/docs/terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11 | For HL7 terser expressions and predicates
+| link:camel-hl7/src/main/docs/terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11 | To use HL7 terser scripts in Camel expressions or predicates.
 
-| link:camel-script/src/main/docs/javaScript-language.adoc[JavaScript] (camel-script) | 1.0 | For JavaScript expressions and predicates
+| link:camel-script/src/main/docs/javaScript-language.adoc[JavaScript] (camel-script) | 1.0 | To use JavaScript in Camel expressions or predicates.
 
-| link:camel-jsonpath/src/main/docs/jsonpath-language.adoc[JSonPath] (camel-jsonpath) | 2.13 | For JSonPath expressions and predicates
+| link:camel-jsonpath/src/main/docs/jsonpath-language.adoc[JSonPath] (camel-jsonpath) | 2.13 | To use JSonPath in Camel expressions or predicates.
 
-| link:camel-jxpath/src/main/docs/jxpath-language.adoc[JXPath] (camel-jxpath) | 1.3 | *deprecated* For JXPath expressions and predicates
+| link:camel-jxpath/src/main/docs/jxpath-language.adoc[JXPath] (camel-jxpath) | 1.3 | *deprecated* To use JXPath in Camel expressions or predicates.
 
-| link:camel-mvel/src/main/docs/mvel-language.adoc[MVEL] (camel-mvel) | 2.0 | For MVEL expressions and predicates
+| link:camel-mvel/src/main/docs/mvel-language.adoc[MVEL] (camel-mvel) | 2.0 | To use MVEL scripts in Camel expressions or predicates.
 
-| link:camel-ognl/src/main/docs/ognl-language.adoc[OGNL] (camel-ognl) | 1.1 | For OGNL expressions and predicates
+| link:camel-ognl/src/main/docs/ognl-language.adoc[OGNL] (camel-ognl) | 1.1 | To use OGNL scripts in Camel expressions or predicates.
 
-| link:camel-script/src/main/docs/php-language.adoc[PHP] (camel-script) | 1.0 | *deprecated* For PHP expressions and predicates
+| link:camel-script/src/main/docs/php-language.adoc[PHP] (camel-script) | 1.0 | *deprecated* To use PHP scripts in Camel expressions or predicates.
 
-| link:camel-script/src/main/docs/python-language.adoc[Python] (camel-script) | 1.0 | *deprecated* For Python expressions and predicates
+| link:camel-script/src/main/docs/python-language.adoc[Python] (camel-script) | 1.0 | *deprecated* To use Python scripts in Camel expressions or predicates.
 
-| link:../camel-core/src/main/docs/ref-language.adoc[Ref] (camel-core) | 2.8 | For using a custom expression or predicate
+| link:../camel-core/src/main/docs/ref-language.adoc[Ref] (camel-core) | 2.8 | Reference to an existing Camel expression or predicate which is looked up from the Camel registry.
 
-| link:camel-script/src/main/docs/ruby-language.adoc[Ruby] (camel-script) | 1.0 | *deprecated* For Ruby expressions and predicates
+| link:camel-script/src/main/docs/ruby-language.adoc[Ruby] (camel-script) | 1.0 | *deprecated* To use Ruby scripts in Camel expressions or predicates.
 
-| link:../camel-core/src/main/docs/simple-language.adoc[Simple] (camel-core) | 1.1 | For expressions and predicates using the simple language
+| link:../camel-core/src/main/docs/simple-language.adoc[Simple] (camel-core) | 1.1 | To use Camels built-in Simple language in Camel expressions or predicates.
 
-| link:camel-spring/src/main/docs/spel-language.adoc[SpEL] (camel-spring) | 2.7 | For Spring Expression Language (SpEL) expressions and predicates
+| link:camel-spring/src/main/docs/spel-language.adoc[SpEL] (camel-spring) | 2.7 | To use Spring Expression Language (SpEL) in Camel expressions or predicates.
 
-| link:camel-josql/src/main/docs/sql-language.adoc[SQL] (camel-josql) | 1.0 | *deprecated* For SQL expressions and predicates
+| link:camel-josql/src/main/docs/sql-language.adoc[SQL] (camel-josql) | 1.0 | *deprecated* To use SQL (on Java beans) in Camel expressions or predicates.
 
-| link:../camel-core/src/main/docs/tokenize-language.adoc[Tokenize] (camel-core) | 2.0 | For expressions and predicates using a body or header tokenizer
+| link:../camel-core/src/main/docs/tokenize-language.adoc[Tokenize] (camel-core) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
 
-| link:../camel-core/src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-core) | 2.14 | For expressions and predicates using a body or header XML tokenizer
+| link:../camel-core/src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-core) | 2.14 | To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
 
-| link:../camel-core/src/main/docs/xpath-language.adoc[XPath] (camel-core) | 1.1 | For XPath expressions and predicates
+| link:../camel-core/src/main/docs/xpath-language.adoc[XPath] (camel-core) | 1.1 | To use XPath (XML) in Camel expressions or predicates.
 
-| link:camel-saxon/src/main/docs/xquery-language.adoc[XQuery] (camel-saxon) | 1.0 | For XQuery expressions and predicates
+| link:camel-saxon/src/main/docs/xquery-language.adoc[XQuery] (camel-saxon) | 1.0 | To use XQuery (XML) in Camel expressions or predicates.
 |===
 // languages: END
 
@@ -1086,7 +1089,7 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (13 deprecated)
 
 | link:camel-spring-security/src/main/docs/spring-security.adoc[Spring Security] (camel-spring-security) | 2.3 | Security using Spring Security
 
-| link:camel-swagger/src/main/docs/swagger.adoc[Swagger] (camel-swagger) | 2.14 | *deprecated* Rest-dsl support for using swagger api-doc
+| link:camel-swagger/src/main/docs/swagger.adoc[Swagger] (camel-swagger) | 2.14 | *deprecated* Rest-dsl support for using swagger api-doc (uses Scala)
 
 | link:camel-swagger-java/src/main/docs/swagger-java.adoc[Swagger Java] (camel-swagger-java) | 2.16 | Rest-dsl support for using swagger api-doc
 

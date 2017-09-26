@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * ASN.1 data format
+ * The ASN.1 data format is used for file transfer with telecommunications protocols.
  */
 @Metadata(firstVersion = "2.20.0", label = "dataformat,transformation,file", title = "ASN.1 File")
 @XmlRootElement(name = "asn1")

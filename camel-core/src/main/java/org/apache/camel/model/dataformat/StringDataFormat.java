@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * String (text based) data format
+ * String data format is a textual based format that supports character encoding.
  *
  * @version 
  */

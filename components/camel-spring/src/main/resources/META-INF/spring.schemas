@@ -106,6 +106,7 @@ http\://camel.apache.org/schema/spring/camel-spring-2.18.1.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.18.2.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.18.3.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.18.4.xsd=camel-spring.xsd
+http\://camel.apache.org/schema/spring/camel-spring-2.18.5.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.19.0.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.19.1.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.19.2.xsd=camel-spring.xsd

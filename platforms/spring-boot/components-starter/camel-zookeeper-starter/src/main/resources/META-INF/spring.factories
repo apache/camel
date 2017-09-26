@@ -15,4 +15,5 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.zookeeper.springboot.ZooKeeperComponentAutoConfiguration
+org.apache.camel.component.zookeeper.springboot.ZooKeeperComponentAutoConfiguration,\
+org.apache.camel.component.zookeeper.ha.springboot.ZooKeeperClusterServiceAutoConfiguration

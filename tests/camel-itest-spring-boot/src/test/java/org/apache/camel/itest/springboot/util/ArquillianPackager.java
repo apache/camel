@@ -302,6 +302,7 @@ public final class ArquillianPackager {
         ignore.add("commons-beanutils:commons-beanutils");
         ignore.add("io.fabric8:kubernetes-");
         ignore.add("io.netty:netty:jar"); // an old version
+        ignore.add("io.netty:netty-tcnative-boringssl-static");
         ignore.add("io.swagger:swagger-parser");
         ignore.add("org.apache.commons");
         ignore.add("org.apache.curator");
@@ -322,6 +323,7 @@ public final class ArquillianPackager {
         ignore.add("org.easytesting");
         ignore.add("net.openhft");
         ignore.add("net.sourceforge.htmlunit:htmlunit-core-js"); // v 2.21 does not exist
+        ignore.add("org.springframework.cloud"); // too many different versions
         ignore.add("org.springframework.data");
         ignore.add("org.springframework.security:spring-security-jwt");
         ignore.add("org.springframework.security:spring-security-rsa");
@@ -462,7 +464,8 @@ public final class ArquillianPackager {
     private static File createUserPom(ITestConfig config, List<String> cleanTestProvidedDependencies) throws Exception {
 
         String pom;
-        try (InputStream pomTemplate = ArquillianPackager.class.getResourceAsStream("/application-pom.xml")) {
+        String template = "/application-pom-sb" + config.getSpringBootMajorVersion() + ".xml";
+        try (InputStream pomTemplate = ArquillianPackager.class.getResourceAsStream(template)) {
             pom = IOUtils.toString(pomTemplate);
         }
 
@@ -540,6 +543,10 @@ public final class ArquillianPackager {
 
     private static String enforceExclusions(ITestConfig config, String dependencyXml, List<MavenDependencyExclusion> exclusions) {
 
+        if (dependencyXml.contains("<groupId>org.springframework.boot</groupId>") && dependencyXml.contains("<artifactId>spring-boot-starter")) {
+            return dependencyXml;
+        }
+
         if (!dependencyXml.contains("<exclusions>")) {
             dependencyXml = dependencyXml.replace("</dependency>", "<exclusions></exclusions></dependency>");
         }
@@ -576,22 +583,28 @@ public final class ArquillianPackager {
         String groupId = textBetween(dependencyXml, "<groupId>", "</groupId>");
         String artifactId = textBetween(dependencyXml, "<artifactId>", "</artifactId>");
 
-        String bomVersion = config.getTestLibraryVersions().get(groupId + ":" + artifactId);
-        if (bomVersion == null) {
-            bomVersion = BOMResolver.getInstance().getBOMVersion(groupId, artifactId);
+        String version = config.getTestLibraryVersions().get(groupId + ":" + artifactId);
+        boolean stripVersion = false;
+        if (version == null) {
+            boolean testsLib = dependencyXml.contains("<classifier>tests");
+            stripVersion = !testsLib && BOMResolver.getInstance(config).getBOMVersion(groupId, artifactId) != null;
         }
 
-        if (bomVersion != null) {
+        if (version != null) {
             if (dependencyXml.contains("<version>")) {
                 int from = dependencyXml.indexOf("<version>") + 9;
                 int to = dependencyXml.indexOf("</version>");
 
-                dependencyXml = dependencyXml.substring(0, from) + bomVersion + dependencyXml.substring(to);
+                dependencyXml = dependencyXml.substring(0, from) + version + dependencyXml.substring(to);
             } else {
                 String kw = "</artifactId>";
                 int pos = dependencyXml.indexOf(kw) + kw.length();
-                dependencyXml = dependencyXml.substring(0, pos) + "<version>" + bomVersion + "</version>" + dependencyXml.substring(pos);
+                dependencyXml = dependencyXml.substring(0, pos) + "<version>" + version + "</version>" + dependencyXml.substring(pos);
             }
+        } else if (stripVersion && dependencyXml.contains("<version>")) {
+            int from = dependencyXml.indexOf("<version>");
+            int to = dependencyXml.indexOf("</version>") + 10;
+            dependencyXml = dependencyXml.substring(0, from) + dependencyXml.substring(to);
         }
 
         return dependencyXml;

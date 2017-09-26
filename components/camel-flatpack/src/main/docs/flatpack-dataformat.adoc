@@ -28,14 +28,14 @@ The Flatpack dataformat supports 9 options which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| parserFactoryRef |  | String | References to a custom parser factory to lookup in the registry
 | definition |  | String | The flatpack pzmap configuration file. Can be omitted in simpler situations but its preferred to use the pzmap.
 | fixed | false | Boolean | Delimited or fixed. Is by default false = delimited
 | ignoreFirstRecord | true | Boolean | Whether the first line is ignored for delimited files (for the column headers). Is by default true.
-| textQualifier | " | String | If the text is qualified with a char such as "
+| textQualifier |  | String | If the text is qualified with a character. Uses quote character by default.
 | delimiter | , | String | The delimiter char (could be ; or similar)
 | allowShortLines | false | Boolean | Allows for lines to be shorter than expected and ignores the extra characters
 | ignoreExtraColumns | false | Boolean | Allows for lines to be longer than expected and ignores the extra characters.
+| parserFactoryRef |  | String | References to a custom parser factory to lookup in the registry
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END

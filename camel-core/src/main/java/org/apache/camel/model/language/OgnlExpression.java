@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For OGNL expressions and predicates
+ * To use OGNL scripts in Camel expressions or predicates.
  *
  * @version 
  */

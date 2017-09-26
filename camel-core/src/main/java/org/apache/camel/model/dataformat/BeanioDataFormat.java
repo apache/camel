@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * BeanIO data format
+ * The BeanIO data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).
  *
  * @version 
  */
@@ -48,9 +48,9 @@ public class BeanioDataFormat extends DataFormatDefinition {
     private Boolean ignoreInvalidRecords;
     @XmlAttribute
     private String encoding;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String beanReaderErrorHandlerType;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private Boolean unmarshalSingleObject;
 
     public BeanioDataFormat() {

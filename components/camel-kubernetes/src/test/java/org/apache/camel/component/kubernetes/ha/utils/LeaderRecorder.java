@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -41,9 +42,9 @@ public class LeaderRecorder implements CamelClusterEventListener.Leadership {
     private List<LeadershipInfo> leaderships = new CopyOnWriteArrayList<>();
 
     @Override
-    public void leadershipChanged(CamelClusterView view, CamelClusterMember leader) {
+    public void leadershipChanged(CamelClusterView view, Optional<CamelClusterMember> leader) {
         LOG.info("Cluster view {} - leader changed to: {}", view.getLocalMember(), leader);
-        this.leaderships.add(new LeadershipInfo(leader != null ? leader.getId() : null, System.currentTimeMillis()));
+        this.leaderships.add(new LeadershipInfo(leader.map(CamelClusterMember::getId).orElse(null), System.currentTimeMillis()));
     }
 
     public List<LeadershipInfo> getLeadershipInfo() {

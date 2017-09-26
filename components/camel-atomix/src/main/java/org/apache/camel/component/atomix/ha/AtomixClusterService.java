@@ -147,8 +147,8 @@ public final class AtomixClusterService extends AbstractCamelClusterService<Atom
         super.doStop();
 
         if (atomix != null) {
-            LOGGER.debug("Shutdown atomix replica {}", atomix);
-            atomix.shutdown().join();
+            LOGGER.debug("Leaving atomix cluster replica {}", atomix);
+            atomix.leave().join();
         }
     }
 

@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * YAML data format
+ * YAML is a data format to marshal and unmarshal Java objects to and from YAML.
  *
  * @version 
  */

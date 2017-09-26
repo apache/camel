@@ -34,7 +34,13 @@
 
   <dependencies>
 
-    <!-- no dependency -->
+    <!-- required dependencies by camel-catalog -->
+    <!-- we shade our patched ordered json-simple parser -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>json-simple-ordered</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- testing -->
     <dependency>
@@ -162,6 +168,35 @@
         </configuration>
       </plugin>
 
+      <!-- shade caffeine cache for faster Camel and spi-annotations as needed by everybody -->
+      <!-- shade json-simple for parsing Camel component JSon schema files -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>org.apache.camel:json-simple-ordered</include>
+                </includes>
+              </artifactSet>
+              <relocations>
+                <relocation>
+                  <pattern>org.json.simple</pattern>
+                  <!-- scala compiler do not like org.apache.camel.org so its just json.simple instead of org.json.simple -->
+                  <shadedPattern>org.apache.camel.json.simple</shadedPattern>
+                </relocation>
+              </relocations>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- generate and include all components in the catalog -->
       <plugin>
         <groupId>org.apache.camel</groupId>
@@ -187,7 +222,7 @@
         <configuration>
           <instructions>
             <Export-Package>org.apache.camel.catalog*</Export-Package>
-            <Import-Package>org.apache.camel.language.simple;resolution:=optional,*</Import-Package>
+            <Import-Package>org.apache.camel.language.simple;resolution:=optional,!org.json.simple,*</Import-Package>
           </instructions>
         </configuration>
       </plugin>

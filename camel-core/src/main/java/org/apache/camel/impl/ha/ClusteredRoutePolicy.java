@@ -19,6 +19,7 @@ package org.apache.camel.impl.ha;
 import java.time.Duration;
 import java.util.EventObject;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -87,8 +88,18 @@ public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelCon
                 }
             }
 
-            clusterView.removeEventListener(leadershipEventListener);
-            setLeader(false);
+            try {
+                // Remove event listener
+                clusterView.removeEventListener(leadershipEventListener);
+
+                // If all the routes have been shut down then the view and its
+                // resources can eventually be released.
+                clusterView.getClusterService().releaseView(clusterView);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                setLeader(false);
+            }
         });
     }
 
@@ -243,7 +254,7 @@ public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelCon
         );
 
         clusterView.addEventListener(leadershipEventListener);
-        setLeader(clusterView.getLocalMember().isMaster());
+        setLeader(clusterView.getLocalMember().isLeader());
     }
 
     // ****************************************************
@@ -252,8 +263,8 @@ public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelCon
 
     private class CamelClusterLeadershipListener implements CamelClusterEventListener.Leadership {
         @Override
-        public void leadershipChanged(CamelClusterView view, CamelClusterMember leader) {
-            setLeader(clusterView.getLocalMember().isMaster());
+        public void leadershipChanged(CamelClusterView view, Optional<CamelClusterMember> leader) {
+            setLeader(clusterView.getLocalMember().isLeader());
         }
     }
 

@@ -33,16 +33,20 @@ unit test your routes.
 
 ## Components
 
-Apache Camel comes with a lot of components.
+Apache Camel comes with a lot of artifacts with components, data formats, languages and various other kinds.
 The up to date list is available online at:
 
-<https://github.com/apache/camel/tree/master/components#components>
+* Components: <https://github.com/apache/camel/tree/master/components#components>
+* Data Formats: <https://github.com/apache/camel/tree/master/components#data-formats>
+* Languages: <https://github.com/apache/camel/tree/master/components#expression-languages>
+* Miscellaneous: <https://github.com/apache/camel/tree/master/components#miscellaneous-components>
 
 ## Examples
 
 Apache Camel comes with many examples.
+The up to date list is available online at:
 
-<https://github.com/apache/camel/tree/master/examples#examples>
+* Examples: <https://github.com/apache/camel/tree/master/examples#examples>
 
 ## Getting Started
 
@@ -51,6 +55,10 @@ To help you get started, try the following links:
 **Getting Started**
   
 <http://camel.apache.org/getting-started.html>
+
+It is also recommended to get started by trying out some of the beginner examples.
+
+* Examples: <https://github.com/apache/camel/tree/master/examples#examples>
 
 **Building**
   

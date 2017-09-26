@@ -163,7 +163,7 @@
                   <images>
                     <image>
                       <name>consul:latest</name>
-                      <alias>consul</alias>
+                      <alias>0.9.3</alias>
                       <run>
                         <ports>
                           <port>consul.port:8500</port>

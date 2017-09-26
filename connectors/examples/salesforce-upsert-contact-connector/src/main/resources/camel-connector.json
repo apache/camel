@@ -2,7 +2,7 @@
   "baseScheme" : "salesforce",
   "baseGroupId" : "org.apache.camel",
   "baseArtifactId" : "camel-salesforce",
-  "baseVersion" : "2.20.0-20170910.172654-189",
+  "baseVersion" : "2.20.0-SNAPSHOT",
   "baseJavaType" : "org.apache.camel.component.salesforce.SalesforceComponent",
   "name" : "SalesforceUpsertContact",
   "scheme" : "salesforce-upsert-contact",

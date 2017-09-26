@@ -19,7 +19,6 @@ package org.apache.camel.component.zookeeper.ha;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.apache.camel.RuntimeCamelException;
@@ -27,6 +26,7 @@ import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
 import org.apache.camel.ha.CamelClusterMember;
 import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.impl.ha.AbstractCamelClusterView;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.leader.LeaderSelector;
 import org.apache.curator.framework.recipes.leader.LeaderSelectorListenerAdapter;
@@ -40,7 +40,7 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
     private final ZooKeeperCuratorConfiguration configuration;
     private final CuratorFramework client;
     private final CuratorLocalMember localMember;
-    private LeaderSelector leaderSelector;
+    private volatile LeaderSelector leaderSelector;
 
     public ZooKeeperClusterView(CamelClusterService cluster, ZooKeeperCuratorConfiguration configuration, CuratorFramework client, String namespace) {
         super(cluster, namespace);
@@ -57,12 +57,16 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
 
     @Override
     public Optional<CamelClusterMember> getMaster() {
-        if (leaderSelector == null) {
+        if (leaderSelector == null || isStoppingOrStopped()) {
             return Optional.empty();
         }
 
         try {
-            return Optional.of(new CuratorClusterMember(leaderSelector.getLeader()));
+            Participant participant = leaderSelector.getLeader();
+
+            return ObjectHelper.equal(participant.getId(), localMember.getId())
+                ? Optional.of(localMember)
+                : Optional.of(new CuratorClusterMember(participant));
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
@@ -90,6 +94,8 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
             leaderSelector = new LeaderSelector(client, configuration.getBasePath(), new CamelLeaderElectionListener());
             leaderSelector.setId(getClusterService().getId());
             leaderSelector.start();
+        } else {
+            leaderSelector.requeue();
         }
     }
 
@@ -97,16 +103,25 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
     protected void doStop() throws Exception {
         if (leaderSelector != null) {
             leaderSelector.interruptLeadership();
-            leaderSelector.close();
-            leaderSelector = null;
+            fireLeadershipChangedEvent(getMaster());
         }
     }
 
-    class CamelLeaderElectionListener extends LeaderSelectorListenerAdapter {
+    @Override
+    protected void doShutdown() throws Exception {
+        if (leaderSelector != null) {
+            leaderSelector.close();
+        }
+    }
+
+    // ***********************************************
+    //
+    // ***********************************************
+
+    private final class CamelLeaderElectionListener extends LeaderSelectorListenerAdapter {
         @Override
         public void takeLeadership(CuratorFramework curatorFramework) throws Exception {
-            localMember.setMaster(true);
-            fireLeadershipChangedEvent(localMember);
+            fireLeadershipChangedEvent(Optional.of(localMember));
 
             while (isRunAllowed()) {
                 try {
@@ -116,26 +131,20 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
                     break;
                 }
             }
-            
-            localMember.setMaster(false);
-            getMaster().ifPresent(leader -> fireLeadershipChangedEvent(leader));
+
+            fireLeadershipChangedEvent(getMaster());
         }
     }
 
-    // ***********************************************
-    //
-    // ***********************************************
-
     private final class CuratorLocalMember implements CamelClusterMember {
-        private AtomicBoolean master = new AtomicBoolean(false);
-
-        void setMaster(boolean master) {
-            this.master.set(master);
+        @Override
+        public boolean isLeader() {
+            return leaderSelector != null ? leaderSelector.hasLeadership() : false;
         }
 
         @Override
-        public boolean isMaster() {
-            return master.get();
+        public boolean isLocal() {
+            return true;
         }
 
         @Override
@@ -157,7 +166,14 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
         }
 
         @Override
-        public boolean isMaster() {
+        public boolean isLocal() {
+            return (participant.getId() != null)
+                ? ObjectHelper.equal(participant.getId(), localMember.getId())
+                : false;
+        }
+
+        @Override
+        public boolean isLeader() {
             try {
                 return leaderSelector.getLeader().equals(this.participant);
             } catch (Exception e) {

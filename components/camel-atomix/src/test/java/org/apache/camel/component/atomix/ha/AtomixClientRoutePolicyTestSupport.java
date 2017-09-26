@@ -81,7 +81,8 @@ public abstract class AtomixClientRoutePolicyTestSupport {
 
     private void run(String id) {
         try {
-            CountDownLatch contextLatch = new CountDownLatch(1);
+            int events = ThreadLocalRandom.current().nextInt(2, 6);
+            CountDownLatch contextLatch = new CountDownLatch(events);
 
             DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
@@ -91,15 +92,10 @@ public abstract class AtomixClientRoutePolicyTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:atomix?delay=1s&period=1s&repeatCount=1")
+                    from("timer:atomix?delay=1s&period=1s")
                         .routeId("route-" + id)
-                        .process(e -> {
-                            LOGGER.debug("Node {} done", id);
-                            results.add(id);
-                            // Shutdown the context later on to give a chance to
-                            // other members to catch-up
-                            scheduler.schedule(contextLatch::countDown, 2 + ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS);
-                        });
+                        .log("From ${routeId}")
+                        .process(e -> contextLatch.countDown());
                 }
             });
 
@@ -109,6 +105,10 @@ public abstract class AtomixClientRoutePolicyTestSupport {
             context.start();
 
             contextLatch.await();
+
+            LOGGER.debug("Shutting down client node {}", id);
+            results.add(id);
+
             context.stop();
 
             latch.countDown();

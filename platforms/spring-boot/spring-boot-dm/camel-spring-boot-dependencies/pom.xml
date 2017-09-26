@@ -189,12 +189,12 @@
       <dependency>
         <groupId>org.apache.avro</groupId>
         <artifactId>avro-mapred</artifactId>
-        <version>1.8.1</version>
+        <version>1.8.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.avro</groupId>
         <artifactId>avro-mapred</artifactId>
-        <version>1.8.1</version>
+        <version>1.8.2</version>
         <classifier>hadoop2</classifier>
       </dependency>
       <dependency>
@@ -1672,6 +1672,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ldap-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ldif</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ldif-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

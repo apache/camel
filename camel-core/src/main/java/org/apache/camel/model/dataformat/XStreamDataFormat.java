@@ -42,7 +42,7 @@ import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * XStream data format
+ * XSTream data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
  *
  * @version 
  */

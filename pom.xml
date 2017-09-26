@@ -140,6 +140,7 @@
   <modules>
     <module>parent</module>
     <module>etc</module>
+    <module>bom</module>
     <module>buildingtools</module>
     <module>camel-core</module>
     <module>components</module>
@@ -230,6 +231,8 @@
                 <exclude>**/*.sh</exclude>
                 <exclude>**/*.bat</exclude>
                 <exclude>**/java9-maven-settings</exclude>
+                <!-- tooling json-simple parser -->
+                <exclude>**/src/main/java/org/json/simple/**</exclude>
                 <!-- tooling/camel-manual/src/styles/print.css use a different license -->
                 <exclude>**/src/styles/print.css</exclude>
                 <!-- tooling for component docs -->
@@ -267,6 +270,7 @@
                 <exclude>**/src/main/resources/META-INF/MANIFEST.MF</exclude>
                 <!-- examples -->
                 <exclude>**/fabric8/*.yaml</exclude>
+                <exclude>**/src/main/resources/consul/services.json</exclude>
                 <!-- generated files -->
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
