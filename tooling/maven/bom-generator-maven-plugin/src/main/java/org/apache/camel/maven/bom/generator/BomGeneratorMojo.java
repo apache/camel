@@ -35,10 +35,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -206,14 +203,21 @@ public class BomGeneratorMojo extends AbstractMojo {
         Document pom = builder.parse(sourcePom);
 
         XPath xpath = XPathFactory.newInstance().newXPath();
-        XPathExpression expr = xpath.compile("/project/parent/version");
 
-        Node node = (Node) expr.evaluate(pom, XPathConstants.NODE);
+        XPathExpression parentVersion = xpath.compile("/project/parent/version");
+        setActualVersion(pom, parentVersion);
+
+        XPathExpression projectVersion = xpath.compile("/project/version");
+        setActualVersion(pom, projectVersion);
+
+        return pom;
+    }
+
+    private void setActualVersion(Document pom, XPathExpression path) throws XPathExpressionException {
+        Node node = (Node) path.evaluate(pom, XPathConstants.NODE);
         if (node != null && node.getTextContent() != null && node.getTextContent().trim().equals("${project.version}")) {
             node.setTextContent(project.getVersion());
         }
-
-        return pom;
     }
 
     private void writePom(Document pom) throws Exception {
