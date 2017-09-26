@@ -4812,7 +4812,7 @@
                 </sourceDirectories>
                 <headerLocation>header-java.txt</headerLocation>
                 <includes>**/*.java,**/*.groovy,**/*.scala,**/*.properties,**/*.xml,**/*.xsd</includes>
-                <excludes>**/archetype-resources/**/*.java,**/archetype-resources/**/*.groovy,**/archetype-resources/**/*.scala,**/archetype-resources/**/*.xml</excludes>
+                <excludes>**/archetype-resources/**/*.java,**/archetype-resources/**/*.groovy,**/archetype-resources/**/*.scala,**/archetype-resources/**/*.xml,**/org/json/simple/**/*.java</excludes>
               </configuration>
               <goals>
                 <goal>checkstyle</goal>
