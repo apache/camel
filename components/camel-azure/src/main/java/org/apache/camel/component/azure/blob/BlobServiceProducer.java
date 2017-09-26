@@ -41,6 +41,7 @@ import com.microsoft.azure.storage.blob.ListBlobItem;
 import com.microsoft.azure.storage.blob.PageRange;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.azure.common.ExchangeUtil;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -461,19 +462,31 @@ public class BlobServiceProducer extends DefaultProducer {
     }
     
     private InputStream getInputStreamFromExchange(Exchange exchange) throws Exception {
-        Object blobObject = exchange.getIn().getMandatoryBody();
-        InputStream inputStream = null;
-        if (blobObject instanceof String) {
-            String charset = getCharsetName(exchange);
-            inputStream = new ByteArrayInputStream(((String)blobObject).getBytes(charset));
-        } else if (blobObject instanceof InputStream) {
-            inputStream = (InputStream)blobObject;
-        } else if (blobObject instanceof File) {
-            inputStream = new FileInputStream((File)blobObject);
-        } else {
-            throw new IllegalArgumentException("Unsupported blob type:" + blobObject.getClass().getName());
+        Object body = exchange.getIn().getBody();
+
+        if (body instanceof WrappedFile) {
+            // unwrap file
+            body = ((WrappedFile) body).getFile();
         }
-        return inputStream;
+
+        InputStream is;
+        if (body instanceof InputStream) {
+            is = (InputStream) body;
+        } else if (body instanceof File) {
+            is = new FileInputStream((File)body);
+        } else if (body instanceof byte[]) {
+            is = new ByteArrayInputStream((byte[]) body);
+        } else {
+            // try as input stream
+            is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
+        }
+
+        if (is == null) {
+            // fallback to string based
+            throw new IllegalArgumentException("Unsupported blob type:" + body.getClass().getName());
+        }
+
+        return is;
     }
     
     private void closeInputStreamIfNeeded(InputStream inputStream) throws IOException {
