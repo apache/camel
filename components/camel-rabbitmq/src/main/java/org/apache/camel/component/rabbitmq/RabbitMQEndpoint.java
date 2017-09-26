@@ -75,7 +75,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean autoDelete = true;
     @UriParam(label = "common", defaultValue = "true")
     private boolean durable = true;
-    @UriParam(label = "common", defaultValue = "false")
+    @UriParam(label = "common")
     private boolean exclusive;
     @UriParam(label = "producer")
     private boolean bridgeEndpoint;
@@ -111,7 +111,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private ConnectionFactory connectionFactory;
     @UriParam(label = "advanced")
     private Boolean automaticRecoveryEnabled;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", defaultValue = "5000")
     private Integer networkRecoveryInterval = 5000;
     @UriParam(label = "advanced")
     private Boolean topologyRecoveryEnabled;
@@ -160,9 +160,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam(label = "advanced")
     @Deprecated
     private ArgsConfigurer exchangeArgsConfigurer;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", defaultValue = "20000")
     private long requestTimeout = 20000;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", defaultValue = "1000")
     private long requestTimeoutCheckerInterval = 1000;
     @UriParam(label = "advanced")
     private boolean transferException;
