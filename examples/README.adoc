@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 97 (8 deprecated)
+Number of Examples: 96 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -91,8 +91,6 @@ Number of Examples: 97 (8 deprecated)
 | link:camel-example-aggregate/README.md[Aggregate] (camel-example-aggregate) | EIP | Demonstrates the persistent support for the Camel aggregator
 
 | link:camel-example-cafe/README.md[Cafe] (camel-example-cafe) | EIP | A cafe example showing how to work with Camel
-
-| link:camel-example-etl/README.md[ETL] (camel-example-etl) | EIP | An example showing how to use Camel as an Extract Transform and Load (ETL) tool
 
 | link:camel-example-hystrix/README.md[Hystrix] (camel-example-hystrix) | EIP | An example showing how to use Hystrix EIP as circuit breaker in Camel routes
 
