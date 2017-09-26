@@ -1306,6 +1306,7 @@
   </feature>
   <feature name='camel-linkedin' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature>aries-blueprint</feature>
+    <feature>pax-http-whiteboard</feature>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${cxf-version-range}'>cxf-core</feature>
     <feature version='${cxf-version-range}'>cxf-jaxrs</feature>
