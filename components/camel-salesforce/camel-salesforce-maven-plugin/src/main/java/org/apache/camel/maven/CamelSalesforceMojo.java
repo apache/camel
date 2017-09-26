@@ -68,7 +68,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
@@ -80,7 +80,6 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.log.Log4JLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.eclipse.jetty.client.HttpProxy;
 import org.eclipse.jetty.client.Origin;
@@ -90,6 +89,7 @@ import org.eclipse.jetty.client.api.Authentication;
 import org.eclipse.jetty.client.util.BasicAuthentication;
 import org.eclipse.jetty.client.util.DigestAuthentication;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.slf4j.LoggerFactory;
 
 /**
  * Goal to generate DTOs for Salesforce SObjects
@@ -496,9 +496,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
         final Properties velocityProperties = new Properties();
         velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADER, "cloader");
         velocityProperties.setProperty("cloader.resource.loader.class", ClasspathResourceLoader.class.getName());
-        velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
-        velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM + ".log4j.logger", LOG.getName());
-
+        velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, LOG.getName());
         final VelocityEngine engine = new VelocityEngine(velocityProperties);
 
         return engine;
