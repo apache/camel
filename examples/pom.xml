@@ -55,7 +55,6 @@
     <module>camel-example-cxf-proxy</module>
     <module>camel-example-cxf-tomcat</module>
     <module>camel-example-console</module>
-    <module>camel-example-etl</module>
     <module>camel-example-ftp</module>
     <module>camel-example-google-pubsub</module>
     <module>camel-example-guice-jms</module>
