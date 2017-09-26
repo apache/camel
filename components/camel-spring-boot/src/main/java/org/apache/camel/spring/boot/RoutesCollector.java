@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.StartupListener;
 import org.apache.camel.main.MainDurationEventNotifier;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -173,9 +174,19 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                             controller.getCompleted(), controller.getLatch());
                     }
 
-                    // controller will start Camel
-                    LOG.info("Starting CamelMainRunController to ensure the main thread keeps running");
-                    controller.start();
+                    camelContext.addStartupListener(new StartupListener() {
+                        @Override
+                        public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+                            // run the CamelMainRunController after the context has been started
+                            // this way we ensure that NO_START flag is honoured as it's set as
+                            // a thread local variable of the thread CamelMainRunController is
+                            // not running on
+                            if (!alreadyStarted) {
+                                LOG.info("Starting CamelMainRunController to ensure the main thread keeps running");
+                                controller.start();
+                            }
+                        }
+                    });
                 } else {
                     if (applicationContext instanceof ConfigurableApplicationContext) {
                         ConfigurableApplicationContext cac = (ConfigurableApplicationContext) applicationContext;
