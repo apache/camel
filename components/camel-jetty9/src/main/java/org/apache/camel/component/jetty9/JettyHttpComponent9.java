@@ -36,8 +36,12 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JettyHttpComponent9 extends JettyHttpComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent9.class);
 
     protected CamelHttpClient createCamelHttpClient(HttpClientTransport transport, SslContextFactory sslContextFactory) {
         return new CamelHttpClient9(transport, sslContextFactory);
@@ -52,7 +56,7 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
                                                       SslContextFactory sslcf) {
         try {
             String host = endpoint.getHttpUri().getHost();
-            int porto = endpoint.getPort();
+            int port = endpoint.getPort();
             org.eclipse.jetty.server.HttpConfiguration httpConfig = new org.eclipse.jetty.server.HttpConfiguration();
             httpConfig.setSendServerVersion(endpoint.isSendServerVersion());
             httpConfig.setSendDateHeader(endpoint.isSendDateHeader());
@@ -87,24 +91,31 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
             }
             connectionFactories.add(httpFactory);
             result.setConnectionFactories(connectionFactories);
-            result.setPort(porto);
+            result.setPort(port);
             if (host != null) {
                 result.setHost(host);
             }
-            if (getSslSocketConnectorProperties() != null && "https".equals(endpoint.getProtocol())) {
-                // must copy the map otherwise it will be deleted
-                Map<String, Object> properties = new HashMap<String, Object>(getSslSocketConnectorProperties());
-                IntrospectionSupport.setProperties(sslcf, properties);
-                if (properties.size() > 0) {
-                    throw new IllegalArgumentException("There are " + properties.size()
-                        + " parameters that couldn't be set on the SocketConnector."
-                        + " Check the uri if the parameters are spelt correctly and that they are properties of the SelectChannelConnector."
-                        + " Unknown parameters=[" + properties + "]");
-                }                
+            if (sslcf != null) {
+                if (getSslSocketConnectorProperties() != null && "https".equals(endpoint.getProtocol())) {
+                    // must copy the map otherwise it will be deleted
+                    Map<String, Object> properties = new HashMap<String, Object>(getSslSocketConnectorProperties());
+                    IntrospectionSupport.setProperties(sslcf, properties);
+                    if (properties.size() > 0) {
+                        throw new IllegalArgumentException("There are " + properties.size()
+                            + " parameters that couldn't be set on the SocketConnector."
+                            + " Check the uri if the parameters are spelt correctly and that they are properties of the SelectChannelConnector."
+                            + " Unknown parameters=[" + properties + "]");
+                    }
+                }
+
+                LOG.info("Connector on port: {} is using includeCipherSuites: {} excludeCipherSuites: {} includeProtocols: {} excludeProtocols: {}",
+                    port, sslcf.getIncludeCipherSuites(), sslcf.getExcludeCipherSuites(), sslcf.getIncludeProtocols(), sslcf.getExcludeProtocols());
             }
+
             return result;
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
+
 }
