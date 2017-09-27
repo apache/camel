@@ -34,7 +34,6 @@
 
     <properties>
         <azure-storage-java-sdk-version>5.0.0</azure-storage-java-sdk-version>
-        <powermock-easymock-version>1.6.6</powermock-easymock-version>
         <camel.osgi.export.pkg>org.apache.camel.component.azure.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>
         </camel.osgi.export.service>
