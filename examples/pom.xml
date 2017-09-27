@@ -101,6 +101,7 @@
     <module>camel-example-spring-boot-health-checks</module>
     <module>camel-example-spring-boot-infinispan</module>
     <module>camel-example-spring-boot-live-reload</module>
+    <module>camel-example-spring-boot-master</module>
     <module>camel-example-spring-boot-metrics</module>
     <module>camel-example-spring-boot-pojo</module>
     <module>camel-example-spring-boot-rest-jpa</module>
