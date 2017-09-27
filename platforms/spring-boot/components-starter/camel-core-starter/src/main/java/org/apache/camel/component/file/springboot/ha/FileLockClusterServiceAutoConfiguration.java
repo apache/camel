@@ -28,7 +28,6 @@ import org.apache.camel.spring.boot.ha.ClusteredRouteControllerAutoConfiguration
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -43,9 +42,8 @@ public class FileLockClusterServiceAutoConfiguration {
     @Autowired
     private FileLockClusterServiceConfiguration configuration;
 
-    @Bean(initMethod = "start", destroyMethod = "stop")
+    @Bean(name = "file-lock-cluster-service")
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    @ConditionalOnMissingBean
     public CamelClusterService consulClusterService() throws Exception {
         FileLockClusterService service = new FileLockClusterService();
 
@@ -53,6 +51,10 @@ public class FileLockClusterServiceAutoConfiguration {
             .ifPresent(service::setId);
         Optional.ofNullable(configuration.getRoot())
             .ifPresent(service::setRoot);
+        Optional.ofNullable(configuration.getOrder())
+            .ifPresent(service::setOrder);
+        Optional.ofNullable(configuration.getAttributes())
+            .ifPresent(service::setAttributes);
         Optional.ofNullable(configuration.getAcquireLockDelay())
             .map(TimePatternConverter::toMilliSeconds)
             .ifPresent(v -> service.setAcquireLockDelay(v, TimeUnit.MILLISECONDS));

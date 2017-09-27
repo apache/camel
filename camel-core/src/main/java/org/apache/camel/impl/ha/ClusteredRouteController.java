@@ -51,11 +51,13 @@ public class ClusteredRouteController extends DefaultRouteController {
     private final PolicyFactory policyFactory;
     private final ClusteredRouteConfiguration defaultConfiguration;
     private CamelClusterService clusterService;
+    private CamelClusterService.Selector clusterServiceSelector;
 
     public ClusteredRouteController() {
         this.routes = new CopyOnWriteArraySet<>();
         this.configurations = new ConcurrentHashMap<>();
         this.filters = new ArrayList<>();
+        this.clusterServiceSelector = ClusterServiceSelectors.DEFAULT_SELECTOR;
         this.policyFactory = new PolicyFactory();
 
         this.defaultConfiguration = new ClusteredRouteConfiguration();
@@ -133,13 +135,26 @@ public class ClusteredRouteController extends DefaultRouteController {
         return clusterService;
     }
 
+    /**
+     * Set the cluster service to use.
+     */
     public void setClusterService(CamelClusterService clusterService) {
-        // prevent replacing the service
-        if (this.clusterService != null && this.clusterService != clusterService) {
-            throw new IllegalArgumentException("CamelClusterService is already set");
-        }
+        ObjectHelper.notNull(clusterService, "CamelClusterService");
 
         this.clusterService = clusterService;
+    }
+
+    public CamelClusterService.Selector getClusterServiceSelector() {
+        return clusterServiceSelector;
+    }
+
+    /**
+     * Set the selector strategy to look-up a {@link CamelClusterService}
+     */
+    public void setClusterServiceSelector(CamelClusterService.Selector clusterServiceSelector) {
+        ObjectHelper.notNull(clusterService, "CamelClusterService.Selector");
+
+        this.clusterServiceSelector = clusterServiceSelector;
     }
 
     // *******************************
@@ -165,10 +180,10 @@ public class ClusteredRouteController extends DefaultRouteController {
 
         if (clusterService == null) {
             // Finally try to grab it from the camel context.
-            clusterService = context.hasService(CamelClusterService.class);
+            clusterService = ClusterServiceHelper.mandatoryLookupService(context, clusterServiceSelector);
         }
 
-        ObjectHelper.notNull(clusterService, "clusterService");
+        LOGGER.debug("Using ClusterService instance {} (id={}, type={})", clusterService, clusterService.getId(), clusterService.getClass().getName());
 
         if (!ServiceHelper.isStarted(clusterService)) {
             // Start the cluster service if not yet started.
@@ -294,7 +309,7 @@ public class ClusteredRouteController extends DefaultRouteController {
                     final String namespace = ObjectHelper.supplyIfEmpty(configuration.getNamespace(), defaultConfiguration::getNamespace);
                     final Duration initialDelay = ObjectHelper.supplyIfEmpty(configuration.getInitialDelay(), defaultConfiguration::getInitialDelay);
 
-                    ClusteredRoutePolicy policy = new ClusteredRoutePolicy(clusterService.getView(namespace));
+                    ClusteredRoutePolicy policy = ClusteredRoutePolicy.forView(clusterService.getView(namespace));
                     policy.setCamelContext(getCamelContext());
                     policy.setInitialDelay(initialDelay);
 

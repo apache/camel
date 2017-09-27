@@ -84,6 +84,16 @@ public class KubernetesClusterServiceConfiguration {
      */
     private Long retryPeriodMillis;
 
+    /**
+     * Custom service attributes.
+     */
+    private Map<String, Object> attributes;
+    
+    /**
+     * Service lookup order/priority.
+     */
+    private Integer order;
+
     public boolean isEnabled() {
         return enabled;
     }
@@ -180,4 +190,19 @@ public class KubernetesClusterServiceConfiguration {
         this.retryPeriodMillis = retryPeriodMillis;
     }
 
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
 }

@@ -25,7 +25,7 @@ import org.apache.camel.ha.CamelClusterService;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class CamelClusterServiceTest {
+public class ClusterServiceViewTest {
 
     @Test
     public void testViewEquality() throws Exception {

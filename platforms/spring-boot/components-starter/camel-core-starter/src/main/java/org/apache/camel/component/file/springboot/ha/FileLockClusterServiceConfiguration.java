@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file.springboot.ha;
 
+import java.util.Map;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "camel.component.file.cluster.service")
@@ -44,6 +46,16 @@ public class FileLockClusterServiceConfiguration {
      * The time to wait between attempts to try to acquire lock.
      */
     private String acquireLockInterval;
+
+    /**
+     * Custom service attributes.
+     */
+    private Map<String, Object> attributes;
+    
+    /**
+     * Service lookup order/priority.
+     */
+    private Integer order;
 
     public boolean isEnabled() {
         return enabled;
@@ -83,5 +95,21 @@ public class FileLockClusterServiceConfiguration {
 
     public void setAcquireLockInterval(String acquireLockInterval) {
         this.acquireLockInterval = acquireLockInterval;
+    }
+
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
     }
 }

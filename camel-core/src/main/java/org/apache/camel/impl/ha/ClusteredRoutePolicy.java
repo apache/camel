@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Clustered Route policy using")
-public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelContextAware {
+public final class ClusteredRoutePolicy extends RoutePolicySupport implements CamelContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClusteredRoutePolicy.class);
 
     private final AtomicBoolean leader;
@@ -61,7 +61,7 @@ public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelCon
 
     private CamelContext camelContext;
 
-    public ClusteredRoutePolicy(CamelClusterView clusterView) {
+    private ClusteredRoutePolicy(CamelClusterView clusterView) {
         this.clusterView = clusterView;
         this.leadershipEventListener = new CamelClusterLeadershipListener();
 
@@ -317,22 +317,33 @@ public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelCon
     // Static helpers
     // ****************************************************
 
-    public static ClusteredRoutePolicy forNamespace(CamelContext camelContext, String namespace) throws Exception {
-        CamelClusterService cluster = camelContext.hasService(CamelClusterService.class);
-        if (cluster == null) {
-            throw new IllegalStateException("CamelCluster service not found");
-        }
+    public static ClusteredRoutePolicy forNamespace(CamelContext camelContext, CamelClusterService.Selector selector, String namespace) throws Exception {
+        final CamelClusterService service = ClusterServiceHelper.lookupService(camelContext, selector).orElseThrow(
+            () -> new IllegalStateException("CamelCluster service not found")
+        );
 
-        return forNamespace(cluster, namespace);
+        return forNamespace(service, namespace);
     }
 
-    public static ClusteredRoutePolicy forNamespace(CamelClusterService cluster, String namespace) throws Exception {
-        return forView(cluster.getView(namespace));
+    public static ClusteredRoutePolicy forNamespace(CamelContext camelContext, String namespace) throws Exception {
+        return forNamespace(camelContext, ClusterServiceSelectors.DEFAULT_SELECTOR, namespace);
+    }
+
+    public static ClusteredRoutePolicy forNamespace(CamelClusterService service, String namespace) throws Exception {
+        return forView(service.getView(namespace));
     }
 
     public static ClusteredRoutePolicy forView(CamelClusterView view) throws Exception  {
+
         ClusteredRoutePolicy policy = new ClusteredRoutePolicy(view);
         policy.setCamelContext(view.getCamelContext());
+
+        LOGGER.debug("ClusteredRoutePolicy {} is using ClusterService instance {} (id={}, type={})",
+            policy,
+            view.getClusterService(),
+            view.getClusterService().getId(),
+            view.getClusterService().getClass().getName()
+        );
 
         return policy;
     }

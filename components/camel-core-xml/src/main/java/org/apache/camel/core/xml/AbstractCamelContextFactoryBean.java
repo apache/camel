@@ -329,10 +329,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             }
         }
         // cluster service
-        CamelClusterService clusterService = getBeanForType(CamelClusterService.class);
-        if (clusterService != null) {
-            LOG.info("Using CamelClusterService: " + clusterService);
-            getContext().addService(clusterService);
+        Map<String, CamelClusterService> clusterServices = getContext().getRegistry().findByTypeWithName(CamelClusterService.class);
+        if (clusterServices != null && !clusterServices.isEmpty()) {
+            for (Entry<String, CamelClusterService> entry : clusterServices.entrySet()) {
+                CamelClusterService service = entry.getValue();
+                LOG.info("Using CamelClusterService with id: {} and implementation: {}", service.getId(), service);
+                getContext().addService(service);
+            }
         }
         // add route policy factories
         Map<String, RoutePolicyFactory> routePolicyFactories = getContext().getRegistry().findByTypeWithName(RoutePolicyFactory.class);

@@ -24,7 +24,6 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -39,9 +38,8 @@ public class KubernetesClusterServiceAutoConfiguration {
     @Autowired
     private KubernetesClusterServiceConfiguration configuration;
 
-    @Bean(initMethod = "start", destroyMethod = "stop")
+    @Bean(name = "kubernetes-cluster-service")
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    @ConditionalOnMissingBean
     public CamelClusterService kubernetesClusterService() throws Exception {
         KubernetesClusterService service = new KubernetesClusterService();
 
