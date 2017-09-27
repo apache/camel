@@ -67,7 +67,7 @@ public class ClusteredRouteControllerAutoConfiguration {
         controller.setFilters(filters);
         controller.addFilter(new ClusteredRouteFilters.IsAutoStartup());
 
-        if (ObjectHelper.isEmpty(configuration.getClusterService())) {
+        if (ObjectHelper.isNotEmpty(configuration.getClusterService())) {
             controller.setClusterService(configuration.getClusterService());
         }
 
