@@ -35,13 +35,13 @@ public class FileProducerFileExistAppendTest extends ContextTestSupport {
     public void testAppend() throws Exception {
         template.sendBodyAndHeader("file://target/file", "Hello World\n", Exchange.FILE_NAME, "hello.txt");
 
-        context.startAllRoutes();
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World\nBye World");
         mock.expectedFileExists("target/file/hello.txt", "Hello World\nBye World");
 
         template.sendBodyAndHeader("file://target/file?fileExist=Append", "Bye World", Exchange.FILE_NAME, "hello.txt");
+
+        context.startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }
