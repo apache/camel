@@ -279,7 +279,7 @@
     <hadoop-bundle-version>1.2.1_1</hadoop-bundle-version>
     <hadoop-version>1.2.1</hadoop-version>
     <hadoop2-bundle-version>2.7.2_1</hadoop2-bundle-version>
-    <hadoop2-version>2.7.2</hadoop2-version>
+    <hadoop2-version>2.7.4</hadoop2-version>
     <hadoop2-protobuf-version>2.5.0</hadoop2-protobuf-version>
     <hamcrest-version>2.0.0.0</hamcrest-version>
     <hapi-version>2.2</hapi-version>
