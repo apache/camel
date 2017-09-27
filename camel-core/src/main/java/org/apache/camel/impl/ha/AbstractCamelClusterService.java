@@ -17,12 +17,14 @@
 package org.apache.camel.impl.ha;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.locks.StampedLock;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Ordered;
 import org.apache.camel.ha.CamelClusterMember;
 import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.ha.CamelClusterView;
@@ -36,7 +38,9 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCamelClusterService.class);
 
     private final Map<String, ViewHolder<T>> views;
+    private final Map<String, Object> attributes;
     private final StampedLock lock;
+    private int order;
     private String id;
     private CamelContext camelContext;
 
@@ -49,10 +53,21 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
     }
 
     protected AbstractCamelClusterService(String id, CamelContext camelContext) {
+        this.order = Ordered.LOWEST;
         this.id = id;
         this.camelContext = camelContext;
         this.views = new HashMap<>();
         this.lock = new StampedLock();
+        this.attributes = new HashMap<>();
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     @Override
@@ -82,6 +97,20 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes.clear();
+        this.attributes.putAll(attributes);
+    }
+
+    public void setAttribute(String key, Object value) {
+        this.attributes.put(key, value);
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return Collections.unmodifiableMap(attributes);
     }
 
     @Override

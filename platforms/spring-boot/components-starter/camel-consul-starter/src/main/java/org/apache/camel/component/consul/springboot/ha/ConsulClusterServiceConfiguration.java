@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.consul.springboot.ha;
 
+import java.util.Map;
+
 import org.apache.camel.component.consul.ha.ConsulClusterConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -31,6 +33,16 @@ public class ConsulClusterServiceConfiguration extends ConsulClusterConfiguratio
      */
     private String id;
 
+    /**
+     * Custom service attributes.
+     */
+    private Map<String, Object> attributes;
+    
+    /**
+     * Service lookup order/priority.
+     */
+    private Integer order;
+
     public boolean isEnabled() {
         return enabled;
     }
@@ -45,5 +57,21 @@ public class ConsulClusterServiceConfiguration extends ConsulClusterConfiguratio
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
     }
 }

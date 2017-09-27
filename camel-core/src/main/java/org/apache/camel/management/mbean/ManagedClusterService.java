@@ -25,7 +25,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.mbean.ManagedClusterServiceMBean;
 import org.apache.camel.ha.CamelClusterService;
-import org.apache.camel.ha.CamelClusterServiceHelper;
+import org.apache.camel.impl.ha.ClusterServiceHelper;
 import org.apache.camel.spi.ManagementStrategy;
 
 public class ManagedClusterService implements ManagedClusterServiceMBean {
@@ -84,14 +84,14 @@ public class ManagedClusterService implements ManagedClusterServiceMBean {
 
     @Override
     public Collection<String> getNamespaces() {
-        return CamelClusterServiceHelper.lookupService(context)
+        return ClusterServiceHelper.lookupService(context)
             .map(CamelClusterService::getNamespaces)
             .orElseGet(Collections::emptyList);
     }
 
     @Override
     public void startView(String namespace) throws Exception {
-        Optional<CamelClusterService> service = CamelClusterServiceHelper.lookupService(context);
+        Optional<CamelClusterService> service = ClusterServiceHelper.lookupService(context);
         if (service.isPresent()) {
             service.get().startView(namespace);
         }
@@ -99,7 +99,7 @@ public class ManagedClusterService implements ManagedClusterServiceMBean {
 
     @Override
     public void stopView(String namespace) throws Exception {
-        Optional<CamelClusterService> service = CamelClusterServiceHelper.lookupService(context);
+        Optional<CamelClusterService> service = ClusterServiceHelper.lookupService(context);
         if (service.isPresent()) {
             service.get().stopView(namespace);
         }
@@ -107,7 +107,7 @@ public class ManagedClusterService implements ManagedClusterServiceMBean {
 
     @Override
     public boolean isLeader(String namespace) {
-        return CamelClusterServiceHelper.lookupService(context)
+        return ClusterServiceHelper.lookupService(context)
             .map(s -> s.isLeader(namespace))
             .orElse(false);
     }

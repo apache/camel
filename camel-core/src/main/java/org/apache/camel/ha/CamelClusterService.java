@@ -17,12 +17,21 @@
 package org.apache.camel.ha;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Ordered;
 import org.apache.camel.Service;
 import org.apache.camel.spi.IdAware;
 
-public interface CamelClusterService extends Service, CamelContextAware, IdAware {
+public interface CamelClusterService extends Service, CamelContextAware, IdAware, Ordered {
+
+    @Override
+    default int getOrder() {
+        return Ordered.LOWEST;
+    }
 
     /**
      * Get a view of the cluster bound to a namespace creating it if needed. Multiple
@@ -68,6 +77,13 @@ public interface CamelClusterService extends Service, CamelContextAware, IdAware
     boolean isLeader(String namespace);
 
     /**
+     * Attributes associated to the service.
+     */
+    default Map<String, Object> getAttributes() {
+        return Collections.emptyMap();
+    }
+
+    /**
      * Access the underlying concrete CamelClusterService implementation to
      * provide access to further features.
      *
@@ -82,5 +98,12 @@ public interface CamelClusterService extends Service, CamelContextAware, IdAware
         throw new IllegalArgumentException(
             "Unable to unwrap this CamelClusterService type (" + getClass() + ") to the required type (" + clazz + ")"
         );
+    }
+
+    interface Selector {
+        /**
+         * Select a specific CamelClusterService instance among a collection.
+         */
+        Optional<CamelClusterService> select(Collection<CamelClusterService> services);
     }
 }
