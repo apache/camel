@@ -1411,7 +1411,6 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-metrics/${project.version}</bundle>
   </feature>
-
   <feature name='camel-milo' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.javassist/javassist/${javassist-version}</bundle>
@@ -1435,7 +1434,6 @@
     <bundle dependency='true'>mvn:org.eclipse.milo/sdk-client/${milo-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-milo/${project.version}</bundle>
   </feature>
-
   <feature name='camel-mina' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/${mina-bundle-version}</bundle>
