@@ -192,8 +192,6 @@
     <dropbox-version>1.8.2</dropbox-version>
     <easymock-version>3.4</easymock-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
-    <eclipse-birt-version>3.8.1.v20120830-144521</eclipse-birt-version>
-    <eclipse-birt-services-version>3.3.100.v20120522-1822</eclipse-birt-services-version>   
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
     <ehcache-version>2.10.1</ehcache-version>
