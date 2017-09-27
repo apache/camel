@@ -181,6 +181,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             long timeout = (Long) answer.get("timeout");
             answer.put("shutdownTimeout", "" + unit.toSeconds(timeout));
             answer.put("applicationContextClassLoader", answer.get("applicationContextClassName"));
+            answer.put("HeadersMapFactory", answer.get("headersMapFactoryClassName"));
         }
 
         return answer;
