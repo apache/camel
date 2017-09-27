@@ -65,6 +65,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "ApplicationContext class name")
     String getApplicationContextClassName();
 
+    @ManagedAttribute(description = "HeadersMapFactory class name")
+    String getHeadersMapFactoryClassName();
+
     @Deprecated
     @ManagedOperation(description = "Gets the value of a Camel global option")
     String getProperty(String key) throws Exception;

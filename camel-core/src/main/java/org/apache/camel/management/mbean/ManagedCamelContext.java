@@ -137,10 +137,15 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public String getApplicationContextClassName() {
         if (context.getApplicationContextClassLoader() != null) {
-            return context.getApplicationContextClassLoader().toString();
+            return context.getApplicationContextClassLoader().getClass().getName();
         } else {
             return null;
         }
+    }
+
+    @Override
+    public String getHeadersMapFactoryClassName() {
+        return context.getHeadersMapFactory().getClass().getName();
     }
 
     @Deprecated
