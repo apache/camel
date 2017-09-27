@@ -908,6 +908,11 @@
     <bundle>mvn:org.apache.camel/camel-hdfs2/${project.version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hadoop-client/${hadoop2-bundle-version}</bundle>
   </feature>
+  <feature name='camel-headersmap' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:com.cedarsoftware/java-util/${java-util-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-headersmap/${project.version}</bundle>
+  </feature>
   <feature name='camel-hipchat' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
