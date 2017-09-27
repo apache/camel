@@ -29,18 +29,18 @@ public class ApplicationConfiguration {
             public void configure() throws Exception {
                 from("timer:foo?period=1s")
                     .routeId("foo")
-                    .process(e -> { 
-                        throw new RuntimeCamelException("fail (foo)"); 
+                    .process(e -> {
+                        throw new RuntimeCamelException("This is a forced exception to have health check monitor this failure (route=foo)"); 
                     });
                 from("timer:bar?period=1s")
                     .routeId("bar")
-                    .process(e -> { 
-                        throw new RuntimeCamelException("fail (bar)"); 
+                    .process(e -> {
+                        throw new RuntimeCamelException("This is a forced exception to have health check monitor this failure (route=bar)");
                     });
                 from("timer:slow?period=1s")
                     .routeId("slow")
-                    .process(e -> { 
-                        Thread.sleep(1200); 
+                    .process(e -> {
+                        Thread.sleep(1200);
                     });
             }
         };
@@ -56,4 +56,3 @@ public class ApplicationConfiguration {
         return new ApplicationCheck("local", "my-check-2");
     }
 }
-
