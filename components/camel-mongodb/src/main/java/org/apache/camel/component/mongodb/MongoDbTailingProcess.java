@@ -94,7 +94,9 @@ public class MongoDbTailingProcess implements Runnable {
     }
 
     private Boolean isCollectionCapped() {
-        return endpoint.getMongoDatabase().runCommand(createCollStatsCommand()).getBoolean(CAPPED_KEY);
+        // A non-capped collection does not return a "capped" key/value, so we have to deal with null here
+        Boolean result = endpoint.getMongoDatabase().runCommand(createCollStatsCommand()).getBoolean(CAPPED_KEY);
+        return (result != null ? result : false);
     }
 
     private BasicDBObject createCollStatsCommand() {
