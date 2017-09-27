@@ -42,7 +42,7 @@ public class DockerProducerTestIT extends DockerITTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                    .to("docker://imagelist")
+                    .to("docker://imagelist?maxTotalConnections=10")
                     .log("${body}")
                     .to("mock:result");
             }
