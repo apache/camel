@@ -30,14 +30,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockitoAnnotations;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(BonitaAPIUtil.class)
 public class BonitaAPIUtilPrepareInputsTest {
 
     @Mock
@@ -47,6 +44,7 @@ public class BonitaAPIUtilPrepareInputsTest {
 
     @Before
     public void setup() {
+        MockitoAnnotations.initMocks(this);
         bonitaApiUtil = BonitaAPIUtil
                 .getInstance(new BonitaAPIConfig("hostname", "port", "username", "password"));
         Mockito.when(processDefinition.getName()).thenReturn("processName");
