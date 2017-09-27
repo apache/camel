@@ -282,6 +282,7 @@
 	* [Linkedin](linkedin-component.adoc)
 	* [Lucene](lucene-component.adoc)
 	* [Lumberjack](lumberjack-component.adoc)
+	* [Master](master-component.adoc)
 	* [Metrics](metrics-component.adoc)
 	* [Mina](mina-component.adoc)
 	* [Mina2](mina2-component.adoc)
