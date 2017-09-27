@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 96 (8 deprecated)
+Number of Examples: 97 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -79,6 +79,8 @@ Number of Examples: 96 (8 deprecated)
 | link:camel-example-spring-cloud-servicecall/README.adoc[Spring Cloud Servicecall] (camel-example-spring-cloud-servicecall) | Cloud | An example showing how to work with Camel ServiceCall EIP and Spring Cloud
 
 | link:camel-example-spring-boot-clustered-route-controller/readme.adoc[Spring Boot Clustered Route Controller] (camel-example-spring-boot-clustered-route-controller) | Clustering | An example showing how to work with Camel's Clustered Route Controller and Spring Boot
+
+| link:camel-example-spring-boot-master/readme.adoc[Spring Boot Master] (camel-example-spring-boot-master) | Clustering | An example showing how to work with Camel's Master component and Spring Boot
 
 | link:camel-example-cdi-cassandraql/README.md[CDI Cassandra] (camel-example-cdi-cassandraql) | Database | Cassandraql CDI example
 
