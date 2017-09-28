@@ -33,6 +33,10 @@
   <description>Core Camel Commands</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.15.0</firstVersion>
+    <label>tooling</label>
+
     <camel.osgi.export.pkg>org.apache.camel.commands.*</camel.osgi.export.pkg>
   </properties>
 

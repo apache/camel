@@ -33,6 +33,10 @@
   <name>Camel :: Platforms :: Apache Karaf :: Commands</name>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.8.0</firstVersion>
+    <label>tooling</label>
+
     <camel.osgi.export.pkg>org.apache.camel.karaf.commands.*</camel.osgi.export.pkg>
   </properties>
 

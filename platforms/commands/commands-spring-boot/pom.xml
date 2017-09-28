@@ -33,7 +33,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-      <camel.osgi.export.pkg />
+      <!-- use by camel-catalog -->
+      <firstVersion>2.17.0</firstVersion>
+      <label>tooling</label>
+
+      <camel.osgi.export.pkg/>
     </properties>
 
     <dependencies>

@@ -33,6 +33,10 @@
   <description>Camel Commands using Jolokia</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.15.0</firstVersion>
+    <label>tooling</label>
+
     <camel.osgi.export.pkg>org.apache.camel.commands.jolokia*</camel.osgi.export.pkg>
   </properties>
 
