@@ -40,6 +40,7 @@ import org.apache.camel.ha.CamelClusterView;
 import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReferenceCount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,17 +53,27 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private final Set<Route> startedRoutes;
     private final Set<Route> stoppedRoutes;
     private final ReferenceCount refCount;
-    private final CamelClusterView clusterView;
     private final CamelClusterEventListener.Leadership leadershipEventListener;
     private final CamelContextStartupListener listener;
     private final AtomicBoolean contextStarted;
+
+    private final String namespace;
+    private final CamelClusterService.Selector clusterServiceSelector;
+    private CamelClusterService clusterService;
+    private CamelClusterView clusterView;
+
     private Duration initialDelay;
     private ScheduledExecutorService executorService;
 
     private CamelContext camelContext;
 
-    private ClusteredRoutePolicy(CamelClusterView clusterView) {
-        this.clusterView = clusterView;
+    private ClusteredRoutePolicy(CamelClusterService clusterService, CamelClusterService.Selector clusterServiceSelector, String namespace) {
+        this.namespace = namespace;
+        this.clusterService = clusterService;
+        this.clusterServiceSelector = clusterServiceSelector;
+
+        ObjectHelper.notNull(namespace, "Namespace");
+
         this.leadershipEventListener = new CamelClusterLeadershipListener();
 
         this.stoppedRoutes = new HashSet<>();
@@ -153,6 +164,24 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         this.stoppedRoutes.add(route);
 
         startManagedRoutes();
+    }
+
+    @Override
+    public void doStart() throws Exception {
+        if (clusterService == null) {
+            clusterService = ClusterServiceHelper.lookupService(camelContext, clusterServiceSelector).orElseThrow(
+                () -> new IllegalStateException("CamelCluster service not found")
+            );
+        }
+
+        LOGGER.debug("ClusteredRoutePolicy {} is using ClusterService instance {} (id={}, type={})",
+            this,
+            clusterService,
+            clusterService.getId(),
+            clusterService.getClass().getName()
+        );
+
+        clusterView = clusterService.getView(namespace);
     }
 
     @Override
@@ -318,11 +347,10 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     // ****************************************************
 
     public static ClusteredRoutePolicy forNamespace(CamelContext camelContext, CamelClusterService.Selector selector, String namespace) throws Exception {
-        final CamelClusterService service = ClusterServiceHelper.lookupService(camelContext, selector).orElseThrow(
-            () -> new IllegalStateException("CamelCluster service not found")
-        );
+        ClusteredRoutePolicy policy = new ClusteredRoutePolicy(null, selector, namespace);
+        policy.setCamelContext(camelContext);
 
-        return forNamespace(service, namespace);
+        return policy;
     }
 
     public static ClusteredRoutePolicy forNamespace(CamelContext camelContext, String namespace) throws Exception {
@@ -330,21 +358,14 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     }
 
     public static ClusteredRoutePolicy forNamespace(CamelClusterService service, String namespace) throws Exception {
-        return forView(service.getView(namespace));
+        return new ClusteredRoutePolicy(service, ClusterServiceSelectors.DEFAULT_SELECTOR, namespace);
     }
 
-    public static ClusteredRoutePolicy forView(CamelClusterView view) throws Exception  {
+    public static ClusteredRoutePolicy forNamespace(CamelClusterService.Selector selector, String namespace) throws Exception {
+        return new ClusteredRoutePolicy(null, selector, namespace);
+    }
 
-        ClusteredRoutePolicy policy = new ClusteredRoutePolicy(view);
-        policy.setCamelContext(view.getCamelContext());
-
-        LOGGER.debug("ClusteredRoutePolicy {} is using ClusterService instance {} (id={}, type={})",
-            policy,
-            view.getClusterService(),
-            view.getClusterService().getId(),
-            view.getClusterService().getClass().getName()
-        );
-
-        return policy;
+    public static ClusteredRoutePolicy forNamespace(String namespace) throws Exception {
+        return forNamespace(ClusterServiceSelectors.DEFAULT_SELECTOR, namespace);
     }
 }

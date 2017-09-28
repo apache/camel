@@ -309,7 +309,7 @@ public class ClusteredRouteController extends DefaultRouteController {
                     final String namespace = ObjectHelper.supplyIfEmpty(configuration.getNamespace(), defaultConfiguration::getNamespace);
                     final Duration initialDelay = ObjectHelper.supplyIfEmpty(configuration.getInitialDelay(), defaultConfiguration::getInitialDelay);
 
-                    ClusteredRoutePolicy policy = ClusteredRoutePolicy.forView(clusterService.getView(namespace));
+                    ClusteredRoutePolicy policy = ClusteredRoutePolicy.forNamespace(clusterService, namespace);
                     policy.setCamelContext(getCamelContext());
                     policy.setInitialDelay(initialDelay);
 

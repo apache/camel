@@ -32,7 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atomix.client.AtomixFactory;
 import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ha.ClusteredRoutePolicyFactory;
+import org.apache.camel.impl.ha.ClusteredRoutePolicy;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Assert;
 import org.junit.Test;
@@ -88,12 +88,12 @@ public abstract class AtomixClientRoutePolicyTestSupport {
             context.disableJMX();
             context.setName("context-" + id);
             context.addService(createClusterService(id, address));
-            context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     from("timer:atomix?delay=1s&period=1s")
                         .routeId("route-" + id)
+                        .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
                         .log("From ${routeId}")
                         .process(e -> contextLatch.countDown());
                 }
