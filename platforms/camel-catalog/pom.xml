@@ -32,6 +32,12 @@
   <name>Camel :: Platforms :: Camel Catalog</name>
   <description>Camel Catalog</description>
 
+  <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.15.0</firstVersion>
+    <label>catalog</label>
+  </properties>
+
   <dependencies>
 
     <!-- required dependencies by camel-catalog -->

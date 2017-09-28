@@ -32,6 +32,12 @@
   <name>Camel :: Platforms :: Camel Catalog :: REST</name>
   <description>Camel Catalog REST</description>
 
+  <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.19.0</firstVersion>
+    <label>catalog</label>
+  </properties>
+
   <dependencies>
 
     <dependency>

@@ -33,6 +33,10 @@
   <description>Camel Catalog Connector</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.19.0</firstVersion>
+    <label>catalog</label>
+
     <camel.osgi.export.pkg>
       org.apache.camel.catalog.connector
     </camel.osgi.export.pkg>

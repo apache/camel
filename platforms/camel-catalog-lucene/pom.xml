@@ -33,6 +33,10 @@
   <description>Camel Catalog Lucene</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.17.0</firstVersion>
+    <label>catalog</label>
+
     <camel.osgi.export.pkg>
       org.apache.camel.catalog.lucene
     </camel.osgi.export.pkg>
