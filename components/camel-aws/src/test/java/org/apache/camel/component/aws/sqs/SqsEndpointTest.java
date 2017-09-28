@@ -22,9 +22,9 @@ import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
 
 import org.apache.camel.impl.DefaultCamelContext;
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 
 public class SqsEndpointTest {
@@ -34,7 +34,7 @@ public class SqsEndpointTest {
 
     @Before
     public void setUp() throws Exception {
-        amazonSQSClient = EasyMock.createMock(AmazonSQSClient.class);
+        amazonSQSClient = Mockito.mock(AmazonSQSClient.class);
         
         SqsConfiguration config = new SqsConfiguration();
         config.setQueueName("test-queue");
@@ -46,30 +46,27 @@ public class SqsEndpointTest {
 
     @Test
     public void doStartShouldNotCallUpdateQueueAttributesIfQueueExistAndNoOptionIsSpecified() throws Exception {
-        EasyMock.expect(amazonSQSClient.listQueues())
-            .andReturn(new ListQueuesResult().withQueueUrls("https://sqs.us-east-1.amazonaws.com/ID/dummy-queue", "https://sqs.us-east-1.amazonaws.com/ID/test-queue"));
-        
-        EasyMock.replay(amazonSQSClient);
+        Mockito.when(amazonSQSClient.listQueues())
+            .thenReturn(new ListQueuesResult().withQueueUrls("https://sqs.us-east-1.amazonaws.com/ID/dummy-queue", "https://sqs.us-east-1.amazonaws.com/ID/test-queue"));
         
         endpoint.doStart();
         
-        EasyMock.verify(amazonSQSClient);
+        Mockito.verify(amazonSQSClient).listQueues();
     }
     
     @Test
     public void doStartWithDifferentQueueOwner() throws Exception {
 
-        EasyMock.expect(amazonSQSClient.getQueueUrl(new GetQueueUrlRequest("test-queue")
-                            .withQueueOwnerAWSAccountId("111222333")))
-            .andReturn(new GetQueueUrlResult()
+        GetQueueUrlRequest expectedGetQueueUrlRequest = new GetQueueUrlRequest("test-queue")
+                            .withQueueOwnerAWSAccountId("111222333");
+        Mockito.when(amazonSQSClient.getQueueUrl(expectedGetQueueUrlRequest))
+            .thenReturn(new GetQueueUrlResult()
                            .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue"));
-
-        EasyMock.replay(amazonSQSClient);
 
         endpoint.getConfiguration().setQueueOwnerAWSAccountId("111222333");
         endpoint.doStart();
 
-        EasyMock.verify(amazonSQSClient);
+        Mockito.verify(amazonSQSClient).getQueueUrl(expectedGetQueueUrlRequest);
 
     }
 }
