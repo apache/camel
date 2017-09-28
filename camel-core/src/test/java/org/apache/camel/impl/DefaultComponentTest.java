@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.TypeConversionException;
 
 /**
  * Unit test for helper methods on the DefaultComponent.
@@ -91,6 +92,27 @@ public class DefaultComponentTest extends ContextTestSupport {
         parameters.put("date", "beginning");
         value = my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class);
         assertEquals(new Date(0), value);
+    }
+
+    public void testResolveAndRemoveReferenceParameterWithConversion() {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("number", "#numeric");
+        MyComponent my = new MyComponent(this.context);
+        Integer value = my.resolveAndRemoveReferenceParameter(parameters, "number", Integer.class);
+        assertEquals(12345, value.intValue());
+    }
+
+    public void testResolveAndRemoveReferenceParameterWithFailedConversion() {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("number", "#non-numeric");
+        MyComponent my = new MyComponent(this.context);
+        try {
+            my.resolveAndRemoveReferenceParameter(parameters, "number", Integer.class);
+        } catch (TypeConversionException ex) {
+            assertEquals("Error during type conversion from type: java.lang.String " +
+                    "to the required type: java.lang.Integer " +
+                    "with value abc due For input string: \"abc\"", ex.getMessage());
+        }
     }
 
     public void testResolveAndRemoveReferenceParameterNotInRegistry() {
@@ -229,6 +251,8 @@ public class DefaultComponentTest extends ContextTestSupport {
         jndiRegistry.bind("bean1", bean1);
         jndiRegistry.bind("bean2", bean2);
         jndiRegistry.bind("listBean", Arrays.asList(bean1, bean2));
+        jndiRegistry.bind("numeric", "12345");
+        jndiRegistry.bind("non-numeric", "abc");
         return jndiRegistry;
     }
 

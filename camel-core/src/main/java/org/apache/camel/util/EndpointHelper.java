@@ -321,9 +321,9 @@ public final class EndpointHelper {
     public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type, boolean mandatory) {
         String valueNoHash = StringHelper.replaceAll(value, "#", "");
         if (mandatory) {
-            return CamelContextHelper.mandatoryLookup(context, valueNoHash, type);
+            return CamelContextHelper.mandatoryLookupAndConvert(context, valueNoHash, type);
         } else {
-            return CamelContextHelper.lookup(context, valueNoHash, type);
+            return CamelContextHelper.lookupAndConvert(context, valueNoHash, type);
         }
     }
 
