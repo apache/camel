@@ -868,101 +868,101 @@ Number of Data Formats: 48 in 39 JAR artifacts (2 deprecated)
 |===
 | Data Format | Available From | Description
 
-| link:camel-asn1/src/main/docs/asn1-dataformat.adoc[ASN.1 File] (camel-asn1) | 2.20 | Camel ASN.1 support
+| link:camel-asn1/src/main/docs/asn1-dataformat.adoc[ASN.1 File] (camel-asn1) | 2.20 | The ASN.1 data format is used for file transfer with telecommunications protocols.
 
-| link:camel-avro/src/main/docs/avro-dataformat.adoc[Avro] (camel-avro) | 2.14 | Camel Avro data format
+| link:camel-avro/src/main/docs/avro-dataformat.adoc[Avro] (camel-avro) | 2.14 | The Avro data format is used for serialization and deserialization of messages using Apache Avro binary dataformat.
 
-| link:camel-barcode/src/main/docs/barcode-dataformat.adoc[Barcode] (camel-barcode) | 2.14 | Camel Barcode (e.g. QRcode, PDF417, DataMatrix) support
+| link:camel-barcode/src/main/docs/barcode-dataformat.adoc[Barcode] (camel-barcode) | 2.14 | The Barcode data format is used for creating barccode images (such as QR-Code)
 
-| link:camel-base64/src/main/docs/base64-dataformat.adoc[Base64] (camel-base64) | 2.11 | Camel Base64 data format support
+| link:camel-base64/src/main/docs/base64-dataformat.adoc[Base64] (camel-base64) | 2.11 | The Base64 data format is used for base64 encoding and decoding.
 
-| link:camel-beanio/src/main/docs/beanio-dataformat.adoc[BeanIO] (camel-beanio) | 2.10 | Camel BeanIO data format support
+| link:camel-beanio/src/main/docs/beanio-dataformat.adoc[BeanIO] (camel-beanio) | 2.10 | The BeanIO data format is used for working with flat payloads (such as CSV delimited or fixed length formats).
 
-| link:camel-bindy/src/main/docs/bindy-dataformat.adoc[Bindy CSV] (camel-bindy) | 2.0 | Camel Bindy data format support
+| link:camel-bindy/src/main/docs/bindy-dataformat.adoc[Bindy CSV] (camel-bindy) | 2.0 | The Bindy data format is used for working with flat payloads (such as CSV delimited fixed length formats or FIX messages).
 
-| link:camel-bindy/src/main/docs/bindy-dataformat.adoc[Bindy Fixed Length] (camel-bindy) | 2.0 | Camel Bindy data format support
+| link:camel-bindy/src/main/docs/bindy-dataformat.adoc[Bindy Fixed Length] (camel-bindy) | 2.0 | The Bindy data format is used for working with flat payloads (such as CSV delimited fixed length formats or FIX messages).
 
-| link:camel-bindy/src/main/docs/bindy-dataformat.adoc[Bindy Key Value Pair] (camel-bindy) | 2.0 | Camel Bindy data format support
+| link:camel-bindy/src/main/docs/bindy-dataformat.adoc[Bindy Key Value Pair] (camel-bindy) | 2.0 | The Bindy data format is used for working with flat payloads (such as CSV delimited fixed length formats or FIX messages).
 
-| link:camel-boon/src/main/docs/boon-dataformat.adoc[Boon] (camel-boon) | 2.16 | Camel Boon support
+| link:camel-boon/src/main/docs/boon-dataformat.adoc[Boon] (camel-boon) | 2.16 | Boon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
-| link:camel-castor/src/main/docs/castor-dataformat.adoc[Castor] (camel-castor) | 2.1 | Camel Castor data format support
+| link:camel-castor/src/main/docs/castor-dataformat.adoc[Castor] (camel-castor) | 2.1 | Castor data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
 
-| link:camel-crypto/src/main/docs/crypto-dataformat.adoc[Crypto (Java Cryptographic Extension)] (camel-crypto) | 2.3 | Camel Cryptographic Support
+| link:camel-crypto/src/main/docs/crypto-dataformat.adoc[Crypto (Java Cryptographic Extension)] (camel-crypto) | 2.3 | Crypto data format is used for encrypting and decrypting of messages using Java Cryptographic Extension.
 
-| link:camel-csv/src/main/docs/csv-dataformat.adoc[CSV] (camel-csv) | 1.3 | Camel CSV data format support
+| link:camel-csv/src/main/docs/csv-dataformat.adoc[CSV] (camel-csv) | 1.3 | The CSV data format is used for handling CSV payloads.
 
-| link:camel-flatpack/src/main/docs/flatpack-dataformat.adoc[Flatpack] (camel-flatpack) | 2.1 | Camel FlatPack support
+| link:camel-flatpack/src/main/docs/flatpack-dataformat.adoc[Flatpack] (camel-flatpack) | 2.1 | The Flatpack data format is used for working with flat payloads (such as CSV delimited or fixed length formats).
 
 | link:../camel-core/src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0 | The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).
 
-| link:camel-hessian/src/main/docs/hessian-dataformat.adoc[Hessian] (camel-hessian) | 2.17 | *deprecated* Hessian serialization support
+| link:camel-hessian/src/main/docs/hessian-dataformat.adoc[Hessian] (camel-hessian) | 2.17 | *deprecated* Hessian data format is used for marshalling and unmarshalling messages using Cauchos Hessian format.
 
-| link:camel-hl7/src/main/docs/hl7-dataformat.adoc[HL7] (camel-hl7) | 2.0 | Camel HL7 support
+| link:camel-hl7/src/main/docs/hl7-dataformat.adoc[HL7] (camel-hl7) | 2.0 | The HL7 data format can be used to marshal or unmarshal HL7 (Health Care) model objects.
 
-| link:camel-ical/src/main/docs/ical-dataformat.adoc[iCal] (camel-ical) | 2.12 | Camel iCal component
+| link:camel-ical/src/main/docs/ical-dataformat.adoc[iCal] (camel-ical) | 2.12 | The iCal dataformat is used for working with iCalendar messages.
 
-| link:camel-jacksonxml/src/main/docs/jacksonxml-dataformat.adoc[JacksonXML] (camel-jacksonxml) | 2.16 | Camel Jackson XML support
+| link:camel-jacksonxml/src/main/docs/jacksonxml-dataformat.adoc[JacksonXML] (camel-jacksonxml) | 2.16 | JacksonXML data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
 
 | link:../camel-core/src/main/docs/serialization-dataformat.adoc[Java Object Serialization] (camel-core) | 2.12 | Serialization is a data format which uses the standard Java Serialization mechanism to unmarshal a binary payload into Java objects or to marshal Java objects into a binary blob.
 
-| link:camel-jaxb/src/main/docs/jaxb-dataformat.adoc[JAXB] (camel-jaxb) | 1.0 | Camel JAXB support
+| link:camel-jaxb/src/main/docs/jaxb-dataformat.adoc[JAXB] (camel-jaxb) | 1.0 | JAXB data format uses the JAXB2 XML marshalling standard to unmarshal an XML payload into Java objects or to marshal Java objects into an XML payload.
 
-| link:camel-jibx/src/main/docs/jibx-dataformat.adoc[JiBX] (camel-jibx) | 2.6 | Camel Jibx support
+| link:camel-jibx/src/main/docs/jibx-dataformat.adoc[JiBX] (camel-jibx) | 2.6 | JiBX data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
 
-| link:camel-fastjson/src/main/docs/json-fastjson-dataformat.adoc[JSon Fastjson] (camel-fastjson) | 2.20 | Camel Fastjson support
+| link:camel-fastjson/src/main/docs/json-fastjson-dataformat.adoc[JSon Fastjson] (camel-fastjson) | 2.20 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
-| link:camel-gson/src/main/docs/json-gson-dataformat.adoc[JSon GSon] (camel-gson) | 2.10 | Camel Gson support
+| link:camel-gson/src/main/docs/json-gson-dataformat.adoc[JSon GSon] (camel-gson) | 2.10 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
-| link:camel-jackson/src/main/docs/json-jackson-dataformat.adoc[JSon Jackson] (camel-jackson) | 2.0 | Camel Jackson support
+| link:camel-jackson/src/main/docs/json-jackson-dataformat.adoc[JSon Jackson] (camel-jackson) | 2.0 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
-| link:camel-johnzon/src/main/docs/json-johnzon-dataformat.adoc[JSon Johnzon] (camel-johnzon) | 2.18 | Camel Johnzon support
+| link:camel-johnzon/src/main/docs/json-johnzon-dataformat.adoc[JSon Johnzon] (camel-johnzon) | 2.18 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
-| link:camel-xstream/src/main/docs/json-xstream-dataformat.adoc[JSon XStream] (camel-xstream) | 2.0 | Camel XStream support
+| link:camel-xstream/src/main/docs/json-xstream-dataformat.adoc[JSon XStream] (camel-xstream) | 2.0 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
-| link:camel-lzf/src/main/docs/lzf-dataformat.adoc[LZF Deflate Compression] (camel-lzf) | 2.17 | Camel LZF support
+| link:camel-lzf/src/main/docs/lzf-dataformat.adoc[LZF Deflate Compression] (camel-lzf) | 2.17 | The LZF data format is a message compression and de-compression format (uses the LZF deflate algorithm).
 
-| link:camel-mail/src/main/docs/mime-multipart-dataformat.adoc[MIME Multipart] (camel-mail) | 2.17 | Camel Mail support
+| link:camel-mail/src/main/docs/mime-multipart-dataformat.adoc[MIME Multipart] (camel-mail) | 2.17 | The MIME Multipart data format can marshal a Camel message with attachments into a Camel message having a MIME-Multipart message as message body (and no attachments) and vise-versa when unmarshalling.
 
-| link:camel-crypto/src/main/docs/pgp-dataformat.adoc[PGP] (camel-crypto) | 2.9 | Camel Cryptographic Support
+| link:camel-crypto/src/main/docs/pgp-dataformat.adoc[PGP] (camel-crypto) | 2.9 | PGP data format is used for encrypting and decrypting of messages using Java Cryptographic Extension and PGP.
 
-| link:camel-protobuf/src/main/docs/protobuf-dataformat.adoc[Protobuf] (camel-protobuf) | 2.2 | Camel Google Protobuf data format support
+| link:camel-protobuf/src/main/docs/protobuf-dataformat.adoc[Protobuf] (camel-protobuf) | 2.2 | The Protobuf data format is used for serializing between Java objects and the Google Protobuf protocol.
 
-| link:camel-rss/src/main/docs/rss-dataformat.adoc[RSS] (camel-rss) | 2.1 | Camel RSS support
+| link:camel-rss/src/main/docs/rss-dataformat.adoc[RSS] (camel-rss) | 2.1 | RSS data format is used for working with RSS sync feed Java Objects and transforming to XML and vice-versa.
 
-| link:camel-soap/src/main/docs/soapjaxb-dataformat.adoc[SOAP] (camel-soap) | 2.3 | Camel SOAP support
+| link:camel-soap/src/main/docs/soapjaxb-dataformat.adoc[SOAP] (camel-soap) | 2.3 | SOAP is a data format which uses JAXB2 and JAX-WS annotations to marshal and unmarshal SOAP payloads.
 
 | link:../camel-core/src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | 2.12 | String data format is a textual based format that supports character encoding.
 
-| link:camel-syslog/src/main/docs/syslog-dataformat.adoc[Syslog] (camel-syslog) | 2.6 | Camel Syslog support
+| link:camel-syslog/src/main/docs/syslog-dataformat.adoc[Syslog] (camel-syslog) | 2.6 | The Syslog dataformat is used for working with RFC3164 and RFC5424 messages (logging and monitoring).
 
-| link:camel-tarfile/src/main/docs/tarfile-dataformat.adoc[Tar File] (camel-tarfile) | 2.16 | Camel Tar file support
+| link:camel-tarfile/src/main/docs/tarfile-dataformat.adoc[Tar File] (camel-tarfile) | 2.16 | The Tar File data format is a message compression and de-compression format of tar files.
 
-| link:camel-thrift/src/main/docs/thrift-dataformat.adoc[Thrift] (camel-thrift) | 2.20 | Camel Apache Thrift data format and RPC support
+| link:camel-thrift/src/main/docs/thrift-dataformat.adoc[Thrift] (camel-thrift) | 2.20 | The Thrift data format is used for serialization and deserialization of messages using Apache Thrift binary dataformat.
 
-| link:camel-tagsoup/src/main/docs/tidyMarkup-dataformat.adoc[TidyMarkup] (camel-tagsoup) | 2.0 | Camel TagSoup support
+| link:camel-tagsoup/src/main/docs/tidyMarkup-dataformat.adoc[TidyMarkup] (camel-tagsoup) | 2.0 | TidyMarkup data format is used for parsing HTML and return it as pretty well-formed HTML.
 
-| link:camel-univocity-parsers/src/main/docs/univocity-csv-dataformat.adoc[uniVocity CSV] (camel-univocity-parsers) | 2.15 | Camel UniVocity parsers data format support
+| link:camel-univocity-parsers/src/main/docs/univocity-csv-dataformat.adoc[uniVocity CSV] (camel-univocity-parsers) | 2.15 | The uniVocity CSV data format is used for working with CSV (Comma Separated Values) flat payloads.
 
-| link:camel-univocity-parsers/src/main/docs/univocity-fixed-dataformat.adoc[uniVocity Fixed Length] (camel-univocity-parsers) | 2.15 | Camel UniVocity parsers data format support
+| link:camel-univocity-parsers/src/main/docs/univocity-fixed-dataformat.adoc[uniVocity Fixed Length] (camel-univocity-parsers) | 2.15 | The uniVocity Fixed Length data format is used for working with fixed length flat payloads.
 
-| link:camel-univocity-parsers/src/main/docs/univocity-tsv-dataformat.adoc[uniVocity TSV] (camel-univocity-parsers) | 2.15 | Camel UniVocity parsers data format support
+| link:camel-univocity-parsers/src/main/docs/univocity-tsv-dataformat.adoc[uniVocity TSV] (camel-univocity-parsers) | 2.15 | The uniVocity TSV data format is used for working with TSV (Tabular Separated Values) flat payloads.
 
-| link:camel-xmlbeans/src/main/docs/xmlBeans-dataformat.adoc[XML Beans] (camel-xmlbeans) | 1.2 | *deprecated* Camel XMLBeans support
+| link:camel-xmlbeans/src/main/docs/xmlBeans-dataformat.adoc[XML Beans] (camel-xmlbeans) | 1.2 | *deprecated* XML Beans data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
 
-| link:camel-xmljson/src/main/docs/xmljson-dataformat.adoc[XML JSon] (camel-xmljson) | 2.10 | Camel XML JSON Data Format
+| link:camel-xmljson/src/main/docs/xmljson-dataformat.adoc[XML JSon] (camel-xmljson) | 2.10 | XML JSon data format can convert from XML to JSON and vice-versa directly without stepping through intermediate POJOs.
 
-| link:camel-xmlrpc/src/main/docs/xmlrpc-dataformat.adoc[XML RPC] (camel-xmlrpc) | 2.11 | Camel XML RPC support
+| link:camel-xmlrpc/src/main/docs/xmlrpc-dataformat.adoc[XML RPC] (camel-xmlrpc) | 2.11 | The XML RPC data format is used for working with the XML RPC protocol.
 
-| link:camel-xmlsecurity/src/main/docs/secureXML-dataformat.adoc[XML Security] (camel-xmlsecurity) | 2.0 | Camel Partial XML Encryption/Decryption and XML Signature support
+| link:camel-xmlsecurity/src/main/docs/secureXML-dataformat.adoc[XML Security] (camel-xmlsecurity) | 2.0 | The XML Security data format facilitates encryption and decryption of XML payloads.
 
-| link:camel-xstream/src/main/docs/xstream-dataformat.adoc[XStream] (camel-xstream) | 1.3 | Camel XStream support
+| link:camel-xstream/src/main/docs/xstream-dataformat.adoc[XStream] (camel-xstream) | 1.3 | XSTream data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
 
-| link:camel-snakeyaml/src/main/docs/yaml-snakeyaml-dataformat.adoc[YAML SnakeYAML] (camel-snakeyaml) | 2.17 | Camel SnakeYAML support
+| link:camel-snakeyaml/src/main/docs/yaml-snakeyaml-dataformat.adoc[YAML SnakeYAML] (camel-snakeyaml) | 2.17 | YAML is a data format to marshal and unmarshal Java objects to and from YAML.
 
 | link:../camel-core/src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | 2.12 | Zip Deflate Compression data format is a message compression and de-compression format (not zip files).
 
-| link:camel-zipfile/src/main/docs/zipfile-dataformat.adoc[Zip File] (camel-zipfile) | 2.11 | Camel Zip file support
+| link:camel-zipfile/src/main/docs/zipfile-dataformat.adoc[Zip File] (camel-zipfile) | 2.11 | The Zip File data format is a message compression and de-compression format of zip files.
 |===
 // dataformats: END
 
