@@ -283,11 +283,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
             if (row.containsKey("firstVersion")) {
                 dataFormatModel.setFirstVersion(row.get("firstVersion"));
             }
-            // override description for camel-core, as otherwise its too generic
-            if ("camel-core".equals(project.getArtifactId())) {
-                if (row.containsKey("description")) {
-                    dataFormatModel.setDescription(row.get("description"));
-                }
+            // favor description from the model schema
+            if (row.containsKey("description")) {
+                dataFormatModel.setDescription(row.get("description"));
             }
         }
 
