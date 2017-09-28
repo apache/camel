@@ -23,10 +23,9 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.mock;
-import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AbstractCamelCatalogTest {
 
@@ -44,13 +43,11 @@ public class AbstractCamelCatalogTest {
 
     @Test
     public void shouldConstructEndpointUris() throws URISyntaxException {
-        expect(resolver.getComponentJSonSchema("comp")).andReturn("{\n"//
+        when(resolver.getComponentJSonSchema("comp")).thenReturn("{\n"//
             + "  \"component\": {\n"//
             + "    \"syntax\": \"comp:param1:param2\"\n"//
             + "  }\n"//
             + "}");
-
-        replay(resolver);
 
         final Map<String, String> properties = new HashMap<>();
         properties.put("param1", "value1");
@@ -64,13 +61,11 @@ public class AbstractCamelCatalogTest {
 
     @Test
     public void shouldConstructEndpointUrisWithPropertyPlaceholders() throws URISyntaxException {
-        expect(resolver.getComponentJSonSchema("comp")).andReturn("{\n"//
+        when(resolver.getComponentJSonSchema("comp")).thenReturn("{\n"//
             + "  \"component\": {\n"//
             + "    \"syntax\": \"comp:param1:param2\"\n"//
             + "  }\n"//
             + "}");
-
-        replay(resolver);
 
         final Map<String, String> properties = new HashMap<>();
         properties.put("param1", "{{prop1}}");
@@ -84,13 +79,11 @@ public class AbstractCamelCatalogTest {
 
     @Test
     public void shouldConstructEndpointUrisWhenValuesContainTokens() throws URISyntaxException {
-        expect(resolver.getComponentJSonSchema("comp")).andReturn("{\n"//
+        when(resolver.getComponentJSonSchema("comp")).thenReturn("{\n"//
             + "  \"component\": {\n"//
             + "    \"syntax\": \"comp:param1:param2\"\n"//
             + "  }\n"//
             + "}");
-
-        replay(resolver);
 
         final Map<String, String> properties = new HashMap<>();
         properties.put("param1", "{value1}");
@@ -104,13 +97,11 @@ public class AbstractCamelCatalogTest {
 
     @Test
     public void shouldContextPathAndQuery() throws URISyntaxException {
-        expect(resolver.getComponentJSonSchema("comp")).andReturn("{\n"//
+        when(resolver.getComponentJSonSchema("comp")).thenReturn("{\n"//
             + "  \"component\": {\n"//
             + "    \"syntax\": \"comp:value1\"\n"//
             + "  }\n"//
             + "}");
-
-        replay(resolver);
 
         final Map<String, String> properties = new HashMap<>();
         properties.put("value1", "camel");
@@ -123,13 +114,11 @@ public class AbstractCamelCatalogTest {
 
     @Test
     public void shouldEmptyContextPath() throws URISyntaxException {
-        expect(resolver.getComponentJSonSchema("comp")).andReturn("{\n"//
+        when(resolver.getComponentJSonSchema("comp")).thenReturn("{\n"//
             + "  \"component\": {\n"//
             + "    \"syntax\": \"comp\"\n"//
             + "  }\n"//
             + "}");
-
-        replay(resolver);
 
         final Map<String, String> properties = new HashMap<>();
 
@@ -140,13 +129,11 @@ public class AbstractCamelCatalogTest {
 
     @Test
     public void shouldEmptyContextPathWithQuery() throws URISyntaxException {
-        expect(resolver.getComponentJSonSchema("comp")).andReturn("{\n"//
+        when(resolver.getComponentJSonSchema("comp")).thenReturn("{\n"//
             + "  \"component\": {\n"//
             + "    \"syntax\": \"comp\"\n"//
             + "  }\n"//
             + "}");
-
-        replay(resolver);
 
         final Map<String, String> properties = new HashMap<>();
         properties.put("foo", "123");
