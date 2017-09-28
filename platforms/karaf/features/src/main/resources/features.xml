@@ -1614,6 +1614,13 @@
     <bundle dependency='true'>mvn:org.pacesys.openstack4j.connectors/openstack4j-okhttp/${openstack4j-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-openstack/${project.version}</bundle>
   </feature>
+  <feature name='camel-opentracing' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:io.opentracing/opentracing-api/${opentracing-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:io.opentracing/opentracing-noop/${opentracing-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:io.opentracing.contrib/opentracing-tracerresolver/${opentracing-tracerresolver-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-opentracing/${project.version}</bundle>
+  </feature>
   <feature name='camel-paho' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.eclipse.paho/org.eclipse.paho.client.mqttv3/${paho-version}</bundle>
