@@ -1554,7 +1554,6 @@
   </feature>
   <feature name='camel-olingo2' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <feature version='${project.version}'>camel-core</feature>
     <feature>http</feature>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
@@ -1568,6 +1567,35 @@
     <bundle dependency='true'>mvn:org.apache.camel/camel-olingo2-api/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-olingo2/${project.version}</bundle>
   </feature>
+  <!-- TODO: https://issues.apache.org/jira/browse/CAMEL-11856
+  <feature name='camel-olingo4' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <feature>http</feature>
+    <bundle dependency='true'>mvn:org.apache.olingo/odata-commons-api/${olingo4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.olingo/odata-commons-core/${olingo4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.olingo/odata-server-api/${olingo4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.olingo/odata-server-core/${olingo4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.olingo/odata-client-api/${olingo4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.olingo/odata-client-core/${olingo4-version}</bundle>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+    <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
+    <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpasyncclient-osgi/${httpasyncclient-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:net.sf.jsignature.io-tools/easystream/1.2.15</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-xml/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.woodstox/stax2-api/${stax2-api-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.woodstox/woodstox-core-asl/${woodstox-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml/aalto-xml/0.9.10</bundle>
+    <bundle dependency='true'>mvn:org.apache.camel/camel-olingo4-api/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-olingo4/${project.version}</bundle>
+  </feature> -->
   <feature name='camel-openshift' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>wrap:mvn:com.openshift/openshift-java-client/${openshift-java-client-version}</bundle>
