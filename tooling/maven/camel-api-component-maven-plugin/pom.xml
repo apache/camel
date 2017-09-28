@@ -109,10 +109,10 @@
       <artifactId>doxia-site-renderer</artifactId>
       <version>1.6</version>
       <exclusions>
-      	<exclusion>
-      		<groupId>org.apache.velocity</groupId>
-      		<artifactId>velocity</artifactId>
-      	</exclusion>
+        <exclusion>
+          <groupId>org.apache.velocity</groupId>
+          <artifactId>velocity</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
