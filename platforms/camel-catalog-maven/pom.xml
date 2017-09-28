@@ -33,6 +33,10 @@
   <description>Camel Catalog Maven</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.18.0</firstVersion>
+    <label>catalog</label>
+
     <camel.osgi.export.pkg>
       org.apache.camel.catalog.maven
     </camel.osgi.export.pkg>
