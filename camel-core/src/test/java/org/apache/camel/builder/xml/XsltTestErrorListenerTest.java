@@ -18,32 +18,24 @@ package org.apache.camel.builder.xml;
 
 import java.net.URL;
 import javax.xml.transform.ErrorListener;
-import javax.xml.transform.TransformerException;
 
 import junit.framework.TestCase;
-import org.easymock.EasyMock;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class XsltTestErrorListenerTest extends TestCase {
 
     private XsltBuilder xsltBuilder = new XsltBuilder();
-    private ErrorListener errorListener = createMock(ErrorListener.class);
+    private ErrorListener errorListener = mock(ErrorListener.class);
 
     public void testErrorListener() throws Exception {
         // Xalan transformer cannot work as expected, so we just skip the test
         if (xsltBuilder.getConverter().getTransformerFactory().getClass().getName().startsWith("org.apache.xalan")) {
             return;
         }
-        errorListener.error(EasyMock.<TransformerException>anyObject());
-        expectLastCall().atLeastOnce();
-
-        errorListener.fatalError(EasyMock.<TransformerException>anyObject());
-        expectLastCall().once();
-        replay(errorListener);
 
         URL styleSheet = getClass().getResource("example-with-errors.xsl");
         try {
@@ -53,6 +45,7 @@ public class XsltTestErrorListenerTest extends TestCase {
         } catch (Exception ex) {
             // expected
         }
-        verify(errorListener);
+        verify(errorListener, atLeastOnce()).error(anyObject());
+        verify(errorListener).fatalError(anyObject());
     }
 }
