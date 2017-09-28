@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
@@ -76,6 +77,7 @@ public class EndpointHelperTest extends ContextTestSupport {
         bar = context.getEndpoint("mock:bar");
         reg.put("foo", foo);
         reg.put("coolbar", bar);
+        reg.put("numbar", "12345");
 
         return context;
     }
@@ -99,6 +101,27 @@ public class EndpointHelperTest extends ContextTestSupport {
         Endpoint endpoint = EndpointHelper.resolveReferenceParameter(context, "coolbar", Endpoint.class);
         assertNotNull(endpoint);
         assertSame(bar, endpoint);
+    }
+
+    public void testResolveAndConvertReferenceParameter() throws Exception {
+        // The registry value is a java.lang.String
+        Integer number = EndpointHelper.resolveReferenceParameter(context, "numbar", Integer.class);
+        assertNotNull(number);
+        assertEquals(12345, (int) number);
+    }
+
+    public void testResolveAndConvertMissingReferenceParameter() throws Exception {
+        Integer number = EndpointHelper.resolveReferenceParameter(context, "misbar", Integer.class, false);
+        assertNull(number);
+    }
+
+    public void testMandatoryResolveAndConvertMissingReferenceParameter() throws Exception {
+        try {
+            EndpointHelper.resolveReferenceParameter(context, "misbar", Integer.class, true);
+            fail();
+        } catch (NoSuchBeanException ex) {
+            assertEquals("No bean could be found in the registry for: misbar of type: java.lang.Integer", ex.getMessage());
+        }
     }
 
     public void testResolveParameter() throws Exception {
