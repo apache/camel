@@ -103,6 +103,14 @@ public final class CamelContextHelper {
     }
 
     /**
+     * Tried to convert the given value to the requested type
+     */
+    public static <T> T tryConvertTo(CamelContext context, Class<T> type, Object value) {
+        notNull(context, "camelContext");
+        return context.getTypeConverter().tryConvertTo(type, value);
+    }
+
+    /**
      * Converts the given value to the specified type throwing an {@link IllegalArgumentException}
      * if the value could not be converted to a non null value
      */
@@ -136,6 +144,14 @@ public final class CamelContextHelper {
      */
     public static <T> T lookup(CamelContext context, String name, Class<T> beanType) {
         return context.getRegistry().lookupByNameAndType(name, beanType);
+    }
+
+    /**
+     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
+     * {@link CamelContext} and try to convert it to the given type.
+     */
+    public static <T> T lookupAndConvert(CamelContext context, String name, Class<T> beanType) {
+        return tryConvertTo(context, beanType, lookup(context, name));
     }
 
     /**
@@ -173,6 +189,18 @@ public final class CamelContextHelper {
             throw new NoSuchBeanException(name, beanType.getName());
         }
         return answer;
+    }
+
+    /**
+     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
+     * {@link CamelContext} and convert it to the given type or throws NoSuchBeanException if not found.
+     */
+    public static <T> T mandatoryLookupAndConvert(CamelContext context, String name, Class<T> beanType) {
+        Object value = lookup(context, name);
+        if (value == null) {
+            throw new NoSuchBeanException(name, beanType.getName());
+        }
+        return convertTo(context, beanType, value);
     }
 
     /**
