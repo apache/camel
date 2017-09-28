@@ -34,7 +34,7 @@
   <properties>
     <!-- use by camel-catalog -->
     <firstVersion>2.19.0</firstVersion>
-    <label>catalog</label>
+    <label>tooling</label>
   </properties>
 
   <dependencies>
