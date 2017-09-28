@@ -35,6 +35,10 @@ import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A consumer which is only really active when the {@link CamelClusterView} has
+ * the leadership.
+ */
 @ManagedResource(description = "Managed Master Consumer")
 public class MasterConsumer extends DefaultConsumer {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(MasterConsumer.class);

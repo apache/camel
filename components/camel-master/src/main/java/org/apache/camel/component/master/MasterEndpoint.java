@@ -24,11 +24,16 @@ import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.ha.CamelClusterService;
+import org.apache.camel.ha.CamelClusterView;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
+/**
+ * Represents an endpoint which only becomes active when the {@link CamelClusterView}
+ * has the leadership.
+ */
 @ManagedResource(description = "Managed Master Endpoint")
 @UriEndpoint(
     firstVersion = "2.20.0",
