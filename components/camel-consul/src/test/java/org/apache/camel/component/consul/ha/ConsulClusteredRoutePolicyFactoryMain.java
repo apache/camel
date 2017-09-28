@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper.ha;
+package org.apache.camel.component.consul.ha;
 
 import java.util.UUID;
 
@@ -25,8 +25,8 @@ import org.apache.camel.impl.ha.ClusteredRoutePolicyFactory;
 import org.apache.camel.main.Main;
 import org.apache.camel.main.MainListenerSupport;
 
-public final class ZooKeeperClusteredRoutePolicyMain {
-    private ZooKeeperClusteredRoutePolicyMain() {        
+public final class ConsulClusteredRoutePolicyFactoryMain {
+    private ConsulClusteredRoutePolicyFactoryMain() {
     }
 
     public static void main(String[] args) throws Exception {
@@ -37,10 +37,9 @@ public final class ZooKeeperClusteredRoutePolicyMain {
             @Override
             public void configure(CamelContext context) {
                 try {
-                    ZooKeeperClusterService service = new ZooKeeperClusterService();
+                    ConsulClusterService service = new ConsulClusterService();
                     service.setId("node-" + id);
-                    service.setNodes(args[0]);
-                    service.setBasePath("/camel");
+                    service.setUrl(args[0]);
 
                     context.setNameStrategy(new ExplicitCamelContextNameStrategy("camel-" + id));
                     context.addService(service);

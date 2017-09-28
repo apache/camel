@@ -27,8 +27,8 @@ import org.apache.camel.impl.ha.ClusteredRoutePolicyFactory;
 import org.apache.camel.main.Main;
 import org.apache.camel.main.MainListenerSupport;
 
-public final class AtomixClientClusteredRoutePolicyMain {
-    private AtomixClientClusteredRoutePolicyMain() {
+public final class AtomixClientClusteredRoutePolicyFactoryMain {
+    private AtomixClientClusteredRoutePolicyFactoryMain() {
     }
 
     public static void main(String[] args) throws Exception {

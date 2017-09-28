@@ -298,8 +298,10 @@ final class ConsulClusterView extends AbstractCamelClusterView {
                     this
                 );
 
-                // Refresh session
-                sessionClient.renewSession(sessionId.get());
+                if (sessionId.get() != null) {
+                    // Refresh session
+                    sessionClient.renewSession(sessionId.get());
+                }
             }
         }
     }

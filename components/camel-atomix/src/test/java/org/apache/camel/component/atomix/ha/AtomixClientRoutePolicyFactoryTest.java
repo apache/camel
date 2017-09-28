@@ -21,7 +21,7 @@ import java.util.Collections;
 import io.atomix.catalyst.transport.Address;
 import org.apache.camel.ha.CamelClusterService;
 
-public final class AtomixClientRoutePolicyTest extends AtomixClientRoutePolicyTestSupport {
+public final class AtomixClientRoutePolicyFactoryTest extends AtomixClientRoutePolicyFactoryTestSupport {
     @Override
     protected CamelClusterService createClusterService(String id, Address bootstrapNode) {
         AtomixClusterClientService service = new AtomixClusterClientService();
