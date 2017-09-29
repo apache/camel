@@ -26,6 +26,9 @@ import org.apache.camel.main.Main;
 import org.apache.camel.main.MainListenerSupport;
 
 public final class ZooKeeperMasterMain {
+    private ZooKeeperMasterMain() {
+    }
+
     public static void main(String[] args) throws Exception {
         final String nodeId = UUID.randomUUID().toString();
         final String address = args[0];
