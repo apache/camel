@@ -26,13 +26,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ManagementAgent;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.createStrictMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.reset;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests proper behavior of DefaultManagementAgent when
@@ -43,8 +41,8 @@ public class DefaultManagementAgentMockTest {
 
     @Test
     public void testObjectNameModification() throws JMException {
-        MBeanServer mbeanServer = createStrictMock(MBeanServer.class);
-        ObjectInstance instance = createStrictMock(ObjectInstance.class);
+        MBeanServer mbeanServer = mock(MBeanServer.class);
+        ObjectInstance instance = mock(ObjectInstance.class);
 
         ManagementAgent agent = new DefaultManagementAgent();
         agent.setMBeanServer(mbeanServer);
@@ -54,28 +52,24 @@ public class DefaultManagementAgentMockTest {
         ObjectName registeredObjectName = new ObjectName("domain", "key", "otherValue");
 
         // Register MBean and return different ObjectName
-        expect(mbeanServer.isRegistered(sourceObjectName)).andReturn(false);
-        expect(mbeanServer.registerMBean(object, sourceObjectName)).andReturn(instance);
-        expect(instance.getObjectName()).andReturn(registeredObjectName);
-        expect(mbeanServer.isRegistered(registeredObjectName)).andReturn(true);
-        replay(mbeanServer, instance);
+        when(mbeanServer.isRegistered(sourceObjectName)).thenReturn(false);
+        when(mbeanServer.registerMBean(object, sourceObjectName)).thenReturn(instance);
+        when(instance.getObjectName()).thenReturn(registeredObjectName);
+        when(mbeanServer.isRegistered(registeredObjectName)).thenReturn(true);
 
         agent.register(object, sourceObjectName);
 
         assertTrue(agent.isRegistered(sourceObjectName));
-        verify(mbeanServer, instance);
         reset(mbeanServer, instance);
 
         // ... and unregister it again
-        expect(mbeanServer.isRegistered(registeredObjectName)).andReturn(true);
+        when(mbeanServer.isRegistered(registeredObjectName)).thenReturn(true);
         mbeanServer.unregisterMBean(registeredObjectName);
-        expect(mbeanServer.isRegistered(sourceObjectName)).andReturn(false);
-        replay(mbeanServer);
+        when(mbeanServer.isRegistered(sourceObjectName)).thenReturn(false);
 
         agent.unregister(sourceObjectName);
 
         assertFalse(agent.isRegistered(sourceObjectName));
-        verify(mbeanServer);
     }
 
     @Test
