@@ -132,6 +132,7 @@
     <module>camel-elasticsearch5-starter</module>
     <module>camel-elsql-starter</module>
     <module>camel-etcd-starter</module>
+    <module>camel-everit-json-schema-starter</module>
     <module>camel-exec-starter</module>
     <module>camel-facebook-starter</module>
     <module>camel-fastjson-starter</module>

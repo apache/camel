@@ -121,6 +121,7 @@
     <module>camel-elsql</module>
     <module>camel-etcd</module>
     <module>camel-eventadmin</module>
+    <module>camel-everit-json-schema</module>
     <module>camel-exec</module>
     <module>camel-facebook</module>
     <module>camel-fastjson</module>
