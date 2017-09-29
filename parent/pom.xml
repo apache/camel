@@ -5521,8 +5521,6 @@
               <artifactId>maven-surefire-plugin</artifactId>
               <!--lets avoid polluting every pom.xml as these settings are almost always needed-->
               <configuration>
-                <!--https://issues.apache.org/jira/browse/SUREFIRE-1265-->
-                <reuseForks>true</reuseForks>
                 <argLine>${camel.surefire.fork.vmargs}</argLine>
               </configuration>
             </plugin>
