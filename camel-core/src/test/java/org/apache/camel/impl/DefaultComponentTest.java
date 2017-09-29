@@ -109,9 +109,9 @@ public class DefaultComponentTest extends ContextTestSupport {
         try {
             my.resolveAndRemoveReferenceParameter(parameters, "number", Integer.class);
         } catch (TypeConversionException ex) {
-            assertEquals("Error during type conversion from type: java.lang.String " +
-                    "to the required type: java.lang.Integer " +
-                    "with value abc due For input string: \"abc\"", ex.getMessage());
+            assertEquals("Error during type conversion from type: java.lang.String "
+                    + "to the required type: java.lang.Integer "
+                    + "with value abc due For input string: \"abc\"", ex.getMessage());
         }
     }
 
