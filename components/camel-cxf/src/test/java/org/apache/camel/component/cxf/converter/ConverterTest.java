@@ -35,10 +35,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.cxf.message.MessageContentsList;
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 public class ConverterTest extends Assert {
     
@@ -58,24 +60,18 @@ public class ConverterTest extends Assert {
         CamelContext context = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(context);
         
-        Response response = EasyMock.createMock(Response.class);
-        InputStream is = EasyMock.createMock(InputStream.class);
+        Response response = mock(Response.class);
+        InputStream is = mock(InputStream.class);
         
-        response.getEntity();
-        EasyMock.expectLastCall().andReturn(is);
+        when(response.getEntity()).thenReturn(is);
         
-        EasyMock.replay(response);
         InputStream result = CxfConverter.toInputStream(response, exchange);
         assertEquals("We should get the inputStream here ", is, result);
-        EasyMock.verify(response);
         
-        EasyMock.reset(response);
-        response.getEntity();
-        EasyMock.expectLastCall().andReturn("Hello World");
-        EasyMock.replay(response);
+        reset(response);
+        when(response.getEntity()).thenReturn("Hello World");
         result = CxfConverter.toInputStream(response, exchange);
         assertTrue("We should get the inputStream here ", result instanceof ByteArrayInputStream);
-        EasyMock.verify(response);
     }
     
     @Test

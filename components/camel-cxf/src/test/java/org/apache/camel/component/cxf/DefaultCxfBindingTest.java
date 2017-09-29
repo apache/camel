@@ -52,10 +52,11 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
-import org.easymock.EasyMock;
-import org.easymock.IMocksControl;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * 
@@ -274,15 +275,12 @@ public class DefaultCxfBindingTest extends Assert {
         exchange.getOut().addAttachment("att-1", new DataHandler(new FileDataSource("pom.xml")));
         exchange.getOut().getAttachmentObject("att-1").setHeader("attachment-header", "value 1");
         
-        IMocksControl control = EasyMock.createNiceControl();
-        
-        Endpoint endpoint = control.createMock(Endpoint.class);
-        Binding binding = control.createMock(Binding.class);
-        EasyMock.expect(endpoint.getBinding()).andReturn(binding);
+        Endpoint endpoint = mock(Endpoint.class);
+        Binding binding = mock(Binding.class);
+        when(endpoint.getBinding()).thenReturn(binding);
         org.apache.cxf.message.Message cxfMessage = new org.apache.cxf.message.MessageImpl();
-        EasyMock.expect(binding.createMessage()).andReturn(cxfMessage);
+        when(binding.createMessage()).thenReturn(cxfMessage);
         cxfExchange.put(Endpoint.class, endpoint);
-        control.replay();
         
         cxfBinding.populateCxfResponseFromExchange(exchange, cxfExchange);
         
