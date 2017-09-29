@@ -29,10 +29,14 @@ import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 
 /**
  * A unit test for spring configured cxf endpoint.
@@ -98,31 +102,23 @@ public class CxfEndpointTest extends Assert {
     @Test
     public void testCxfEndpointConfigurer() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        CxfEndpointConfigurer configurer = EasyMock.createMock(CxfEndpointConfigurer.class);
-        Processor processor = EasyMock.createMock(Processor.class);
+        CxfEndpointConfigurer configurer = mock(CxfEndpointConfigurer.class);
+        Processor processor = mock(Processor.class);
         registry.put("myConfigurer", configurer);
         CamelContext camelContext = new DefaultCamelContext(registry);
         CxfComponent cxfComponent = new CxfComponent(camelContext);
         CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI + "&cxfEndpointConfigurer=#myConfigurer");
 
-        configurer.configure(EasyMock.isA(AbstractWSDLBasedEndpointFactory.class));
-        EasyMock.expectLastCall();
-        configurer.configureServer(EasyMock.isA(Server.class));
-        EasyMock.expectLastCall();
-        EasyMock.replay(configurer);
         endpoint.createConsumer(processor);
-        EasyMock.verify(configurer);
-
-        EasyMock.reset(configurer);
-        configurer.configure(EasyMock.isA(AbstractWSDLBasedEndpointFactory.class));
-        EasyMock.expectLastCall();
-        configurer.configureClient(EasyMock.isA(Client.class));
-        EasyMock.expectLastCall();
-        EasyMock.replay(configurer);
+        verify(configurer).configure(isA(AbstractWSDLBasedEndpointFactory.class));
+        verify(configurer).configureServer(isA(Server.class));
+        
+        reset(configurer);
         Producer producer = endpoint.createProducer();
         producer.start();
-        EasyMock.verify(configurer);
-
+        
+        verify(configurer).configure(isA(AbstractWSDLBasedEndpointFactory.class));
+        verify(configurer).configureClient(isA(Client.class));
     }
 
 }
