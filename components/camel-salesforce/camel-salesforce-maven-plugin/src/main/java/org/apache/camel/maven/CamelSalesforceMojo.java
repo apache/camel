@@ -89,7 +89,6 @@ import org.eclipse.jetty.client.api.Authentication;
 import org.eclipse.jetty.client.util.BasicAuthentication;
 import org.eclipse.jetty.client.util.DigestAuthentication;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.slf4j.LoggerFactory;
 
 /**
  * Goal to generate DTOs for Salesforce SObjects
