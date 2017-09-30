@@ -103,11 +103,9 @@ import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceKind;
-import org.apache.olingo.server.core.uri.UriResourceFunctionImpl;
 import org.apache.olingo.server.core.uri.parser.Parser;
-import org.apache.olingo.server.core.uri.parser.UriParserException;
-import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
 import static org.apache.camel.component.olingo4.api.impl.Olingo4Helper.getContentTypeHeader;
 
@@ -411,7 +409,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                 }
                 break;
             case function:
-                UriResourceFunctionImpl uriResourceFunction = (UriResourceFunctionImpl)listResource.get(listResource.size() - 1);
+                UriResourceFunction uriResourceFunction = (UriResourceFunction)listResource.get(listResource.size() - 1);
                 EdmReturnType functionReturnType = uriResourceFunction.getFunction().getReturnType();
 
                 switch (functionReturnType.getType().getKind()) {
@@ -805,7 +803,7 @@ public final class Olingo4AppImpl implements Olingo4App {
 
         try {
             result = parser.parseUri(resourcePath, queryOptions, null);
-        } catch (UriParserException | UriValidationException e) {
+        } catch (Exception e) {
             throw new IllegalArgumentException("parseUri (" + resourcePath + "," + queryOptions + "): " + e.getMessage(), e);
         }
         return result;

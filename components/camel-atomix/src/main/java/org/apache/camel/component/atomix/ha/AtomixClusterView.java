@@ -95,21 +95,21 @@ final class AtomixClusterView extends AbstractCamelClusterView {
             LOGGER.debug("Listen election events");
             group.election().onElection(term -> {
                 if (isRunAllowed()) {
-                    fireLeadershipChangedEvent(new AtomixClusterMember(term.leader()));
+                    fireLeadershipChangedEvent(Optional.of(toClusterMember(term.leader())));
                 }
             });
 
             LOGGER.debug("Listen join events");
             group.onJoin(member -> {
                 if (isRunAllowed()) {
-                    fireMemberAddedEvent(new AtomixClusterMember(member));
+                    fireMemberAddedEvent(toClusterMember(member));
                 }
             });
 
             LOGGER.debug("Listen leave events");
             group.onLeave(member -> {
                 if (isRunAllowed()) {
-                    fireMemberRemovedEvent(new AtomixClusterMember(member));
+                    fireMemberRemovedEvent(toClusterMember(member));
                 }
             });
 
@@ -123,11 +123,17 @@ final class AtomixClusterView extends AbstractCamelClusterView {
         localMember.leave();
     }
 
+    protected CamelClusterMember toClusterMember(GroupMember member)  {
+        return localMember != null && localMember.is(member)
+            ? localMember
+            : new AtomixClusterMember(member);
+    }
+
     // ***********************************************
     //
     // ***********************************************
 
-    class AtomixLocalMember implements CamelClusterMember {
+    final class AtomixLocalMember implements CamelClusterMember {
         private LocalMember member;
 
         @Override
@@ -145,12 +151,23 @@ final class AtomixClusterView extends AbstractCamelClusterView {
         }
 
         @Override
-        public boolean isMaster() {
+        public boolean isLeader() {
             if (member == null) {
                 return false;
             }
 
             return member.equals(group.election().term().leader());
+        }
+
+        @Override
+        public boolean isLocal() {
+            return true;
+        }
+
+        boolean is(GroupMember member) {
+            return this.member != null
+                ? this.member.equals(member)
+                : false;
         }
 
         boolean hasJoined() {
@@ -175,8 +192,15 @@ final class AtomixClusterView extends AbstractCamelClusterView {
 
         AtomixLocalMember leave() {
             if (member != null) {
-                LOGGER.debug("Leaving group {}", group);
-                member.leave();
+                String id = member.id();
+
+                LOGGER.debug("Member {} : leave group {}", id, group);
+
+                member.leave().join();
+                group.remove(id).join();
+
+                member = null;
+                fireLeadershipChangedEvent(Optional.empty());
             }
 
             return this;
@@ -191,7 +215,7 @@ final class AtomixClusterView extends AbstractCamelClusterView {
         }
     }
 
-    class AtomixClusterMember implements CamelClusterMember {
+    final class AtomixClusterMember implements CamelClusterMember {
         private final GroupMember member;
 
         AtomixClusterMember(GroupMember member) {
@@ -204,7 +228,7 @@ final class AtomixClusterView extends AbstractCamelClusterView {
         }
 
         @Override
-        public boolean isMaster() {
+        public boolean isLeader() {
             if (group == null) {
                 return false;
             }
@@ -213,6 +237,11 @@ final class AtomixClusterView extends AbstractCamelClusterView {
             }
 
             return member.equals(group.election().term().leader());
+        }
+
+        @Override
+        public boolean isLocal() {
+            return localMember != null ? localMember.is(member) : false;
         }
 
         @Override

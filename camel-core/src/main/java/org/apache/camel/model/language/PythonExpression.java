@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For Python expressions and predicates
+ * To use Python scripts in Camel expressions or predicates.
  *
  * @version 
  */

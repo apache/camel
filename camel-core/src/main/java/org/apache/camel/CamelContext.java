@@ -30,6 +30,7 @@ import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -2062,4 +2063,23 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     void setHeadersMapFactory(HeadersMapFactory factory);
 
+    /**
+     * Returns an optional {@link HealthCheckRegistry}, by default no registry is
+     * present and it must be explicit activated. Components can register/unregister
+     * health checks in response to life-cycle events (i.e. start/stop).
+     *
+     * This registry is not used by the camel context but it is up to the impl to
+     * properly use it, i.e.
+     *
+     * - a RouteController could use the registry to decide to restart a route
+     *   with failing health checks
+     * - spring boot could integrate such checks within its health endpoint or
+     *   make it available only as separate endpoint.
+     */
+    HealthCheckRegistry getHealthCheckRegistry();
+
+    /**
+     * Sets a {@link HealthCheckRegistry}.
+     */
+    void setHealthCheckRegistry(HealthCheckRegistry healthCheckRegistry);
 }

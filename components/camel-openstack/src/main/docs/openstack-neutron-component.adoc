@@ -1,4 +1,4 @@
-## OpenStack Neutron Component
+== OpenStack Neutron Component
 
 *Available as of Camel version 2.19*
 
@@ -41,33 +41,35 @@ The OpenStack Neutron component has no options.
 // endpoint options: START
 The OpenStack Neutron endpoint is configured using URI syntax:
 
-    openstack-neutron:host
+----
+openstack-neutron:host
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (1 parameters):
+==== Path Parameters (1 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **host** | *Required* OpenStack host url |  | String
-|=======================================================================
+| *host* | *Required* OpenStack host url |  | String
+|===
 
-#### Query Parameters (9 parameters):
+==== Query Parameters (9 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **apiVersion** (producer) | OpenStack API version | V3 | String
-| **config** (producer) | OpenStack configuration |  | Config
-| **domain** (producer) | Authentication domain | default | String
-| **operation** (producer) | The operation to do |  | String
-| **password** (producer) | *Required* OpenStack password |  | String
-| **project** (producer) | *Required* The project ID |  | String
-| **subsystem** (producer) | *Required* OpenStack Neutron subsystem |  | String
-| **username** (producer) | *Required* OpenStack username |  | String
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-|=======================================================================
+| *apiVersion* (producer) | OpenStack API version | V3 | String
+| *config* (producer) | OpenStack configuration |  | Config
+| *domain* (producer) | Authentication domain | default | String
+| *operation* (producer) | The operation to do |  | String
+| *password* (producer) | *Required* OpenStack password |  | String
+| *project* (producer) | *Required* The project ID |  | String
+| *subsystem* (producer) | *Required* OpenStack Neutron subsystem |  | String
+| *username* (producer) | *Required* OpenStack username |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
 // endpoint options: END
 
 

@@ -29,5 +29,5 @@ for this component:
 | https://wiki.openstack.org/wiki/Nova[OpenStack Nova] | link:openstack-nova-component.html[openstack-nova] | Component to maintain OpenStack nova.
 | https://wiki.openstack.org/wiki/Swift[OpenStack Swift] | link:openstack-swift-component.html[openstack-swift] | Component to maintain OpenStack swift.
 |=======================================================================
-{% endraw %}
+
 

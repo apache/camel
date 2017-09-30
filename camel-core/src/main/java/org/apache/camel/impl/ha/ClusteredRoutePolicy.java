@@ -19,6 +19,7 @@ package org.apache.camel.impl.ha;
 import java.time.Duration;
 import java.util.EventObject;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -39,29 +40,40 @@ import org.apache.camel.ha.CamelClusterView;
 import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReferenceCount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Clustered Route policy using")
-public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelContextAware {
+public final class ClusteredRoutePolicy extends RoutePolicySupport implements CamelContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClusteredRoutePolicy.class);
 
     private final AtomicBoolean leader;
     private final Set<Route> startedRoutes;
     private final Set<Route> stoppedRoutes;
     private final ReferenceCount refCount;
-    private final CamelClusterView clusterView;
     private final CamelClusterEventListener.Leadership leadershipEventListener;
     private final CamelContextStartupListener listener;
     private final AtomicBoolean contextStarted;
+
+    private final String namespace;
+    private final CamelClusterService.Selector clusterServiceSelector;
+    private CamelClusterService clusterService;
+    private CamelClusterView clusterView;
+
     private Duration initialDelay;
     private ScheduledExecutorService executorService;
 
     private CamelContext camelContext;
 
-    public ClusteredRoutePolicy(CamelClusterView clusterView) {
-        this.clusterView = clusterView;
+    private ClusteredRoutePolicy(CamelClusterService clusterService, CamelClusterService.Selector clusterServiceSelector, String namespace) {
+        this.namespace = namespace;
+        this.clusterService = clusterService;
+        this.clusterServiceSelector = clusterServiceSelector;
+
+        ObjectHelper.notNull(namespace, "Namespace");
+
         this.leadershipEventListener = new CamelClusterLeadershipListener();
 
         this.stoppedRoutes = new HashSet<>();
@@ -87,8 +99,18 @@ public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelCon
                 }
             }
 
-            clusterView.removeEventListener(leadershipEventListener);
-            setLeader(false);
+            try {
+                // Remove event listener
+                clusterView.removeEventListener(leadershipEventListener);
+
+                // If all the routes have been shut down then the view and its
+                // resources can eventually be released.
+                clusterView.getClusterService().releaseView(clusterView);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                setLeader(false);
+            }
         });
     }
 
@@ -142,6 +164,24 @@ public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelCon
         this.stoppedRoutes.add(route);
 
         startManagedRoutes();
+    }
+
+    @Override
+    public void doStart() throws Exception {
+        if (clusterService == null) {
+            clusterService = ClusterServiceHelper.lookupService(camelContext, clusterServiceSelector).orElseThrow(
+                () -> new IllegalStateException("CamelCluster service not found")
+            );
+        }
+
+        LOGGER.debug("ClusteredRoutePolicy {} is using ClusterService instance {} (id={}, type={})",
+            this,
+            clusterService,
+            clusterService.getId(),
+            clusterService.getClass().getName()
+        );
+
+        clusterView = clusterService.getView(namespace);
     }
 
     @Override
@@ -243,7 +283,7 @@ public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelCon
         );
 
         clusterView.addEventListener(leadershipEventListener);
-        setLeader(clusterView.getLocalMember().isMaster());
+        setLeader(clusterView.getLocalMember().isLeader());
     }
 
     // ****************************************************
@@ -252,8 +292,8 @@ public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelCon
 
     private class CamelClusterLeadershipListener implements CamelClusterEventListener.Leadership {
         @Override
-        public void leadershipChanged(CamelClusterView view, CamelClusterMember leader) {
-            setLeader(clusterView.getLocalMember().isMaster());
+        public void leadershipChanged(CamelClusterView view, Optional<CamelClusterMember> leader) {
+            setLeader(clusterView.getLocalMember().isLeader());
         }
     }
 
@@ -306,23 +346,26 @@ public class ClusteredRoutePolicy extends RoutePolicySupport implements CamelCon
     // Static helpers
     // ****************************************************
 
-    public static ClusteredRoutePolicy forNamespace(CamelContext camelContext, String namespace) throws Exception {
-        CamelClusterService cluster = camelContext.hasService(CamelClusterService.class);
-        if (cluster == null) {
-            throw new IllegalStateException("CamelCluster service not found");
-        }
-
-        return forNamespace(cluster, namespace);
-    }
-
-    public static ClusteredRoutePolicy forNamespace(CamelClusterService cluster, String namespace) throws Exception {
-        return forView(cluster.getView(namespace));
-    }
-
-    public static ClusteredRoutePolicy forView(CamelClusterView view) throws Exception  {
-        ClusteredRoutePolicy policy = new ClusteredRoutePolicy(view);
-        policy.setCamelContext(view.getCamelContext());
+    public static ClusteredRoutePolicy forNamespace(CamelContext camelContext, CamelClusterService.Selector selector, String namespace) throws Exception {
+        ClusteredRoutePolicy policy = new ClusteredRoutePolicy(null, selector, namespace);
+        policy.setCamelContext(camelContext);
 
         return policy;
+    }
+
+    public static ClusteredRoutePolicy forNamespace(CamelContext camelContext, String namespace) throws Exception {
+        return forNamespace(camelContext, ClusterServiceSelectors.DEFAULT_SELECTOR, namespace);
+    }
+
+    public static ClusteredRoutePolicy forNamespace(CamelClusterService service, String namespace) throws Exception {
+        return new ClusteredRoutePolicy(service, ClusterServiceSelectors.DEFAULT_SELECTOR, namespace);
+    }
+
+    public static ClusteredRoutePolicy forNamespace(CamelClusterService.Selector selector, String namespace) throws Exception {
+        return new ClusteredRoutePolicy(null, selector, namespace);
+    }
+
+    public static ClusteredRoutePolicy forNamespace(String namespace) throws Exception {
+        return forNamespace(ClusterServiceSelectors.DEFAULT_SELECTOR, namespace);
     }
 }

@@ -31,7 +31,7 @@ import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * JSon data format
+ * JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
  *
  * @version 
  */

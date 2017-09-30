@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * PGP data format
+ * PGP data format is used for encrypting and decrypting of messages using Java Cryptographic Extension and PGP.
  */
 @Metadata(firstVersion = "2.9.0", label = "dataformat,transformation,security", title = "PGP")
 @XmlRootElement(name = "pgp")

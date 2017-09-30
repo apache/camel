@@ -101,8 +101,8 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         Customer response = (Customer) exchange.getOut().getBody();
 
         assertNotNull("The response should not be null ", response);
-        assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
-        assertEquals("Get a wrong customer name", response.getName(), "John");
+        assertEquals("Get a wrong customer id ", 123, response.getId());
+        assertEquals("Get a wrong customer name", "John", response.getName());
         assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("Get a wrong header value", "value", exchange.getOut().getHeader("key"));
         // END SNIPPET: ProxyExample     
@@ -181,8 +181,8 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         Customer response = (Customer) exchange.getOut().getBody();
         
         assertNotNull("The response should not be null ", response);
-        assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
-        assertEquals("Get a wrong customer name", response.getName(), "John");
+        assertEquals("Get a wrong customer id ", 123, response.getId());
+        assertEquals("Get a wrong customer name", "John", response.getName());
         assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("Get a wrong header value", "value", exchange.getOut().getHeader("key"));
     }
@@ -207,7 +207,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         // we should get the exception here 
         assertNull("Don't expect the exception here", exchange.getException());
         Message result = exchange.getOut();
-        assertEquals("Get a wrong http status code.", result.getHeader(Exchange.HTTP_RESPONSE_CODE), 406);
+        assertEquals("Get a wrong http status code.", 406, result.getHeader(Exchange.HTTP_RESPONSE_CODE));
         
         
     }
@@ -256,8 +256,8 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         // get the response message 
         Customer response = (Customer) exchange.getOut().getBody();
         assertNotNull("The response should not be null ", response);
-        assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
-        assertEquals("Get a wrong customer name", response.getName(), "John");
+        assertEquals("Get a wrong customer id ", 123, response.getId());
+        assertEquals("Get a wrong customer name", "John", response.getName());
         assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
 
@@ -281,8 +281,8 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         // get the response message
         Customer response = (Customer) exchange.getOut().getBody();
         assertNotNull("The response should not be null ", response);
-        assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
-        assertEquals("Get a wrong customer name", response.getName(), "John");
+        assertEquals("Get a wrong customer id ", 123, response.getId());
+        assertEquals("Get a wrong customer name", "John", response.getName());
         assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
     
@@ -367,7 +367,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         Customer response = (Customer) exchange.getOut().getBody();
         assertNotNull("The response should not be null ", response);
         assertTrue("Get a wrong customer id ", response.getId() != 8888);
-        assertEquals("Get a wrong customer name", response.getName(), "Willem");
+        assertEquals("Get a wrong customer name", "Willem", response.getName());
         assertEquals("Get a wrong response code", 201, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
     

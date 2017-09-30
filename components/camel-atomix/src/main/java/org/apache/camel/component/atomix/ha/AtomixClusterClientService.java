@@ -106,9 +106,6 @@ public final class AtomixClusterClientService extends AbstractCamelClusterServic
 
     @Override
     protected void doStart() throws Exception {
-        // instantiate a new atomix replica
-        getOrCreateClient();
-
         super.doStart();
     }
 

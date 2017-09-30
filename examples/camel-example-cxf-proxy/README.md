@@ -13,7 +13,7 @@ You will need to compile this example first:
 
 To run the example type:
 	
-	mvn camel:run
+	mvn camel:run -Dmaven.test.skip=true
 
 The proxied webservice is located at
 

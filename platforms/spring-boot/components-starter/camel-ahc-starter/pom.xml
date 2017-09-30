@@ -41,11 +41,6 @@
     </dependency>
     <!--START OF GENERATED CODE-->
     <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty-all</artifactId>
-      <version>${ahc-netty-version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-starter</artifactId>
     </dependency>

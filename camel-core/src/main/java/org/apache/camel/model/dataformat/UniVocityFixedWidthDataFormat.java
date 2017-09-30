@@ -26,18 +26,18 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * UniVocity fixed-width data format
+ * The uniVocity Fixed Length data format is used for working with fixed length flat payloads.
  */
 @Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity Fixed Length")
 @XmlRootElement(name = "univocity-fixed")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityFixedWidthDataFormat extends UniVocityAbstractDataFormat {
     @XmlAttribute
-    protected Boolean skipTrailingCharsUntilNewline;
+    private Boolean skipTrailingCharsUntilNewline;
     @XmlAttribute
-    protected Boolean recordEndsOnNewline;
-    @XmlAttribute @Metadata(defaultValue = " ")
-    protected String padding;
+    private Boolean recordEndsOnNewline;
+    @XmlAttribute
+    private String padding;
 
     public UniVocityFixedWidthDataFormat() {
         super("univocity-fixed");

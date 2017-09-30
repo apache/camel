@@ -61,9 +61,6 @@ public class DockerComponent extends DefaultComponent {
 
         configuration.setOperation(operation);
 
-        // Validate URI Parameters
-        DockerHelper.validateParameters(operation, parameters);
-
         Endpoint endpoint = new DockerEndpoint(uri, this, configuration);
         setProperties(configuration, parameters);
         configuration.setParameters(parameters);

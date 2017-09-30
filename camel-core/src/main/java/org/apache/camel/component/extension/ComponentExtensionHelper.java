@@ -17,27 +17,26 @@
 package org.apache.camel.component.extension;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
-import org.apache.camel.ComponentAware;
+import org.apache.camel.util.ObjectHelper;
 
 public final class ComponentExtensionHelper {
     private ComponentExtensionHelper() {
     }
 
+    /**
+     * @deprecated use {@link ObjectHelper#trySetCamelContext(Object, CamelContext)}
+     */
+    @Deprecated
     public static <T> T trySetCamelContext(T object, CamelContext camelContext) {
-        if (object instanceof CamelContextAware) {
-            ((CamelContextAware) object).setCamelContext(camelContext);
-        }
-
-        return object;
+        return ObjectHelper.trySetCamelContext(object, camelContext);
     }
 
+    /**
+     * @deprecated use {@link ObjectHelper#trySetComponent(Object, Component)}
+     */
+    @Deprecated
     public static <T> T trySetComponent(T object, Component component) {
-        if (object instanceof ComponentAware) {
-            ((ComponentAware) object).setComponent(component);
-        }
-
-        return object;
+        return ObjectHelper.trySetComponent(object, component);
     }
 }

@@ -137,7 +137,7 @@ public class TestEndpoint extends MockEndpoint {
     }
 
     /**
-     * If enabled the the messages loaded from the test endpoint will be split using \n\r delimiters (new lines)
+     * If enabled the the messages loaded from the test endpoint will be split using new line delimiters
      * so each line is an expected message.
      * <br/>
      * For example to use a file endpoint to load a file where each line is an expected message.

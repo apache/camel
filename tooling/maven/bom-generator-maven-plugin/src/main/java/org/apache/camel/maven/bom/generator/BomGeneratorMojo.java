@@ -38,7 +38,9 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -206,14 +208,21 @@ public class BomGeneratorMojo extends AbstractMojo {
         Document pom = builder.parse(sourcePom);
 
         XPath xpath = XPathFactory.newInstance().newXPath();
-        XPathExpression expr = xpath.compile("/project/parent/version");
 
-        Node node = (Node) expr.evaluate(pom, XPathConstants.NODE);
+        XPathExpression parentVersion = xpath.compile("/project/parent/version");
+        setActualVersion(pom, parentVersion);
+
+        XPathExpression projectVersion = xpath.compile("/project/version");
+        setActualVersion(pom, projectVersion);
+
+        return pom;
+    }
+
+    private void setActualVersion(Document pom, XPathExpression path) throws XPathExpressionException {
+        Node node = (Node) path.evaluate(pom, XPathConstants.NODE);
         if (node != null && node.getTextContent() != null && node.getTextContent().trim().equals("${project.version}")) {
             node.setTextContent(project.getVersion());
         }
-
-        return pom;
     }
 
     private void writePom(Document pom) throws Exception {
@@ -385,21 +394,50 @@ public class BomGeneratorMojo extends AbstractMojo {
     }
 
     private Set<String> getProvidedDependencyManagement(String groupId, String artifactId, String version) throws Exception {
+        return getProvidedDependencyManagement(groupId, artifactId, version, new TreeSet<>());
+    }
+
+    private Set<String> getProvidedDependencyManagement(String groupId, String artifactId, String version, Set<String> gaChecked) throws Exception {
+        String ga = groupId + ":" + artifactId;
+        gaChecked.add(ga);
         Artifact bom = resolveArtifact(groupId, artifactId, version, "pom");
         MavenProject bomProject = loadExternalProjectPom(bom.getFile());
 
         Set<String> provided = new HashSet<>();
         if (bomProject.getDependencyManagement() != null && bomProject.getDependencyManagement().getDependencies() != null) {
             for (Dependency dep : bomProject.getDependencyManagement().getDependencies()) {
-                provided.add(comparisonKey(dep));
+                if ("pom".equals(dep.getType()) && "import".equals(dep.getScope())) {
+                    String subGa = dep.getGroupId() + ":" + dep.getArtifactId();
+                    if (!gaChecked.contains(subGa)) {
+                        Set<String> sub = getProvidedDependencyManagement(dep.getGroupId(), dep.getArtifactId(), resolveVersion(bomProject, dep.getVersion()), gaChecked);
+                        provided.addAll(sub);
+                    }
+                } else {
+                    provided.add(comparisonKey(dep));
+                }
             }
         }
 
         return provided;
     }
 
+    private String resolveVersion(MavenProject project, String version) {
+        if (version.contains("${")) {
+            int start = version.indexOf("${");
+            int end = version.indexOf("}");
+            if (end > start) {
+                String prop = version.substring(start + 2, end);
+                String resolved = project.getProperties().getProperty(prop);
+                if (resolved != null) {
+                    version = version.substring(0, start) + resolved + version.substring(end + 1);
+                }
+            }
+        }
+        return version;
+    }
+
     private String comparisonKey(Dependency dependency) {
-        return dependency.getGroupId() + ":" + dependency.getArtifactId();
+        return dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + (dependency.getType() != null ? dependency.getType() : "jar");
     }
 
     private Artifact resolveArtifact(String groupId, String artifactId, String version, String type) throws Exception {

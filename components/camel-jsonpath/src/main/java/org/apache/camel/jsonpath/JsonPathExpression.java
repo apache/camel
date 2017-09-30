@@ -16,6 +16,9 @@
  */
 package org.apache.camel.jsonpath;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.jayway.jsonpath.Option;
 import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
@@ -40,6 +43,7 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
     private boolean allowSimple = true;
     private boolean allowEasyPredicate = true;
     private boolean writeAsString;
+    private String headerName;
     private Option[] options;
 
     public JsonPathExpression(String expression) {
@@ -113,6 +117,17 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
         this.writeAsString = writeAsString;
     }
 
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    /**
+     * Name of header to use as input, instead of the message body
+     */
+    public void setHeaderName(String headerName) {
+        this.headerName = headerName;
+    }
+
     public Option[] getOptions() {
         return options;
     }
@@ -129,6 +144,14 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
         try {
             Object result = evaluateJsonPath(exchange, engine);
             if (resultType != null) {
+                // in some cases we get a single element that is wrapped in a List, so unwrap that
+                // if we for example want to grab the single entity and convert that to a int/boolean/String etc
+                boolean resultIsCollection = Collection.class.isAssignableFrom(resultType);
+                boolean singleElement = result instanceof List && ((List) result).size() == 1;
+                if (singleElement && !resultIsCollection) {
+                    result = ((List) result).get(0);
+                    LOG.trace("Unwrapping result: {} from single element List before converting to: {}", result, resultType);
+                }
                 return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, result);
             } else {
                 return result;
@@ -157,7 +180,7 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
 
         LOG.debug("Initializing {} using: {}", predicate ? "predicate" : "expression", exp);
         try {
-            engine = new JsonPathEngine(exp, writeAsString, suppressExceptions, allowSimple, options);
+            engine = new JsonPathEngine(exp, writeAsString, suppressExceptions, allowSimple, headerName, options);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(exp, e);
         }

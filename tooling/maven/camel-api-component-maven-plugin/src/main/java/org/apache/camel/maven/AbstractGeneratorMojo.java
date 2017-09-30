@@ -37,7 +37,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.VelocityException;
 import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.log.Log4JLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,17 +87,21 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         }
     }
 
-    protected static VelocityEngine getEngine() {
+    protected static VelocityEngine getEngine() throws MojoExecutionException {
         if (engine == null) {
             // initialize velocity to load resources from class loader and use Log4J
             Properties velocityProperties = new Properties();
             velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADER, "cloader");
             velocityProperties.setProperty("cloader.resource.loader.class", ClasspathResourceLoader.class.getName());
-            velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
             final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
-            velocityProperties.setProperty(Log4JLogChute.RUNTIME_LOG_LOG4J_LOGGER, velocityLogger.getName());
-            engine = new VelocityEngine(velocityProperties);
-            engine.init();
+            velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
+            try {
+                engine = new VelocityEngine(velocityProperties);
+                engine.init();
+            } catch (Exception e) {
+                throw new MojoExecutionException(e.getMessage(), e);
+            }
+            
         }
         return engine;
     }
@@ -141,7 +144,12 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         context.put("newLine", "\n");
 
         // load velocity template
-        final Template template = getEngine().getTemplate(templateName, "UTF-8");
+        Template template = null;
+        try {
+            template = getEngine().getTemplate(templateName, "UTF-8");
+        } catch (Exception e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        }
 
         // generate file
         BufferedWriter writer = null;

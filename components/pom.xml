@@ -59,6 +59,7 @@
     <module>camel-cxf</module>
     <module>camel-cxf-transport</module>
     <module>camel-jms</module>
+    <module>camel-master</module>
 
     <!-- build it first so it can be used by other component to test i.e. ServiceCall EIP -->
     <module>camel-ribbon</module>
@@ -191,6 +192,7 @@
     <module>camel-kubernetes</module>
     <module>camel-kura</module>
     <module>camel-ldap</module>
+    <module>camel-ldif</module>
     <module>camel-leveldb</module>
     <module>camel-linkedin</module>
     <module>camel-lucene</module>

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.s3;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -35,6 +37,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -112,12 +115,23 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Received {} messages in this poll", s3ObjectSummaries.size());
         }
-        
+
+        Collection<S3Object> s3Objects = new ArrayList<>();
         Queue<Exchange> answer = new LinkedList<Exchange>();
-        for (S3ObjectSummary s3ObjectSummary : s3ObjectSummaries) {
-            S3Object s3Object = getAmazonS3Client().getObject(s3ObjectSummary.getBucketName(), s3ObjectSummary.getKey());
-            Exchange exchange = getEndpoint().createExchange(s3Object);
-            answer.add(exchange);
+        try {
+            for (S3ObjectSummary s3ObjectSummary : s3ObjectSummaries) {
+                S3Object s3Object = getAmazonS3Client().getObject(s3ObjectSummary.getBucketName(), s3ObjectSummary.getKey());
+                s3Objects.add(s3Object);
+
+                Exchange exchange = getEndpoint().createExchange(s3Object);
+                answer.add(exchange);
+            }
+        } catch (Throwable e) {
+            LOG.warn("Error getting S3Object due: " + e.getMessage(), e);
+            // ensure all previous gathered s3 objects are closed
+            // if there was an exception creating the exchanges in this batch
+            s3Objects.forEach(IOHelper::close);
+            throw e;
         }
 
         return answer;

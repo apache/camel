@@ -26,9 +26,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Unit testing for using a MinaProducer that it can shutdown properly (CAMEL-395)
@@ -40,10 +39,7 @@ public class MinaProducerShutdownMockTest extends BaseMinaTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        // create our mock and record expected behavior = that worker timeout should be set to 0
-        SocketConnector mockConnector = createMock(SocketConnector.class);
-        mockConnector.setWorkerTimeout(0);
-        replay(mockConnector);
+        SocketConnector mockConnector = mock(SocketConnector.class);
 
         // normal camel code to get a producer
         Endpoint endpoint = context.getEndpoint("mina:tcp://localhost:{{port}}?textline=true&sync=false");
@@ -63,7 +59,7 @@ public class MinaProducerShutdownMockTest extends BaseMinaTest {
         // stop using our mock
         producer.stop();
 
-        verify(mockConnector);
+        verify(mockConnector).setWorkerTimeout(0);
 
         assertMockEndpointsSatisfied();
     }

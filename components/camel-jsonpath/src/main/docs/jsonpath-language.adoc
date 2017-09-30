@@ -1,4 +1,4 @@
-## JSonPath Language
+== JSonPath Language
 
 *Available as of Camel version 2.13*
 
@@ -18,99 +18,106 @@ from("queue:books.new")
       .to("jms:queue:book.expensive")
 -----------------------------------------------------
 
-### JSonPath Options
+=== JSonPath Options
 
 
 // language options: START
-The JSonPath language supports 6 options which are listed below.
+The JSonPath language supports 7 options which are listed below.
 
 
 
 [width="100%",cols="2,1m,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Default | Java Type | Description
 | resultType |  | String | Sets the class name of the result type (type from output)
 | suppressExceptions | false | Boolean | Whether to suppress exceptions such as PathNotFoundException.
 | allowSimple | true | Boolean | Whether to allow in inlined simple exceptions in the json path expression
 | allowEasyPredicate | true | Boolean | Whether to allow using the easy predicate parser to pre-parse predicates.
 | writeAsString | false | Boolean | Whether to write the output of each row/element as a JSon String value instead of a Map/POJO value.
+| headerName |  | String | Name of header to use as input instead of the message body
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|=======================================================================
+|===
 // language options: END
 
 
 
-### Using XML configuration
+=== Using XML configuration
 
 If you prefer to configure your routes in your link:spring.html[Spring]
 XML file then you can use link:jsonpath.html[JSonPath] expressions as
 follows
 
 [source,xml]
--------------------------------------------------------------------------
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <from uri="direct:start"/>
-      <choice>
-        <when>
-          <jsonpath>$.store.book[?(@.price &lt; 10)]</jsonpath>
-          <to uri="mock:cheap"/>
-        </when>
-        <when>
-          <jsonpath>$.store.book[?(@.price &lt; 30)]</jsonpath>
-          <to uri="mock:average"/>
-        </when>
-        <otherwise>
-          <to uri="mock:expensive"/>
-        </otherwise>
-      </choice>
-    </route>
-  </camelContext>
--------------------------------------------------------------------------
+----
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <choice>
+      <when>
+        <jsonpath>$.store.book[?(@.price &lt; 10)]</jsonpath>
+        <to uri="mock:cheap"/>
+      </when>
+      <when>
+        <jsonpath>$.store.book[?(@.price &lt; 30)]</jsonpath>
+        <to uri="mock:average"/>
+      </when>
+      <otherwise>
+        <to uri="mock:expensive"/>
+      </otherwise>
+    </choice>
+  </route>
+</camelContext>
+----
 
-### Syntax
+=== Syntax
 
 See the https://code.google.com/p/json-path/[JSonPath] project page for
 further examples.
 
-### Easy Syntax
+=== Easy Syntax
 
 *Available as of Camel 2.19*
 
 When you just want to define a basic predicate using jsonpath syntax it can be a bit hard to remember the syntax.
  So for example to find out all the cheap books you have to do
 
-    $.store.book[?(@.price < 20)]
+----
+$.store.book[?(@.price < 20)]
+----
 
 However what if you could just write it as
 
-    store.book.price < 20
+----
+store.book.price < 20
+----
 
 And you can omit the path if you just want to look at nodes with a price key
 
-    price < 20
+----
+price < 20
+----
 
 To support this there is a `EasyPredicateParser` which kicks-in if you have define the predicate
   using a basic style. That means the predicate must not start with the `$` sign, and only include one operator.
 
 The easy syntax is:
 
-   left OP right
+----
+left OP right
+----
 
 You can use Camel simple language in the right operator, eg
 
-    store.book.price < ${header.limit}
+----
+store.book.price < ${header.limit}
+----
 
-
-
-
-### Supported message body types
+=== Supported message body types
 
 Camel JSonPath supports message body using the following types:
 
-{% raw %}
 [width="100%",cols="3m,7",options="header"]
-|=======================================================================
+|===
 | Type | Comment
 | File | Reading from files
 | String | Plain strings
@@ -120,14 +127,13 @@ Camel JSonPath supports message body using the following types:
   is able to use Jackson to read the message body as POJO and convert to `java.util.Map`
   which is supported by JSonPath. For example you can add `camel-jackson` as dependency to include Jackson.
 | InputStream | If none of the above types matches, then Camel will attempt to read the message body as an `java.io.InputStream`.
-|=======================================================================
-{% endraw %}
+|===
 
 If a message body is of unsupported type then an exception is thrown by default, however you
 can configure JSonPath to suppress exceptions (see below)
 
 
-### Suppress exceptions
+=== Suppress exceptions
 
 *Available as of Camel 2.16*
 
@@ -138,7 +144,7 @@ contains optional data. Therefore you can set the option
 suppressExceptions to true to ignore this as shown:
 
 [source,java]
----------------------------------------------------
+----
 from("direct:start")
     .choice()
         // use true to suppress exceptions
@@ -146,31 +152,29 @@ from("direct:start")
             .to("mock:middle")
         .otherwise()
             .to("mock:other");
----------------------------------------------------
+----
 
 And in XML DSL:
 
 [source,xml]
---------------------------------------------------------------------------
-    <route>
-      <from uri="direct:start"/>
-      <choice>
-        <when>
-          <jsonpath suppressExceptions="true">person.middlename</jsonpath>
-          <to uri="mock:middle"/>
-        </when>
-        <otherwise>
-          <to uri="mock:other"/>
-        </otherwise>
-      </choice>
-    </route>
---------------------------------------------------------------------------
-
- 
+----
+<route>
+  <from uri="direct:start"/>
+  <choice>
+    <when>
+      <jsonpath suppressExceptions="true">person.middlename</jsonpath>
+      <to uri="mock:middle"/>
+    </when>
+    <otherwise>
+      <to uri="mock:other"/>
+    </otherwise>
+  </choice>
+</route>
+----
 
 This option is also available on the `@JsonPath` annotation.
 
-### Inline Simple exceptions
+=== Inline Simple exceptions
 
 *Available as of Camel 2.18*
 
@@ -178,7 +182,7 @@ Its now possible to inlined Simple language expressions in the JSonPath expressi
 An example is shown below:
 
 [source,java]
----------------------------------------------------
+----
 from("direct:start")
   .choice()
     .when().jsonpath("$.store.book[?(@.price < ${header.cheap})]")
@@ -187,12 +191,12 @@ from("direct:start")
       .to("mock:average")
     .otherwise()
       .to("mock:expensive");
----------------------------------------------------
+----
 
 And in XML DSL:
 
 [source,xml]
---------------------------------------------------------------------------
+----
 <route>
   <from uri="direct:start"/>
   <choice>
@@ -209,24 +213,23 @@ And in XML DSL:
     </otherwise>
   </choice>
 </route>
---------------------------------------------------------------------------
+----
 
 You can turn off support for inlined simple expression by setting the option allowSimple to false as shown:
 
 [source,java]
----------------------------------------------------
+----
 .when().jsonpath("$.store.book[?(@.price < 10)]", false, false)
----------------------------------------------------
+----
 
 And in XML DSL:
 
 [source,xml]
---------------------------------------------------------------------------
+----
 <jsonpath allowSimple="false">$.store.book[?(@.price < 10)]</jsonpath>
---------------------------------------------------------------------------
+----
 
-
-### JSonPath injection
+=== JSonPath injection
 
 You can use link:bean-integration.html[Bean Integration] to invoke a
 method on a bean and use various languages such as JSonPath to extract a
@@ -235,7 +238,7 @@ value from the message and bind it to a method parameter.
 For example
 
 [source,java]
----------------------------------------------------------------------------------------------------
+----
 public class Foo {
     
     @Consume(uri = "activemq:queue:books.new")
@@ -243,9 +246,9 @@ public class Foo {
       // process the inbound message here
     }
 }
----------------------------------------------------------------------------------------------------
+----
 
-### Encoding Detection
+=== Encoding Detection
 
 *Since Camel version 2.16*, the encoding of the JSON document is
 detected automatically, if the document is encoded in unicode  (UTF-8,
@@ -255,35 +258,66 @@ you enter the document in String format to the JSONPath component or you
 can specify the encoding in the header "*CamelJsonPathJsonEncoding*"
 (JsonpathConstants.HEADER_JSON_ENCODING).
 
-### Split JSon data into sub rows as JSon
+=== Split JSon data into sub rows as JSon
 
 You can use jsonpath to split a JSon document, such as:
 
 [source,java]
----------------------------------------------------------------------------------------------------
-    from("direct:start")
-        .split().jsonpath("$.store.book[*]")
-        .to("log:book");
----------------------------------------------------------------------------------------------------
+----
+from("direct:start")
+    .split().jsonpath("$.store.book[*]")
+    .to("log:book");
+----
 
 Then each book is logged, however the message body is a `Map` instance. Sometimes
 you may want to output this as plain String JSon value instead, which can be done
 from *Camel 2.20* onwards with the `writeAsString` option as shown:
 
 [source,java]
----------------------------------------------------------------------------------------------------
-    from("direct:start")
-        .split().jsonpathWriteAsString("$.store.book[*]")
-        .to("log:book");
----------------------------------------------------------------------------------------------------
+----
+from("direct:start")
+    .split().jsonpathWriteAsString("$.store.book[*]")
+    .to("log:book");
+----
 
 Then each book is logged as a String JSon value. For earlier versions of Camel you
 would need to use camel-jackson dataformat and marshal the message body to make it
 convert the message body from `Map` to a `String` type.
 
+=== Using header as input
+*Available as of Camel 2.20*
 
+By default jsonpath uses the message body as the input source. However you can also use a header as input
+by specifying the `headerName` option.
 
-### Dependencies
+For example to count the number of books from a json document that
+was stored in a header named `books` you can do:
+
+[source,java]
+----
+from("direct:start")
+    .setHeader("numberOfBooks")
+        .jsonpath("$..store.book.length()", false, int.class, "books")
+    .to("mock:result");
+----
+
+In the `jsonpath` expression above we specify the name of the header as `books`
+and we also told that we wanted the result to be converted as an integer by `int.class`.
+
+The same example in XML DSL would be:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader headerName="numberOfBooks">
+    <jsonpath headerName="books" resultType="int">$..store.book.length()</jsonpath>
+  </transform>
+  <to uri="mock:result"/>
+</route>
+----
+
+=== Dependencies
 
 To use JSonPath in your camel routes you need to add the a dependency on
 *camel-jsonpath* which implements the JSonPath language.
@@ -293,10 +327,10 @@ substituting the version number for the latest & greatest release (see
 link:download.html[the download page for the latest versions]).
 
 [source,xml]
------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-jsonpath</artifactId>
   <version>x.x.x</version>
 </dependency>
------------------------------------------
+----

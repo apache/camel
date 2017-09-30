@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.servicenow;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
@@ -45,7 +47,7 @@ public final class ServiceNowClient {
     private final ServiceNowConfiguration configuration;
     private final WebClient client;
 
-    ServiceNowClient(CamelContext camelContext, ServiceNowConfiguration configuration) throws Exception {
+    public ServiceNowClient(CamelContext camelContext, ServiceNowConfiguration configuration) {
         this.camelContext = camelContext;
         this.configuration = configuration;
         this.client = WebClient.create(
@@ -206,7 +208,7 @@ public final class ServiceNowClient {
     }
 
     private static void configureRequestContext(
-            CamelContext context, ServiceNowConfiguration configuration, WebClient client) throws Exception {
+            CamelContext context, ServiceNowConfiguration configuration, WebClient client) {
 
         WebClient.getConfig(client)
             .getRequestContext()
@@ -214,7 +216,7 @@ public final class ServiceNowClient {
     }
 
     private static void configureTls(
-        CamelContext camelContext, ServiceNowConfiguration configuration, WebClient client) throws Exception {
+        CamelContext camelContext, ServiceNowConfiguration configuration, WebClient client) {
 
         SSLContextParameters sslContextParams = configuration.getSslContextParameters();
         if (sslContextParams != null) {
@@ -224,15 +226,19 @@ public final class ServiceNowClient {
                 tlsClientParams = new TLSClientParameters();
             }
 
-            SSLContext sslContext = sslContextParams.createSSLContext(camelContext);
-            tlsClientParams.setSSLSocketFactory(sslContext.getSocketFactory());
+            try {
+                SSLContext sslContext = sslContextParams.createSSLContext(camelContext);
+                tlsClientParams.setSSLSocketFactory(sslContext.getSocketFactory());
 
-            conduit.setTlsClientParameters(tlsClientParams);
+                conduit.setTlsClientParameters(tlsClientParams);
+            } catch (IOException | GeneralSecurityException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
         }
     }
 
     private static void configureHttpClientPolicy(
-            CamelContext context, ServiceNowConfiguration configuration, WebClient client) throws Exception {
+            CamelContext context, ServiceNowConfiguration configuration, WebClient client) {
 
         HTTPClientPolicy httpPolicy = configuration.getHttpClientPolicy();
         if (httpPolicy == null) {
@@ -252,7 +258,7 @@ public final class ServiceNowClient {
     }
 
     private static void configureProxyAuthorizationPolicy(
-            CamelContext context, ServiceNowConfiguration configuration, WebClient client) throws Exception {
+            CamelContext context, ServiceNowConfiguration configuration, WebClient client) {
 
         ProxyAuthorizationPolicy proxyPolicy = configuration.getProxyAuthorizationPolicy();
         if (proxyPolicy == null) {

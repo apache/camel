@@ -32,7 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atomix.client.AtomixFactory;
 import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ha.ClusteredRoutePolicyFactory;
+import org.apache.camel.impl.ha.ClusteredRoutePolicy;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Assert;
 import org.junit.Test;
@@ -81,25 +81,21 @@ public abstract class AtomixClientRoutePolicyTestSupport {
 
     private void run(String id) {
         try {
-            CountDownLatch contextLatch = new CountDownLatch(1);
+            int events = ThreadLocalRandom.current().nextInt(2, 6);
+            CountDownLatch contextLatch = new CountDownLatch(events);
 
             DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
             context.setName("context-" + id);
             context.addService(createClusterService(id, address));
-            context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:atomix?delay=1s&period=1s&repeatCount=1")
+                    from("timer:atomix?delay=1s&period=1s")
                         .routeId("route-" + id)
-                        .process(e -> {
-                            LOGGER.debug("Node {} done", id);
-                            results.add(id);
-                            // Shutdown the context later on to give a chance to
-                            // other members to catch-up
-                            scheduler.schedule(contextLatch::countDown, 2 + ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS);
-                        });
+                        .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
+                        .log("From ${routeId}")
+                        .process(e -> contextLatch.countDown());
                 }
             });
 
@@ -109,6 +105,10 @@ public abstract class AtomixClientRoutePolicyTestSupport {
             context.start();
 
             contextLatch.await();
+
+            LOGGER.debug("Shutting down client node {}", id);
+            results.add(id);
+
             context.stop();
 
             latch.countDown();

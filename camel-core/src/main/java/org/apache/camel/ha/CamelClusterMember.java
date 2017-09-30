@@ -22,5 +22,10 @@ public interface CamelClusterMember extends HasId {
     /**
      * @return true if this member is the master.
      */
-    boolean isMaster();
+    boolean isLeader();
+
+    /**
+     * @return true if this member is local.
+     */
+    boolean isLocal();
 }

@@ -50,6 +50,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.converter.jaxp.ThreadSafeNodeList;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
@@ -96,6 +97,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
     private final ThreadLocal<Exchange> exchange = new ThreadLocal<Exchange>();
     private final MessageVariableResolver variableResolver = new MessageVariableResolver(exchange);
     private final Map<String, String> namespaces = new ConcurrentHashMap<String, String>();
+    private boolean threadSafety;
     private volatile XPathFactory xpathFactory;
     private volatile Class<?> documentType = Document.class;
     // For some reason the default expression of "a/b" on a document such as
@@ -448,6 +450,25 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         return this;
     }
 
+    /**
+     * Whether to enable thread-safety for the returned result of the xpath expression.
+     * This applies to when using NODESET as the result type, and the returned set has
+     * multiple elements. In this situation there can be thread-safety issues if you
+     * process the NODESET concurrently such as from a Camel Splitter EIP in parallel processing mode.
+     * This option prevents concurrency issues by doing defensive copies of the nodes.
+     * <p/>
+     * It is recommended to turn this option on if you are using camel-saxon or Saxon in your application.
+     * Saxon has thread-safety issues which can be prevented by turning this option on.
+     * <p/>
+     * Thread-safety is disabled by default
+     *
+     * @return the current builder.
+     */
+    public XPathBuilder threadSafety(boolean threadSafety) {
+        setThreadSafety(threadSafety);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -493,6 +514,14 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
 
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
+    }
+
+    public boolean isThreadSafety() {
+        return threadSafety;
+    }
+
+    public void setThreadSafety(boolean threadSafety) {
+        this.threadSafety = threadSafety;
     }
 
     /**
@@ -946,6 +975,24 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         } finally {
             // IOHelper can handle if is is null
             IOHelper.close(is);
+        }
+
+        if (threadSafety && answer != null && answer instanceof NodeList) {
+            try {
+                NodeList list = (NodeList) answer;
+
+                // when the result is NodeList and it has 2+ elements then its not thread-safe to use concurrently
+                // and we need to clone each node and build a thread-safe list to be used instead
+                boolean threadSafetyNeeded = list.getLength() >= 2;
+                if (threadSafetyNeeded) {
+                    answer = new ThreadSafeNodeList(list);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Created thread-safe result from: {} as: {}", list.getClass().getName(), answer.getClass().getName());
+                    }
+                }
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
         }
 
         if (LOG.isTraceEnabled()) {

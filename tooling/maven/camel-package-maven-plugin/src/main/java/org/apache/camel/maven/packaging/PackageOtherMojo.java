@@ -173,7 +173,7 @@ public class PackageOtherMojo extends AbstractMojo {
 
             log.debug("Generated " + out + " containing JSon schema for " + name + " other");
         } catch (Exception e) {
-            throw new MojoExecutionException("Error loading language model from camel-core. Reason: " + e, e);
+            throw new MojoExecutionException("Error loading other model. Reason: " + e, e);
         }
 
         // now create properties file

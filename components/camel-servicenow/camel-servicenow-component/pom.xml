@@ -29,7 +29,7 @@
 
   <artifactId>camel-servicenow</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: ServiceNow</name>
+  <name>Camel :: ServiceNow :: Component</name>
   <description>Camel ServiceNow support</description>
 
   <properties>

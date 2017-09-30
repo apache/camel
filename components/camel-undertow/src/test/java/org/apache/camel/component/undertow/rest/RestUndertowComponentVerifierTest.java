@@ -36,7 +36,7 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
         parameters.put("componentName", "undertow");
         parameters.put("host", "http://localhost:" + getPort());
         parameters.put("path", "verify");
-        parameters.put("method", "get");
+        parameters.put("method", "GET");
 
         ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.PARAMETERS, parameters);
 
@@ -75,7 +75,7 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
         parameters.put("componentName", "undertow");
         parameters.put("host", "http://localhost:" + getPort());
         parameters.put("path", "verify");
-        parameters.put("method", "get");
+        parameters.put("method", "GET");
 
         // This parameter does not belong to the rest component and validation
         // is delegated to the transport component
@@ -99,7 +99,7 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
         parameters.put("componentName", "undertow");
         parameters.put("host", "http://localhost:" + getPort());
         parameters.put("path", "verify");
-        parameters.put("method", "get");
+        parameters.put("method", "GET");
 
         ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.CONNECTIVITY, parameters);
 

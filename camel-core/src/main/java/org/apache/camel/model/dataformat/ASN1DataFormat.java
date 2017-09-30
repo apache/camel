@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * ASN.1 data format
+ * The ASN.1 data format is used for file transfer with telecommunications protocols.
  */
 @Metadata(firstVersion = "2.20.0", label = "dataformat,transformation,file", title = "ASN.1 File")
 @XmlRootElement(name = "asn1")
@@ -80,7 +80,7 @@ public class ASN1DataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Name of class to use when unarmshalling
+     * Name of class to use when unmarshalling
      */
     public void setClazzName(String clazzName) {
         this.clazzName = clazzName;

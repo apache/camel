@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * BeanIO data format
+ * The BeanIO data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).
  *
  * @version 
  */
@@ -48,8 +48,10 @@ public class BeanioDataFormat extends DataFormatDefinition {
     private Boolean ignoreInvalidRecords;
     @XmlAttribute
     private String encoding;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String beanReaderErrorHandlerType;
+    @XmlAttribute @Metadata(label = "advanced")
+    private Boolean unmarshalSingleObject;
 
     public BeanioDataFormat() {
         super("beanio");
@@ -73,6 +75,9 @@ public class BeanioDataFormat extends DataFormatDefinition {
         }
         if (beanReaderErrorHandlerType != null) {
             setProperty(camelContext, dataFormat, "beanReaderErrorHandlerType", beanReaderErrorHandlerType);
+        }
+        if (unmarshalSingleObject != null) {
+            setProperty(camelContext, dataFormat, "unmarshalSingleObject", unmarshalSingleObject);
         }
     }
 
@@ -157,5 +162,17 @@ public class BeanioDataFormat extends DataFormatDefinition {
      */
     public void setBeanReaderErrorHandlerType(String beanReaderErrorHandlerType) {
         this.beanReaderErrorHandlerType = beanReaderErrorHandlerType;
+    }
+
+    public Boolean getUnmarshalSingleObject() {
+        return unmarshalSingleObject;
+    }
+
+    /**
+     * This options controls whether to unmarshal as a list of objects or as a single object only. The former is the default mode, and the latter
+     * is only intended in special use-cases where beanio maps the Camel message to a single POJO bean.
+     */
+    public void setUnmarshalSingleObject(Boolean unmarshalSingleObject) {
+        this.unmarshalSingleObject = unmarshalSingleObject;
     }
 }

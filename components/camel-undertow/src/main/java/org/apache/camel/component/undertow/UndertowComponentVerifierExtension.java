@@ -17,6 +17,7 @@
 package org.apache.camel.component.undertow;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -48,9 +49,12 @@ import org.xnio.Xnio;
 import org.xnio.XnioWorker;
 
 public final class UndertowComponentVerifierExtension extends DefaultComponentVerifierExtension {
+    private ThreadLocal<WeakReference<UndertowClientWrapper>> clientCache;
 
     UndertowComponentVerifierExtension() {
         super("undertow");
+
+        clientCache = new ThreadLocal<>();
     }
 
     // *********************************
@@ -99,15 +103,15 @@ public final class UndertowComponentVerifierExtension extends DefaultComponentVe
         // Check if validation is rest-related
         final boolean isRest = verifyParams.entrySet().stream().anyMatch(e -> e.getKey().startsWith("rest."));
 
-        String httpUri;
-        Optional<String> httpMethod;
+        String httpUri = null;
+        String httpMethod = null;
 
         if (isRest) {
             // We are doing rest endpoint validation but as today the endpoint
             // can't do any param substitution so the validation is performed
             // against the http uri
             httpUri = getOption(verifyParams, "rest.host", String.class).orElse(null);
-            httpMethod = getOption(verifyParams, "rest.method", String.class);
+            httpMethod = getOption(verifyParams, "rest.method", String.class).orElse(null);
 
             String path = getOption(verifyParams, "rest.path", String.class).map(FileUtil::stripLeadingSeparator).orElse(null);
             if (ObjectHelper.isNotEmpty(httpUri) && ObjectHelper.isNotEmpty(path)) {
@@ -120,11 +124,10 @@ public final class UndertowComponentVerifierExtension extends DefaultComponentVe
             verifyParams.entrySet().removeIf(e -> e.getKey().startsWith("rest."));
         }
 
-        httpUri = getOption(verifyParams, "httpURI", String.class).orElse(null);
-        httpMethod = Optional.empty();
+        final URI uri = getHttpUri(verifyParams);
 
         // Check whether the http uri is null or empty
-        if (ObjectHelper.isEmpty(httpUri)) {
+        if (ObjectHelper.isEmpty(uri)) {
             builder.error(
                 ResultErrorBuilder.withMissingOption("httpURI")
                     .detail("rest", isRest)
@@ -137,8 +140,8 @@ public final class UndertowComponentVerifierExtension extends DefaultComponentVe
         }
 
         try {
-            final UndertowClientWrapper wrapper = new UndertowClientWrapper();
-            final ClientResponse response = wrapper.send(httpUri, httpMethod);
+            final UndertowClientWrapper wrapper = getUndertowClientWrapper();
+            final ClientResponse response = wrapper.send(uri, Optional.ofNullable(httpMethod));
 
             if (response != null) {
                 int code = response.getResponseCode();
@@ -184,6 +187,44 @@ public final class UndertowComponentVerifierExtension extends DefaultComponentVe
     // Helpers
     // *********************************
 
+    private URI getHttpUri(Map<String, Object> parameters) {
+        URI uri = null;
+
+        // check if a client has been supplied to the parameters map
+        for (Object value : parameters.values()) {
+            if (value instanceof URI) {
+                uri = URI.class.cast(value);
+                break;
+            }
+        }
+
+        if (ObjectHelper.isEmpty(uri)) {
+            String httpUri = (String)parameters.get("httpURI");
+
+            if (!ObjectHelper.isEmpty(httpUri)) {
+                uri = URI.create(UnsafeUriCharactersEncoder.encodeHttpURI(httpUri));
+            }
+        }
+
+        return uri;
+    }
+
+    private UndertowClientWrapper getUndertowClientWrapper() throws Exception {
+        WeakReference<UndertowClientWrapper> ref = clientCache.get();
+        UndertowClientWrapper wrapper = null;
+
+        if (ref != null) {
+            wrapper = ref.get();
+        }
+
+        if (wrapper == null) {
+            wrapper = new UndertowClientWrapper();
+            clientCache.set(new WeakReference<>(wrapper));
+        }
+
+        return wrapper;
+    }
+
     private final class UndertowClientWrapper {
         private final XnioWorker worker;
         private final ByteBufferPool pool;
@@ -195,9 +236,8 @@ public final class UndertowComponentVerifierExtension extends DefaultComponentVe
             this.client = UndertowClient.getInstance();
         }
 
-        public ClientResponse send(String httpUri, Optional<String> httpMethod) throws Exception {
-            URI uri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(httpUri));
-            HttpString method = httpMethod.map(Methods::fromString).orElse(Methods.GET);
+        public ClientResponse send(URI uri, Optional<String> httpMethod) throws Exception {
+            HttpString method = httpMethod.map(String::toUpperCase).map(Methods::fromString).orElse(Methods.GET);
 
             ClientRequest request = new ClientRequest();
             request.setMethod(method);
@@ -213,7 +253,7 @@ public final class UndertowComponentVerifierExtension extends DefaultComponentVe
         }
     }
 
-    private static final class UndertowClientResponseFuture extends AbstractIoFuture<ClientExchange> implements ClientCallback<ClientExchange> {
+    private final class UndertowClientResponseFuture extends AbstractIoFuture<ClientExchange> implements ClientCallback<ClientExchange> {
         @Override
         public void completed(ClientExchange result) {
             result.setResponseListener(new ClientCallback<ClientExchange>() {

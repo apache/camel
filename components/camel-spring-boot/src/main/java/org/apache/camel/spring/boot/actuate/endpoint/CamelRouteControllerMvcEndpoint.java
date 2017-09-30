@@ -16,64 +16,16 @@
  */
 package org.apache.camel.spring.boot.actuate.endpoint;
 
-import java.util.function.Supplier;
-
-import org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter;
 import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Adapter to expose {@link CamelRouteControllerEndpoint} as an {@link MvcEndpoint}.
  */
 @ConfigurationProperties(prefix = "endpoints." + CamelRouteControllerEndpoint.ENDPOINT_ID)
-public class CamelRouteControllerMvcEndpoint extends EndpointMvcAdapter {
-
-    /**
-     * Default path
-     */
-    public static final String PATH = "/camel/route-controller";
-
-    private final CamelRouteControllerEndpoint delegate;
+public class CamelRouteControllerMvcEndpoint extends AbstractCamelMvcEndpoint<CamelRouteControllerEndpoint> {
 
     public CamelRouteControllerMvcEndpoint(CamelRouteControllerEndpoint delegate) {
-        super(delegate);
-
-        this.setPath(PATH);
-        this.delegate = delegate;
-    }
-
-    // ********************************************
-    // Endpoints
-    // ********************************************
-
-    // ********************************************
-    // Helpers
-    // ********************************************
-
-    private Object doIfEnabled(Supplier<Object> supplier) {
-        if (!delegate.isEnabled()) {
-            return getDisabledResponse();
-        }
-
-        return supplier.get();
-    }
-
-    @SuppressWarnings("serial")
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public static class GenericException extends RuntimeException {
-        public GenericException(String message, Throwable cause) {
-            super(message, cause);
-
-        }
-    }
-
-    @SuppressWarnings("serial")
-    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such route")
-    public static class NoSuchRouteException extends RuntimeException {
-        public NoSuchRouteException(String message) {
-            super(message);
-        }
+        super("/camel/route-controller", delegate);
     }
 }

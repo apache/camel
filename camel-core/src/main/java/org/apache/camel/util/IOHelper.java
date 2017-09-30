@@ -50,6 +50,11 @@ public final class IOHelper {
     private static final Logger LOG = LoggerFactory.getLogger(IOHelper.class);
     private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
+    // allows to turn on backwards compatible to turn off regarding the first read byte with value zero (0b0) as EOL.
+    // See more at CAMEL-11672
+    private static final boolean ZERO_BYTE_EOL_ENABLED =
+        "true".equalsIgnoreCase(System.getProperty("camel.zeroByteEOLEnabled", "true"));
+
     private IOHelper() {
         // Utility Class
     }
@@ -192,16 +197,27 @@ public final class IOHelper {
                     new Object[]{input, output, bufferSize, flushOnEachWrite});
         }
 
+        int total = 0;
         final byte[] buffer = new byte[bufferSize];
         int n = input.read(buffer);
-        int total = 0;
-        while (-1 != n) {
-            output.write(buffer, 0, n);
-            if (flushOnEachWrite) {
-                output.flush();
+
+        boolean hasData;
+        if (ZERO_BYTE_EOL_ENABLED) {
+            // workaround issue on some application servers which can return 0 (instead of -1)
+            // as first byte to indicate end of stream (CAMEL-11672)
+            hasData = n > 0;
+        } else {
+            hasData = n > -1;
+        }
+        if (hasData) {
+            while (-1 != n) {
+                output.write(buffer, 0, n);
+                if (flushOnEachWrite) {
+                    output.flush();
+                }
+                total += n;
+                n = input.read(buffer);
             }
-            total += n;
-            n = input.read(buffer);
         }
         if (!flushOnEachWrite) {
             // flush at end, if we didn't do it during the writing

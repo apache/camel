@@ -1,4 +1,4 @@
-## ZooKeeper Master Component
+== ZooKeeper Master Component
 
 *Available as of Camel version 2.19*
 
@@ -38,44 +38,46 @@ The ZooKeeper Master component supports 7 options which are listed below.
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **containerIdFactory** (consumer) | To use a custom ContainerIdFactory for creating container ids. |  | ContainerIdFactory
-| **zkRoot** (consumer) | The root path to use in zookeeper where information is stored which nodes are master/slave etc. Will by default use: /camel/zookeepermaster/clusters/master | /camel/zookeepermaster/clusters/master | String
-| **curator** (advanced) | To use a custom configured CuratorFramework as connection to zookeeper ensemble. |  | CuratorFramework
-| **maximumConnection Timeout** (consumer) | Timeout in millis to use when connecting to the zookeeper ensemble | 10000 | int
-| **zooKeeperUrl** (consumer) | The url for the zookeeper ensemble | localhost:2181 | String
-| **zooKeeperPassword** (security) | The password to use when connecting to the zookeeper ensemble |  | String
-| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
-|=======================================================================
+| *containerIdFactory* (consumer) | To use a custom ContainerIdFactory for creating container ids. |  | ContainerIdFactory
+| *zkRoot* (consumer) | The root path to use in zookeeper where information is stored which nodes are master/slave etc. Will by default use: /camel/zookeepermaster/clusters/master | /camel/zookeepermaster/clusters/master | String
+| *curator* (advanced) | To use a custom configured CuratorFramework as connection to zookeeper ensemble. |  | CuratorFramework
+| *maximumConnection Timeout* (consumer) | Timeout in millis to use when connecting to the zookeeper ensemble | 10000 | int
+| *zooKeeperUrl* (consumer) | The url for the zookeeper ensemble | localhost:2181 | String
+| *zooKeeperPassword* (security) | The password to use when connecting to the zookeeper ensemble |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 // endpoint options: START
 The ZooKeeper Master endpoint is configured using URI syntax:
 
-    zookeeper-master:groupName:consumerEndpointUri
+----
+zookeeper-master:groupName:consumerEndpointUri
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (2 parameters):
+==== Path Parameters (2 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **groupName** | *Required* The name of the cluster group to use |  | String
-| **consumerEndpointUri** | *Required* The consumer endpoint to use in master/slave mode |  | String
-|=======================================================================
+| *groupName* | *Required* The name of the cluster group to use |  | String
+| *consumerEndpointUri* | *Required* The consumer endpoint to use in master/slave mode |  | String
+|===
 
-#### Query Parameters (4 parameters):
+==== Query Parameters (4 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-|=======================================================================
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
 // endpoint options: END
 
 ### Example

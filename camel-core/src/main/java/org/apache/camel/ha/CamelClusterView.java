@@ -16,6 +16,7 @@
  */
 package org.apache.camel.ha;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,7 +79,7 @@ public interface CamelClusterView extends Service, CamelContextAware {
      * @param clazz the proprietary class or interface of the underlying concrete CamelClusterView.
      * @return an instance of the underlying concrete CamelClusterView as the required type.
      */
-    default <T> T unwrap(Class<T> clazz) {
+    default <T extends CamelClusterView> T unwrap(Class<T> clazz) {
         if (CamelClusterView.class.isAssignableFrom(clazz)) {
             return clazz.cast(this);
         }

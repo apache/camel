@@ -108,7 +108,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean useByteBuf;
     @UriParam(label = "advanced")
     private boolean udpByteArrayCodec;
-    @UriParam(label = "producer")
+    @UriParam(label = "common")
     private boolean reuseChannel;
 
     /**
@@ -643,8 +643,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     }
 
     /**
-     * This option allows producers to reuse the same Netty {@link Channel} for the lifecycle of processing the {@link Exchange}.
-     * This is useable if you need to call a server multiple times in a Camel route and want to use the same network connection.
+     * This option allows producers and consumers (in client mode) to reuse the same Netty {@link Channel} for the lifecycle of processing the {@link Exchange}.
+     * This is useful if you need to call a server multiple times in a Camel route and want to use the same network connection.
      * When using this the channel is not returned to the connection pool until the {@link Exchange} is done; or disconnected
      * if the disconnect option is set to true.
      * <p/>

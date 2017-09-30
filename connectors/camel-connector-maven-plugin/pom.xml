@@ -33,6 +33,11 @@
 
   <dependencies>
 
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog</artifactId>
+    </dependency>
+
     <!-- we extend this existing maven plugin -->
     <dependency>
       <groupId>org.apache.maven.plugins</groupId>

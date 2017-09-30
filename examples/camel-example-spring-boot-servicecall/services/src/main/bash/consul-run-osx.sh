@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CONSUL_VER="0.8.1"
+CONSUL_VER="0.9.3"
 CONSUL_ZIP="consul_${CONSUL_VER}_darwin_amd64.zip"
 
 # cleanup
@@ -18,17 +18,6 @@ if [ ! -f target/$CONSUL_ZIP ]; then
     curl -o target/$CONSUL_ZIP "https://releases.hashicorp.com/consul/$CONSUL_VER/$CONSUL_ZIP"
 fi
 
-cat > target/consul-config/services.json <<EOF
-{
-  "services": [{
-    "id": "s1i1", "name": "service-1", "tags": ["camel", "service-call"], "address": "localhost", "port": 9011
-  }, {
-    "id": "s1i2", "name": "service-1", "tags": ["camel", "service-call"], "address": "localhost", "port": 9012
-  }, {
-    "id": "s1i3", "name": "service-1", "tags": ["camel", "service-call"], "address": "localhost", "port": 9013
-  }]
-}
-EOF
 
 unzip -d target target/$CONSUL_ZIP
 chmod +x target/consul
@@ -42,5 +31,5 @@ target/consul \
     -bind 0.0.0.0 \
     -log-level trace \
     -data-dir target/consul-data \
-    -config-dir target/consul-config \
+    -config-dir src/main/resources/consul \
     -ui

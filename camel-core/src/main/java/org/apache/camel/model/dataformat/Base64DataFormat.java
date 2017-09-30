@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Base64 data format
+ * The Base64 data format is used for base64 encoding and decoding.
  *
  * @version 
  */
@@ -38,7 +38,7 @@ public class Base64DataFormat extends DataFormatDefinition {
 
     @XmlAttribute @Metadata(defaultValue = "76")
     private Integer lineLength;
-    @XmlAttribute @Metadata(defaultValue = "\\r\\n")
+    @XmlAttribute
     private String lineSeparator;
     @XmlAttribute
     private Boolean urlSafe;
@@ -82,7 +82,7 @@ public class Base64DataFormat extends DataFormatDefinition {
     /**
      * The line separators to use.
      * <p/>
-     * By default \r\n is used.
+     * Uses new line characters (CRLF) by default.
      */
     public void setLineSeparator(String lineSeparator) {
         this.lineSeparator = lineSeparator;

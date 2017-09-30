@@ -203,7 +203,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
     /**
      * The normalized line separator of the files
      * <p/>
-     * The default value is \n
+     * The default value is a new line character.
      */
     public void setNormalizedLineSeparator(String normalizedLineSeparator) {
         this.normalizedLineSeparator = normalizedLineSeparator;

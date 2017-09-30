@@ -240,4 +240,19 @@ public final class CamelOpenMBeanTypes {
                                  new String[]{"Type", "Static", "Dynamic", "Description"},
                                  new OpenType[]{SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN, SimpleType.STRING});
     }
+
+
+
+
+    public static CompositeType camelHealthDetailsCompositeType() throws OpenDataException {
+        return new CompositeType("healthDetails", "Health Details",
+            new String[]{"id", "group", "state", "enabled", "interval", "failureThreshold"},
+            new String[]{"ID", "Group", "State", "Enabled", "Interval", "Failure Threshold"},
+            new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.LONG, SimpleType.INTEGER});
+    }
+
+    public static TabularType camelHealthDetailsTabularType() throws OpenDataException {
+        CompositeType ct = camelHealthDetailsCompositeType();
+        return new TabularType("healthDetails", "Health Details", ct, new String[]{"id"});
+    }
 }

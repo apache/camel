@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * LZF compression data format
+ * The LZF data format is a message compression and de-compression format (uses the LZF deflate algorithm).
  */
 @Metadata(firstVersion = "2.17.0", label = "dataformat,transformation", title = "LZF Deflate Compression")
 @XmlRootElement(name = "lzf")

@@ -198,6 +198,10 @@
               <name>itest.springboot.mavenOfflineResolution</name>
               <value>false</value>
             </property>
+            <property>
+              <name>itest.springboot.springBootVersion</name>
+              <value>${spring-boot-version}</value>
+            </property>
 
           </systemProperties>
         </configuration>

@@ -24,7 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * GZip compression data format
+ * The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).
  *
  * @version 
  */

@@ -29,12 +29,12 @@ import javax.annotation.Generated;
 import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.catalog.JSonSchemaHelper;
 import org.apache.camel.maven.connector.model.ComponentModel;
 import org.apache.camel.maven.connector.model.ComponentOptionModel;
 import org.apache.camel.maven.connector.model.ConnectorOptionModel;
 import org.apache.camel.maven.connector.model.EndpointOptionModel;
 import org.apache.camel.maven.connector.model.OptionModel;
-import org.apache.camel.maven.connector.util.JSonSchemaHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -312,6 +312,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addImport("org.apache.camel.spi.HasId");
         javaClass.addImport("org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator");
         javaClass.addImport("org.apache.camel.util.ObjectHelper");
+        javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
 
         javaClass.addField()
             .setPrivate()
@@ -352,7 +353,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         configureMethod.addAnnotation(Lazy.class);
         configureMethod.addAnnotation(Bean.class).setStringValue("name", beanName);
         configureMethod.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
-        configureMethod.addAnnotation(ConditionalOnMissingBean.class).setStringValue("name", beanName);
+        configureMethod.addAnnotation(ConditionalOnMissingBean.class);
 
         MethodSource<JavaClassSource> postProcessMethod = javaClass.addMethod()
             .setName("postConstruct" + shortJavaType)
@@ -407,6 +408,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("\n");
         if (hasOptions) {
             sb.append("Map<String, Object> parameters = new HashMap<>();\n");
+            sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
             sb.append("CamelPropertiesHelper.setCamelProperties(camelContext, connector, parameters, false);\n");
             sb.append("connector.setOptions(parameters);\n");
         }
@@ -446,6 +448,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("connector.setCamelContext(camelContext);\n");
         sb.append("\n");
         sb.append("try {\n");
+        sb.append("IntrospectionSupport.getProperties(entry.getValue(), parameters, null, false);\n");
         sb.append("CamelPropertiesHelper.setCamelProperties(camelContext, connector, parameters, false);\n");
         sb.append("connector.setOptions(parameters);\n");
         sb.append("if (ObjectHelper.isNotEmpty(customizers)) {\n");

@@ -31,16 +31,16 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * CSV data format
+ * The CSV data format is used for handling CSV payloads.
  */
 @Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,csv", title = "CSV")
 @XmlRootElement(name = "csv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CsvDataFormat extends DataFormatDefinition {
     // Format options
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String formatRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(enums = "DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MYSQL,RFC4180")
     private String formatName;
     @XmlAttribute
     private Boolean commentMarkerDisabled;
@@ -394,7 +394,7 @@ public class CsvDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Sets the record separator (aka new line) which by default is \r\n (CRLF)
+     * Sets the record separator (aka new line) which by default is new line characters (CRLF)
      */
     public void setRecordSeparator(String recordSeparator) {
         this.recordSeparator = recordSeparator;

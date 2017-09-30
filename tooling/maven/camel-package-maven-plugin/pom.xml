@@ -46,6 +46,13 @@
 
   <dependencies>
 
+    <!-- use our patched ordered json-simple parser -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>json-simple-ordered</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>org.mvel</groupId>
       <artifactId>mvel2</artifactId>

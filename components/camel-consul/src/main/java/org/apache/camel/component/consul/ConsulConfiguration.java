@@ -16,55 +16,12 @@
  */
 package org.apache.camel.component.consul;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.option.ConsistencyMode;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
 
 @UriParams
-public class ConsulConfiguration implements CamelContextAware, Cloneable {
-    @UriParam
-    private String url;
-    @UriParam(label = "advanced")
-    private String datacenter;
-    @UriParam(label = "advanced")
-    private String nearNode;
-    @UriParam(label = "advanced")
-    private List<String> nodeMeta;
-    @UriParam(label = "advanced", defaultValue = "DEFAULT", enums = "DEFAULT,STALE,CONSISTENT")
-    private ConsistencyMode consistencyMode = ConsistencyMode.DEFAULT;
-    @UriParam(javaType = "java.lang.String")
-    private Set<String> tags;
-
-    @UriParam(label = "security")
-    private SSLContextParameters sslContextParameters;
-    @UriParam(label = "security", secret = true)
-    private String aclToken;
-    @UriParam(label = "security", secret = true)
-    private String userName;
-    @UriParam(label = "security", secret = true)
-    private String password;
-
-    @UriParam
-    private Long connectTimeoutMillis;
-    @UriParam
-    private Long readTimeoutMillis;
-    @UriParam
-    private Long writeTimeoutMillis;
-    @UriParam(defaultValue = "true")
-    private boolean pingInstance = true;
-
+public class ConsulConfiguration extends ConsulClientConfiguration {
     @UriParam
     private String key;
     @UriParam(label = "producer")
@@ -72,220 +29,11 @@ public class ConsulConfiguration implements CamelContextAware, Cloneable {
     @UriParam(label = "producer", defaultValue = "false")
     private boolean valueAsString;
 
-    @UriParam(label = "consumer,watch", defaultValue = "10")
-    private Integer blockSeconds = 10;
-    @UriParam(label = "consumer,watch", defaultValue = "0")
-    private long firstIndex;
-    @UriParam(label = "consumer,watch", defaultValue = "false")
-    private boolean recursive;
-
-    private CamelContext context;
-
     public ConsulConfiguration() {
-        this.context = null;
-    }
-
-    public ConsulConfiguration(CamelContext context) {
-        this.context = context;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext context) {
-        this.context = context;
-    }
-
-    @Override
-    public CamelContext getCamelContext() {
-        return context;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    /**
-     * The Consul agent URL
-     */
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    /**
-     * @deprecated replaced by {@link #getDatacenter()} ()}
-     */
-    @Deprecated
-    public String getDc() {
-        return datacenter;
-    }
-
-    /**
-     * The data center
-     *
-     * @deprecated replaced by {@link #setDatacenter(String)} ()}
-     */
-    @Deprecated
-    public void setDc(String dc) {
-        this.datacenter = dc;
-    }
-
-    public String getDatacenter() {
-        return datacenter;
-    }
-
-    /**
-     * The data center
-     */
-    public void setDatacenter(String datacenter) {
-        this.datacenter = datacenter;
-    }
-
-    public String getNearNode() {
-        return nearNode;
-    }
-
-    /**
-     * The near node to use for queries.
-     */
-    public void setNearNode(String nearNode) {
-        this.nearNode = nearNode;
-    }
-
-    public List<String> getNodeMeta() {
-        return nodeMeta;
-    }
-
-    /**
-     * The note meta-data to use for queries.
-     */
-    public void setNodeMeta(List<String> nodeMeta) {
-        this.nodeMeta = nodeMeta;
-    }
-
-    public ConsistencyMode getConsistencyMode() {
-        return consistencyMode;
-    }
-
-    /**
-     * The consistencyMode used for queries, default ConsistencyMode.DEFAULT
-     */
-    public void setConsistencyMode(ConsistencyMode consistencyMode) {
-        this.consistencyMode = consistencyMode;
-    }
-
-    public Set<String> getTags() {
-        return tags;
-    }
-
-    /**
-     * Set tags. You can separate multiple tags by comma.
-     */
-    public void setTags(Set<String> tags) {
-        this.tags = tags;
-    }
-
-    /**
-     * Set tags. You can separate multiple tags by comma.
-     */
-    public void setTags(String tagsAsString) {
-        this.tags = new HashSet<>();
-        Collections.addAll(tags, tagsAsString.split(","));
-    }
-
-    public SSLContextParameters getSslContextParameters() {
-        return sslContextParameters;
-    }
-
-    /**
-     * SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters
-     * instance.
-     */
-    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
-        this.sslContextParameters = sslContextParameters;
-    }
-
-    public String getAclToken() {
-        return aclToken;
-    }
-
-    /**
-     * Sets the ACL token to be used with Consul
-     */
-    public void setAclToken(String aclToken) {
-        this.aclToken = aclToken;
     }
 
     public String getAction() {
         return action;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    /**
-     * Sets the username to be used for basic authentication
-     */
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Sets the password to be used for basic authentication
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public boolean requiresBasicAuthentication() {
-        return ObjectHelper.isNotEmpty(userName) && ObjectHelper.isNotEmpty(password);
-    }
-
-    public Long getConnectTimeoutMillis() {
-        return connectTimeoutMillis;
-    }
-
-    /**
-     * Connect timeout for OkHttpClient
-     */
-    public void setConnectTimeoutMillis(Long connectTimeoutMillis) {
-        this.connectTimeoutMillis = connectTimeoutMillis;
-    }
-
-    public Long getReadTimeoutMillis() {
-        return readTimeoutMillis;
-    }
-
-    /**
-     * Read timeout for OkHttpClient
-     */
-    public void setReadTimeoutMillis(Long readTimeoutMillis) {
-        this.readTimeoutMillis = readTimeoutMillis;
-    }
-
-    public Long getWriteTimeoutMillis() {
-        return writeTimeoutMillis;
-    }
-
-    /**
-     * Write timeout for OkHttpClient
-     */
-    public void setWriteTimeoutMillis(Long writeTimeoutMillis) {
-        this.writeTimeoutMillis = writeTimeoutMillis;
-    }
-
-    public boolean isPingInstance() {
-        return pingInstance;
-    }
-
-    /**
-     * Configure if the AgentClient should attempt a ping before returning the Consul instance
-     */
-    public void setPingInstance(boolean pingInstance) {
-        this.pingInstance = pingInstance;
     }
 
     /**
@@ -318,68 +66,11 @@ public class ConsulConfiguration implements CamelContextAware, Cloneable {
         this.key = key;
     }
 
-    public Integer getBlockSeconds() {
-        return blockSeconds;
-    }
+    // ****************************************
+    // Copy
+    // ****************************************
 
-    /**
-     * The second to wait for a watch event, default 10 seconds
-     */
-    public void setBlockSeconds(Integer blockSeconds) {
-        this.blockSeconds = blockSeconds;
-    }
-
-    public long getFirstIndex() {
-        return firstIndex;
-    }
-
-    /**
-     * The first index for watch for, default 0
-     */
-    public void setFirstIndex(long firstIndex) {
-        this.firstIndex = firstIndex;
-    }
-
-    public boolean isRecursive() {
-        return recursive;
-    }
-
-    /**
-     * Recursively watch, default false
-     */
-    public void setRecursive(boolean recursive) {
-        this.recursive = recursive;
-    }
-
-    public Consul createConsulClient() throws Exception {
-        Consul.Builder builder = Consul.builder();
-        builder.withPing(pingInstance);
-
-        if (ObjectHelper.isNotEmpty(url)) {
-            builder.withUrl(url);
-        }
-        if (ObjectHelper.isNotEmpty(context) && ObjectHelper.isNotEmpty(sslContextParameters)) {
-            builder.withSslContext(sslContextParameters.createSSLContext(context));
-        }
-        if (ObjectHelper.isNotEmpty(aclToken)) {
-            builder.withAclToken(aclToken);
-        }
-        if (requiresBasicAuthentication()) {
-            builder.withBasicAuth(userName, password);
-        }
-        if (ObjectHelper.isNotEmpty(connectTimeoutMillis)) {
-            builder.withConnectTimeoutMillis(connectTimeoutMillis);
-        }
-        if (ObjectHelper.isNotEmpty(readTimeoutMillis)) {
-            builder.withReadTimeoutMillis(readTimeoutMillis);
-        }
-        if (ObjectHelper.isNotEmpty(writeTimeoutMillis)) {
-            builder.withWriteTimeoutMillis(writeTimeoutMillis);
-        }
-
-        return builder.build();
-    }
-
+    @Override
     public ConsulConfiguration copy() {
         try {
             return (ConsulConfiguration)super.clone();

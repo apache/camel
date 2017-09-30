@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For SQL expressions and predicates
+ * To use SQL (on Java beans) in Camel expressions or predicates.
  *
  * @version 
  */

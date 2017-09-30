@@ -27,7 +27,7 @@ public class XStreamDataFormatPermissionsSystemPropertyTest extends XStreamDataF
     public static void setup() {
         // clear the default permissions system property
         // see AbstractXStreamWrapper.PERMISSIONS_PROPERTY_DEFAULT
-        XStreamTestUtils.setPermissionSystemProperty("");
+        XStreamTestUtils.setPermissionSystemProperty("*");
     }
 
     @AfterClass

@@ -76,11 +76,11 @@
   <cxf:cxfEndpoint id="routerEndpoint" address="{{router.address}}"
     serviceClass="org.apache.camel.component.cxf.HelloService">
     <cxf:features>
-		<cxf-cluster:failover>
-			<cxf-cluster:strategy>
-				<ref bean="SequentialAddresses" />
-			</cxf-cluster:strategy>
-		</cxf-cluster:failover>
+        <cxf-cluster:failover>
+            <cxf-cluster:strategy>
+                <ref component-id="SequentialAddresses" />
+            </cxf-cluster:strategy>
+        </cxf-cluster:failover>
      </cxf:features>
   </cxf:cxfEndpoint>
 

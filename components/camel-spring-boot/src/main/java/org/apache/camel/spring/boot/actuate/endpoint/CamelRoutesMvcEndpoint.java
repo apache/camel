@@ -18,10 +18,8 @@ package org.apache.camel.spring.boot.actuate.endpoint;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 import org.springframework.boot.actuate.endpoint.mvc.ActuatorMediaTypes;
-import org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter;
 import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpStatus;
@@ -38,20 +36,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Adapter to expose {@link CamelRoutesEndpoint} as an {@link MvcEndpoint}.
  */
 @ConfigurationProperties(prefix = "endpoints." + CamelRoutesEndpoint.ENDPOINT_ID)
-public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
-
-    /**
-     * Default path
-     */
-    public static final String PATH = "/camel/routes";
-    
-    private final CamelRoutesEndpoint delegate;
+public class CamelRoutesMvcEndpoint extends AbstractCamelMvcEndpoint<CamelRoutesEndpoint> {
 
     public CamelRoutesMvcEndpoint(CamelRoutesEndpoint delegate) {
-        super(delegate);
-
-        this.setPath(PATH);
-        this.delegate = delegate;
+        super("/camel/routes", delegate);
     }
 
     // ********************************************
@@ -70,7 +58,7 @@ public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
             @PathVariable String id) {
 
         return doIfEnabled(() -> {
-            Object result = delegate.getRouteDetailsInfo(id);
+            Object result = delegate().getRouteDetailsInfo(id);
             if (result == null) {
                 throw new NoSuchRouteException("No such route " + id);
             }
@@ -91,7 +79,7 @@ public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
             @PathVariable String id) {
 
         return doIfEnabled(() -> {
-            Object result = delegate.getRouteInfo(id);
+            Object result = delegate().getRouteInfo(id);
             if (result == null) {
                 throw new NoSuchRouteException("No such route " + id);
             }
@@ -115,11 +103,11 @@ public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
 
         return doIfEnabled(() -> {
             try {
-                delegate.stopRoute(
-                        id,
-                        Optional.ofNullable(timeout),
-                        Optional.of(TimeUnit.SECONDS),
-                        Optional.ofNullable(abortAfterTimeout)
+                delegate().stopRoute(
+                    id,
+                    Optional.ofNullable(timeout),
+                    Optional.of(TimeUnit.SECONDS),
+                    Optional.ofNullable(abortAfterTimeout)
                 );
             } catch (Exception e) {
                 throw new GenericException("Error stopping route " + id, e);
@@ -142,7 +130,7 @@ public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
 
         return doIfEnabled(() -> {
             try {
-                delegate.startRoute(id);
+                delegate().startRoute(id);
             } catch (Exception e) {
                 throw new GenericException("Error starting route " + id, e);
             }
@@ -157,7 +145,7 @@ public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
 
         return doIfEnabled(() -> {
             try {
-                delegate.resetRoute(id);                
+                delegate().resetRoute(id);
             } catch (Exception e) {
                 throw new GenericException("Error resetting route stats " + id, e);
             }
@@ -181,10 +169,10 @@ public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
 
         return doIfEnabled(() -> {
             try {
-                delegate.suspendRoute(
-                        id,
-                        Optional.ofNullable(timeout),
-                        Optional.of(TimeUnit.SECONDS)
+                delegate().suspendRoute(
+                    id,
+                    Optional.ofNullable(timeout),
+                    Optional.of(TimeUnit.SECONDS)
                 );
             } catch (Exception e) {
                 throw new GenericException("Error suspending route " + id, e);
@@ -207,7 +195,7 @@ public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
 
         return doIfEnabled(() -> {
             try {
-                delegate.resumeRoute(id);
+                delegate().resumeRoute(id);
             } catch (Exception e) {
                 throw new GenericException("Error resuming route " + id, e);
             }
@@ -219,23 +207,6 @@ public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
     // ********************************************
     // Helpers
     // ********************************************
-
-    private Object doIfEnabled(Supplier<Object> supplier) {
-        if (!delegate.isEnabled()) {
-            return getDisabledResponse();
-        }
-
-        return supplier.get();
-    }
-
-    @SuppressWarnings("serial")
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public static class GenericException extends RuntimeException {
-        public GenericException(String message, Throwable cause) {
-            super(message, cause);
-
-        }
-    }
 
     @SuppressWarnings("serial")
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such route")

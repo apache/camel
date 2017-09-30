@@ -52,11 +52,9 @@
     <module>camel-example-cdi-xml</module>
     <module>camel-example-cxf</module>
     <module>camel-example-cxf-blueprint</module>
-    <module>camel-example-cxf-osgi</module>
     <module>camel-example-cxf-proxy</module>
     <module>camel-example-cxf-tomcat</module>
     <module>camel-example-console</module>
-    <module>camel-example-etl</module>
     <module>camel-example-ftp</module>
     <module>camel-example-google-pubsub</module>
     <module>camel-example-guice-jms</module>
@@ -100,8 +98,10 @@
     <module>camel-example-spring-boot-clustered-route-controller</module>
     <module>camel-example-spring-boot-geocoder</module>
     <module>camel-example-spring-boot-grpc</module>
+    <module>camel-example-spring-boot-health-checks</module>
     <module>camel-example-spring-boot-infinispan</module>
     <module>camel-example-spring-boot-live-reload</module>
+    <module>camel-example-spring-boot-master</module>
     <module>camel-example-spring-boot-metrics</module>
     <module>camel-example-spring-boot-pojo</module>
     <module>camel-example-spring-boot-rest-jpa</module>
@@ -116,7 +116,6 @@
     <module>camel-example-spring-security</module>
     <module>camel-example-ssh</module>
     <module>camel-example-ssh-security</module>
-    <module>camel-example-sql</module>
     <module>camel-example-sql-blueprint</module>
     <module>camel-example-swagger-cdi</module>
     <module>camel-example-swagger-osgi</module>

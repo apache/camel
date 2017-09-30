@@ -52,18 +52,22 @@ public class JsonPathEngine {
     private static final Pattern SIMPLE_PATTERN = Pattern.compile("\\$\\{[^\\}]+\\}", Pattern.MULTILINE);
     private final String expression;
     private final boolean writeAsString;
+    private final String headerName;
     private final JsonPath path;
     private final Configuration configuration;
     private JsonPathAdapter adapter;
     private volatile boolean initJsonAdapter;
 
+    @Deprecated
     public JsonPathEngine(String expression) {
-        this(expression, false, false, true, null);
+        this(expression, false, false, true, null, null);
     }
 
-    public JsonPathEngine(String expression, boolean writeAsString, boolean suppressExceptions, boolean allowSimple, Option[] options) {
+    public JsonPathEngine(String expression, boolean writeAsString, boolean suppressExceptions, boolean allowSimple,
+                          String headerName, Option[] options) {
         this.expression = expression;
         this.writeAsString = writeAsString;
+        this.headerName = headerName;
 
         Defaults defaults = DefaultsImpl.INSTANCE;
         if (options != null) {
@@ -96,6 +100,7 @@ public class JsonPathEngine {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public Object read(Exchange exchange) throws Exception {
         Object answer;
         if (path == null) {
@@ -146,11 +151,9 @@ public class JsonPathEngine {
                 }
                 return map;
             } else {
-                if (adapter != null) {
-                    String json = adapter.writeAsString(answer, exchange);
-                    if (json != null) {
-                        return json;
-                    }
+                String json = adapter.writeAsString(answer, exchange);
+                if (json != null) {
+                    return json;
                 }
             }
         }
@@ -159,12 +162,12 @@ public class JsonPathEngine {
     }
 
     private Object doRead(JsonPath path, Exchange exchange) throws IOException, CamelExchangeException {
-        Object json = exchange.getIn().getBody();
+        Object json = headerName != null ? exchange.getIn().getHeader(headerName) : exchange.getIn().getBody();
 
         if (json instanceof InputStream) {
             return readWithInputStream(path, exchange);
         } else if (json instanceof GenericFile) {
-            LOG.trace("JSonPath: {} is read as generic file from message body: {}", path, json);
+            LOG.trace("JSonPath: {} is read as generic file: {}", path, json);
             GenericFile<?> genericFile = (GenericFile<?>) json;
             if (genericFile.getCharset() != null) {
                 // special treatment for generic file with charset
@@ -174,19 +177,19 @@ public class JsonPathEngine {
         }
 
         if (json instanceof String) {
-            LOG.trace("JSonPath: {} is read as String from message body: {}", path, json);
+            LOG.trace("JSonPath: {} is read as String: {}", path, json);
             String str = (String) json;
             return path.read(str, configuration);
         } else if (json instanceof Map) {
-            LOG.trace("JSonPath: {} is read as Map from message body: {}", path, json);
+            LOG.trace("JSonPath: {} is read as Map: {}", path, json);
             Map map = (Map) json;
             return path.read(map, configuration);
         } else if (json instanceof List) {
-            LOG.trace("JSonPath: {} is read as List from message body: {}", path, json);
+            LOG.trace("JSonPath: {} is read as List: {}", path, json);
             List list = (List) json;
             return path.read(list, configuration);
         } else {
-            // can we find an adapter which can read the message body
+            // can we find an adapter which can read the message body/header
             Object answer = readWithAdapter(path, exchange);
             if (answer == null) {
                 // fallback and attempt input stream for any other types
@@ -207,12 +210,16 @@ public class JsonPathEngine {
         }
 
         // okay it was not then lets throw a failure
-        throw new CamelExchangeException("Cannot read message body as supported JSon value", exchange);
+        if (headerName != null) {
+            throw new CamelExchangeException("Cannot read message header " + headerName + " as supported JSon value", exchange);
+        } else {
+            throw new CamelExchangeException("Cannot read message body as supported JSon value", exchange);
+        }
     }
 
     private Object readWithInputStream(JsonPath path, Exchange exchange) throws IOException {
-        Object json = exchange.getIn().getBody();
-        LOG.trace("JSonPath: {} is read as InputStream from message body: {}", path, json);
+        Object json = headerName != null ? exchange.getIn().getHeader(headerName) : exchange.getIn().getBody();
+        LOG.trace("JSonPath: {} is read as InputStream: {}", path, json);
 
         InputStream is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, json);
         if (is != null) {
@@ -232,8 +239,8 @@ public class JsonPathEngine {
     }
 
     private Object readWithAdapter(JsonPath path, Exchange exchange) {
-        Object json = exchange.getIn().getBody();
-        LOG.trace("JSonPath: {} is read with adapter from message body: {}", path, json);
+        Object json = headerName != null ? exchange.getIn().getHeader(headerName) : exchange.getIn().getBody();
+        LOG.trace("JSonPath: {} is read with adapter: {}", path, json);
 
         doInitAdapter(exchange);
 
@@ -242,7 +249,7 @@ public class JsonPathEngine {
             Map map = adapter.readValue(json, exchange);
             if (map != null) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("JacksonJsonAdapter converted message body from: {} to: java.util.Map", ObjectHelper.classCanonicalName(json));
+                    LOG.debug("JacksonJsonAdapter converted object from: {} to: java.util.Map", ObjectHelper.classCanonicalName(json));
                 }
                 return path.read(map, configuration);
             }

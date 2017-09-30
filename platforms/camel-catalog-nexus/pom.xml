@@ -34,6 +34,10 @@
   <description>Camel Catalog Nexus</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.19.0</firstVersion>
+    <label>tooling</label>
+
     <camel.osgi.export.pkg>
       org.apache.camel.catalog.nexus
     </camel.osgi.export.pkg>

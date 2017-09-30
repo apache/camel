@@ -16,4 +16,6 @@
 ## ---------------------------------------------------------------------------
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.apache.camel.component.consul.springboot.ConsulComponentAutoConfiguration,\
-org.apache.camel.component.consul.springboot.cloud.ConsulServiceDiscoveryAutoConfiguration
+org.apache.camel.component.consul.springboot.cloud.ConsulServiceDiscoveryAutoConfiguration,\
+org.apache.camel.component.consul.springboot.ha.ConsulClusterServiceAutoConfiguration,\
+org.apache.camel.component.consul.springboot.health.HealthCheckRepositoryAutoConfiguration

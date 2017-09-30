@@ -1,4 +1,4 @@
-## Tika Component
+== Tika Component
 
 *Available as of Camel version 2.19*
 
@@ -42,29 +42,31 @@ The Tika component has no options.
 // endpoint options: START
 The Tika endpoint is configured using URI syntax:
 
-    tika:operation
+----
+tika:operation
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (1 parameters):
+==== Path Parameters (1 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **operation** | *Required* Tika Operation. parse or detect |  | TikaOperation
-|=======================================================================
+| *operation* | *Required* Tika Operation. parse or detect |  | TikaOperation
+|===
 
-#### Query Parameters (5 parameters):
+==== Query Parameters (5 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **tikaConfig** (producer) | Tika Config |  | TikaConfig
-| **tikaConfigUri** (producer) | Tika Config Uri: The URI of tika-config.xml |  | String
-| **tikaParseOutputEncoding** (producer) | Tika Parse Output Encoding - Used to specify the character encoding of the parsed output. Defaults to Charset.defaultCharset() . |  | String
-| **tikaParseOutputFormat** (producer) | Tika Output Format. Supported output formats. xml: Returns Parsed Content as XML. html: Returns Parsed Content as HTML. text: Returns Parsed Content as Text. textMain: Uses the boilerpipe library to automatically extract the main content from a web page. | xml | TikaParseOutputFormat
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-|=======================================================================
+| *tikaConfig* (producer) | Tika Config |  | TikaConfig
+| *tikaConfigUri* (producer) | Tika Config Uri: The URI of tika-config.xml |  | String
+| *tikaParseOutputEncoding* (producer) | Tika Parse Output Encoding - Used to specify the character encoding of the parsed output. Defaults to Charset.defaultCharset() . |  | String
+| *tikaParseOutputFormat* (producer) | Tika Output Format. Supported output formats. xml: Returns Parsed Content as XML. html: Returns Parsed Content as HTML. text: Returns Parsed Content as Text. textMain: Uses the boilerpipe library to automatically extract the main content from a web page. | xml | TikaParseOutputFormat
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
 // endpoint options: END
 
 

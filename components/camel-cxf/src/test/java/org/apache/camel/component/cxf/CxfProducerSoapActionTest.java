@@ -23,17 +23,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.junit.Test;
 
 public class CxfProducerSoapActionTest extends CamelTestSupport {
 
+    private static int port = AvailablePortFinder.getNextAvailable();
     private static final String SOAP_ACTION = "http://camel.apache.org/order/Order";
     private static final String OPERATION_NAMESPACE = "http://camel.apache.org/order";
     private static final String OPERATION_NAME = "order";
     private static final String DIRECT_START = "direct:start";
-    private static final String CXF_ENDPOINT = "cxf:http://localhost:9000/order?wsdlURL=classpath:order.wsdl&loggingFeatureEnabled=true";
+    private static final String CXF_ENDPOINT = "cxf:http://localhost:" + port + "/order?wsdlURL=classpath:order.wsdl&loggingFeatureEnabled=true";
     private static final String REQUEST_MESSAGE = "<Envelope xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                                                   + "<Body/>" + "</Envelope>";
 

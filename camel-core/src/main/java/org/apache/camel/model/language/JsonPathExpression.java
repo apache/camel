@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * For JSonPath expressions and predicates
+ * To use JSonPath in Camel expressions or predicates.
  *
  * @version 
  */
@@ -50,6 +50,8 @@ public class JsonPathExpression extends ExpressionDefinition {
     private Boolean allowEasyPredicate;
     @XmlAttribute @Metadata(defaultValue = "false")
     private Boolean writeAsString;
+    @XmlAttribute
+    private String headerName;
 
     public JsonPathExpression() {
     }
@@ -124,6 +126,17 @@ public class JsonPathExpression extends ExpressionDefinition {
         this.writeAsString = writeAsString;
     }
 
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    /**
+     * Name of header to use as input, instead of the message body
+     */
+    public void setHeaderName(String headerName) {
+        this.headerName = headerName;
+    }
+
     public String getLanguage() {
         return "jsonpath";
     }
@@ -157,6 +170,9 @@ public class JsonPathExpression extends ExpressionDefinition {
         if (writeAsString != null) {
             setProperty(expression, "writeAsString", writeAsString);
         }
+        if (headerName != null) {
+            setProperty(expression, "headerName", headerName);
+        }
         super.configureExpression(camelContext, expression);
     }
 
@@ -176,6 +192,9 @@ public class JsonPathExpression extends ExpressionDefinition {
         }
         if (writeAsString != null) {
             setProperty(predicate, "writeAsString", writeAsString);
+        }
+        if (headerName != null) {
+            setProperty(predicate, "headerName", headerName);
         }
         super.configurePredicate(camelContext, predicate);
     }

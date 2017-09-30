@@ -26,14 +26,14 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * UniVocity TSV data format
+ * The uniVocity TSV data format is used for working with TSV (Tabular Separated Values) flat payloads.
  */
 @Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity TSV")
 @XmlRootElement(name = "univocity-tsv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityTsvDataFormat extends UniVocityAbstractDataFormat {
     @XmlAttribute @Metadata(defaultValue = "\\")
-    protected String escapeChar;
+    private String escapeChar;
 
     public UniVocityTsvDataFormat() {
         super("univocity-tsv");

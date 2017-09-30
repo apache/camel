@@ -83,7 +83,7 @@ public final class ConsulRoutePolicy extends RoutePolicySupport implements Camel
 
     public ConsulRoutePolicy(ConsulConfiguration configuration) throws Exception {
         this.consulUrl = configuration.getUrl();
-        this.consul = configuration.createConsulClient();
+        this.consul = configuration.createConsulClient(camelContext);
     }
 
     @Override

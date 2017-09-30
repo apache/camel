@@ -181,7 +181,7 @@
 
     <dependency>
       <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity</artifactId>
+      <artifactId>velocity-engine-core</artifactId>
       <version>${velocity-version}</version>
     </dependency>
 
@@ -236,7 +236,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <excludes>
-                <!--ignore tests until CXF-7270 is resolved and released-->
+                <!--ignore tests until CXF-7520 is resolved and released-->
                 <exclude>**/**</exclude>
               </excludes>
             </configuration>

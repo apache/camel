@@ -1,0 +1,21 @@
+# Camel Clustered Route Controller Example Spring Boot
+
+This example shows how to work with a simple Apache Camel application using Spring Boot and a Master component.
+
+## How to run
+
+1. build the project:
++
+    mvn clean package
+
+2. in a separate shell, run the first camel node
++
+    mvn spring-boot:run
+
+3. in a separate shell, run the second camel node
++
+    mvn spring-boot:run
+
+## More information
+
+You can find more information about Apache Camel at the website: http://camel.apache.org/

@@ -214,10 +214,10 @@ public class BoxFilesManager {
             BoxFile file = new BoxFile(boxConnection, fileId);
 
             if (modified != null) {
-                if (fileSize != null && listener != null) {
+                if (fileSize != null) {
                     file.uploadVersion(fileContent, modified, fileSize, listener);
                 } else {
-                    file.uploadVersion(fileContent, modified);
+                    file.uploadVersion(fileContent, modified, 0, listener);
                 }
             } else {
                 file.uploadVersion(fileContent);

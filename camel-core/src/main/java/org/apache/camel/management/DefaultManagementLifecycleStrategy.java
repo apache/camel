@@ -46,6 +46,7 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.TimerListener;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.api.management.PerformanceCounter;
+import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.impl.ConsumerCache;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultEndpointRegistry;
@@ -221,6 +222,17 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         enlistPreRegisteredServices();
 
         try {
+            Object me = getManagementObjectStrategy().getManagedObjectForCamelHealth(camelContext);
+            if (me == null) {
+                // endpoint should not be managed
+                return;
+            }
+            manageObject(me);
+        } catch (Exception e) {
+            LOG.warn("Could not register CamelHealth MBean. This exception will be ignored.", e);
+        }
+
+        try {
             Object me = getManagementObjectStrategy().getManagedObjectForRouteController(camelContext);
             if (me == null) {
                 // endpoint should not be managed
@@ -296,6 +308,16 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             }
         } catch (Exception e) {
             LOG.warn("Could not unregister RouteController MBean", e);
+        }
+
+        try {
+            Object mc = getManagementObjectStrategy().getManagedObjectForCamelHealth(context);
+            // the context could have been removed already
+            if (getManagementStrategy().isManaged(mc, null)) {
+                unmanageObject(mc);
+            }
+        } catch (Exception e) {
+            LOG.warn("Could not unregister CamelHealth MBean", e);
         }
 
         try {
@@ -525,6 +547,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             answer = new ManagedValidatorRegistry(context, (ValidatorRegistry)service);
         } else if (service instanceof RuntimeCamelCatalog) {
             answer = new ManagedRuntimeCamelCatalog(context, (RuntimeCamelCatalog) service);
+        } else if (service instanceof CamelClusterService) {
+            answer = getManagementObjectStrategy().getManagedObjectForClusterService(context, (CamelClusterService)service);
         } else if (service != null) {
             // fallback as generic service
             answer = getManagementObjectStrategy().getManagedObjectForService(context, service);

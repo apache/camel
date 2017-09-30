@@ -27,15 +27,32 @@ import org.apache.camel.util.ObjectHelper;
 public class ClusteredRoutePolicyFactory implements RoutePolicyFactory {
     private final String namespace;
     private final CamelClusterService clusterService;
+    private final CamelClusterService.Selector clusterServiceSelector;
 
-    public ClusteredRoutePolicyFactory(String viewName) {
-        this.namespace = ObjectHelper.notNull(viewName, "Cluster View Namespace");
+    public ClusteredRoutePolicyFactory(String namespace) {
+        ObjectHelper.notNull(namespace, "Cluster View Namespace");
+
+        this.namespace = namespace;
         this.clusterService = null;
+        this.clusterServiceSelector = ClusterServiceSelectors.DEFAULT_SELECTOR;
+    }
+
+    public ClusteredRoutePolicyFactory(CamelClusterService.Selector selector, String namespace) {
+        ObjectHelper.notNull(namespace, "Cluster View Namespace");
+        ObjectHelper.notNull(selector, "Cluster Service Selector");
+
+        this.namespace = namespace;
+        this.clusterService = null;
+        this.clusterServiceSelector = selector;
     }
 
     public ClusteredRoutePolicyFactory(CamelClusterService clusterService, String viewName) {
-        this.namespace = ObjectHelper.notNull(viewName, "Cluster View Namespace");
-        this.clusterService = ObjectHelper.notNull(clusterService, "Cluster Service");
+        ObjectHelper.notNull(clusterService, "Cluster Service");
+        ObjectHelper.notNull(viewName, "Cluster View Namespace");
+
+        this.clusterService = clusterService;
+        this.namespace = viewName;
+        this.clusterServiceSelector = null;
     }
 
     @Override
@@ -43,7 +60,7 @@ public class ClusteredRoutePolicyFactory implements RoutePolicyFactory {
         try {
             return clusterService != null
                 ? ClusteredRoutePolicy.forNamespace(clusterService, namespace)
-                : ClusteredRoutePolicy.forNamespace(camelContext, namespace);
+                : ClusteredRoutePolicy.forNamespace(camelContext, clusterServiceSelector, namespace);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
@@ -55,6 +72,10 @@ public class ClusteredRoutePolicyFactory implements RoutePolicyFactory {
 
     public static ClusteredRoutePolicyFactory forNamespace(String namespace) {
         return new ClusteredRoutePolicyFactory(namespace);
+    }
+
+    public static ClusteredRoutePolicyFactory forNamespace(CamelClusterService.Selector selector, String namespace) {
+        return new ClusteredRoutePolicyFactory(selector, namespace);
     }
 
     public static ClusteredRoutePolicyFactory forNamespace(CamelClusterService clusterService, String namespace) {

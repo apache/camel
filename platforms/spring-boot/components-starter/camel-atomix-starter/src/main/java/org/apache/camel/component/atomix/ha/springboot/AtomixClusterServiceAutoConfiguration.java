@@ -45,10 +45,10 @@ public class AtomixClusterServiceAutoConfiguration {
     @Autowired
     private AtomixClusterServiceConfiguration configuration;
 
-    @Bean(initMethod = "start", destroyMethod = "stop")
+    @Bean(name = "atomix-cluster-service")
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    @ConditionalOnProperty(prefix = "camel.clustered.service.atomix", name = "mode", havingValue = "node")
-    public CamelClusterService clusterNode() {
+    @ConditionalOnProperty(prefix = "camel.component.atomix.cluster.service", name = "mode", havingValue = "node")
+    public CamelClusterService atomixClusterService() {
         AtomixClusterService service = new AtomixClusterService();
         service.setNodes(configuration.getNodes().stream().map(Address::new).collect(Collectors.toList()));
 
@@ -58,19 +58,23 @@ public class AtomixClusterServiceAutoConfiguration {
         ObjectHelper.ifNotEmpty(configuration.getStoragePath(), service::setStoragePath);
         ObjectHelper.ifNotEmpty(configuration.getStorageLevel(), service::setStorageLevel);
         ObjectHelper.ifNotEmpty(configuration.getConfigurationUri(), service::setConfigurationUri);
+        ObjectHelper.ifNotEmpty(configuration.getAttributes(), service::setAttributes);
+        ObjectHelper.ifNotEmpty(configuration.getOrder(), service::setOrder);
 
         return service;
     }
 
-    @Bean(initMethod = "start", destroyMethod = "stop")
+    @Bean(name = "atomix-cluster-client-service")
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    @ConditionalOnProperty(prefix = "camel.clustered.service.atomix", name = "mode", havingValue = "client")
-    public CamelClusterService clusterClient() {
+    @ConditionalOnProperty(prefix = "camel.component.atomix.cluster.service", name = "mode", havingValue = "client")
+    public CamelClusterService atomixClusterClientService() {
         AtomixClusterClientService service = new AtomixClusterClientService();
         service.setNodes(configuration.getNodes().stream().map(Address::new).collect(Collectors.toList()));
 
         ObjectHelper.ifNotEmpty(configuration.getId(), service::setId);
         ObjectHelper.ifNotEmpty(configuration.getConfigurationUri(), service::setConfigurationUri);
+        ObjectHelper.ifNotEmpty(configuration.getAttributes(), service::setAttributes);
+        ObjectHelper.ifNotEmpty(configuration.getOrder(), service::setOrder);
 
         return service;
     }
@@ -84,12 +88,11 @@ public class AtomixClusterServiceAutoConfiguration {
             super(ConfigurationPhase.REGISTER_BEAN);
         }
 
-        @ConditionalOnProperty(prefix = "camel.clustered.service.atomix", name = "enabled")
+        @ConditionalOnProperty(prefix = "camel.component.atomix.cluster.service", name = "enabled")
         static class IfEnabled {
         }
 
-
-        @ConditionalOnProperty(prefix = "camel.clustered.service.atomix", name = "mode")
+        @ConditionalOnProperty(prefix = "camel.component.atomix.cluster.service", name = "mode")
         static class WithMode {
         }
     }

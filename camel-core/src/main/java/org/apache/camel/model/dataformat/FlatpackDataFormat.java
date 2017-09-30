@@ -30,21 +30,19 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Flatpack data format
+ * The Flatpack data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).
  */
 @Metadata(firstVersion = "2.1.0", label = "dataformat,transformation,csv", title = "Flatpack")
 @XmlRootElement(name = "flatpack")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FlatpackDataFormat extends DataFormatDefinition {
     @XmlAttribute
-    private String parserFactoryRef;
-    @XmlAttribute
     private String definition;
     @XmlAttribute
     private Boolean fixed;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean ignoreFirstRecord;
-    @XmlAttribute @Metadata(defaultValue = "\"")
+    @XmlAttribute
     private String textQualifier;
     @XmlAttribute @Metadata(defaultValue = ",")
     private String delimiter;
@@ -52,20 +50,11 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     private Boolean allowShortLines;
     @XmlAttribute
     private Boolean ignoreExtraColumns;
+    @XmlAttribute @Metadata(label = "advanced")
+    private String parserFactoryRef;
 
     public FlatpackDataFormat() {
         super("flatpack");
-    }
-
-    public String getParserFactoryRef() {
-        return parserFactoryRef;
-    }
-
-    /**
-     * References to a custom parser factory to lookup in the registry
-     */
-    public void setParserFactoryRef(String parserFactoryRef) {
-        this.parserFactoryRef = parserFactoryRef;
     }
 
     public String getDefinition() {
@@ -109,7 +98,9 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * If the text is qualified with a char such as &quot;
+     * If the text is qualified with a character.
+     * <p/>
+     * Uses quote character by default.
      */
     public void setTextQualifier(String textQualifier) {
         this.textQualifier = textQualifier;
@@ -146,6 +137,17 @@ public class FlatpackDataFormat extends DataFormatDefinition {
      */
     public void setIgnoreExtraColumns(Boolean ignoreExtraColumns) {
         this.ignoreExtraColumns = ignoreExtraColumns;
+    }
+
+    public String getParserFactoryRef() {
+        return parserFactoryRef;
+    }
+
+    /**
+     * References to a custom parser factory to lookup in the registry
+     */
+    public void setParserFactoryRef(String parserFactoryRef) {
+        this.parserFactoryRef = parserFactoryRef;
     }
 
     @Override

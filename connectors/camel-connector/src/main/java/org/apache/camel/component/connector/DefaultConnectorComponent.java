@@ -66,14 +66,18 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
     private Processor afterConsumer;
 
     protected DefaultConnectorComponent(String componentName, String className) {
-        this.model = new ConnectorModel(componentName, className);
+        this(componentName, loadConnectorClass(className));
+    }
+
+    protected DefaultConnectorComponent(String componentName, Class<?> componentClass) {
+        this.model = new ConnectorModel(componentName, componentClass);
         this.baseScheme = this.model.getBaseScheme();
         this.componentName = componentName;
         this.componentScheme = componentName + "-component";
         this.options = new HashMap<>();
 
         // add to catalog
-        this.catalog.addComponent(componentName, className);
+        this.catalog.addComponent(componentName, componentClass.getName());
 
         // It may be a custom component so we need to register this in the camel catalog also
         if (!catalog.findComponentNames().contains(baseScheme)) {
@@ -87,6 +91,15 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         }
 
         registerExtension(this::getComponentVerifierExtension);
+    }
+
+    private static Class<?> loadConnectorClass(String className) {
+        try {
+            ClassLoader classLoader = DefaultConnectorComponent.class.getClassLoader();
+            return classLoader.loadClass(className);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     protected <T> void doAddOption(Map<String, T> options, String name, T value) {

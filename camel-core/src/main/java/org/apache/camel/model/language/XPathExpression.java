@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * For XPath expressions and predicates
+ * To use XPath (XML) in Camel expressions or predicates.
  */
 @Metadata(firstVersion = "1.1.0", label = "language,core,xml", title = "XPath")
 @XmlRootElement(name = "xpath")
@@ -39,13 +39,13 @@ import org.apache.camel.util.ObjectHelper;
 public class XPathExpression extends NamespaceAwareExpression {
     @XmlAttribute(name = "documentType")
     private String documentTypeName;
-    @XmlAttribute(name = "resultType")
+    @XmlAttribute(name = "resultType") @Metadata(defaultValue = "NODESET", enums = "NUMBER,STRING,BOOLEAN,NODESET,NODE")
     private String resultTypeName;
     @XmlAttribute
     private Boolean saxon;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String factoryRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String objectModel;
     @XmlAttribute
     private Boolean logNamespaces;
@@ -57,7 +57,9 @@ public class XPathExpression extends NamespaceAwareExpression {
     private Class<?> resultType;
     @XmlTransient
     private XPathFactory xpathFactory;
-    
+    @XmlAttribute @Metadata(label = "advanced")
+    private Boolean threadSafety;
+
     public XPathExpression() {
     }
 
@@ -180,6 +182,24 @@ public class XPathExpression extends NamespaceAwareExpression {
         this.headerName = headerName;
     }
 
+    public Boolean getThreadSafety() {
+        return threadSafety;
+    }
+
+    /**
+     * Whether to enable thread-safety for the returned result of the xpath expression.
+     * This applies to when using NODESET as the result type, and the returned set has
+     * multiple elements. In this situation there can be thread-safety issues if you
+     * process the NODESET concurrently such as from a Camel Splitter EIP in parallel processing mode.
+     * This option prevents concurrency issues by doing defensive copies of the nodes.
+     * <p/>
+     * It is recommended to turn this option on if you are using camel-saxon or Saxon in your application.
+     * Saxon has thread-safety issues which can be prevented by turning this option on.
+     */
+    public void setThreadSafety(Boolean threadSafety) {
+        this.threadSafety = threadSafety;
+    }
+
     @Override
     public Expression createExpression(CamelContext camelContext) {
         if (documentType == null && documentTypeName != null) {
@@ -233,6 +253,9 @@ public class XPathExpression extends NamespaceAwareExpression {
         if (objectModel != null) {
             setProperty(expression, "objectModelUri", objectModel);
         }
+        if (threadSafety != null) {
+            setProperty(expression, "threadSafety", threadSafety);
+        }
         if (isLogNamespaces) {
             ObjectHelper.cast(XPathBuilder.class, expression).setLogNamespaces(true);
         }
@@ -262,6 +285,9 @@ public class XPathExpression extends NamespaceAwareExpression {
         }
         if (objectModel != null) {
             setProperty(predicate, "objectModelUri", objectModel);
+        }
+        if (threadSafety != null) {
+            setProperty(predicate, "threadSafety", threadSafety);
         }
         if (isLogNamespaces) {
             ObjectHelper.cast(XPathBuilder.class, predicate).setLogNamespaces(true);

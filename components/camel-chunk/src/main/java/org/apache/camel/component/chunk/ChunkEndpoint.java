@@ -180,6 +180,11 @@ public class ChunkEndpoint extends ResourceEndpoint {
             if (encoding != null) {
                 theme.setEncoding(encoding);
             }
+
+            ClassLoader apcl = getCamelContext().getApplicationContextClassLoader();
+            if (apcl != null) {
+                theme.setJarContext(apcl);
+            }
         }
         return theme;
     }

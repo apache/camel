@@ -11,10 +11,10 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 98 (8 deprecated)
+Number of Examples: 97 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
-|=======================================================================
+|===
 | Example | Category | Description
 
 | link:camel-example-cdi/README.md[CDI] (camel-example-cdi) | Beginner | An example showing how to work with Camel and CDI for dependency injection
@@ -44,13 +44,11 @@ Number of Examples: 98 (8 deprecated)
 
 | link:camel-example-spring-boot/readme.adoc[Spring Boot] (camel-example-spring-boot) | Beginner | An example showing how to work with Camel and Spring Boot
 
-| link:camel-example-spring-boot-clustered-route-controller/readme.adoc[Spring Boot Clustered Route Controller] (camel-example-spring-boot-clustered-route-controller) | Beginner | An example showing how to work with Camel's Clustered Route Controller and Spring Boot
+| link:camel-example-spring-boot-health-checks/readme.adoc[Spring Boot Health Checks] (camel-example-spring-boot-health-checks) | Beginner | An example showing how to work with Camel's Health Checks and Spring Boot
 
 | link:camel-example-spring-boot-live-reload/readme.adoc[Spring Boot Live Reload] (camel-example-spring-boot-live-reload) | Beginner | An example showing how to use the live reload feature of Spring Boot with Camel
 
 | link:camel-example-spring-boot-pojo/README.adoc[Spring Boot Pojo] (camel-example-spring-boot-pojo) | Beginner | An example showing how to work with Camel POJO routing with Spring Boot
-
-| link:camel-example-spring-boot-supervising-route-controller/readme.adoc[Spring Boot Supervising Route Controller] (camel-example-spring-boot-supervising-route-controller) | Beginner | An example showing how to work with Camel's Supervising Route Controller and Spring Boot
 
 | link:camel-example-spring-javaconfig/README.md[Spring Java Config] (camel-example-spring-javaconfig) | Beginner | An example showing how to work with Camel and Spring Java Config
 
@@ -80,6 +78,10 @@ Number of Examples: 98 (8 deprecated)
 
 | link:camel-example-spring-cloud-servicecall/README.adoc[Spring Cloud Servicecall] (camel-example-spring-cloud-servicecall) | Cloud | An example showing how to work with Camel ServiceCall EIP and Spring Cloud
 
+| link:camel-example-spring-boot-clustered-route-controller/readme.adoc[Spring Boot Clustered Route Controller] (camel-example-spring-boot-clustered-route-controller) | Clustering | An example showing how to work with Camel's Clustered Route Controller and Spring Boot
+
+| link:camel-example-spring-boot-master/readme.adoc[Spring Boot Master] (camel-example-spring-boot-master) | Clustering | An example showing how to work with Camel's Master component and Spring Boot
+
 | link:camel-example-cdi-cassandraql/README.md[CDI Cassandra] (camel-example-cdi-cassandraql) | Database | Cassandraql CDI example
 
 | link:camel-example-jdbc/README.md[JDBC] (camel-example-jdbc) | Database | An example for showing Camel using JDBC component
@@ -88,13 +90,9 @@ Number of Examples: 98 (8 deprecated)
 
 | link:camel-example-spring-boot-rest-jpa/README.md[Spring Boot REST JPA] (camel-example-spring-boot-rest-jpa) | Database | An example demonstrating how to use Camel REST DSL with JPA to expose a RESTful API that performs CRUD operations on a database
 
-| link:camel-example-sql/README.md[SQL] (camel-example-sql) | Database | An example for showing Camel using SQL component
-
 | link:camel-example-aggregate/README.md[Aggregate] (camel-example-aggregate) | EIP | Demonstrates the persistent support for the Camel aggregator
 
 | link:camel-example-cafe/README.md[Cafe] (camel-example-cafe) | EIP | A cafe example showing how to work with Camel
-
-| link:camel-example-etl/README.md[ETL] (camel-example-etl) | EIP | An example showing how to use Camel as an Extract Transform and Load (ETL) tool
 
 | link:camel-example-hystrix/README.md[Hystrix] (camel-example-hystrix) | EIP | An example showing how to use Hystrix EIP as circuit breaker in Camel routes
 
@@ -131,6 +129,8 @@ Number of Examples: 98 (8 deprecated)
 
 | link:camel-example-spring-boot-metrics/README.md[Spring Boot Metrics] (camel-example-spring-boot-metrics) | Management and Monitoring | An example showing how to work with Camel and Spring Boot and report metrics to Graphite
 
+| link:camel-example-spring-boot-supervising-route-controller/readme.adoc[Spring Boot Supervising Route Controller] (camel-example-spring-boot-supervising-route-controller) | Management and Monitoring | An example showing how to work with Camel's Supervising Route Controller and Spring Boot
+
 | link:camel-example-tracer/README.md[Tracer] (camel-example-tracer) | Management and Monitoring | *deprecated* An example showing how to persist Camel trace event messages using JPA
 
 | link:camel-example-zipkin/README.md[Zipkin] (camel-example-zipkin) | Management and Monitoring | An example showing how to trace incoming and outgoing messages from Camel with Zipkin
@@ -152,8 +152,6 @@ Number of Examples: 98 (8 deprecated)
 | link:camel-example-cdi-osgi/README.md[CDI OSGi] (camel-example-cdi-osgi) | OSGi | *deprecated* PAX CDI example
 
 | link:camel-example-cxf-blueprint/README.md[CXF Blueprint] (camel-example-cxf-blueprint) | OSGi | An example which use a CXF consumer and the OSGI HTTP Service
-
-| link:camel-example-cxf-osgi/README.md[CXF OSGi] (camel-example-cxf-osgi) | OSGi | An example which use a CXF consumer and the OSGI HTTP Service
 
 | link:camel-example-netty-http/README.md[Netty HTTP] (camel-example-netty-http) | OSGi | An example showing how to use a shared Netty HTTP server with multiple Camel applications in OSGi container
 
@@ -221,7 +219,7 @@ Number of Examples: 98 (8 deprecated)
 | link:camel-example-cxf-tomcat/README.md[CXF Tomcat] (camel-example-cxf-tomcat) | WebService | An example using Camel CXF (code first) with Apache Tomcat
 
 | link:camel-example-spring-ws/README.md[Spring WebService] (camel-example-spring-ws) | WebService | An example showing how to work with Camel and Spring Web Services
-|=======================================================================
+|===
 // examples: END
 
 

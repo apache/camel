@@ -1,6 +1,5 @@
 [[PublishSubscribeChannel-PublishSubscribeChannel]]
-Publish Subscribe Channel
-^^^^^^^^^^^^^^^^^^^^^^^^^
+== Publish Subscribe Channel
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/PublishSubscribeChannel.html[Publish
@@ -18,34 +17,31 @@ allowing multiple consumers.
 
 image:http://www.enterpriseintegrationpatterns.com/img/PublishSubscribeSolution.gif[image]
 
-[[PublishSubscribeChannel-UsingRoutingLogic]]
-Using Routing Logic
-+++++++++++++++++++
+[[PublishSubscribeChannel-Samples]]
+=== Samples
 
 Another option is to explicitly list the publish-subscribe relationship
 in your routing logic; this keeps the producer and consumer decoupled
 but lets you control the fine grained routing configuration using the
 link:dsl.html[DSL] or link:xml-configuration.html[Xml Configuration].
 
-*Using the link:fluent-builders.html[Fluent Builders]*
+In Java code:
 
 [source,java]
----------------------------------------------------
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        errorHandler(deadLetterChannel("mock:error"));
- 
-        from("direct:a")
-            .multicast().to("direct:b", "direct:c", "direct:d");
-    }
-};
----------------------------------------------------
+----
+from("direct:a")
+    .multicast()
+      .to("direct:b")
+      .to("direct:c")
+      .to("direct:d")
+    .end() // end multicast
+----
 
-*Using the link:spring-xml-extensions.html[Spring XML Extensions]*
+And in XML:
 
 [source,xml]
----------------------------------------------------
-<camelContext errorHandlerRef="errorHandler" xmlns="http://camel.apache.org/schema/spring">
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:a"/>
         <multicast>
@@ -55,15 +51,4 @@ RouteBuilder builder = new RouteBuilder() {
         </multicast>
     </route>
 </camelContext>
----------------------------------------------------
-
-[[PublishSubscribeChannel-UsingThisPattern]]
-Using This Pattern
-++++++++++++++++++
-
-If you would like to use this EIP Pattern then please read the
-link:getting-started.html[Getting Started], you may also find the
-link:architecture.html[Architecture] useful particularly the description
-of link:endpoint.html[Endpoint] and link:uris.html[URIs]. Then you could
-try out some of the link:examples.html[Examples] first before trying
-this pattern out.
+----

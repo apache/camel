@@ -1,4 +1,4 @@
-## YAML SnakeYAML DataFormat
+== YAML SnakeYAML DataFormat
 
 *Available as of Camel version 2.17*
 
@@ -22,7 +22,7 @@ The YAML SnakeYAML dataformat supports 11 options which are listed below.
 
 
 [width="100%",cols="2s,1m,1m,6",options="header"]
-|=======================================================================
+|===
 | Name | Default | Java Type | Description
 | library | SnakeYAML | YAMLLibrary | Which yaml library to use. By default it is SnakeYAML
 | unmarshalTypeName |  | String | Class name of the java type to use when unarmshalling
@@ -35,7 +35,7 @@ The YAML SnakeYAML dataformat supports 11 options which are listed below.
 | allowAnyType | false | Boolean | Allow any class to be un-marshaled
 | typeFilter |  | List | Set the types SnakeYAML is allowed to un-marshall
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
-|=======================================================================
+|===
 // dataformat options: END
 
 WARNING: SnakeYAML can load any class from YAML definition which may lead to security breach so by default, SnakeYAML DataForma restrict the object it can load to standard Java objects like List or Long. If you want to load custom POJOs you need to add theirs type to SnakeYAML DataFormat type filter list. If your source is trusted, you can set the property allowAnyType to true so SnakeYAML DataForma won't perform any filter on the types.

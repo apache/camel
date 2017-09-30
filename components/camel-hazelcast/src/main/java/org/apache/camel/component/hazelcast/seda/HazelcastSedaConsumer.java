@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.hazelcast.seda;
 
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.hazelcast.core.BaseQueue;
 import com.hazelcast.transaction.TransactionContext;
 
 import org.apache.camel.AsyncCallback;
@@ -71,7 +71,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
     }
 
     public void run() {
-        final BlockingQueue<?> queue = endpoint.getQueue();
+        BaseQueue<?> queue = endpoint.getHazelcastInstance().getQueue(endpoint.getConfiguration().getQueueName());
 
         while (queue != null && isRunAllowed()) {
             final Exchange exchange = this.getEndpoint().createExchange();
@@ -85,6 +85,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                     if (transactionCtx != null) {
                         log.trace("Begin transaction: {}", transactionCtx.getTxnId());
                         transactionCtx.beginTransaction();
+                        queue = transactionCtx.getQueue(endpoint.getConfiguration().getQueueName());
                     }
                 }
 

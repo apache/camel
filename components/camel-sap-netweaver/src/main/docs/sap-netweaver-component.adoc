@@ -1,4 +1,4 @@
-## SAP NetWeaver Component
+== SAP NetWeaver Component
 
 *Available as of Camel version 2.12*
 
@@ -55,30 +55,32 @@ The SAP NetWeaver component has no options.
 // endpoint options: START
 The SAP NetWeaver endpoint is configured using URI syntax:
 
-    sap-netweaver:url
+----
+sap-netweaver:url
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (1 parameters):
+==== Path Parameters (1 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **url** | *Required* Url to the SAP net-weaver gateway server. |  | String
-|=======================================================================
+| *url* | *Required* Url to the SAP net-weaver gateway server. |  | String
+|===
 
-#### Query Parameters (6 parameters):
+==== Query Parameters (6 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **flatternMap** (producer) | If the JSON Map contains only a single entry then flattern by storing that single entry value as the message body. | true | boolean
-| **json** (producer) | Whether to return data in JSON format. If this option is false then XML is returned in Atom format. | true | boolean
-| **jsonAsMap** (producer) | To transform the JSON from a String to a Map in the message body. | true | boolean
-| **password** (producer) | *Required* Password for account. |  | String
-| **username** (producer) | *Required* Username for account. |  | String
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-|=======================================================================
+| *flatternMap* (producer) | If the JSON Map contains only a single entry then flattern by storing that single entry value as the message body. | true | boolean
+| *json* (producer) | Whether to return data in JSON format. If this option is false then XML is returned in Atom format. | true | boolean
+| *jsonAsMap* (producer) | To transform the JSON from a String to a Map in the message body. | true | boolean
+| *password* (producer) | *Required* Password for account. |  | String
+| *username* (producer) | *Required* Username for account. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
 // endpoint options: END
 
 

@@ -59,11 +59,12 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
                       + "?initialDelay=0&delay=10&fileName=${bean:counter.next}.txt&delete=true").to("mock:result");
             }
         });
-        context.start();
 
         // we should only get one as we only poll a single file using the file expression
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Goodday World");
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
@@ -82,11 +83,12 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
                 // END SNIPPET: e1
             }
         });
-        context.start();
 
         // we should only get one as we only poll a single file using the file expression
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Goodday World");
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }

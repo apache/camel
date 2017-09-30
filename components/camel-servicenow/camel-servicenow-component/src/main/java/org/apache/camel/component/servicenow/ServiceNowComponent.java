@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.servicenow;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -25,9 +23,7 @@ import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.VerifiableComponent;
-import org.apache.camel.component.extension.ComponentExtension;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.apache.camel.component.extension.MetaDataExtension;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.EndpointHelper;
@@ -39,17 +35,12 @@ import org.apache.camel.util.ObjectHelper;
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 public class ServiceNowComponent extends DefaultComponent implements VerifiableComponent, SSLContextParametersAware {
-    private static final Collection<Class<? extends ComponentExtension>> EXTENSIONS = Arrays.asList(ComponentVerifierExtension.class, MetaDataExtension.class);
-
     @Metadata(label = "advanced")
     private String instanceName;
     @Metadata(label = "advanced")
     private ServiceNowConfiguration configuration;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-
-    private ServiceNowComponentVerifierExtension verifierExtension;
-    private ServiceNowMetaDataExtension metaDataExtension;
 
     public ServiceNowComponent() {
         this(null);
@@ -64,54 +55,9 @@ public class ServiceNowComponent extends DefaultComponent implements VerifiableC
         registerExtension(ServiceNowMetaDataExtension::new);
     }
 
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        final CamelContext context = getCamelContext();
-        final ServiceNowConfiguration configuration = this.configuration.copy();
-
-        Map<String, Object> models = IntrospectionSupport.extractProperties(parameters, "model.");
-        for (Map.Entry<String, Object> entry : models.entrySet()) {
-            configuration.addModel(
-                entry.getKey(),
-                EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
-        }
-
-        Map<String, Object> requestModels = IntrospectionSupport.extractProperties(parameters, "requestModel.");
-        for (Map.Entry<String, Object> entry : requestModels.entrySet()) {
-            configuration.addRequestModel(
-                entry.getKey(),
-                EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
-        }
-
-        Map<String, Object> responseModels = IntrospectionSupport.extractProperties(parameters, "responseModel.");
-        for (Map.Entry<String, Object> entry : responseModels.entrySet()) {
-            configuration.addResponseModel(
-                entry.getKey(),
-                EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
-        }
-
-        setProperties(configuration, parameters);
-
-        if (ObjectHelper.isEmpty(remaining)) {
-            // If an instance is not set on the endpoint uri, use the one set on
-            // component.
-            remaining = instanceName;
-        }
-
-        String instanceName = getCamelContext().resolvePropertyPlaceholders(remaining);
-        if (!configuration.hasApiUrl()) {
-            configuration.setApiUrl(String.format("https://%s.service-now.com/api", instanceName));
-        }
-        if (!configuration.hasOauthTokenUrl()) {
-            configuration.setOauthTokenUrl(String.format("https://%s.service-now.com/oauth_token.do", instanceName));
-        }
-
-        if (configuration.getSslContextParameters() == null) {
-            configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
-        }
-
-        return new ServiceNowEndpoint(uri, this, configuration, instanceName);
-    }
+    // ****************************************
+    // Properties
+    // ****************************************
 
     public String getInstanceName() {
         return instanceName;
@@ -206,6 +152,58 @@ public class ServiceNowComponent extends DefaultComponent implements VerifiableC
         configuration.setOauthTokenUrl(oauthTokenUrl);
     }
 
+    public String getProxyHost() {
+        return configuration.getProxyHost();
+    }
+
+    /**
+     * The proxy host name
+     * @param proxyHost
+     */
+    @Metadata(label = "advanced")
+    public void setProxyHost(String proxyHost) {
+        configuration.setProxyHost(proxyHost);
+    }
+
+    public Integer getProxyPort() {
+        return configuration.getProxyPort();
+    }
+
+    /**
+     * The proxy port number
+     * @param proxyPort
+     */
+    @Metadata(label = "advanced")
+    public void setProxyPort(Integer proxyPort) {
+        configuration.setProxyPort(proxyPort);
+    }
+
+    public String getProxyUserName() {
+        return configuration.getProxyUserName();
+    }
+
+    /**
+     * Username for proxy authentication
+     * @param proxyUserName
+     */
+    @Metadata(label = "advanced,security", secret = true)
+    public void setProxyUserName(String proxyUserName) {
+        configuration.setProxyUserName(proxyUserName);
+    }
+
+    public String getProxyPassword() {
+        return configuration.getProxyPassword();
+    }
+
+    /**
+     * Password for proxy authentication
+     * @param proxyPassword
+     */
+    @Metadata(label = "advanced,security", secret = true)
+    public void setProxyPassword(String proxyPassword) {
+        configuration.setProxyPassword(proxyPassword);
+    }
+
     @Override
     public boolean isUseGlobalSslContextParameters() {
         return this.useGlobalSslContextParameters;
@@ -222,5 +220,58 @@ public class ServiceNowComponent extends DefaultComponent implements VerifiableC
     @Override
     public ComponentVerifier getVerifier() {
         return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
+    }
+
+    // ****************************************
+    // Component impl
+    // ****************************************
+
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        final CamelContext context = getCamelContext();
+        final ServiceNowConfiguration configuration = this.configuration.copy();
+
+        Map<String, Object> models = IntrospectionSupport.extractProperties(parameters, "model.");
+        for (Map.Entry<String, Object> entry : models.entrySet()) {
+            configuration.addModel(
+                entry.getKey(),
+                EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
+        }
+
+        Map<String, Object> requestModels = IntrospectionSupport.extractProperties(parameters, "requestModel.");
+        for (Map.Entry<String, Object> entry : requestModels.entrySet()) {
+            configuration.addRequestModel(
+                entry.getKey(),
+                EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
+        }
+
+        Map<String, Object> responseModels = IntrospectionSupport.extractProperties(parameters, "responseModel.");
+        for (Map.Entry<String, Object> entry : responseModels.entrySet()) {
+            configuration.addResponseModel(
+                entry.getKey(),
+                EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
+        }
+
+        setProperties(configuration, parameters);
+
+        if (ObjectHelper.isEmpty(remaining)) {
+            // If an instance is not set on the endpoint uri, use the one set on
+            // component.
+            remaining = instanceName;
+        }
+
+        String instanceName = getCamelContext().resolvePropertyPlaceholders(remaining);
+        if (!configuration.hasApiUrl()) {
+            configuration.setApiUrl(String.format("https://%s.service-now.com/api", instanceName));
+        }
+        if (!configuration.hasOauthTokenUrl()) {
+            configuration.setOauthTokenUrl(String.format("https://%s.service-now.com/oauth_token.do", instanceName));
+        }
+
+        if (configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
+        return new ServiceNowEndpoint(uri, this, configuration, instanceName);
     }
 }

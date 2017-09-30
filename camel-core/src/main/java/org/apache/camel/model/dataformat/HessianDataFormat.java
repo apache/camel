@@ -24,11 +24,12 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Hessian data format
+ * Hessian data format is used for marshalling and unmarshalling messages using Caucho’s Hessian format.
  */
 @Metadata(firstVersion = "2.17.0", label = "dataformat,transformation", title = "Hessian")
 @XmlRootElement(name = "hessian")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class HessianDataFormat extends DataFormatDefinition {
 
     public HessianDataFormat() {

@@ -1,4 +1,4 @@
-## Schematron Component
+== Schematron Component
 
 *Available as of Camel version 2.15*
 
@@ -38,28 +38,30 @@ The Schematron component has no options.
 // endpoint options: START
 The Schematron endpoint is configured using URI syntax:
 
-    schematron:path
+----
+schematron:path
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (1 parameters):
+==== Path Parameters (1 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **path** | *Required* The path to the schematron rules file. Can either be in class path or location in the file system. |  | String
-|=======================================================================
+| *path* | *Required* The path to the schematron rules file. Can either be in class path or location in the file system. |  | String
+|===
 
-#### Query Parameters (4 parameters):
+==== Query Parameters (4 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **abort** (producer) | Flag to abort the route and throw a schematron validation exception. | false | boolean
-| **rules** (producer) | To use the given schematron rules instead of loading from the path |  | Templates
-| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| **uriResolver** (advanced) | Set the URIResolver to be used for resolving schematron includes in the rules file. |  | URIResolver
-|=======================================================================
+| *abort* (producer) | Flag to abort the route and throw a schematron validation exception. | false | boolean
+| *rules* (producer) | To use the given schematron rules instead of loading from the path |  | Templates
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *uriResolver* (advanced) | Set the URIResolver to be used for resolving schematron includes in the rules file. |  | URIResolver
+|===
 // endpoint options: END
 
 

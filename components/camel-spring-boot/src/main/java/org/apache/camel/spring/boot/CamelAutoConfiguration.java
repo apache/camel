@@ -31,6 +31,9 @@ import org.apache.camel.TypeConverters;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.ha.CamelClusterService;
+import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.health.HealthCheckRepository;
+import org.apache.camel.health.HealthCheckService;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultTraceFormatter;
@@ -456,10 +459,13 @@ public class CamelAutoConfiguration {
             }
         }
         // cluster service
-        CamelClusterService clusterService = getSingleBeanOfType(applicationContext, CamelClusterService.class);
-        if (clusterService != null) {
-            LOG.info("Using CamelClusterService: " + clusterService);
-            camelContext.addService(clusterService);
+        Map<String, CamelClusterService> clusterServices = applicationContext.getBeansOfType(CamelClusterService.class);
+        if (clusterServices != null && !clusterServices.isEmpty()) {
+            for (Map.Entry<String, CamelClusterService> entry : clusterServices.entrySet()) {
+                CamelClusterService service = entry.getValue();
+                LOG.info("Using CamelClusterService with id: {} and implementation: {}", service.getId(), service);
+                camelContext.addService(service);
+            }
         }
         // add route policy factories
         Map<String, RoutePolicyFactory> routePolicyFactories = applicationContext.getBeansOfType(RoutePolicyFactory.class);
@@ -475,7 +481,29 @@ public class CamelAutoConfiguration {
         if (sslContextParametersSupplier != null) {
             camelContext.setSSLContextParameters(sslContextParametersSupplier.get());
         }
-
+        // Health check registry
+        HealthCheckRegistry healthCheckRegistry = getSingleBeanOfType(applicationContext, HealthCheckRegistry.class);
+        if (healthCheckRegistry != null) {
+            healthCheckRegistry.setCamelContext(camelContext);
+            LOG.info("Using HealthCheckRegistry: {}", healthCheckRegistry);
+            camelContext.setHealthCheckRegistry(healthCheckRegistry);
+        } else {
+            healthCheckRegistry = camelContext.getHealthCheckRegistry();
+            healthCheckRegistry.setCamelContext(camelContext);
+        }
+        // Health check repository
+        Map<String, HealthCheckRepository> repositories = applicationContext.getBeansOfType(HealthCheckRepository.class);
+        if (ObjectHelper.isNotEmpty(repositories)) {
+            for (HealthCheckRepository repository: repositories.values()) {
+                healthCheckRegistry.addRepository(repository);
+            }
+        }
+        // Health check service
+        HealthCheckService healthCheckService = getSingleBeanOfType(applicationContext, HealthCheckService.class);
+        if (healthCheckService != null) {
+            LOG.info("Using HealthCheckService: {}", healthCheckService);
+            camelContext.addService(healthCheckService);
+        }
         // Route controller
         RouteController routeController = getSingleBeanOfType(applicationContext, RouteController.class);
         if (routeController != null) {

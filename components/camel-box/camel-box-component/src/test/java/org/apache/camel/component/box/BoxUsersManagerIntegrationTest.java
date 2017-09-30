@@ -51,6 +51,8 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
     private static final String CAMEL_TEST_CREATE_APP_USER_NAME = "Wilma";
     private static final String CAMEL_TEST_CREATE_ENTERPRISE_USER_NAME = "fred";
     private static final String CAMEL_TEST_CREATE_ENTERPRISE_USER_LOGIN = "fred@example.com";
+    private static final String CAMEL_TEST_CREATE_ENTERPRISE_USER2_NAME = "gregory";
+    private static final String CAMEL_TEST_CREATE_ENTERPRISE_USER2_LOGIN = "gregory@example.com";
 
     private BoxUser testUser;
 
@@ -240,6 +242,22 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
         }
     }
 
+    @Test
+    public void testmMoveFolderToUser() throws Exception {
+        BoxUser.Info user1 = BoxUser.createEnterpriseUser(getConnection(),
+                CAMEL_TEST_CREATE_ENTERPRISE_USER_LOGIN, CAMEL_TEST_CREATE_ENTERPRISE_USER_NAME);
+        BoxUser.Info user2 = BoxUser.createEnterpriseUser(getConnection(),
+                CAMEL_TEST_CREATE_ENTERPRISE_USER2_LOGIN, CAMEL_TEST_CREATE_ENTERPRISE_USER2_NAME);
+
+        final Map<String, Object> headers = new HashMap<String, Object>();
+        // parameter type is String
+        headers.put("CamelBox.userId", user1.getID());
+        headers.put("CamelBox.sourceUserId", user2.getID());
+
+        final com.box.sdk.BoxFolder.Info result = requestBodyAndHeaders("direct://MOVEFOLDERTOUSER", null, headers);
+        assertNotNull("moveFolderToUser result", result);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -275,6 +293,8 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
                 // test route for updateUserInfo
                 from("direct://UPDATEUSERINFO").to("box://" + PATH_PREFIX + "/updateUserInfo");
 
+                // test route for moveFolderToUser
+                from("direct://MOVEFOLDERTOUSER").to("box://" + PATH_PREFIX + "/moveFolderToUser");
             }
         };
     }

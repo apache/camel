@@ -18,8 +18,10 @@ package org.apache.camel.util.concurrent;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.locks.StampedLock;
+import java.util.function.Supplier;
 
 import org.apache.camel.util.function.ThrowingRunnable;
+import org.apache.camel.util.function.ThrowingSupplier;
 
 public final class LockHelper {
     private LockHelper() {
@@ -55,6 +57,26 @@ public final class LockHelper {
         }
     }
 
+    public static <R> R supplyWithReadLock(StampedLock lock, Supplier<R> task)  {
+        long stamp = lock.readLock();
+
+        try {
+            return task.get();
+        } finally {
+            lock.unlockRead(stamp);
+        }
+    }
+
+    public static <R, T extends Throwable> R supplyWithReadLockT(StampedLock lock, ThrowingSupplier<R, T> task) throws T {
+        long stamp = lock.readLock();
+
+        try {
+            return task.get();
+        } finally {
+            lock.unlockRead(stamp);
+        }
+    }
+
     public static void doWithWriteLock(StampedLock lock, Runnable task) {
         long stamp = lock.writeLock();
 
@@ -65,11 +87,21 @@ public final class LockHelper {
         }
     }
 
-    public static <R> R  callWithWriteLock(StampedLock lock, Callable<R> task) throws Exception {
+    public static <R> R callWithWriteLock(StampedLock lock, Callable<R> task) throws Exception {
         long stamp = lock.writeLock();
 
         try {
             return task.call();
+        } finally {
+            lock.unlockWrite(stamp);
+        }
+    }
+
+    public static <R> R supplyWithWriteLock(StampedLock lock, Supplier<R> task)  {
+        long stamp = lock.writeLock();
+
+        try {
+            return task.get();
         } finally {
             lock.unlockWrite(stamp);
         }
@@ -80,6 +112,16 @@ public final class LockHelper {
 
         try {
             task.run();
+        } finally {
+            lock.unlockWrite(stamp);
+        }
+    }
+
+    public static <R, T extends Throwable> R supplyWithWriteLockT(StampedLock lock, ThrowingSupplier<R, T> task) throws T {
+        long stamp = lock.writeLock();
+
+        try {
+            return task.get();
         } finally {
             lock.unlockWrite(stamp);
         }
