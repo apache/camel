@@ -105,8 +105,8 @@ public class GaugeRouteTest {
                     new Answer<CamelMetricsGauge>() {
                         @Override
                         public CamelMetricsGauge answer(InvocationOnMock invocation) throws Throwable {
-                            mockGauges.put(invocation.getArgumentAt(0, String.class), invocation.getArgumentAt(1, CamelMetricsGauge.class));
-                            return invocation.getArgumentAt(1, CamelMetricsGauge.class);
+                            mockGauges.put(invocation.getArgument(0), invocation.getArgument(1));
+                            return invocation.getArgument(1);
                         }
                     });
             return registry;
@@ -137,8 +137,8 @@ public class GaugeRouteTest {
         endpoint.assertIsSatisfied();
         verify(mockRegistry, times(1)).register(eq("A"), argThat(new ArgumentMatcher<CamelMetricsGauge>() {
             @Override
-            public boolean matches(Object argument) {
-                return argument instanceof CamelMetricsGauge && "my subject".equals(((CamelMetricsGauge)argument).getValue());
+            public boolean matches(CamelMetricsGauge argument) {
+                return "my subject".equals(argument.getValue());
             }
         }));
     }
@@ -147,8 +147,8 @@ public class GaugeRouteTest {
     public void testOverride() throws Exception {
         verify(mockRegistry, times(1)).register(eq("A"), argThat(new ArgumentMatcher<CamelMetricsGauge>() {
             @Override
-            public boolean matches(Object argument) {
-                return argument instanceof CamelMetricsGauge && "my subject".equals(((CamelMetricsGauge)argument).getValue());
+            public boolean matches(CamelMetricsGauge argument) {
+                return "my subject".equals(argument.getValue());
             }
         }));
         endpoint.expectedMessageCount(1);
@@ -156,8 +156,8 @@ public class GaugeRouteTest {
         endpoint.assertIsSatisfied();
         verify(mockRegistry, times(1)).register(eq("B"), argThat(new ArgumentMatcher<CamelMetricsGauge>() {
             @Override
-            public boolean matches(Object argument) {
-                return argument instanceof CamelMetricsGauge && "my overriding subject".equals(((CamelMetricsGauge)argument).getValue());
+            public boolean matches(CamelMetricsGauge argument) {
+                return "my overriding subject".equals(argument.getValue());
             }
         }));
     }
