@@ -62,7 +62,7 @@ public class StompConsumerTest extends StompBaseTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("stomp:queue:test")
+                from("stomp:/queue/test")
                         .transform(body().convertToString())
                         .to("mock:result");
             }
