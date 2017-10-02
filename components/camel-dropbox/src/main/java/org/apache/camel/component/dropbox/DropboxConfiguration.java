@@ -18,8 +18,8 @@ package org.apache.camel.component.dropbox;
 
 import java.util.Locale;
 
-import com.dropbox.core.DbxClient;
 import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.v2.DbxClientV2;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.apache.camel.spi.Metadata;
@@ -56,16 +56,16 @@ public class DropboxConfiguration {
     private String clientIdentifier;
     //reference to dropbox client
     @UriParam
-    private DbxClient client;
+    private DbxClientV2 client;
 
     /**
      * To use an existing DbxClient instance as DropBox client.
      */
-    public void setClient(DbxClient client) {
+    public void setClient(DbxClientV2 client) {
         this.client = client;
     }
 
-    public DbxClient getClient() {
+    public DbxClientV2 getClient() {
         return client;
     }
 
@@ -74,7 +74,7 @@ public class DropboxConfiguration {
      */
     public void createClient() {
         DbxRequestConfig config = new DbxRequestConfig(clientIdentifier, Locale.getDefault().toString());
-        this.client = new DbxClient(config, accessToken);
+        this.client = new DbxClientV2(config, accessToken);
     }
 
     public String getAccessToken() {
