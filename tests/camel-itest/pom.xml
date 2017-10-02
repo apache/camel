@@ -499,8 +499,8 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <excludes>
-                <!-- TODO: until https://issues.apache.org/jira/browse/SUREFIRE-1265 is released. -->
-                <exclude>**/**.java</exclude>
+                <!-- TODO: until CXF-7520 is resolved and released. -->
+                <exclude>**/*GreeterClientCxfMessageTest.java</exclude>
               </excludes>
             </configuration>
           </plugin>
