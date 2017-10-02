@@ -30,6 +30,9 @@ public interface ThriftConstants {
     String THRIFT_SERVER_ASYNC_INTERFACE_NAME = "AsyncIface";
     String THRIFT_SERVER_ASYNC_PROCESSOR_CLASS = "AsyncProcessor";
     
+    String THRIFT_DEFAULT_SECURITY_PROTOCOL = "TLS";
+    String THRIFT_DEFAULT_SECURITY_STORE_TYPE = "JKS";
+    
     int THRIFT_CONSUMER_POOL_SIZE = 1;
     int THRIFT_CONSUMER_MAX_POOL_SIZE = 10;
     /*

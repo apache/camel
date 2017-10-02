@@ -40,6 +40,21 @@ public class ThriftConfiguration {
 
     @UriParam(label = "producer")
     private String method;
+    
+    @UriParam(defaultValue = "BINARY")
+    private ThriftExchangeProtocol exchangeProtocol = ThriftExchangeProtocol.BINARY;
+    
+    @UriParam(label = "security", defaultValue = "PLAINTEXT")
+    private ThriftNegotiationType negotiationType = ThriftNegotiationType.PLAINTEXT;
+    
+    @UriParam(label = "security")
+    private ThriftSSLConfiguration sslConfiguration;
+    
+    @UriParam(defaultValue = "NONE")
+    private ThriftCompressionType compressionType = ThriftCompressionType.NONE;
+    
+    @UriParam(label = "consumer")
+    private int clientTimeout;
 
     @UriParam(label = "consumer", defaultValue = "" + ThriftConstants.THRIFT_CONSUMER_POOL_SIZE)
     private int poolSize = ThriftConstants.THRIFT_CONSUMER_POOL_SIZE;
@@ -48,7 +63,7 @@ public class ThriftConfiguration {
     private int maxPoolSize = ThriftConstants.THRIFT_CONSUMER_MAX_POOL_SIZE;
 
     /**
-     * Fully qualified service name from the protocol buffer descriptor file
+     * Fully qualified service name from the thrift descriptor file
      * (package dot service definition name)
      */
     public String getService() {
@@ -69,10 +84,54 @@ public class ThriftConfiguration {
     public void setMethod(String method) {
         this.method = method;
     }
+    
+    /**
+     * Exchange protocol serialization type
+     */
+    public ThriftExchangeProtocol getExchangeProtocol() {
+        return exchangeProtocol;
+    }
+
+    public void setExchangeProtocol(ThriftExchangeProtocol exchangeProtocol) {
+        this.exchangeProtocol = exchangeProtocol;
+    }
+
+    /**
+     * Security negotiation type
+     */
+    public ThriftNegotiationType getNegotiationType() {
+        return negotiationType;
+    }
+
+    public void setNegotiationType(ThriftNegotiationType negotiationType) {
+        this.negotiationType = negotiationType;
+    }
+
+    /**
+     * Configuration parameters for SSL/TLS security negotiation
+     */
+    public ThriftSSLConfiguration getSslConfiguration() {
+        return sslConfiguration;
+    }
+
+    public void setSslConfiguration(ThriftSSLConfiguration sslConfiguration) {
+        this.sslConfiguration = sslConfiguration;
+    }
+    
+    /**
+     * Protocol compression mechanism type
+     */
+    public ThriftCompressionType getCompressionType() {
+        return compressionType;
+    }
+
+    public void setCompressionType(ThriftCompressionType compressionType) {
+        this.compressionType = compressionType;
+    }
 
     /**
      * The Thrift server host name. This is localhost or 0.0.0.0 (if not
-     * defined) when being a consumer or remote server hostname when using
+     * defined) when being a consumer or remote server host name when using
      * producer.
      */
     public String getHost() {
@@ -92,6 +151,17 @@ public class ThriftConfiguration {
 
     public void setPort(int port) {
         this.port = port;
+    }
+    
+    /**
+     * Client timeout for consumers
+     */
+    public int getClientTimeout() {
+        return clientTimeout;
+    }
+
+    public void setClientTimeout(int clientTimeout) {
+        this.clientTimeout = clientTimeout;
     }
 
     /**
@@ -124,5 +194,5 @@ public class ThriftConfiguration {
         }
         
         setService(uri.getPath().substring(1));
-    }
+    }    
 }
