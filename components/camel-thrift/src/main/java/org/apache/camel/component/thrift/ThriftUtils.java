@@ -33,9 +33,15 @@ import org.apache.camel.util.ReflectionHelper;
 import org.apache.thrift.async.AsyncMethodCallback;
 import org.apache.thrift.async.TAsyncClientManager;
 import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TCompactProtocol;
+import org.apache.thrift.protocol.TJSONProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
+import org.apache.thrift.protocol.TSimpleJSONProtocol;
+import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TNonblockingTransport;
+import org.apache.thrift.transport.TTransport;
+import org.apache.thrift.transport.TZlibTransport;
 
 /**
  * ThriftUtils helpers are working with dynamic methods via Camel and Java
@@ -55,10 +61,11 @@ public final class ThriftUtils {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static Object constructClientInstance(String packageName, String serviceName, TProtocol protocol, final CamelContext context) {
+    public static Object constructClientInstance(String packageName, String serviceName, TTransport transport, ThriftExchangeProtocol exchangeProtocol,
+                                                 final ThriftNegotiationType negotiationType, final ThriftCompressionType compressionType, final CamelContext context) {
         Object clientInstance = null;
         Class[] constructorParamTypes = {TProtocol.class};
-        Object[] constructorParamValues = {protocol};
+        Object[] constructorParamValues = {constructSyncProtocol(transport, exchangeProtocol, negotiationType, compressionType)};
 
         String clientClassName = packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_SYNC_CLIENT_CLASS_NAME;
         try {
@@ -77,7 +84,7 @@ public final class ThriftUtils {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static Object constructAsyncClientInstance(String packageName, String serviceName, TNonblockingTransport transport, final CamelContext context) {
+    public static Object constructAsyncClientInstance(String packageName, String serviceName, TNonblockingTransport transport, ThriftExchangeProtocol exchangeProtocol, final CamelContext context) {
         Object asynClientInstance = null;
         Class[] getterParamTypes = {TNonblockingTransport.class};
         Class[] constructorParamTypes = {TAsyncClientManager.class, TProtocolFactory.class};
@@ -86,7 +93,7 @@ public final class ThriftUtils {
         try {
             Class clientClass = context.getClassResolver().resolveMandatoryClass(clientClassName);
             Constructor factoryConstructor = clientClass.getConstructor(constructorParamTypes);
-            Object factoryInstance = factoryConstructor.newInstance(new TAsyncClientManager(), new TBinaryProtocol.Factory());
+            Object factoryInstance = factoryConstructor.newInstance(new TAsyncClientManager(), constructAsyncProtocol(exchangeProtocol));
             Method asyncClientGetter = ReflectionHelper.findMethod(clientClass, ThriftConstants.THRIFT_ASYNC_CLIENT_GETTER_NAME, getterParamTypes);
             if (asyncClientGetter == null) {
                 throw new IllegalArgumentException("Thrift async client getter not found: " + clientClassName + "." + ThriftConstants.THRIFT_ASYNC_CLIENT_GETTER_NAME);
@@ -174,9 +181,47 @@ public final class ThriftUtils {
         }
         return processorInstance;
     }
+    
+    private static TProtocol constructSyncProtocol(TTransport transport, ThriftExchangeProtocol exchangeProtocol,
+                                                   final ThriftNegotiationType negotiationType, final ThriftCompressionType compressionType) {
+        if (negotiationType == ThriftNegotiationType.SSL) {
+            // If negotiation passed over SSL/TLS the only binary transport is supported
+            return new TBinaryProtocol(transport);
+        } else if (compressionType == ThriftCompressionType.ZLIB) {
+            return new TBinaryProtocol(new TZlibTransport(transport));
+        } else {
+            switch (exchangeProtocol) {
+            case BINARY:
+                return new TBinaryProtocol(new TFramedTransport(transport));
+            case JSON:
+                return new TJSONProtocol(new TFramedTransport(transport));
+            case SJSON:
+                return new TSimpleJSONProtocol(new TFramedTransport(transport));
+            case COMPACT:
+                return new TCompactProtocol(new TFramedTransport(transport));
+            default:
+                throw new IllegalArgumentException("Exchange protocol " + exchangeProtocol + " not implemented");
+            }
+        }
+    }
+    
+    private static TProtocolFactory constructAsyncProtocol(ThriftExchangeProtocol exchangeProtocol) {
+        switch (exchangeProtocol) {
+        case BINARY:
+            return new TBinaryProtocol.Factory();
+        case JSON:
+            return new TJSONProtocol.Factory();
+        case SJSON:
+            return new TSimpleJSONProtocol.Factory();
+        case COMPACT:
+            return new TCompactProtocol.Factory();
+        default:
+            throw new IllegalArgumentException("Exchange protocol " + exchangeProtocol + " not implemented");    
+        }
+    }
 
-    /*
-     * This function find onComplete method inside interface implementation and
+    /**
+     * The function find onComplete method inside interface implementation and
      * get fist parameter (but not Object.class) as return type
      */
     @SuppressWarnings("rawtypes")
@@ -198,9 +243,9 @@ public final class ThriftUtils {
         return "(" + joiner.toString() + ")";
     }
 
-    /*
-     * This function transforms objects types stored as list or simple object
-     * inside Body to the primitives objects to find appropriate method
+    /**
+     * The function transforms objects types stored as list or simple object
+     * inside the Body to the primitives objects to find appropriate method
      */
     @SuppressWarnings({"rawtypes"})
     private static Object[] convertObjects2Primitives(Object request, AsyncClientMethodCallback methodCallback) {

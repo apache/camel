@@ -45,23 +45,38 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *host* | The Thrift server host name. This is localhost or 0.0.0.0 (if not defined) when being a consumer or remote server hostname when using producer. |  | String
+| *host* | The Thrift server host name. This is localhost or 0.0.0.0 (if not defined) when being a consumer or remote server host name when using producer. |  | String
 | *port* | *Required* The Thrift server port |  | int
-| *service* | *Required* Fully qualified service name from the protocol buffer descriptor file (package dot service definition name) |  | String
+| *service* | *Required* Fully qualified service name from the thrift descriptor file (package dot service definition name) |  | String
 |===
 
-==== Query Parameters (7 parameters):
+==== Query Parameters (22 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *compressionType* (common) | Protocol compression mechanism type | NONE | ThriftCompressionType
+| *exchangeProtocol* (common) | Exchange protocol serialization type | BINARY | ThriftExchangeProtocol
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *clientTimeout* (consumer) | Client timeout for consumers |  | int
 | *maxPoolSize* (consumer) | The Thrift server consumer max thread pool size | 10 | int
 | *poolSize* (consumer) | The Thrift server consumer initial thread pool size | 1 | int
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *method* (producer) | The Thrift invoked method name |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *cipherSuites* (security) | Cipher suites array |  | String[]
+| *keyManagerType* (security) | Key store manager type |  | String
+| *keyStorePassword* (security) | Key store password |  | String
+| *keyStorePath* (security) | Path to the key store file |  | String
+| *keyStoreType* (security) | Key store type | JKS | String
+| *negotiationType* (security) | Security negotiation type | PLAINTEXT | ThriftNegotiationType
+| *requireClientAuth* (security) | Set if client authentication is required | false | boolean
+| *securityProtocol* (security) | Security negotiation protocol | TLS | String
+| *trustManagerType* (security) | Trust store manager type |  | String
+| *trustPassword* (security) | Trust store password |  | String
+| *trustStorePath* (security) | Path to the trust store file |  | String
+| *trustStoreType* (security) | Trust store type | JKS | String
 |===
 // endpoint options: END
 

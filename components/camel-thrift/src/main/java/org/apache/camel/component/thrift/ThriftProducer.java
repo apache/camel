@@ -26,11 +26,9 @@ import org.apache.camel.component.thrift.client.AsyncClientMethodCallback;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.thrift.TException;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TNonblockingSocket;
 import org.apache.thrift.transport.TNonblockingTransport;
+import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
@@ -45,7 +43,6 @@ public class ThriftProducer extends DefaultProducer implements AsyncProcessor {
 
     protected final ThriftConfiguration configuration;
     protected final ThriftEndpoint endpoint;
-    private TProtocol protocol;
     private TTransport syncTransport;
     private TNonblockingTransport asyncTransport;
     private Object thriftClient;
@@ -93,17 +90,35 @@ public class ThriftProducer extends DefaultProducer implements AsyncProcessor {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (endpoint.isSynchronous()) {
+        
+        if (configuration.getNegotiationType() == ThriftNegotiationType.SSL) {
+            if (!endpoint.isSynchronous()) {
+                throw new IllegalArgumentException("The SSL negotiation type requires to set syncronous communication mode");
+            }
+            
+            if (syncTransport == null) {
+                initializeSslTransport();
+                LOG.info("Getting synchronous secured client implementation");
+                thriftClient = ThriftUtils.constructClientInstance(endpoint.getServicePackage(), endpoint.getServiceName(),
+                                                                   syncTransport, configuration.getExchangeProtocol(),
+                                                                   configuration.getNegotiationType(), configuration.getCompressionType(),
+                                                                   endpoint.getCamelContext());
+            }
+        } else if (endpoint.isSynchronous()) {
             if (syncTransport == null) {
                 initializeSyncTransport();
                 LOG.info("Getting synchronous client implementation");
-                thriftClient = ThriftUtils.constructClientInstance(endpoint.getServicePackage(), endpoint.getServiceName(), protocol, endpoint.getCamelContext());
+                thriftClient = ThriftUtils.constructClientInstance(endpoint.getServicePackage(), endpoint.getServiceName(),
+                                                                   syncTransport, configuration.getExchangeProtocol(),
+                                                                   configuration.getNegotiationType(), configuration.getCompressionType(),
+                                                                   endpoint.getCamelContext());
             }
         } else {
             if (asyncTransport == null) {
                 initializeAsyncTransport();
                 LOG.info("Getting asynchronous client implementation");
-                thriftClient = ThriftUtils.constructAsyncClientInstance(endpoint.getServicePackage(), endpoint.getServiceName(), asyncTransport, endpoint.getCamelContext());
+                thriftClient = ThriftUtils.constructAsyncClientInstance(endpoint.getServicePackage(), endpoint.getServiceName(), asyncTransport,
+                                                                        configuration.getExchangeProtocol(), endpoint.getCamelContext());
             }
         }
     }
@@ -114,7 +129,6 @@ public class ThriftProducer extends DefaultProducer implements AsyncProcessor {
             LOG.debug("Terminating synchronous transport the remote Thrift server");
             syncTransport.close();
             syncTransport = null;
-            protocol = null;
         } else if (asyncTransport != null) {
             LOG.debug("Terminating asynchronous transport the remote Thrift server");
             asyncTransport.close();
@@ -131,7 +145,6 @@ public class ThriftProducer extends DefaultProducer implements AsyncProcessor {
             throw new IllegalArgumentException("No connection properties (host, port) specified");
         }
         syncTransport.open();
-        protocol = new TBinaryProtocol(new TFramedTransport(syncTransport));
     }
     
     protected void initializeAsyncTransport() throws IOException, TTransportException {
@@ -143,4 +156,27 @@ public class ThriftProducer extends DefaultProducer implements AsyncProcessor {
         }
     }
     
+    protected void initializeSslTransport() throws TTransportException {
+        if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
+            ThriftSSLConfiguration sslConfiguration = configuration.getSslConfiguration();
+            if (sslConfiguration == null) {
+                throw new IllegalArgumentException("SSL Configuration must be initialized if negotiation type is set to " + configuration.getNegotiationType());
+            }
+            
+            ObjectHelper.notNull(sslConfiguration.getSecurityProtocol(), "Security protocol");
+            ObjectHelper.notNull(sslConfiguration.getTrustStorePath(), "Trust store path");
+            ObjectHelper.notNull(sslConfiguration.getTrustPassword(), "Trust store password");
+            ObjectHelper.notNull(sslConfiguration.getTrustManagerType(), "Trust manager type");
+            ObjectHelper.notNull(sslConfiguration.getTrustStoreType(), "Trust store type");
+            
+            LOG.info("Creating secured transport to the remote Thrift server {}:{}", configuration.getHost(), configuration.getPort());
+            
+            TSSLTransportFactory.TSSLTransportParameters sslParams = new TSSLTransportFactory.TSSLTransportParameters(sslConfiguration.getSecurityProtocol(), sslConfiguration.getCipherSuites());
+            
+            sslParams.setTrustStore(sslConfiguration.getTrustStorePath(), sslConfiguration.getTrustPassword(), sslConfiguration.getTrustManagerType(), sslConfiguration.getTrustStoreType());
+            syncTransport = TSSLTransportFactory.getClientSocket(configuration.getHost(), configuration.getPort(), configuration.getClientTimeout(), sslParams);
+        } else {
+            throw new IllegalArgumentException("No connection properties (host, port) specified");
+        }
+    }
 }
