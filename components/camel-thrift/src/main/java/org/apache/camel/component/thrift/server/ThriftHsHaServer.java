@@ -40,26 +40,14 @@ public class ThriftHsHaServer extends TNonblockingServer {
             super(transport);
         }
 
-        public ExecutorService getExecutorService() {
-            return executorService;
-        }
-
         public Args executorService(ExecutorService executorService) {
             this.executorService = executorService;
             return this;
         }
 
-        public ExecutorService getStartThreadPool() {
-            return startThreadPool;
-        }
-
         public Args startThreadPool(ExecutorService startThreadPool) {
             this.startThreadPool = startThreadPool;
             return this;
-        }
-
-        public CamelContext getContext() {
-            return context;
         }
 
         public Args context(CamelContext context) {
