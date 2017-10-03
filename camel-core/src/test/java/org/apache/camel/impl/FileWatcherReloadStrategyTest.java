@@ -51,6 +51,8 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
     }
 
     public void testAddNewRoute() throws Exception {
+        if (isPlatform("windows")) return;
+
         deleteDirectory("target/dummy");
         createDirectory("target/dummy");
 
@@ -75,6 +77,8 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
     }
 
     public void testUpdateExistingRoute() throws Exception {
+        if (isPlatform("windows")) return;
+
         deleteDirectory("target/dummy");
         createDirectory("target/dummy");
 
@@ -130,6 +134,8 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
     }
 
     public void testUpdateXmlRoute() throws Exception {
+        if (isPlatform("windows")) return;
+
         deleteDirectory("target/dummy");
         createDirectory("target/dummy");
 
