@@ -502,6 +502,8 @@ follows:
 
 |getGroupInfo |info |groupId |com.box.sdk.BoxGroup.Info
 
+|updateGroupInfo |updateInfo |groupId, groupInfo |com.box.sdk.BoxGroup
+
 |addGroupMembership |addMembership |groupId, userId, role |com.box.sdk.BoxGroupMembership
 
 |deleteGroupMembership |deleteMembership |groupMembershipId |
