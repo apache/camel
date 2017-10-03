@@ -42,6 +42,11 @@ public class CamelAwsTest extends AbstractSpringBootTestSupport {
     public void componentTests() throws Exception {
         this.runComponentTest(createTestConfig(), "aws-cw");
         this.runComponentTest(createTestConfig(), "aws-ddb");
+        this.runComponentTest(createTestConfig(), "aws-ddbstream");
+        this.runComponentTest(createTestConfig(), "aws-ec2");
+        this.runComponentTest(createTestConfig(), "aws-kinesis");
+        this.runComponentTest(createTestConfig(), "aws-kinesis-firehose");
+        this.runComponentTest(createTestConfig(), "aws-lambda");
         this.runComponentTest(createTestConfig(), "aws-s3");
         this.runComponentTest(createTestConfig(), "aws-sdb");
         this.runComponentTest(createTestConfig(), "aws-ses");
