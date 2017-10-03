@@ -41,6 +41,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.camel.Attachment;
@@ -598,15 +599,21 @@ public class MailBinding {
         Map<String, Object> answer = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         Enumeration<?> names = mailMessage.getAllHeaders();
 
+        MailConfiguration mailConfiguration = ((MailEndpoint) exchange.getFromEndpoint()).getConfiguration();
         while (names.hasMoreElements()) {
             Header header = (Header) names.nextElement();
+
             String value = header.getValue();
+            if (value != null && mailConfiguration.isMimeDecodeHeaders()) {
+                value = MimeUtility.decodeText(MimeUtility.unfold(value));
+            }
+
             if (headerFilterStrategy != null && !headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), value, exchange)) {
                 CollectionHelper.appendValue(answer, header.getName(), value);
             }
         }
         // if the message is a multipart message, do not set the content type to multipart/*
-        if (((MailEndpoint)exchange.getFromEndpoint()).getConfiguration().isMapMailMessage()) {
+        if (mailConfiguration.isMapMailMessage()) {
             Object content = mailMessage.getContent();
             if (content instanceof MimeMultipart) {
                 MimeMultipart multipart = (MimeMultipart)content;
