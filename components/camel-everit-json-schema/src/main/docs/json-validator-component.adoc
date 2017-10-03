@@ -1,9 +1,11 @@
 == JSON Schema Validator Component
 === Everit Json Schema Validator Component
+*Available as of Camel version *
+
 
 *Available as of Camel version 2.20*
 
-The Validator component performs bean validation of the message body
+The JSON Schema Validator component performs bean validation of the message body
 agains JSON Schemas using the Everit.org JSON Schema library
 (https://github.com/everit-org/json-schema). 
 
@@ -29,12 +31,11 @@ json-validator:resourceUri[?options]
 ------------------------------
 
 
-Where *label* is an arbitrary text value describing the endpoint. +
- You can append query options to the URI in the following format,
-?option=value&option=value&...
-
+Where *resourceUri* is some URL to a local resource on the classpath or a 
+full URL to a remote resource or resource on the file system which contains 
+the JSON Schema to validate against.
+ 
 === URI Options
-
 
 // component options: START
 The JSON Schema Validator component has no options.
@@ -59,7 +60,7 @@ with the following path and query parameters:
 | *resourceUri* | *Required* URL to a local resource on the classpath or a reference to lookup a bean in the Registry or a full URL to a remote resource or resource on the file system which contains the JSON Schema to validate against. |  | String
 |===
 
-==== Query Parameters (5 parameters):
+==== Query Parameters (6 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -68,6 +69,7 @@ with the following path and query parameters:
 | *failOnNullHeader* (producer) | Whether to fail if no header exists when validating against a header. | true | boolean
 | *headerName* (producer) | To validate against a header instead of the message body. |  | String
 | *errorHandler* (advanced) | To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception. |  | JsonValidatorError Handler
+| *schemaLoader* (advanced) | To use a custom schema loader allowing for adding custom format validation. See the Everit JSON Schema documentation. The default implementation will create a schema loader builder with draft v6 support. |  | JsonSchemaLoader
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
@@ -117,7 +119,7 @@ Assumed we have the following JSON Schema
 }
 -----------------------------------------------------------
 
-we can validate incomming JSON with the following Camel route.
+we can validate incoming JSON with the following Camel route.
 
 [source,java]
 -------------------------
