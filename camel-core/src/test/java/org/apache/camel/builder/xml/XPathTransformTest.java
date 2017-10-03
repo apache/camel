@@ -28,9 +28,6 @@ import org.slf4j.Logger;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -102,10 +99,6 @@ public class XPathTransformTest extends ContextTestSupport {
         NodeList list = XPathBuilder.xpath("//*", NodeList.class).evaluate(context, doc, NodeList.class);
         assertNotNull(list);
 
-        // optional trace and debug logging
-        verify(l, atLeast(0)).trace(anyString());
-        verify(l, atLeast(0)).debug(anyString());
-        verify(l, atLeastOnce()).info(anyString(), any(Object.class));
         verify(l, never()).info(argThat(containsString("Namespaces discovered in message")), any(Object.class));
     }
 
