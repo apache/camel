@@ -28,7 +28,16 @@ thrift://service[?options]
 ### Endpoint Options
 
 // component options: START
-The Thrift component has no options.
+The Thrift component supports 2 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *useGlobalSslContext Parameters* (security) | Determine if the thrift component is using global SSL context parameters | false | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 // endpoint options: START
@@ -50,7 +59,7 @@ with the following path and query parameters:
 | *service* | *Required* Fully qualified service name from the thrift descriptor file (package dot service definition name) |  | String
 |===
 
-==== Query Parameters (22 parameters):
+==== Query Parameters (12 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -65,18 +74,8 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *method* (producer) | The Thrift invoked method name |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *cipherSuites* (security) | Cipher suites array |  | String[]
-| *keyManagerType* (security) | Key store manager type |  | String
-| *keyStorePassword* (security) | Key store password |  | String
-| *keyStorePath* (security) | Path to the key store file |  | String
-| *keyStoreType* (security) | Key store type | JKS | String
 | *negotiationType* (security) | Security negotiation type | PLAINTEXT | ThriftNegotiationType
-| *requireClientAuth* (security) | Set if client authentication is required | false | boolean
-| *securityProtocol* (security) | Security negotiation protocol | TLS | String
-| *trustManagerType* (security) | Trust store manager type |  | String
-| *trustPassword* (security) | Trust store password |  | String
-| *trustStorePath* (security) | Path to the trust store file |  | String
-| *trustStoreType* (security) | Trust store type | JKS | String
+| *sslParameters* (security) | Configuration parameters for SSL/TLS security negotiation |  | SSLContextParameters
 |===
 // endpoint options: END
 
