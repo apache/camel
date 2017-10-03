@@ -16,20 +16,20 @@
  */
 package org.apache.camel.component.aws.lambda;
 
-import java.util.*;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
-public class LambdaComponent extends UriEndpointComponent {
+public class LambdaComponent extends DefaultComponent {
 
     public LambdaComponent() {
-        super(LambdaEndpoint.class);
     }
 
     public LambdaComponent(CamelContext context) {
-        super(context, LambdaEndpoint.class);
+        super(context);
     }
 
     @Override
