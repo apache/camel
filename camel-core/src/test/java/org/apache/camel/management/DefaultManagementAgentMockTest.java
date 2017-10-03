@@ -24,6 +24,7 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ManagementAgent;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.when;
  * {@link MBeanServer#registerMBean(Object, ObjectName)} returns an
  * {@link ObjectInstance} with a different ObjectName
  */
+@Ignore("Is flaky with mockito")
 public class DefaultManagementAgentMockTest {
 
     @Test
