@@ -23,9 +23,14 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.camel</groupId>
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel</artifactId>
+    <version>${project.version}</version>
+  </parent>
+
   <artifactId>camel-bom</artifactId>
-  <version>${project.version}</version>
+
   <packaging>pom</packaging>
 
   <name>Camel :: BOM</name>
