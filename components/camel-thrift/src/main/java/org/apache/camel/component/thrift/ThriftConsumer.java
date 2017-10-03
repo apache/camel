@@ -32,6 +32,7 @@ import org.apache.camel.component.thrift.server.ThriftMethodHandler;
 import org.apache.camel.component.thrift.server.ThriftThreadPoolServer;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.transport.TNonblockingServerSocket;
@@ -116,22 +117,26 @@ public class ThriftConsumer extends DefaultConsumer {
         }
 
         if (configuration.getNegotiationType() == ThriftNegotiationType.SSL && endpoint.isSynchronous()) {
-            ThriftSSLConfiguration sslConfiguration = configuration.getSslConfiguration();
-            if (sslConfiguration == null) {
-                throw new IllegalArgumentException("SSL Configuration must be initialized if negotiation type is set to " + configuration.getNegotiationType());
+            SSLContextParameters sslParameters = configuration.getSslParameters();
+            if (sslParameters == null) {
+                throw new IllegalArgumentException("SSL parameters must be initialized if negotiation type is set to " + configuration.getNegotiationType());
             }
 
-            ObjectHelper.notNull(sslConfiguration.getSecurityProtocol(), "Security protocol");
-            ObjectHelper.notNull(sslConfiguration.getKeyStorePath(), "Keystore path");
-            ObjectHelper.notNull(sslConfiguration.getKeyStorePassword(), "Keystore password");
-            ObjectHelper.notNull(sslConfiguration.getKeyManagerType(), "Key manager type");
-            ObjectHelper.notNull(sslConfiguration.getKeyStoreType(), "Key store type");
+            ObjectHelper.notNull(sslParameters.getSecureSocketProtocol(), "Security protocol");
+            ObjectHelper.notNull(sslParameters.getKeyManagers().getKeyStore().getResource(), "Keystore path");
+            ObjectHelper.notNull(sslParameters.getKeyManagers().getKeyStore().getPassword(), "Keystore password");
 
-            TSSLTransportFactory.TSSLTransportParameters sslParams = new TSSLTransportFactory.TSSLTransportParameters(sslConfiguration.getSecurityProtocol(),
-                                                                                                                      sslConfiguration.getCipherSuites());
-            sslParams.setKeyStore(sslConfiguration.getKeyStorePath(), sslConfiguration.getKeyStorePassword(), sslConfiguration.getKeyManagerType(),
-                                  sslConfiguration.getKeyStoreType());
-            sslParams.requireClientAuth(sslConfiguration.isRequireClientAuth());
+            TSSLTransportFactory.TSSLTransportParameters sslParams;
+            sslParams = new TSSLTransportFactory.TSSLTransportParameters(sslParameters.getSecureSocketProtocol(),
+                                                     sslParameters.getCipherSuites() == null ? null
+                                                     : sslParameters.getCipherSuites().getCipherSuite().stream().toArray(String[]::new));
+            
+            if (ObjectHelper.isNotEmpty(sslParameters.getKeyManagers().getKeyStore().getProvider()) && ObjectHelper.isNotEmpty(sslParameters.getKeyManagers().getKeyStore().getType())) {
+                sslParams.setKeyStore(sslParameters.getKeyManagers().getKeyStore().getResource(), sslParameters.getKeyManagers().getKeyStore().getPassword(),
+                                      sslParameters.getKeyManagers().getKeyStore().getProvider(), sslParameters.getKeyManagers().getKeyStore().getType());
+            } else {
+                sslParams.setKeyStore(sslParameters.getKeyManagers().getKeyStore().getResource(), sslParameters.getKeyManagers().getKeyStore().getPassword());
+            }
 
             try {
                 syncServerTransport = TSSLTransportFactory.getServerSocket(configuration.getPort(), configuration.getClientTimeout(), InetAddress.getByName(configuration.getHost()),

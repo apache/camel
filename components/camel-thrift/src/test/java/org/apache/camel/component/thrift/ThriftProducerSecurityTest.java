@@ -34,6 +34,9 @@ import org.apache.camel.component.thrift.impl.CalculatorSyncServerImpl;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
@@ -95,12 +98,19 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
     
     @Override
     protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        ThriftSSLConfiguration sslConfig = new ThriftSSLConfiguration();
+        JndiRegistry jndi = super.createRegistry();        
+        SSLContextParameters sslParameters = new SSLContextParameters();
         
-        sslConfig.setTrustStorePath(TRUST_STORE_PATH);
-        sslConfig.setTrustPassword(SECURITY_STORE_PASSWORD);
-        jndi.bind("sslConfig", sslConfig);
+        KeyStoreParameters keyStoreParams = new KeyStoreParameters();
+        keyStoreParams.setResource(TRUST_STORE_PATH);
+        keyStoreParams.setPassword(SECURITY_STORE_PASSWORD);
+        
+        TrustManagersParameters trustManagerParams = new TrustManagersParameters();
+        trustManagerParams.setKeyStore(keyStoreParams);
+        
+        sslParameters.setTrustManagers(trustManagerParams);
+        
+        jndi.bind("sslParams", sslParameters);
         return jndi;
     }
     
@@ -192,19 +202,19 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
             public void configure() {
                 from("direct:thrift-secured-calculate")
                     .to("thrift://localhost:" + THRIFT_TEST_PORT + "/org.apache.camel.component.thrift.generated.Calculator?" 
-                        + "method=calculate&negotiationType=SSL&sslConfiguration=#sslConfig&synchronous=true");
+                        + "method=calculate&negotiationType=SSL&sslParameters=#sslParams&synchronous=true");
                 from("direct:thrift-secured-add")
                     .to("thrift://localhost:" + THRIFT_TEST_PORT + "/org.apache.camel.component.thrift.generated.Calculator?"
-                        + "method=add&negotiationType=SSL&sslConfiguration=#sslConfig&synchronous=true");
+                        + "method=add&negotiationType=SSL&sslParameters=#sslParams&synchronous=true");
                 from("direct:thrift-secured-ping")
                     .to("thrift://localhost:" + THRIFT_TEST_PORT + "/org.apache.camel.component.thrift.generated.Calculator?"
-                        + "method=ping&negotiationType=SSL&sslConfiguration=#sslConfig&synchronous=true");
+                        + "method=ping&negotiationType=SSL&sslParameters=#sslParams&synchronous=true");
                 from("direct:thrift-secured-zip")
                     .to("thrift://localhost:" + THRIFT_TEST_PORT + "/org.apache.camel.component.thrift.generated.Calculator?"
-                        + "method=zip&negotiationType=SSL&sslConfiguration=#sslConfig&synchronous=true");
+                        + "method=zip&negotiationType=SSL&sslParameters=#sslParams&synchronous=true");
                 from("direct:thrift-secured-alltypes")
                     .to("thrift://localhost:" + THRIFT_TEST_PORT + "/org.apache.camel.component.thrift.generated.Calculator?"
-                        + "method=alltypes&negotiationType=SSL&sslConfiguration=#sslConfig&synchronous=true");
+                        + "method=alltypes&negotiationType=SSL&sslParameters=#sslParams&synchronous=true");
             }
         };
     }
