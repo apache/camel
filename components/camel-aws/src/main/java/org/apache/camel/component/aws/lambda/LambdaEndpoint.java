@@ -26,7 +26,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
@@ -34,8 +34,9 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The aws-lambda is used for managing and invoking functions from Amazon Lambda.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "aws-lambda", title = "AWS Lambda", syntax = "aws-lambda:functionName", producerOnly = true, label = "cloud,computing,serverless")
-public class LambdaEndpoint extends ScheduledPollEndpoint {
+@UriEndpoint(firstVersion = "2.20.0", scheme = "aws-lambda", title = "AWS Lambda",
+    syntax = "aws-lambda:function", producerOnly = true, label = "cloud,computing,serverless")
+public class LambdaEndpoint extends DefaultEndpoint {
 
     private AWSLambda awsLambdaClient;
 

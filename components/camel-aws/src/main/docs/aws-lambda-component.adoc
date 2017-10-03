@@ -1,6 +1,6 @@
-## AWS Lambda Component
+== AWS Lambda Component
 
-*Available as of Camel version 2.21*
+*Available as of Camel version 2.20*
 
 The Lambda component supports create, get, list, delete and invoke
 https://aws.amazon.com/lambda/[AWS Lambda] functions.
@@ -40,31 +40,34 @@ The AWS Lambda component has no options.
 // endpoint options: START
 The AWS Lambda endpoint is configured using URI syntax:
 
-    aws-lambda:functionName
+----
+aws-lambda:function
+----
 
 with the following path and query parameters:
 
-#### Path Parameters (1 parameters):
+==== Path Parameters (1 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **function** | *Required* Name of the Lambda function. |  | String
-|=======================================================================
+| *function* | *Required* Name of the Lambda function. |  | String
+|===
 
-#### Query Parameters (8 parameters):
+==== Query Parameters (8 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
-|=======================================================================
+|===
 | Name | Description | Default | Type
-| **accessKey** (producer) | Amazon AWS Access Key |  | String
-| **awsLambdaClient** (producer) | To use a existing configured AwsLambdaClient as client |  | AWSLambda
-| **awsLambdaEndpoint** (producer) | The region with which the AWS-Lambda client wants to work with. |  | String
-| **operation** (producer) | *Required* The operation to perform. It can be listFunctions getFunction createFunction deleteFunction or invokeFunction |  | LambdaOperations
-| **proxyHost** (producer) | To define a proxy host when instantiating the Lambda client |  | String
-| **proxyPort** (producer) | To define a proxy port when instantiating the Lambda client |  | Integer
-| **secretKey** (producer) | Amazon AWS Secret Key |  | String
-|=======================================================================
+| *awsLambdaEndpoint* (producer) | The region with which the AWS-Lambda client wants to work with. |  | String
+| *operation* (producer) | *Required* The operation to perform. It can be listFunctions getFunction createFunction deleteFunction or invokeFunction |  | LambdaOperations
+| *awsLambdaClient* (advanced) | To use a existing configured AwsLambdaClient as client |  | AWSLambda
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *proxyHost* (proxy) | To define a proxy host when instantiating the Lambda client |  | String
+| *proxyPort* (proxy) | To define a proxy port when instantiating the Lambda client |  | Integer
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
 // endpoint options: END
 
 

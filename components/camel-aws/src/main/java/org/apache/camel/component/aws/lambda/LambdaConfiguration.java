@@ -23,27 +23,26 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class LambdaConfiguration implements Cloneable {
+public class LambdaConfiguration {
 
     @UriPath
     @Metadata(required = "true")
     private String function;
-    @UriParam(label = "producer")
-    private AWSLambda awsLambdaClient;
-    @UriParam(label = "producer", secret = true)
-    private String accessKey;
-    @UriParam(label = "producer", secret = true)
-    private String secretKey;
-    @UriParam(label = "producer")
-    private String awsLambdaEndpoint;
-    @UriParam(label = "producer")
+    @UriParam
     @Metadata(required = "true")
     private LambdaOperations operation;
-    @UriParam(label = "producer")
+    @UriParam
+    private String awsLambdaEndpoint;
+    @UriParam(label = "security", secret = true)
+    private String accessKey;
+    @UriParam(label = "security", secret = true)
+    private String secretKey;
+    @UriParam(label = "proxy")
     private String proxyHost;
-    @UriParam(label = "producer")
+    @UriParam(label = "proxy")
     private Integer proxyPort;
-
+    @UriParam(label = "advanced")
+    private AWSLambda awsLambdaClient;
 
     public String getFunction() {
         return function;
@@ -55,7 +54,6 @@ public class LambdaConfiguration implements Cloneable {
     public void setFunction(String function) {
         this.function = function;
     }
-
 
     public AWSLambda getAwsLambdaClient() {
         return awsLambdaClient;
@@ -133,6 +131,5 @@ public class LambdaConfiguration implements Cloneable {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-
 
 }

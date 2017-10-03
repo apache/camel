@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.aws.lambda;
 
-import java.io.*;
-import java.nio.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.lambda.AWSLambda;
@@ -49,7 +51,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
 
-
 /**
  * A Producer which sends messages to the Amazon Web Service Lambda <a
  * href="https://aws.amazon.com/lambda/">AWS Lambda</a>
@@ -61,7 +62,6 @@ public class LambdaProducer extends DefaultProducer {
     public LambdaProducer(final Endpoint endpoint) {
         super(endpoint);
     }
-
 
     @Override
     public void process(final Exchange exchange) throws Exception {
@@ -86,7 +86,6 @@ public class LambdaProducer extends DefaultProducer {
         }
     }
 
-
     private void getFunction(AWSLambda lambdaClient, Exchange exchange) {
         GetFunctionResult result;
         try {
@@ -98,7 +97,6 @@ public class LambdaProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-
 
     private void deleteFunction(AWSLambda lambdaClient, Exchange exchange) {
         DeleteFunctionResult result;
@@ -112,7 +110,6 @@ public class LambdaProducer extends DefaultProducer {
         message.setBody(result);
     }
 
-
     private void listFunctions(AWSLambda lambdaClient, Exchange exchange) {
         ListFunctionsResult result;
         try {
@@ -124,7 +121,6 @@ public class LambdaProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-
 
     private void invokeFunction(AWSLambda lambdaClient, Exchange exchange) {
         InvokeResult result;
@@ -141,11 +137,10 @@ public class LambdaProducer extends DefaultProducer {
         message.setBody(StandardCharsets.UTF_8.decode(result.getPayload()).toString());
     }
 
-
     private void createFunction(AWSLambda lambdaClient, Exchange exchange) throws Exception {
         CreateFunctionResult result;
-        try {
 
+        try {
             CreateFunctionRequest request = new CreateFunctionRequest()
                 .withFunctionName(getConfiguration().getFunction());
 
@@ -269,14 +264,13 @@ public class LambdaProducer extends DefaultProducer {
             result = lambdaClient.createFunction(request);
 
         } catch (AmazonServiceException ase) {
-            System.out.println(ase.getErrorCode() + " - " + ase.getErrorMessage());
             LOG.trace("invokeFunction command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
+
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-
 
     private LambdaOperations determineOperation(Exchange exchange) {
         LambdaOperations operation = exchange.getIn().getHeader(LambdaConstants.OPERATION, LambdaOperations.class);
