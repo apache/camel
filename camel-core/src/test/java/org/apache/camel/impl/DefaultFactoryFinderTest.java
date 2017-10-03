@@ -34,7 +34,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class DefaultFactoryFinderTest {
@@ -127,8 +126,6 @@ public class DefaultFactoryFinderTest {
         when(injector.newInstance(TestImplA.class)).thenReturn(expected);
 
         final List<TestType> instances = factoryFinder.newInstances("TestImplA", injector, TestType.class);
-
-        verify(injector);
 
         assertEquals(1, instances.size());
         assertThat(instances, hasItem(expected));
