@@ -169,7 +169,7 @@ public final class JSonSchemaHelper {
      * @return output in pretty printed format
      */
     public static String prettyPrint(String json) {
-        return Jsoner.prettyPrint(json);
+        return Jsoner.prettyPrint(json, 2);
     }
 
     /**
