@@ -44,6 +44,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BoxGroupsManagerIntegrationTest.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
             .getApiName(BoxGroupsManagerApiMethod.class).getName();
+    private static final String CAMEL_TEST_GROUP_DESCRIPTION = "CamelTestGroupDescription";
     private static final String CAMEL_TEST_GROUP_NAME = "CamelTestGroup";
     private static final String CAMEL_TEST_CREATE_GROUP_NAME = "CamelTestCreateGroup";
 
@@ -129,6 +130,27 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
 
         assertNotNull("getGroupInfo result", result);
         LOG.debug("getGroupInfo: " + result);
+    }
+
+    @Test
+    public void testUpdateGroupInfo() throws Exception {
+        BoxGroup.Info info = testGroup.getInfo();
+	info.setDescription(CAMEL_TEST_GROUP_DESCRIPTION);
+
+        try {
+            final Map<String, Object> headers = new HashMap<String, Object>();
+            // parameter type is String
+            headers.put("CamelBox.groupId", testGroup.getID());
+            // parameter type is com.box.sdk.BoxGroup.Info
+            headers.put("CamelBox.groupInfo", info);
+            final com.box.sdk.BoxGroup result = requestBodyAndHeaders("direct://UPDATEGROUPINFO", null, headers);
+            assertNotNull("updateGroupInfo result", result);
+            LOG.debug("updateGroupInfo: " + result);
+        } finally {
+            info = testGroup.getInfo();
+            info.setDescription("");
+            testGroup.updateInfo(info);
+        }
     }
 
     @Test
