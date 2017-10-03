@@ -23,7 +23,7 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
+
 
 
 public class SolrFixtures {
@@ -59,11 +59,12 @@ public class SolrFixtures {
             return "solr://localhost:" + port + "/solr";
         }
     }
+        
 
     SolrClient getServer() {
         if (serverType == TestServerType.USE_HTTPS) {
             return solrHttpsServer;
-        } else if (serverType == TestServerType.USE_CLOUD) {
+        } else if (serverType == TestServerType.USE_CLOUD) {            
             return cloudFixture.solrClient;
         } else {
             return solrServer;
@@ -73,14 +74,14 @@ public class SolrFixtures {
     static void createSolrFixtures() throws Exception {
         solrHttpsRunner = JettySolrFactory.createJettyTestFixture(true);
         httpsPort = solrHttpsRunner.getLocalPort();
-        log.info("Started Https Test Server: " + solrHttpsRunner.getBaseUrl());
-        solrHttpsServer = new HttpSolrServer("https://localhost:" + httpsPort + "/solr");
+        log.info("Started Https Test Server: " + solrHttpsRunner.getBaseUrl());        
+        solrHttpsServer = new HttpSolrClient.Builder("https://localhost: + httpsPort + /solr").build();
         solrHttpsServer.setConnectionTimeout(60000);
 
         solrRunner = JettySolrFactory.createJettyTestFixture(false);
         port = solrRunner.getLocalPort();
-
-        solrServer = new HttpSolrServer("http://localhost:" + port + "/solr");
+        
+        solrServer = new HttpSolrClient.Builder("http://localhost: + port + /solr").build();
 
         log.info("Started Test Server: " + solrRunner.getBaseUrl());
         cloudFixture = new SolrCloudFixture("src/test/resources/solr");
@@ -109,7 +110,7 @@ public class SolrFixtures {
             solrHttpsServer.commit();
         }
         if (cloudFixture != null) {
-            cloudFixture.solrClient.deleteByQuery("*:*");
+            cloudFixture.solrClient.deleteByQuery("*:*");            
             cloudFixture.solrClient.commit();
         }
     }
