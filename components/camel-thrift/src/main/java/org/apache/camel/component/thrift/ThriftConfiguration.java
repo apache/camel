@@ -23,6 +23,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 @UriParams
 public class ThriftConfiguration {
@@ -48,7 +49,7 @@ public class ThriftConfiguration {
     private ThriftNegotiationType negotiationType = ThriftNegotiationType.PLAINTEXT;
     
     @UriParam(label = "security")
-    private ThriftSSLConfiguration sslConfiguration;
+    private SSLContextParameters sslParameters;
     
     @UriParam(defaultValue = "NONE")
     private ThriftCompressionType compressionType = ThriftCompressionType.NONE;
@@ -110,12 +111,12 @@ public class ThriftConfiguration {
     /**
      * Configuration parameters for SSL/TLS security negotiation
      */
-    public ThriftSSLConfiguration getSslConfiguration() {
-        return sslConfiguration;
+    public SSLContextParameters getSslParameters() {
+        return sslParameters;
     }
 
-    public void setSslConfiguration(ThriftSSLConfiguration sslConfiguration) {
-        this.sslConfiguration = sslConfiguration;
+    public void setSslParameters(SSLContextParameters sslParameters) {
+        this.sslParameters = sslParameters;
     }
     
     /**

@@ -25,6 +25,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.thrift.client.AsyncClientMethodCallback;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TNonblockingSocket;
 import org.apache.thrift.transport.TNonblockingTransport;
@@ -158,22 +159,29 @@ public class ThriftProducer extends DefaultProducer implements AsyncProcessor {
     
     protected void initializeSslTransport() throws TTransportException {
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
-            ThriftSSLConfiguration sslConfiguration = configuration.getSslConfiguration();
-            if (sslConfiguration == null) {
-                throw new IllegalArgumentException("SSL Configuration must be initialized if negotiation type is set to " + configuration.getNegotiationType());
+            SSLContextParameters sslParameters = configuration.getSslParameters();
+            if (sslParameters == null) {
+                throw new IllegalArgumentException("SSL parameters must be initialized if negotiation type is set to " + configuration.getNegotiationType());
             }
             
-            ObjectHelper.notNull(sslConfiguration.getSecurityProtocol(), "Security protocol");
-            ObjectHelper.notNull(sslConfiguration.getTrustStorePath(), "Trust store path");
-            ObjectHelper.notNull(sslConfiguration.getTrustPassword(), "Trust store password");
-            ObjectHelper.notNull(sslConfiguration.getTrustManagerType(), "Trust manager type");
-            ObjectHelper.notNull(sslConfiguration.getTrustStoreType(), "Trust store type");
+            ObjectHelper.notNull(sslParameters.getSecureSocketProtocol(), "Security protocol");
+            ObjectHelper.notNull(sslParameters.getTrustManagers().getKeyStore().getResource(), "Trust store path");
+            ObjectHelper.notNull(sslParameters.getTrustManagers().getKeyStore().getPassword(), "Trust store password");
             
             LOG.info("Creating secured transport to the remote Thrift server {}:{}", configuration.getHost(), configuration.getPort());
             
-            TSSLTransportFactory.TSSLTransportParameters sslParams = new TSSLTransportFactory.TSSLTransportParameters(sslConfiguration.getSecurityProtocol(), sslConfiguration.getCipherSuites());
+            TSSLTransportFactory.TSSLTransportParameters sslParams;
+            sslParams = new TSSLTransportFactory.TSSLTransportParameters(sslParameters.getSecureSocketProtocol(),
+                                                                         sslParameters.getCipherSuites() == null ? null
+                                                                         : sslParameters.getCipherSuites().getCipherSuite().stream().toArray(String[]::new));
             
-            sslParams.setTrustStore(sslConfiguration.getTrustStorePath(), sslConfiguration.getTrustPassword(), sslConfiguration.getTrustManagerType(), sslConfiguration.getTrustStoreType());
+            if (ObjectHelper.isNotEmpty(sslParameters.getTrustManagers().getProvider()) && ObjectHelper.isNotEmpty(sslParameters.getTrustManagers().getKeyStore().getType())) {
+                sslParams.setTrustStore(sslParameters.getTrustManagers().getKeyStore().getResource(), sslParameters.getTrustManagers().getKeyStore().getPassword(),
+                                        sslParameters.getTrustManagers().getProvider(), sslParameters.getTrustManagers().getKeyStore().getType());
+            } else {
+                sslParams.setTrustStore(sslParameters.getTrustManagers().getKeyStore().getResource(), sslParameters.getTrustManagers().getKeyStore().getPassword());
+            }
+            
             syncTransport = TSSLTransportFactory.getClientSocket(configuration.getHost(), configuration.getPort(), configuration.getClientTimeout(), sslParams);
         } else {
             throw new IllegalArgumentException("No connection properties (host, port) specified");

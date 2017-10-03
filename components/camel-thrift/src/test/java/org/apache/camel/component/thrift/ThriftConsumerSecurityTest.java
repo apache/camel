@@ -26,6 +26,9 @@ import org.apache.camel.component.thrift.generated.Work;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.jsse.KeyManagersParameters;
+import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSSLTransportFactory;
@@ -80,11 +83,18 @@ public class ThriftConsumerSecurityTest extends CamelTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        ThriftSSLConfiguration sslConfig = new ThriftSSLConfiguration();
+        SSLContextParameters sslParameters = new SSLContextParameters();
         
-        sslConfig.setKeyStorePath(KEY_STORE_PATH);
-        sslConfig.setKeyStorePassword(SECURITY_STORE_PASSWORD);
-        jndi.bind("sslConfig", sslConfig);
+        KeyStoreParameters keyStoreParams = new KeyStoreParameters();
+        keyStoreParams.setResource(KEY_STORE_PATH);
+        keyStoreParams.setPassword(SECURITY_STORE_PASSWORD);
+        
+        KeyManagersParameters keyManagerParams = new KeyManagersParameters();
+        keyManagerParams.setKeyStore(keyStoreParams);
+        
+        sslParameters.setKeyManagers(keyManagerParams);
+        
+        jndi.bind("sslParams", sslParameters);
         return jndi;
     }
     
@@ -127,7 +137,7 @@ public class ThriftConsumerSecurityTest extends CamelTestSupport {
             @Override
             public void configure() {
                 
-                from("thrift://localhost:" + THRIFT_TEST_PORT + "/org.apache.camel.component.thrift.generated.Calculator?negotiationType=SSL&sslConfiguration=#sslConfig&synchronous=true")
+                from("thrift://localhost:" + THRIFT_TEST_PORT + "/org.apache.camel.component.thrift.generated.Calculator?negotiationType=SSL&sslParameters=#sslParams&synchronous=true")
                     .to("mock:thrift-secure-service").choice()
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate")).setBody(simple(new Integer(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2).toString()))
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("echo")).setBody(simple("${body[0]}")).bean(new CalculatorMessageBuilder(), "echo");
