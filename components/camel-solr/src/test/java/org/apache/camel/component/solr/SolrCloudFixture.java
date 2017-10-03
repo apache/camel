@@ -79,8 +79,8 @@ public class SolrCloudFixture {
                 log.info("JETTY RUNNING AT " + jetty.getBaseUrl() + " PORT " + jetty.getLocalPort());
             }
         }
-
-        solrClient = new CloudSolrClient(zkAddr, true);
+        
+        solrClient = new CloudSolrClient.Builder().withZkHost(zkAddr).build();
         solrClient.connect();
 
         createCollection(solrClient, "collection1", 1, 1, "conf1");
