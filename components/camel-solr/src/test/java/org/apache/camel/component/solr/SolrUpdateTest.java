@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
@@ -51,7 +51,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
     public void testInsertSolrInputDocumentAsXMLWithoutAddRoot() throws Exception {
 
         SolrInputDocument doc = new SolrInputDocument();
-        doc.addField("id", "MA147LL/A", 1.0f);
+        doc.addField("id", "MA147LL/A");        
         String docAsXml = ClientUtils.toXML(doc);
         template.sendBodyAndHeader("direct:start", docAsXml, SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
         solrCommit();
@@ -65,7 +65,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
     public void testInsertSolrInputDocumentAsXMLWithAddRoot() throws Exception {
 
         SolrInputDocument doc = new SolrInputDocument();
-        doc.addField("id", "MA147LL/A", 1.0f);
+        doc.addField("id", "MA147LL/A");
         String docAsXml = "<add>" + ClientUtils.toXML(doc) + "</add>";
         template.sendBodyAndHeader("direct:start", docAsXml, SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
         solrCommit();
@@ -79,7 +79,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
     public void testInsertSolrInputDocument() throws Exception {
 
         SolrInputDocument doc = new SolrInputDocument();
-        doc.addField("id", "MA147LL/A", 1.0f);
+        doc.addField("id", "MA147LL/A");
         template.sendBodyAndHeader("direct:start", doc, SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
 
         solrCommit();
@@ -94,11 +94,11 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
         List<SolrInputDocument> docList = new ArrayList<>(2);
 
         SolrInputDocument doc = new SolrInputDocument();
-        doc.addField("id", "MA147LL/A", 1.0f);
+        doc.addField("id", "MA147LL/A");
         docList.add(doc);
 
         doc = new SolrInputDocument();
-        doc.addField("id", "KP147LL/A", 1.0f);
+        doc.addField("id", "KP147LL/A");
         docList.add(doc);
 
         template.sendBodyAndHeader("direct:start", docList, SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
@@ -160,7 +160,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
         template.send("direct:start", exchange);
 
         //noinspection ThrowableResultOfMethodCallIgnored
-        assertEquals(HttpSolrServer.RemoteSolrException.class, exchange.getException().getClass());
+        assertEquals(HttpSolrClient.RemoteSolrException.class, exchange.getException().getClass());
     }
 
     @Test
