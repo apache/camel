@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.mail;
 
+import javax.mail.internet.MimeUtility;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
-
-import javax.mail.internet.MimeUtility;
 
 /**
  * Unit test for Mail header decoding/unfolding support.
