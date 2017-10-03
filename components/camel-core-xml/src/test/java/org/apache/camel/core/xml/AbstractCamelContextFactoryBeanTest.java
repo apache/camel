@@ -83,7 +83,7 @@ public class AbstractCamelContextFactoryBeanTest {
 
         // program the property resolution in context mock
         when(context.resolvePropertyPlaceholders(anyString())).thenAnswer(invocation -> {
-            final String placeholder = invocation.getArgument(0);
+            final String placeholder = invocation.getArgumentAt(0, String.class);
 
             // we receive the argument and check if the method should return a
             // value that can be converted to boolean

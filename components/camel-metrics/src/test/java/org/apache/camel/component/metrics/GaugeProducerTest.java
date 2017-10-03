@@ -76,8 +76,8 @@ public class GaugeProducerTest {
     public void testDefault() throws Exception {
         verify(registry, times(1)).register(eq(METRICS_NAME), argThat(new ArgumentMatcher<CamelMetricsGauge>() {
             @Override
-            public boolean matches(CamelMetricsGauge argument) {
-                return VALUE.equals(argument.getValue());
+            public boolean matches(Object argument) {
+                return argument instanceof CamelMetricsGauge && VALUE.equals(((CamelMetricsGauge)argument).getValue());
             }
         }));
     }
@@ -89,14 +89,14 @@ public class GaugeProducerTest {
         verify(in, times(1)).getHeader(HEADER_GAUGE_SUBJECT, Object.class);
         verify(registry, times(1)).register(eq(METRICS_NAME), argThat(new ArgumentMatcher<CamelMetricsGauge>() {
             @Override
-            public boolean matches(CamelMetricsGauge argument) {
-                return VALUE.equals(argument.getValue());
+            public boolean matches(Object argument) {
+                return argument instanceof CamelMetricsGauge && VALUE.equals(((CamelMetricsGauge)argument).getValue());
             }
         }));
         verify(registry, times(1)).register(eq(METRICS_NAME_HEADER), argThat(new ArgumentMatcher<CamelMetricsGauge>() {
             @Override
-            public boolean matches(CamelMetricsGauge argument) {
-                return VALUE_HEADER.equals(argument.getValue());
+            public boolean matches(Object argument) {
+                return argument instanceof CamelMetricsGauge && VALUE_HEADER.equals(((CamelMetricsGauge)argument).getValue());
             }
         }));
     }
