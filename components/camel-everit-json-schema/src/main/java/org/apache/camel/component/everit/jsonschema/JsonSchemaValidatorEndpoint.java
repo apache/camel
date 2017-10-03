@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.everit.jsonschema;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -30,12 +27,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 
 /**
@@ -52,46 +43,42 @@ public class JsonSchemaValidatorEndpoint extends DefaultEndpoint {
     @UriParam(label = "advanced", description = "To use a custom org.apache.camel.component.everit.jsonschema.JsonValidatorErrorHandler. " 
             + "The default error handler captures the errors and throws an exception.")
     private JsonValidatorErrorHandler errorHandler = new DefaultJsonValidationErrorHandler();
+    @UriParam(label = "advanced", description = "To use a custom schema loader allowing for adding custom format validation. See the Everit JSON Schema documentation.")
+    private JsonSchemaLoader schemaLoader = new DefaultJsonSchemaLoader();
     @UriParam(defaultValue = "true", description = "Whether to fail if no body exists.")
     private boolean failOnNullBody = true;
     @UriParam(defaultValue = "true", description = "Whether to fail if no header exists when validating against a header.")
     private boolean failOnNullHeader = true;
     @UriParam(description = "To validate against a header instead of the message body.")
     private String headerName;
+    
 
     /**
-     * We need a one-to-one relation between endpoint and a Schema 
+     * We need a one-to-one relation between endpoint and a JsonSchemaReader 
      * to be able to clear the cached schema. See method
      * {@link #clearCachedSchema}.
      */
-    private Schema schema;
+    private JsonSchemaReader schemaReader;
 
     public JsonSchemaValidatorEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component);
         this.resourceUri = resourceUri;
     }
 
-    private Schema loadSchema() throws IOException {
-        ObjectHelper.notNull(getCamelContext(), "camelContext");
-        ObjectHelper.notNull(this.resourceUri, "resourceUri");
-        try (InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), this.resourceUri)) {
-            JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
-            // LOG.debug("JSON schema: {}", rawSchema);
-            return SchemaLoader.load(rawSchema);
-        }
-    }
-
+    
     @ManagedOperation(description = "Clears the cached schema, forcing to re-load the schema on next request")
     public void clearCachedSchema() {        
-        this.schema = null; // will cause to reload the schema
+        this.schemaReader.setSchema(null); // will cause to reload the schema
     }
     
     @Override
     public Producer createProducer() throws Exception {
-        if (this.schema == null) {
-            this.schema = loadSchema();
+        if (this.schemaReader == null) {
+            this.schemaReader = new JsonSchemaReader(getCamelContext(), resourceUri, schemaLoader);
+            // Load the schema once when creating the producer to fail fast if the schema is invalid.
+            this.schemaReader.getSchema();
         }
-        JsonValidatingProcessor validator = new JsonValidatingProcessor(this.schema);
+        JsonValidatingProcessor validator = new JsonValidatingProcessor(this.schemaReader);
         configureValidator(validator);
 
         return new JsonSchemaValidatorProducer(this, validator);
@@ -139,6 +126,18 @@ public class JsonSchemaValidatorEndpoint extends DefaultEndpoint {
      */
     public void setErrorHandler(JsonValidatorErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
+    }
+    
+    public JsonSchemaLoader getSchemaLoader() {
+        return schemaLoader;
+    }
+    
+    /**
+     * To use a custom schema loader allowing for adding custom format validation. See the Everit JSON Schema documentation.
+     * The default implementation will create a schema loader builder with draft v6 support.
+     */
+    public void setSchemaLoader(JsonSchemaLoader schemaLoader) {
+        this.schemaLoader = schemaLoader;
     }
 
     public boolean isFailOnNullBody() {

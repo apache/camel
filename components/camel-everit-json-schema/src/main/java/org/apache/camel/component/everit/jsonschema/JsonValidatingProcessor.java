@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JsonValidatingProcessor implements AsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(JsonValidatingProcessor.class);
-    private Schema schema;
+    private JsonSchemaReader schemaReader;
     private JsonValidatorErrorHandler errorHandler = new DefaultJsonValidationErrorHandler();
     private boolean failOnNullBody = true;
     private boolean failOnNullHeader = true;
@@ -49,8 +49,8 @@ public class JsonValidatingProcessor implements AsyncProcessor {
         
     }
 
-    public JsonValidatingProcessor(Schema schema) {
-        this.schema = schema;
+    public JsonValidatingProcessor(JsonSchemaReader schemaReader) {
+        this.schemaReader = schemaReader;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -70,6 +70,7 @@ public class JsonValidatingProcessor implements AsyncProcessor {
     protected void doProcess(Exchange exchange) throws Exception {
         Object jsonPayload = null;
         InputStream is = null;
+        Schema schema = null;
         try {
             is = getContentToValidate(exchange, InputStream.class);
             if (shouldUseHeader()) {
@@ -82,6 +83,7 @@ public class JsonValidatingProcessor implements AsyncProcessor {
                 }
             }
             if (is != null) {
+                schema = this.schemaReader.getSchema();
                 if (schema instanceof ObjectSchema) {
                     jsonPayload = new JSONObject(new JSONTokener(is));
                 } else { 

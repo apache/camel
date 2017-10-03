@@ -16,22 +16,13 @@
  */
 package org.apache.camel.component.everit.jsonschema;
 
-import java.util.Map;
+import java.io.IOException;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.CamelContext;
+import org.everit.json.schema.Schema;
 
-/**
- * The JSON Schema Validator Component is for validating JSON against a schema.
- *
- * @version
- */
-public class JsonSchemaValidatorComponent extends DefaultComponent {
-
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        JsonSchemaValidatorEndpoint endpoint = new JsonSchemaValidatorEndpoint(uri, this, remaining);
-        setProperties(endpoint, parameters);
-        return endpoint;
-    }
+public interface JsonSchemaLoader {
+    
+    Schema createSchema(CamelContext camelContext, String resourceUri) throws IOException;
 
 }
