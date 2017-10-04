@@ -62,7 +62,7 @@ public class StompConsumerUriTest extends StompBaseTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("stomp:queue:test?brokerURL=tcp://localhost:%d", getPort())
+                fromF("stomp:/queue/test?brokerURL=tcp://localhost:%d", getPort())
                     .transform(body().convertToString())
                     .to("mock:result");
             }

@@ -89,7 +89,7 @@ public class StompProducerTest extends StompBaseTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:foo").to("stomp:queue:test");
+                from("direct:foo").to("stomp:/queue/test");
             }
         };
     }
