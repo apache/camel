@@ -22,6 +22,7 @@ import java.util.Map;
 import io.grpc.internal.GrpcUtil;
 import io.grpc.netty.NegotiationType;
 import io.grpc.netty.NettyChannelBuilder;
+import org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -51,8 +52,8 @@ public class GrpcConfiguration {
     @UriParam(label = "security", defaultValue = "NONE")
     private GrpcAuthType authenticationType = GrpcAuthType.NONE;
     
-    @UriParam(label = "security")
-    private String serviceAccountResource;
+    @UriParam(label = "security", defaultValue = "HMAC256")
+    private JwtAlgorithm jwtAlgorithm = JwtAlgorithm.HMAC256;
     
     @UriParam(label = "security", secret = true)
     private String jwtSecret;
@@ -62,6 +63,9 @@ public class GrpcConfiguration {
     
     @UriParam(label = "security")
     private String jwtSubject;
+    
+    @UriParam(label = "security")
+    private String serviceAccountResource;
     
     @UriParam(label = "security")
     private String keyCertChainResource;
@@ -171,14 +175,14 @@ public class GrpcConfiguration {
     }
     
     /**
-     * Service Account key file in JSON format resource link supported by the Google Cloud SDK
+     * JSON Web Token sign algorithm
      */
-    public String getServiceAccountResource() {
-        return serviceAccountResource;
+    public JwtAlgorithm getJwtAlgorithm() {
+        return jwtAlgorithm;
     }
 
-    public void setServiceAccountResource(String serviceAccountResource) {
-        this.serviceAccountResource = serviceAccountResource;
+    public void setJwtAlgorithm(JwtAlgorithm jwtAlgorithm) {
+        this.jwtAlgorithm = jwtAlgorithm;
     }
     
     /**
@@ -212,6 +216,17 @@ public class GrpcConfiguration {
 
     public void setJwtSubject(String jwtSubject) {
         this.jwtSubject = jwtSubject;
+    }
+    
+    /**
+     * Service Account key file in JSON format resource link supported by the Google Cloud SDK
+     */
+    public String getServiceAccountResource() {
+        return serviceAccountResource;
+    }
+
+    public void setServiceAccountResource(String serviceAccountResource) {
+        this.serviceAccountResource = serviceAccountResource;
     }
 
     /**
@@ -373,5 +388,5 @@ public class GrpcConfiguration {
         }
         
         setService(uri.getPath().substring(1));
-    }
+    }    
 }

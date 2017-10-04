@@ -14,25 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.grpc;
+package org.apache.camel.component.grpc.auth.jwt;
 
 /**
- * Authentication method types list in advance to the SSL/TLS negotiation
+ * Implemented JSON Web Token secret signing algorithms
  */
-public enum GrpcAuthType {
+public enum JwtAlgorithm {
     /**
-     * No advanced authentication method
+     * HmacSHA256 algorithm
      */
-    NONE,
+    HMAC256,
 
     /**
-     * Google OAuth2 token auth. Valid for producer interacting with Google
-     * public services with gRPC support only
+     * HmacSHA384 algorithm
      */
-    GOOGLE,
+    HMAC384,
 
     /**
-     * Custom JSON Web Token with HmacSHA algorithms implementation
+     * HmacSHA512 algorithm
      */
-    JWT
+    HMAC512
 }

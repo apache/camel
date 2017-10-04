@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.grpc.server.auth.jwt;
+package org.apache.camel.component.grpc.auth.jwt;
 
 import java.io.UnsupportedEncodingException;
 
@@ -47,8 +47,8 @@ public class JwtServerInterceptor implements ServerInterceptor {
 
     private final JWTVerifier verifier;
 
-    public JwtServerInterceptor(String secret, String issuer, String subject) {
-        verifier = JwtHelper.prepareJwtVerifier(secret, issuer, subject);
+    public JwtServerInterceptor(JwtAlgorithm algorithm, String secret, String issuer, String subject) {
+        verifier = prepareJwtVerifier(algorithm, secret, issuer, subject);
     }
 
     @Override
@@ -75,22 +75,14 @@ public class JwtServerInterceptor implements ServerInterceptor {
         return Contexts.interceptCall(ctx, call, metadata, serverCallHandler);
     }
     
-    /**
-     * JSON Web Token credentials validator helper
-     */
-    public static final class JwtHelper {
-        private JwtHelper() {
-        }
-        
-        public static JWTVerifier prepareJwtVerifier(String secret, String issuer, String subject) {
-            try {
-                Algorithm algorithm = Algorithm.HMAC256(secret);
-                return JWT.require(algorithm).withIssuer(issuer).withSubject(subject).build();
-            } catch (JWTCreationException e) {
-                throw new IllegalArgumentException("Unable to create JWT verifier", e);
-            } catch (UnsupportedEncodingException e) {
-                throw new IllegalArgumentException("UTF-8 encoding not supported during JWT verifier creation", e);
-            }
+    public static JWTVerifier prepareJwtVerifier(JwtAlgorithm algorithmName, String secret, String issuer, String subject) {
+        try {
+            Algorithm algorithm = JwtHelper.selectAlgorithm(algorithmName, secret);
+            return JWT.require(algorithm).withIssuer(issuer).withSubject(subject).build();
+        } catch (JWTCreationException e) {
+            throw new IllegalArgumentException("Unable to create JWT verifier", e);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("UTF-8 encoding not supported during JWT verifier creation", e);
         }
     }
 }

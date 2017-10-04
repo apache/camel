@@ -51,7 +51,7 @@ with the following path and query parameters:
 | *service* | *Required* Fully qualified service name from the protocol buffer descriptor file (package dot service definition name) |  | String
 |===
 
-==== Query Parameters (24 parameters):
+==== Query Parameters (25 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -71,6 +71,7 @@ with the following path and query parameters:
 | *userAgent* (producer) | The user agent header passed to the server |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *authenticationType* (security) | Authentication method type in advance to the SSL/TLS negotiation | NONE | GrpcAuthType
+| *jwtAlgorithm* (security) | JSON Web Token sign algorithm | HMAC256 | JwtAlgorithm
 | *jwtIssuer* (security) | JSON Web Token issuer |  | String
 | *jwtSecret* (security) | JSON Web Token secret |  | String
 | *jwtSubject* (security) | JSON Web Token subject |  | String
@@ -105,10 +106,13 @@ To enable these features the following component properties combinations must be
 |||serviceAccountResource||Required
 |3|*Custom JSON Web Token implementation authentication*|authenticationType|JWT|Required
 |||negotiationType|NONE or TLS|Optional. The TLS/SSL not checking for this type, but strongly recommended.
+|||jwtAlgorithm|HMAC256(default) or (HMAC384,HMAC512)|Optional
 |||jwtSecret||Required
 |||jwtIssuer||Optional
 |||jwtSubject||Optional
 |=======================================================================
+TLS with OpenSSL is currently the recommended approach for using gRPC over TLS component.
+Using the JDK for ALPN is generally much slower and may not support the necessary ciphers for HTTP2. This function is not implemented in the component.
 
 ### gRPC producer resource type mapping
 
