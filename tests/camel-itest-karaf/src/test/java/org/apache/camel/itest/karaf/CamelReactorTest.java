@@ -21,13 +21,13 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelReactiveStreamsTest extends BaseKarafTest {
+public class CamelReactorTest extends BaseKarafTest {
 
-    public static final String COMPONENT = extractName(CamelReactiveStreamsTest.class);
+    public static final String COMPONENT = extractName(CamelReactorTest.class);
 
     @Test
     public void test() throws Exception {
-        testComponent(COMPONENT);
+        installCamelFeature(COMPONENT);
     }
 
 }
