@@ -46,7 +46,7 @@ public abstract class AbstractIgniteTest extends CamelTestSupport {
 
     protected IgniteConfiguration createConfiguration() {
         IgniteConfiguration config = new IgniteConfiguration();
-        config.setGridName(UUID.randomUUID().toString());
+        config.setIgniteInstanceName(UUID.randomUUID().toString());
         config.setIncludeEventTypes(EventType.EVT_JOB_FINISHED, EventType.EVT_JOB_RESULTED);
         config.setDiscoverySpi(new TcpDiscoverySpi().setIpFinder(LOCAL_IP_FINDER));
         return config;
