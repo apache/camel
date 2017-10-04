@@ -161,7 +161,7 @@ public class IgniteSetTest extends AbstractIgniteTest {
     @Test
     public void testWithConfiguration() {
         CollectionConfiguration configuration = new CollectionConfiguration();
-        configuration.setCacheMode(CacheMode.LOCAL);
+        configuration.setCacheMode(CacheMode.PARTITIONED);
 
         context.getRegistry(JndiRegistry.class).bind("config", configuration);
 
