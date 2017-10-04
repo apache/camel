@@ -28,8 +28,9 @@ import io.grpc.netty.NettyChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import io.netty.handler.ssl.SslProvider;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.grpc.client.auth.jwt.JwtCallCredentials;
-import org.apache.camel.component.grpc.client.auth.jwt.JwtHelper;
+import org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm;
+import org.apache.camel.component.grpc.auth.jwt.JwtCallCredentials;
+import org.apache.camel.component.grpc.auth.jwt.JwtHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -62,8 +63,8 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
 
     @Before
     public void startGrpcChannels() throws SSLException {
-        String correctJwtToken = JwtHelper.createJwtToken(GRPC_JWT_CORRECT_SECRET, null, null);
-        String incorrectJwtToken = JwtHelper.createJwtToken(GRPC_JWT_INCORRECT_SECRET, null, null);
+        String correctJwtToken = JwtHelper.createJwtToken(JwtAlgorithm.HMAC256, GRPC_JWT_CORRECT_SECRET, null, null);
+        String incorrectJwtToken = JwtHelper.createJwtToken(JwtAlgorithm.HMAC256, GRPC_JWT_INCORRECT_SECRET, null, null);
         
         tlsChannel = NettyChannelBuilder.forAddress("localhost", GRPC_TLS_TEST_PORT)
                                         .sslContext(GrpcSslContexts.forClient()
