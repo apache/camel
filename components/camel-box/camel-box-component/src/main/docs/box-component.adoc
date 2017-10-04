@@ -492,7 +492,7 @@ follows:
 |=======================================================================
 |Endpoint |Shorthand Alias |Options |Result Body Type
 
-|createGroup |create |name |com.box.sdk.BoxGroup 
+|createGroup |create |name, [provenance, externalSyncIdentifier, description, invitabilityLevel, memberViewabilityLevel] |com.box.sdk.BoxGroup 
 
 |addGroupMembership |createMembership |groupId, userId, role |com.box.sdk.BoxGroupMembership
 
