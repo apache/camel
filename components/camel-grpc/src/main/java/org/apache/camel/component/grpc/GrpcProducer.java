@@ -30,12 +30,12 @@ import io.netty.handler.ssl.SslProvider;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.grpc.auth.jwt.JwtCallCredentials;
+import org.apache.camel.component.grpc.auth.jwt.JwtHelper;
 import org.apache.camel.component.grpc.client.GrpcExchangeForwarder;
 import org.apache.camel.component.grpc.client.GrpcExchangeForwarderFactory;
 import org.apache.camel.component.grpc.client.GrpcResponseAggregationStreamObserver;
 import org.apache.camel.component.grpc.client.GrpcResponseRouterStreamObserver;
-import org.apache.camel.component.grpc.client.auth.jwt.JwtCallCredentials;
-import org.apache.camel.component.grpc.client.auth.jwt.JwtHelper;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
@@ -105,7 +105,7 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
             } else if (configuration.getAuthenticationType() == GrpcAuthType.JWT) {
                 ObjectHelper.notNull(configuration.getJwtSecret(), "jwtSecret");
                 
-                String jwtToken = JwtHelper.createJwtToken(configuration.getJwtSecret(), configuration.getJwtIssuer(), configuration.getJwtSubject());
+                String jwtToken = JwtHelper.createJwtToken(configuration.getJwtAlgorithm(), configuration.getJwtSecret(), configuration.getJwtIssuer(), configuration.getJwtSubject());
                 callCreds = new JwtCallCredentials(jwtToken);
             }
             
