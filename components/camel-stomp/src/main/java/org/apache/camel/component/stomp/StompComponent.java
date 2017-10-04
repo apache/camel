@@ -54,14 +54,12 @@ public class StompComponent extends HeaderFilterStrategyComponent implements SSL
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String destination = "/" + remaining.replaceAll(":", "/");
-
         // must copy config so we do not have side effects
         StompConfiguration config = getConfiguration().copy();
         // allow to configure configuration from uri parameters
         setProperties(config, parameters);
 
-        StompEndpoint endpoint = new StompEndpoint(uri, this, config, destination);
+        StompEndpoint endpoint = new StompEndpoint(uri, this, config, remaining);
         
         // set header filter strategy and then call set properties 
         // if user wants to add CustomHeaderFilterStrategy
