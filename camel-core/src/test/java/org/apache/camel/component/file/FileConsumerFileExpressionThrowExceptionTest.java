@@ -28,8 +28,6 @@ import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 
-import static org.awaitility.Awaitility.await;
-
 /**
  * Unit test for expression option for file consumer.
  */
@@ -73,7 +71,7 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
 
         context.start();
 
-        await().atMost(2, TimeUnit.SECONDS).until(() -> LATCH.getCount() == 0);
+        assertTrue(LATCH.await(2, TimeUnit.SECONDS));
 
         // and we should rollback X number of times
         assertTrue(event.startsWith("rollback"));
