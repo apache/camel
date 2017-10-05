@@ -437,6 +437,11 @@
                   </aliases>
                   <nullableOptions>
                     <nullableOption>role</nullableOption>
+                    <nullableOption>description</nullableOption>
+                    <nullableOption>provenance</nullableOption>
+                    <nullableOption>externalSyncIdentifier</nullableOption>
+                    <nullableOption>invitabilityLevel</nullableOption>
+                    <nullableOption>memberViewabilityLevel</nullableOption>
                   </nullableOptions>
                 </api>
                 <api>
