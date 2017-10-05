@@ -18,7 +18,9 @@
 
 -->
 <solver>
-  <!--<environmentMode>FAST_ASSERT</environmentMode>-->
+  <!--
+  <environmentMode>FAST_ASSERT</environmentMode>
+  -->
 
   <!-- Domain model configuration -->
   <solutionClass>org.optaplanner.examples.cloudbalancing.domain.CloudBalance</solutionClass>
@@ -26,7 +28,6 @@
 
   <!-- Score configuration -->
   <scoreDirectorFactory>
-    <scoreDefinitionType>HARD_SOFT</scoreDefinitionType>
     <scoreDrl>org/optaplanner/examples/cloudbalancing/solver/cloudBalancingScoreRules.drl</scoreDrl>
   </scoreDirectorFactory>
 

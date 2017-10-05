@@ -19,16 +19,12 @@ package org.apache.camel.component.optaplanner;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * OptaPlanner component for Camel
  */
-public class OptaPlannerComponent extends UriEndpointComponent {
-
-    public OptaPlannerComponent() {
-        super(OptaPlannerEndpoint.class);
-    }
+public class OptaPlannerComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         OptaPlannerConfiguration configuration = new OptaPlannerConfiguration();
