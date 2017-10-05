@@ -52,7 +52,7 @@ public class DropboxConfiguration {
     @UriParam
     private DropboxUploadMode uploadMode;
     //id of the app
-    @UriParam @Metadata(required = "true")
+    @UriParam
     private String clientIdentifier;
     //reference to dropbox client
     @UriParam

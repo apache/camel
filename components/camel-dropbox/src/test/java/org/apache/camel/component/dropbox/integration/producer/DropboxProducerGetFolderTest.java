@@ -116,21 +116,21 @@ public class DropboxProducerGetFolderTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/XXX")
+                        .to("dropbox://get?accessToken={{accessToken}}&remotePath=/XXX")
                         .to("mock:result");
 
                 from("direct:start2")
                     .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant("/XXX"))
-                    .to("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}")
+                    .to("dropbox://get?accessToken={{accessToken}}")
                     .to("mock:result");
 
                 from("direct:start3")
-                    .to("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}")
+                    .to("dropbox://get?accessToken={{accessToken}}")
                     .to("mock:result");
 
                 from("direct:start4")
                     .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant("/XXX"))
-                    .to("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/aWrongPath")
+                    .to("dropbox://get?accessToken={{accessToken}}&remotePath=/aWrongPath")
                     .to("mock:result");
 
             }
