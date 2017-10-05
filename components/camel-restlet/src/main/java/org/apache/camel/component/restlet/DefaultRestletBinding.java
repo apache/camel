@@ -47,6 +47,7 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -58,8 +59,11 @@ import org.restlet.data.ChallengeResponse;
 import org.restlet.data.ChallengeScheme;
 import org.restlet.data.CharacterSet;
 import org.restlet.data.ClientInfo;
+import org.restlet.data.Cookie;
+import org.restlet.data.Encoding;
 import org.restlet.data.Form;
 import org.restlet.data.Header;
+import org.restlet.data.Language;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Preference;
@@ -349,6 +353,23 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 for (MediaType acceptedMediaType : acceptedMediaTypes) {
                     acceptedMediaTypesList.add(new Preference<MediaType>(acceptedMediaType));
                 }
+            } else if ("Accept-Encoding".equalsIgnoreCase(key)) {
+                // assume only accepting one encoding
+                ClientInfo clientInfo = request.getClientInfo();
+                Encoding encoding = Encoding.valueOf(value);
+                clientInfo.getAcceptedEncodings().add(new Preference<>(encoding));
+            } else if ("Accept-Language".equalsIgnoreCase(key)) {
+                // assume only accepting one encoding
+                ClientInfo clientInfo = request.getClientInfo();
+                Language language = Language.valueOf(value);
+                clientInfo.getAcceptedLanguages().add(new Preference<>(language));
+            } else if ("Cookie".equalsIgnoreCase(key)) {
+                String k = StringHelper.before(value, "=");
+                String v = StringHelper.after(value, "=");
+                if (k != null && v != null) {
+                    Cookie cookie = new Cookie(k, v);
+                    request.getCookies().add(cookie);
+                }
             } else if ("Content-Type".equalsIgnoreCase(key)) {
                 MediaType mediaType = exchange.getContext().getTypeConverter().tryConvertTo(MediaType.class, exchange, value);
                 if (mediaType != null) {
@@ -381,7 +402,8 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
 
             // ignore these headers
             if ("Host".equalsIgnoreCase(key) || "Accept".equalsIgnoreCase(key) || "Accept-encoding".equalsIgnoreCase(key)
-                || "User-Agent".equalsIgnoreCase(key) || "Referer".equalsIgnoreCase(key) || "Connection".equalsIgnoreCase(key)) {
+                || "User-Agent".equalsIgnoreCase(key) || "Referer".equalsIgnoreCase(key) || "Connection".equalsIgnoreCase(key)
+                || "Cookie".equalsIgnoreCase(key)) {
                 continue;
             }
             if ("Content-Type".equalsIgnoreCase(key)) {
