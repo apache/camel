@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.restlet;
 
-import java.util.logging.Level;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 /**
  * @version 
@@ -31,11 +28,6 @@ public class RestletProducerStandardHeaderWarningTest extends RestletTestSupport
 
     @Test
     public void testRestletProducerAuthorizationGet() throws Exception {
-        // restlet uses the JUL logger which is a pain to configure/install
-        // we should not see WARN logs
-        SLF4JBridgeHandler.install();
-        java.util.logging.LogManager.getLogManager().getLogger("").setLevel(Level.INFO);
-
         String out = fluentTemplate.to("direct:start")
             .withHeader("id", 123).withHeader("Authorization", "myuser")
             .request(String.class);

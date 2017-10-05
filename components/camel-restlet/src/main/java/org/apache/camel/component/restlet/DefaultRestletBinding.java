@@ -52,6 +52,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.restlet.Request;
 import org.restlet.Response;
+import org.restlet.data.AuthenticationInfo;
 import org.restlet.data.CacheDirective;
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.ChallengeScheme;
@@ -310,7 +311,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         LOG.debug("Detected {} extension headers", extensionHeaders.getHeaders().size());
         LOG.debug("Detected {} standard headers", standardHeaders.size());
 
-        configureRestletStandardHeaders(exchange, request, standardHeaders);
+        configureRestletRequestStandardHeaders(exchange, request, standardHeaders);
 
         // deprecated accept
         final MediaType[] acceptedMediaTypes = exchange.getIn().getHeader(Exchange.ACCEPT_CONTENT_TYPE, MediaType[].class);
@@ -323,7 +324,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         }
     }
 
-    private void configureRestletStandardHeaders(Exchange exchange, Request request, Series standardHeaders) {
+    private void configureRestletRequestStandardHeaders(Exchange exchange, Request request, Series standardHeaders) {
         Iterator it = standardHeaders.iterator();
         while (it.hasNext()) {
             Header h = (Header) it.next();
@@ -334,7 +335,6 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 ChallengeResponse c = new ChallengeResponse(new ChallengeScheme("", ""));
                 c.setRawValue(value);
                 request.setChallengeResponse(c);
-                continue;
             } else if ("Accept".equalsIgnoreCase(key)) {
                 ClientInfo clientInfo = request.getClientInfo();
                 List<Preference<MediaType>> acceptedMediaTypesList = clientInfo.getAcceptedMediaTypes();
@@ -342,16 +342,56 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 for (MediaType acceptedMediaType : acceptedMediaTypes) {
                     acceptedMediaTypesList.add(new Preference<MediaType>(acceptedMediaType));
                 }
-                continue;
             } else if ("Content-Type".equalsIgnoreCase(key)) {
                 MediaType mediaType = exchange.getContext().getTypeConverter().tryConvertTo(MediaType.class, exchange, value);
                 if (mediaType != null) {
                     request.getEntity().setMediaType(mediaType);
                 }
-                continue;
+            } else if ("User-Agent".equalsIgnoreCase(key)) {
+                request.getClientInfo().setAgent(value);
+            } else if ("Referer".equalsIgnoreCase(key)) {
+                request.setReferrerRef(value);
+            } else if ("Host".equalsIgnoreCase(key)) {
+                request.setHostRef(value);
+            } else if ("Date".equalsIgnoreCase(key)) {
+                Date d = exchange.getContext().getTypeConverter().tryConvertTo(Date.class, exchange, value);
+                if (d != null) {
+                    request.setDate(d);
+                }
+            } else {
+                // TODO: implement all the other restlet standard headers
+                LOG.warn("Addition of the standard header \"{}\" is not allowed. Please use the equivalent property in the Restlet API.", key);
             }
-            // TODO: implement all the other restlet standard headers
-            LOG.warn("Addition of the standard header \"{}\" is not allowed. Please use the equivalent property in the Restlet API.", key);
+        }
+    }
+
+    private void configureRestletResponseStandardHeaders(Exchange exchange, Response response, Series standardHeaders) {
+        Iterator it = standardHeaders.iterator();
+        while (it.hasNext()) {
+            Header h = (Header) it.next();
+            String key = h.getName();
+            String value = h.getValue();
+            if ("Content-Type".equalsIgnoreCase(key)) {
+                MediaType mediaType = exchange.getContext().getTypeConverter().tryConvertTo(MediaType.class, exchange, value);
+                if (mediaType != null) {
+                    response.getEntity().setMediaType(mediaType);
+                }
+            } else if ("Server".equalsIgnoreCase(key)) {
+                response.getServerInfo().setAgent(value);
+            } else if ("Age".equalsIgnoreCase(key)) {
+                Integer age = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, exchange, value);
+                if (age != null) {
+                    response.setAge(age);
+                }
+            } else if ("Expires".equalsIgnoreCase(key)) {
+                Date date = exchange.getContext().getTypeConverter().tryConvertTo(Date.class, exchange, value);
+                if (date != null) {
+                    response.getEntity().setExpirationDate(date);
+                }
+            } else {
+                // TODO: implement all the other restlet standard headers
+                LOG.warn("Addition of the standard header \"{}\" is not allowed. Please use the equivalent property in the Restlet API.", key);
+            }
         }
     }
 
@@ -450,9 +490,27 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             }
         }
 
-        // set HTTP headers so we return these in the response
-        if (!series.isEmpty()) {
-            response.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, series);
+        // filter out standard restlet headers which must be configured differently
+        org.restlet.Message extensionHeaders = new Request();
+        HeaderUtils.copyExtensionHeaders(series, extensionHeaders);
+
+        // setup standard headers
+        Series<Header> standardHeaders = new Series<>(Header.class);
+        standardHeaders.addAll(series);
+        standardHeaders.removeAll(extensionHeaders.getHeaders());
+
+        // setup extension headers
+        series.removeAll(standardHeaders);
+
+        // now add standard headers but via the special restlet api
+        LOG.debug("Detected {} extension headers", extensionHeaders.getHeaders().size());
+        LOG.debug("Detected {} standard headers", standardHeaders.size());
+
+        configureRestletResponseStandardHeaders(exchange, response, standardHeaders);
+
+        // include the extension headers on the response
+        if (extensionHeaders.getHeaders().size() > 0) {
+            response.getHeaders().addAll(extensionHeaders.getHeaders());
         }
     }
 
