@@ -241,6 +241,7 @@ public class RibbonServiceLoadBalancer
                         serviceName,
                         service.getHost(),
                         service.getPort(),
+                        service.getMetadata(),
                         service.getHealth()
                     );
 
