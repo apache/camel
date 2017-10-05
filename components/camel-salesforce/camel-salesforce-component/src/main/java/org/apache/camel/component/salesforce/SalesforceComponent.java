@@ -386,7 +386,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
                 // shutdown http client connections
                 httpClient.stop();
                 // destroy http client if it was created by the component
-                if (config.getHttpClient() == null) {
+                if (config != null && config.getHttpClient() == null) {
                     httpClient.destroy();
                 }
                 httpClient = null;
