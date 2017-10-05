@@ -288,7 +288,7 @@ Number of Components: 283 in 194 JAR artifacts (17 deprecated)
 `google-mail:apiName/methodName` | 2.15 | The google-mail component provides access to Google Mail.
 
 | link:camel-google-pubsub/src/main/docs/google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) +
-`google-pubsub:projectId:destinationName` | 2.19 | Messaging client for Google Cloud Platform PubSub Service: https://cloud.google.com/pubsub/
+`google-pubsub:projectId:destinationName` | 2.19 | Messaging client for Google Cloud Platform PubSub Service
 
 | link:camel-gora/src/main/docs/gora-component.adoc[Gora] (camel-gora) +
 `gora:name` | 2.14 | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
