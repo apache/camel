@@ -445,6 +445,10 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (body == null) {
             // empty response
             response.setEntity("", MediaType.TEXT_PLAIN);
+            // if empty response and status is OK, then set it to NO_CONTENT which is more correct
+            if (Status.SUCCESS_OK.equals(response.getStatus())) {
+                response.setStatus(Status.SUCCESS_NO_CONTENT);
+            }
         } else if (body instanceof Response) {
             // its already a restlet response, so dont do anything
             LOG.debug("Using existing Restlet Response from exchange body: {}", body);

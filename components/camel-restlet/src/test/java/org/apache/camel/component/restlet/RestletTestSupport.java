@@ -52,7 +52,9 @@ public abstract class RestletTestSupport extends CamelTestSupport {
         CloseableHttpClient client = HttpClientBuilder.create().build();
         try {
             HttpResponse response = client.execute(method);
-            response.setEntity(new BufferedHttpEntity(response.getEntity()));
+            if (response.getEntity() != null) {
+                response.setEntity(new BufferedHttpEntity(response.getEntity()));
+            }
             return response;
         } finally {
             client.close();
