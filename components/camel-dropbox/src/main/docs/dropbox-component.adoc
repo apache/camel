@@ -92,7 +92,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *accessToken* (common) | *Required* The access token to make API requests for a specific Dropbox user |  | String
 | *client* (common) | To use an existing DbxClient instance as DropBox client. |  | DbxClientV2
-| *clientIdentifier* (common) | *Required* Name of the app registered to make API requests |  | String
+| *clientIdentifier* (common) | Name of the app registered to make API requests |  | String
 | *localPath* (common) | Optional folder or file to upload on Dropbox from the local filesystem. If this option has not been configured then the message body is used as the content to upload. |  | String
 | *newRemotePath* (common) | Destination file or folder |  | String
 | *query* (common) | A space-separated list of sub-strings to search for. A file matches only if it contains all the sub-strings. If this option is not set all files will be matched. |  | String

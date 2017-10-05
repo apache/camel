@@ -48,7 +48,7 @@ public class DropboxConsumerGetSingleTest extends DropboxTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=XXX")
+                from("dropbox://get?accessToken={{accessToken}}&remotePath=XXX")
                         .to("file:XXX")
                         .to("mock:result");
             }

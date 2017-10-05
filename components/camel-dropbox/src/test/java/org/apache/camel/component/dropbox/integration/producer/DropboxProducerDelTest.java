@@ -80,12 +80,12 @@ public class DropboxProducerDelTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://del?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/XXX")
+                        .to("dropbox://del?accessToken={{accessToken}}&remotePath=/XXX")
                         .to("mock:result");
 
                 from("direct:start2")
                     .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant("/XXX"))
-                    .to("dropbox://del?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}")
+                    .to("dropbox://del?accessToken={{accessToken}}")
                     .to("mock:result");
             }
         };
