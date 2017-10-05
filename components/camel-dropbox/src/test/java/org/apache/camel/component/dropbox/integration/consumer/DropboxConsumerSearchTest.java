@@ -48,7 +48,7 @@ public class DropboxConsumerSearchTest extends DropboxTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("dropbox://search?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/XXX")
+                from("dropbox://search?accessToken={{accessToken}}&remotePath=/XXX")
                         .to("mock:result");
             }
         };
