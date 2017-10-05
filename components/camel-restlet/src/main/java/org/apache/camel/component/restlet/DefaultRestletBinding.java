@@ -65,6 +65,7 @@ import org.restlet.data.Preference;
 import org.restlet.data.Status;
 import org.restlet.engine.application.DecodeRepresentation;
 import org.restlet.engine.header.HeaderConstants;
+import org.restlet.engine.header.HeaderUtils;
 import org.restlet.representation.ByteArrayRepresentation;
 import org.restlet.representation.EmptyRepresentation;
 import org.restlet.representation.FileRepresentation;
@@ -293,23 +294,65 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             }
         }
 
-        // accept
-        String accept = exchange.getIn().getHeader("Accept", String.class);
-        final ClientInfo clientInfo = request.getClientInfo();
-        final List<Preference<MediaType>> acceptedMediaTypesList = clientInfo.getAcceptedMediaTypes();
-        if (accept != null) {
-            final MediaType[] acceptedMediaTypes = exchange.getContext().getTypeConverter().tryConvertTo(MediaType[].class, exchange, accept);
-            for (final MediaType acceptedMediaType : acceptedMediaTypes) {
-                acceptedMediaTypesList.add(new Preference<MediaType>(acceptedMediaType));
-            }
-        }
+        // filter out standard restlet headers which must be configured differently
+        org.restlet.Message extensionHeaders = new Request();
+        HeaderUtils.copyExtensionHeaders(restletHeaders, extensionHeaders);
+
+        // setup standard headers
+        Series<Header> standardHeaders = new Series<>(Header.class);
+        standardHeaders.addAll(restletHeaders);
+        standardHeaders.removeAll(extensionHeaders.getHeaders());
+
+        // setup extension headers
+        restletHeaders.removeAll(standardHeaders);
+
+        // now add standard headers but via the special restlet api
+        LOG.debug("Detected {} extension headers", extensionHeaders.getHeaders().size());
+        LOG.debug("Detected {} standard headers", standardHeaders.size());
+
+        configureRestletStandardHeaders(exchange, request, standardHeaders);
+
+        // deprecated accept
         final MediaType[] acceptedMediaTypes = exchange.getIn().getHeader(Exchange.ACCEPT_CONTENT_TYPE, MediaType[].class);
         if (acceptedMediaTypes != null) {
-            for (final MediaType acceptedMediaType : acceptedMediaTypes) {
+            ClientInfo clientInfo = request.getClientInfo();
+            List<Preference<MediaType>> acceptedMediaTypesList = clientInfo.getAcceptedMediaTypes();
+            for (MediaType acceptedMediaType : acceptedMediaTypes) {
                 acceptedMediaTypesList.add(new Preference<MediaType>(acceptedMediaType));
             }
         }
+    }
 
+    private void configureRestletStandardHeaders(Exchange exchange, Request request, Series standardHeaders) {
+        Iterator it = standardHeaders.iterator();
+        while (it.hasNext()) {
+            Header h = (Header) it.next();
+            String key = h.getName();
+            String value = h.getValue();
+            if ("Authorization".equalsIgnoreCase(key)) {
+                // special workaround for restlet (https://github.com/restlet/restlet-framework-java/issues/1086)
+                ChallengeResponse c = new ChallengeResponse(new ChallengeScheme("", ""));
+                c.setRawValue(value);
+                request.setChallengeResponse(c);
+                continue;
+            } else if ("Accept".equalsIgnoreCase(key)) {
+                ClientInfo clientInfo = request.getClientInfo();
+                List<Preference<MediaType>> acceptedMediaTypesList = clientInfo.getAcceptedMediaTypes();
+                MediaType[] acceptedMediaTypes = exchange.getContext().getTypeConverter().tryConvertTo(MediaType[].class, exchange, value);
+                for (MediaType acceptedMediaType : acceptedMediaTypes) {
+                    acceptedMediaTypesList.add(new Preference<MediaType>(acceptedMediaType));
+                }
+                continue;
+            } else if ("Content-Type".equalsIgnoreCase(key)) {
+                MediaType mediaType = exchange.getContext().getTypeConverter().tryConvertTo(MediaType.class, exchange, value);
+                if (mediaType != null) {
+                    request.getEntity().setMediaType(mediaType);
+                }
+                continue;
+            }
+            // TODO: implement all the other restlet standard headers
+            LOG.warn("Addition of the standard header \"{}\" is not allowed. Please use the equivalent property in the Restlet API.", key);
+        }
     }
 
     public void populateRestletResponseFromExchange(Exchange exchange, Response response) throws Exception {
