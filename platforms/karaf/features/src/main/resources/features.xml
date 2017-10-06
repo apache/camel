@@ -539,9 +539,14 @@
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.dropbox.core/dropbox-core-sdk/${dropbox-version}</bundle>
+    <bundle dependency='true'>mvn:com.dropbox.core/dropbox-core-sdk/${dropbox-version}</bundle>
+    <!-- sadly dropbox-core-sdk include test scoped dependencies in its MANIFEST.MF OSGi import
+         so we need a bunch of other bundles here -->
+    <bundle dependency='true'>wrap:mvn:com.google.android/android/4.1.1.4</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.appengine/appengine-api-1.0-sdk/1.9.38</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okhttp/${squareup-okhttp-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okio/${squareup-okio-bundle-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.squareup.okhttp3/okhttp/3.5.0</bundle>
     <bundle>mvn:org.apache.camel/camel-dropbox/${project.version}</bundle>
   </feature>
   <feature name='camel-ehcache' version='${project.version}' resolver='(obr)' start-level='50'>
