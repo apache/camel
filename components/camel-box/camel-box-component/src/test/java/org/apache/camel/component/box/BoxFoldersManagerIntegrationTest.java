@@ -73,6 +73,25 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
     }
 
     @Test
+    public void testCreateFolderByPath() throws Exception {
+
+        // delete folder created in test setup.
+        deleteTestFolder();
+
+        final Map<String, Object> headers = new HashMap<String, Object>();
+        // parameter type is String
+        headers.put("CamelBox.parentFolderId", "0");
+        // parameter type is String[]
+        headers.put("CamelBox.path", new String[] {CAMEL_TEST_FOLDER});
+
+        testFolder = requestBodyAndHeaders("direct://CREATEFOLDER", null, headers);
+
+        assertNotNull("createFolder result", testFolder);
+        assertEquals("createFolder folder name", CAMEL_TEST_FOLDER, testFolder.getInfo().getName());
+        LOG.debug("createFolder: " + testFolder);
+    }
+
+    @Test
     public void testDeleteFolder() throws Exception {
         // using String message body for single parameter "folderId"
         requestBody("direct://DELETEFOLDER", testFolder.getID());
