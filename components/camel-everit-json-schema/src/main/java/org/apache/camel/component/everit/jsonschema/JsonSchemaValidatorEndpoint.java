@@ -16,17 +16,26 @@
  */
 package org.apache.camel.component.everit.jsonschema;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.camel.Component;
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.Metadata;
+import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.IOHelper;
+import org.everit.json.schema.ObjectSchema;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -34,12 +43,10 @@ import org.apache.camel.spi.UriPath;
  */
 @ManagedResource(description = "Managed JSON ValidatorEndpoint")
 @UriEndpoint(scheme = "json-validator", title = "JSON Schema Validator", syntax = "json-validator:resourceUri", producerOnly = true, label = "core,validation")
-public class JsonSchemaValidatorEndpoint extends DefaultEndpoint {
+public class JsonSchemaValidatorEndpoint extends ResourceEndpoint {
 
-    @UriPath(description = "URL to a local resource on the classpath, or a reference to lookup a bean in the Registry,"
-            + " or a full URL to a remote resource or resource on the file system which contains the JSON Schema to validate against.")
-    @Metadata(required = "true")
-    private String resourceUri;
+    private static final Logger LOG = LoggerFactory.getLogger(JsonSchemaValidatorEndpoint.class);
+    
     @UriParam(label = "advanced", description = "To use a custom org.apache.camel.component.everit.jsonschema.JsonValidatorErrorHandler. " 
             + "The default error handler captures the errors and throws an exception.")
     private JsonValidatorErrorHandler errorHandler = new DefaultJsonValidationErrorHandler();
@@ -52,68 +59,93 @@ public class JsonSchemaValidatorEndpoint extends DefaultEndpoint {
     @UriParam(description = "To validate against a header instead of the message body.")
     private String headerName;
     
-
-    /**
-     * We need a one-to-one relation between endpoint and a JsonSchemaReader 
-     * to be able to clear the cached schema. See method
-     * {@link #clearCachedSchema}.
-     */
-    private JsonSchemaReader schemaReader;
-
+    private Schema schema;
+    
     public JsonSchemaValidatorEndpoint(String endpointUri, Component component, String resourceUri) {
-        super(endpointUri, component);
-        this.resourceUri = resourceUri;
+        super(endpointUri, component, resourceUri);
     }
 
-    
-    @ManagedOperation(description = "Clears the cached schema, forcing to re-load the schema on next request")
-    public void clearCachedSchema() {        
-        this.schemaReader.setSchema(null); // will cause to reload the schema
+    @Override
+    public void clearContentCache() {
+        this.schema = null;
+        super.clearContentCache();
     }
     
     @Override
-    public Producer createProducer() throws Exception {
-        if (this.schemaReader == null) {
-            this.schemaReader = new JsonSchemaReader(getCamelContext(), resourceUri, schemaLoader);
-            // Load the schema once when creating the producer to fail fast if the schema is invalid.
-            this.schemaReader.getSchema();
+    public ExchangePattern getExchangePattern() {
+        return ExchangePattern.InOut;
+    }
+    
+    @Override
+    protected void onExchange(Exchange exchange) throws Exception {
+        Object jsonPayload = null;
+        InputStream is = null;
+        // Get a local copy of the current schema to improve concurrency.
+        Schema localSchema = this.schema;
+        if (localSchema == null) {
+            localSchema = getOrCreateSchema();
         }
-        JsonValidatingProcessor validator = new JsonValidatingProcessor(this.schemaReader);
-        configureValidator(validator);
-
-        return new JsonSchemaValidatorProducer(this, validator);
+        try {
+            is = getContentToValidate(exchange, InputStream.class);
+            if (shouldUseHeader()) {
+                if (is == null && isFailOnNullHeader()) {
+                    throw new NoJsonHeaderValidationException(exchange, headerName);
+                }
+            } else {
+                if (is == null && isFailOnNullBody()) {
+                    throw new NoJsonBodyValidationException(exchange);
+                }
+            }
+            if (is != null) {
+                if (schema instanceof ObjectSchema) {
+                    jsonPayload = new JSONObject(new JSONTokener(is));
+                } else { 
+                    jsonPayload = new JSONArray(new JSONTokener(is));
+                }
+                // throws a ValidationException if this object is invalid
+                schema.validate(jsonPayload); 
+                LOG.debug("JSON is valid");
+            }
+        } catch (ValidationException e) {
+            this.errorHandler.handleErrors(exchange, schema, e);
+        } catch (JSONException e) {
+            this.errorHandler.handleErrors(exchange, schema, e);
+        } finally {
+            IOHelper.close(is);
+        }
     }
-
-    private void configureValidator(JsonValidatingProcessor validator) {
-        validator.setErrorHandler(errorHandler);
-        validator.setFailOnNullBody(failOnNullBody);
-        validator.setFailOnNullHeader(failOnNullHeader);
-        validator.setHeaderName(headerName);
-    }
-
-    @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Cannot consume from validator");
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     
-    public String getResourceUri() {
-        return resourceUri;
+    private <T> T getContentToValidate(Exchange exchange, Class<T> clazz) {
+        if (shouldUseHeader()) {
+            return exchange.getIn().getHeader(headerName, clazz);
+        } else {
+            return exchange.getIn().getBody(clazz);
+        }
     }
 
+    private boolean shouldUseHeader() {
+        return headerName != null;
+    }
+    
     /**
-     * URL to a local resource on the classpath, or a reference to lookup a bean in the Registry,
-     * or a full URL to a remote resource or resource on the file system which contains the JSON Schema to validate against.
+     * Synchronized method to create a schema if is does not already exist.
+     * 
+     * @return The currently loaded schema
+     * @throws IOException
      */
-    public void setResourceUri(String resourceUri) {
-        this.resourceUri = resourceUri;
+    private Schema getOrCreateSchema() throws Exception {
+        synchronized (this) {
+            if (this.schema == null) {
+                this.schema = this.schemaLoader.createSchema(getCamelContext(), this.getResourceAsInputStream());
+            }
+        }
+        return this.schema;
     }
 
+    @Override
+    protected String createEndpointUri() {
+        return "json-validator:" + getResourceUri();
+    }
     
     public JsonValidatorErrorHandler getErrorHandler() {
         return errorHandler;
