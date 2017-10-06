@@ -60,7 +60,25 @@ public class RabbitMQDeclareSupport {
         populateQueueArgumentsFromDeadLetterExchange(queueArgs);
         populateQueueArgumentsFromConfigurer(queueArgs);
         queueArgs.putAll(endpoint.getQueueArgs());
+        formatSpecialQueueArguments(queueArgs);
         return queueArgs;
+    }
+
+    private void formatSpecialQueueArguments(Map<String, Object> queueArgs) {
+        Object queueLengthLimit = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_LENGHT_LIMIT_KEY);
+        if (queueLengthLimit != null && queueLengthLimit instanceof String) {
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_LENGHT_LIMIT_KEY, Long.parseLong((String) queueLengthLimit));
+        }
+
+        Object queueMessageTtl = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY);
+        if (queueMessageTtl != null && queueMessageTtl instanceof String) {
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY, Long.parseLong((String) queueMessageTtl));
+        }
+
+        Object queueExpiration = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY);
+        if (queueExpiration != null && queueExpiration instanceof String) {
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY, Long.parseLong((String) queueExpiration));
+        }
     }
 
     private Map<String, Object> populateQueueArgumentsFromDeadLetterExchange(final Map<String, Object> queueArgs) {
