@@ -422,6 +422,8 @@ box:folders/endpoint?[options]
 
 |createFolder |create |parentFolderId, folderName |com.box.sdk.BoxFolder
 
+|createFolder |create |parentFolderId, path |com.box.sdk.BoxFolder
+
 |copyFolder |copy |folderId, destinationfolderId, [newName] |com.box.sdk.BoxFolder 
 
 |moveFolder |move |folderId, destinationFolderId, newName |com.box.sdk.BoxFolder
