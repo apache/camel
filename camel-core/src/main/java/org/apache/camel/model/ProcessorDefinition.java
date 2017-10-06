@@ -411,7 +411,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * to using a {@link Pipeline} but derived classes could change the behaviour
      */
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
-        return new Pipeline(routeContext.getCamelContext(), list);
+        return Pipeline.newInstance(routeContext.getCamelContext(), list);
     }
 
     /**
