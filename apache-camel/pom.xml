@@ -1845,12 +1845,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-master-starter</artifactId>
+      <artifactId>camel-mail-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-mail-starter</artifactId>
+      <artifactId>camel-master-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
