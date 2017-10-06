@@ -43,7 +43,7 @@
       <artifactId>camel-core</artifactId>
     </dependency>
 
-	<!-- JSON is vital to MongoDB, so we absolutely require camel-jackson -->
+	  <!-- JSON is vital to MongoDB, so we absolutely require camel-jackson -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jackson</artifactId>
@@ -95,30 +95,30 @@
     </dependency>
   </dependencies>
 
-    <!-- skip tests on AIX and HP-UX -->
-    <profiles>
-        <profile>
-            <id>aix</id>
-            <activation>
-                <os>
-                    <family>AIX</family>
-                </os>
-            </activation>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
-        </profile>
-        <profile>
-            <id>hpux</id>
-            <activation>
-                <os>
-                    <family>HP-UX</family>
-                </os>
-            </activation>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
-        </profile>
-    </profiles>
+  <!-- skip tests on AIX and HP-UX -->
+  <profiles>
+    <profile>
+      <id>aix</id>
+      <activation>
+        <os>
+          <family>AIX</family>
+        </os>
+      </activation>
+      <properties>
+        <skipTests>true</skipTests>
+      </properties>
+    </profile>
+    <profile>
+      <id>hpux</id>
+      <activation>
+        <os>
+          <family>HP-UX</family>
+        </os>
+      </activation>
+      <properties>
+        <skipTests>true</skipTests>
+      </properties>
+    </profile>
+  </profiles>
 
 </project>
