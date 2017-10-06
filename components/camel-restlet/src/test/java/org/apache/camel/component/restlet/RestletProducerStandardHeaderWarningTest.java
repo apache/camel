@@ -24,18 +24,14 @@ import org.junit.Test;
 /**
  * @version 
  */
-public class RestletProducerTest extends RestletTestSupport {
+public class RestletProducerStandardHeaderWarningTest extends RestletTestSupport {
 
     @Test
-    public void testRestletProducerGet() throws Exception {
-        String out = template.requestBodyAndHeader("direct:start", null, "id", 123, String.class);
-        assertEquals("123;Donald Duck", out);
-    }
-    
-    @Test
-    public void testRestletProducerDelete() throws Exception {
-        String out = template.requestBodyAndHeader("direct:delete", null, "id", 123, String.class);
-        assertEquals("123;Donald Duck", out);
+    public void testRestletProducerAuthorizationGet() throws Exception {
+        String out = fluentTemplate.to("direct:start")
+            .withHeader("id", 123).withHeader("Authorization", "myuser")
+            .request(String.class);
+        assertEquals("123;Donald Duck;myuser", out);
     }
 
     @Override
@@ -45,13 +41,17 @@ public class RestletProducerTest extends RestletTestSupport {
             public void configure() throws Exception {
                 from("direct:start").to("restlet:http://localhost:" + portNum + "/users/{id}/basic").to("log:reply");
                 
-                from("direct:delete").to("restlet:http://localhost:" + portNum + "/users/{id}/basic?restletMethod=DELETE");
-
                 from("restlet:http://localhost:" + portNum + "/users/{id}/basic?restletMethods=GET,DELETE")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
+                            String authorization = exchange.getIn().getHeader("Authorization", String.class);
+                            log.info("Authorization header: {}", authorization);
                             String id = exchange.getIn().getHeader("id", String.class);
                             exchange.getOut().setBody(id + ";Donald Duck");
+                            if (authorization != null) {
+                                String body = exchange.getOut().getBody(String.class) + ";" + authorization;
+                                exchange.getOut().setBody(body);
+                            }
                         }
                     });
             }

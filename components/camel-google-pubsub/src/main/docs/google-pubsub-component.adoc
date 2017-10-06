@@ -2,8 +2,6 @@
 
 *Available as of Camel version 2.19*
 
-### Component Description
-
 The Google Pubsub component provides access
 to https://cloud.google.com/pubsub/[Cloud Pub/Sub Infrastructure] via
 the https://cloud.google.com/apis/docs/client-libraries-explained[Google Client Services API].
@@ -23,37 +21,17 @@ for this component:
 
 ------------------------------------------------------
 
-[[GooglePubsub-AuthenticationConfiguration]]
-Authentication Configuration
-
-Google Pubsub component authentication is targeted for use with the GCP Service Accounts.
-For more information please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
-
-Google security credentials can be set explicitly via one of the two options:
-
-* Service Account Email and Service Account Key (PEM format)
-* GCP credentials file location
-
-If both are set, the Service Account Email/Key will take precedence.
-
-Or implicitly, where the connection factory falls back on
-https://developers.google.com/identity/protocols/application-default-credentials#howtheywork[Application Default Credentials].
-
-*OBS!* The location of the default credentials file is configurable - via GOOGLE_APPLICATION_CREDENTIALS environment variable.
-
-Service Account Email and Service Account Key can be found in the GCP JSON credentials file as client_email and private_key respectively.
-
-### URI Format
+=== URI Format
 
 The GoogleMail Component uses the following URI format:
 
---------------------------------------------------------
-        google-pubsub://project-id:destinationName?[options]
---------------------------------------------------------
+----
+google-pubsub://project-id:destinationName?[options]
+----
 
 Destination Name can be either a topic or a subscription name.
 
-### GooglePubsubComponent
+=== Options
 
 // component options: START
 The Google Pubsub component supports 2 options which are listed below.
@@ -103,7 +81,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-### Producer Endpoints
+=== Producer Endpoints
 
 Producer endpoints can accept and deliver to PubSub individual and grouped
 exchanges alike. Grouped exchanges have `Exchange.GROUPED_EXCHANGE` property set.
@@ -118,7 +96,7 @@ A Map set as message header `GooglePubsubConstants.ATTRIBUTES` will be sent as P
 Once exchange has been delivered to PubSub the PubSub Message ID will be assigned to
 the header `GooglePubsubConstants.MESSAGE_ID`.
 
-### Consumer Endpoints
+=== Consumer Endpoints
 Google PubSub will redeliver the message if it has not been acknowledged within the time period set
 as a configuration option on the subscription.
 
@@ -131,7 +109,7 @@ To ack/nack the message the component uses Acknowledgement ID stored as header `
 If the header is removed or tampered with, the ack will fail and the message will be redelivered
 again after the ack deadline.
 
-### Message Headers
+=== Message Headers
 Headers set by the consumer endpoints:
 
 * GooglePubsubConstants.MESSAGE_ID
@@ -139,12 +117,31 @@ Headers set by the consumer endpoints:
 * GooglePubsubConstants.PUBLISH_TIME
 * GooglePubsubConstants.ACK_ID
 
-### Message Body
+=== Message Body
 
 The consumer endpoint returns the content of the message as byte[] - exactly as the underlying system sends it.
 It is up for the route to convert/unmarshall the contents.
 
-### Rollback and Redelivery
+=== Authentication Configuration
+
+Google Pubsub component authentication is targeted for use with the GCP Service Accounts.
+For more information please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
+
+Google security credentials can be set explicitly via one of the two options:
+
+* Service Account Email and Service Account Key (PEM format)
+* GCP credentials file location
+
+If both are set, the Service Account Email/Key will take precedence.
+
+Or implicitly, where the connection factory falls back on
+https://developers.google.com/identity/protocols/application-default-credentials#howtheywork[Application Default Credentials].
+
+*OBS!* The location of the default credentials file is configurable - via GOOGLE_APPLICATION_CREDENTIALS environment variable.
+
+Service Account Email and Service Account Key can be found in the GCP JSON credentials file as client_email and private_key respectively.
+
+=== Rollback and Redelivery
 
 The rollback for Google PubSub relies on the idea of the Acknowledgement Deadline - the time period where Google PubSub expects to receive the acknowledgement.
 If the acknowledgement has not been received, the message is redelivered.
@@ -157,8 +154,4 @@ So, rollback is effectively a deadline extension API call with zero value - i.e.
 be redelivered to the next consumer.
 
 It is possible to delay the message redelivery by setting the acknowledgement deadline explicitly for the rollback by
-setting the message header
-
-* GooglePubsubConstants.ACK_DEADLINE
-
-to the value in seconds.
+setting the message header `GooglePubsubConstants.ACK_DEADLINE` to the value in seconds.
