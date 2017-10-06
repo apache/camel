@@ -88,10 +88,7 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
 
                 if (interceptedTarget != null) {
                     // wrap in a pipeline so we continue routing to the next
-                    List<Processor> list = new ArrayList<Processor>(2);
-                    list.add(output);
-                    list.add(interceptedTarget);
-                    return new Pipeline(context, list);
+                    return Pipeline.newInstance(context, output, interceptedTarget);
                 } else {
                     return output;
                 }
