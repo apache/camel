@@ -16,13 +16,29 @@
  */
 package org.apache.camel.component.everit.jsonschema;
 
-import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
+import org.everit.json.schema.FormatValidator;
 import org.everit.json.schema.Schema;
 
+/**
+ * Can be used to create custom schema for the JSON validator endpoint.
+ * This interface is useful to add custom {@link FormatValidator} to the {@link Schema}
+ * 
+ * For more information see 
+ * <a href="https://github.com/everit-org/json-schema#format-validators">Format Validators</a>
+ * in the Everit JSON Schema documentation. 
+ */
 public interface JsonSchemaLoader {
     
-    Schema createSchema(CamelContext camelContext, String resourceUri) throws IOException;
+    /**
+     * Create a new Schema based on the schema input stream.
+     * @param camelContext camel context
+     * @param schemaInputStream the resource input stream
+     * @return a Schema to be used when validating incoming requests
+     * @throws Exception if 
+     */
+    Schema createSchema(CamelContext camelContext, InputStream schemaInputStream) throws Exception;
 
 }

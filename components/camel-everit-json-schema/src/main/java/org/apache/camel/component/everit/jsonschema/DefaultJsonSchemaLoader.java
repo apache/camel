@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.ResourceHelper;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.everit.json.schema.loader.SchemaLoader.SchemaLoaderBuilder;
@@ -32,11 +31,11 @@ public class DefaultJsonSchemaLoader implements
         JsonSchemaLoader {
 
     @Override
-    public Schema createSchema(CamelContext camelContext, String resourceUri) throws IOException {
+    public Schema createSchema(CamelContext camelContext, InputStream schemaInputStream) throws IOException {
         
         SchemaLoaderBuilder schemaLoaderBuilder = SchemaLoader.builder().draftV6Support();
         
-        try (InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, resourceUri)) {
+        try (InputStream inputStream = schemaInputStream) {
             JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
             return schemaLoaderBuilder.schemaJson(rawSchema).build().load().build();
         }
