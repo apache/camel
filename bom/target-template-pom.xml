@@ -27,7 +27,6 @@
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
     <version>${project.version}</version>
-    <relativePath>../../apache-camel</relativePath>
   </parent>
 
   <artifactId>camel-bom</artifactId>
