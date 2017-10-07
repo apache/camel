@@ -34,10 +34,10 @@ public interface JsonSchemaLoader {
     
     /**
      * Create a new Schema based on the schema input stream.
+     *
      * @param camelContext camel context
      * @param schemaInputStream the resource input stream
      * @return a Schema to be used when validating incoming requests
-     * @throws Exception if 
      */
     Schema createSchema(CamelContext camelContext, InputStream schemaInputStream) throws Exception;
 

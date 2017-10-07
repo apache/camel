@@ -19,8 +19,7 @@ package org.apache.camel.component.everit.jsonschema;
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 
-public class DefaultJsonValidationErrorHandler implements
-        JsonValidatorErrorHandler {
+public class DefaultJsonValidationErrorHandler implements JsonValidatorErrorHandler {
 
     @Override
     public void reset() {
@@ -28,10 +27,7 @@ public class DefaultJsonValidationErrorHandler implements
     }
     
     @Override
-    public void handleErrors(Exchange exchange,
-            org.everit.json.schema.Schema schema,
-            Exception e)
-            throws ValidationException {
+    public void handleErrors(Exchange exchange, org.everit.json.schema.Schema schema, Exception e) throws ValidationException {
         if (e instanceof org.everit.json.schema.ValidationException) {
             throw new JsonSchemaValidationException(exchange, schema, (org.everit.json.schema.ValidationException)e);
         } else {

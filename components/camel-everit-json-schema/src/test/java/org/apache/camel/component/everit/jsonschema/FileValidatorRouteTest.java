@@ -27,9 +27,6 @@ import org.apache.camel.util.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- */
 public class FileValidatorRouteTest extends CamelTestSupport {
 
     protected MockEndpoint validEndpoint;
