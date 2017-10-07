@@ -40,7 +40,8 @@ import org.slf4j.LoggerFactory;
  * Validates the payload of a message using Everit JSON schema validator.
  */
 @ManagedResource(description = "Managed JsonValidatorEndpoint")
-@UriEndpoint(scheme = "json-validator", title = "JSON Schema Validator", syntax = "json-validator:resourceUri", producerOnly = true, label = "validation,json")
+@UriEndpoint(scheme = "json-validator", firstVersion = "2.20.0", title = "JSON Schema Validator", syntax = "json-validator:resourceUri",
+    producerOnly = true, label = "validation")
 public class JsonValidatorEndpoint extends ResourceEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonValidatorEndpoint.class);
