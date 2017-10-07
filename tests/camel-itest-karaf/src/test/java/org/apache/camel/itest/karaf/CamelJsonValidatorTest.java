@@ -21,13 +21,13 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelEveritJsonSchemaTest extends BaseKarafTest {
+public class CamelJsonValidatorTest extends BaseKarafTest {
 
-    public static final String COMPONENT = "json-validator";
+    public static final String COMPONENT = extractName(CamelJsonValidatorTest.class);
 
     @Test
     public void test() throws Exception {
-        testComponent("camel-everit-json-schema", COMPONENT);
+        testComponent(COMPONENT);
     }
 
 }
