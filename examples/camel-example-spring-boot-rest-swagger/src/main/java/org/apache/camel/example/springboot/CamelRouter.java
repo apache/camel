@@ -47,7 +47,7 @@ public class CamelRouter extends RouteBuilder {
             .consumes("application/json")
             .produces("application/json")
 
-            .get().description("Find all users").outTypeList(User.class)
+            .get().description("Find all users").outType(User[].class)
                 .responseMessage().code(200).message("All users successfully returned").endResponseMessage()
                 .to("bean:userService?method=findUsers")
         
