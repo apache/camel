@@ -4496,13 +4496,6 @@
         <version>${jira-rest-client-version}</version>
       </dependency>
 
-     <!-- Optional Everit.org JSON Schema -->
-     <dependency>
-       <groupId>com.github.everit-org.json-schema</groupId>
-       <artifactId>org.everit.json.schema</artifactId>
-       <version>${everit-org-json-schema-version}</version>
-     </dependency>
- 
       <!-- optional misc -->
       <dependency>
         <groupId>com.google.code.scriptengines</groupId>
