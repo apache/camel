@@ -304,6 +304,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-everit-json-schema</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-exec</artifactId>
     </dependency>
     <dependency>
@@ -1426,6 +1430,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-etcd-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-everit-json-schema-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
