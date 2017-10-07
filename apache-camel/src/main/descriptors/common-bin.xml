@@ -88,7 +88,6 @@
         <include>org.apache.camel:camel-elsql</include>
         <include>org.apache.camel:camel-etcd</include>
         <include>org.apache.camel:camel-eventadmin</include>
-        <include>org.apache.camel:camel-everit-json-schema</include>
         <include>org.apache.camel:camel-exec</include>
         <include>org.apache.camel:camel-facebook</include>
         <include>org.apache.camel:camel-fastjson</include>
@@ -157,6 +156,7 @@
         <include>org.apache.camel:camel-josql</include>
         <include>org.apache.camel:camel-jpa</include>
         <include>org.apache.camel:camel-jsch</include>
+        <include>org.apache.camel:camel-json-validator</include>
         <include>org.apache.camel:camel-jsonpath</include>
         <include>org.apache.camel:camel-jt400</include>
         <include>org.apache.camel:camel-juel</include>
@@ -384,7 +384,6 @@
         <include>org.apache.camel:camel-elasticsearch5-starter</include>
         <include>org.apache.camel:camel-elsql-starter</include>
         <include>org.apache.camel:camel-etcd-starter</include>
-        <include>org.apache.camel:camel-everit-json-schema-starter</include>
         <include>org.apache.camel:camel-exec-starter</include>
         <include>org.apache.camel:camel-facebook-starter</include>
         <include>org.apache.camel:camel-fastjson-starter</include>
@@ -452,6 +451,7 @@
         <include>org.apache.camel:camel-josql-starter</include>
         <include>org.apache.camel:camel-jpa-starter</include>
         <include>org.apache.camel:camel-jsch-starter</include>
+        <include>org.apache.camel:camel-json-validator-starter</include>
         <include>org.apache.camel:camel-jsonpath-starter</include>
         <include>org.apache.camel:camel-jt400-starter</include>
         <include>org.apache.camel:camel-juel-starter</include>
