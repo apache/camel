@@ -23,8 +23,6 @@ import org.apache.camel.impl.DefaultComponent;
 
 /**
  * The JSON Schema Validator Component is for validating JSON against a schema.
- *
- * @version
  */
 public class JsonSchemaValidatorComponent extends DefaultComponent {
 

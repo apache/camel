@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.everit.jsonschema;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.Component;
@@ -37,30 +36,28 @@ import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Validates the payload of a message using XML Schema and JAXP Validation.
  */
-@ManagedResource(description = "Managed JSON ValidatorEndpoint")
-@UriEndpoint(scheme = "json-validator", title = "JSON Schema Validator", syntax = "json-validator:resourceUri", producerOnly = true, label = "core,validation")
+@ManagedResource(description = "Managed JsonSchemaValidatorEndpoint")
+@UriEndpoint(scheme = "json-validator", title = "JSON Schema Validator", syntax = "json-validator:resourceUri", producerOnly = true, label = "validation,json")
 public class JsonSchemaValidatorEndpoint extends ResourceEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonSchemaValidatorEndpoint.class);
-    
-    @UriParam(label = "advanced", description = "To use a custom org.apache.camel.component.everit.jsonschema.JsonValidatorErrorHandler. " 
-            + "The default error handler captures the errors and throws an exception.")
-    private JsonValidatorErrorHandler errorHandler = new DefaultJsonValidationErrorHandler();
-    @UriParam(label = "advanced", description = "To use a custom schema loader allowing for adding custom format validation. See the Everit JSON Schema documentation.")
-    private JsonSchemaLoader schemaLoader = new DefaultJsonSchemaLoader();
-    @UriParam(defaultValue = "true", description = "Whether to fail if no body exists.")
+
+    private volatile Schema schema;
+
+    @UriParam(defaultValue = "true")
     private boolean failOnNullBody = true;
-    @UriParam(defaultValue = "true", description = "Whether to fail if no header exists when validating against a header.")
+    @UriParam(defaultValue = "true")
     private boolean failOnNullHeader = true;
     @UriParam(description = "To validate against a header instead of the message body.")
     private String headerName;
-    
-    private Schema schema;
-    
+    @UriParam(label = "advanced")
+    private JsonValidatorErrorHandler errorHandler = new DefaultJsonValidationErrorHandler();
+    @UriParam(label = "advanced")
+    private JsonSchemaLoader schemaLoader = new DefaultJsonSchemaLoader();
+
     public JsonSchemaValidatorEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component, resourceUri);
     }
@@ -78,7 +75,7 @@ public class JsonSchemaValidatorEndpoint extends ResourceEndpoint {
     
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
-        Object jsonPayload = null;
+        Object jsonPayload;
         InputStream is = null;
         // Get a local copy of the current schema to improve concurrency.
         Schema localSchema = this.schema;
@@ -106,9 +103,7 @@ public class JsonSchemaValidatorEndpoint extends ResourceEndpoint {
                 schema.validate(jsonPayload); 
                 LOG.debug("JSON is valid");
             }
-        } catch (ValidationException e) {
-            this.errorHandler.handleErrors(exchange, schema, e);
-        } catch (JSONException e) {
+        } catch (ValidationException | JSONException e) {
             this.errorHandler.handleErrors(exchange, schema, e);
         } finally {
             IOHelper.close(is);
@@ -131,7 +126,6 @@ public class JsonSchemaValidatorEndpoint extends ResourceEndpoint {
      * Synchronized method to create a schema if is does not already exist.
      * 
      * @return The currently loaded schema
-     * @throws IOException
      */
     private Schema getOrCreateSchema() throws Exception {
         synchronized (this) {
@@ -152,7 +146,7 @@ public class JsonSchemaValidatorEndpoint extends ResourceEndpoint {
     }
 
     /**
-     * To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler.
+     * To use a custom ValidatorErrorHandler.
      * <p/>
      * The default error handler captures the errors and throws an exception.
      */
@@ -165,7 +159,7 @@ public class JsonSchemaValidatorEndpoint extends ResourceEndpoint {
     }
     
     /**
-     * To use a custom schema loader allowing for adding custom format validation. See the Everit JSON Schema documentation.
+     * To use a custom schema loader allowing for adding custom format validation. See Everit JSON Schema documentation.
      * The default implementation will create a schema loader builder with draft v6 support.
      */
     public void setSchemaLoader(JsonSchemaLoader schemaLoader) {

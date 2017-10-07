@@ -26,16 +26,11 @@ public class JsonSchemaValidationException extends ValidationException {
     
     private static final long serialVersionUID = 1L;
     
-    public JsonSchemaValidationException(Exchange exchange, Schema schema,
-            org.everit.json.schema.ValidationException e) {
-        super(e.getAllMessages().stream().collect(Collectors.joining(", ")),
-                exchange,
-                e
-                );
+    public JsonSchemaValidationException(Exchange exchange, Schema schema, org.everit.json.schema.ValidationException e) {
+        super(e.getAllMessages().stream().collect(Collectors.joining(", ")), exchange, e);
     }
 
-    public JsonSchemaValidationException(Exchange exchange, Schema schema,
-            Exception e) {
+    public JsonSchemaValidationException(Exchange exchange, Schema schema, Exception e) {
         super(e.getMessage(), exchange, e);
     }
 }

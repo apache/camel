@@ -26,15 +26,11 @@ import org.everit.json.schema.loader.SchemaLoader.SchemaLoaderBuilder;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-
-public class DefaultJsonSchemaLoader implements
-        JsonSchemaLoader {
+public class DefaultJsonSchemaLoader implements JsonSchemaLoader {
 
     @Override
     public Schema createSchema(CamelContext camelContext, InputStream schemaInputStream) throws IOException {
-        
         SchemaLoaderBuilder schemaLoaderBuilder = SchemaLoader.builder().draftV6Support();
-        
         try (InputStream inputStream = schemaInputStream) {
             JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
             return schemaLoaderBuilder.schemaJson(rawSchema).build().load().build();

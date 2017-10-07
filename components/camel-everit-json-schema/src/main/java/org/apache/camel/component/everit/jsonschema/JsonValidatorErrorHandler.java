@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 
 public interface JsonValidatorErrorHandler {
+
     /**
      * Resets any state within this error handler
      */
