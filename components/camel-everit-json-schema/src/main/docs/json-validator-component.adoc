@@ -1,6 +1,6 @@
 == JSON Schema Validator Component
 
-*Available as of Camel version 2.20*
+*Available as of Camel version *
 
 The JSON Schema Validator component performs bean validation of the message body
 agains JSON Schemas using the Everit.org JSON Schema library
@@ -125,5 +125,3 @@ from("direct:start")
   .to("json-validator:myschema.json")
   .to("mock:end")
 ----
-
-
