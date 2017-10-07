@@ -80,14 +80,14 @@ public class DropboxProducerPutWithRemotePathTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://put?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&uploadMode=add&localPath=/XXX&remotePath=/XXX")
+                        .to("dropbox://put?accessToken={{accessToken}}&uploadMode=add&localPath=/XXX&remotePath=/XXX")
                         .to("mock:result");
 
                 from("direct:start2")
                     .setHeader(DropboxConstants.HEADER_LOCAL_PATH, constant("/XXX"))
                     .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant("/XXX"))
                     .setHeader(DropboxConstants.HEADER_UPLOAD_MODE, constant(DropboxUploadMode.add))
-                    .to("dropbox://put?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}")
+                    .to("dropbox://put?accessToken={{accessToken}}")
                     .to("mock:result");
             }
         };
