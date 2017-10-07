@@ -304,10 +304,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-everit-json-schema</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-exec</artifactId>
     </dependency>
     <dependency>
@@ -585,6 +581,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jsch</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-json-validator</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -1434,11 +1434,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-everit-json-schema-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-exec-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1770,6 +1765,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jsch-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-json-validator-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
