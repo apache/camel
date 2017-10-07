@@ -259,6 +259,7 @@
 	* [JMX](jmx-component.adoc)
 	* [JOLT](jolt-component.adoc)
 	* [JPA](jpa-component.adoc)
+	* [JSON Schema Validator](json-validator-component.adoc)
 	* [JT400](jt400-component.adoc)
 	* [Kafka](kafka-component.adoc)
 	* [Kestrel](kestrel-component.adoc)

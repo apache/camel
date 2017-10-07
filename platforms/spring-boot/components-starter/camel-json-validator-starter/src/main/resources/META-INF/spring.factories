@@ -16,6 +16,4 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.everit.jsonschema.springboot.JsonSchemaValidatorComponentAutoConfiguration,\
 org.apache.camel.component.jsonvalidator.springboot.JsonValidatorComponentAutoConfiguration
-

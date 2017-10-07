@@ -26,8 +26,8 @@
   </parent>
   <artifactId>camel-json-validator-starter</artifactId>
   <packaging>jar</packaging>
-  <name>Spring-Boot Starter :: Camel :: Everit Kft. JSON Schema validator</name>
-  <description>Spring-Boot Starter for Camel JSON Schema validation based on everit-org json-schema library</description>
+  <name>Spring-Boot Starter :: Camel :: JSON validator</name>
+  <description>Spring-Boot Starter for Camel JSON Schema validation based on Everit JSON-schema library</description>
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
