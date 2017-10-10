@@ -104,6 +104,28 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
     }
 
     @Test
+    public void testZipWithPathElements() throws Exception {
+        getMockEndpoint("mock:zip").expectedBodiesReceived(getZippedText("poem.txt"));
+        getMockEndpoint("mock:zip").expectedHeaderReceived(FILE_NAME, "poem.txt.zip");
+
+        template.sendBodyAndHeader("direct:zip", TEXT, FILE_NAME, "poems/poem.txt");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testZipWithPreservedPathElements() throws Exception {
+        zip.setPreservePathElements(true);
+
+        getMockEndpoint("mock:zip").expectedBodiesReceived(getZippedTextInFolder("poems/", "poems/poem.txt"));
+        getMockEndpoint("mock:zip").expectedHeaderReceived(FILE_NAME, "poem.txt.zip");
+
+        template.sendBodyAndHeader("direct:zip", TEXT, FILE_NAME, "poems/poem.txt");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testUnzip() throws Exception {
         getMockEndpoint("mock:unzip").expectedBodiesReceived(TEXT);
         getMockEndpoint("mock:unzip").expectedHeaderReceived(FILE_NAME, "file");
@@ -291,6 +313,20 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         ZipOutputStream zos = new ZipOutputStream(baos);
         try {
             zos.putNextEntry(new ZipEntry(entryName));
+            IOHelper.copy(bais, zos);
+        } finally {
+            IOHelper.close(bais, zos);
+        }
+        return baos.toByteArray();
+    }
+
+    private static byte[] getZippedTextInFolder(String folder, String file) throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(TEXT.getBytes("UTF-8"));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipOutputStream zos = new ZipOutputStream(baos);
+        try {
+            zos.putNextEntry(new ZipEntry(folder));
+            zos.putNextEntry(new ZipEntry(file));
             IOHelper.copy(bais, zos);
         } finally {
             IOHelper.close(bais, zos);
