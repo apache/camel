@@ -43,6 +43,7 @@ import static org.apache.camel.Exchange.FILE_NAME;
 import static org.apache.camel.dataformat.tarfile.TarUtils.TEXT;
 import static org.apache.camel.dataformat.tarfile.TarUtils.getBytes;
 import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredText;
+import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredTextInFolder;
 
 /**
  * Unit tests for {@link TarFileDataFormat}.
@@ -78,6 +79,36 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertTrue(ObjectHelper.equalByteArray(getTaredText("poem.txt"), (byte[]) exchange.getIn().getBody()));
+    }
+
+    @Test
+    public void testTarWithPathElements() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:tar");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(FILE_NAME, "poem.txt.tar");
+
+        template.sendBodyAndHeader("direct:tar", TEXT, FILE_NAME, "poems/poem.txt");
+
+        assertMockEndpointsSatisfied();
+
+        Exchange exchange = mock.getReceivedExchanges().get(0);
+        assertTrue(ObjectHelper.equalByteArray(getTaredText("poem.txt"), (byte[]) exchange.getIn().getBody()));
+    }
+
+    @Test
+    public void testTarWithPreservedPathElements() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:tar");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(FILE_NAME, "poem.txt.tar");
+
+        tar.setPreservePathElements(true);
+
+        template.sendBodyAndHeader("direct:tar", TEXT, FILE_NAME, "poems/poem.txt");
+
+        assertMockEndpointsSatisfied();
+
+        Exchange exchange = mock.getReceivedExchanges().get(0);
+        assertTrue(ObjectHelper.equalByteArray(getTaredTextInFolder("poems/", "poems/poem.txt"), (byte[]) exchange.getIn().getBody()));
     }
 
     @Test
