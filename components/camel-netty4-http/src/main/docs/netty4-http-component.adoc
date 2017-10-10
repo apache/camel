@@ -255,9 +255,11 @@ The description in the table takes offset in a route having:
 
 |`CamelHttpMethod` |`String` |The HTTP method used, such as GET, POST, TRACE etc.
 
-|`CamelHttpUrl` |`String` |The URL including protocol, host and port, etc
+|`CamelHttpUrl` |`String` |The URL including protocol, host and port, etc: 
+`http://0.0.0.0:8080/myapp`
 
-|`CamelHttpUri` |`String` |The URI without protocol, host and port, etc
+|`CamelHttpUri` |`String` |The URI without protocol, host and port, etc:
+`/myapp`
 
 |`CamelHttpQuery` |`String` |Any query parameters, such as `foo=bar&beer=yes`
 
