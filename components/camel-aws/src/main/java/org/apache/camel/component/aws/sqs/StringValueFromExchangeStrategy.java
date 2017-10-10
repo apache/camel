@@ -16,17 +16,11 @@
  */
 package org.apache.camel.component.aws.sqs;
 
-/**
- * Constants used in Camel AWS SQS module
- *
- */
-public interface SqsConstants {
+import org.apache.camel.Exchange;
 
-    String ATTRIBUTES = "CamelAwsSqsAttributes";
-    String MESSAGE_ATTRIBUTES = "CamelAwsSqsMessageAttributes";
-    String MD5_OF_BODY = "CamelAwsSqsMD5OfBody";
-    String MESSAGE_ID = "CamelAwsSqsMessageId";
-    String RECEIPT_HANDLE = "CamelAwsSqsReceiptHandle";
-    String DELAY_HEADER = "CamelAwsSqsDelaySeconds";
-    String MESSAGE_GROUP_ID_HEADER = "CamelAwsMessageGroupId";
+@FunctionalInterface
+public interface StringValueFromExchangeStrategy {
+    
+    String value(Exchange exchange);
+
 }
