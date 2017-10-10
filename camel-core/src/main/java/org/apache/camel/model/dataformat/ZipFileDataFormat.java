@@ -38,6 +38,8 @@ public class ZipFileDataFormat extends DataFormatDefinition {
     private Boolean usingIterator;
     @XmlAttribute
     private Boolean allowEmptyDirectory;
+    @XmlAttribute
+    private Boolean preservePathElements;
 
     public ZipFileDataFormat() {
         super("zipfile");
@@ -51,6 +53,9 @@ public class ZipFileDataFormat extends DataFormatDefinition {
         if (allowEmptyDirectory != null) {
             setProperty(camelContext, dataFormat, "allowEmptyDirectory", allowEmptyDirectory);
         }
+        if (preservePathElements != null) {
+            setProperty(camelContext, dataFormat, "preservePathElements", preservePathElements);
+        }
     }
 
     public Boolean getUsingIterator() {
@@ -59,6 +64,10 @@ public class ZipFileDataFormat extends DataFormatDefinition {
     
     public Boolean getAllowEmptyDirectory() {
         return allowEmptyDirectory;
+    }
+
+    public Boolean getPreservePathElements() {
+        return preservePathElements;
     }
 
     /**
@@ -75,6 +84,14 @@ public class ZipFileDataFormat extends DataFormatDefinition {
      */
     public void setAllowEmptyDirectory(Boolean allowEmptyDirectory) {
         this.allowEmptyDirectory = allowEmptyDirectory;
+    }
+
+    /**
+     * If the file name contains path elements, setting this option to true, allows the path to be maintained
+     * in the zip file.
+     */
+    public void setPreservePathElements(Boolean preservePathElements) {
+        this.preservePathElements = preservePathElements;
     }
 
 }

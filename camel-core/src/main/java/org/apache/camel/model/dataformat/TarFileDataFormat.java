@@ -37,6 +37,8 @@ public class TarFileDataFormat extends DataFormatDefinition {
     private Boolean usingIterator;
     @XmlAttribute
     private Boolean allowEmptyDirectory;
+    @XmlAttribute
+    private Boolean preservePathElements;
 
     public TarFileDataFormat() {
         super("tarfile");
@@ -47,6 +49,9 @@ public class TarFileDataFormat extends DataFormatDefinition {
         if (usingIterator != null) {
             setProperty(camelContext, dataFormat, "usingIterator", usingIterator);
         }
+        if (preservePathElements != null) {
+            setProperty(camelContext, dataFormat, "preservePathElements", preservePathElements);
+        }
     }
 
     public Boolean getUsingIterator() {
@@ -55,6 +60,10 @@ public class TarFileDataFormat extends DataFormatDefinition {
     
     public Boolean getAllowEmptyDirectory() {
         return allowEmptyDirectory;
+    }
+
+    public Boolean getPreservePathElements() {
+        return preservePathElements;
     }
 
     /**
@@ -71,5 +80,13 @@ public class TarFileDataFormat extends DataFormatDefinition {
      */
     public void setAllowEmptyDirectory(Boolean allowEmptyDirectory) {
         this.allowEmptyDirectory = allowEmptyDirectory;
+    }
+
+    /**
+     * If the file name contains path elements, setting this option to true, allows the path to be maintained
+     * in the tar file.
+     */
+    public void setPreservePathElements(Boolean preservePathElements) {
+        this.preservePathElements = preservePathElements;
     }
 }

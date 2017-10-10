@@ -59,6 +59,27 @@ final class TarUtils {
         return baos.toByteArray();
     }
 
+    static byte[] getTaredTextInFolder(String folder, String file) throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(TEXT.getBytes("UTF-8"));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        TarArchiveOutputStream tos = new TarArchiveOutputStream(baos);
+        try {
+            TarArchiveEntry folderEntry = new TarArchiveEntry(folder);
+            folderEntry.setSize(0L);
+            tos.putArchiveEntry(folderEntry);
+
+            TarArchiveEntry fileEntry = new TarArchiveEntry(file);
+            fileEntry.setSize(bais.available());
+            tos.putArchiveEntry(fileEntry);
+
+            IOHelper.copy(bais, tos);
+        } finally {
+            tos.closeArchiveEntry();
+            IOHelper.close(bais, tos);
+        }
+        return baos.toByteArray();
+    }
+
     static byte[] getBytes(File file) throws IOException {
         FileInputStream fis = new FileInputStream(file);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
