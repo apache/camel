@@ -190,7 +190,6 @@
     <dozer-version>6.1.0</dozer-version>
     <drools-version>7.3.0.Final</drools-version>
     <dropbox-version>3.0.4</dropbox-version>
-    <easymock-version>3.4</easymock-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
@@ -4368,11 +4367,6 @@
         <groupId>org.awaitility</groupId>
         <artifactId>awaitility</artifactId>
         <version>${awaitility-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.easymock</groupId>
-        <artifactId>easymock</artifactId>
-        <version>${easymock-version}</version>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
