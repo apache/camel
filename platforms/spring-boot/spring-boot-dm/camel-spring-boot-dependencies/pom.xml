@@ -3242,11 +3242,6 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.easymock</groupId>
-        <artifactId>easymock</artifactId>
-        <version>3.4</version>
-      </dependency>
-      <dependency>
         <groupId>org.eclipse.jetty.websocket</groupId>
         <artifactId>websocket-api</artifactId>
         <version>9.4.6.v20170531</version>
