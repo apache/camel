@@ -97,7 +97,9 @@ public class KafkaConsumer extends DefaultConsumer {
         executor = endpoint.createExecutor();
         for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
             KafkaFetchRecords task = new KafkaFetchRecords(endpoint.getConfiguration().getTopic(), i + "", getProps());
-            executor.submit(task);
+            if (!executor.submit(task)) {
+		throw new Exception("Failed to submit task:" + task.toString());
+	    }
             tasks.add(task);
         }
     }
