@@ -130,10 +130,10 @@ public final class MappedEndpointConfiguration extends DefaultEndpointConfigurat
         }
 
         queryParams.sort(null);
-        String q = "";
+        StringBuilder q = new StringBuilder();
         for (String entry : queryParams) {
-            q += q.length() == 0 ? "" : "&";
-            q += entry;
+            q.append(q.length() == 0 ? "" : "&");
+            q.append(entry);
         }
 
         StringBuilder u = new StringBuilder(64);
