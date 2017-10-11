@@ -40,14 +40,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SmppDataSmCommandTest {
 
@@ -73,7 +71,7 @@ public class SmppDataSmCommandTest {
 
     @Before
     public void setUp() {
-        session = createMock(SMPPSession.class);
+        session = mock(SMPPSession.class);
         config = new SmppConfiguration();
 
         command = new SmppDataSmCommand(session, config);
@@ -83,16 +81,12 @@ public class SmppDataSmCommandTest {
     public void executeWithConfigurationData() throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "DataSm");
-        expect(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+        when(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()),
                 eq(new RegisteredDelivery((byte) 1)), eq(DataCodings.newInstance((byte) 0))))
-            .andReturn(new DataSmResult(new MessageId("1"), null));
-
-        replay(session);
+            .thenReturn(new DataSmResult(new MessageId("1"), null));
 
         command.execute(exchange);
-
-        verify(session);
 
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
         assertNull(exchange.getOut().getHeader(SmppConstants.OPTIONAL_PARAMETERS));
@@ -110,16 +104,12 @@ public class SmppDataSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.DEST_ADDR_NPI, NumberingPlanIndicator.INTERNET.value());
         exchange.getIn().setHeader(SmppConstants.DEST_ADDR, "1919");
         exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
-        expect(session.dataShortMessage(eq("XXX"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
+        when(session.dataShortMessage(eq("XXX"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"), eq(new ESMClass()),
                 eq(new RegisteredDelivery((byte) 2)), eq(DataCodings.newInstance((byte) 0))))
-            .andReturn(new DataSmResult(new MessageId("1"), null));
-
-        replay(session);
+            .thenReturn(new DataSmResult(new MessageId("1"), null));
 
         command.execute(exchange);
-
-        verify(session);
 
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
         assertNull(exchange.getOut().getHeader(SmppConstants.OPTIONAL_PARAMETERS));
@@ -145,7 +135,7 @@ public class SmppDataSmCommandTest {
         optionalParameters.put("0x2154", "7400000");
         optionalParameters.put("0x2155", null);
         exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETERS, optionalParameters);
-        expect(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+        when(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()),
                 eq(new RegisteredDelivery((byte) 1)), eq(DataCodings.newInstance((byte) 0)),
                 eq(new OptionalParameter.Source_subaddress("1292".getBytes())),
@@ -154,18 +144,14 @@ public class SmppDataSmCommandTest {
                 eq(new OptionalParameter.Dest_telematics_id((short) 2)),
                 eq(new OptionalParameter.Qos_time_to_live(3600000)),
                 eq(new OptionalParameter.Alert_on_message_delivery((byte) 0))))
-            .andReturn(new DataSmResult(new MessageId("1"), new OptionalParameter[] {new OptionalParameter.Source_subaddress("1292".getBytes()),
+            .thenReturn(new DataSmResult(new MessageId("1"), new OptionalParameter[] {new OptionalParameter.Source_subaddress("1292".getBytes()),
                 new OptionalParameter.Additional_status_info_text("urgent"),
                 new OptionalParameter.Dest_addr_subunit((byte) 4),
                 new OptionalParameter.Dest_telematics_id((short) 2),
                 new OptionalParameter.Qos_time_to_live(3600000),
                 new OptionalParameter.Alert_on_message_delivery((byte) 0)}));
 
-        replay(session);
-
         command.execute(exchange);
-
-        verify(session);
 
         assertEquals(3, exchange.getOut().getHeaders().size());
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
@@ -210,7 +196,7 @@ public class SmppDataSmCommandTest {
         optionalParameters.put(Short.valueOf((short) 0x2154), Integer.valueOf(7400000));
         optionalParameters.put(Short.valueOf((short) 0x2155), null);
         exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETER, optionalParameters);
-        expect(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+        when(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()),
                 eq(new RegisteredDelivery((byte) 1)), eq(DataCodings.newInstance((byte) 0)),
                 eq(new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "1292")),
@@ -225,16 +211,12 @@ public class SmppDataSmCommandTest {
                 eq(new OptionalParameter.Short((short) 0x2153, (short) 9)),
                 eq(new OptionalParameter.Int((short) 0x2154, 7400000)),
                 eq(new OptionalParameter.Null((short) 0x2155))))
-            .andReturn(new DataSmResult(new MessageId("1"), new OptionalParameter[]{
+            .thenReturn(new DataSmResult(new MessageId("1"), new OptionalParameter[]{
                 new OptionalParameter.Source_subaddress("1292".getBytes()), new OptionalParameter.Additional_status_info_text("urgent"),
                 new OptionalParameter.Dest_addr_subunit((byte) 4), new OptionalParameter.Dest_telematics_id((short) 2),
                 new OptionalParameter.Qos_time_to_live(3600000), new OptionalParameter.Alert_on_message_delivery((byte) 0)}));
 
-        replay(session);
-
         command.execute(exchange);
-
-        verify(session);
 
         assertEquals(3, exchange.getOut().getHeaders().size());
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
