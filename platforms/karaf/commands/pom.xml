@@ -84,8 +84,7 @@
           <instructions>
             <Import-Package>
               !org.apache.felix.utils.properties,
-              org.apache.karaf.shell.api.action;version="[4,5)",
-              org.apache.karaf.shell.support.completers;version="[4,5)",
+              org.apache.karaf.shell.*;version="[4,5)",
               org.slf4j.*;version="[1.6,2)",
               *
             </Import-Package>
