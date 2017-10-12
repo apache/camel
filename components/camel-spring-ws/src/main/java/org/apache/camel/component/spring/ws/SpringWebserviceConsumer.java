@@ -82,20 +82,22 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
     }
     
     private void populateExchangeWithBreadcrumbFromMessageContext(MessageContext messageContext, Exchange exchange) {
-        SaajSoapMessage saajSoap = (SaajSoapMessage) messageContext.getRequest();
-        SOAPMessage soapMessageRequest = null;
-        if (saajSoap != null) {
-            soapMessageRequest = saajSoap.getSaajMessage();
-            if (soapMessageRequest != null) {
-                MimeHeaders mimeHeaders = soapMessageRequest.getMimeHeaders();
-                if (mimeHeaders != null) {
-                    String[] breadcrumbIdHeaderValues = mimeHeaders.getHeader(Exchange.BREADCRUMB_ID);
-                    // expected to get one token
-                    // if more than one token expected, 
-                    // presumably breadcrumb generation strategy 
-                    // may be required to implement
-                    if (breadcrumbIdHeaderValues != null && breadcrumbIdHeaderValues.length >= 1) {
-                        exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbIdHeaderValues[0]);
+        if(messageContext.getRequest() instanceof SaajSoapMessage){
+            SaajSoapMessage saajSoap = (SaajSoapMessage) messageContext.getRequest();
+            SOAPMessage soapMessageRequest = null;
+            if (saajSoap != null) {
+                soapMessageRequest = saajSoap.getSaajMessage();
+                if (soapMessageRequest != null) {
+                    MimeHeaders mimeHeaders = soapMessageRequest.getMimeHeaders();
+                    if (mimeHeaders != null) {
+                        String[] breadcrumbIdHeaderValues = mimeHeaders.getHeader(Exchange.BREADCRUMB_ID);
+                        // expected to get one token
+                        // if more than one token expected, 
+                        // presumably breadcrumb generation strategy 
+                        // may be required to implement
+                        if (breadcrumbIdHeaderValues != null && breadcrumbIdHeaderValues.length >= 1) {
+                            exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbIdHeaderValues[0]);
+                        }
                     }
                 }
             }
