@@ -167,7 +167,7 @@ public class MailConfiguration implements Cloneable {
         int port = uri.getPort();
         if (port > 0) {
             setPort(port);
-        } else if (port <= 0 && this.port <= 0) {
+        } else if (this.port <= 0) {
             // resolve default port if no port number was provided, and not already configured with a port number
             setPort(MailUtils.getDefaultPortForProtocol(uri.getScheme()));
         }
