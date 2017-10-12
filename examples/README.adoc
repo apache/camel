@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 97 (8 deprecated)
+Number of Examples: 98 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -49,6 +49,8 @@ Number of Examples: 97 (8 deprecated)
 | link:camel-example-spring-boot-live-reload/readme.adoc[Spring Boot Live Reload] (camel-example-spring-boot-live-reload) | Beginner | An example showing how to use the live reload feature of Spring Boot with Camel
 
 | link:camel-example-spring-boot-pojo/README.adoc[Spring Boot Pojo] (camel-example-spring-boot-pojo) | Beginner | An example showing how to work with Camel POJO routing with Spring Boot
+
+| link:camel-example-spring-boot-xml/readme.adoc[Spring Boot Xml] (camel-example-spring-boot-xml) | Beginner | An example showing how to work with Camel routes in XML files and Spring Boot
 
 | link:camel-example-spring-javaconfig/README.md[Spring Java Config] (camel-example-spring-javaconfig) | Beginner | An example showing how to work with Camel and Spring Java Config
 
