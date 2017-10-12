@@ -623,8 +623,10 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     }
 
     /**
+     * Gets the type of the header record.
      *
-     * @return
+     * @return The type of the header record if any, otherwise
+     *         <code>void.class</code>.
      */
     public Class<?> header() {
         return header;
@@ -638,8 +640,10 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     }
 
     /**
+     * Gets the type of the footer record.
      *
-     * @return
+     * @return The type of the footer record if any, otherwise
+     *         <code>void.class</code>.
      */
     public Class<?> footer() {
         return footer;
