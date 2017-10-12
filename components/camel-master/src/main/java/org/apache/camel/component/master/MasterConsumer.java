@@ -69,10 +69,6 @@ public class MasterConsumer extends DefaultConsumer {
 
         view = clusterService.getView(masterEndpoint.getNamespace());
         view.addEventListener(leadershipListener);
-
-        if (isMaster()) {
-            onLeadershipTaken();
-        }
     }
 
     @Override
