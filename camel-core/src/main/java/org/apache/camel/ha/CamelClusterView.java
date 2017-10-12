@@ -16,7 +16,6 @@
  */
 package org.apache.camel.ha;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,8 +40,19 @@ public interface CamelClusterView extends Service, CamelContextAware {
      * Provides the master member if elected.
      *
      * @return the master member.
+     * @deprecated use {@link #getLeader()}
      */
-    Optional<CamelClusterMember> getMaster();
+    @Deprecated
+    default Optional<CamelClusterMember> getMaster() {
+        return getLeader();
+    }
+
+    /**
+     * Provides the leader member if elected.
+     *
+     * @return the leader member.
+     */
+    Optional<CamelClusterMember> getLeader();
 
     /**
      * Provides the local member.

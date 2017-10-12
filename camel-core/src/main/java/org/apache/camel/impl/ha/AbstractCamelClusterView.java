@@ -80,7 +80,7 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
                     // the consumer can catch up.
 
                     if (CamelClusterEventListener.Leadership.class.isInstance(listener)) {
-                        CamelClusterEventListener.Leadership.class.cast(listener).leadershipChanged(this, getMaster());
+                        CamelClusterEventListener.Leadership.class.cast(listener).leadershipChanged(this, getLeader());
                     }
 
                     if (CamelClusterEventListener.Membership.class.isInstance(listener)) {
