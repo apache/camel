@@ -14,27 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample.camel;
+package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.stereotype.Component;
 
-/**
- * A simple Camel route that triggers from a timer and calls a bean and prints to system out.
- * <p/>
- * Use <tt>@Component</tt> to make Camel auto detect this route when starting.
- */
-@Component
-public class SampleCamelRouter extends RouteBuilder {
+public class MyJavaDslRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("timer:hello?period={{timer.period}}").routeId("hello")
-                .transform().method("myBean", "saySomething")
-                .filter(simple("${body} contains 'foo'"))
-                    .to("log:foo")
-                .end()
-                .to("stream:out");
+        from("direct:start").routeId("bar")
+            .log("I was here")
+            .setHeader("foo", constant("123"))
+            .choice()
+                .when(header("foo"))
+                    .to("log:a")
+                    .toD("log:a2")
+                .when().header("bar")
+                    .toD("log:b")
+                .otherwise()
+                    .log("none")
+            .end()
+            .to("mock:result");
     }
-
 }

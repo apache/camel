@@ -14,27 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample.camel;
+package org.apache.camel.test.spring;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.springframework.stereotype.Component;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * A simple Camel route that triggers from a timer and calls a bean and prints to system out.
+ * Enables dumping route coverage statistic.
+ * The route coverage status is written as xml files in the <tt>target/camel-route-coverage</tt> directory after the test has finished.
  * <p/>
- * Use <tt>@Component</tt> to make Camel auto detect this route when starting.
+ * This allows tooling or manual inspection of the stats, so you can generate a route trace diagram of which EIPs
+ * have been in use and which have not. Similar concepts as a code coverage report.
  */
-@Component
-public class SampleCamelRouter extends RouteBuilder {
-
-    @Override
-    public void configure() throws Exception {
-        from("timer:hello?period={{timer.period}}").routeId("hello")
-                .transform().method("myBean", "saySomething")
-                .filter(simple("${body} contains 'foo'"))
-                    .to("log:foo")
-                .end()
-                .to("stream:out");
-    }
+@Documented
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+public @interface EnableRouteCoverage {
 
 }

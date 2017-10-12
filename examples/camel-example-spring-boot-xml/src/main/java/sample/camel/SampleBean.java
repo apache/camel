@@ -16,25 +16,23 @@
  */
 package sample.camel;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * A simple Camel route that triggers from a timer and calls a bean and prints to system out.
+ * A bean that returns a message when you call the {@link #saySomething()} method.
  * <p/>
- * Use <tt>@Component</tt> to make Camel auto detect this route when starting.
+ * Uses <tt>@Component("myBean")</tt> to register this bean with the name <tt>myBean</tt>
+ * that we use in the Camel route to lookup this bean.
  */
-@Component
-public class SampleCamelRouter extends RouteBuilder {
+@Component("myBean")
+public class SampleBean {
 
-    @Override
-    public void configure() throws Exception {
-        from("timer:hello?period={{timer.period}}").routeId("hello")
-                .transform().method("myBean", "saySomething")
-                .filter(simple("${body} contains 'foo'"))
-                    .to("log:foo")
-                .end()
-                .to("stream:out");
+    @Value("${greeting}")
+    private String say;
+
+    public String saySomething() {
+        return say;
     }
 
 }

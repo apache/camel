@@ -30,7 +30,7 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
 
     @Override
     public void prepareTestInstance(TestContext testContext) throws Exception {
-        LOG.info("@RunWith(CamelSpringBootJUnit4ClassRunner.class) preparing: {}", testContext.getTestClass());
+        LOG.info("@RunWith(CamelSpringBootRunner.class) preparing: {}", testContext.getTestClass());
 
         Class<?> testClass = testContext.getTestClass();
         // we are customizing the Camel context with
@@ -56,15 +56,20 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
 
     @Override
     public void beforeTestMethod(TestContext testContext) throws Exception {
-        LOG.info("@RunWith(CamelSpringBootJUnit4ClassRunner.class) before: {}.{}", testContext.getTestClass(), testContext.getTestMethod().getName());
+        LOG.info("@RunWith(CamelSpringBootRunner.class) before: {}.{}", testContext.getTestClass(), testContext.getTestMethod().getName());
 
         Class<?> testClass = testContext.getTestClass();
+        String testName = testContext.getTestMethod().getName();
+
         ConfigurableApplicationContext context = (ConfigurableApplicationContext) testContext.getApplicationContext();
 
         // mark Camel to be startable again and start Camel
         System.clearProperty("skipStartingCamelContext");
 
-        LOG.info("Initialized CamelSpringBootJUnit4ClassRunner now ready to start CamelContext");
+        // route coverage need to know the test method
+        CamelAnnotationsHandler.handleRouteCoverage(context, testClass, (String) -> testName);
+
+        LOG.info("Initialized CamelSpringBootRunner now ready to start CamelContext");
         CamelAnnotationsHandler.handleCamelContextStartup(context, testClass);
     }
 

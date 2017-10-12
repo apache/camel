@@ -17,8 +17,12 @@
 package org.apache.camel.parser;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.parser.helper.CamelXmlTreeParserHelper;
+import org.apache.camel.parser.model.CamelNodeDetails;
+import org.apache.camel.parser.model.CamelNodeDetailsFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -41,6 +45,59 @@ import static org.apache.camel.parser.helper.CamelXmlHelper.getSafeAttribute;
 public final class XmlRouteParser {
 
     private XmlRouteParser() {
+    }
+
+    /**
+     * Parses the XML file and build a route model (tree) of the discovered routes in the XML source file.
+     *
+     * @param xml                     the xml file as input stream
+     * @param baseDir                 the base of the source code
+     * @param fullyQualifiedFileName  the fully qualified source code file name
+     * @return a list of route model (tree) of each discovered route
+     */
+    public static List<CamelNodeDetails> parseXmlRouteTree(InputStream xml, String baseDir, String fullyQualifiedFileName) {
+        List<CamelNodeDetails> answer = new ArrayList<>();
+
+        // try parse it as dom
+        Document dom = null;
+        try {
+            dom = XmlLineNumberParser.parseXml(xml);
+        } catch (Exception e) {
+            // ignore as the xml file may not be valid at this point
+        }
+        if (dom != null) {
+
+            // find any from which is the start of the route
+            CamelNodeDetailsFactory nodeFactory = CamelNodeDetailsFactory.newInstance();
+
+            CamelXmlTreeParserHelper parser = new CamelXmlTreeParserHelper();
+
+            List<Node> routes = CamelXmlHelper.findAllRoutes(dom);
+            for (Node route : routes) {
+                // parse each route and build
+                String routeId = getSafeAttribute(route, "id");
+                String lineNumber = (String) route.getUserData(XmlLineNumberParser.LINE_NUMBER);
+                String lineNumberEnd = (String) route.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
+
+                // we only want the relative dir name from the resource directory, eg META-INF/spring/foo.xml
+                String fileName = fullyQualifiedFileName;
+                if (fileName.startsWith(baseDir)) {
+                    fileName = fileName.substring(baseDir.length() + 1);
+                }
+
+                CamelNodeDetails node = nodeFactory.newNode(null, "route");
+                node.setRouteId(routeId);
+                node.setFileName(fileName);
+                node.setLineNumber(lineNumber);
+                node.setLineNumberEnd(lineNumberEnd);
+
+                // parse the route and gather all its EIPs
+                List<CamelNodeDetails> tree = parser.parseCamelRouteTree(route, routeId, node, baseDir, fullyQualifiedFileName);
+                answer.addAll(tree);
+            }
+        }
+
+        return answer;
     }
 
     /**

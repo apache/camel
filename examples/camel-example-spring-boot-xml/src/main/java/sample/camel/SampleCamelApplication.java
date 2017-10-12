@@ -16,25 +16,25 @@
  */
 package sample.camel;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ImportResource;
 
+//CHECKSTYLE:OFF
 /**
- * A simple Camel route that triggers from a timer and calls a bean and prints to system out.
- * <p/>
- * Use <tt>@Component</tt> to make Camel auto detect this route when starting.
+ * A sample Spring Boot application that starts the Camel routes.
  */
-@Component
-public class SampleCamelRouter extends RouteBuilder {
+@SpringBootApplication
+// load the spring xml file from classpath
+@ImportResource("classpath:my-camel.xml")
+public class SampleCamelApplication {
 
-    @Override
-    public void configure() throws Exception {
-        from("timer:hello?period={{timer.period}}").routeId("hello")
-                .transform().method("myBean", "saySomething")
-                .filter(simple("${body} contains 'foo'"))
-                    .to("log:foo")
-                .end()
-                .to("stream:out");
+    /**
+     * A main method to start this application.
+     */
+    public static void main(String[] args) {
+        SpringApplication.run(SampleCamelApplication.class, args);
     }
 
 }
+//CHECKSTYLE:ON

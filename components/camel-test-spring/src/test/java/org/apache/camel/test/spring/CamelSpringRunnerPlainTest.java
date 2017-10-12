@@ -118,6 +118,11 @@ public class CamelSpringRunnerPlainTest {
         assertNull(camelContext2.getDebugger());
     }
 
+    @Test
+    public void testRouteCoverage() throws Exception {
+        // noop
+    }
+
 }
 // end::example[]
 // END SNIPPET: e1

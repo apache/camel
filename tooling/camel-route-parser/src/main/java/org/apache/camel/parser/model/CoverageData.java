@@ -14,27 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample.camel;
-
-import org.apache.camel.builder.RouteBuilder;
-import org.springframework.stereotype.Component;
+package org.apache.camel.parser.model;
 
 /**
- * A simple Camel route that triggers from a timer and calls a bean and prints to system out.
- * <p/>
- * Use <tt>@Component</tt> to make Camel auto detect this route when starting.
+ * Represents coverage data of a given node in the Camel route.
  */
-@Component
-public class SampleCamelRouter extends RouteBuilder {
+public class CoverageData {
 
-    @Override
-    public void configure() throws Exception {
-        from("timer:hello?period={{timer.period}}").routeId("hello")
-                .transform().method("myBean", "saySomething")
-                .filter(simple("${body} contains 'foo'"))
-                    .to("log:foo")
-                .end()
-                .to("stream:out");
+    private final String node;
+    private final int count;
+
+    public CoverageData(String node, int count) {
+        this.count = count;
+        this.node = node;
     }
 
+    public String getNode() {
+        return node;
+    }
+
+    public int getCount() {
+        return count;
+    }
 }
