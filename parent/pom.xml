@@ -440,7 +440,7 @@
     <kie-version>7.3.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
     <kubernetes-client-version>3.0.0</kubernetes-client-version>
-    <kubernetes-model-version>2.0.0</kubernetes-model-version>
+    <kubernetes-model-version>1.1.4</kubernetes-model-version>
     <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
     <leveldbjni-version>1.8</leveldbjni-version>
     <leveldb-api-version>0.9</leveldb-api-version>
