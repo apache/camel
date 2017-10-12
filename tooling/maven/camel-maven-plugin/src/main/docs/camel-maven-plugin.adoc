@@ -311,6 +311,28 @@ public boolean isDumpRouteCoverage() {
 }
 ----
 
+Routes that can be route coveraged must have an unique id assigned, in other words you cannot use anonymous routes.
+
+You do this using `routeId` in Java DSL:
+
+[source,java]
+----
+from("jms:queue:cheese").routeId("cheesy")
+  .to("log:foo")
+  ...
+----
+
+And in XML DSL you just assign the route id via the id attribute
+
+[source,xml]
+----
+<route id="cheesy">
+  <from uri="jms:queue:cheese"/>
+  <to uri="log:foo"/>
+  ...
+</route>
+----
+
 === Generating route coverage report
 
 After unit testing with:
@@ -328,11 +350,28 @@ mvn camel:route-coverage
 Which then reports which routes has missing route coverage with precise source code line reporting:
 
 ----
-  TODO: sample
+[INFO] --- camel-maven-plugin:2.21.0:route-coverage (default-cli) @ camel-example-spring-boot-xml ---
+[INFO] Discovered 1 routes
+[INFO] Route coverage summary:
+
+File:	src/main/resources/my-camel.xml
+RouteId:	hello
+
+  Line #      Count   Route
+  ------      -----   -----
+      28          1   from
+      29          1     transform
+      32          1     filter
+      34          0       to
+      36          1     to
+
+Coverage: 4 out of 5 (80.0%)
 ----
 
-=== Options
+Here we can see that the 2nd last line with `to` has `0` in the count column, and therefore is not covered.
+We can also see that this is one line 34 in the source code file, which is in the `my-camel.xml` XML file.
 
+=== Options
 
 The maven plugin supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
 
