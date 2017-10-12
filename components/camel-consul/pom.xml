@@ -174,7 +174,7 @@
                           <port>consul.port:8500</port>
                         </ports>
                         <wait>
-                          <log>agent: Synced service 'consul'</log>
+                          <log>agent: Synced node info</log>
                           <time>20000</time>
                         </wait>
                         <cmd>

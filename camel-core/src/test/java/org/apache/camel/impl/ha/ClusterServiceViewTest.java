@@ -146,6 +146,38 @@ public class ClusterServiceViewTest {
         );
     }
 
+    @Test
+    public void testLateViewListeners() throws Exception {
+        final TestClusterService service = new TestClusterService(UUID.randomUUID().toString());
+        final TestClusterView view = service.getView("ns1").unwrap(TestClusterView.class);
+        final int events = 1 + new Random().nextInt(10);
+        final Set<Integer> results = new HashSet<>();
+        final CountDownLatch latch = new CountDownLatch(events * 2);
+
+        IntStream.range(0, events).forEach(
+            i -> view.addEventListener((CamelClusterEventListener.Leadership) (v, l) -> {
+                results.add(i);
+                latch.countDown();
+            })
+        );
+
+        service.start();
+        view.setLeader(true);
+
+        IntStream.range(events, events * 2).forEach(
+            i -> view.addEventListener((CamelClusterEventListener.Leadership) (v, l) -> {
+                results.add(i);
+                latch.countDown();
+            })
+        );
+
+        latch.await(10, TimeUnit.SECONDS);
+
+        IntStream.range(0, events * 2).forEach(
+            i -> Assert.assertTrue(results.contains(i))
+        );
+    }
+
     // *********************************
     // Helpers
     // *********************************

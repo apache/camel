@@ -283,7 +283,6 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         );
 
         clusterView.addEventListener(leadershipEventListener);
-        setLeader(clusterView.getLocalMember().isLeader());
     }
 
     // ****************************************************

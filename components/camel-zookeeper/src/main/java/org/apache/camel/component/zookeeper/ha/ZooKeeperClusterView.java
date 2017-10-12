@@ -31,6 +31,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.leader.LeaderSelector;
 import org.apache.curator.framework.recipes.leader.LeaderSelectorListenerAdapter;
 import org.apache.curator.framework.recipes.leader.Participant;
+import org.apache.zookeeper.KeeperException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +68,9 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
             return ObjectHelper.equal(participant.getId(), localMember.getId())
                 ? Optional.of(localMember)
                 : Optional.of(new CuratorClusterMember(participant));
+        } catch (KeeperException.NoNodeException e) {
+            LOGGER.debug("Failed to get get master because node '{}' does not yet exist (error: '{}')", configuration.getBasePath(), e.getMessage());
+            return Optional.empty();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
@@ -83,6 +87,9 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
                 .stream()
                 .map(CuratorClusterMember::new)
                 .collect(Collectors.toList());
+        } catch (KeeperException.NoNodeException e) {
+            LOGGER.debug("Failed to get members because node '{}' does not yet exist (error: '{}')", configuration.getBasePath(), e.getMessage());
+            return Collections.emptyList();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
