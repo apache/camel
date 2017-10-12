@@ -47,7 +47,8 @@ public class BasicMessageFilter implements MessageFilter {
     @Override
     public void filterConsumer(Exchange exchange, WebServiceMessage response) {
         if (exchange != null) {
-            processHeaderAndAttachments(exchange.getOut(), response);
+            Message responseMessage = exchange.hasOut() ? exchange.getOut(Message.class) : exchange.getIn(Message.class);
+            processHeaderAndAttachments(responseMessage, response);
         }
     }
 
