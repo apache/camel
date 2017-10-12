@@ -51,7 +51,7 @@ final class AtomixClusterView extends AbstractCamelClusterView {
     }
 
     @Override
-    public Optional<CamelClusterMember> getMaster() {
+    public Optional<CamelClusterMember> getLeader() {
         if (group == null) {
             return Optional.empty();
         }

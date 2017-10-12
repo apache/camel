@@ -190,7 +190,7 @@ public class ClusterServiceViewTest {
         }
 
         @Override
-        public Optional<CamelClusterMember> getMaster() {
+        public Optional<CamelClusterMember> getLeader() {
             return leader
                 ? Optional.of(getLocalMember())
                 : Optional.empty();
@@ -237,7 +237,7 @@ public class ClusterServiceViewTest {
             this.leader = leader;
 
             if (isRunAllowed()) {
-                fireLeadershipChangedEvent(getMaster());
+                fireLeadershipChangedEvent(getLeader());
             }
         }
     }

@@ -54,7 +54,7 @@ public class JGroupsLockClusterView extends AbstractCamelClusterView {
     }
 
     @Override
-    public Optional<CamelClusterMember> getMaster() {
+    public Optional<CamelClusterMember> getLeader() {
         if (isMaster) {
             return Optional.of(localMember);
         } else {

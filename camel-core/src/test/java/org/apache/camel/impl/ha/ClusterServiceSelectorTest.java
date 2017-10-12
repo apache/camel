@@ -354,7 +354,7 @@ public class ClusterServiceSelectorTest {
         }
 
         @Override
-        public Optional<CamelClusterMember> getMaster() {
+        public Optional<CamelClusterMember> getLeader() {
             return Optional.empty();
         }
 

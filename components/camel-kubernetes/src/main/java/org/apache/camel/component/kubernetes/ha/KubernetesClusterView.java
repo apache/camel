@@ -71,7 +71,7 @@ public class KubernetesClusterView extends AbstractCamelClusterView {
     }
 
     @Override
-    public Optional<CamelClusterMember> getMaster() {
+    public Optional<CamelClusterMember> getLeader() {
         return currentLeader;
     }
 

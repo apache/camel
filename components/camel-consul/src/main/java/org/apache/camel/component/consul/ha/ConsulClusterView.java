@@ -63,7 +63,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
     }
 
     @Override
-    public Optional<CamelClusterMember> getMaster() {
+    public Optional<CamelClusterMember> getLeader() {
         if (keyValueClient == null) {
             return Optional.empty();
         }
@@ -157,7 +157,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             }
             if (!master && this.master.compareAndSet(true, false)) {
                 LOGGER.debug("Leadership lost for session id {}", sessionId.get());
-                fireLeadershipChangedEvent(getMaster());
+                fireLeadershipChangedEvent(getLeader());
                 return;
             }
         }
