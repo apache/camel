@@ -56,7 +56,9 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
     @Override
     public Optional<CamelClusterMember> getLeader() {
-        return Optional.of(this.localMember);
+        return this.localMember.isLeader()
+            ? Optional.of(this.localMember)
+            : Optional.empty();
     }
 
     @Override
