@@ -42,6 +42,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- the catalog has details the parser needs to parse the Camel Java DSL -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!-- only test scopes for camel as we have no runtime dependency on camel -->
     <dependency>
       <groupId>org.apache.camel</groupId>

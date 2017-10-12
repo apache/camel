@@ -391,7 +391,8 @@ public abstract class CamelTestSupport extends TestSupport {
         log.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
 
         // if we should dump route stats, then write that to a file
-        if (isDumpRouteCoverage()) {
+        boolean coverage = System.getProperty("CamelTestRouteCoverage", "false").equalsIgnoreCase("true") || isDumpRouteCoverage();
+        if (coverage) {
             String className = this.getClass().getSimpleName();
             String dir = "target/camel-route-coverage";
             String name = className + "-" + getTestMethodName() + ".xml";
@@ -485,7 +486,6 @@ public abstract class CamelTestSupport extends TestSupport {
 
         builder.append(routesSummary);
         log.info(builder.toString());
-
     }
 
     /**

@@ -27,6 +27,7 @@ import java.util.Set;
 import org.apache.camel.spring.SpringCamelContext;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.TestContext;
 
 /**
  * Helper that provides state information across the levels of Spring Test that do not expose the
@@ -41,7 +42,8 @@ public final class CamelSpringTestHelper {
     
     private static ThreadLocal<String> originalJmxDisabledValue = new ThreadLocal<String>();
     private static ThreadLocal<Class<?>> testClazz = new ThreadLocal<Class<?>>();
-    
+    private static ThreadLocal<TestContext> testContext = new ThreadLocal<TestContext>();
+
     private CamelSpringTestHelper() {
     }
     
@@ -60,7 +62,15 @@ public final class CamelSpringTestHelper {
     public static void setTestClass(Class<?> testClass) {
         testClazz.set(testClass);
     }
-    
+
+    public static Method getTestMethod() {
+        return testContext.get().getTestMethod();
+    }
+
+    public static void setTestContext(TestContext context) {
+        testContext.set(context);
+    }
+
     /**
      * Returns all methods defined in {@code clazz} and its superclasses/interfaces.
      */
