@@ -29,6 +29,8 @@ import java.lang.annotation.Target;
  * <p/>
  * This allows tooling or manual inspection of the stats, so you can generate a route trace diagram of which EIPs
  * have been in use and which have not. Similar concepts as a code coverage report.
+ * <p/>
+ * You can also turn on route coverage globally via setting JVM system property <tt>CamelTestRouteCoverage=true</tt>.
  */
 @Documented
 @Inherited
