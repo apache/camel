@@ -35,6 +35,7 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.ExcludingPackageScanClassResolver;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.spring.CamelSpringTestHelper.DoToSpringCamelContextsStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -283,7 +284,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      */
     private void handleRouteCoverage(GenericApplicationContext context, Class<?> testClass) throws Exception {
         if (testClass.isAnnotationPresent(EnableRouteCoverage.class)) {
-            System.setProperty("CamelTestRouteCoverage", "true");
+            System.setProperty(CamelTestSupport.ROUTE_COVERAGE_ENABLED, "true");
 
             CamelSpringTestHelper.doToSpringCamelContexts(context, new DoToSpringCamelContextsStrategy() {
 
