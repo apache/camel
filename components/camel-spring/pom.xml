@@ -573,7 +573,7 @@
         </dependencies>
     </profile>
 
-    <profile>
+  <profile>
       <id>jdk8</id>
       <activation>
         <jdk>(,1.8]</jdk>
@@ -597,17 +597,33 @@
               <execution>
                 <id>generate-schema</id>
                 <phase>process-classes</phase>
+                 <configuration>
+                  <target>
+                    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
+                    <path id ="source.files.list">
+                      <fileset dir="${project.build.directory}/schema-src">
+                        <include name="**/*.java" />
+                      </fileset>
+                    </path>
+                    <property name="source.files.property" refid="source.files.list"/>
+                    <propertyregex property="schema.source.formatted" input="${source.files.property}" regexp=":" replace=" " global="true" />
+                    <property name="schema.source.files" value="${schema.source.formatted}"/>
+                    <echo>Schema files ${schema.source.files}</echo>
+                  </target>
+                  <exportAntProperties>true</exportAntProperties>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>cpy-schema</id>
+                <phase>process-test-sources</phase>
                 <configuration>
                   <target>
-                    <echo>Generating XSD schema</echo>
-                    <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
-                    <mkdir dir="${project.build.directory}/schema" />
-                    <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
-                      <schema namespace="http://camel.apache.org/schema/spring" file="camel-spring.xsd" />
-                      <compilerarg line="-target ${jdk.version}"/>
-                      <compilerarg line="-source ${jdk.version}"/>
-                      <classpath refid="maven.compile.classpath" />
-                    </schemagen>
+                    <echo>Copying XSD schema to be included in JAR</echo>
+                    <move file="${project.basedir}/schema1.xsd" tofile="${project.build.directory}/schema/camel-spring.xsd" />
+                    <delete file="${project.basedir}/schema2.xsd"/>
                   </target>
                 </configuration>
                 <goals>
@@ -615,6 +631,23 @@
                 </goals>
               </execution>
             </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>generate schema</id>
+                <phase>generate-test-sources</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <executable>schemagen</executable>
+              <commandlineArgs>-cp %classpath ${schema.source.files}</commandlineArgs>
+            </configuration>
           </plugin>
         </plugins>
       </build>
