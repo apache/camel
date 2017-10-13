@@ -324,6 +324,7 @@
               <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
                   <inherited>true</inherited>
                   <dependencies>
                     <!-- need JAXB on the classpath to use the xjc SchemaGenTask -->
@@ -359,7 +360,7 @@
                           <phase>process-classes</phase>
                           <configuration>
                               <target>
-                                  <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
+                                  <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
 
                                   <echo>Copying to code together for the XSD generation</echo>
                                   <mkdir dir="${project.build.directory}/schema-src" />
@@ -384,62 +385,95 @@
                                       </fileset>
                                   </copy>
 
-                                  <echo>Generating XSD schema</echo>
-                                  <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
-                                      <schema namespace="http://camel.apache.org/schema/spring" file="camel-blueprint.xsd" />
-                                      <compilerarg line="-target ${jdk.version}"/>
-                                      <compilerarg line="-source ${jdk.version}"/>
-                                      <classpath refid="maven.compile.classpath" />
-                                  </schemagen>
-
-                              </target>
-                          </configuration>
-                          <goals>
-                              <goal>run</goal>
-                          </goals>
-                      </execution>
-                      <execution>
-                        <id>include-sources</id>
-                        <phase>package</phase>
+                                  <path id ="source.files.list">
+                                            <fileset dir="${project.build.directory}/schema-src">
+                                                <include name="**/*.java" />
+                                            </fileset>
+                                        </path>
+                                        <property name="source.files.property" refid="source.files.list"/>
+                                        <propertyregex property="schema.source.formatted" input="${source.files.property}" regexp=":" replace=" " global="true" />
+                                        <property name="schema.source.files" value="${schema.source.formatted}"/>
+                                        <echo>Schema files ${schema.source.files}</echo>
+                                    </target>
+                                    <exportAntProperties>true</exportAntProperties>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>include-sources</id>
+                                <phase>package</phase>
+                                <configuration>
+                                    <target>
+                                        <echo>Including source code from camel-core-xml in the camel-blueprint-sources.jar</echo>
+                                        <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
+                                            <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*" />
+                                            <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*" />
+                                        </jar>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>copy-schema</id>              
+                                <phase>process-test-sources</phase>
+                                <configuration>
+                                    <target>
+                                        <echo>Copying XSD schema to be included in JAR</echo>
+                                        <move file="${project.basedir}/schema1.xsd" tofile="${project.build.directory}/schema/camel-blueprint.xsd" />
+                                        <delete file="${project.basedir}/schema2.xsd"/>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <!-- after the eip-documentation-enricher we need to copy some shchema files -->
+                            <execution>
+                                <id>include-schemas</id>
+                                <phase>prepare-package</phase>
+                                <configuration>
+                                    <target>
+                                        <echo>Copying XSD schema to be included in JAR</echo>
+                                        <replace file="${project.build.directory}/schema/camel-blueprint.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/blueprint" />
+                                        <copy todir="${project.build.directory}/classes">
+                                            <fileset dir="${project.build.directory}/schema" />
+                                        </copy>
+                                        <!-- copy modified schemas back again in classes so they are included in the JAR -->
+                                        <copy todir="${project.build.directory}/classes">
+                                            <fileset dir="${project.build.directory}/schema" />
+                                        </copy>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate schema</id>
+                                <phase>generate-test-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                         <configuration>
-                          <target>
-                            <echo>Including source code from camel-core-xml in the camel-blueprint-sources.jar</echo>
-                            <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
-                              <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*" />
-                              <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*" />
-                            </jar>
-                          </target>
+                            <executable>schemagen</executable>
+                            <commandlineArgs>-cp %classpath ${schema.source.files}</commandlineArgs>
                         </configuration>
-                        <goals>
-                          <goal>run</goal>
-                        </goals>
-                      </execution>
-                      <!-- after the eip-documentation-enricher we need to copy some shchema files -->
-                      <execution>
-                        <id>include-schemas</id>
-                        <phase>prepare-package</phase>
-                        <configuration>
-                          <target>
-                            <echo>Copying XSD schema to be included in JAR</echo>
-                            <replace file="${project.build.directory}/schema/camel-blueprint.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/blueprint" />
-                            <copy todir="${project.build.directory}/classes">
-                              <fileset dir="${project.build.directory}/schema" />
-                            </copy>
-                            <!-- copy modified schemas back again in classes so they are included in the JAR -->
-                            <copy todir="${project.build.directory}/classes">
-                              <fileset dir="${project.build.directory}/schema" />
-                            </copy>
-                          </target>
-                        </configuration>
-                        <goals>
-                          <goal>run</goal>
-                        </goals>
-                      </execution>
-                  </executions>
-              </plugin>
-            </plugins>
-          </build>
-        </profile>        
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
           <id>on-ibmjdk</id>
           <activation>
