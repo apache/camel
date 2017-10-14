@@ -53,14 +53,15 @@ public class RoasterJavaDslTest extends CamelTestSupport {
         String tree = details.dump(0);
         LOG.info("\n" + tree);
 
-        assertTrue(tree.contains("25\tfrom"));
-        assertTrue(tree.contains("27\t  setHeader"));
-        assertTrue(tree.contains("28\t  choice"));
-        assertTrue(tree.contains("30\t    to"));
-        assertTrue(tree.contains("31\t    toD"));
-        assertTrue(tree.contains("33\t    toD"));
-        assertTrue(tree.contains("35\t    log"));
-        assertTrue(tree.contains("37\t  to"));
+        assertTrue(tree.contains("28\tfrom"));
+        assertTrue(tree.contains("29\t  log"));
+        assertTrue(tree.contains("30\t  setHeader"));
+        assertTrue(tree.contains("31\t  choice"));
+        assertTrue(tree.contains("33\t    to"));
+        assertTrue(tree.contains("34\t    toD"));
+        assertTrue(tree.contains("36\t    toD"));
+        assertTrue(tree.contains("38\t    log"));
+        assertTrue(tree.contains("40\t  to"));
     }
 
     @Test
