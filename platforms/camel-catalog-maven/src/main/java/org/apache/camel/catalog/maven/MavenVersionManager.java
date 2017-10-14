@@ -158,6 +158,9 @@ public class MavenVersionManager implements VersionManager {
         if (is == null && version != null) {
             is = doGetResourceAsStream(name, version);
         }
+        if (is == null) {
+            is = MavenVersionManager.class.getClassLoader().getResourceAsStream(name);
+        }
 
         return is;
     }
