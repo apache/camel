@@ -102,10 +102,10 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         if (jsonUnmarshal != null) {
             camelContext.addService(jsonUnmarshal, true);
         }
-        if (xmlMarshal instanceof CamelContextAware) {
+        if (xmlMarshal != null) {
             camelContext.addService(xmlMarshal, true);
         }
-        if (xmlUnmarshal instanceof CamelContextAware) {
+        if (xmlUnmarshal != null) {
             camelContext.addService(xmlUnmarshal, true);
         }
 
