@@ -18,7 +18,6 @@ package org.apache.camel.parser.java;
 
 import java.io.File;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.camel.parser.ParserResult;
 import org.apache.camel.parser.helper.CamelJavaParserHelper;
@@ -43,9 +42,12 @@ public class RoasterRouteDuplicateIdBuilderDCamelTestSupportTest {
         for (ParserResult result : list) {
             LOG.info("Consumer: " + result.getElement());
         }
-        Assert.assertEquals(6, list.size());
+        Assert.assertEquals(3, list.size());
 
-        list = list.stream().filter(r -> r.getNode().equals("routeId")).collect(Collectors.toList());
+        list = CamelJavaParserHelper.parseCamelRouteIds(method);
+        for (ParserResult result : list) {
+            LOG.info("Route id: " + result.getElement());
+        }
         Assert.assertEquals(3, list.size());
         Assert.assertEquals("foo", list.get(0).getElement());
         Assert.assertEquals("bar", list.get(1).getElement());
