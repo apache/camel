@@ -20,11 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.JSonSchemaHelper;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.parser.model.CamelNodeDetailsFactory;

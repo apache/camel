@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.camel.parser.helper.CamelJavaTreeParserHelper;
 import org.apache.camel.parser.helper.CamelJavaParserHelper;
+import org.apache.camel.parser.helper.CamelJavaTreeParserHelper;
 import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.parser.model.CamelRouteDetails;

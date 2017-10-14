@@ -20,17 +20,16 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.parser.helper.CamelXmlTreeParserHelper;
-import org.apache.camel.parser.model.CamelNodeDetails;
-import org.apache.camel.parser.model.CamelNodeDetailsFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import org.apache.camel.parser.helper.CamelJavaParserHelper;
 import org.apache.camel.parser.helper.CamelXmlHelper;
+import org.apache.camel.parser.helper.CamelXmlTreeParserHelper;
 import org.apache.camel.parser.helper.XmlLineNumberParser;
-
 import org.apache.camel.parser.model.CamelEndpointDetails;
+import org.apache.camel.parser.model.CamelNodeDetails;
+import org.apache.camel.parser.model.CamelNodeDetailsFactory;
 import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
 import org.jboss.forge.roaster.model.util.Strings;
