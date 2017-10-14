@@ -323,10 +323,10 @@ public final class RouteBuilderParser {
 
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
         if (method != null) {
-            List<ParserResult> expressions = CamelJavaParserHelper.parseCamelConsumerUris(method, true, false);
+            List<ParserResult> expressions = CamelJavaParserHelper.parseCamelRouteIds(method);
             for (ParserResult result : expressions) {
                 // route ids is assigned in java dsl using the routeId method
-                if (result.isParsed() && "routeId".equals(result.getNode())) {
+                if (result.isParsed()) {
                     String fileName = fullyQualifiedFileName;
                     if (fileName.startsWith(baseDir)) {
                         fileName = fileName.substring(baseDir.length() + 1);
