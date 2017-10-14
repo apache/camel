@@ -323,7 +323,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
             sw.println("File:\t" + fileName);
         }
         if (routeId != null) {
-            sw.println("RouteId:\t" + routeId);
+            sw.println("Route:\t" + routeId);
         }
         sw.println();
         sw.println(String.format("%8s   %8s   %s", "Line #", "Count", "Route"));
