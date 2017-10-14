@@ -36,6 +36,7 @@ import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Expression;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ITypeBinding;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.InfixExpression;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MemberValuePair;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -83,7 +84,10 @@ public final class CamelJavaTreeParserHelper {
                     if (statement instanceof ExpressionStatement) {
                         ExpressionStatement es = (ExpressionStatement) statement;
                         Expression exp = es.getExpression();
-                        parseExpression(nodeFactory, fullyQualifiedFileName, clazz, configureMethod, block, exp, route);
+                        boolean valid = isFromCamelRoute(exp);
+                        if (valid) {
+                            parseExpression(nodeFactory, fullyQualifiedFileName, clazz, configureMethod, block, exp, route);
+                        }
                     }
                 }
             }
@@ -144,6 +148,30 @@ public final class CamelJavaTreeParserHelper {
         }
 
         return answer;
+    }
+
+    private boolean isFromCamelRoute(Expression exp) {
+        String rootMethodName = null;
+
+        // find out if this is from a Camel route (eg from, route etc.)
+        Expression sub = exp;
+        while (sub instanceof MethodInvocation) {
+            sub = ((MethodInvocation) sub).getExpression();
+            if (sub instanceof MethodInvocation) {
+                Expression parent = ((MethodInvocation) sub).getExpression();
+                if (parent == null) {
+                    break;
+                }
+            }
+        }
+        if (sub instanceof MethodInvocation) {
+            rootMethodName = ((MethodInvocation) sub).getName().getIdentifier();
+        } else if (sub instanceof SimpleName) {
+            rootMethodName = ((SimpleName) sub).getIdentifier();
+        }
+
+        // a route starts either via from or route
+        return "from".equals(rootMethodName) || "route".equals(rootMethodName);
     }
 
     private boolean hasOutput(String name) {

@@ -22,6 +22,9 @@ public class MyJavaDslRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
+        // setProperty is also a model name but this should not be parsed as part of a Camel route
+        System.setProperty("ENV", "src/test/resources/");
+
         from("direct:start").routeId("bar")
             .log("I was here")
             .setHeader("foo", constant("123"))
