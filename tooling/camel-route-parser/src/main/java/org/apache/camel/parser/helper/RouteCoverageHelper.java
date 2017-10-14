@@ -127,6 +127,15 @@ public final class RouteCoverageHelper {
             return;
         }
 
+        // inlined error handler, on completion etc should be skipped (and currently not supported in route coverage)
+        boolean skip = "onException".equals(key) || "onCompletion".equals(key)
+            || "intercept".equals(key) || "interceptFrom".equals(key) || "interceptSendToEndpoint".equals(key)
+            || "policy".equals(key) || "transacted".equals(key);
+
+        if (skip) {
+            return;
+        }
+
         // only calculate for elements within the route
         if (!"route".equals(key)) {
             Integer count = 0;
