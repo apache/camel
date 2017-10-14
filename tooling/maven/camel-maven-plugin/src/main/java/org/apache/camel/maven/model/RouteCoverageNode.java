@@ -74,4 +74,46 @@ public final class RouteCoverageNode {
         this.level = level;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        RouteCoverageNode that = (RouteCoverageNode) o;
+
+        if (lineNumber != that.lineNumber) {
+            return false;
+        }
+        if (level != that.level) {
+            return false;
+        }
+        if (!className.equals(that.className)) {
+            return false;
+        }
+        return name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = className.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + lineNumber;
+        result = 31 * result + level;
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "RouteCoverageNode["
+            + "lineNumber=" + lineNumber
+            + ", count=" + count
+            + ", name='" + name + '\''
+            + ", level=" + level
+            + ", className='" + className + '\''
+            + ']';
+    }
 }

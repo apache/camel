@@ -19,7 +19,9 @@ package org.apache.camel.parser.helper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.w3c.dom.Document;
@@ -39,9 +41,19 @@ public final class RouteCoverageHelper {
     private RouteCoverageHelper() {
     }
 
+    /**
+     * Parses the dumped route coverage data and creates a line by line coverage data
+     *
+     * @param directory  the directory with the dumped route coverage data
+     * @param routeId    the route id to gather, must not be null.
+     * @return line by line coverage data
+     */
     public static List<CoverageData> parseDumpRouteCoverageByRouteId(String directory, String routeId) throws Exception {
         List<CoverageData> answer = new ArrayList<>();
 
+        if (routeId == null) {
+            return answer;
+        }
         File[] files = new File(directory).listFiles(f -> f.getName().endsWith(".xml"));
         if (files == null) {
             return answer;
@@ -58,10 +70,47 @@ public final class RouteCoverageHelper {
                     String id = route.getAttributes().getNamedItem("id").getNodeValue();
                     // must be the target route
                     if (routeId.equals(id)) {
-                        // parse each route and build a Map<String, Integer> with the no of messages processed
-                        // where String is the EIP name
+                        // parse each route and build a List<CoverageData> for line by line coverage data
                         AtomicInteger counter = new AtomicInteger();
                         parseRouteData(catalog, route, answer, counter);
+                    }
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    public static Map<String, List<CoverageData>> parseDumpRouteCoverageByClassAndTestMethod(String directory) throws Exception {
+        Map<String, List<CoverageData>> answer = new LinkedHashMap();
+
+        File[] files = new File(directory).listFiles(f -> f.getName().endsWith(".xml"));
+        if (files == null) {
+            return answer;
+        }
+
+        CamelCatalog catalog = new DefaultCamelCatalog(true);
+
+        for (File file : files) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+                Document dom = XmlLineNumberParser.parseXml(fis);
+                NodeList routes = dom.getElementsByTagName("route");
+                for (int i = 0; i < routes.getLength(); i++) {
+                    Node route = routes.item(i);
+                    // parse each route and build a List<CoverageData> for line by line coverage data
+                    AtomicInteger counter = new AtomicInteger();
+                    List<CoverageData> data = new ArrayList<>();
+                    parseRouteData(catalog, route, data, counter);
+                    // create a key which is based on the file name without extension
+                    String key = file.getName();
+                    // strip .xml extension
+                    key = key.substring(0, key.length() - 4);
+                    // is there existing data
+                    List<CoverageData> existing = answer.get(key);
+                    if (existing != null) {
+                        existing.addAll(data);
+                    } else {
+                        answer.put(key, data);
                     }
                 }
             }
