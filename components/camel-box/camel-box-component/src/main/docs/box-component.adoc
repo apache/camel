@@ -3,7 +3,7 @@
 *Available as of Camel version 2.14*
 
 The Box component provides access to all of the Box.com APIs accessible
-using https://github.com/box/box-java-sdk/[box-java-sdk]. It
+using https://github.com/box/box-java-sdk/[https://github.com/box/box-java-sdk]. It
 allows producing messages to upload and download files, create, edit,
 and manage folders, etc. It also supports APIs that allow polling for
 updates to user accounts and even changes to enterprise accounts, etc.
