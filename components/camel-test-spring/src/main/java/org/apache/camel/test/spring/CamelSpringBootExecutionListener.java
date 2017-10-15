@@ -67,7 +67,7 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         System.clearProperty("skipStartingCamelContext");
 
         // route coverage need to know the test method
-        CamelAnnotationsHandler.handleRouteCoverage(context, testClass, (String) -> testName);
+        CamelAnnotationsHandler.handleRouteCoverage(context, testClass, s -> testName);
 
         LOG.info("Initialized CamelSpringBootRunner now ready to start CamelContext");
         CamelAnnotationsHandler.handleCamelContextStartup(context, testClass);
