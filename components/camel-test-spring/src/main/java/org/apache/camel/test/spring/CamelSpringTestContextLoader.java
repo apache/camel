@@ -291,7 +291,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                 @Override
                 public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
                     LOG.info("Enabling RouteCoverage");
-                    EventNotifier notifier = new RouteCoverageEventNotifier(testClass.getName(), (String) -> getTestMethod().getName());
+                    EventNotifier notifier = new RouteCoverageEventNotifier(testClass.getName(), s -> getTestMethod().getName());
                     camelContext.addService(notifier, true);
                     camelContext.getManagementStrategy().addEventNotifier(notifier);
                 }

@@ -42,7 +42,7 @@ public class CamelSpringRouteProcessorDumpRouteCoverageTest extends CamelSpringR
     }
 
     @Override
-    public void testRouteCoverage() throws Exception{
+    public void testRouteCoverage() throws Exception {
         camelContext.stop();
         camelContext2.stop();
 
