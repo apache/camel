@@ -104,8 +104,7 @@
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>${mockito-version}</version>
+      <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
 
