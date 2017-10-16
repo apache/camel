@@ -89,9 +89,9 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         match.put("match", actualQuery);
         Map<String, Object> query = new HashMap<>();
         query.put("query", match);
-        SearchHits response = template.requestBody("direct:search", query,SearchHits.class);
+        SearchHits response = template.requestBody("direct:search", query, SearchHits.class);
         assertNotNull("response should not be null", response);
-        assertEquals("response hits should be == 1",1, response.totalHits);
+        assertEquals("response hits should be == 1", 1, response.totalHits);
     }
         
     @Test
@@ -203,8 +203,8 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
 
         //now, perform Delete
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Delete);
-        DocWriteResponse.Result deleteResponse = template.requestBodyAndHeaders("direct:start", indexId, headers,DocWriteResponse.Result.class);
-        assertEquals("response should not be null",DocWriteResponse.Result.DELETED, deleteResponse);
+        DocWriteResponse.Result deleteResponse = template.requestBodyAndHeaders("direct:start", indexId, headers, DocWriteResponse.Result.class);
+        assertEquals("response should not be null", DocWriteResponse.Result.DELETED, deleteResponse);
 
         //now, verify GET fails to find the indexed value
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.GetById);

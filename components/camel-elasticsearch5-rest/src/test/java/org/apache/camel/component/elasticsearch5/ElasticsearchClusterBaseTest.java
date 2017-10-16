@@ -63,7 +63,7 @@ public class ElasticsearchClusterBaseTest extends CamelTestSupport {
 
         // wait for green status
         runner.ensureGreen();
-        restclient = RestClient.builder(new HttpHost(InetAddress.getByName("localhost"),ES_FIRST_NODE_TRANSPORT_PORT)).build();
+        restclient = RestClient.builder(new HttpHost(InetAddress.getByName("localhost"), ES_FIRST_NODE_TRANSPORT_PORT)).build();
         client = new RestHighLevelClient(restclient);
     }
 

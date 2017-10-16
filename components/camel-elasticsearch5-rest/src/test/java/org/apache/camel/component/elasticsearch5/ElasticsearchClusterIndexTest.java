@@ -70,10 +70,8 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
 
         final BasicResponseHandler responseHandler = new BasicResponseHandler();
         String body = responseHandler.handleEntity(restclient.performRequest("GET", "/_cluster/health?pretty").getEntity());
-        assertStringContains(body,"\"number_of_data_nodes\" : 3");
-
+        assertStringContains(body, "\"number_of_data_nodes\" : 3");
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
