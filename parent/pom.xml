@@ -180,7 +180,7 @@
     <derby-version>10.11.1.1</derby-version>
     <digitalocean-api-client-version>2.12</digitalocean-api-client-version>
     <digitalocean-api-client-bundle-version>2.12_1</digitalocean-api-client-bundle-version>
-    <disruptor-version>3.3.6</disruptor-version>
+    <disruptor-version>3.3.7</disruptor-version>
     <dnsjava-version>2.1.8</dnsjava-version>
     <dnsjava-bundle-version>2.1.8_1</dnsjava-bundle-version>
     <docker-java-version>3.0.13</docker-java-version>
