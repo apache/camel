@@ -27,14 +27,12 @@
     <version>2.21.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.apache.camel</groupId>
   <artifactId>camel-elasticsearch5-rest</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: ElasticSearch5 :: REST</name>
   <description>Camel ElasticSearch 5.x REST support</description>
 
   <properties>
-    <elasticsearch.version>${elasticsearch5-version}</elasticsearch.version>
     <camel.osgi.export.pkg>org.apache.camel.component.elasticsearch5.*;${camel.osgi.version}</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=elasticsearch-rest</camel.osgi.export.service>
   </properties>
@@ -44,6 +42,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.elasticsearch.client</groupId>
       <artifactId>elasticsearch-rest-high-level-client</artifactId>
@@ -93,11 +92,6 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-1.2-api</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
