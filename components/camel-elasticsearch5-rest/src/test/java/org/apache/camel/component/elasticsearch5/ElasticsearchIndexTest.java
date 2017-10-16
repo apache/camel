@@ -38,9 +38,8 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
         assertNotNull("indexId should be set", indexId);
 
         int status = template.requestBody("direct:deleteIndex", "", Integer.class);
-        assertEquals("status should be 200",200, status);
+        assertEquals("status should be 200", 200, status);
     }
-
 
     @Test
     public void testIndexWithReplication() throws Exception {

@@ -40,7 +40,7 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
     public static RestClient client;
 
     protected static final int ES_BASE_TRANSPORT_PORT = AvailablePortFinder.getNextAvailable();
-    protected static final int ES_BASE_HTTP_PORT = AvailablePortFinder.getNextAvailable(ES_BASE_TRANSPORT_PORT+1);
+    protected static final int ES_BASE_HTTP_PORT = AvailablePortFinder.getNextAvailable(ES_BASE_TRANSPORT_PORT + 1);
 
     @SuppressWarnings("resource")
     @BeforeClass
@@ -61,7 +61,7 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
 
         // wait for green status
         runner.ensureGreen();
-        client = RestClient.builder(new HttpHost(InetAddress.getByName("localhost"),ES_BASE_HTTP_PORT)).build();
+        client = RestClient.builder(new HttpHost(InetAddress.getByName("localhost"), ES_BASE_HTTP_PORT)).build();
     }
 
     @AfterClass
@@ -84,7 +84,7 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         final ElasticsearchComponent elasticsearchComponent = new ElasticsearchComponent();
-        elasticsearchComponent.setHostAddresses("localhost:"+ES_BASE_HTTP_PORT);
+        elasticsearchComponent.setHostAddresses("localhost:" + ES_BASE_HTTP_PORT);
         context.addComponent("elasticsearch5-rest", elasticsearchComponent);
         return context;
     }

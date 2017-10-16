@@ -54,8 +54,8 @@ public class ElasticsearchBulkTest extends ElasticsearchBaseTest {
         // given
         List<Map<String, String>> request = new ArrayList<>();
         final HashMap<String, String> valueMap = new HashMap<>();
-        valueMap.put("id",prefix+"baz");
-        valueMap.put("content",prefix + "hello");
+        valueMap.put("id", prefix + "baz");
+        valueMap.put("content", prefix + "hello");
         request.add(valueMap);
         // when
         @SuppressWarnings("unchecked")
