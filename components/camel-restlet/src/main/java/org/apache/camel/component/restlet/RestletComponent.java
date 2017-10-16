@@ -37,7 +37,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.restlet.converter.RestletConverter;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
@@ -68,7 +70,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version
  */
-public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
+public class RestletComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware, HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);
     private static final Object LOCK = new Object();
 
@@ -117,6 +119,11 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     private List<String> enabledConverters;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
+    @Metadata(
+            label = "filter",
+            description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message."
+    )
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public RestletComponent() {
         this(new Component());
@@ -125,7 +132,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     public RestletComponent(Component component) {
         // Allow the Component to be injected, so that the RestletServlet may be
         // configured within a webapp
-        super(RestletEndpoint.class);
+        super();
         this.component = component;
     }
 
@@ -535,12 +542,23 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     public Integer getControllerSleepTimeMs() {
         return controllerSleepTimeMs;
     }
-
+    
     /**
      * Time for the controller thread to sleep between each control.
      */
     public void setControllerSleepTimeMs(Integer controllerSleepTimeMs) {
         this.controllerSleepTimeMs = controllerSleepTimeMs;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return this.headerFilterStrategy;
+    }
+
+    /**
+     * Custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        this.headerFilterStrategy = strategy;
     }
 
     public Integer getInboundBufferSize() {
@@ -928,6 +946,12 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
                         && !converters.contains(converter.getClass().getSimpleName())
                 );
             }
+        }
+    }
+
+    public void setEndpointHeaderFilterStrategy(Endpoint endpoint) {
+        if (this.headerFilterStrategy != null && endpoint instanceof HeaderFilterStrategyAware) {
+            ((HeaderFilterStrategyAware)endpoint).setHeaderFilterStrategy(this.headerFilterStrategy);
         }
     }
 }
