@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 285 in 196 JAR artifacts (17 deprecated)
+Number of Components: 285 in 196 JAR artifacts (19 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -227,14 +227,14 @@ Number of Components: 285 in 196 JAR artifacts (17 deprecated)
 | link:camel-ejb/src/main/docs/ejb-component.adoc[EJB] (camel-ejb) +
 `ejb:beanName` | 2.4 | The ejb component is for invoking EJB Java beans from Camel.
 
-| link:camel-elasticsearch5-rest/src/main/docs/elasticsearch5-rest-component.adoc[Elastichsearch Rest or Elasticsearch 5 Rest] (camel-elasticsearch5-rest) +
+| link:camel-elasticsearch5-rest/src/main/docs/elasticsearch5-rest-component.adoc[Elastichsearch5 Rest] (camel-elasticsearch5-rest) +
 `elasticsearch5-rest:clusterName` | 2.21 | The elasticsearch component is used for interfacing with ElasticSearch server using 5.x REST API.
 
 | link:camel-elasticsearch/src/main/docs/elasticsearch-component.adoc[Elasticsearch] (camel-elasticsearch) +
-`elasticsearch:clusterName` | 2.11 | The elasticsearch component is used for interfacing with ElasticSearch server.
+`elasticsearch:clusterName` | 2.11 | *deprecated* The elasticsearch component is used for interfacing with ElasticSearch server.
 
 | link:camel-elasticsearch5/src/main/docs/elasticsearch5-component.adoc[Elasticsearch5] (camel-elasticsearch5) +
-`elasticsearch5:clusterName` | 2.19 | The elasticsearch component is used for interfacing with ElasticSearch server using 5.x API.
+`elasticsearch5:clusterName` | 2.19 | *deprecated* The elasticsearch component is used for interfacing with ElasticSearch server using 5.x API.
 
 | link:camel-elsql/src/main/docs/elsql-component.adoc[ElSQL] (camel-elsql) +
 `elsql:elsqlName:resourceUri` | 2.16 | The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
