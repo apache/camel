@@ -95,7 +95,7 @@ public final class CamelJavaTreeParserHelper {
 
         List<CamelNodeDetails> answer = new ArrayList<>();
 
-        if (route.getOutputs().isEmpty()) {
+        if (route.getOutputs() == null || route.getOutputs().isEmpty()) {
             // okay no routes found
             return answer;
         }
