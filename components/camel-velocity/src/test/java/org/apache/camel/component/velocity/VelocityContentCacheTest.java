@@ -59,9 +59,10 @@ public class VelocityContentCacheTest extends CamelTestSupport {
         template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override", "Bye $headers.name", Exchange.FILE_NAME, "hello.vm");
 
         mock.reset();
-        mock.expectedBodiesReceived("Bye Paris");
+        mock.expectedBodiesReceived("Bye Paris", "Bye World");
 
         template.sendBodyAndHeader("direct:a", "Body", "name", "Paris");
+        template.sendBodyAndHeader("direct:a", "Body", "name", "World");
         mock.assertIsSatisfied();
     }
 

@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * An expression which extracts the named exchange property
+ * To use a Camel Exchange property in expressions or predicates.
  *
  * @version 
  */

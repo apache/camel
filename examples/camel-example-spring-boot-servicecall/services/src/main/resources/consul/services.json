@@ -1,0 +1,19 @@
+{
+  "services": [{
+    "id": "s1i1", "name": "service-1", "tags": ["camel", "service-call"], "address": "localhost", "port": 9011
+  }, {
+    "id": "s1i2", "name": "service-1", "tags": ["camel", "service-call"], "address": "localhost", "port": 9012
+  }, {
+    "id": "s1i3", "name": "service-1", "tags": ["camel", "service-call"], "address": "localhost", "port": 9013
+  }, {
+    "id": "s1i4", "name": "service-1", "address": "localhost", "port": 9014
+  }, {
+    "id": "s2i1", "name": "service-2", "tags": ["camel", "service-call"], "address": "localhost", "port": 9021
+  }, {
+    "id": "s2i2", "name": "service-2", "tags": ["camel", "service-call"], "address": "localhost", "port": 9022
+  }, {
+    "id": "s2i3", "name": "service-2", "tags": ["camel", "service-call"], "address": "localhost", "port": 9023
+  }, {
+    "id": "s2i4", "name": "service-2", "address": "localhost", "port": 9024
+  }]
+}

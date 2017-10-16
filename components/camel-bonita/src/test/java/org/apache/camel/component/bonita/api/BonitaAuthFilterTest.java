@@ -27,14 +27,10 @@ import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockitoAnnotations;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore("javax.management.*")
 public class BonitaAuthFilterTest {
 
     @Mock
@@ -42,6 +38,7 @@ public class BonitaAuthFilterTest {
 
     @Before
     public void setup() {
+        MockitoAnnotations.initMocks(this);
         Map<String, Cookie> resultCookies = new HashMap<>();
         Mockito.when(requestContext.getCookies()).thenReturn(resultCookies);
 

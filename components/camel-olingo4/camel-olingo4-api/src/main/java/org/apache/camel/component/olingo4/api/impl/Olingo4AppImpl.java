@@ -103,11 +103,9 @@ import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceKind;
-import org.apache.olingo.server.core.uri.UriResourceFunctionImpl;
 import org.apache.olingo.server.core.uri.parser.Parser;
-import org.apache.olingo.server.core.uri.parser.UriParserException;
-import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
 import static org.apache.camel.component.olingo4.api.impl.Olingo4Helper.getContentTypeHeader;
 
@@ -143,6 +141,7 @@ public final class Olingo4AppImpl implements Olingo4App {
     private final ODataWriter odataWriter = odataClient.getWriter();
 
     private String serviceUri;
+
     private ContentType contentType;
     private Map<String, String> httpHeaders;
 
@@ -233,7 +232,7 @@ public final class Olingo4AppImpl implements Olingo4App {
     public <T> void read(final Edm edm, final String resourcePath, final Map<String, String> queryParams, final Map<String, String> endpointHttpHeaders,
                          final Olingo4ResponseHandler<T> responseHandler) {
         final String queryOptions = concatQueryParams(queryParams);
-        final UriInfo uriInfo = parseUri(edm, resourcePath, queryOptions);
+        final UriInfo uriInfo = parseUri(edm, resourcePath, queryOptions, serviceUri);
 
         execute(new HttpGet(createUri(resourcePath, queryOptions)), getResourceContentType(uriInfo), endpointHttpHeaders, new AbstractFutureCallback<T>(responseHandler) {
 
@@ -249,7 +248,7 @@ public final class Olingo4AppImpl implements Olingo4App {
     public void uread(final Edm edm, final String resourcePath, final Map<String, String> queryParams, final Map<String, String> endpointHttpHeaders,
                       final Olingo4ResponseHandler<InputStream> responseHandler) {
         final String queryOptions = concatQueryParams(queryParams);
-        final UriInfo uriInfo = parseUri(edm, resourcePath, queryOptions);
+        final UriInfo uriInfo = parseUri(edm, resourcePath, queryOptions, serviceUri);
 
         execute(new HttpGet(createUri(resourcePath, queryOptions)), getResourceContentType(uriInfo), endpointHttpHeaders, new AbstractFutureCallback<InputStream>(responseHandler) {
 
@@ -269,14 +268,14 @@ public final class Olingo4AppImpl implements Olingo4App {
 
     @Override
     public <T> void create(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data, final Olingo4ResponseHandler<T> responseHandler) {
-        final UriInfo uriInfo = parseUri(edm, resourcePath, null);
+        final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
 
         writeContent(edm, new HttpPost(createUri(resourcePath, null)), uriInfo, data, endpointHttpHeaders, responseHandler);
     }
 
     @Override
     public <T> void update(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data, final Olingo4ResponseHandler<T> responseHandler) {
-        final UriInfo uriInfo = parseUri(edm, resourcePath, null);
+        final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
 
         writeContent(edm, new HttpPut(createUri(resourcePath, null)), uriInfo, data, endpointHttpHeaders, responseHandler);
     }
@@ -294,21 +293,21 @@ public final class Olingo4AppImpl implements Olingo4App {
 
     @Override
     public <T> void patch(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data, final Olingo4ResponseHandler<T> responseHandler) {
-        final UriInfo uriInfo = parseUri(edm, resourcePath, null);
+        final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
 
         writeContent(edm, new HttpPatch(createUri(resourcePath, null)), uriInfo, data, endpointHttpHeaders, responseHandler);
     }
 
     @Override
     public <T> void merge(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data, final Olingo4ResponseHandler<T> responseHandler) {
-        final UriInfo uriInfo = parseUri(edm, resourcePath, null);
+        final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
 
         writeContent(edm, new HttpMerge(createUri(resourcePath, null)), uriInfo, data, endpointHttpHeaders, responseHandler);
     }
 
     @Override
     public void batch(final Edm edm, final Map<String, String> endpointHttpHeaders, final Object data, final Olingo4ResponseHandler<List<Olingo4BatchResponse>> responseHandler) {
-        final UriInfo uriInfo = parseUri(edm, SegmentType.BATCH.getValue(), null);
+        final UriInfo uriInfo = parseUri(edm, SegmentType.BATCH.getValue(), null, serviceUri);
 
         writeContent(edm, new HttpPost(createUri(SegmentType.BATCH.getValue(), null)), uriInfo, data, endpointHttpHeaders, responseHandler);
     }
@@ -411,7 +410,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                 }
                 break;
             case function:
-                UriResourceFunctionImpl uriResourceFunction = (UriResourceFunctionImpl)listResource.get(listResource.size() - 1);
+                UriResourceFunction uriResourceFunction = (UriResourceFunction)listResource.get(listResource.size() - 1);
                 EdmReturnType functionReturnType = uriResourceFunction.getFunction().getReturnType();
 
                 switch (functionReturnType.getType().getKind()) {
@@ -565,7 +564,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                     final Olingo4BatchQueryRequest batchQueryPart = (Olingo4BatchQueryRequest)batchPart;
                     final String batchQueryUri = createUri(StringUtils.isBlank(batchQueryPart.getResourceUri()) ? serviceUri : batchQueryPart.getResourceUri(),
                                                            batchQueryPart.getResourcePath(), concatQueryParams(batchQueryPart.getQueryParams()));
-                    final UriInfo uriInfo = parseUri(edm, batchQueryPart.getResourcePath(), concatQueryParams(batchQueryPart.getQueryParams()));
+                    final UriInfo uriInfo = parseUri(edm, batchQueryPart.getResourcePath(), concatQueryParams(batchQueryPart.getQueryParams()), serviceUri);
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
 
                     batchRequestHeaderOutputStream.write((HttpGet.METHOD_NAME + " " + batchQueryUri + " " + HttpVersion.HTTP_1_1).getBytes(Constants.UTF8));
@@ -585,7 +584,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                     final Olingo4BatchChangeRequest batchChangePart = (Olingo4BatchChangeRequest)batchPart;
                     final String batchChangeUri = createUri(StringUtils.isBlank(batchChangePart.getResourceUri()) ? serviceUri : batchChangePart.getResourceUri(),
                                                             batchChangePart.getResourcePath(), null);
-                    final UriInfo uriInfo = parseUri(edm, batchChangePart.getResourcePath(), null);
+                    final UriInfo uriInfo = parseUri(edm, batchChangePart.getResourcePath(), null, serviceUri);
 
                     if (batchChangePart.getOperation() != Operation.DELETE) {
                         writeHttpHeader(batchRequestHeaderOutputStream, CONTENT_ID_HEADER, batchChangePart.getContentId());
@@ -658,7 +657,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                 Map<String, String> batchPartHeaders = getHeadersValueMap(batchPartHttpResponse.getAllHeaders());
                 if (batchPartRequest instanceof Olingo4BatchQueryRequest) {
                     Olingo4BatchQueryRequest batchPartQueryRequest = (Olingo4BatchQueryRequest)batchPartRequest;
-                    final UriInfo uriInfo = parseUri(edm, batchPartQueryRequest.getResourcePath(), null);
+                    final UriInfo uriInfo = parseUri(edm, batchPartQueryRequest.getResourcePath(), null, serviceUri);
 
                     if (HttpStatusCode.BAD_REQUEST.getStatusCode() <= batchPartLineStatusCode && batchPartLineStatusCode <= AbstractFutureCallback.NETWORK_CONNECT_TIMEOUT_ERROR) {
                         final ContentType responseContentType = getContentTypeHeader(batchPartHttpResponse);
@@ -683,7 +682,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                         } else {
                             final UriInfo uriInfo = parseUri(edm, batchPartChangeRequest.getResourcePath()
                                                                   + (batchPartChangeRequest.getOperation() == Operation.CREATE ? CLIENT_ENTITY_FAKE_MARKER : ""),
-                                                             null);
+                                                             null, serviceUri);
                             content = readContent(uriInfo, batchPartHttpResponse.getEntity().getContent());
                         }
                     }
@@ -799,13 +798,13 @@ public final class Olingo4AppImpl implements Olingo4App {
         return concatQuery.toString().replaceAll("  *", "%20");
     }
 
-    private static UriInfo parseUri(Edm edm, String resourcePath, String queryOptions) {
+    private static UriInfo parseUri(Edm edm, String resourcePath, String queryOptions, String serviceUri) {
         Parser parser = new Parser(edm, OData.newInstance());
         UriInfo result;
 
         try {
-            result = parser.parseUri(resourcePath, queryOptions, null);
-        } catch (UriParserException | UriValidationException e) {
+            result = parser.parseUri(resourcePath, queryOptions, null, serviceUri);
+        } catch (Exception e) {
             throw new IllegalArgumentException("parseUri (" + resourcePath + "," + queryOptions + "): " + e.getMessage(), e);
         }
         return result;

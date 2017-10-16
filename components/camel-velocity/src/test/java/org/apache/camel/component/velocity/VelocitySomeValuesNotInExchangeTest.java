@@ -61,7 +61,9 @@ public class VelocitySomeValuesNotInExchangeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:a").to("velocity:org/apache/camel/component/velocity/someValuesNotInExchange.vm").to("mock:result");
+                from("direct:a")
+                    .to("velocity:org/apache/camel/component/velocity/someValuesNotInExchange.vm")
+                    .to("mock:result");
             }
         };
     }

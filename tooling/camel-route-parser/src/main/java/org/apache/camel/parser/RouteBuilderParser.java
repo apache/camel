@@ -20,10 +20,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.parser.helper.CamelJavaParserHelper;
+import org.apache.camel.parser.helper.CamelJavaTreeParserHelper;
 import org.apache.camel.parser.model.CamelEndpointDetails;
+import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
@@ -45,6 +48,42 @@ import org.jboss.forge.roaster.model.util.Strings;
 public final class RouteBuilderParser {
 
     private RouteBuilderParser() {
+    }
+
+    /**
+     * Parses the java source class and build a route model (tree) of the discovered routes in the java source class.
+     *
+     * @param clazz                   the java source class
+     * @param baseDir                 the base of the source code
+     * @param fullyQualifiedFileName  the fully qualified source code file name
+     * @return a list of route model (tree) of each discovered route
+     */
+    public static List<CamelNodeDetails> parseRouteBuilderTree(JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
+                                                               boolean includeInlinedRouteBuilders) {
+
+        List<MethodSource<JavaClassSource>> methods = new ArrayList<>();
+        MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
+        if (method != null) {
+            methods.add(method);
+        }
+        if (includeInlinedRouteBuilders) {
+            List<MethodSource<JavaClassSource>> inlinedMethods = CamelJavaParserHelper.findInlinedConfigureMethods(clazz);
+            if (!inlinedMethods.isEmpty()) {
+                methods.addAll(inlinedMethods);
+            }
+        }
+
+        CamelJavaTreeParserHelper parser = new CamelJavaTreeParserHelper();
+        List<CamelNodeDetails> list = new ArrayList<>();
+        for (MethodSource<JavaClassSource> configureMethod : methods) {
+            // there may be multiple route builder configure methods
+            List<CamelNodeDetails> details = parser.parseCamelRouteTree(clazz, baseDir, fullyQualifiedFileName, configureMethod);
+            list.addAll(details);
+        }
+        // we end up parsing bottom->up so reverse list
+        Collections.reverse(list);
+
+        return list;
     }
 
     /**
@@ -284,10 +323,10 @@ public final class RouteBuilderParser {
 
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
         if (method != null) {
-            List<ParserResult> expressions = CamelJavaParserHelper.parseCamelConsumerUris(method, true, false);
+            List<ParserResult> expressions = CamelJavaParserHelper.parseCamelRouteIds(method);
             for (ParserResult result : expressions) {
                 // route ids is assigned in java dsl using the routeId method
-                if (result.isParsed() && "routeId".equals(result.getNode())) {
+                if (result.isParsed()) {
                     String fileName = fullyQualifiedFileName;
                     if (fileName.startsWith(baseDir)) {
                         fileName = fileName.substring(baseDir.length() + 1);

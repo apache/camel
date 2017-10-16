@@ -16,6 +16,8 @@
  */
 package org.apache.camel.ha;
 
+import java.util.Optional;
+
 /**
  * Marker interface for cluster events
  */
@@ -27,9 +29,9 @@ public interface CamelClusterEventListener {
          * Notify a change in the leadership for a particular cluster.
          *
          * @param view the cluster view
-         * @param leader the new leader or null (when there are no active leaders)
+         * @param leader the optional new leader
          */
-        void leadershipChanged(CamelClusterView view, CamelClusterMember leader);
+        void leadershipChanged(CamelClusterView view, Optional<CamelClusterMember> leader);
 
     }
 

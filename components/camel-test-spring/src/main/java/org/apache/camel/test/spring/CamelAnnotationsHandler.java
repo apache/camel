@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultDebugger;
@@ -30,7 +31,9 @@ import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -66,6 +69,29 @@ public final class CamelAnnotationsHandler {
         } else {
             LOGGER.info("Disabling Camel JMX globally for tests by default. Use the DisableJMX annotation to override the default setting.");
             System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
+        }
+    }
+
+    /**
+     * Handles disabling of JMX on Camel contexts based on {@link DisableJmx}.
+     *
+     * @param context the initialized Spring context
+     * @param testClass the test class being executed
+     */
+    public static void handleRouteCoverage(ConfigurableApplicationContext context, Class<?> testClass, Function testMethod) throws Exception {
+        if (testClass.isAnnotationPresent(EnableRouteCoverage.class)) {
+            System.setProperty(CamelTestSupport.ROUTE_COVERAGE_ENABLED, "true");
+
+            CamelSpringTestHelper.doToSpringCamelContexts(context, new CamelSpringTestHelper.DoToSpringCamelContextsStrategy() {
+
+                @Override
+                public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
+                    LOGGER.info("Enabling RouteCoverage");
+                    EventNotifier notifier = new RouteCoverageEventNotifier(testClass.getName(), testMethod);
+                    camelContext.addService(notifier, true);
+                    camelContext.getManagementStrategy().addEventNotifier(notifier);
+                }
+            });
         }
     }
 

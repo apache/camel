@@ -32,7 +32,7 @@ import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 
 /**
- * XML-Security data format
+ * The XML Security data format facilitates encryption and decryption of XML payloads.
  */
 @Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,xml,security", title = "XML Security")
 @XmlRootElement(name = "secureXML")

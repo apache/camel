@@ -23,76 +23,50 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.processor.Pipeline;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
  * Connector {@link Producer} which is capable of performing before and after custom processing
- * while processing (ie sending the message).
+ * via the {@link Pipeline }while processing (ie sending the message).
  */
 public class ConnectorProducer extends DefaultAsyncProducer {
 
-    private final AsyncProcessor producer;
-    private final Processor beforeProducer;
-    private final Processor afterProducer;
+    private final AsyncProcessor processor;
 
-    public ConnectorProducer(Endpoint endpoint, Producer producer, Processor beforeProducer, Processor afterProducer) {
+    public ConnectorProducer(final Endpoint endpoint, final Processor processor) {
         super(endpoint);
-        this.producer = AsyncProcessorConverterHelper.convert(producer);
-        this.beforeProducer = beforeProducer;
-        this.afterProducer = afterProducer;
+        this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
 
     @Override
-    public boolean process(Exchange exchange, final AsyncCallback callback) {
-        // setup callback for after producer
-        AsyncCallback delegate = doneSync -> {
-            if (afterProducer != null) {
-                try {
-                    afterProducer.process(exchange);
-                } catch (Throwable e) {
-                    exchange.setException(e);
-                }
-            }
-            callback.done(doneSync);
-        };
-
-        // perform any before producer
-        if (beforeProducer != null) {
-            try {
-                beforeProducer.process(exchange);
-            } catch (Throwable e) {
-                exchange.setException(e);
-                callback.done(true);
-                return true;
-            }
-        }
-
-        return producer.process(exchange, delegate);
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        return processor.process(exchange, callback);
     }
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(beforeProducer, producer, afterProducer);
+        ServiceHelper.startServices(processor);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(beforeProducer, producer, afterProducer);
+        ServiceHelper.stopServices(processor);
     }
 
     @Override
     protected void doSuspend() throws Exception {
-        ServiceHelper.suspendService(producer);
+        ServiceHelper.suspendService(processor);
     }
 
     @Override
     protected void doResume() throws Exception {
-        ServiceHelper.resumeService(producer);
+        ServiceHelper.resumeService(processor);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(beforeProducer, producer, afterProducer);
+        ServiceHelper.stopAndShutdownServices(processor);
     }
 }

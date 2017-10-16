@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -25,8 +26,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Traceable;
-import org.apache.camel.spi.IdAware;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -41,7 +40,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  *
  * @version 
  */
-public class Pipeline extends MulticastProcessor implements AsyncProcessor, Traceable, IdAware {
+public class Pipeline extends MulticastProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(Pipeline.class);
 
     private String id;
@@ -59,10 +58,29 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
         return new Pipeline(camelContext, processors);
     }
 
+    public static Processor newInstance(final CamelContext camelContext, final Processor... processors) {
+        if (processors == null || processors.length == 0) {
+            return null;
+        } else if (processors.length == 1) {
+            return processors[0];
+        }
+
+        final List<Processor> toBeProcessed = new ArrayList<>(processors.length);
+        for (Processor processor : processors) {
+            if (processor != null) {
+                toBeProcessed.add(processor);
+            }
+        }
+
+        return new Pipeline(camelContext, toBeProcessed);
+    }
+
+    @Override
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Iterator<Processor> processors = getProcessors().iterator();
         Exchange nextExchange = exchange;
@@ -118,7 +136,8 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
         // implement asynchronous routing logic in callback so we can have the callback being
         // triggered and then continue routing where we left
         boolean sync = asyncProcessor.process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
+            @Override
+            public void done(final boolean doneSync) {
                 // we only have to handle async completion of the pipeline
                 if (doneSync) {
                     return;
@@ -135,8 +154,8 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
                     }
 
                     nextExchange = createNextExchange(nextExchange);
-                    doneSync = process(original, nextExchange, callback, processors, processor);
-                    if (!doneSync) {
+                    boolean isDoneSync = process(original, nextExchange, callback, processors, processor);
+                    if (!isDoneSync) {
                         LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                         return;
                     }
@@ -192,10 +211,12 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
         return "pipeline";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

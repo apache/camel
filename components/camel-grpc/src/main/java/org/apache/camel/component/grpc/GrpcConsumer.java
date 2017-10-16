@@ -34,9 +34,9 @@ import javassist.util.proxy.ProxyFactory;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.grpc.auth.jwt.JwtServerInterceptor;
 import org.apache.camel.component.grpc.server.GrpcHeaderInterceptor;
 import org.apache.camel.component.grpc.server.GrpcMethodHandler;
-import org.apache.camel.component.grpc.server.auth.jwt.JwtServerInterceptor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
@@ -129,7 +129,8 @@ public class GrpcConsumer extends DefaultConsumer {
         if (configuration.getAuthenticationType() == GrpcAuthType.JWT) {
             ObjectHelper.notNull(configuration.getJwtSecret(), "jwtSecret");
             
-            serverBuilder = serverBuilder.intercept(new JwtServerInterceptor(configuration.getJwtSecret(), configuration.getJwtIssuer(), configuration.getJwtSubject()));
+            serverBuilder = serverBuilder.intercept(new JwtServerInterceptor(configuration.getJwtAlgorithm(), configuration.getJwtSecret(),
+                                                                             configuration.getJwtIssuer(), configuration.getJwtSubject()));
         }
         
         server = serverBuilder.addService(ServerInterceptors.intercept(bindableService, headerInterceptor))

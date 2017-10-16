@@ -32,8 +32,10 @@ import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.ExcludingPackageScanClassResolver;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.spring.CamelSpringTestHelper.DoToSpringCamelContextsStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +109,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
     public ApplicationContext loadContext(String... locations) throws Exception {
         
         Class<?> testClass = getTestClass();
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Loading ApplicationContext for locations [" + StringUtils.arrayToCommaDelimitedString(locations) + "].");
         }
@@ -153,6 +155,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         SpringCamelContext.setNoStart(false);
         
         // Post CamelContext(s) instantiation but pre CamelContext(s) start setup
+        handleRouteCoverage(context, testClass);
         handleProvidesBreakpoint(context, testClass);
         handleShutdownTimeout(context, testClass);
         handleMockEndpoints(context, testClass);
@@ -204,7 +207,6 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         
         if (mergedConfig != null) {
             parentContext = mergedConfig.getParentApplicationContext();
-
         }
         
         if (testClass.isAnnotationPresent(ExcludeRoutes.class)) {
@@ -258,7 +260,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      */
     protected void handleDisableJmx(GenericApplicationContext context, Class<?> testClass) {
         CamelSpringTestHelper.setOriginalJmxDisabledValue(System.getProperty(JmxSystemPropertyKeys.DISABLED));
-        
+
         if (testClass.isAnnotationPresent(DisableJmx.class)) {
             if (testClass.getAnnotation(DisableJmx.class).value()) {
                 LOG.info("Disabling Camel JMX globally as DisableJmx annotation was found and disableJmx is set to true.");
@@ -267,12 +269,36 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                 LOG.info("Enabling Camel JMX as DisableJmx annotation was found and disableJmx is set to false.");
                 System.clearProperty(JmxSystemPropertyKeys.DISABLED);
             }
-        } else {
+        } else if (!testClass.isAnnotationPresent(EnableRouteCoverage.class)) {
+            // route coverage need JMX so do not disable it by default
             LOG.info("Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting.");
             System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
         }
     }
-    
+
+    /**
+     * Handles disabling of JMX on Camel contexts based on {@link DisableJmx}.
+     *
+     * @param context the initialized Spring context
+     * @param testClass the test class being executed
+     */
+    private void handleRouteCoverage(GenericApplicationContext context, Class<?> testClass) throws Exception {
+        if (testClass.isAnnotationPresent(EnableRouteCoverage.class)) {
+            System.setProperty(CamelTestSupport.ROUTE_COVERAGE_ENABLED, "true");
+
+            CamelSpringTestHelper.doToSpringCamelContexts(context, new DoToSpringCamelContextsStrategy() {
+
+                @Override
+                public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
+                    LOG.info("Enabling RouteCoverage");
+                    EventNotifier notifier = new RouteCoverageEventNotifier(testClass.getName(), s -> getTestMethod().getName());
+                    camelContext.addService(notifier, true);
+                    camelContext.getManagementStrategy().addEventNotifier(notifier);
+                }
+            });
+        }
+    }
+
     /**
      * Handles the processing of the {@link ProvidesBreakpoint} annotation on a test class.  Exists here
      * as it is needed in 
@@ -503,5 +529,15 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      */
     protected Class<?> getTestClass() {
         return CamelSpringTestHelper.getTestClass();
+    }
+
+    /**
+     * Returns the test method under test.
+     *
+     * @return the method that is being executed
+     * @see CamelSpringTestHelper
+     */
+    protected Method getTestMethod() {
+        return CamelSpringTestHelper.getTestMethod();
     }
 }

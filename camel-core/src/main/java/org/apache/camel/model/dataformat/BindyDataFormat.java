@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Bindy data format
+ * The Bindy data format is used for working with flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).
  *
  * @version 
  */

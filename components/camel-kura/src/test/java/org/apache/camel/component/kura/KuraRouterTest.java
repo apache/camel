@@ -93,7 +93,7 @@ public class KuraRouterTest extends Assert {
 
     @Test
     public void shouldReturnNoService() {
-        given(bundleContext.getServiceReference(any(Class.class))).willReturn(null);
+        given(bundleContext.getServiceReference(any(String.class))).willReturn(null);
         assertNull(router.service(ConfigurationAdmin.class));
     }
 
@@ -104,7 +104,7 @@ public class KuraRouterTest extends Assert {
 
     @Test(expected = IllegalStateException.class)
     public void shouldValidateLackOfService() {
-        given(bundleContext.getServiceReference(any(Class.class))).willReturn(null);
+        given(bundleContext.getServiceReference(any(String.class))).willReturn(null);
         router.requiredService(ConfigurationAdmin.class);
     }
 

@@ -40,8 +40,19 @@ public interface CamelClusterView extends Service, CamelContextAware {
      * Provides the master member if elected.
      *
      * @return the master member.
+     * @deprecated use {@link #getLeader()}
      */
-    Optional<CamelClusterMember> getMaster();
+    @Deprecated
+    default Optional<CamelClusterMember> getMaster() {
+        return getLeader();
+    }
+
+    /**
+     * Provides the leader member if elected.
+     *
+     * @return the leader member.
+     */
+    Optional<CamelClusterMember> getLeader();
 
     /**
      * Provides the local member.
@@ -78,7 +89,7 @@ public interface CamelClusterView extends Service, CamelContextAware {
      * @param clazz the proprietary class or interface of the underlying concrete CamelClusterView.
      * @return an instance of the underlying concrete CamelClusterView as the required type.
      */
-    default <T> T unwrap(Class<T> clazz) {
+    default <T extends CamelClusterView> T unwrap(Class<T> clazz) {
         if (CamelClusterView.class.isAssignableFrom(clazz)) {
             return clazz.cast(this);
         }

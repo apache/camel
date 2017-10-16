@@ -3,6 +3,11 @@
 
 *Available as of Camel 2.20*
 
+[WARNING]
+====
+*Experimental feature*
+====
+
 Camel 2.20 provides an *experimental* support to probe the state of a Camel integration via a pluggable Health Check strategy based on the following concepts:
 
 - *HealthCheck:* represent an health check and defines its basic contract;

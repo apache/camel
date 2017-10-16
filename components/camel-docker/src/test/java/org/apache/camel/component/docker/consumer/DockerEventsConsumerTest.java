@@ -30,14 +30,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Consumer test for events on Docker Platform
  */
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
+@RunWith(MockitoJUnitRunner.class)
 public class DockerEventsConsumerTest extends CamelTestSupport {
     private String host = "localhost";
     private Integer port = 2375;

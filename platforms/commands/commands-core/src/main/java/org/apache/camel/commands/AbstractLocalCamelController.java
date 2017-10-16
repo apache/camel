@@ -88,6 +88,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             answer.put("classResolver", context.getClassResolver().toString());
             answer.put("packageScanClassResolver", context.getPackageScanClassResolver().toString());
             answer.put("applicationContextClassLoader", context.getApplicationContextClassLoader().toString());
+            answer.put("headersMapFactory", context.getHeadersMapFactory().toString());
 
             for (Map.Entry<String, String> entry : context.getProperties().entrySet()) {
                 answer.put("property." + entry.getKey(), entry.getValue());

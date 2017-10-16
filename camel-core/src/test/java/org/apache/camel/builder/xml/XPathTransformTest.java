@@ -23,18 +23,15 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.ContextTestSupport;
-import org.easymock.Capture;
-import org.easymock.CaptureType;
 import org.slf4j.Logger;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.capture;
-import static org.easymock.EasyMock.contains;
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -58,13 +55,9 @@ public class XPathTransformTest extends ContextTestSupport {
     }
 
     public void testXPathNamespaceLoggingEnabledJavaDSL() throws Exception {
-        Logger l = createNiceMock(Logger.class);
+        Logger l = mock(Logger.class);
 
-        expect(l.isInfoEnabled()).andReturn(true).anyTimes();
-
-        l.info(contains("Namespaces discovered in message"), anyObject(Object.class));
-        expectLastCall().times(1);
-        replay(l);
+        when(l.isInfoEnabled()).thenReturn(true);
 
         String body = "<aRoot xmlns:nsa=\"http://namespacec.net\"><nsa:a xmlns:nsa=\"http://namespacea.net\">Hello|there|Camel</nsa:a>"
                 + "<nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a><nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a>"
@@ -82,19 +75,13 @@ public class XPathTransformTest extends ContextTestSupport {
         NodeList list = XPathBuilder.xpath("//*", NodeList.class).logNamespaces().evaluate(context, doc, NodeList.class);
         assertNotNull(list);
 
-        verify(l);
+        verify(l).info(argThat(containsString("Namespaces discovered in message")), any(Object.class));
     }
 
     public void testXPathNamespaceLoggingDisabledJavaDSL() throws Exception {
-        Logger l = createNiceMock(Logger.class);
+        Logger l = mock(Logger.class);
 
-        expect(l.isInfoEnabled()).andReturn(true).anyTimes();
-
-        Capture<String> captures = new Capture<String>(CaptureType.ALL);
-        l.info(capture(captures), anyObject(Object.class));
-        expectLastCall().anyTimes();
-
-        replay(l);
+        when(l.isInfoEnabled()).thenReturn(true);
 
         String body = "<aRoot xmlns:nsa=\"http://namespacec.net\"><nsa:a xmlns:nsa=\"http://namespacea.net\">Hello|there|Camel</nsa:a>"
                 + "<nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a><nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a>"
@@ -112,13 +99,7 @@ public class XPathTransformTest extends ContextTestSupport {
         NodeList list = XPathBuilder.xpath("//*", NodeList.class).evaluate(context, doc, NodeList.class);
         assertNotNull(list);
 
-        verify(l);
-
-        for (String c : captures.getValues()) {
-            if (c.contains("Namespaces discovered in message")) {
-                throw new AssertionError("Did not expect LOG.info with 'Namespaces discovered in message'");
-            }
-        }
+        verify(l, never()).info(argThat(containsString("Namespaces discovered in message")), any(Object.class));
     }
 
 }

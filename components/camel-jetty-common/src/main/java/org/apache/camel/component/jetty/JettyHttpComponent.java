@@ -621,6 +621,41 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (ssl != null) {
             answer.setSslContext(ssl.createSSLContext(getCamelContext()));
         }
+
+        // jetty default is
+        // addExcludeProtocols("SSL", "SSLv2", "SSLv2Hello", "SSLv3");
+        // setExcludeCipherSuites("^.*_(MD5|SHA|SHA1)$");
+
+        // configure include/exclude ciphers and protocols
+        if (ssl != null && ssl.getCipherSuitesFilter() != null)  {
+            List<String> includeCiphers = ssl.getCipherSuitesFilter().getInclude();
+            if (includeCiphers != null && !includeCiphers.isEmpty()) {
+                String[] arr = includeCiphers.toArray(new String[includeCiphers.size()]);
+                answer.setIncludeCipherSuites(arr);
+            } else {
+                answer.setIncludeCipherSuites(".*");
+            }
+            List<String> excludeCiphers = ssl.getCipherSuitesFilter().getExclude();
+            if (excludeCiphers != null && !excludeCiphers.isEmpty()) {
+                String[] arr = excludeCiphers.toArray(new String[excludeCiphers.size()]);
+                answer.setExcludeCipherSuites(arr);
+            }
+        }
+        if (ssl != null && ssl.getSecureSocketProtocolsFilter() != null) {
+            List<String> includeProtocols = ssl.getSecureSocketProtocolsFilter().getInclude();
+            if (includeProtocols != null && !includeProtocols.isEmpty()) {
+                String[] arr = includeProtocols.toArray(new String[includeProtocols.size()]);
+                answer.setIncludeProtocols(arr);
+            } else {
+                answer.setIncludeProtocols(".*");
+            }
+            List<String> excludeProtocols = ssl.getSecureSocketProtocolsFilter().getExclude();
+            if (excludeProtocols != null && !excludeProtocols.isEmpty()) {
+                String[] arr = excludeProtocols.toArray(new String[excludeProtocols.size()]);
+                answer.setExcludeProtocols(arr);
+            }
+        }
+
         return answer;
     }
 

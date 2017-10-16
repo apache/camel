@@ -20,17 +20,29 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
  * Represents the component that manages {@link ThriftEndpoint}.
  */
-public class ThriftComponent extends DefaultComponent {
+public class ThriftComponent extends DefaultComponent implements SSLContextParametersAware {
+    
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ThriftConfiguration config = new ThriftConfiguration();
 
         config = parseConfiguration(config, uri, parameters);
+        SSLContextParameters sslParameters = config.getSslParameters();
+        if (config.getNegotiationType() == ThriftNegotiationType.SSL && sslParameters == null) {
+            sslParameters = retrieveGlobalSslContextParameters();
+            config.setSslParameters(sslParameters);
+        }
+        
         setProperties(config, parameters);
 
         Endpoint endpoint = new ThriftEndpoint(uri, this, config);
@@ -45,5 +57,18 @@ public class ThriftComponent extends DefaultComponent {
     protected ThriftConfiguration parseConfiguration(ThriftConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
         configuration.parseURI(new URI(remaining), parameters, this);
         return configuration;
+    }
+
+    /**
+     * Determine if the thrift component is using global SSL context parameters
+     */
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 }

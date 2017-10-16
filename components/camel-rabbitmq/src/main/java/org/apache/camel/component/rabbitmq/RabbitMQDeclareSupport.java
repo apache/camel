@@ -61,16 +61,33 @@ public class RabbitMQDeclareSupport {
         populateQueueArgumentsFromDeadLetterExchange(queueArgs);
         populateQueueArgumentsFromConfigurer(queueArgs);
         queueArgs.putAll(endpoint.getQueueArgs());
+        formatSpecialQueueArguments(queueArgs);
         return queueArgs;
     }
 
-    private Map<String, Object> populateQueueArgumentsFromDeadLetterExchange(final Map<String, Object> queueArgs) {
+    private void formatSpecialQueueArguments(Map<String, Object> queueArgs) {
+        // some arguments must be in numeric values so we need to fix this
+        Object queueLengthLimit = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY);
+        if (queueLengthLimit != null && queueLengthLimit instanceof String) {
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY, Long.parseLong((String) queueLengthLimit));
+        }
+
+        Object queueMessageTtl = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY);
+        if (queueMessageTtl != null && queueMessageTtl instanceof String) {
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY, Long.parseLong((String) queueMessageTtl));
+        }
+
+        Object queueExpiration = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY);
+        if (queueExpiration != null && queueExpiration instanceof String) {
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY, Long.parseLong((String) queueExpiration));
+        }
+    }
+
+    private void populateQueueArgumentsFromDeadLetterExchange(final Map<String, Object> queueArgs) {
         if (endpoint.getDeadLetterExchange() != null) {
             queueArgs.put(RabbitMQConstants.RABBITMQ_DEAD_LETTER_EXCHANGE, endpoint.getDeadLetterExchange());
             queueArgs.put(RabbitMQConstants.RABBITMQ_DEAD_LETTER_ROUTING_KEY, endpoint.getDeadLetterRoutingKey());
         }
-
-        return queueArgs;
     }
 
     private Map<String, Object> resolvedExchangeArguments() {

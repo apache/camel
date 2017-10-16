@@ -24,7 +24,6 @@ import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxGroup;
 import com.box.sdk.BoxGroupMembership;
 import com.box.sdk.BoxUser;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxGroupsManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;
@@ -36,14 +35,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Test class for {@link BoxGroupsManager}
- * APIs.
+ * Test class for {@link BoxGroupsManager} APIs.
  */
 public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoxGroupsManagerIntegrationTest.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
-            .getApiName(BoxGroupsManagerApiMethod.class).getName();
+        .getApiName(BoxGroupsManagerApiMethod.class).getName();
+    private static final String CAMEL_TEST_GROUP_DESCRIPTION = "CamelTestGroupDescription";
     private static final String CAMEL_TEST_GROUP_NAME = "CamelTestGroup";
     private static final String CAMEL_TEST_CREATE_GROUP_NAME = "CamelTestCreateGroup";
 
@@ -61,7 +60,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
         headers.put("CamelBox.role", null);
 
         final com.box.sdk.BoxGroupMembership result = requestBodyAndHeaders("direct://ADDGROUPMEMBERSHIP", null,
-                headers);
+            headers);
 
         assertNotNull("addGroupMembership result", result);
         LOG.debug("addGroupMembership: " + result);
@@ -115,8 +114,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
 
     @Test
     public void testGetAllGroups() throws Exception {
-        @SuppressWarnings("rawtypes")
-        final java.util.Collection result = requestBody("direct://GETALLGROUPS", null);
+        @SuppressWarnings("rawtypes") final java.util.Collection result = requestBody("direct://GETALLGROUPS", null);
 
         assertNotNull("getAllGroups result", result);
         LOG.debug("getAllGroups: " + result);
@@ -129,6 +127,27 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
 
         assertNotNull("getGroupInfo result", result);
         LOG.debug("getGroupInfo: " + result);
+    }
+
+    @Test
+    public void testUpdateGroupInfo() throws Exception {
+        BoxGroup.Info info = testGroup.getInfo();
+        info.setDescription(CAMEL_TEST_GROUP_DESCRIPTION);
+
+        try {
+            final Map<String, Object> headers = new HashMap<String, Object>();
+            // parameter type is String
+            headers.put("CamelBox.groupId", testGroup.getID());
+            // parameter type is com.box.sdk.BoxGroup.Info
+            headers.put("CamelBox.groupInfo", info);
+            final com.box.sdk.BoxGroup result = requestBodyAndHeaders("direct://UPDATEGROUPINFO", null, headers);
+            assertNotNull("updateGroupInfo result", result);
+            LOG.debug("updateGroupInfo: " + result);
+        } finally {
+            info = testGroup.getInfo();
+            info.setDescription("");
+            testGroup.updateInfo(info);
+        }
     }
 
     @Test
@@ -145,8 +164,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testGetGroupMemberships() throws Exception {
         // using String message body for single parameter "groupId"
-        @SuppressWarnings("rawtypes")
-        final java.util.Collection result = requestBody("direct://GETGROUPMEMBERSHIPS", testGroup.getID());
+        @SuppressWarnings("rawtypes") final java.util.Collection result = requestBody("direct://GETGROUPMEMBERSHIPS", testGroup.getID());
 
         assertNotNull("getGroupMemberships result", result);
         LOG.debug("getGroupMemberships: " + result);
@@ -164,7 +182,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
         headers.put("CamelBox.info", info);
 
         final com.box.sdk.BoxGroupMembership result = requestBodyAndHeaders("direct://UPDATEGROUPMEMBERSHIPINFO", null,
-                headers);
+            headers);
 
         assertNotNull("updateGroupMembershipInfo result", result);
         LOG.debug("updateGroupMembershipInfo: " + result);
@@ -185,7 +203,7 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
 
                 // test route for deleteGroupMembership
                 from("direct://DELETEGROUPMEMBERSHIP")
-                        .to("box://" + PATH_PREFIX + "/deleteGroupMembership?inBody=groupMembershipId");
+                    .to("box://" + PATH_PREFIX + "/deleteGroupMembership?inBody=groupMembershipId");
 
                 // test route for getAllGroups
                 from("direct://GETALLGROUPS").to("box://" + PATH_PREFIX + "/getAllGroups");
@@ -195,11 +213,11 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
 
                 // test route for getGroupMembershipInfo
                 from("direct://GETGROUPMEMBERSHIPINFO")
-                        .to("box://" + PATH_PREFIX + "/getGroupMembershipInfo?inBody=groupMemebershipId");
+                    .to("box://" + PATH_PREFIX + "/getGroupMembershipInfo?inBody=groupMemebershipId");
 
                 // test route for getGroupMemberships
                 from("direct://GETGROUPMEMBERSHIPS")
-                        .to("box://" + PATH_PREFIX + "/getGroupMemberships?inBody=groupId");
+                    .to("box://" + PATH_PREFIX + "/getGroupMemberships?inBody=groupId");
 
                 // test route for updateGroupMembershipInfo
                 from("direct://UPDATEGROUPMEMBERSHIPINFO").to("box://" + PATH_PREFIX + "/updateGroupMembershipInfo");
@@ -258,8 +276,8 @@ public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
             return ((Collection<?>) it).size();
         } else {
             int i = 0;
-            for (@SuppressWarnings("unused") 
-            Object obj : it) {
+            for (@SuppressWarnings("unused")
+                Object obj : it) {
                 i++;
             }
             return i;

@@ -62,7 +62,8 @@ The uniVocity Fixed Length dataformat supports 17 options which are listed below
 | numberOfRecordsToRead |  | Integer | The maximum number of record to read.
 | emptyValue |  | String | The String representation of an empty value
 | lineSeparator |  | String | The line separator of the files The default value is to use the JVM platform line separator
-| normalizedLineSeparator | \n | String | The normalized line separator of the files The default value is \n
+| normalizedLineSeparator | 
+ | String | The normalized line separator of the files The default value is a new line character.
 | comment | # | String | The comment symbol. The default value is
 | lazyLoad | false | Boolean | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one. The default value is false
 | asMap | false | Boolean | Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected). The default value is false

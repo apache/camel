@@ -47,8 +47,7 @@ import org.springframework.context.annotation.Scope;
 @ConditionalOnProperty(prefix = "camel.clustered.controller", name = "enabled")
 @EnableConfigurationProperties(ClusteredRouteControllerConfiguration.class)
 public class ClusteredRouteControllerAutoConfiguration {
-    @Autowired
-    private ClusteredRouteControllerConfiguration configuration;
+
     @Autowired(required = false)
     private List<ClusteredRouteFilter> filters = Collections.emptyList();
 
@@ -56,7 +55,7 @@ public class ClusteredRouteControllerAutoConfiguration {
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     @ConditionalOnMissingBean
     @ConditionalOnBean(CamelClusterService.class)
-    public RouteController routeController() {
+    public RouteController routeController(ClusteredRouteControllerConfiguration configuration) {
         ClusteredRouteController controller = new ClusteredRouteController();
         controller.setNamespace(configuration.getNamespace());
 
@@ -68,7 +67,7 @@ public class ClusteredRouteControllerAutoConfiguration {
         controller.setFilters(filters);
         controller.addFilter(new ClusteredRouteFilters.IsAutoStartup());
 
-        if (ObjectHelper.isEmpty(configuration.getClusterService())) {
+        if (ObjectHelper.isNotEmpty(configuration.getClusterService())) {
             controller.setClusterService(configuration.getClusterService());
         }
 

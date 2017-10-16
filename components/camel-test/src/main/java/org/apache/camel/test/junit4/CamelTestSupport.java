@@ -91,6 +91,12 @@ import org.slf4j.LoggerFactory;
  * @version
  */
 public abstract class CamelTestSupport extends TestSupport {
+
+    /**
+     * JVM system property which can be set to true to turn on dumping route coverage statistics.
+     */
+    public static final String ROUTE_COVERAGE_ENABLED = "CamelTestRouteCoverage";
+
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
     private static final ThreadLocal<Boolean> INIT = new ThreadLocal<Boolean>();
     private static ThreadLocal<ModelCamelContext> threadCamelContext = new ThreadLocal<ModelCamelContext>();
@@ -128,6 +134,8 @@ public abstract class CamelTestSupport extends TestSupport {
      * <p/>
      * This allows tooling or manual inspection of the stats, so you can generate a route trace diagram of which EIPs
      * have been in use and which have not. Similar concepts as a code coverage report.
+     * <p/>
+     * You can also turn on route coverage globally via setting JVM system property <tt>CamelTestRouteCoverage=true</tt>.
      *
      * @return <tt>true</tt> to write route coverage status in an xml file in the <tt>target/camel-route-coverage</tt> directory after the test has finished.
      */
@@ -284,7 +292,7 @@ public abstract class CamelTestSupport extends TestSupport {
     private void doSetUp() throws Exception {
         log.debug("setUp test");
         // jmx is enabled if we have configured to use it, or if dump route coverage is enabled (it requires JMX)
-        boolean jmx = useJmx() || isDumpRouteCoverage();
+        boolean jmx = useJmx() || isRouteCoverageEnabled();
         if (jmx) {
             enableJMX();
         } else {
@@ -382,6 +390,10 @@ public abstract class CamelTestSupport extends TestSupport {
         }
     }
 
+    private boolean isRouteCoverageEnabled() {
+        return System.getProperty(ROUTE_COVERAGE_ENABLED, "false").equalsIgnoreCase("true") || isDumpRouteCoverage();
+    }
+
     @After
     public void tearDown() throws Exception {
         long time = watch.stop();
@@ -391,7 +403,7 @@ public abstract class CamelTestSupport extends TestSupport {
         log.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
 
         // if we should dump route stats, then write that to a file
-        if (isDumpRouteCoverage()) {
+        if (isRouteCoverageEnabled()) {
             String className = this.getClass().getSimpleName();
             String dir = "target/camel-route-coverage";
             String name = className + "-" + getTestMethodName() + ".xml";
@@ -410,7 +422,7 @@ public abstract class CamelTestSupport extends TestSupport {
                 file.mkdirs();
                 file = new File(dir, name);
 
-                log.info("Dumping route coverage to file: " + file);
+                log.info("Dumping route coverage to file: {}", file);
                 InputStream is = new ByteArrayInputStream(combined.getBytes());
                 OutputStream os = new FileOutputStream(file, false);
                 IOHelper.copyAndCloseInput(is, os);
@@ -485,7 +497,6 @@ public abstract class CamelTestSupport extends TestSupport {
 
         builder.append(routesSummary);
         log.info(builder.toString());
-
     }
 
     /**

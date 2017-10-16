@@ -78,20 +78,35 @@ public class BoxGroupsManager {
     }
 
     /**
-     * Create a new group with a specified name.
+     * Create a new group with a specified name and optional additional parameters.
+     * Optional parameters may be null.
      * 
      * @param name
      *            - the name of the new group.
+     * @param provenance
+     *            - the provenance of the new group.
+     * @param externalSyncIdentifier
+     *            - the external_sync_identifier of the new group.
+     * @param description
+     *            - the description of the new group.
+     * @param invitabilityLevel
+     *            - the invitibility_level of the new group.
+     * @param memberViewabilityLevel
+     *            - the member_viewability_level of the new group.
      * @return The newly created group.
      */
-    public BoxGroup createGroup(String name) {
+    public BoxGroup createGroup(String name, String provenance,
+        String externalSyncIdentifier, String description,
+        String invitabilityLevel, String memberViewabilityLevel) {
+
         try {
             LOG.debug("Creating group name=" + name);
             if (name == null) {
                 throw new IllegalArgumentException("Parameter 'name' can not be null");
             }
 
-            return BoxGroup.createGroup(boxConnection, name).getResource();
+            return BoxGroup.createGroup(boxConnection, name, provenance, externalSyncIdentifier, description,
+                invitabilityLevel, memberViewabilityLevel).getResource();
         } catch (BoxAPIException e) {
             throw new RuntimeException(
                     String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
@@ -136,6 +151,34 @@ public class BoxGroupsManager {
             BoxGroup group = new BoxGroup(boxConnection, groupId);
 
             return group.getInfo();
+        } catch (BoxAPIException e) {
+            throw new RuntimeException(
+                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+        }
+    }
+
+    /**
+     * Update group information.
+     *
+     * @param groupId
+     *            - the id of group to update.
+     * @param groupInfo
+     *            - the updated information
+     * @return The updated group.
+     */
+    public BoxGroup updateGroupInfo(String groupId, BoxGroup.Info groupInfo) {
+        try {
+            LOG.debug("Updating info for group(id=" + groupId + ")");
+            if (groupId == null) {
+                throw new IllegalArgumentException("Parameter 'groupId' can not be null");
+            }
+            if (groupInfo == null) {
+                throw new IllegalArgumentException("Parameter 'groupInfo' can not be null");
+            }
+
+            BoxGroup group = new BoxGroup(boxConnection, groupId);
+            group.updateInfo(groupInfo);
+            return group;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
                     String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);

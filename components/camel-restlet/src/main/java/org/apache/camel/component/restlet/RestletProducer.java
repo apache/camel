@@ -17,11 +17,9 @@
 package org.apache.camel.component.restlet;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

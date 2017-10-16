@@ -26,11 +26,6 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Injector;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.mock;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
@@ -38,6 +33,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class DefaultFactoryFinderTest {
 
@@ -60,12 +57,10 @@ public class DefaultFactoryFinderTest {
 
         final String properties = "class=" + TestImplA.class.getName();
 
-        expect(classResolver.loadResourceAsStream("/org/apache/camel/impl/TestImplA"))
-                .andReturn(new ByteArrayInputStream(properties.getBytes()));
+        when(classResolver.loadResourceAsStream("/org/apache/camel/impl/TestImplA"))
+                .thenReturn(new ByteArrayInputStream(properties.getBytes()));
 
-        expect(classResolver.resolveClass(TestImplA.class.getName())).andReturn(null);
-
-        replay(classResolver);
+        when(classResolver.resolveClass(TestImplA.class.getName())).thenReturn(null);
 
         final DefaultFactoryFinder factoryFinder = new DefaultFactoryFinder(classResolver, TEST_RESOURCE_PATH);
 
@@ -73,7 +68,6 @@ public class DefaultFactoryFinderTest {
             factoryFinder.findClass("TestImplA", null);
             fail("Should have thrown ClassNotFoundException");
         } catch (final ClassNotFoundException e) {
-            verify(classResolver);
             assertEquals(TestImplA.class.getName(), e.getMessage());
         }
 
@@ -81,12 +75,10 @@ public class DefaultFactoryFinderTest {
 
     @Test
     public void shouldComplainIfInstanceTypeIsNotAsExpected() throws ClassNotFoundException, IOException {
-        final Injector injector = createMock(Injector.class);
+        final Injector injector = mock(Injector.class);
 
         final TestImplA expected = new TestImplA();
-        expect(injector.newInstance(TestImplA.class)).andReturn(expected);
-
-        replay(injector);
+        when(injector.newInstance(TestImplA.class)).thenReturn(expected);
 
         try {
             factoryFinder.newInstances("TestImplA", injector, TestImplB.class);
@@ -128,16 +120,12 @@ public class DefaultFactoryFinderTest {
 
     @Test
     public void shouldCreateNewInstancesWithInjector() throws ClassNotFoundException, IOException {
-        final Injector injector = createMock(Injector.class);
+        final Injector injector = mock(Injector.class);
 
         final TestImplA expected = new TestImplA();
-        expect(injector.newInstance(TestImplA.class)).andReturn(expected);
-
-        replay(injector);
+        when(injector.newInstance(TestImplA.class)).thenReturn(expected);
 
         final List<TestType> instances = factoryFinder.newInstances("TestImplA", injector, TestType.class);
-
-        verify(injector);
 
         assertEquals(1, instances.size());
         assertThat(instances, hasItem(expected));

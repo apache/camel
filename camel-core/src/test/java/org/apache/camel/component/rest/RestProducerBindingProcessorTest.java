@@ -28,20 +28,16 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.spi.DataFormat;
-import org.easymock.Capture;
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.capture;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.mock;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.same;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.same;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class RestProducerBindingProcessorTest {
 
@@ -74,27 +70,22 @@ public class RestProducerBindingProcessorTest {
         input.setBody(request);
         exchange.setIn(input);
 
-        jsonDataFormat.marshal(same(exchange), same(request), anyObject(OutputStream.class));
-        expectLastCall().andVoid();
-
         final ResponsePojo response = new ResponsePojo();
-        expect(outJsonDataFormat.unmarshal(same(exchange), anyObject(InputStream.class))).andReturn(response);
+        when(outJsonDataFormat.unmarshal(same(exchange), any(InputStream.class))).thenReturn(response);
 
-        final Capture<AsyncCallback> bindingCallback = EasyMock.newCapture();
+        final ArgumentCaptor<AsyncCallback> bindingCallback = ArgumentCaptor.forClass(AsyncCallback.class);
 
-        expect(processor.process(same(exchange), capture(bindingCallback))).andReturn(false);
-
-        replay(jsonDataFormat, outJsonDataFormat, processor);
+        when(processor.process(same(exchange), bindingCallback.capture())).thenReturn(false);
 
         bindingProcessor.process(exchange, callback);
 
-        assertTrue(bindingCallback.hasCaptured());
+        verify(jsonDataFormat).marshal(same(exchange), same(request), any(OutputStream.class));
+
+        assertNotNull(bindingCallback.getValue());
 
         final AsyncCallback that = bindingCallback.getValue();
 
         that.done(false);
-
-        verify(jsonDataFormat, outJsonDataFormat, processor);
 
         Assert.assertSame(response, exchange.getOut().getBody());
     }
@@ -113,27 +104,22 @@ public class RestProducerBindingProcessorTest {
         input.setBody(request);
         exchange.setIn(input);
 
-        xmlDataFormat.marshal(same(exchange), same(request), anyObject(OutputStream.class));
-        expectLastCall().andVoid();
-
         final ResponsePojo response = new ResponsePojo();
-        expect(outXmlDataFormat.unmarshal(same(exchange), anyObject(InputStream.class))).andReturn(response);
+        when(outXmlDataFormat.unmarshal(same(exchange), any(InputStream.class))).thenReturn(response);
 
-        final Capture<AsyncCallback> bindingCallback = EasyMock.newCapture();
+        final ArgumentCaptor<AsyncCallback> bindingCallback = ArgumentCaptor.forClass(AsyncCallback.class);
 
-        expect(processor.process(same(exchange), capture(bindingCallback))).andReturn(false);
-
-        replay(xmlDataFormat, outXmlDataFormat, processor);
+        when(processor.process(same(exchange), bindingCallback.capture())).thenReturn(false);
 
         bindingProcessor.process(exchange, callback);
 
-        assertTrue(bindingCallback.hasCaptured());
+        verify(xmlDataFormat).marshal(same(exchange), same(request), any(OutputStream.class));
+
+        assertNotNull(bindingCallback.getValue());
 
         final AsyncCallback that = bindingCallback.getValue();
 
         that.done(false);
-
-        verify(xmlDataFormat, outXmlDataFormat, processor);
 
         Assert.assertSame(response, exchange.getOut().getBody());
     }
@@ -152,20 +138,16 @@ public class RestProducerBindingProcessorTest {
         input.setBody(request);
         exchange.setIn(input);
 
-        final Capture<AsyncCallback> bindingCallback = EasyMock.newCapture();
+        final ArgumentCaptor<AsyncCallback> bindingCallback = ArgumentCaptor.forClass(AsyncCallback.class);
 
-        expect(processor.process(same(exchange), capture(bindingCallback))).andReturn(false);
-
-        replay(processor);
+        when(processor.process(same(exchange), bindingCallback.capture())).thenReturn(false);
 
         bindingProcessor.process(exchange, callback);
 
-        assertTrue(bindingCallback.hasCaptured());
+        assertNotNull(bindingCallback.getValue());
 
         final AsyncCallback that = bindingCallback.getValue();
 
         that.done(false);
-
-        verify(processor);
     }
 }

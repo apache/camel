@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
-    private final Map<Integer, User> users = new TreeMap<Integer, User>();
+    private final Map<Integer, User> users = new TreeMap<>();
 
     public UserServiceImpl() {
         users.put(1, new User(1, "John Coltrane"));

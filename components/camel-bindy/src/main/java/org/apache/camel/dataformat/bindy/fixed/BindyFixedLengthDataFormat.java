@@ -119,7 +119,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                         LOG.info("Skipping marshal of header row; 'skipHeader=true'");
                         continue;
                     } else {
-                        result = headerFactory.unbind(model);
+                        result = headerFactory.unbind(getCamelContext(), model);
                     }
                 }
             } else if (row == models.size() && footerFactory != null) {
@@ -131,14 +131,14 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                         LOG.info("Skipping marshal of footer row; 'skipFooter=true'");
                         continue;
                     } else {
-                        result = footerFactory.unbind(model);
+                        result = footerFactory.unbind(getCamelContext(), model);
                     }
                 }
             }
 
             if (result == null) {
                 // marshal as a normal / default row
-                result = factory.unbind(model);
+                result = factory.unbind(getCamelContext(), model);
             }
 
             byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
@@ -291,7 +291,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         Map<String, Object> model = factory.factory();
 
         // Bind data from Fixed record with model classes
-        factory.bind(myLine, model, count);
+        factory.bind(getCamelContext(), myLine, model, count);
 
         // Link objects together
         factory.link(model);

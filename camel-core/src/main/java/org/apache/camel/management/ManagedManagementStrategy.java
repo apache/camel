@@ -24,6 +24,7 @@ import org.apache.camel.management.mbean.ManagedBacklogDebugger;
 import org.apache.camel.management.mbean.ManagedBacklogTracer;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedCamelHealth;
+import org.apache.camel.management.mbean.ManagedClusterService;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedDataFormat;
@@ -140,6 +141,9 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
         } else if (managedObject instanceof ManagedThreadPool) {
             ManagedThreadPool mes = (ManagedThreadPool) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForThreadPool(mes.getContext(), mes.getThreadPool(), mes.getId(), mes.getSourceId());
+        } else if (managedObject instanceof ManagedClusterService) {
+            ManagedClusterService mcs = (ManagedClusterService) managedObject;
+            objectName = getManagementNamingStrategy().getObjectNameForClusterService(mcs.getContext(), mcs.getService());
         } else if (managedObject instanceof ManagedService) {
             // check for managed service should be last
             ManagedService ms = (ManagedService) managedObject;

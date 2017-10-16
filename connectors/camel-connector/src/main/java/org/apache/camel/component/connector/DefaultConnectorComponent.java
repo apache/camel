@@ -66,14 +66,18 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
     private Processor afterConsumer;
 
     protected DefaultConnectorComponent(String componentName, String className) {
-        this.model = new ConnectorModel(componentName, className);
+        this(componentName, loadConnectorClass(className));
+    }
+
+    protected DefaultConnectorComponent(String componentName, Class<?> componentClass) {
+        this.model = new ConnectorModel(componentName, componentClass);
         this.baseScheme = this.model.getBaseScheme();
         this.componentName = componentName;
         this.componentScheme = componentName + "-component";
         this.options = new HashMap<>();
 
         // add to catalog
-        this.catalog.addComponent(componentName, className);
+        this.catalog.addComponent(componentName, componentClass.getName());
 
         // It may be a custom component so we need to register this in the camel catalog also
         if (!catalog.findComponentNames().contains(baseScheme)) {
@@ -87,6 +91,15 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         }
 
         registerExtension(this::getComponentVerifierExtension);
+    }
+
+    private static Class<?> loadConnectorClass(String className) {
+        try {
+            ClassLoader classLoader = DefaultConnectorComponent.class.getClassLoader();
+            return classLoader.loadClass(className);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     protected <T> void doAddOption(Map<String, T> options, String name, T value) {
@@ -339,15 +352,15 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
                 // the connector may have default values for the component level also
                 // and if so we need to prepare these values and set on this component
                 // before we can start
-                Map<String, String> defaultOptions = model.getDefaultComponentOptions();
+                Map<String, Object> defaultOptions = model.getDefaultComponentOptions();
 
                 if (!defaultOptions.isEmpty()) {
-                    for (Map.Entry<String, String> entry : defaultOptions.entrySet()) {
+                    for (Map.Entry<String, Object> entry : defaultOptions.entrySet()) {
                         String key = entry.getKey();
-                        String value = entry.getValue();
+                        Object value = entry.getValue();
                         if (value != null) {
                             // also support {{ }} placeholders so resolve those first
-                            value = getCamelContext().resolvePropertyPlaceholders(value);
+                            value = getCamelContext().resolvePropertyPlaceholders(value.toString());
 
                             log.debug("Using component option: {}={}", key, value);
                             IntrospectionSupport.setProperty(context, base, key, value);
@@ -360,11 +373,11 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
                     // Get the list of options from the connector catalog that
                     // are configured to target the endpoint
                     List<String> endpointOptions = model.getEndpointOptions();
-                    List<String> connectorOptions = model.getConnectorOptions();
+                    Map<String, Object> connectorOptions = model.getConnectorOptions();
 
                     for (Map.Entry<String, Object> entry : options.entrySet()) {
                         // Only set options that are targeting the component
-                        if (!endpointOptions.contains(entry.getKey()) && !connectorOptions.contains(entry.getKey())) {
+                        if (!endpointOptions.contains(entry.getKey()) && !connectorOptions.containsKey(entry.getKey())) {
                             log.debug("Using component option: {}={}", entry.getKey(), entry.getValue());
                             IntrospectionSupport.setProperty(context, base, entry.getKey(), entry.getValue());
                         }
@@ -424,7 +437,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
     }
 
     private Map<String, String> buildEndpointOptions(String remaining, Map<String, Object> parameters) throws URISyntaxException, NoTypeConversionAvailableException {
-        Map<String, String> defaultOptions = model.getDefaultEndpointOptions();
+        Map<String, Object> defaultOptions = model.getDefaultEndpointOptions();
 
         // gather all options to use when building the delegate uri
         Map<String, String> options = new LinkedHashMap<>();
@@ -433,7 +446,8 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         if (!defaultOptions.isEmpty()) {
             defaultOptions.forEach((key, value) -> {
                 if (isValidConnectionOption(key, value)) {
-                    doAddOption(options, key, value);
+                    String text = value.toString();
+                    doAddOption(options, key, text);
                 }
             });
         }
@@ -482,7 +496,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         return options;
     }
 
-    private boolean isValidConnectionOption(String key, String value) {
+    private boolean isValidConnectionOption(String key, Object value) {
         // skip specific option if its a scheduler
         if (model.getScheduler() != null && asSchedulerKey(key) != null) {
             return false;

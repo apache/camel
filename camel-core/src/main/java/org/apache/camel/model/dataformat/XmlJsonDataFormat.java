@@ -31,7 +31,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * XML-JSon data format
+ * XML JSon data format can convert from XML to JSON and vice-versa directly, without stepping through intermediate POJOs.
  *
  * @version 
  */
@@ -73,7 +73,7 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
     private Boolean skipNamespaces;
     @XmlAttribute
     private Boolean removeNamespacePrefixes;
-    @XmlAttribute @XmlList
+    @XmlAttribute @XmlList @Metadata(label = "advanced")
     private List<String> expandableProperties;
     @XmlAttribute
     private String typeHints;

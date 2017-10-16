@@ -33,7 +33,7 @@ public class SimpleProcessorTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").process(new Processor() {
+                from("direct:start").routeId("myRoute").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody("Bye World");
                     }

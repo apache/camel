@@ -97,6 +97,7 @@ public class ContextInfoCommand extends AbstractContextCommand {
             out.println(stringEscape.unescapeJava("\tClassResolver: " + row.get("classResolver")));
             out.println(stringEscape.unescapeJava("\tPackageScanClassResolver: " + row.get("packageScanClassResolver")));
             out.println(stringEscape.unescapeJava("\tApplicationContextClassLoader: " + row.get("applicationContextClassLoader")));
+            out.println(stringEscape.unescapeJava("\tHeadersMapFactory: " + row.get("headersMapFactory")));
 
             printStatistics(camelController, out);
 

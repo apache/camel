@@ -524,7 +524,7 @@ public abstract class TestSupport extends Assert {
      */
     public static boolean isPlatform(String platform) {
         String osName = System.getProperty("os.name").toLowerCase(Locale.US);
-        return osName.indexOf(platform.toLowerCase(Locale.US)) > -1;
+        return osName.contains(platform.toLowerCase(Locale.US));
     }
 
     /**
@@ -537,14 +537,14 @@ public abstract class TestSupport extends Assert {
      */
     public static boolean isJavaVendor(String vendor) {
         String javaVendor = System.getProperty("java.vendor").toLowerCase(Locale.US);
-        return javaVendor.indexOf(vendor.toLowerCase(Locale.US)) > -1;
+        return javaVendor.contains(vendor.toLowerCase(Locale.US));
     }
 
     /**
      * Is this Java 1.5
      *
      * @return <tt>true</tt> if its Java 1.5, <tt>false</tt> if its not (for example Java 1.6 or better)
-     * @deprecated will be removed in the near future as Camel now requires JDK1.6+
+     * @deprecated will be removed in the future as Camel requires JDK1.8+
      */
     @Deprecated
     public static boolean isJava15() {
@@ -555,7 +555,9 @@ public abstract class TestSupport extends Assert {
      * Is this Java 1.6
      *
      * @return <tt>true</tt> if its Java 1.6, <tt>false</tt> if its not (for example Java 1.7 or better)
+     * @deprecated will be removed in the future as Camel requires JDK1.8+
      */
+    @Deprecated
     public static boolean isJava16() {
         return getJavaMajorVersion() == 6;
 
@@ -565,7 +567,9 @@ public abstract class TestSupport extends Assert {
      * Is this Java 1.7
      *
      * @return <tt>true</tt> if its Java 1.7, <tt>false</tt> if its not (for example Java 1.6 or older)
+     * @deprecated will be removed in the future as Camel requires JDK1.8+
      */
+    @Deprecated
     public static boolean isJava17() {
         return getJavaMajorVersion() == 7;
 
@@ -578,6 +582,16 @@ public abstract class TestSupport extends Assert {
      */
     public static boolean isJava18() {
         return getJavaMajorVersion() == 8;
+
+    }
+
+    /**
+     * Is this Java 1.9
+     *
+     * @return <tt>true</tt> if its Java 1.9, <tt>false</tt> if its not (for example Java 1.8 or older)
+     */
+    public static boolean isJava19() {
+        return getJavaMajorVersion() == 9;
 
     }
 

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mongodb.converters;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -72,6 +73,14 @@ public final class MongoDbFallbackConverter {
         // okay then fallback and use jackson
         if (type == DBObject.class) {
             Map<?, ?> m = OBJECT_MAPPER.convertValue(value, Map.class);
+            // workaround problem with mongodb for BigDecimal should be Double
+            for (Map.Entry entry : m.entrySet()) {
+                Object v = entry.getValue();
+                if (v instanceof BigDecimal) {
+                    v = Double.valueOf(v.toString());
+                    entry.setValue(v);
+                }
+            }
             return new BasicDBObject(m);
         }
 

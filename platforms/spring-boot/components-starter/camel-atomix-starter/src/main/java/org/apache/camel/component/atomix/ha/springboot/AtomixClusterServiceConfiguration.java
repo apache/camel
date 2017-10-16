@@ -17,12 +17,13 @@
 package org.apache.camel.component.atomix.ha.springboot;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import io.atomix.copycat.server.storage.StorageLevel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "camel.clustered.service.atomix")
+@ConfigurationProperties(prefix = "camel.component.atomix.cluster.service")
 public class AtomixClusterServiceConfiguration {
     enum Mode {
         node,
@@ -72,6 +73,16 @@ public class AtomixClusterServiceConfiguration {
      * The Atomix configuration uri.
      */
     private String configurationUri;
+
+    /**
+     * Custom service attributes.
+     */
+    private Map<String, Object> attributes;
+    
+    /**
+     * Service lookup order/priority.
+     */
+    private Integer order;
 
     // *********************************
     // Properties
@@ -147,5 +158,21 @@ public class AtomixClusterServiceConfiguration {
 
     public void setConfigurationUri(String configurationUri) {
         this.configurationUri = configurationUri;
+    }
+
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
     }
 }

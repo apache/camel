@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.dataformat.bindy.annotation.BindyConverter;
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
@@ -116,15 +117,15 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     }
 
     @Override
-    public void bind(List<String> data, Map<String, Object> model, int line) throws Exception {
+    public void bind(CamelContext camelContext, List<String> data, Map<String, Object> model, int line) throws Exception {
 
         // Map to hold the model @OneToMany classes while binding
         Map<String, List<Object>> lists = new HashMap<String, List<Object>>();
 
-        bind(data, model, line, lists);
+        bind(camelContext, data, model, line, lists);
     }
 
-    public void bind(List<String> data, Map<String, Object> model, int line, Map<String, List<Object>> lists) throws Exception {
+    public void bind(CamelContext camelContext, List<String> data, Map<String, Object> model, int line, Map<String, List<Object>> lists) throws Exception {
 
         Map<Integer, List<String>> results = new HashMap<Integer, List<String>>();
 
@@ -412,7 +413,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
      *
      */
     @Override
-    public String unbind(Map<String, Object> model) throws Exception {
+    public String unbind(CamelContext camelContext, Map<String, Object> model) throws Exception {
 
         StringBuilder builder = new StringBuilder();
 

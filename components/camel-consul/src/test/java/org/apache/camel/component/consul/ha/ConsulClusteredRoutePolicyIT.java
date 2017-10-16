@@ -29,7 +29,7 @@ import java.util.stream.IntStream;
 import com.orbitz.consul.Consul;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ha.ClusteredRoutePolicyFactory;
+import org.apache.camel.impl.ha.ClusteredRoutePolicy;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -67,7 +67,8 @@ public class ConsulClusteredRoutePolicyIT {
 
     private static void run(String id) {
         try {
-            CountDownLatch contextLatch = new CountDownLatch(1);
+            int events = ThreadLocalRandom.current().nextInt(2, 6);
+            CountDownLatch contextLatch = new CountDownLatch(events);
 
             ConsulClusterService service = new ConsulClusterService();
             service.setId("node-" + id);
@@ -79,19 +80,14 @@ public class ConsulClusteredRoutePolicyIT {
             context.disableJMX();
             context.setName("context-" + id);
             context.addService(service);
-            context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:consul?delay=1s&period=1s&repeatCount=1")
+                    from("timer:consul?delay=1s&period=1s")
                         .routeId("route-" + id)
-                        .process(e -> {
-                            LOGGER.debug("Node {} done", id);
-                            RESULTS.add(id);
-                            // Shutdown the context later on to give a chance to
-                            // other members to catch-up
-                            SCHEDULER.schedule(contextLatch::countDown, 2 + ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS);
-                        });
+                        .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
+                        .log("From ${routeId}")
+                        .process(e -> contextLatch.countDown());
                 }
             });
 
@@ -101,6 +97,10 @@ public class ConsulClusteredRoutePolicyIT {
             context.start();
 
             contextLatch.await();
+
+            LOGGER.debug("Shutting down node {}", id);
+            RESULTS.add(id);
+
             context.stop();
 
             LATCH.countDown();

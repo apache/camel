@@ -401,9 +401,10 @@ public class BeanInfo {
         MethodInfo answer = methodMap.get(method);
         if (answer == null) {
             // maybe the method overrides, and the method map keeps info of the source override we can use
-            for (Method source : methodMap.keySet()) {
+            for (Map.Entry<Method, MethodInfo> methodEntry : methodMap.entrySet()) {
+                Method source = methodEntry.getKey();
                 if (ObjectHelper.isOverridingMethod(getType(), source, method, false)) {
-                    answer = methodMap.get(source);
+                    answer = methodEntry.getValue();
                     break;
                 }
             }

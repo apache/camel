@@ -34,9 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Messaging client for Google Cloud Platform PubSub Service:
- * https://cloud.google.com/pubsub/
- *
+ * Messaging client for Google Cloud Platform PubSub Service
+ * <p/>
  * Built on top of the Service API libraries (v1).
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "google-pubsub", title = "Google Pubsub",

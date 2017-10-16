@@ -303,6 +303,11 @@ public class MailComponentConfiguration
          * what content-type-encoding to use for attachments.
          */
         private AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver;
+        /**
+         * This option enables transparent MIME decoding and unfolding for mail
+         * headers.
+         */
+        private Boolean mimeDecodeHeaders = false;
 
         public JavaMailSender getJavaMailSender() {
             return javaMailSender;
@@ -593,6 +598,14 @@ public class MailComponentConfiguration
         public void setAttachmentsContentTransferEncodingResolver(
                 AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver) {
             this.attachmentsContentTransferEncodingResolver = attachmentsContentTransferEncodingResolver;
+        }
+
+        public Boolean getMimeDecodeHeaders() {
+            return mimeDecodeHeaders;
+        }
+
+        public void setMimeDecodeHeaders(Boolean mimeDecodeHeaders) {
+            this.mimeDecodeHeaders = mimeDecodeHeaders;
         }
     }
 }

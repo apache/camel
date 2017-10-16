@@ -121,12 +121,12 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
     // API Helpers
 
     protected <T> T service(Class<T> serviceType) {
-        ServiceReference reference = bundleContext.getServiceReference(serviceType);
+        ServiceReference reference = bundleContext.getServiceReference(serviceType.getName());
         return reference == null ? null : (T) bundleContext.getService(reference);
     }
 
     protected <T> T requiredService(Class<T> serviceType) {
-        ServiceReference reference = bundleContext.getServiceReference(serviceType);
+        ServiceReference reference = bundleContext.getServiceReference(serviceType.getName());
         if (reference == null) {
             throw new IllegalStateException("Cannot find service: " + serviceType.getName());
         }

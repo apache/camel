@@ -18,6 +18,7 @@ package org.apache.camel.impl.ha;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Consumer;
 
@@ -65,11 +66,41 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
 
     @Override
     public void addEventListener(CamelClusterEventListener listener) {
-        LockHelper.doWithWriteLock(lock, () -> listeners.add(listener));
+        if (listener == null) {
+            return;
+        }
+
+        LockHelper.doWithWriteLock(
+            lock,
+            () -> {
+                listeners.add(listener);
+
+                if (isRunAllowed()) {
+                    // if the view has already been started, fire known events so
+                    // the consumer can catch up.
+
+                    if (CamelClusterEventListener.Leadership.class.isInstance(listener)) {
+                        CamelClusterEventListener.Leadership.class.cast(listener).leadershipChanged(this, getLeader());
+                    }
+
+                    if (CamelClusterEventListener.Membership.class.isInstance(listener)) {
+                        CamelClusterEventListener.Membership ml = CamelClusterEventListener.Membership.class.cast(listener);
+
+                        for (CamelClusterMember member: getMembers()) {
+                            ml.memberAdded(this, member);
+                        }
+                    }
+                }
+            }
+        );
     }
 
     @Override
     public void removeEventListener(CamelClusterEventListener listener) {
+        if (listener == null) {
+            return;
+        }
+
         LockHelper.doWithWriteLock(lock, () -> listeners.removeIf(l -> l == listener));
     }
 
@@ -82,7 +113,7 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
             lock,
             () -> {
                 for (int i = 0; i < listeners.size(); i++) {
-                    CamelClusterEventListener listener = listeners.get(0);
+                    CamelClusterEventListener listener = listeners.get(i);
 
                     if (type.isInstance(listener)) {
                         consumer.accept(type.cast(listener));
@@ -92,7 +123,7 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
         );
     }
 
-    protected void fireLeadershipChangedEvent(CamelClusterMember leader) {
+    protected void fireLeadershipChangedEvent(Optional<CamelClusterMember> leader) {
         doWithListener(
             CamelClusterEventListener.Leadership.class,
             listener -> listener.leadershipChanged(this, leader)

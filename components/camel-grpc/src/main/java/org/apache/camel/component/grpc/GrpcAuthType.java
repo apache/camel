@@ -32,7 +32,7 @@ public enum GrpcAuthType {
     GOOGLE,
 
     /**
-     * Custom JSON Web Token with HmacSHA256 algorithm implementation
+     * Custom JSON Web Token with HmacSHA algorithms implementation
      */
     JWT
 }

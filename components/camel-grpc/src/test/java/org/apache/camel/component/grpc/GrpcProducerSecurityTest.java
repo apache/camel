@@ -27,7 +27,8 @@ import io.grpc.stub.StreamObserver;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslProvider;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.grpc.server.auth.jwt.JwtServerInterceptor;
+import org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm;
+import org.apache.camel.component.grpc.auth.jwt.JwtServerInterceptor;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
@@ -66,7 +67,7 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
         
         grpcServerWithJWT = NettyServerBuilder.forPort(GRPC_JWT_TEST_PORT)
                                               .addService(new PingPongImpl())
-                                              .intercept(new JwtServerInterceptor(GRPC_JWT_CORRECT_SECRET, null, null))
+                                              .intercept(new JwtServerInterceptor(JwtAlgorithm.HMAC256, GRPC_JWT_CORRECT_SECRET, null, null))
                                               .build()
                                               .start();
         

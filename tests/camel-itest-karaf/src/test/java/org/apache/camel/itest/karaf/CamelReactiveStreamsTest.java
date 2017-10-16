@@ -30,5 +30,4 @@ public class CamelReactiveStreamsTest extends BaseKarafTest {
         testComponent(COMPONENT);
     }
 
-
 }

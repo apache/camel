@@ -6,7 +6,7 @@ The connector component is an abstract component that is used as a building bloc
 ### What is a Camel connector?
 
 A Camel connector is a simplified setup of any existing Camel component. The idea is to be able to pre-configure
-  a connector to a specific use-case, such as _add contact to salesforce_, or _add calender entry_,
+  a connector to a specific use-case, such as _add contact to salesforce_, or _add calendar entry_,
   or _new leads from twitter_.
 
 The existing Camel components are generic and have many options. Therefore to use any of these components you
@@ -42,7 +42,7 @@ You can also copy the existing examples from the `connectors` directory where th
 - `foo-connector` - A connector that is based on the Timer component from `camel-core`.
 - `bar-connector` - A connector that is based on the 3rd party `beverage-component`.
 - `wine-connector` - Another connector that is based on the 3rd party `beverage-component`.
-- `twitter-search` - A connector based on twitter to search for keywords.
+- `twitter-find` - A connector based on twitter to search for keywords.
 
 You can find an example using these connectors in the `foo-bar-wine-example` in the `connectors` directory.
 
@@ -162,35 +162,35 @@ You will also need to add the `spring-boot-configuration-processor` in the Maven
     </dependency>
 ------------
 
-An example on how to configure a component in spring boot can be taken from the twitter-search connector:
+An example on how to configure a component in spring boot can be taken from the twitter-find connector:
 
 [source]
 ------------
-    camel.connector.twitter-search.consumer-key = ...
-    camel.connector.twitter-search.consumer-secret = ...
-    camel.connector.twitter-search.access-token = ...
-    camel.connector.twitter-search.access-token-secret = ...
-    camel.connector.twitter-search.keywords = apache-camel
+    camel.connector.twitter-find.consumer-key = ...
+    camel.connector.twitter-find.consumer-secret = ...
+    camel.connector.twitter-find.access-token = ...
+    camel.connector.twitter-find.access-token-secret = ...
+    camel.connector.twitter-find.keywords = apache-camel
 ------------
 
 You may need to instantiate multiple instance of the connector i.e. to use different logins and this is now possible through the 'configurations' parameters:
 
 [source]
 ------------
-    camel.connector.twitter-search.configurations.tw-search1.consumer-key = ...
-    camel.connector.twitter-search.configurations.tw-search1.consumer-secret = ...
-    camel.connector.twitter-search.configurations.tw-search1.access-token = ...
-    camel.connector.twitter-search.configurations.tw-search1.access-token-secret = ...
-    camel.connector.twitter-search.configurations.tw-search1.keywords = apache-camel
+    camel.connector.twitter-find.configurations.tw-find1.consumer-key = ...
+    camel.connector.twitter-find.configurations.tw-find1.consumer-secret = ...
+    camel.connector.twitter-find.configurations.tw-find1.access-token = ...
+    camel.connector.twitter-find.configurations.tw-find1.access-token-secret = ...
+    camel.connector.twitter-find.configurations.tw-find1.keywords = apache-camel
 
-    camel.connector.twitter-search.configurations.tw-search2.consumer-key = ...
-    camel.connector.twitter-search.configurations.tw-search2.consumer-secret = ...
-    camel.connector.twitter-search.configurations.tw-search2.access-token = ...
-    camel.connector.twitter-search.configurations.tw-search2.access-token-secret = ...
-    camel.connector.twitter-search.configurations.tw-search2.keywords = apache-karaf
+    camel.connector.twitter-find.configurations.tw-find2.consumer-key = ...
+    camel.connector.twitter-find.configurations.tw-find2.consumer-secret = ...
+    camel.connector.twitter-find.configurations.tw-find2.access-token = ...
+    camel.connector.twitter-find.configurations.tw-find2.access-token-secret = ...
+    camel.connector.twitter-find.configurations.tw-find2.keywords = apache-karaf
 ------------
 
-This would create two instances of the twitter-search connector each one configured with its own list of options.
+This would create two instances of the twitter-find connector each one configured with its own list of options.
 You can now use the new connectors as standard components like:
 
 [source,java]
@@ -198,9 +198,9 @@ You can now use the new connectors as standard components like:
     @Component
     public class MyRouteBuilder implements RouteBuilder{
         public void configure() throws Exception {
-            from("tw-search1")
+            from("tw-find1")
                 .log("On account 1 I got:  ${body}")
-            from("tw-search2")
+            from("tw-find2")
                 .log("On account 2 I got: ${body}")
         }
     }

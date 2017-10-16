@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>2.20.0-SNAPSHOT</version>
+    <version>2.21.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-api-component-maven-plugin</artifactId>
@@ -108,6 +108,12 @@
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
       <version>1.6</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.velocity</groupId>
+          <artifactId>velocity</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -116,7 +122,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity</artifactId>
+      <artifactId>velocity-engine-core</artifactId>
       <version>${velocity-version}</version>
     </dependency>
     
@@ -157,7 +163,7 @@
     <!-- VelocityEngine javadoc for testing -->
     <dependency>
       <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity</artifactId>
+      <artifactId>velocity-engine-core</artifactId>
       <version>${velocity-version}</version>
       <classifier>javadoc</classifier>
       <scope>test</scope>

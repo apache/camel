@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
- * For expressions and predicates using a body or header tokenizer
+ * To use Camel message body or header with a tokenizer in Camel expressions or predicates.
  *
  * @see TokenizeLanguage
  */
@@ -69,7 +69,7 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * The (start) token to use as tokenizer, for example \n for a new line token.
+     * The (start) token to use as tokenizer, for example you can use the new line token.
      * You can use simple language as the token to support dynamic tokens.
      */
     public void setToken(String token) {

@@ -26,7 +26,7 @@
   <!-- START SNIPPET: e1 -->
   <!-- camelContext is the Camel runtime, where we can host Camel routes -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
+    <route id="myRoute">
       <!-- read input from the console using the stream component -->
       <from
           uri="stream:in?promptMessage=Enter something: "/>

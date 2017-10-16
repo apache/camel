@@ -507,7 +507,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         assertTrue("Logoffs not received", logoffLatch.await(5000, TimeUnit.MILLISECONDS));
         quickfixjEngine.removeEventListener(logoffListener);
 
-        assertThat(events.size(), is(2));
+        assertThat(events.size(), is(6));
 
         assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.SessionLogoff, acceptorSessionID, null)));
         assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.SessionLogoff, initiatorSessionID, null)));

@@ -218,7 +218,7 @@ public final class MllpSocketUtil {
         if (payload != null && length >= 0) {
             for (int i = Math.min(length, payload.length) - 1; i > 0; --i) {
                 if (payload[i] == END_OF_DATA) {
-                    if (i > 0 && payload[i - 1] == END_OF_BLOCK) {
+                    if (payload[i - 1] == END_OF_BLOCK) {
                         return i - 1;
                     }
                 }

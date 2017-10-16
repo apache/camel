@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For HL7 terser expressions and predicates
+ * To use HL7 terser scripts in Camel expressions or predicates.
  *
  * @version 
  */

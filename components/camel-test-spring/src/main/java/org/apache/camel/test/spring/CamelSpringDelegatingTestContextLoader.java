@@ -16,6 +16,8 @@
  */
 package org.apache.camel.test.spring;
 
+import java.lang.reflect.Method;
+
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spring.SpringCamelContext;
 import org.slf4j.Logger;
@@ -77,6 +79,7 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
         AnnotationConfigUtils.registerAnnotationConfigProcessors((BeanDefinitionRegistry) context);
 
         // Post CamelContext(s) instantiation but pre CamelContext(s) start setup
+        CamelAnnotationsHandler.handleRouteCoverage(context, testClass, s -> getTestMethod().getName());
         CamelAnnotationsHandler.handleProvidesBreakpoint(context, testClass);
         CamelAnnotationsHandler.handleShutdownTimeout(context, testClass);
         CamelAnnotationsHandler.handleMockEndpoints(context, testClass);
@@ -117,6 +120,16 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
      */
     protected Class<?> getTestClass() {
         return CamelSpringTestHelper.getTestClass();
+    }
+
+    /**
+     * Returns the test method under test.
+     *
+     * @return the method that is being executed
+     * @see CamelSpringTestHelper
+     */
+    protected Method getTestMethod() {
+        return CamelSpringTestHelper.getTestMethod();
     }
 
 }

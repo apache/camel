@@ -12,21 +12,21 @@ First thing you'll need to do is preparing the environment.
 Don't forget to use a bit more memory for your Minikube for running this example:
 
 ```
-minikube start --memory 5120 --cpus=4
+$ minikube start --memory 5120 --cpus=4
 ```
 
 Once your Minikube node is up and running you'll need to run the following command.
 In your src/main/resource/fabric8/ folder you'll find two yaml file. Run the following command using them:
 
 ```
-kubectl create -f src/main/resources/fabric8/cassandra-service.yaml
-kubectl create -f src/main/resources/fabric8/cassandra-statefulset.yaml
+$ kubectl create -f src/main/resources/fabric8/cassandra-service.yaml
+$ kubectl create -f src/main/resources/fabric8/cassandra-statefulset.yaml
 ```
 
 To check the correct startup of the cluster run the following command:
 
 ```
-kubectl get statefulsets
+$ kubectl get statefulsets
 NAME        DESIRED   CURRENT   AGE
 cassandra   2         2         2h
 ```
@@ -34,7 +34,7 @@ cassandra   2         2         2h
 and check the status of the pods
 
 ```
-kubectl get pods
+$ kubectl get pods
 NAME                                       READY     STATUS    RESTARTS   AGE
 cassandra-0                                1/1       Running   0          2h
 cassandra-1                                1/1       Running   0          2h
@@ -43,7 +43,7 @@ cassandra-1                                1/1       Running   0          2h
 You can also verify the healt of your cluster by running
 
 ```
-kubectl exec <pod_name> -it nodetool status
+$ kubectl exec <pod_name> -it nodetool status
 Datacenter: DC1-K8Demo
 ======================
 Status=Up/Down
@@ -96,4 +96,19 @@ and you should see something like this:
 2017-08-06 10:43:59,586 [2 - timer://foo] INFO  cassandra-route                - Query result set [Row[1, oscerd]]
 2017-08-06 10:44:04,575 [2 - timer://foo] INFO  cassandra-route                - Query result set [Row[1, oscerd]]
 2017-08-06 10:44:09,577 [2 - timer://foo] INFO  cassandra-route                - Query result set [Row[1, oscerd]]
+```
+
+### Cleanup
+
+Run following to undeploy the application and cassandra nodes
+```
+$ mvn -Pkubernetes-install fabric8:undeploy
+$ kubectl create -f src/main/resources/fabric8/cassandra-service.yaml
+$ kubectl create -f src/main/resources/fabric8/cassandra-statefulset.yaml
+```
+
+Make sure no pod is running
+```
+$ kubectl get pods
+No resources found.
 ```

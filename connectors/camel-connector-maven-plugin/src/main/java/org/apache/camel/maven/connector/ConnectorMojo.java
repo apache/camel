@@ -49,6 +49,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.plugins.jar.AbstractJarMojo;
 
+import static org.apache.camel.maven.connector.util.JSonSchemaHelper.prettyPrint;
+
 @Mojo(name = "jar", defaultPhase = LifecyclePhase.PREPARE_PACKAGE, requiresProject = true, threadSafe = true,
         requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class ConnectorMojo extends AbstractJarMojo {
@@ -71,6 +73,12 @@ public class ConnectorMojo extends AbstractJarMojo {
      */
     @Parameter(defaultValue = "false")
     private boolean includeGitUrl;
+
+    /**
+     * Whether to output JSon connector schema files in pretty print mode or not
+     */
+    @Parameter(defaultValue = "true")
+    private boolean prettyPrint;
 
     private CamelCatalog catalog = new DefaultCamelCatalog();
 
@@ -118,15 +126,15 @@ public class ConnectorMojo extends AbstractJarMojo {
                 if (schema != null) {
                     String json = FileHelper.loadText(new FileInputStream(schema));
 
-                    List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+                    List<Map<String, String>> rows = org.apache.camel.catalog.JSonSchemaHelper.parseJsonSchema("component", json, false);
                     String header = buildComponentHeaderSchema(rows, dto, gitUrl);
                     getLog().debug(header);
 
-                    rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+                    rows = org.apache.camel.catalog.JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
                     String componentOptions = buildComponentOptionsSchema(rows, dto);
                     getLog().debug(componentOptions);
 
-                    rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+                    rows = org.apache.camel.catalog.JSonSchemaHelper.parseJsonSchema("properties", json, true);
                     String endpointOptions = buildEndpointOptionsSchema(rows, dto);
                     getLog().debug(endpointOptions);
 
@@ -145,7 +153,7 @@ public class ConnectorMojo extends AbstractJarMojo {
                     String newJson = jsonSchema.toString();
 
                     // parse ourselves
-                    rows = JSonSchemaHelper.parseJsonSchema("component", newJson, false);
+                    rows = org.apache.camel.catalog.JSonSchemaHelper.parseJsonSchema("component", newJson, false);
                     String newScheme = getOption(rows, "scheme");
 
                     checkConnectorScheme(newScheme);
@@ -159,6 +167,8 @@ public class ConnectorMojo extends AbstractJarMojo {
                     File out = new File(subDir, name);
 
                     FileOutputStream fos = new FileOutputStream(out, false);
+                    // output as pretty print
+                    newJson = prettyPrint ? prettyPrint(newJson) : newJson;
                     fos.write(newJson.getBytes());
                     fos.close();
 

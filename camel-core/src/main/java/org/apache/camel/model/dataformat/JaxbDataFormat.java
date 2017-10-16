@@ -31,7 +31,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * JAXB data format
+ * JAXB data format uses the JAXB2 XML marshalling standard to unmarshal an XML payload into Java objects or to marshal Java objects into an XML payload.
  *
  * @version 
  */
@@ -64,13 +64,13 @@ public class JaxbDataFormat extends DataFormatDefinition {
     private String partNamespace;
     @XmlAttribute
     private String namespacePrefixRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String xmlStreamWriterWrapper;
     @XmlAttribute
     private String schemaLocation;
     @XmlAttribute
     private String noNamespaceSchemaLocation;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String jaxbProviderProperties;
 
     public JaxbDataFormat() {

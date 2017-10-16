@@ -43,9 +43,9 @@ public class RestletProducerTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("restlet:http://localhost:" + portNum + "/users/123/basic").to("log:reply");
+                from("direct:start").to("restlet:http://localhost:" + portNum + "/users/{id}/basic").to("log:reply");
                 
-                from("direct:delete").to("restlet:http://localhost:" + portNum + "/users/123/basic?restletMethod=DELETE");
+                from("direct:delete").to("restlet:http://localhost:" + portNum + "/users/{id}/basic?restletMethod=DELETE");
 
                 from("restlet:http://localhost:" + portNum + "/users/{id}/basic?restletMethods=GET,DELETE")
                     .process(new Processor() {

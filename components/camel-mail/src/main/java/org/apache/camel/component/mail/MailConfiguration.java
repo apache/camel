@@ -109,6 +109,8 @@ public class MailConfiguration implements Cloneable {
     private boolean skipFailedMessage;
     @UriParam @Metadata(label = "consumer")
     private boolean handleFailedMessage;
+    @UriParam(defaultValue = "false") @Metadata(label = "consumer")
+    private boolean mimeDecodeHeaders;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "advanced", prefix = "mail.", multiValue = true)
@@ -118,7 +120,7 @@ public class MailConfiguration implements Cloneable {
 
     public MailConfiguration() {
     }
-    
+
     public MailConfiguration(CamelContext context) {
         this.applicationClassLoader = context.getApplicationContextClassLoader();
     }
@@ -165,7 +167,7 @@ public class MailConfiguration implements Cloneable {
         int port = uri.getPort();
         if (port > 0) {
             setPort(port);
-        } else if (port <= 0 && this.port <= 0) {
+        } else if (this.port <= 0) {
             // resolve default port if no port number was provided, and not already configured with a port number
             setPort(MailUtils.getDefaultPortForProtocol(uri.getScheme()));
         }
@@ -747,5 +749,16 @@ public class MailConfiguration implements Cloneable {
      */
     public void setAttachmentsContentTransferEncodingResolver(AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver) {
         this.attachmentsContentTransferEncodingResolver = attachmentsContentTransferEncodingResolver;
+    }
+
+    /**
+     * This option enables transparent MIME decoding and unfolding for mail headers.
+     */
+    public void setMimeDecodeHeaders(boolean mimeDecodeHeaders) {
+        this.mimeDecodeHeaders = mimeDecodeHeaders;
+    }
+
+    public boolean isMimeDecodeHeaders() {
+        return mimeDecodeHeaders;
     }
 }

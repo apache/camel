@@ -869,7 +869,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             // do not try to build root folder (/ or \)
             if (!(directory.equals("/") || directory.equals("\\"))) {
                 log.trace("Trying to build remote directory by chunk: {}", directory);
-
+                
+                // while creating directory string if directory results in
+                // trailing slash, remove it not necessary
+                directory = FileUtil.stripTrailingSeparator(directory);
+                
                 success = client.makeDirectory(directory);
             }
         }

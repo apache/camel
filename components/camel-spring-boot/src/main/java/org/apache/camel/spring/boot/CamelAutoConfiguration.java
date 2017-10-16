@@ -140,7 +140,7 @@ public class CamelAutoConfiguration {
         camelContext.getShutdownStrategy().setShutdownRoutesInReverseOrder(config.isShutdownRoutesInReverseOrder());
         camelContext.getShutdownStrategy().setLogInflightExchangesOnTimeout(config.isShutdownLogInflightExchangesOnTimeout());
 
-        if (config.getLogDebugMaxChars() > 0) {
+        if (config.getLogDebugMaxChars() != 0) {
             camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "" + config.getLogDebugMaxChars());
         }
 
@@ -459,10 +459,13 @@ public class CamelAutoConfiguration {
             }
         }
         // cluster service
-        CamelClusterService clusterService = getSingleBeanOfType(applicationContext, CamelClusterService.class);
-        if (clusterService != null) {
-            LOG.info("Using CamelClusterService: " + clusterService);
-            camelContext.addService(clusterService);
+        Map<String, CamelClusterService> clusterServices = applicationContext.getBeansOfType(CamelClusterService.class);
+        if (clusterServices != null && !clusterServices.isEmpty()) {
+            for (Map.Entry<String, CamelClusterService> entry : clusterServices.entrySet()) {
+                CamelClusterService service = entry.getValue();
+                LOG.info("Using CamelClusterService with id: {} and implementation: {}", service.getId(), service);
+                camelContext.addService(service);
+            }
         }
         // add route policy factories
         Map<String, RoutePolicyFactory> routePolicyFactories = applicationContext.getBeansOfType(RoutePolicyFactory.class);

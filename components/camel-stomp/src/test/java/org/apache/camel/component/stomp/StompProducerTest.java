@@ -19,6 +19,7 @@ package org.apache.camel.component.stomp;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
@@ -50,7 +51,7 @@ public class StompProducerTest extends StompBaseTest {
         final BlockingConnection subscribeConnection = stomp.connectBlocking();
 
         StompFrame frame = new StompFrame(SUBSCRIBE);
-        frame.addHeader(DESTINATION, StompFrame.encodeHeader("/queue/test"));
+        frame.addHeader(DESTINATION, StompFrame.encodeHeader("test"));
         frame.addHeader(ID, subscribeConnection.nextId());
         StompFrame response = subscribeConnection.request(frame);
 
@@ -74,9 +75,10 @@ public class StompProducerTest extends StompBaseTest {
         });
         thread.start();
 
-        Producer producer = context.getEndpoint("direct:foo").createProducer();
+        Endpoint endpoint = context.getEndpoint("direct:foo");
+        Producer producer = endpoint.createProducer();
         for (int i = 0; i < numberOfMessages; i++) {
-            Exchange exchange = producer.createExchange();
+            Exchange exchange = endpoint.createExchange();
             exchange.getIn().setBody(("test message " + i).getBytes("UTF-8"));
             exchange.getIn().setHeader(HEADER, HEADER_VALUE);
             producer.process(exchange);
@@ -89,7 +91,7 @@ public class StompProducerTest extends StompBaseTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:foo").to("stomp:queue:test");
+                from("direct:foo").to("stomp:test");
             }
         };
     }

@@ -1,0 +1,33 @@
+{
+  "component": {
+    "kind": "component",
+    "scheme": "bean",
+    "syntax": "bean:beanName",
+    "title": "Bean",
+    "description": "The bean component is for invoking Java beans from Camel.",
+    "label": "core,java",
+    "deprecated": false,
+    "deprecationNote": "",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.bean.BeanComponent",
+    "firstVersion": "1.0.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core",
+    "version": "2.20.0-SNAPSHOT"
+  },
+  "componentProperties": {
+    "resolvePropertyPlaceholders": { "kind": "property", "displayName": "Resolve Property Placeholders", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders." }
+  },
+  "properties": {
+    "beanName": { "kind": "path", "displayName": "Bean Name", "group": "producer", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the name of the bean to invoke" },
+    "method": { "kind": "parameter", "displayName": "Method", "group": "producer", "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the name of the method to invoke on the bean" },
+    "cache": { "kind": "parameter", "displayName": "Cache", "group": "advanced", "label": "advanced", "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "If enabled Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope." },
+    "multiParameterArray": { "kind": "parameter", "displayName": "Multi Parameter Array", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": true, "deprecationNote": "This option is used internally by Camel, and is not intended for end users to use.", "secret": false, "defaultValue": false, "description": "How to treat the parameters which are passed from the message body; if it is true the message body should be an array of parameters. Note: This option is used internally by Camel and is not intended for end users to use." },
+    "parameters": { "kind": "parameter", "displayName": "Parameters", "group": "advanced", "label": "advanced", "type": "object", "javaType": "java.util.Map<java.lang.String,java.lang.Object>", "prefix": "bean.", "multiValue": true, "deprecated": false, "secret": false, "description": "Used for configuring additional properties on the bean" },
+    "synchronous": { "kind": "parameter", "displayName": "Synchronous", "group": "advanced", "label": "advanced", "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported)." }
+  }
+}
+
