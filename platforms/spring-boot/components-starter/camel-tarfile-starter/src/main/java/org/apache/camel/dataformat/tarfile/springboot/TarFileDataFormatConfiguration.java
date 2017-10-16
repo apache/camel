@@ -44,6 +44,11 @@ public class TarFileDataFormatConfiguration
      */
     private Boolean allowEmptyDirectory = false;
     /**
+     * If the file name contains path elements setting this option to true
+     * allows the path to be maintained in the tar file.
+     */
+    private Boolean preservePathElements = false;
+    /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
      * example application/xml for data formats marshalling to XML or
@@ -65,6 +70,14 @@ public class TarFileDataFormatConfiguration
 
     public void setAllowEmptyDirectory(Boolean allowEmptyDirectory) {
         this.allowEmptyDirectory = allowEmptyDirectory;
+    }
+
+    public Boolean getPreservePathElements() {
+        return preservePathElements;
+    }
+
+    public void setPreservePathElements(Boolean preservePathElements) {
+        this.preservePathElements = preservePathElements;
     }
 
     public Boolean getContentTypeHeader() {
