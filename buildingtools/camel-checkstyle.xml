@@ -22,7 +22,7 @@
     "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 
 <!--
-Checks to make sure the code meets the ActiveMQ coding guidelines which
+Checks to make sure the code meets the Camel coding guidelines which
 
 It also enforces a bunch of other "BestPractices like method
 lengths, if/try depths, etc...
