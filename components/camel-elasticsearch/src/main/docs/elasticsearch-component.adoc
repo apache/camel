@@ -1,4 +1,4 @@
-== Elasticsearch Component
+== Elasticsearch Component (deprecated)
 
 *Available as of Camel version 2.11*
 

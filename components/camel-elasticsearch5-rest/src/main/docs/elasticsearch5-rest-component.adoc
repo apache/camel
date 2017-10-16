@@ -1,57 +1,62 @@
-== Elasticsearch5 Component (deprecated)
+== Elastichsearch5 Rest Component
 
-*Available as of Camel version 2.19*
+*Available as of Camel version 2.21*
 
 The ElasticSearch component allows you to interface with an
-https://www.elastic.co/products/elasticsearch[ElasticSearch] 5.x API.
+https://www.elastic.co/products/elasticsearch[ElasticSearch] 5.x API using the REST Client library.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-elasticsearch5</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
-### URI format
+=== URI format
 
-[source,java]
--------------------------------------
-elasticsearch5://clusterName[?options]
--------------------------------------
-
-
-### Endpoint Options
+[source]
+----
+elasticsearch5-rest://clusterName[?options]
+----
 
 
+=== Endpoint Options
 
 // component options: START
-The Elasticsearch5 component supports 2 options which are listed below.
+The Elastichsearch5 Rest component supports 12 options which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *client* (advanced) | To use an existing configured Elasticsearch client instead of creating a client per endpoint. This allow to customize the client with specific settings. |  | TransportClient
+| *client* (advanced) | To use an existing configured Elasticsearch client instead of creating a client per endpoint. This allow to customize the client with specific settings. |  | RestClient
+| *hostAddresses* (advanced) | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for hostAddresses to be considered instead. |  | String
+| *socketTimeout* (advanced) | The timeout in ms to wait before the socket will timeout. | 30000 | int
+| *connectionTimeout* (advanced) | The time in ms to wait before connection will timeout. | 30000 | int
+| *user* (advance) | Basic authenticate user |  | String
+| *password* (producer) | Password for authenticate |  | String
+| *enableSSL* (advanced) | Enable SSL | false | Boolean
+| *maxRetryTimeout* (advanced) | The time in ms before retry | 30000 | int
+| *enableSniffer* (advanced) | Enable automatically discover nodes from a running Elasticsearch cluster | false | Boolean
+| *snifferInterval* (advanced) | The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when sniffOnFailure is disabled or when there are no failures between consecutive sniff executions | 300000 | int
+| *sniffAfterFailureDelay* (advanced) | The delay of a sniff execution scheduled after a failure (in milliseconds) | 60000 | int
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
 
 
-
-
-
 // endpoint options: START
-The Elasticsearch5 endpoint is configured using URI syntax:
+The Elastichsearch5 Rest endpoint is configured using URI syntax:
 
 ----
-elasticsearch5:clusterName
+elasticsearch5-rest:clusterName
 ----
 
 with the following path and query parameters:
@@ -64,32 +69,26 @@ with the following path and query parameters:
 | *clusterName* | *Required* Name of the cluster |  | String
 |===
 
-==== Query Parameters (16 parameters):
+==== Query Parameters (10 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *clientTransportSniff* (producer) | Is the client allowed to sniff the rest of the cluster or not. This setting map to the client.transport.sniff setting. | false | boolean
+| *connectionTimeout* (producer) | The time in ms to wait before connection will timeout. | 30000 | int
+| *disconnect* (producer) | Disconnect after it finish calling the producer | false | boolean
+| *hostAddresses* (producer) | *Required* Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for hostAddresses to be considered instead. |  | String
 | *indexName* (producer) | The name of the index to act against |  | String
 | *indexType* (producer) | The type of the index to act against |  | String
-| *ip* (producer) | The TransportClient remote host ip to use |  | String
+| *maxRetryTimeout* (producer) | The time in ms before retry | 30000 | int
 | *operation* (producer) | What operation to perform |  | ElasticsearchOperation
-| *pingSchedule* (producer) | The time(in unit) the client ping the cluster. | 5s | String
-| *pingTimeout* (producer) | The time(in unit) to wait for a ping response from a node too return. | 5s | String
-| *port* (producer) | The TransportClient remote port to use (defaults to 9300) | 9300 | int
-| *tcpCompress* (producer) | true if compression (LZF) enable between all nodes. | false | boolean
-| *tcpConnectTimeout* (producer) | The time( in unit) to wait for connection timeout. | 30s | String
-| *transportAddresses* (producer) | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for transportAddresses to be considered instead. |  | String
+| *socketTimeout* (producer) | The timeout in ms to wait before the socket will timeout. | 30000 | int
 | *waitForActiveShards* (producer) | Index creation waits for the write consistency number of shards to be available | 1 | int
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *enableSSL* (security) | Enable SSL. Require XPack client jar on the classpath | false | boolean
-| *password* (authentication) | Password for authenticate against the cluster. Require XPack client jar on the classpath |  | String
-| *user* (authentication) | User for authenticate against the cluster. Requires transport_client role for accessing the cluster. Require XPack client jar on the classpath |  | String
 |===
 // endpoint options: END
 
 
-### Message Operations
+=== Message Operations
 
 The following ElasticSearch operations are currently supported. Simply
 set an endpoint URI option or exchange header with a key of "operation"
@@ -97,7 +96,7 @@ and a value set to one of the following. Some operations also require
 other parameters or the message body to be set.
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |operation |message body |description
 
 |INDEX |Map, String, byte[] or XContentBuilder content to index |Adds content to an index and returns the content's indexId in the body.
@@ -132,45 +131,32 @@ returns a MultiSearchResponse object in the body
 
 |UPDATE |Map, String, byte[] or XContentBuilder content to update |Updates content to an index and returns the content's
 indexId in the body.
-|=======================================================================
+|===
 
-### Index Example
+=== Index Example
 
 Below is a simple INDEX example
 
 [source,java]
--------------------------------------------------------------------------------
+----
 from("direct:index")
-.to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet");
--------------------------------------------------------------------------------
+  .to("elasticsearch5-rest://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet");
+----
 
 [source,xml]
----------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:index" />
-    <to uri="elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet"/>
+    <to uri="elasticsearch5-rest://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet"/>
 </route>
----------------------------------------------------------------------------------------
+----
 
 A client would simply need to pass a body message containing a Map to
 the route. The result body contains the indexId created.
 
 [source,java]
--------------------------------------------------------------------------
+----
 Map<String, String> map = new HashMap<String, String>();
 map.put("content", "test");
 String indexId = template.requestBody("direct:index", map, String.class);
--------------------------------------------------------------------------
-
-### For more information, see these resources
-
-http://www.elastic.co[Elastic Main Site]
-
-https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-api.html[ElasticSearch Java API]
-
-### See Also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+----

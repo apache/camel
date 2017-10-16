@@ -27,12 +27,12 @@ import org.elasticsearch.client.RestClient;
 /**
  * The elasticsearch component is used for interfacing with ElasticSearch server using 5.x REST API.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "elasticsearch5-rest", title = "Elastichsearch Rest or Elasticsearch 5 Rest",
+@UriEndpoint(firstVersion = "2.21.0", scheme = "elasticsearch5-rest", title = "Elastichsearch5 Rest",
     syntax = "elasticsearch5-rest:clusterName", producerOnly = true, label = "monitoring,search")
 public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     @UriParam
-    protected final ElasticsearchConfiguration configuration;
+    private final ElasticsearchConfiguration configuration;
 
     private RestClient client;
 
