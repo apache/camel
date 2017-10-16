@@ -188,6 +188,7 @@
 	* [EHCache](cache-component.adoc)
 	* [Ehcache](ehcache-component.adoc)
 	* [EJB](ejb-component.adoc)
+	* [Elastichsearch Rest or Elasticsearch 5 Rest](elasticsearch5-rest-component.adoc)
 	* [Elasticsearch](elasticsearch-component.adoc)
 	* [Elasticsearch5](elasticsearch5-component.adoc)
 	* [ElSQL](elsql-component.adoc)
