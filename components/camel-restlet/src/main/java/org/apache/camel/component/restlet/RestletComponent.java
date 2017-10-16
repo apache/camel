@@ -119,10 +119,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
     private List<String> enabledConverters;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    @Metadata(
-            label = "filter",
-            description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message."
-    )
+    @Metadata(label = "filter", description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
 
     public RestletComponent() {
@@ -555,7 +552,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
     }
 
     /**
-     * Custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+     * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter header to and from Camel message.
      */
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;

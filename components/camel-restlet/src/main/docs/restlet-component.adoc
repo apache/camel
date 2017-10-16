@@ -71,7 +71,7 @@ The Restlet component supports 22 options which are listed below.
 | Name | Description | Default | Type
 | *controllerDaemon* (consumer) | Indicates if the controller thread should be a daemon (not blocking JVM exit). |  | Boolean
 | *controllerSleepTimeMs* (consumer) | Time for the controller thread to sleep between each control. |  | Integer
-| *headerFilterStrategy* (filter) | Custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *inboundBufferSize* (consumer) | The size of the buffer when reading messages. |  | Integer
 | *maxConnectionsPerHost* (common) | Maximum number of concurrent connections per host (IP address). |  | Integer
 | *maxThreads* (consumer) | Maximum threads that will service requests. |  | Integer
