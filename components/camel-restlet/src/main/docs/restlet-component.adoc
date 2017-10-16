@@ -71,6 +71,7 @@ The Restlet component supports 22 options which are listed below.
 | Name | Description | Default | Type
 | *controllerDaemon* (consumer) | Indicates if the controller thread should be a daemon (not blocking JVM exit). |  | Boolean
 | *controllerSleepTimeMs* (consumer) | Time for the controller thread to sleep between each control. |  | Integer
+| *headerFilterStrategy* (filter) | Custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *inboundBufferSize* (consumer) | The size of the buffer when reading messages. |  | Integer
 | *maxConnectionsPerHost* (common) | Maximum number of concurrent connections per host (IP address). |  | Integer
 | *maxThreads* (consumer) | Maximum threads that will service requests. |  | Integer
@@ -89,7 +90,6 @@ The Restlet component supports 22 options which are listed below.
 | *synchronous* (producer) | Whether to use synchronous Restlet Client for the producer. Setting this option to true can yield faster performance as it seems the Restlet synchronous Client works better. |  | Boolean
 | *enabledConverters* (advanced) | A list of converters to enable as full class name or simple class name. All the converters automatically registered are enabled if empty or null |  | List
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
-| *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
