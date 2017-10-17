@@ -28,13 +28,19 @@ public class AMQPConnectionDetails {
     public static final String AMQP_USERNAME = "AMQP_SERVICE_USERNAME";
 
     public static final String AMQP_PASSWORD = "AMQP_SERVICE_PASSWORD";
+    
+    private static final String KEYSTORE = "broker.ks";
+
+    private static final String TRUSTSTORE = "broker.ks";
+
+    private static final String PASSWORD = "password";
 
     private final String uri;
 
     private final String username;
 
     private final String password;
-
+   
     public AMQPConnectionDetails(String uri, String username, String password) {
         this.uri = uri;
         this.username = username;
@@ -59,6 +65,24 @@ public class AMQPConnectionDetails {
             throw new RuntimeException(e);
         }
     }
+
+    public static AMQPConnectionDetails discoverAMQPSsl(CamelContext camelContext) {
+        try {
+            PropertiesComponent propertiesComponent = camelContext.getComponent("properties", PropertiesComponent.class);
+
+            String host = property(propertiesComponent, AMQP_HOST, "localhost");
+            int port = Integer.parseInt(property(propertiesComponent, AMQP_PORT, "5672"));
+            String username = property(propertiesComponent, AMQP_USERNAME, null);
+            String password = property(propertiesComponent, AMQP_PASSWORD, null);
+
+            return new AMQPConnectionDetails("amqps://" + host + ":" + port, username,
+                                             password + "?transport.trustStoreLocation=" + TRUSTSTORE + "&transport.trustStorePassword=" + PASSWORD + "&transport.keyStoreLocation="
+                                                                                       + KEYSTORE + "&transport.keyStorePassword=" + PASSWORD);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public String uri() {
         return uri;

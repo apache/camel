@@ -563,9 +563,9 @@
     <protonpack-version>1.8</protonpack-version>
     <pubnub-version>4.6.5</pubnub-version>
     <qpid-bundle-version>0.28_1</qpid-bundle-version>
-    <qpid-proton-j-version>0.16.0</qpid-proton-j-version>
-    <qpid-proton-j-bundle-version>0.14.0</qpid-proton-j-bundle-version>
-    <qpid-jms-client-version>0.11.1</qpid-jms-client-version>
+    <qpid-proton-j-version>0.22.0</qpid-proton-j-version>
+    <qpid-proton-j-bundle-version>0.22.0</qpid-proton-j-bundle-version>
+    <qpid-jms-client-version>0.26.0</qpid-jms-client-version>
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
     <quartz-version-range>[1.8,2)</quartz-version-range>
@@ -762,7 +762,7 @@
       org.springframework.xml.*;version="[2,3)",
       org.springframework.*;version="${spring-version-range}",
       org.apache.cxf.*;version="${cxf-version-range}",
-      org.apache.qpid.*;version="[0.20,1)",
+      org.apache.qpid.*;version="[0.26,1)",
       org.apache.abdera.*;version="[0.4,2)",
       org.apache.commons.httpclient.*;version="[3.1,4.0)",
       org.apache.velocity.*;version="[1.6.2,2)",
