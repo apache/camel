@@ -167,8 +167,8 @@
                   <showLogs>false</showLogs>
                   <images>
                     <image>
-                      <name>consul:latest</name>
-                      <alias>0.9.3</alias>
+                      <name>consul:1.0.0</name>
+                      <alias>consul</alias>
                       <run>
                         <ports>
                           <port>consul.port:8500</port>
