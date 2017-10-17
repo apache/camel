@@ -35,4 +35,28 @@ public class JGroupsLockClusterServiceConfiguration {
      */
     private String jgroupsClusterName;
 
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getJgroupsConfig() {
+        return jgroupsConfig;
+    }
+
+    public void setJgroupsConfig(String jgroupsConfig) {
+        this.jgroupsConfig = jgroupsConfig;
+    }
+
+    public String getJgroupsClusterName() {
+        return jgroupsClusterName;
+    }
+
+    public void setJgroupsClusterName(String jgroupsClusterName) {
+        this.jgroupsClusterName = jgroupsClusterName;
+    }
 }
