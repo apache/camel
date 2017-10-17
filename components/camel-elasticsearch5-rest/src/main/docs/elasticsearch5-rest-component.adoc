@@ -12,7 +12,7 @@ for this component:
 ----
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-elasticsearch5</artifactId>
+    <artifactId>camel-elasticsearch5-rest</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
@@ -69,13 +69,14 @@ with the following path and query parameters:
 | *clusterName* | *Required* Name of the cluster |  | String
 |===
 
-==== Query Parameters (10 parameters):
+==== Query Parameters (11 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *connectionTimeout* (producer) | The time in ms to wait before connection will timeout. | 30000 | int
 | *disconnect* (producer) | Disconnect after it finish calling the producer | false | boolean
+| *enableSSL* (producer) | Enable SSL | false | boolean
 | *hostAddresses* (producer) | *Required* Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for hostAddresses to be considered instead. |  | String
 | *indexName* (producer) | The name of the index to act against |  | String
 | *indexType* (producer) | The type of the index to act against |  | String
@@ -99,39 +100,57 @@ other parameters or the message body to be set.
 |===
 |operation |message body |description
 
-|INDEX |Map, String, byte[] or XContentBuilder content to index |Adds content to an index and returns the content's indexId in the body.
+|Index |*Map*, *String*, *byte[]*, *XContentBuilder* or *IndexRequest* content to index |Adds content to an index and returns the content's indexId in the body.
 You can set the indexId by setting the message header with
 the key "indexId".
 
-|GET_BY_ID |index id of content to retrieve |Retrieves the specified index and returns a GetResult object in the body
+|GetById |*String* or *GetRequest* index id of content to retrieve |Retrieves the specified index and returns a GetResult object in the body
 
-|DELETE |index name and type of content to delete |Deletes the specified indexName and indexType and returns a DeleteResponse object in the
+|Delete |*String* or *DeleteRequest* index name and type of content to delete |Deletes the specified indexName and indexType and returns a DeleteResponse object in the
 body
 
-|DELETE_INDEX |index name of content to delete |Deletes the specified indexName and returns a DeleteIndexResponse object in the
+|DeleteIndex |*String* or *DeleteRequest* index name of the index to delete |Deletes the specified indexName and returns a status code the
 body
 
-|BULK_INDEX | a *List* or *Collection* of any type that is already accepted
+|BulkIndex | a *List*, *BulkRequest*, or *Collection* of any type that is already accepted
 (XContentBuilder, Map, byte[], String) |Adds content to an index and return a List of the id of the
 successfully indexed documents in the body
 
-|BULK |a *List* or *Collection* of any type that is already accepted
-(XContentBuilder, Map, byte[], String) |Adds content to an index and returns the BulkResponse
+|Bulk |a *List*, *BulkRequest*, or *Collection* of any type that is already accepted
+       (XContentBuilder, Map, byte[], String) |Adds content to an index and returns the BulkItemResponse[]
 object in the body
 
-|SEARCH |Map, String or SearchRequest Object |Search the content with the map of query string
+|Search |*Map*, *String* or *SearchRequest* |Search the content with the map of query string
 
-|MULTIGET |List of MultigetRequest.Item object |Retrieves the specified indexes, types etc. in
-MultigetRequest and returns a MultigetResponse object in the body
+|Exists |Index name(indexName) as header  |Checks the index exists or not and returns a Boolean flag in the body
 
-|MULTISEARCH |List of SearchRequest object |Search for parameters specified in MultiSearchRequest and
-returns a MultiSearchResponse object in the body
-
-|EXISTS |Index name as header |Checks the index exists or not and returns a Boolean flag in the body
-
-|UPDATE |Map, String, byte[] or XContentBuilder content to update |Updates content to an index and returns the content's
+|Update |*Map*, *UpdateRequest*, *String*, *byte[]* or *XContentBuilder* content to update |Updates content to an index and returns the content's
 indexId in the body.
 |===
+
+=== Configure the component and enable basic authentication
+To use the Elasticsearch component is has to be configured with a minimum configuration.
+
+[source,java]
+----
+ElasticsearchComponent elasticsearchComponent = new ElasticsearchComponent();
+elasticsearchComponent.setHostAddresses("myelkhost:9200");
+camelContext.addComponent("elasticsearch-rest", elasticsearchComponent);
+----
+
+For basic authentication with elasticsearch or using reverse http proxy in front of the elasticsearch cluster, simply setup
+basic authentication and SSL on the component like the example below
+
+[source,java]
+----
+ElasticsearchComponent elasticsearchComponent = new ElasticsearchComponent();
+elasticsearchComponent.setHostAddresses("myelkhost:9200");
+elasticsearchComponent.setUser("elkuser");
+elasticsearchComponent.setPassword("secure!!");
+elasticsearchComponent.setEnableSSL(true);
+
+camelContext.addComponent("elasticsearch-rest", elasticsearchComponent);
+----
 
 === Index Example
 
@@ -140,14 +159,14 @@ Below is a simple INDEX example
 [source,java]
 ----
 from("direct:index")
-  .to("elasticsearch5-rest://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet");
+  .to("elasticsearch5-rest://elasticsearch?operation=Index&indexName=twitter&indexType=tweet");
 ----
 
 [source,xml]
 ----
 <route>
     <from uri="direct:index" />
-    <to uri="elasticsearch5-rest://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet"/>
+    <to uri="elasticsearch5-rest://elasticsearch?operation=Index&indexName=twitter&indexType=tweet"/>
 </route>
 ----
 
@@ -159,4 +178,46 @@ the route. The result body contains the indexId created.
 Map<String, String> map = new HashMap<String, String>();
 map.put("content", "test");
 String indexId = template.requestBody("direct:index", map, String.class);
+----
+
+=== Search Example
+
+Searching on specific field(s) and value use the Operation ´Search´.
+Pass in the query JSON String or the Map
+
+[source,java]
+----
+from("direct:search")
+  .to("elasticsearch5-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet");
+----
+
+[source,xml]
+----
+<route>
+    <from uri="direct:search" />
+    <to uri="eelasticsearch5-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet"/>
+</route>
+----
+
+[source,java]
+----
+String query = "{\"query\":{\"match\":{\"content\":\"new release of ApacheCamel\"}}}";
+SearchHits response = template.requestBody("direct:search", query, SearchHits.class);
+
+----
+
+Search on specific field(s) using Map.
+
+[source,java]
+----
+Map<String, Object> actualQuery = new HashMap<>();
+actualQuery.put("content", "new release of ApacheCamel");
+
+Map<String, Object> match = new HashMap<>();
+match.put("match", actualQuery);
+
+Map<String, Object> query = new HashMap<>();
+query.put("query", match);
+SearchHits response = template.requestBody("direct:search", query, SearchHits.class);
+
 ----
