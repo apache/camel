@@ -23,6 +23,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -126,8 +128,10 @@ public final class RouteCoverageXmlParser {
                     }
                 }
 
-                // we do not want customId in output
-                el.removeAttribute("customId");
+                // we do not want customId in output of the EIPs
+                if (!"route".equals(qName)) {
+                    el.removeAttribute("customId");
+                }
 
                 elementStack.push(el);
             }
