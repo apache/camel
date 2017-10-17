@@ -192,17 +192,17 @@ the `camel-example-cdi` from Apache Camel you can run
 
 ----
 $cd camel-example-cdi
-$mvn org.apache.camel:camel-maven-plugin:2.19.0:validate
+$mvn org.apache.camel:camel-maven-plugin:2.20.0:validate
 ----
 
 which then runs and outputs the following:
 
 ----
 [INFO] ------------------------------------------------------------------------
-[INFO] Building Camel :: Example :: CDI 2.19.0
+[INFO] Building Camel :: Example :: CDI 2.20.0
 [INFO] ------------------------------------------------------------------------
 [INFO]
-[INFO] --- camel-maven-plugin:2.19.0:validate (default-cli) @ camel-example-cdi ---
+[INFO] --- camel-maven-plugin:2.20.0:validate (default-cli) @ camel-example-cdi ---
 [INFO] Endpoint validation success: (4 = passed, 0 = invalid, 0 = incapable, 0 = unknown components)
 [INFO] Simple validation success: (0 = passed, 0 = invalid)
 [INFO] ------------------------------------------------------------------------
@@ -229,10 +229,10 @@ And when running the validate goal again reports the following:
 
 ----
 [INFO] ------------------------------------------------------------------------
-[INFO] Building Camel :: Example :: CDI 2.19.0
+[INFO] Building Camel :: Example :: CDI 2.20.0
 [INFO] ------------------------------------------------------------------------
 [INFO]
-[INFO] --- camel-maven-plugin:2.19.0:validate (default-cli) @ camel-example-cdi ---
+[INFO] --- camel-maven-plugin:2.20.0:validate (default-cli) @ camel-example-cdi ---
 [WARNING] Endpoint validation error at: org.apache.camel.example.cdi.MyRoutes(MyRoutes.java:32)
 
 	timer:foo?perid=5000
@@ -277,7 +277,7 @@ You can pass in the options using `-D` style as shown:
 
 ----
 $cd myproject
-$mvn org.apache.camel:camel-maven-plugin:2.19.0:validate -DincludeTest=true
+$mvn org.apache.camel:camel-maven-plugin:2.20.0:validate -DincludeTest=true
 ----
 
 
@@ -289,6 +289,38 @@ You can therefore use this to know which parts of your Camel routes has been use
 
 === Enabling route coverage
 
+You can enable route coverage while running unit tests either by
+
+- setting global JVM system property enabling for all test classes
+- using `@EnableRouteCoverage` annotation per test class if using `camel-test-spring` module
+- overriding `isDumpRouteCoverage` method per test class if using `camel-test` module
+
+==== Enabling via JVM system property
+
+You can turn on the JVM system property `CamelTestRouteCoverage` to enable route coverage for all tests cases.
+This can be done either in the configuration of the `maven-surefire-plugin`:
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-surefire-plugin</artifactId>
+  <configuration>
+    <systemPropertyVariables>
+      <CamelTestRouteCoverage>true</CamelTestRouteCoverage>
+    </systemPropertyVariables>
+  </configuration>
+</plugin>
+----
+
+Or from the command line when running tests:
+
+----
+mvn clean test -DCamelTestRouteCoverage=true
+----
+
+==== Enabling via @EnableRouteCoverage annotation
+
 You need to enable route coverage in the unit tests classes. You can do this by adding the `@EnableRouteCoverage`
 annotation to the test class if you are testing using `camel-test-spring`:
 
@@ -299,6 +331,8 @@ annotation to the test class if you are testing using `camel-test-spring`:
 @EnableRouteCoverage
 public class FooApplicationTest {
 ----
+
+==== Enabling via isDumpRouteCoverage method
 
 However if you are using `camel-test` and your unit tests are extending `CamelTestSupport` then you can
 turn on route coverage as shown:
@@ -373,15 +407,20 @@ We can also see that this is one line 34 in the source code file, which is in th
 
 === Options
 
-The maven plugin supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
+The maven plugin supports the following options which can be configured from the command line (use `-D` syntax),
+ or defined in the `pom.xml` file in the `<configuration>` tag.
 
 |===
 | Parameter | Default Value | Description
 | failOnError | false | Whether to fail if any of the routes has not 100% coverage.
 | includeTest | false | Whether to include test source code.
-| includes | | To filter the names of java and xml files to only include files matching any of the given list of patterns (wildcard and regular expression). Multiple values can be separated by comma.
-| excludes | | To filter the names of java and xml files to exclude files matching any of the given list of patterns (wildcard and regular expression). Multiple values can be separated by comma.
+| includes | | To filter the names of java and xml files to only include files matching any of the given list of
+ patterns (wildcard and regular expression). Multiple values can be separated by comma.
+| excludes | | To filter the names of java and xml files to exclude files matching any of the given list of
+ patterns (wildcard and regular expression). Multiple values can be separated by comma.
+| anonymousRoutes | false | Whether to allow anonymous routes (routes without any route id assigned).
+ By using route id's then its safer to match the route cover data with the route source code.
+ Anonymous routes are less safe to use for route coverage as its harder to know exactly which route
+ that was tested corresponds to which of the routes from the source code.
 |===
-
-
 
