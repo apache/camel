@@ -196,7 +196,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         // favor strict matching on route ids
         for (CamelNodeDetails t : routeIdTrees) {
             String routeId = t.getRouteId();
-            String fileName = asRelativeFile(t.getFileName());
+            String fileName = stripRootPath(asRelativeFile(t.getFileName()));
 
             // grab dump data for the route
             try {
@@ -243,7 +243,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                         }
 
                         if (!coverage.isEmpty()) {
-                            String out = templateCoverageData(className, null, coverage, notCovered);
+                            String fileName = stripRootPath(asRelativeFile(t.getValue().get(0).getFileName()));
+                            String out = templateCoverageData(fileName, null, coverage, notCovered);
                             getLog().info("Route coverage summary:\n\n" + out);
                             getLog().info("");
                         }
