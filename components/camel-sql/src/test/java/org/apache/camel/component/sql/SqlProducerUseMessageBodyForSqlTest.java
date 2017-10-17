@@ -56,7 +56,7 @@ public class SqlProducerUseMessageBodyForSqlTest extends CamelTestSupport {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("direct:start")
+                from("direct:start").routeId("foo")
                         .setBody(constant("select * from projects where license = :?lic order by id"))
                         .to("sql://query?useMessageBodyForSql=true")
                         .to("mock:result");
@@ -84,7 +84,7 @@ public class SqlProducerUseMessageBodyForSqlTest extends CamelTestSupport {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("direct:start")
+                from("direct:start").routeId("bar")
                         .setBody(constant("select * from projects where license = :?lic order by id"))
                         .to("sql://query?useMessageBodyForSql=true")
                         .to("mock:result");
@@ -114,7 +114,7 @@ public class SqlProducerUseMessageBodyForSqlTest extends CamelTestSupport {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("direct:start")
+                from("direct:start").routeId("baz")
                         .setBody(constant("insert into projects(id, project, license) values(:?id,:?project,:?lic)"))
                         .to("sql://query?useMessageBodyForSql=true&batch=true")
                         .to("mock:result");
