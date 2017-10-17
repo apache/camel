@@ -150,6 +150,9 @@ public final class ElasticsearchActionRequestConverter {
     }
 
     public static SearchRequest toSearchRequest(Object queryObject, Exchange exchange) throws IOException {
+        if (queryObject instanceof SearchRequest) {
+            return (SearchRequest) queryObject;
+        }
         SearchRequest searchRequest = new SearchRequest(exchange.getIn()
             .getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
             .types(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, String.class));

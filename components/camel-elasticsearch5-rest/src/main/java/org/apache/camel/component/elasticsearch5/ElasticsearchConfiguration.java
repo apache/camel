@@ -49,10 +49,11 @@ public class ElasticsearchConfiguration {
     private int connectionTimeout = ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT;
     @UriParam(defaultValue = "false")
     private boolean disconnect;
+    @UriParam(defaultValue = "false")
+    private boolean enableSSL;
 
     private String user;
     private String password;
-    private boolean enableSSL;
     //Sniffer parameter.
     private boolean enableSniffer;
     private int snifferInterval = ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL;

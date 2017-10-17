@@ -160,7 +160,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             IndexRequest indexRequest = ElasticsearchActionRequestConverter.toIndexRequest(message.getBody(), exchange);
             message.setBody(restHighLevelClient.index(indexRequest).getId());
         } else if (operation == ElasticsearchOperation.Update) {
-            UpdateRequest updateRequest = ElasticsearchActionRequestConverter.toUpdateRequest(message.getBody(Map.class), exchange);
+            UpdateRequest updateRequest = ElasticsearchActionRequestConverter.toUpdateRequest(message.getBody(), exchange);
             message.setBody(restHighLevelClient.update(updateRequest).getId());
         } else if (operation == ElasticsearchOperation.GetById) {
             GetRequest getRequest = ElasticsearchActionRequestConverter.toGetRequest(message.getBody(), exchange);
