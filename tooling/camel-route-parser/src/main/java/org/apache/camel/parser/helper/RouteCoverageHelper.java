@@ -136,8 +136,8 @@ public final class RouteCoverageHelper {
             return;
         }
 
-        // only calculate for elements within the route
-        if (!"route".equals(key)) {
+        // only calculate for elements within the route or children of policy/transaction
+        if (!"route".equals(key) && !"policy".equals(key) && !"transacted".equals(key)) {
             Integer count = 0;
             Node total = node.getAttributes().getNamedItem("exchangesTotal");
             if (total != null) {

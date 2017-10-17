@@ -365,6 +365,15 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     }
 
     private static void gatherRouteCoverageSummary(CamelNodeDetails node, Iterator<CoverageData> it, AtomicInteger level, List<RouteCoverageNode> answer) {
+        // we want to skip data for policy/transacted as they are abstract nodes and just gather their children immediately
+        boolean skipData = "policy".equals(node.getName()) || "transacted".equals(node.getName());
+        if (skipData) {
+            for (CamelNodeDetails child : node.getOutputs()) {
+                gatherRouteCoverageSummary(child, it, level, answer);
+            }
+            return;
+        }
+
         RouteCoverageNode data = new RouteCoverageNode();
         data.setName(node.getName());
         data.setLineNumber(Integer.valueOf(node.getLineNumber()));
