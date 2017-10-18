@@ -30,12 +30,11 @@
   <artifactId>camel-pgevent</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: PgEvent</name>
-  <description>Component for sending/receiving notifications in PostgreSQL via the pgjdbc-ng driver</description>
+  <description>Component for sending/receiving notifications in PostgreSQL</description>
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.pgevent.*</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=pgevent</camel.osgi.export.service>
-    <camel.osgi.import.additional>com.impossibl.pgjdbc-ng.*;version="(0.4,1]"</camel.osgi.import.additional>
   </properties>
 
   <dependencies>
@@ -47,7 +46,6 @@
       <groupId>com.impossibl.pgjdbc-ng</groupId>
       <artifactId>pgjdbc-ng</artifactId>
       <version>${pgjdbc-ng-driver-version}</version>
-      <scope>provided</scope>
     </dependency>
 
     <!-- testing -->
