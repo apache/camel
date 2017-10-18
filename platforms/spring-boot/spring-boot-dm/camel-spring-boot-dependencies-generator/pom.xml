@@ -211,6 +211,7 @@
               <exclude>org.slf4j:slf4j-api</exclude>
               <exclude>org.slf4j:slf4j-log4j12</exclude>
               <exclude>org.slf4j:slf4j-simple</exclude>
+              <exclude>org.slf4j:slf4j-ext</exclude>
 
               <exclude>org.springframework*:*</exclude>
 
@@ -238,10 +239,13 @@
               <exclude>io.netty*:*</exclude>
               <exclude>org.scala-lang:*</exclude>
               <exclude>org.apache.lucene:*</exclude>
+              <exclude>net.java.dev.jna:*</exclude>
 
               <!-- Jetty -->
               <exclude>org.eclipse.jetty:jetty-rewrite</exclude>
               <exclude>org.eclipse.jetty:jetty-util-ajax</exclude>
+              <exclude>org.eclipse.jetty.websocket:websocket-api</exclude>
+              <exclude>org.eclipse.jetty.websocket:websocket-common</exclude>
               <exclude>org.eclipse.jetty.websocket:websocket-servlet</exclude>
 
               <!-- Unrelated -->
