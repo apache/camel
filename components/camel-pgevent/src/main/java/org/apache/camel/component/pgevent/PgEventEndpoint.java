@@ -36,11 +36,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The pgevent component allows for producing/consuming  PostgreSQL events related to the LISTEN/NOTIFY commands.
- *
+ * The pgevent component allows for producing/consuming PostgreSQL events related to the listen/notify commands.
+ * <p/>
  * This requires using PostgreSQL 8.3 or newer.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "pgevent", title = "PostgresSQL Event", syntax = "pgevent:host:port/database/channel", consumerClass = PgEventConsumer.class, label = "database,sql")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "pgevent", title = "PostgresSQL Event", syntax = "pgevent:host:port/database/channel",
+    consumerClass = PgEventConsumer.class, label = "database,sql")
 public class PgEventEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(PgEventEndpoint.class);
 
