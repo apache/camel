@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.salesforce.internal.processor;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Arrays;
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.camel.AsyncCallback;
@@ -38,6 +38,25 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSalesforceProcessor implements SalesforceProcessor {
 
+    public static final String ACCOUNT_OBJECT_NAME = "Account";
+    public static final String CASE_OBJECT_NAME = "Case";
+    public static final String LEAD_OBJECT_NAME = "Lead";
+    // to be continued
+    
+    public static final String HEADER_SFORCE_AUTO_ASSIGN = "Sforce-Auto-Assign";
+    public static final String HEADER_SFORCE_QUERY_OPTIONS = "Sforce-Query-Options";
+    // to be continued
+    
+    public static final String OPERATION_CREATE = "CREATE";
+    public static final String OPERATION_QUERY = "QUERY";
+    public static final String OPERATION_QUERYALL = "QUERYALL";
+    public static final String OPERATION_QUERYMORE = "QUERYMORE";
+    public static final String OPERATION_UPDATE = "UPDATE";
+    public static final String OPERATION_UPSERT = "UPSERT";            
+    // to be continued    
+	
+    public static final HashMap<Object, String[]> HEADERMAP = new HashMap<Object, String[]>();	
+	
     protected static final boolean NOT_OPTIONAL = false;
     protected static final boolean IS_OPTIONAL = true;
     protected static final boolean USE_BODY = true;
@@ -51,62 +70,25 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
     protected final OperationName operationName;
     protected final SalesforceSession session;
     protected final SalesforceHttpClient httpClient;
-    protected final boolean rawPayload;
-    
-    public static final String OPERATION_UPSERT="UPSERT";
-    public static final String OPERATION_UPDATE="UPDATE";
-    public static final String OPERATION_CREATE="CREATE";
-    public static final String OPERATION_QUERY="QUERY";
-    public static final String OPERATION_QUERYALL="QUERYALL";
-    public static final String OPERATION_QUERYMORE="QUERYMORE";    
-    // to be continued
-    
-    public static final String HEADER_SFORCE_AUTO_ASSIGN = "Sforce-Auto-Assign";
-    public static final String HEADER_SFORCE_QUERY_OPTIONS = "Sforce-Query-Options";
-    // to be continued
-    
-    public static final String ACCOUNT_OBJECT_NAME="Account";
-    public static final String CASE_OBJECT_NAME="Case";
-    public static final String LEAD_OBJECT_NAME="Lead";
-    // to be continued
-    
-    public static final HashMap<Object, String[]> headerMap = new HashMap<Object, String[]>();
-    
+    protected final boolean rawPayload; 
+       
     static {
-        headerMap.put(OPERATION_UPSERT + "-" + ACCOUNT_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
-        headerMap.put(OPERATION_UPSERT + "-" + CASE_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
-        headerMap.put(OPERATION_UPSERT + "-" + LEAD_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
-        headerMap.put(OPERATION_UPDATE + "-" + ACCOUNT_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
-        headerMap.put(OPERATION_UPDATE + "-" + CASE_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
-        headerMap.put(OPERATION_UPDATE + "-" + LEAD_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
-        headerMap.put(OPERATION_CREATE + "-" + ACCOUNT_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
-        headerMap.put(OPERATION_CREATE + "-" + CASE_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
-        headerMap.put(OPERATION_CREATE + "-" + LEAD_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
-        headerMap.put(OPERATION_QUERY , new String[] {HEADER_SFORCE_QUERY_OPTIONS});
-        headerMap.put(OPERATION_QUERYALL , new String[] {HEADER_SFORCE_QUERY_OPTIONS});
-        headerMap.put(OPERATION_QUERYMORE , new String[] {HEADER_SFORCE_QUERY_OPTIONS});
-        // to be continued  
+        HEADERMAP.put(OPERATION_UPSERT + "-" + ACCOUNT_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
+        HEADERMAP.put(OPERATION_UPSERT + "-" + CASE_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
+        HEADERMAP.put(OPERATION_UPSERT + "-" + LEAD_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
+        HEADERMAP.put(OPERATION_UPDATE + "-" + ACCOUNT_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
+        HEADERMAP.put(OPERATION_UPDATE + "-" + CASE_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
+        HEADERMAP.put(OPERATION_UPDATE + "-" + LEAD_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
+        HEADERMAP.put(OPERATION_CREATE + "-" + ACCOUNT_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
+        HEADERMAP.put(OPERATION_CREATE + "-" + CASE_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
+        HEADERMAP.put(OPERATION_CREATE + "-" + LEAD_OBJECT_NAME, new String[] {HEADER_SFORCE_AUTO_ASSIGN});
+        HEADERMAP.put(OPERATION_QUERY, new String[] {HEADER_SFORCE_QUERY_OPTIONS});
+        HEADERMAP.put(OPERATION_QUERYALL, new String[] {HEADER_SFORCE_QUERY_OPTIONS});
+        HEADERMAP.put(OPERATION_QUERYMORE, new String[] {HEADER_SFORCE_QUERY_OPTIONS});
+        // to be continued 
     }
     
-    public static List<String> getHeaderKeys(String operation) {
-        return getHeaderKeys(operation, null);
-    }
-     
-    public static List<String> getHeaderKeys(String operation, String sObject) {
-        List<String> sfHeaders = new ArrayList<String>();
-        
-        if(operation!=null)  {          
-            try {
-                sfHeaders = (sObject != null) ? Arrays.asList(headerMap.get(operation+"-"+sObject)) : Arrays.asList(headerMap.get(operation));
-            }  catch (Exception e) {
-                return new ArrayList<String>();       
-            }
-        }
-        
-        return sfHeaders;
-    }
-    
-    public AbstractSalesforceProcessor(SalesforceEndpoint endpoint) {
+	public AbstractSalesforceProcessor(SalesforceEndpoint endpoint) {
         this.endpoint = endpoint;
         this.operationName = endpoint.getOperationName();
         this.endpointConfigMap = endpoint.getConfiguration().toValueMap();
@@ -115,7 +97,25 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
         this.session = component.getSession();
         this.httpClient = endpoint.getConfiguration().getHttpClient();
         this.rawPayload = endpoint.getConfiguration().getRawPayload();
+    }		
+	
+    public static List<String> getHeaderKeys(String operation) {
+        return getHeaderKeys(operation, null);
     }
+     
+    public static List<String> getHeaderKeys(String operation, String sObject) {
+        List<String> sfHeaders = new ArrayList<String>();
+        
+        if (operation != null)  {          
+            try {
+                sfHeaders = (sObject != null) ? Arrays.asList(HEADERMAP.get(operation + "-" + sObject)) : Arrays.asList(HEADERMAP.get(operation));
+            }  catch (Exception e) {
+                return new ArrayList<String>();       
+            }
+        }
+        
+        return sfHeaders;
+    }    
 
     @Override
     public abstract boolean process(Exchange exchange, AsyncCallback callback);
@@ -187,8 +187,8 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
     }
     
     protected final Map<String, Object> getHeaders(String sObjectName, Exchange exchange, String functionCall) {
-        Map<String, Object> sfHeader = new HashMap<String,Object>();
-        for (String key : getHeaderKeys(functionCall, sObjectName)){
+        Map<String, Object> sfHeader = new HashMap<String, Object>();
+        for (String key : getHeaderKeys(functionCall, sObjectName)) {
             sfHeader = exchange.getIn().getHeaders().entrySet().stream()
                   .filter(kv -> kv.getKey().equalsIgnoreCase(key))
                   .collect(Collectors.toMap(kv -> key, kv -> kv.getValue()));

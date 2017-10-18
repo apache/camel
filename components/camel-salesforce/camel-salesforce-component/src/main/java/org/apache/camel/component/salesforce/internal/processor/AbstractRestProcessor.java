@@ -394,10 +394,10 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         
         if (sObjectBase != null) {
             sObjectName = sObjectBase.getClass().getSimpleName();
-            sfHeaders = getHeaders(sObjectName,exchange,"CREATE");
+            sfHeaders = getHeaders(sObjectName, exchange, "CREATE");
         } else {
             sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
-            sfHeaders = getHeaders(sObjectName,exchange,"CREATE");
+            sfHeaders = getHeaders(sObjectName, exchange, "CREATE");
         }
 
         restClient.createSObject(sObjectName, sfHeaders, getRequestStream(exchange),
@@ -423,13 +423,13 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
             // remember the sObject Id
             sObjectId = sObjectBase.getId();
             // remember the client header values
-            sfHeaders = getHeaders(sObjectName,exchange,"UPDATE");
+            sfHeaders = getHeaders(sObjectName, exchange, "UPDATE");
             // clear base object fields, which cannot be updated
             sObjectBase.clearBaseFields();
         } else {
             sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
             sObjectId = getParameter(SOBJECT_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
-            sfHeaders = getHeaders(sObjectName,exchange,"UPDATE");
+            sfHeaders = getHeaders(sObjectName, exchange, "UPDATE");
         }
 
         final String finalsObjectId = sObjectId;
@@ -516,13 +516,13 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
             oldValue = getAndClearPropertyValue(sObjectBase, sObjectExtIdName);
             sObjectExtIdValue = oldValue.toString();
             // remember the client header values
-            sfHeaders = getHeaders(sObjectName,exchange,"UPSERT");
+            sfHeaders = getHeaders(sObjectName, exchange, "UPSERT");
             // clear base object fields, which cannot be updated
             sObjectBase.clearBaseFields();
         } else {
             sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
             sObjectExtIdValue = getParameter(SOBJECT_EXT_ID_VALUE, exchange, IGNORE_BODY, NOT_OPTIONAL);
-            sfHeaders = getHeaders(sObjectName,exchange,"UPSERT");
+            sfHeaders = getHeaders(sObjectName, exchange, "UPSERT");
         }
 
         final Object finalOldValue = oldValue;
@@ -602,7 +602,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final Map<String, Object> sfHeaders;
         
         //remember the client header values
-        sfHeaders = getHeaders(null,exchange,"QUERY");
+        sfHeaders = getHeaders(null, exchange, "QUERY");
 
         restClient.query(sObjectQuery, sfHeaders, new RestClient.ResponseCallback() {
             @Override
@@ -623,7 +623,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final Map<String, Object> sfHeaders;
         
         //remember the client header values
-        sfHeaders = getHeaders(null,exchange,"QUERYMORE");
+        sfHeaders = getHeaders(null, exchange, "QUERYMORE");
 
         restClient.queryMore(nextRecordsUrl, sfHeaders, new RestClient.ResponseCallback() {
             @Override
@@ -643,7 +643,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final Map<String, Object> sfHeaders;
         
         //remember the client header values
-        sfHeaders = getHeaders(null,exchange,"QUERYALL");
+        sfHeaders = getHeaders(null, exchange, "QUERYMORE");
         
         restClient.queryAll(sObjectQuery, sfHeaders, new RestClient.ResponseCallback() {
             @Override
