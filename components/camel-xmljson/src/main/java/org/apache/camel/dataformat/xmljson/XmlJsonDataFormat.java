@@ -29,10 +29,12 @@ import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
 import net.sf.json.xml.XMLSerializer;
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using 
@@ -190,12 +192,26 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat, Dat
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         Object inBody = exchange.getIn().getBody();
         JSON toConvert;
+        
+        if (inBody == null) {
+            return null;
+        }
+        
+        if (inBody instanceof StreamCache) {
+            long length = ((StreamCache) inBody).length();
+            if (length <= 0) {
+                return inBody;
+            }
+        }
         // if the incoming object is already a JSON object, process as-is,
         // otherwise parse it as a String
         if (inBody instanceof JSON) {
             toConvert = (JSON) inBody;
         } else {
             String jsonString = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, inBody);
+            if (ObjectHelper.isEmpty(jsonString)) {
+                return null;
+            }
             toConvert = JSONSerializer.toJSON(jsonString);
         }
 

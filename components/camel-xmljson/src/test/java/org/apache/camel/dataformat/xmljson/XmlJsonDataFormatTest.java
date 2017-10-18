@@ -207,6 +207,16 @@ public class XmlJsonDataFormatTest extends AbstractJsonTestSupport {
         assertTrue("Expected a JSON array with string elements: 1, 2, 3, 4", array.containsAll(Arrays.asList("1", "2", "3", "4")));
         mockJSON.assertIsSatisfied();
     }
+    
+    @Test
+    public void testEmptyBodyToJson() throws Exception {
+        MockEndpoint mockJSON = getMockEndpoint("mock:null2xml");
+        mockJSON.expectedMessageCount(1);
+        mockJSON.message(0).body().isNull();
+
+        template.requestBody("direct:unmarshalNull2Xml", "");
+        mockJSON.assertIsSatisfied();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -219,6 +229,9 @@ public class XmlJsonDataFormatTest extends AbstractJsonTestSupport {
                 from("direct:marshal").marshal(format).to("mock:json");
                 // from JSON to XML
                 from("direct:unmarshal").unmarshal(format).to("mock:xml");
+                
+                // test null body to xml
+                from("direct:unmarshalNull2Xml").unmarshal(format).to("mock:null2xml");
 
                 // from XML to JSON - inline dataformat
                 from("direct:marshalInline").marshal().xmljson().to("mock:jsonInline");

@@ -16,13 +16,17 @@
  */
 package org.apache.camel.dataformat.xmljson;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+
+import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
+import org.apache.camel.StreamCache;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 
@@ -65,6 +69,17 @@ public class SpringXmlJsonDataFormatTest extends CamelSpringTestSupport {
 
         mockJSON.assertIsSatisfied();
         mockXML.assertIsSatisfied();
+    }
+    
+    @Test
+    public void testEmptyBodyToJson() throws Exception {
+        MockEndpoint mockJSON = getMockEndpoint("mock:emptyBody2Xml");
+        mockJSON.expectedMessageCount(1);
+        mockJSON.message(0).body().isInstanceOf(StreamCache.class);
+
+        StreamSource in = context.getTypeConverter().convertTo(StreamSource.class, new ByteArrayInputStream("".getBytes()));
+        template.requestBody("direct:emptyBody2Unmarshal", in);
+        mockJSON.assertIsSatisfied();
     }
 
     @Test
