@@ -33,7 +33,7 @@
 
     <properties>
 		<camel.osgi.import.before.defaults>
-			com.sun.xml.bind.marshaller;resolution:=optional
+			com.sun.xml.bind.marshaller;resolution:=optional;version="[2.2,3)"
 		</camel.osgi.import.before.defaults>
 		<camel.osgi.export.pkg>org.apache.camel.converter.jaxb.*</camel.osgi.export.pkg>
 		<camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=jaxb</camel.osgi.export.service>
