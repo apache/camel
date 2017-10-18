@@ -86,7 +86,7 @@ Please remember to run this check on your code changes before submitting a patch
 
 If you are an Apache Camel committer then clone the ASF git repo at
 
-    git clone https://git-wip-us.apache.org/repos/asf/camel.git
+    git clone https://gitbox.apache.org/repos/asf/camel.git
     cd camel
 
 Build the project (without testing).
