@@ -46,9 +46,9 @@ public class HdfsOsgiHelper {
             for (String key : fileSystems.keySet()) {
                 URI uri = URI.create(key);
                 conf.setClass(String.format("fs.%s.impl", uri.getScheme()), cl.loadClass(fileSystems.get(key)), FileSystem.class);
-                LOG.debug("Successfully loaded class: {}", fileSystems.get(key) );
+                LOG.debug("Successfully loaded class: {}", fileSystems.get(key));
                 FileSystem.get(uri, conf);
-                LOG.debug("Successfully got uri: {} from FileSystem Object", uri );
+                LOG.debug("Successfully got uri: {} from FileSystem Object", uri);
             }
         } catch (Exception e) {
             LOG.debug(e.getMessage(), e);
