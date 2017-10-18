@@ -226,7 +226,12 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void createSObject(String sObjectName, InputStream sObject,
+    public void createSObject(String sObjectName, InputStream sObject, ResponseCallback callback) {
+        createSObject(sObjectName, null, sObject, callback);
+    }
+    
+    @Override
+    public void createSObject(String sObjectName, Map<String, Object> sfHeaders, InputStream sObject,
                               ResponseCallback callback) {
         // post the sObject
         final Request post = getRequest(HttpMethod.POST, sobjectsUrl(sObjectName));
@@ -237,12 +242,22 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         // input stream as entity content
         post.content(new InputStreamContentProvider(sObject));
         post.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
-
+        if (sfHeaders != null) {
+            sfHeaders.forEach((key, value) -> {
+                post.header(key, value.toString());
+            });
+        }
         doHttpRequest(post, new DelegatingClientCallback(callback));
     }
 
     @Override
     public void updateSObject(String sObjectName, String id, InputStream sObject,
+            ResponseCallback callback) {
+        updateSObject(sObjectName, id, null, sObject, callback);
+    }
+    
+    @Override
+    public void updateSObject(String sObjectName, String id, Map<String, Object> sfHeaders, InputStream sObject,
                               ResponseCallback callback) {
         final Request patch = getRequest("PATCH", sobjectsUrl(sObjectName + "/" + id));
         // requires authorization token
@@ -251,7 +266,11 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         // input stream as entity content
         patch.content(new InputStreamContentProvider(sObject));
         patch.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
-
+        if (sfHeaders != null) {
+            sfHeaders.forEach((key, value) -> {
+                patch.header(key, value.toString());
+            });
+        }
         doHttpRequest(patch, new DelegatingClientCallback(callback));
     }
 
@@ -279,7 +298,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void upsertSObject(String sObjectName, String fieldName, String fieldValue, InputStream sObject,
+    public void upsertSObject(String sObjectName, String fieldName, String fieldValue, Map<String, Object> sfHeaders, InputStream sObject,
                               ResponseCallback callback) {
         final Request patch = getRequest("PATCH",
                 sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue));
@@ -291,7 +310,11 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         patch.content(new InputStreamContentProvider(sObject));
         // TODO will the encoding always be UTF-8??
         patch.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
-
+        if (sfHeaders != null) {
+            sfHeaders.forEach((key, value) -> {
+                patch.header(key, value.toString());
+            });
+        }
         doHttpRequest(patch, new DelegatingClientCallback(callback));
     }
 
@@ -319,9 +342,14 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
         doHttpRequest(get, new DelegatingClientCallback(callback));
     }
-
+    
     @Override
     public void query(String soqlQuery, ResponseCallback callback) {
+        query(soqlQuery, null, callback);
+    }
+    
+    @Override
+    public void query(String soqlQuery, Map<String, Object> sfHeaders, ResponseCallback callback) {
         try {
 
             String encodedQuery = urlEncode(soqlQuery);
@@ -329,7 +357,13 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
             // requires authorization token
             setAccessToken(get);
-
+            
+            if (sfHeaders != null) {
+                sfHeaders.forEach((key, value) -> {
+                    get.header(key, value.toString());
+                });
+            }
+            
             doHttpRequest(get, new DelegatingClientCallback(callback));
 
         } catch (UnsupportedEncodingException e) {
@@ -339,17 +373,23 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void queryMore(String nextRecordsUrl, ResponseCallback callback) {
+    public void queryMore(String nextRecordsUrl, Map<String, Object> sfHeaders, ResponseCallback callback) {
         final Request get = getRequest(HttpMethod.GET, instanceUrl + nextRecordsUrl);
 
         // requires authorization token
         setAccessToken(get);
 
+        if (sfHeaders != null) {
+            sfHeaders.forEach((key, value) -> {
+                get.header(key, value.toString());
+            });
+        }
+
         doHttpRequest(get, new DelegatingClientCallback(callback));
     }
 
     @Override
-    public void queryAll(String soqlQuery, ResponseCallback callback) {
+    public void queryAll(String soqlQuery, Map<String, Object> sfHeaders, ResponseCallback callback) {
         try {
 
             String encodedQuery = urlEncode(soqlQuery);
@@ -357,6 +397,12 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
             // requires authorization token
             setAccessToken(get);
+
+            if (sfHeaders != null) {
+                sfHeaders.forEach((key, value) -> {
+                    get.header(key, value.toString());
+                });
+            }
 
             doHttpRequest(get, new DelegatingClientCallback(callback));
 

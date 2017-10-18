@@ -81,6 +81,7 @@ public interface RestClient {
      * @param sObject     request entity
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
+    void createSObject(String sObjectName, Map<String, Object> sfHeaders, InputStream sObject, ResponseCallback callback);
     void createSObject(String sObjectName, InputStream sObject, ResponseCallback callback);
 
     /**
@@ -91,6 +92,7 @@ public interface RestClient {
      * @param sObject     request entity
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
+    void updateSObject(String sObjectName, String id, Map<String, Object> sfHeaders, InputStream sObject, ResponseCallback callback);
     void updateSObject(String sObjectName, String id, InputStream sObject, ResponseCallback callback);
 
     /**
@@ -121,8 +123,8 @@ public interface RestClient {
      * @param sObject     input object to insert or update
      * @param callback    {@link ResponseCallback} to handle response or exception
      */
-    void upsertSObject(String sObjectName,
-                       String fieldName, String fieldValue, InputStream sObject, ResponseCallback callback);
+    void upsertSObject(String sObjectName, String fieldName, String fieldValue, 
+            Map<String, Object> sfHeaders, InputStream sObject, ResponseCallback callback);
 
     /**
      * Deletes a record based on the value of a specified external ID field.
@@ -156,6 +158,7 @@ public interface RestClient {
      * @param soqlQuery SOQL query
      * @param callback  {@link ResponseCallback} to handle response or exception
      */
+    void query(String soqlQuery, Map<String, Object> sfHeaders, ResponseCallback callback);
     void query(String soqlQuery, ResponseCallback callback);
 
     /**
@@ -164,7 +167,7 @@ public interface RestClient {
      * @param nextRecordsUrl URL for next records to fetch, returned by query()
      * @param callback       {@link ResponseCallback} to handle response or exception
      */
-    void queryMore(String nextRecordsUrl, ResponseCallback callback);
+    void queryMore(String nextRecordsUrl, Map<String, Object> sfHeaders, ResponseCallback callback);
 
     /**
      * Executes the specified SOQL query including deleted records.
@@ -172,7 +175,7 @@ public interface RestClient {
      * @param soqlQuery SOQL query
      * @param callback  {@link ResponseCallback} to handle response or exception
      */
-    void queryAll(String soqlQuery, ResponseCallback callback);
+    void queryAll(String soqlQuery, Map<String, Object> sfHeaders, ResponseCallback callback);
 
     /**
      * Executes the specified SOSL search.
