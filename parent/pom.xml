@@ -289,7 +289,7 @@
     <hawtdispatch-version>1.22</hawtdispatch-version>
     <hazelcast-version>3.8.6</hazelcast-version>
     <hbase-version>1.2.6</hbase-version>
-    <hessian-version>4.0.38</hessian-version>
+    <hessian-version>4.0.51</hessian-version>
     <hibernate-validator-version>5.4.1.Final</hibernate-validator-version>
     <hibernate-version>5.0.12.Final</hibernate-version>
     <hikaricp-version>2.3.13</hikaricp-version>
