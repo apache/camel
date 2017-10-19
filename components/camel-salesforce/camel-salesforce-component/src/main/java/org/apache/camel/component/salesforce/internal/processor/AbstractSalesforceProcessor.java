@@ -38,6 +38,7 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
     protected static final boolean USE_BODY = true;
     protected static final boolean IGNORE_BODY = false;
 
+
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
     protected final SalesforceEndpoint endpoint;
@@ -46,7 +47,7 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
     protected final OperationName operationName;
     protected final SalesforceSession session;
     protected final SalesforceHttpClient httpClient;
-    protected final boolean rawPayload;
+    protected final boolean rawPayload; 
 
     public AbstractSalesforceProcessor(SalesforceEndpoint endpoint) {
         this.endpoint = endpoint;

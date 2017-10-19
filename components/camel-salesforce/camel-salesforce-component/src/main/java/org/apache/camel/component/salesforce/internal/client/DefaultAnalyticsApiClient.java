@@ -19,8 +19,10 @@ package org.apache.camel.component.salesforce.internal.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,13 +67,13 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
     }
 
     @Override
-    public void getRecentReports(final RecentReportsResponseCallback callback) {
+    public void getRecentReports(final Map<String, List<String>> headers, final RecentReportsResponseCallback callback) {
 
-        final Request request = getRequest(HttpMethod.GET, reportsUrl());
+        final Request request = getRequest(HttpMethod.GET, reportsUrl(), headers);
 
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 List<RecentReport> recentReports = null;
                 if (response != null) {
                     try {
@@ -80,37 +82,37 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
                         ex = e;
                     }
                 }
-                callback.onResponse(recentReports, ex);
+                callback.onResponse(recentReports, headers, ex);
             }
         });
     }
 
     @Override
-    public void getReportDescription(String reportId, final ReportDescriptionResponseCallback callback) {
+    public void getReportDescription(String reportId, final Map<String, List<String>> headers, final ReportDescriptionResponseCallback callback) {
 
-        final Request request = getRequest(HttpMethod.GET, reportsDescribeUrl(reportId));
+        final Request request = getRequest(HttpMethod.GET, reportsDescribeUrl(reportId), headers);
 
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 ReportDescription reportDescription = null;
                 try {
                     reportDescription = unmarshalResponse(response, request, ReportDescription.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
-                callback.onResponse(reportDescription, ex);
+                callback.onResponse(reportDescription, headers, ex);
             }
         });
     }
 
     @Override
     public void executeSyncReport(String reportId, Boolean includeDetails, ReportMetadata reportMetadata,
-                                  final ReportResultsResponseCallback callback) {
+        final Map<String, List<String>> headers, final ReportResultsResponseCallback callback) {
 
         final boolean useGet = reportMetadata == null;
         final Request request = getRequest(
-                useGet ? HttpMethod.GET : HttpMethod.POST, reportsUrl(reportId, includeDetails));
+                useGet ? HttpMethod.GET : HttpMethod.POST, reportsUrl(reportId, includeDetails), headers);
 
         // set POST data
         if (!useGet) {
@@ -120,31 +122,31 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
                 input.put("reportMetadata", reportMetadata);
                 marshalRequest(input, request);
             } catch (SalesforceException e) {
-                callback.onResponse(null, e);
+                callback.onResponse(null, Collections.emptyMap(), e);
                 return;
             }
         }
 
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 SyncReportResults reportResults = null;
                 try {
                     reportResults = unmarshalResponse(response, request, SyncReportResults.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
-                callback.onResponse(reportResults, ex);
+                callback.onResponse(reportResults, headers, ex);
             }
         });
     }
 
     @Override
     public void executeAsyncReport(String reportId, Boolean includeDetails, ReportMetadata reportMetadata,
-                                   final ReportInstanceResponseCallback callback) {
+        final Map<String, List<String>> headers, final ReportInstanceResponseCallback callback) {
 
         final Request request = getRequest(HttpMethod.POST,
-                reportInstancesUrl(reportId, includeDetails));
+                reportInstancesUrl(reportId, includeDetails), headers);
 
         // set POST data
         if (reportMetadata != null) {
@@ -154,33 +156,33 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
                 input.put("reportMetadata", reportMetadata);
                 marshalRequest(input, request);
             } catch (SalesforceException e) {
-                callback.onResponse(null, e);
+                callback.onResponse(null, Collections.emptyMap(), e);
                 return;
             }
         }
 
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 ReportInstance reportInstance = null;
                 try {
                     reportInstance = unmarshalResponse(response, request, ReportInstance.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
-                callback.onResponse(reportInstance, ex);
+                callback.onResponse(reportInstance, headers, ex);
             }
         });
     }
 
     @Override
-    public void getReportInstances(String reportId, final ReportInstanceListResponseCallback callback) {
+    public void getReportInstances(String reportId, final Map<String, List<String>> headers, final ReportInstanceListResponseCallback callback) {
 
-        final Request request = getRequest(HttpMethod.GET, reportInstancesUrl(reportId));
+        final Request request = getRequest(HttpMethod.GET, reportInstancesUrl(reportId), headers);
 
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 List<ReportInstance> reportInstances = null;
                 if (response != null) {
                     try {
@@ -189,27 +191,28 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
                         ex = e;
                     }
                 }
-                callback.onResponse(reportInstances, ex);
+                callback.onResponse(reportInstances, headers, ex);
             }
         });
     }
 
     @Override
-    public void getReportResults(String reportId, String instanceId, final ReportResultsResponseCallback callback) {
+    public void getReportResults(String reportId, String instanceId, final Map<String, List<String>> headers,
+        final ReportResultsResponseCallback callback) {
 
         final Request request = getRequest(HttpMethod.GET,
-                reportInstancesUrl(reportId, instanceId));
+                reportInstancesUrl(reportId, instanceId), headers);
 
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 AsyncReportResults reportResults = null;
                 try {
                     reportResults = unmarshalResponse(response, request, AsyncReportResults.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
-                callback.onResponse(reportResults, ex);
+                callback.onResponse(reportResults, headers, ex);
             }
         });
     }

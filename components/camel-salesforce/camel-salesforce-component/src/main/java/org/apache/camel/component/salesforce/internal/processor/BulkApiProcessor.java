@@ -19,6 +19,7 @@ package org.apache.camel.component.salesforce.internal.processor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
@@ -125,10 +126,10 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
 
     private void processCreateJob(final Exchange exchange, final AsyncCallback callback) throws InvalidPayloadException {
         JobInfo jobBody = exchange.getIn().getMandatoryBody(JobInfo.class);
-        bulkClient.createJob(jobBody, new BulkApiClient.JobInfoResponseCallback() {
+        bulkClient.createJob(jobBody, determineHeaders(exchange), new BulkApiClient.JobInfoResponseCallback() {
             @Override
-            public void onResponse(JobInfo jobInfo, SalesforceException ex) {
-                processResponse(exchange, jobInfo, ex, callback);
+            public void onResponse(JobInfo jobInfo, Map<String, String> headers, SalesforceException ex) {
+                processResponse(exchange, jobInfo, headers, ex, callback);
             }
         });
     }
@@ -142,10 +143,10 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
         } else {
             jobId = getParameter(JOB_ID, exchange, USE_BODY, NOT_OPTIONAL);
         }
-        bulkClient.getJob(jobId, new BulkApiClient.JobInfoResponseCallback() {
+        bulkClient.getJob(jobId, determineHeaders(exchange), new BulkApiClient.JobInfoResponseCallback() {
             @Override
-            public void onResponse(JobInfo jobInfo, SalesforceException ex) {
-                processResponse(exchange, jobInfo, ex, callback);
+            public void onResponse(JobInfo jobInfo, Map<String, String> headers, SalesforceException ex) {
+                processResponse(exchange, jobInfo, headers, ex, callback);
             }
         });
     }
@@ -159,10 +160,10 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
         } else {
             jobId = getParameter(JOB_ID, exchange, USE_BODY, NOT_OPTIONAL);
         }
-        bulkClient.closeJob(jobId, new BulkApiClient.JobInfoResponseCallback() {
+        bulkClient.closeJob(jobId, determineHeaders(exchange), new BulkApiClient.JobInfoResponseCallback() {
             @Override
-            public void onResponse(JobInfo jobInfo, SalesforceException ex) {
-                processResponse(exchange, jobInfo, ex, callback);
+            public void onResponse(JobInfo jobInfo, Map<String, String> headers, SalesforceException ex) {
+                processResponse(exchange, jobInfo, headers, ex, callback);
             }
         });
     }
@@ -176,10 +177,10 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
         } else {
             jobId = getParameter(JOB_ID, exchange, USE_BODY, NOT_OPTIONAL);
         }
-        bulkClient.abortJob(jobId, new BulkApiClient.JobInfoResponseCallback() {
+        bulkClient.abortJob(jobId, determineHeaders(exchange), new BulkApiClient.JobInfoResponseCallback() {
             @Override
-            public void onResponse(JobInfo jobInfo, SalesforceException ex) {
-                processResponse(exchange, jobInfo, ex, callback);
+            public void onResponse(JobInfo jobInfo, Map<String, String> headers, SalesforceException ex) {
+                processResponse(exchange, jobInfo, headers, ex, callback);
             }
         });
     }
@@ -199,12 +200,13 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
             throw new SalesforceException(msg, e);
         }
 
-        bulkClient.createBatch(request, jobId, contentType, new BulkApiClient.BatchInfoResponseCallback() {
-            @Override
-            public void onResponse(BatchInfo batchInfo, SalesforceException ex) {
-                processResponse(exchange, batchInfo, ex, callback);
-            }
-        });
+        bulkClient.createBatch(request, jobId, contentType, determineHeaders(exchange),
+            new BulkApiClient.BatchInfoResponseCallback() {
+                @Override
+                public void onResponse(BatchInfo batchInfo, Map<String, String> headers, SalesforceException ex) {
+                    processResponse(exchange, batchInfo, headers, ex, callback);
+                }
+            });
     }
 
     private void processGetBatch(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -218,12 +220,13 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
             jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
             batchId = getParameter(BATCH_ID, exchange, USE_BODY, NOT_OPTIONAL);
         }
-        bulkClient.getBatch(jobId, batchId, new BulkApiClient.BatchInfoResponseCallback() {
-            @Override
-            public void onResponse(BatchInfo batchInfo, SalesforceException ex) {
-                processResponse(exchange, batchInfo, ex, callback);
-            }
-        });
+        bulkClient.getBatch(jobId, batchId, determineHeaders(exchange), 
+            new BulkApiClient.BatchInfoResponseCallback() {
+                @Override
+                public void onResponse(BatchInfo batchInfo, Map<String, String> headers, SalesforceException ex) {
+                    processResponse(exchange, batchInfo, headers, ex, callback);
+                }
+            });
     }
 
     private void processGetAllBatches(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -235,12 +238,13 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
         } else {
             jobId = getParameter(JOB_ID, exchange, USE_BODY, NOT_OPTIONAL);
         }
-        bulkClient.getAllBatches(jobId, new BulkApiClient.BatchInfoListResponseCallback() {
-            @Override
-            public void onResponse(List<BatchInfo> batchInfoList, SalesforceException ex) {
-                processResponse(exchange, batchInfoList, ex, callback);
-            }
-        });
+        bulkClient.getAllBatches(jobId, determineHeaders(exchange),
+            new BulkApiClient.BatchInfoListResponseCallback() {
+                @Override
+                public void onResponse(List<BatchInfo> batchInfoList, Map<String, String> headers, SalesforceException ex) {
+                    processResponse(exchange, batchInfoList, headers, ex, callback);
+                }
+            });
     }
 
     private void processGetRequest(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -256,29 +260,30 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
             batchId = getParameter(BATCH_ID, exchange, USE_BODY, NOT_OPTIONAL);
         }
 
-        bulkClient.getRequest(jobId, batchId, new BulkApiClient.StreamResponseCallback() {
-            @Override
-            public void onResponse(InputStream inputStream, SalesforceException ex) {
-                // read the request stream into a StreamCache temp file
-                // ensures the connection is read
-                StreamCache body = null;
-                if (inputStream != null) {
-                    try {
-                        body = StreamCacheConverter.convertToStreamCache(inputStream, exchange);
-                    } catch (IOException e) {
-                        String msg = "Error retrieving batch request: " + e.getMessage();
-                        ex = new SalesforceException(msg, e);
-                    } finally {
-                        // close the input stream to release the Http connection
+        bulkClient.getRequest(jobId, batchId, determineHeaders(exchange), 
+            new BulkApiClient.StreamResponseCallback() {
+                @Override
+                public void onResponse(InputStream inputStream, Map<String, String> headers, SalesforceException ex) {
+                    // read the request stream into a StreamCache temp file
+                    // ensures the connection is read
+                    StreamCache body = null;
+                    if (inputStream != null) {
                         try {
-                            inputStream.close();
-                        } catch (IOException ignore) {
+                            body = StreamCacheConverter.convertToStreamCache(inputStream, exchange);
+                        } catch (IOException e) {
+                            String msg = "Error retrieving batch request: " + e.getMessage();
+                            ex = new SalesforceException(msg, e);
+                        } finally {
+                            // close the input stream to release the Http connection
+                            try {
+                                inputStream.close();
+                            } catch (IOException ignore) {
+                            }
                         }
                     }
+                    processResponse(exchange, body, headers, ex, callback);
                 }
-                processResponse(exchange, body, ex, callback);
-            }
-        });
+            });
     }
 
     private void processGetResults(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -293,29 +298,30 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
             jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
             batchId = getParameter(BATCH_ID, exchange, USE_BODY, NOT_OPTIONAL);
         }
-        bulkClient.getResults(jobId, batchId, new BulkApiClient.StreamResponseCallback() {
-            @Override
-            public void onResponse(InputStream inputStream, SalesforceException ex) {
-                // read the result stream into a StreamCache temp file
-                // ensures the connection is read
-                StreamCache body = null;
-                if (inputStream != null) {
-                    try {
-                        body = StreamCacheConverter.convertToStreamCache(inputStream, exchange);
-                    } catch (IOException e) {
-                        String msg = "Error retrieving batch results: " + e.getMessage();
-                        ex = new SalesforceException(msg, e);
-                    } finally {
-                        // close the input stream to release the Http connection
+        bulkClient.getResults(jobId, batchId, determineHeaders(exchange),
+            new BulkApiClient.StreamResponseCallback() {
+                @Override
+                public void onResponse(InputStream inputStream, Map<String, String> headers, SalesforceException ex) {
+                    // read the result stream into a StreamCache temp file
+                    // ensures the connection is read
+                    StreamCache body = null;
+                    if (inputStream != null) {
                         try {
-                            inputStream.close();
-                        } catch (IOException ignore) {
+                            body = StreamCacheConverter.convertToStreamCache(inputStream, exchange);
+                        } catch (IOException e) {
+                            String msg = "Error retrieving batch results: " + e.getMessage();
+                            ex = new SalesforceException(msg, e);
+                        } finally {
+                            // close the input stream to release the Http connection
+                            try {
+                                inputStream.close();
+                            } catch (IOException ignore) {
+                            }
                         }
                     }
+                    processResponse(exchange, body, headers, ex, callback);
                 }
-                processResponse(exchange, body, ex, callback);
-            }
-        });
+            });
     }
 
     private void processCreateBatchQuery(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -336,11 +342,11 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
             // reuse SOBJECT_QUERY property
             soqlQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
         }
-        bulkClient.createBatchQuery(jobId, soqlQuery, contentType,
+        bulkClient.createBatchQuery(jobId, soqlQuery, contentType, determineHeaders(exchange),
                 new BulkApiClient.BatchInfoResponseCallback() {
                     @Override
-                    public void onResponse(BatchInfo batchInfo, SalesforceException ex) {
-                        processResponse(exchange, batchInfo, ex, callback);
+                    public void onResponse(BatchInfo batchInfo, Map<String, String> headers, SalesforceException ex) {
+                        processResponse(exchange, batchInfo, headers, ex, callback);
                     }
                 });
     }
@@ -357,12 +363,13 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
             jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
             batchId = getParameter(BATCH_ID, exchange, USE_BODY, NOT_OPTIONAL);
         }
-        bulkClient.getQueryResultIds(jobId, batchId, new BulkApiClient.QueryResultIdsCallback() {
-            @Override
-            public void onResponse(List<String> ids, SalesforceException ex) {
-                processResponse(exchange, ids, ex, callback);
-            }
-        });
+        bulkClient.getQueryResultIds(jobId, batchId, determineHeaders(exchange),
+            new BulkApiClient.QueryResultIdsCallback() {
+                @Override
+                public void onResponse(List<String> ids, Map<String, String> headers, SalesforceException ex) {
+                    processResponse(exchange, ids, headers, ex, callback);
+                }
+            });
     }
 
     private void processGetQueryResult(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -380,33 +387,34 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
             batchId = getParameter(BATCH_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
             resultId = getParameter(RESULT_ID, exchange, USE_BODY, NOT_OPTIONAL);
         }
-        bulkClient.getQueryResult(jobId, batchId, resultId, new BulkApiClient.StreamResponseCallback() {
-            @Override
-            public void onResponse(InputStream inputStream, SalesforceException ex) {
-                StreamCache body = null;
-                if (inputStream != null) {
-                    // read the result stream into a StreamCache temp file
-                    // ensures the connection is read
-                    try {
-                        body = StreamCacheConverter.convertToStreamCache(inputStream, exchange);
-                    } catch (IOException e) {
-                        String msg = "Error retrieving query result: " + e.getMessage();
-                        ex = new SalesforceException(msg, e);
-                    } finally {
-                        // close the input stream to release the Http connection
+        bulkClient.getQueryResult(jobId, batchId, resultId, determineHeaders(exchange),
+            new BulkApiClient.StreamResponseCallback() {
+                @Override
+                public void onResponse(InputStream inputStream, Map<String, String> headers, SalesforceException ex) {
+                    StreamCache body = null;
+                    if (inputStream != null) {
+                        // read the result stream into a StreamCache temp file
+                        // ensures the connection is read
                         try {
-                            inputStream.close();
+                            body = StreamCacheConverter.convertToStreamCache(inputStream, exchange);
                         } catch (IOException e) {
-                            // ignore
+                            String msg = "Error retrieving query result: " + e.getMessage();
+                            ex = new SalesforceException(msg, e);
+                        } finally {
+                            // close the input stream to release the Http connection
+                            try {
+                                inputStream.close();
+                            } catch (IOException e) {
+                                // ignore
+                            }
                         }
                     }
+                    processResponse(exchange, body, headers, ex, callback);
                 }
-                processResponse(exchange, body, ex, callback);
-            }
-        });
+            });
     }
 
-    private void processResponse(Exchange exchange, Object body, SalesforceException ex, AsyncCallback callback) {
+    private void processResponse(Exchange exchange, Object body, Map<String, String> headers, SalesforceException ex, AsyncCallback callback) {
         final Message out = exchange.getOut();
         if (ex != null) {
             exchange.setException(ex);
@@ -415,8 +423,11 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
         }
 
         // copy headers and attachments
-        out.getHeaders().putAll(exchange.getIn().getHeaders());
-        out.getAttachmentObjects().putAll(exchange.getIn().getAttachmentObjects());
+        Message inboundMessage = exchange.getIn();
+        Map<String, Object> outboundHeaders = out.getHeaders();
+        outboundHeaders.putAll(inboundMessage.getHeaders());
+        outboundHeaders.putAll(headers);
+        out.copyAttachments(inboundMessage);
 
         // signal exchange completion
         callback.done(false);

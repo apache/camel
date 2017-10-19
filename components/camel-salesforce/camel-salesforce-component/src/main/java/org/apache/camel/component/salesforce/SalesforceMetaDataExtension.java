@@ -18,6 +18,7 @@ package org.apache.camel.component.salesforce;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -83,7 +84,7 @@ public class SalesforceMetaDataExtension extends AbstractMetaDataExtension {
     static JsonSchema fetch(final Consumer<ResponseCallback> restMethod, final SchemaMapper callback) {
         final CompletableFuture<JsonSchema> ret = new CompletableFuture<>();
 
-        restMethod.accept((response, exception) -> {
+        restMethod.accept((response, headers, exception) -> {
             if (exception != null) {
                 ret.completeExceptionally(exception);
             } else {
@@ -103,11 +104,11 @@ public class SalesforceMetaDataExtension extends AbstractMetaDataExtension {
     }
 
     static JsonSchema fetchAllObjectsSchema(final RestClient client) {
-        return fetch(callback -> client.getGlobalObjects(callback), SalesforceMetaDataExtension::mapAllObjectsSchema);
+        return fetch(callback -> client.getGlobalObjects(Collections.emptyMap(), callback), SalesforceMetaDataExtension::mapAllObjectsSchema);
     }
 
     static JsonSchema fetchSingleObjectSchema(final RestClient client, final String objectName) {
-        return fetch(callback -> client.getDescription(objectName, callback),
+        return fetch(callback -> client.getDescription(objectName, Collections.emptyMap(), callback),
             SalesforceMetaDataExtension::mapSingleObjectSchema);
     }
 

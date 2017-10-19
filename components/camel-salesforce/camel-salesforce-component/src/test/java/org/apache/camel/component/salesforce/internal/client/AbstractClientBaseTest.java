@@ -26,6 +26,7 @@ import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.api.Response.CompleteListener;
 import org.eclipse.jetty.client.api.Result;
+import org.eclipse.jetty.http.HttpFields;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -77,12 +78,13 @@ public class AbstractClientBaseTest {
 
         doNothing().when(request).send(listener.capture());
 
-        client.doHttpRequest(request, (response, exception) -> {
+        client.doHttpRequest(request, (response, headers, exception) -> {
         });
 
         final Result result = mock(Result.class);
         final Response response = mock(Response.class);
         when(result.getResponse()).thenReturn(response);
+        when(response.getHeaders()).thenReturn(new HttpFields());
 
         final SalesforceHttpRequest salesforceRequest = mock(SalesforceHttpRequest.class);
         when(result.getRequest()).thenReturn(salesforceRequest);
@@ -106,7 +108,7 @@ public class AbstractClientBaseTest {
 
     @Test
     public void shouldTimeoutWhenRequestsAreStillOngoing() throws Exception {
-        client.doHttpRequest(mock(Request.class), (response, exception) -> {
+        client.doHttpRequest(mock(Request.class), (response, headers, exception) -> {
         });
 
         // the request never completes

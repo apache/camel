@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.Map;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
@@ -222,12 +223,13 @@ public class XmlRestProcessor extends AbstractRestProcessor {
 
     @Override
     protected void processResponse(final Exchange exchange, final InputStream responseEntity,
-        final SalesforceException exception, final AsyncCallback callback) {
+        final Map<String, String> headers, final SalesforceException exception, final AsyncCallback callback) {
         final XStream localXStream = xStream.get();
         try {
             final Message out = exchange.getOut();
             final Message in = exchange.getIn();
             out.copyFromWithNewBody(in, null);
+            out.getHeaders().putAll(headers);
 
             if (exception != null) {
                 if (shouldReport(exception)) {

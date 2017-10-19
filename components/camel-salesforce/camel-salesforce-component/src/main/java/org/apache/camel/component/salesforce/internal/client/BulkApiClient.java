@@ -18,6 +18,7 @@ package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.bulk.BatchInfo;
@@ -30,23 +31,23 @@ import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
 public interface BulkApiClient {
 
     public interface JobInfoResponseCallback {
-        void onResponse(JobInfo jobInfo, SalesforceException ex);
+        void onResponse(JobInfo jobInfo, Map<String, String> headers, SalesforceException ex);
     }
 
     public interface BatchInfoResponseCallback {
-        void onResponse(BatchInfo batchInfo, SalesforceException ex);
+        void onResponse(BatchInfo batchInfo, Map<String, String> headers, SalesforceException ex);
     }
 
     public interface BatchInfoListResponseCallback {
-        void onResponse(List<BatchInfo> batchInfoList, SalesforceException ex);
+        void onResponse(List<BatchInfo> batchInfoList, Map<String, String> headers, SalesforceException ex);
     }
 
     public interface StreamResponseCallback {
-        void onResponse(InputStream inputStream, SalesforceException ex);
+        void onResponse(InputStream inputStream, Map<String, String> headers, SalesforceException ex);
     }
 
     public interface QueryResultIdsCallback {
-        void onResponse(List<String> ids, SalesforceException ex);
+        void onResponse(List<String> ids, Map<String, String> headers, SalesforceException ex);
     }
 
     /**
@@ -55,40 +56,40 @@ public interface BulkApiClient {
      * @param jobInfo  {@link JobInfo} with required fields
      * @param callback {@link JobInfoResponseCallback} to be invoked on response or error
      */
-    void createJob(JobInfo jobInfo,
+    void createJob(JobInfo jobInfo, Map<String, List<String>> header,
                    JobInfoResponseCallback callback);
 
-    void getJob(String jobId,
+    void getJob(String jobId, Map<String, List<String>> header,
                 JobInfoResponseCallback callback);
 
-    void closeJob(String jobId,
+    void closeJob(String jobId, Map<String, List<String>> header,
                   JobInfoResponseCallback callback);
 
-    void abortJob(String jobId,
+    void abortJob(String jobId, Map<String, List<String>> header,
                   JobInfoResponseCallback callback);
 
     void createBatch(InputStream batchStream, String jobId, ContentType contentTypeEnum,
-                     BatchInfoResponseCallback callback);
+        Map<String, List<String>> header, BatchInfoResponseCallback callback);
 
-    void getBatch(String jobId, String batchId,
+    void getBatch(String jobId, String batchId, Map<String, List<String>> header,
                   BatchInfoResponseCallback callback);
 
-    void getAllBatches(String jobId,
+    void getAllBatches(String jobId, Map<String, List<String>> header,
                        BatchInfoListResponseCallback callback);
 
-    void getRequest(String jobId, String batchId,
+    void getRequest(String jobId, String batchId, Map<String, List<String>> header,
                     StreamResponseCallback callback);
 
-    void getResults(String jobId, String batchId,
+    void getResults(String jobId, String batchId, Map<String, List<String>> header,
                     StreamResponseCallback callback);
 
     void createBatchQuery(String jobId, String soqlQuery, ContentType jobContentType,
-                          BatchInfoResponseCallback callback);
+        Map<String, List<String>> header, BatchInfoResponseCallback callback);
 
-    void getQueryResultIds(String jobId, String batchId,
+    void getQueryResultIds(String jobId, String batchId, Map<String, List<String>> header,
                            QueryResultIdsCallback callback);
 
     void getQueryResult(String jobId, String batchId, String resultId,
-                        StreamResponseCallback callback);
+        Map<String, List<String>> header, StreamResponseCallback callback);
 
 }

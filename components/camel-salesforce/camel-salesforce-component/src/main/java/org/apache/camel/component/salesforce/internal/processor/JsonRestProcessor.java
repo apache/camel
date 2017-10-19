@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -168,13 +169,15 @@ public class JsonRestProcessor extends AbstractRestProcessor {
     }
 
     @Override
-    protected void processResponse(Exchange exchange, InputStream responseEntity, SalesforceException ex, AsyncCallback callback) {
+    protected void processResponse(Exchange exchange, InputStream responseEntity, Map<String, String> headers, 
+        SalesforceException ex, AsyncCallback callback) {
 
         // process JSON response for TypeReference
         try {
             final Message out = exchange.getOut();
             final Message in = exchange.getIn();
             out.copyFromWithNewBody(in, null);
+            out.getHeaders().putAll(headers);
 
             if (ex != null) {
                 // if an exception is reported we should not loose it

@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -136,8 +137,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void approval(final InputStream request, final ResponseCallback callback) {
-        final Request post = getRequest(HttpMethod.POST, versionUrl() + "process/approvals/");
+    public void approval(final InputStream request, Map<String, List<String>> headers, final ResponseCallback callback) {
+        final Request post = getRequest(HttpMethod.POST, versionUrl() + "process/approvals/", headers);
 
         // authorization
         setAccessToken(post);
@@ -150,23 +151,23 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void approvals(final ResponseCallback callback) {
-        final Request get = getRequest(HttpMethod.GET, versionUrl() + "process/approvals/");
+    public void approvals(Map<String, List<String>> headers, final ResponseCallback callback) {
+        final Request get = getRequest(HttpMethod.GET, versionUrl() + "process/approvals/", headers);
 
         doHttpRequest(get, new DelegatingClientCallback(callback));
     }
 
     @Override
-    public void getVersions(final ResponseCallback callback) {
-        Request get = getRequest(HttpMethod.GET, servicesDataUrl());
+    public void getVersions(Map<String, List<String>> headers, final ResponseCallback callback) {
+        Request get = getRequest(HttpMethod.GET, servicesDataUrl(), headers);
         // does not require authorization token
 
         doHttpRequest(get, new DelegatingClientCallback(callback));
     }
 
     @Override
-    public void getResources(ResponseCallback callback) {
-        Request get = getRequest(HttpMethod.GET, versionUrl());
+    public void getResources(Map<String, List<String>> headers, ResponseCallback callback) {
+        Request get = getRequest(HttpMethod.GET, versionUrl(), headers);
         // requires authorization token
         setAccessToken(get);
 
@@ -174,8 +175,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void getGlobalObjects(ResponseCallback callback) {
-        Request get = getRequest(HttpMethod.GET, sobjectsUrl(""));
+    public void getGlobalObjects(Map<String, List<String>> headers, ResponseCallback callback) {
+        Request get = getRequest(HttpMethod.GET, sobjectsUrl(""), headers);
         // requires authorization token
         setAccessToken(get);
 
@@ -183,9 +184,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void getBasicInfo(String sObjectName,
-                             ResponseCallback callback) {
-        Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + "/"));
+    public void getBasicInfo(String sObjectName, Map<String, List<String>> headers, ResponseCallback callback) {
+        Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + "/"), headers);
         // requires authorization token
         setAccessToken(get);
 
@@ -193,9 +193,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void getDescription(String sObjectName,
-                               ResponseCallback callback) {
-        Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + "/describe/"));
+    public void getDescription(String sObjectName, Map<String, List<String>> headers, ResponseCallback callback) {
+        Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + "/describe/"), headers);
         // requires authorization token
         setAccessToken(get);
 
@@ -203,7 +202,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void getSObject(String sObjectName, String id, String[] fields,
+    public void getSObject(String sObjectName, String id, String[] fields, Map<String, List<String>> headers,
                            ResponseCallback callback) {
 
         // parse fields if set
@@ -218,7 +217,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             }
             params = fieldsValue.toString();
         }
-        Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + "/" + id + params));
+        Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + "/" + id + params), headers);
         // requires authorization token
         setAccessToken(get);
 
@@ -226,10 +225,10 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void createSObject(String sObjectName, InputStream sObject,
+    public void createSObject(String sObjectName, InputStream sObject, Map<String, List<String>> headers, 
                               ResponseCallback callback) {
         // post the sObject
-        final Request post = getRequest(HttpMethod.POST, sobjectsUrl(sObjectName));
+        final Request post = getRequest(HttpMethod.POST, sobjectsUrl(sObjectName), headers);
 
         // authorization
         setAccessToken(post);
@@ -242,9 +241,9 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void updateSObject(String sObjectName, String id, InputStream sObject,
+    public void updateSObject(String sObjectName, String id, InputStream sObject, Map<String, List<String>> headers,
                               ResponseCallback callback) {
-        final Request patch = getRequest("PATCH", sobjectsUrl(sObjectName + "/" + id));
+        final Request patch = getRequest("PATCH", sobjectsUrl(sObjectName + "/" + id), headers);
         // requires authorization token
         setAccessToken(patch);
 
@@ -256,9 +255,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void deleteSObject(String sObjectName, String id,
-                              ResponseCallback callback) {
-        final Request delete = getRequest(HttpMethod.DELETE, sobjectsUrl(sObjectName + "/" + id));
+    public void deleteSObject(String sObjectName, String id, Map<String, List<String>> headers, ResponseCallback callback) {
+        final Request delete = getRequest(HttpMethod.DELETE, sobjectsUrl(sObjectName + "/" + id), headers);
 
         // requires authorization token
         setAccessToken(delete);
@@ -267,10 +265,10 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void getSObjectWithId(String sObjectName, String fieldName, String fieldValue,
+    public void getSObjectWithId(String sObjectName, String fieldName, String fieldValue, Map<String, List<String>> headers,
                                  ResponseCallback callback) {
         final Request get = getRequest(HttpMethod.GET,
-                sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue));
+                sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue), headers);
 
         // requires authorization token
         setAccessToken(get);
@@ -279,10 +277,10 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void upsertSObject(String sObjectName, String fieldName, String fieldValue, InputStream sObject,
+    public void upsertSObject(String sObjectName, String fieldName, String fieldValue, Map<String, List<String>> headers, InputStream sObject,
                               ResponseCallback callback) {
         final Request patch = getRequest("PATCH",
-                sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue));
+                sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue), headers);
 
         // requires authorization token
         setAccessToken(patch);
@@ -296,10 +294,10 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void deleteSObjectWithId(String sObjectName, String fieldName, String fieldValue,
+    public void deleteSObjectWithId(String sObjectName, String fieldName, String fieldValue, Map<String, List<String>> headers,
                                     ResponseCallback callback) {
         final Request delete = getRequest(HttpMethod.DELETE,
-                sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue));
+                sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue), headers);
 
         // requires authorization token
         setAccessToken(delete);
@@ -308,9 +306,9 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void getBlobField(String sObjectName, String id, String blobFieldName, ResponseCallback callback) {
+    public void getBlobField(String sObjectName, String id, String blobFieldName, Map<String, List<String>> headers, ResponseCallback callback) {
         final Request get = getRequest(HttpMethod.GET,
-                sobjectsUrl(sObjectName + "/" + id + "/" + blobFieldName));
+                sobjectsUrl(sObjectName + "/" + id + "/" + blobFieldName), headers);
         // TODO this doesn't seem to be required, the response is always the content binary stream
         //get.header(HttpHeader.ACCEPT_ENCODING, "base64");
 
@@ -321,11 +319,11 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void query(String soqlQuery, ResponseCallback callback) {
+    public void query(String soqlQuery, Map<String, List<String>> headers, ResponseCallback callback) {
         try {
 
             String encodedQuery = urlEncode(soqlQuery);
-            final Request get = getRequest(HttpMethod.GET, versionUrl() + "query/?q=" + encodedQuery);
+            final Request get = getRequest(HttpMethod.GET, versionUrl() + "query/?q=" + encodedQuery, headers);
 
             // requires authorization token
             setAccessToken(get);
@@ -334,13 +332,13 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
         } catch (UnsupportedEncodingException e) {
             String msg = "Unexpected error: " + e.getMessage();
-            callback.onResponse(null, new SalesforceException(msg, e));
+            callback.onResponse(null, Collections.emptyMap(), new SalesforceException(msg, e));
         }
     }
 
     @Override
-    public void queryMore(String nextRecordsUrl, ResponseCallback callback) {
-        final Request get = getRequest(HttpMethod.GET, instanceUrl + nextRecordsUrl);
+    public void queryMore(String nextRecordsUrl, Map<String, List<String>> headers, ResponseCallback callback) {
+        final Request get = getRequest(HttpMethod.GET, instanceUrl + nextRecordsUrl, headers);
 
         // requires authorization token
         setAccessToken(get);
@@ -349,11 +347,11 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void queryAll(String soqlQuery, ResponseCallback callback) {
+    public void queryAll(String soqlQuery, Map<String, List<String>> headers, ResponseCallback callback) {
         try {
 
             String encodedQuery = urlEncode(soqlQuery);
-            final Request get = getRequest(HttpMethod.GET, versionUrl() + "queryAll/?q=" + encodedQuery);
+            final Request get = getRequest(HttpMethod.GET, versionUrl() + "queryAll/?q=" + encodedQuery, headers);
 
             // requires authorization token
             setAccessToken(get);
@@ -362,16 +360,16 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
         } catch (UnsupportedEncodingException e) {
             String msg = "Unexpected error: " + e.getMessage();
-            callback.onResponse(null, new SalesforceException(msg, e));
+            callback.onResponse(null, Collections.emptyMap(), new SalesforceException(msg, e));
         }
     }
 
     @Override
-    public void search(String soslQuery, ResponseCallback callback) {
+    public void search(String soslQuery, Map<String, List<String>> headers, ResponseCallback callback) {
         try {
 
             String encodedQuery = urlEncode(soslQuery);
-            final Request get = getRequest(HttpMethod.GET, versionUrl() + "search/?q=" + encodedQuery);
+            final Request get = getRequest(HttpMethod.GET, versionUrl() + "search/?q=" + encodedQuery, headers);
 
             // requires authorization token
             setAccessToken(get);
@@ -380,17 +378,18 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
         } catch (UnsupportedEncodingException e) {
             String msg = "Unexpected error: " + e.getMessage();
-            callback.onResponse(null, new SalesforceException(msg, e));
+            callback.onResponse(null, Collections.emptyMap(), new SalesforceException(msg, e));
         }
     }
 
     @Override
     public void apexCall(String httpMethod, String apexUrl,
-                         Map<String, Object> queryParams, InputStream requestDto, ResponseCallback callback) {
+                         Map<String, Object> queryParams, InputStream requestDto, Map<String, List<String>> headers, 
+                         ResponseCallback callback) {
         // create APEX call request
         final Request request;
         try {
-            request = getRequest(httpMethod, apexCallUrl(apexUrl, queryParams));
+            request = getRequest(httpMethod, apexCallUrl(apexUrl, queryParams), headers);
             // set request SObject and content type
             if (requestDto != null) {
                 // guard against requests that do not support bodies
@@ -413,10 +412,10 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             doHttpRequest(request, new DelegatingClientCallback(callback));
         } catch (UnsupportedEncodingException e) {
             String msg = "Unexpected error: " + e.getMessage();
-            callback.onResponse(null, new SalesforceException(msg, e));
+            callback.onResponse(null, Collections.emptyMap(), new SalesforceException(msg, e));
         } catch (URISyntaxException e) {
             String msg = "Unexpected error: " + e.getMessage();
-            callback.onResponse(null, new SalesforceException(msg, e));
+            callback.onResponse(null, Collections.emptyMap(), new SalesforceException(msg, e));
         }
     }
 
@@ -431,10 +430,10 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void recent(final Integer limit, final ResponseCallback responseCallback) {
+    public void recent(final Integer limit, Map<String, List<String>> headers, final ResponseCallback responseCallback) {
         final String param = Optional.ofNullable(limit).map(v -> "?limit=" + v).orElse("");
 
-        final Request get = getRequest(HttpMethod.GET, versionUrl() + "recent/" + param);
+        final Request get = getRequest(HttpMethod.GET, versionUrl() + "recent/" + param, headers);
 
         // requires authorization token
         setAccessToken(get);
@@ -443,8 +442,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    public void limits(final ResponseCallback responseCallback) {
-        final Request get = getRequest(HttpMethod.GET, versionUrl() + "limits/");
+    public void limits(Map<String, List<String>> headers, final ResponseCallback responseCallback) {
+        final Request get = getRequest(HttpMethod.GET, versionUrl() + "limits/", headers);
 
         // requires authorization token
         setAccessToken(get);
@@ -499,8 +498,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         }
 
         @Override
-        public void onResponse(InputStream response, SalesforceException ex) {
-            callback.onResponse(response, ex);
+        public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
+            callback.onResponse(response, headers, ex);
         }
     }
 
