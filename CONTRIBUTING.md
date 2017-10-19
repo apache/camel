@@ -89,6 +89,11 @@ If you are an Apache Camel committer then clone the ASF git repo at
     git clone https://gitbox.apache.org/repos/asf/camel.git
     cd camel
 
+or 
+
+    git clone https://github.com/apache/camel.git
+    cd camel
+
 Build the project (without testing).
 
     mvn clean install -Dtest=false
