@@ -20,6 +20,8 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
 import org.bson.types.BSONTimestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,8 +66,9 @@ public class MongoDbTailTrackingManager {
         }
 
         BasicDBObject updateObj = new BasicDBObject().append("$set", new BasicDBObject(config.field, lastVal));
-        dbCol.updateOne(trackingObj, updateObj);
-        trackingObj = dbCol.find().first();
+        FindOneAndUpdateOptions options = new FindOneAndUpdateOptions()
+            .returnDocument(ReturnDocument.AFTER);
+        trackingObj = dbCol.findOneAndUpdate(trackingObj, updateObj, options);
     }
 
     public synchronized Object recoverFromStore() {
