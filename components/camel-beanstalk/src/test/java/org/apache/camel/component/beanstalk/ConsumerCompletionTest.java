@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atLeastOnce;
@@ -63,7 +63,7 @@ public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
         when(client.reserve(anyInt()))
                 .thenReturn(jobMock)
                 .thenReturn(null);
-        when(client.statsJob(anyInt())).thenReturn(null);
+        when(client.statsJob(anyLong())).thenReturn(null);
 
         MockEndpoint result = getMockEndpoint("mock:result");
 
@@ -77,7 +77,7 @@ public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
         result.assertIsSatisfied();
 
         verify(client, atLeastOnce()).reserve(anyInt());
-        verify(client, atLeastOnce()).statsJob(anyInt());
+        verify(client, atLeastOnce()).statsJob(anyLong());
         verify(client).delete(jobId);
     }
 
@@ -95,7 +95,7 @@ public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
         when(client.reserve(anyInt()))
                 .thenReturn(jobMock)
                 .thenReturn(null);
-        when(client.statsJob(anyInt())).thenReturn(null);
+        when(client.statsJob(anyLong())).thenReturn(null);
         when(client.release(anyInt(), anyLong(), anyInt())).thenReturn(true);
 
         NotifyBuilder notify = new NotifyBuilder(context).whenFailed(1).create();
@@ -108,7 +108,7 @@ public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
         assertTrue(notify.matches(5, TimeUnit.SECONDS));
 
         verify(client, atLeastOnce()).reserve(anyInt());
-        verify(client, atLeastOnce()).statsJob(anyInt());
+        verify(client, atLeastOnce()).statsJob(anyLong());
         verify(client).release(jobId, priority, delay);
     }
 
