@@ -88,7 +88,7 @@ public class AbstractRestProcessorApprovalTest {
 
         @Override
         protected void processResponse(final Exchange exchange, final InputStream responseEntity,
-                final SalesforceException ex, final AsyncCallback callback) {
+                final Map<String, String> headers, final SalesforceException ex, final AsyncCallback callback) {
         }
     }
 

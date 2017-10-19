@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -76,7 +77,8 @@ public class SalesforceComponentVerifierExtension extends DefaultComponentVerifi
 
         try {
             SalesforceClientTemplate.invoke(getCamelContext(), parameters, client -> {
-                client.getVersions((response, exception) ->  processSalesforceException(builder, Optional.ofNullable(exception)));
+                client.getVersions(Collections.emptyMap(),
+                    (response, headers, exception) ->  processSalesforceException(builder, Optional.ofNullable(exception)));
                 return null;
             });
         } catch (NoSuchOptionException e) {

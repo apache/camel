@@ -346,7 +346,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
             final SyncResponseCallback callback = new SyncResponseCallback();
             try {
                 getLog().info("Getting Salesforce Objects...");
-                restClient.getGlobalObjects(callback);
+                restClient.getGlobalObjects(Collections.emptyMap(), callback);
                 if (!callback.await(responseTimeout, TimeUnit.MILLISECONDS)) {
                     throw new MojoExecutionException("Timeout waiting for getGlobalObjects!");
                 }
@@ -385,7 +385,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
             for (String name : objectNames) {
                 try {
                     callback.reset();
-                    restClient.getDescription(name, callback);
+                    restClient.getDescription(name, Collections.emptyMap(), callback);
                     if (!callback.await(responseTimeout, TimeUnit.MILLISECONDS)) {
                         throw new MojoExecutionException("Timeout waiting for getDescription for sObject " + name);
                     }

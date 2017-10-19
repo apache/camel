@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -46,6 +48,9 @@ import static org.mockito.Mockito.mock;
 
 public class SalesforceMetaDataExtensionTest {
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static final Class<Map<String, List<String>>> HEADERS_TYPE = (Class) Map.class;
+
     final SalesforceComponent component = new SalesforceComponent();
 
     final MetaDataExtension metadata;
@@ -67,7 +72,7 @@ public class SalesforceMetaDataExtensionTest {
     public void shouldProvideSalesforceObjectFields() throws IOException {
         final Optional<MetaData> maybeMeta;
         try (InputStream stream = resource("/objectDescription.json")) {
-            doAnswer(provideStreamToCallback(stream)).when(restClient).getDescription(eq("Account"),
+            doAnswer(provideStreamToCallback(stream)).when(restClient).getDescription(eq("Account"), any(HEADERS_TYPE),
                 any(ResponseCallback.class));
             maybeMeta = metadata.meta(Collections.singletonMap(SalesforceEndpointConfig.SOBJECT_NAME, "Account"));
         }
@@ -89,7 +94,7 @@ public class SalesforceMetaDataExtensionTest {
     public void shouldProvideSalesforceObjectTypes() throws IOException {
         final Optional<MetaData> maybeMeta;
         try (InputStream stream = resource("/globalObjects.json")) {
-            doAnswer(provideStreamToCallback(stream)).when(restClient).getGlobalObjects(any(ResponseCallback.class));
+            doAnswer(provideStreamToCallback(stream)).when(restClient).getGlobalObjects(any(HEADERS_TYPE), any(ResponseCallback.class));
             maybeMeta = metadata.meta(Collections.emptyMap());
         }
 
@@ -120,7 +125,7 @@ public class SalesforceMetaDataExtensionTest {
         return invocation -> {
             final ResponseCallback callback = (ResponseCallback) Arrays.stream(invocation.getArguments())
                 .filter(ResponseCallback.class::isInstance).findFirst().get();
-            callback.onResponse(stream, null);
+            callback.onResponse(stream, Collections.emptyMap(), null);
 
             return null;
         };

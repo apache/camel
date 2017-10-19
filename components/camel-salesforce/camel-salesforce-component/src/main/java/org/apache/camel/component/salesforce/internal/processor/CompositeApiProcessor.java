@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce.internal.processor;
 
 import java.util.EnumSet;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.AsyncCallback;
@@ -41,7 +42,7 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
     @FunctionalInterface
     interface ResponseHandler<T> {
 
-        void handleResponse(Exchange exchange, Optional<T> body, SalesforceException exception, AsyncCallback callback);
+        void handleResponse(Exchange exchange, Optional<T> body, Map<String, String> headers, SalesforceException exception, AsyncCallback callback);
 
     }
 
@@ -98,7 +99,7 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
     }
 
     void processCompositeBatchResponse(final Exchange exchange, final Optional<SObjectBatchResponse> responseBody,
-        final SalesforceException exception, final AsyncCallback callback) {
+        final Map<String, String> headers, final SalesforceException exception, final AsyncCallback callback) {
         try {
             if (!responseBody.isPresent()) {
                 exchange.setException(exception);
@@ -109,6 +110,7 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
                 final SObjectBatchResponse response = responseBody.get();
 
                 out.copyFromWithNewBody(in, response);
+                out.getHeaders().putAll(headers);
             }
         } finally {
             // notify callback that exchange is done
@@ -117,7 +119,7 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
     }
 
     void processCompositeTreeResponse(final Exchange exchange, final Optional<SObjectTreeResponse> responseBody,
-        final SalesforceException exception, final AsyncCallback callback) {
+        final Map<String, String> headers, final SalesforceException exception, final AsyncCallback callback) {
 
         try {
             if (!responseBody.isPresent()) {
@@ -148,6 +150,7 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
                 }
 
                 out.copyFromWithNewBody(in, tree);
+                out.getHeaders().putAll(headers);
             }
         } finally {
             // notify callback that exchange is done
@@ -175,8 +178,8 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             throw new SalesforceException(e);
         }
 
-        clientOperation.submit(body,
-            (response, exception) -> responseHandler.handleResponse(exchange, response, exception, callback));
+        clientOperation.submit(body, determineHeaders(exchange),
+            (response, responseHeaders, exception) -> responseHandler.handleResponse(exchange, response, responseHeaders, exception, callback));
 
         return false;
     }

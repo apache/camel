@@ -124,33 +124,33 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
     }
 
     @Override
-    public void submitCompositeBatch(final SObjectBatch batch, final ResponseCallback<SObjectBatchResponse> callback)
-        throws SalesforceException {
+    public void submitCompositeBatch(final SObjectBatch batch, final Map<String, List<String>> headers,
+        final ResponseCallback<SObjectBatchResponse> callback) throws SalesforceException {
         checkCompositeBatchVersion(version, batch.getVersion());
 
         final String url = versionUrl() + "composite/batch";
 
-        final Request post = createRequest(HttpMethod.POST, url);
+        final Request post = createRequest(HttpMethod.POST, url, headers);
 
         final ContentProvider content = serialize(batch, batch.objectTypes());
         post.content(content);
 
-        doHttpRequest(post, (response, exception) -> callback
-            .onResponse(tryToReadResponse(SObjectBatchResponse.class, response), exception));
+        doHttpRequest(post, (response, responseHeaders, exception) -> callback
+            .onResponse(tryToReadResponse(SObjectBatchResponse.class, response), responseHeaders, exception));
     }
 
     @Override
-    public void submitCompositeTree(final SObjectTree tree, final ResponseCallback<SObjectTreeResponse> callback)
-        throws SalesforceException {
+    public void submitCompositeTree(final SObjectTree tree, final Map<String, List<String>> headers,
+        final ResponseCallback<SObjectTreeResponse> callback) throws SalesforceException {
         final String url = versionUrl() + "composite/tree/" + tree.getObjectType();
 
-        final Request post = createRequest(HttpMethod.POST, url);
+        final Request post = createRequest(HttpMethod.POST, url, headers);
 
         final ContentProvider content = serialize(tree, tree.objectTypes());
         post.content(content);
 
-        doHttpRequest(post, (response, exception) -> callback
-            .onResponse(tryToReadResponse(SObjectTreeResponse.class, response), exception));
+        doHttpRequest(post, (response, responseHeaders, exception) -> callback
+            .onResponse(tryToReadResponse(SObjectTreeResponse.class, response), responseHeaders, exception));
     }
 
     static void checkCompositeBatchVersion(final String configuredVersion, final Version batchVersion)
@@ -161,8 +161,8 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         }
     }
 
-    Request createRequest(final HttpMethod method, final String url) {
-        final Request request = getRequest(method, url);
+    Request createRequest(final HttpMethod method, final String url, Map<String, List<String>> headers) {
+        final Request request = getRequest(method, url, headers);
 
         // setup authorization
         setAccessToken(request);
@@ -240,9 +240,9 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
     }
 
     <T> Optional<T> tryToReadResponse(final Class<T> expectedType, final InputStream responseStream) {
-        if (responseStream == null) {           
+        if (responseStream == null) {
             return Optional.empty();
-        } 
+        }
         try {
             if (format == PayloadFormat.JSON) {
                 return Optional.of(fromJson(expectedType, responseStream));

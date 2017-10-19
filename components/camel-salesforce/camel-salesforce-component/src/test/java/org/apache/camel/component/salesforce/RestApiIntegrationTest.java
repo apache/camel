@@ -39,8 +39,6 @@ import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
 import org.apache.camel.component.salesforce.api.dto.RestResources;
 import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
-import org.apache.camel.component.salesforce.api.dto.SearchResult;
-import org.apache.camel.component.salesforce.api.dto.SearchResults;
 import org.apache.camel.component.salesforce.api.dto.Version;
 import org.apache.camel.component.salesforce.api.dto.Versions;
 import org.apache.camel.component.salesforce.dto.generated.Document;
@@ -408,16 +406,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     public void testSearch() throws Exception {
 
         final Object obj = template().requestBody("direct:search", (Object) null);
-        List<SearchResult> searchResults = null;
-        if (obj instanceof SearchResults) {
-            final SearchResults results = (SearchResults) obj;
-            searchResults = results.getResults();
-        } else {
-            @SuppressWarnings("unchecked")
-            final List<SearchResult> tmp = (List<SearchResult>) obj;
-            searchResults = tmp;
-        }
-        assertNotNull(searchResults);
+        assertNotNull(obj);
     }
 
     @Test

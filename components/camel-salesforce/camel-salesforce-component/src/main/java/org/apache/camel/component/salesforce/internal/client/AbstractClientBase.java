@@ -20,7 +20,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -30,6 +35,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Service;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -48,6 +55,8 @@ import org.eclipse.jetty.client.api.Result;
 import org.eclipse.jetty.client.util.BufferingResponseListener;
 import org.eclipse.jetty.client.util.ByteBufferContentProvider;
 import org.eclipse.jetty.client.util.InputStreamContentProvider;
+import org.eclipse.jetty.http.HttpField;
+import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
@@ -133,20 +142,22 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
         // SalesforceSecurityListener will auto login!
     }
 
-    protected Request getRequest(HttpMethod method, String url) {
-        return getRequest(method.asString(), url);
+    protected Request getRequest(HttpMethod method, String url, Map<String, List<String>> headers) {
+        return getRequest(method.asString(), url, headers);
     }
 
-    protected Request getRequest(String method, String url) {
+    protected Request getRequest(String method, String url, Map<String, List<String>> headers) {
         SalesforceHttpRequest request = (SalesforceHttpRequest) httpClient.newRequest(url)
             .method(method)
             .timeout(session.getTimeout(), TimeUnit.MILLISECONDS);
         request.getConversation().setAttribute(SalesforceSecurityHandler.CLIENT_ATTRIBUTE, this);
+        addHeadersTo(request, headers);
+
         return request;
     }
 
     protected interface ClientResponseCallback {
-        void onResponse(InputStream response, SalesforceException ex);
+        void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex);
     }
 
     protected void doHttpRequest(final Request request, final ClientResponseCallback callback) {
@@ -169,17 +180,19 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
             public void onComplete(Result result) {
                 try {
                     Response response = result.getResponse();
+
+                    final Map<String, String> headers = determineHeadersFrom(response);
                     if (result.isFailed()) {
 
                         // Failure!!!
                         // including Salesforce errors reported as exception from SalesforceSecurityHandler
                         Throwable failure = result.getFailure();
                         if (failure instanceof SalesforceException) {
-                            callback.onResponse(null, (SalesforceException) failure);
+                            callback.onResponse(null, headers, (SalesforceException) failure);
                         } else {
                             final String msg = String.format("Unexpected error {%s:%s} executing {%s:%s}",
                                 response.getStatus(), response.getReason(), request.getMethod(), request.getURI());
-                            callback.onResponse(null, new SalesforceException(msg, response.getStatus(), failure));
+                            callback.onResponse(null, headers, new SalesforceException(msg, response.getStatus(), failure));
                         }
                     } else {
 
@@ -197,13 +210,13 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
                                 session.parseLoginResponse(contentResponse, getContentAsString());
                                 final String msg = String.format("Unexpected Error {%s:%s} executing {%s:%s}",
                                     status, response.getReason(), request.getMethod(), request.getURI());
-                                callback.onResponse(null, new SalesforceException(msg, null));
+                                callback.onResponse(null, headers, new SalesforceException(msg, null));
 
                             } catch (SalesforceException e) {
 
                                 final String msg = String.format("Error {%s:%s} executing {%s:%s}",
                                     status, response.getReason(), request.getMethod(), request.getURI());
-                                callback.onResponse(null, new SalesforceException(msg, response.getStatus(), e));
+                                callback.onResponse(null, headers, new SalesforceException(msg, response.getStatus(), e));
 
                             }
                         } else if (status < HttpStatus.OK_200 || status >= HttpStatus.MULTIPLE_CHOICES_300) {
@@ -211,11 +224,11 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
                             final SalesforceException exception = createRestException(response, getContentAsInputStream());
 
                             // for APIs that return body on status 400, such as Composite API we need content as well
-                            callback.onResponse(getContentAsInputStream(), exception);
+                            callback.onResponse(getContentAsInputStream(), headers, exception);
                         } else {
 
                             // Success!!!
-                            callback.onResponse(getContentAsInputStream(), null);
+                            callback.onResponse(getContentAsInputStream(), headers, null);
                         }
                     }
                 } finally {
@@ -264,4 +277,45 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
     protected abstract SalesforceException createRestException(Response response, InputStream responseContent);
 
+    private static Map<String, String> determineHeadersFrom(final Response response) {
+        final HttpFields headers = response.getHeaders();
+
+        final Map<String, String> answer = new LinkedHashMap<>();
+        for (final HttpField header : headers) {
+            final String headerName = header.getName();
+
+            if (headerName.startsWith("Sforce")) {
+                answer.put(headerName, header.getValue());
+            }
+        }
+
+        return answer;
+    }
+
+    private static void addHeadersTo(final Request request, final Map<String, List<String>> headers) {
+        if (headers == null || headers.isEmpty()) {
+            return;
+        }
+
+        final HttpFields requestHeaders = request.getHeaders();
+        for (Entry<String, List<String>> header : headers.entrySet()) {
+            requestHeaders.put(header.getKey(), header.getValue());
+        }
+    }
+
+    static Map<String, List<String>> determineHeaders(final Exchange exchange) {
+        final Message inboundMessage = exchange.getIn();
+
+        final Map<String, Object> headers = inboundMessage.getHeaders();
+
+        final Map<String, List<String>> answer = new HashMap<>();
+        for (final String headerName : headers.keySet()) {
+            if (headerName.startsWith("Sforce") || headerName.startsWith("x-sfdc")) {
+                final String[] values = inboundMessage.getHeader(headerName, String[].class);
+                answer.put(headerName, Arrays.asList(values));
+            }
+        }
+
+        return answer;
+    }
 }

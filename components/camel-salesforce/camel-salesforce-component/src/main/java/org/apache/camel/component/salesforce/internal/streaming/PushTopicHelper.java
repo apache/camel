@@ -18,6 +18,7 @@ package org.apache.camel.component.salesforce.internal.streaming;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,6 +80,7 @@ public class PushTopicHelper {
                     + "NotifyForOperationDelete, NotifyForOperationUndelete, "
                     + "NotifyForOperationUpdate, Description "
                     + "FROM PushTopic WHERE Name = '" + topicName + "'",
+                    Collections.emptyMap(),
                     callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
@@ -169,7 +171,7 @@ public class PushTopicHelper {
         final SyncResponseCallback callback = new SyncResponseCallback();
         try {
             restClient.createSObject(PUSH_TOPIC_OBJECT_NAME,
-                    new ByteArrayInputStream(OBJECT_MAPPER.writeValueAsBytes(topic)), callback);
+                    new ByteArrayInputStream(OBJECT_MAPPER.writeValueAsBytes(topic)), Collections.emptyMap(), callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
                 throw new SalesforceException("API call timeout!", null);
@@ -231,6 +233,7 @@ public class PushTopicHelper {
 
             restClient.updateSObject("PushTopic", topicId,
                     new ByteArrayInputStream(OBJECT_MAPPER.writeValueAsBytes(topic)),
+                    Collections.emptyMap(),
                     callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
