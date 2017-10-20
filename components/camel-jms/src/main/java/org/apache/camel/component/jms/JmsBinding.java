@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
@@ -41,6 +42,8 @@ import javax.jms.Session;
 import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
@@ -154,7 +157,8 @@ public class JmsBinding {
                 return createByteArrayFromBytesMessage((BytesMessage)message);
             } else if (message instanceof StreamMessage) {
                 LOG.trace("Extracting body as a StreamMessage from JMS message: {}", message);
-                return message;
+                StreamMessage streamMessage = (StreamMessage)message;
+                return createInputStreamFromStreamMessage(streamMessage);
             } else {
                 return null;
             }
@@ -235,6 +239,10 @@ public class JmsBinding {
         byte[] result = new byte[(int)message.getBodyLength()];
         message.readBytes(result);
         return result;
+    }
+
+    protected InputStream createInputStreamFromStreamMessage(StreamMessage message) {
+        return new StreamMessageInputStream(message);
     }
 
     /**
@@ -597,7 +605,7 @@ public class JmsBinding {
             }
             return message;
         }
-        case Object:
+        case Object: {
             ObjectMessage message = session.createObjectMessage();
             if (body != null) {
                 try {
@@ -611,6 +619,37 @@ public class JmsBinding {
                 }
             }
             return message;
+        }
+        case Stream: {
+            StreamMessage message = session.createStreamMessage();
+            if (body != null) {
+                long size = 0;
+                try {
+                    LOG.trace("Writing payload in StreamMessage");
+                    InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                    // assume streaming is bigger payload so use same buffer size as the file component
+                    byte[] buffer = new byte[FileUtil.BUFFER_SIZE];
+                    int len = 0;
+                    int count = 0;
+                    while (len >= 0) {
+                        count++;
+                        len = is.read(buffer);
+                        if (len >= 0) {
+                            size += len;
+                            LOG.trace("Writing payload chunk {} as bytes in StreamMessage", count);
+                            message.writeBytes(buffer, 0, len);
+                        }
+                    }
+                    LOG.trace("Finished writing payload (size {}) as bytes in StreamMessage", size);
+                } catch (NoTypeConversionAvailableException | IOException e) {
+                    // cannot convert to inputstream then thrown an exception to avoid sending a null message
+                    JMSException cause = new MessageFormatException(e.getMessage());
+                    cause.initCause(e);
+                    throw cause;
+                }
+            }
+            return message;
+        }
         default:
             break;
         }
