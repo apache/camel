@@ -42,8 +42,6 @@ import javax.jms.Session;
 import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
@@ -57,6 +55,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +65,7 @@ import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinati
 import static org.apache.camel.component.jms.JmsMessageType.Bytes;
 import static org.apache.camel.component.jms.JmsMessageType.Map;
 import static org.apache.camel.component.jms.JmsMessageType.Object;
+import static org.apache.camel.component.jms.JmsMessageType.Stream;
 import static org.apache.camel.component.jms.JmsMessageType.Text;
 
 /**
@@ -293,7 +293,7 @@ public class JmsBinding {
                             answer = answer instanceof MapMessage ? answer : null;
                         } else if (type == JmsMessageType.Object) {
                             answer = answer instanceof ObjectMessage ? answer : null;
-                        } else if (type == JmsMessageType.Stream) {
+                        } else if (type == Stream) {
                             answer = answer instanceof StreamMessage ? answer : null;
                         }
                     }
@@ -555,20 +555,24 @@ public class JmsBinding {
      * @return type or null if no mapping was possible
      */
     protected JmsMessageType getJMSMessageTypeForBody(Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) {
+        boolean streamingEnabled = endpoint.getConfiguration().isStreamMessageTypeEnabled();
+
         JmsMessageType type = null;
         // let body determine the type
         if (body instanceof Node || body instanceof String) {
             type = Text;
-        } else if (body instanceof byte[] || body instanceof WrappedFile || body instanceof File || body instanceof Reader
-                || body instanceof InputStream || body instanceof ByteBuffer || body instanceof StreamCache) {
+        } else if (body instanceof byte[] || body instanceof ByteBuffer) {
             type = Bytes;
+        } else if (body instanceof WrappedFile || body instanceof File || body instanceof Reader
+                || body instanceof InputStream || body instanceof StreamCache) {
+            type = streamingEnabled ? Stream : Bytes;
         } else if (body instanceof Map) {
             type = Map;
         } else if (body instanceof Serializable) {
             type = Object;            
         } else if (exchange.getContext().getTypeConverter().tryConvertTo(File.class, body) != null
                 || exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, body) != null) {
-            type = Bytes;
+            type = streamingEnabled ? Stream : Bytes;
         }
         return type;
     }

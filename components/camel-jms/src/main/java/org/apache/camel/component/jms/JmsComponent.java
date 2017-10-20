@@ -1213,6 +1213,26 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
         getConfiguration().setSubscriptionName(subscriptionName);
     }
 
+
+    public boolean isStreamMessageTypeEnabled() {
+        return getConfiguration().isStreamMessageTypeEnabled();
+    }
+
+    /**
+     * Sets whether StreamMessage type is enabled or not.
+     * Message payloads of streaming kind such as files, InputStream, etc will either by sent as BytesMessage or StreamMessage.
+     * This option controls which kind will be used. By default BytesMessage is used which enforces the entire message payload to be read into memory.
+     * By enabling this option the message payload is read into memory in chunks and each chunk is then written to the StreamMessage until no more data.
+     */
+    @Metadata(label = "producer,advanced", description = "Sets whether StreamMessage type is enabled or not."
+        + " Message payloads of streaming kind such as files, InputStream, etc will either by sent as BytesMessage or StreamMessage."
+        + " This option controls which kind will be used. By default BytesMessage is used which enforces the entire message payload to be read into memory."
+        + " By enabling this option the message payload is read into memory in chunks and each chunk is then written to the StreamMessage until no more data.")
+    public void setStreamMessageTypeEnabled(boolean streamMessageTypeEnabled) {
+        getConfiguration().setStreamMessageTypeEnabled(streamMessageTypeEnabled);
+    }
+
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
