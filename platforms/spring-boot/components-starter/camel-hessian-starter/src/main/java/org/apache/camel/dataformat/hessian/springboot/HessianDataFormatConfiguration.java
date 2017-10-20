@@ -35,7 +35,7 @@ public class HessianDataFormatConfiguration
     /**
      * Define if Whitelist feature is enabled or not
      */
-    private Boolean whitelistEnabled = false;
+    private Boolean whitelistEnabled = true;
     /**
      * Define the allowed objects to be unmarshalled
      */
