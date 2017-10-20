@@ -388,13 +388,19 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         String sObjectName;
         // determine parameters from input AbstractSObject
         AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
+        
+        // determine if there are headers set from the client
+        final Map<String, Object> sfHeaders;
+        
         if (sObjectBase != null) {
             sObjectName = sObjectBase.getClass().getSimpleName();
+            sfHeaders = getHeaders(sObjectName, exchange, "CREATE");
         } else {
             sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
+            sfHeaders = getHeaders(sObjectName, exchange, "CREATE");
         }
 
-        restClient.createSObject(sObjectName, getRequestStream(exchange),
+        restClient.createSObject(sObjectName, sfHeaders, getRequestStream(exchange),
             new RestClient.ResponseCallback() {
                 @Override
                 public void onResponse(InputStream response, SalesforceException exception) {
@@ -407,20 +413,27 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         String sObjectName;
         // determine parameters from input AbstractSObject
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
+        
+        // determine if there are headers set from the client
+        final Map<String, Object> sfHeaders;
+        
         String sObjectId;
         if (sObjectBase != null) {
             sObjectName = sObjectBase.getClass().getSimpleName();
             // remember the sObject Id
             sObjectId = sObjectBase.getId();
+            // remember the client header values
+            sfHeaders = getHeaders(sObjectName, exchange, "UPDATE");
             // clear base object fields, which cannot be updated
             sObjectBase.clearBaseFields();
         } else {
             sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
             sObjectId = getParameter(SOBJECT_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
+            sfHeaders = getHeaders(sObjectName, exchange, "UPDATE");
         }
 
         final String finalsObjectId = sObjectId;
-        restClient.updateSObject(sObjectName, sObjectId, getRequestStream(exchange),
+        restClient.updateSObject(sObjectName, sObjectId, sfHeaders, getRequestStream(exchange),
             new RestClient.ResponseCallback() {
                 @Override
                 public void onResponse(InputStream response, SalesforceException exception) {
@@ -494,19 +507,26 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         // determine parameters from input AbstractSObject
         Object oldValue = null;
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
+        
+        // determine if there are headers set from the client
+        final Map<String, Object> sfHeaders;
+        
         if (sObjectBase != null) {
             sObjectName = sObjectBase.getClass().getSimpleName();
             oldValue = getAndClearPropertyValue(sObjectBase, sObjectExtIdName);
             sObjectExtIdValue = oldValue.toString();
+            // remember the client header values
+            sfHeaders = getHeaders(sObjectName, exchange, "UPSERT");
             // clear base object fields, which cannot be updated
             sObjectBase.clearBaseFields();
         } else {
             sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
             sObjectExtIdValue = getParameter(SOBJECT_EXT_ID_VALUE, exchange, IGNORE_BODY, NOT_OPTIONAL);
+            sfHeaders = getHeaders(sObjectName, exchange, "UPSERT");
         }
 
         final Object finalOldValue = oldValue;
-        restClient.upsertSObject(sObjectName, sObjectExtIdName, sObjectExtIdValue, getRequestStream(exchange),
+        restClient.upsertSObject(sObjectName, sObjectExtIdName, sObjectExtIdValue, sfHeaders, getRequestStream(exchange),
             new RestClient.ResponseCallback() {
                 @Override
                 public void onResponse(InputStream response, SalesforceException exception) {
@@ -577,8 +597,14 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         // use custom response class property
         setResponseClass(exchange, null);
+        
+        // determine if there are headers set from the client
+        final Map<String, Object> sfHeaders;
+        
+        //remember the client header values
+        sfHeaders = getHeaders(null, exchange, "QUERY");
 
-        restClient.query(sObjectQuery, new RestClient.ResponseCallback() {
+        restClient.query(sObjectQuery, sfHeaders, new RestClient.ResponseCallback() {
             @Override
             public void onResponse(InputStream response, SalesforceException exception) {
                 processResponse(exchange, response, exception, callback);
@@ -592,8 +618,14 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         // use custom response class property
         setResponseClass(exchange, null);
+        
+        // determine if there are headers set from the client
+        final Map<String, Object> sfHeaders;
+        
+        //remember the client header values
+        sfHeaders = getHeaders(null, exchange, "QUERYMORE");
 
-        restClient.queryMore(nextRecordsUrl, new RestClient.ResponseCallback() {
+        restClient.queryMore(nextRecordsUrl, sfHeaders, new RestClient.ResponseCallback() {
             @Override
             public void onResponse(InputStream response, SalesforceException exception) {
                 processResponse(exchange, response, exception, callback);
@@ -606,8 +638,14 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         // use custom response class property
         setResponseClass(exchange, null);
-
-        restClient.queryAll(sObjectQuery, new RestClient.ResponseCallback() {
+        
+        // determine if there are headers set from the client
+        final Map<String, Object> sfHeaders;
+        
+        //remember the client header values
+        sfHeaders = getHeaders(null, exchange, "QUERYMORE");
+        
+        restClient.queryAll(sObjectQuery, sfHeaders, new RestClient.ResponseCallback() {
             @Override
             public void onResponse(InputStream response, SalesforceException exception) {
                 processResponse(exchange, response, exception, callback);
