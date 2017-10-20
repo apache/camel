@@ -34,6 +34,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "2.1.0", label = "dataformat,transformation,xml", title = "Castor")
 @XmlRootElement(name = "castor")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class CastorDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String mappingFile;

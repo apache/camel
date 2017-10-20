@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "2.17.0", label = "dataformat,transformation", title = "Hessian")
 @XmlRootElement(name = "hessian")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class HessianDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private Boolean whitelistEnabled = true;
