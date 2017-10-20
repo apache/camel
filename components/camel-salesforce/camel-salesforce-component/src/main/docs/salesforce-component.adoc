@@ -75,6 +75,34 @@ salesforce:operationName?options
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
+### Passing in Salesforce headers and fetching Salesforce response headers
+
+With Camel 2.21 there is support to pass https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/headers.htm[Salesforce headers]
+via inbound message headers, header names that start with `Sforce` or
+`x-sfdc` on the Camel message will be passed on in the request, and
+response headers that start with `Sforce` will be present in the outboud
+message headers.
+
+For example to fetch API limits you can specify:
+
+[source,java]
+------------------------
+// in your Camel route set the header before Salesforce endpoint
+//...
+  .setHeader("Sforce-Limit-Info", constant("api-usage"))
+  .to("salesforce:getGlobalObjects")
+  .to(myProcessor);
+
+// myProcessor will receive `Sforce-Limit-Info` header on the outbound
+// message
+class MyProcessor implements Processor {
+    public void process(Exchange exchange) throws Exception {
+        Message in = exchange.getIn();
+        String apiLimits = in.getHeader("Sforce-Limit-Info", String.class);
+   }
+}
+------------------------
+
 ### Supported Salesforce APIs
 
 The component supports the following Salesforce APIs
