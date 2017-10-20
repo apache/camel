@@ -248,6 +248,10 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
 
         removeNotificationListeners();
 
+        if (mConnector != null) {
+            mConnector.close();
+        }
+
         ServiceHelper.stopService(mFormatter);
     }
     
