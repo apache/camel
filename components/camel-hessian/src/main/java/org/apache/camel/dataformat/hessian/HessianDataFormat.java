@@ -40,7 +40,7 @@ import org.apache.camel.util.ObjectHelper;
 public class HessianDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private static final String FORMAT_NAME = "hessian";
-    private boolean whitelistEnabled;
+    private boolean whitelistEnabled = true;
     private String allowedUnmarshallObjects;
     private String deniedUnmarshallObjects;
 
