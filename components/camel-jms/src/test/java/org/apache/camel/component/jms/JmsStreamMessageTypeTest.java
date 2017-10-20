@@ -28,9 +28,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsStreamMessageTypeTest extends CamelTestSupport {
 
     @Override
@@ -43,7 +40,9 @@ public class JmsStreamMessageTypeTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
+        JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
+        jms.setStreamMessageTypeEnabled(true); // turn on streaming
+        camelContext.addComponent("jms", jms);
         return camelContext;
     }
 
@@ -68,7 +67,7 @@ public class JmsStreamMessageTypeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/stream/in").to("jms:queue:foo?jmsMessageType=Stream");
+                from("file:target/stream/in").to("jms:queue:foo");
 
                 from("jms:queue:foo").to("file:target/stream/out").to("mock:result");
             }
