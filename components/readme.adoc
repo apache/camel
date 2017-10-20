@@ -752,7 +752,7 @@ Number of Data Formats: 45 in 36 JAR artifacts (0 deprecated)
 
 | link:camel-boon/src/main/docs/boon-dataformat.adoc[Boon] (camel-boon) | 2.16 | Camel Boon support
 
-| link:camel-castor/src/main/docs/castor-dataformat.adoc[Castor] (camel-castor) | 2.1 | Camel Castor data format support
+| link:camel-castor/src/main/docs/castor-dataformat.adoc[Castor] (camel-castor) | 2.1 | *deprecated* Camel Castor data format support
 
 | link:camel-crypto/src/main/docs/crypto-dataformat.adoc[Crypto (Java Cryptographic Extension)] (camel-crypto) | 2.3 | Camel Cryptographic Support
 
@@ -762,7 +762,7 @@ Number of Data Formats: 45 in 36 JAR artifacts (0 deprecated)
 
 | link:../camel-core/src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0 | GZip compression data format
 
-| link:camel-hessian/src/main/docs/hessian-dataformat.adoc[Hessian] (camel-hessian) | 2.17 | Hessian serialization support
+| link:camel-hessian/src/main/docs/hessian-dataformat.adoc[Hessian] (camel-hessian) | 2.17 | *deprecated* Hessian serialization support
 
 | link:camel-hl7/src/main/docs/hl7-dataformat.adoc[HL7] (camel-hl7) | 2.0 | Camel HL7 support
 
