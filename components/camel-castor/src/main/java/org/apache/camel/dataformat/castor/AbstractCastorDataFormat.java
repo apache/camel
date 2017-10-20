@@ -30,6 +30,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Marshaller;
@@ -57,6 +58,9 @@ public abstract class AbstractCastorDataFormat extends ServiceSupport implements
     private boolean validation;
     private volatile XMLContext xmlContext;
     private boolean contentTypeHeader = true;
+    private boolean whitlistEnabled = true;
+    private String allowedUnmarshallObjects;
+    private String deniedUnmarshallObjects;
 
     public AbstractCastorDataFormat() {
     }
@@ -129,6 +133,12 @@ public abstract class AbstractCastorDataFormat extends ServiceSupport implements
         // need to create new marshaller as we may have concurrent processing
         Unmarshaller answer = xmlContext.createUnmarshaller();
         answer.setValidation(isValidation());
+        if (whitlistEnabled) {
+            WhitelistObjectFactory factory = new WhitelistObjectFactory();
+            factory.setAllowClasses(allowedUnmarshallObjects);
+            factory.setDenyClasses(deniedUnmarshallObjects);
+            answer.setObjectFactory(factory);
+        }
         return answer;
     }
 
@@ -183,7 +193,6 @@ public abstract class AbstractCastorDataFormat extends ServiceSupport implements
         this.validation = validation;
     }
 
-
     public boolean isContentTypeHeader() {
         return contentTypeHeader;
     }
@@ -193,6 +202,38 @@ public abstract class AbstractCastorDataFormat extends ServiceSupport implements
      */
     public void setContentTypeHeader(boolean contentTypeHeader) {
         this.contentTypeHeader = contentTypeHeader;
+    }
+
+    public boolean isWhitlistEnabled() {
+        return whitlistEnabled;
+    }
+
+    public void setWhitlistEnabled(boolean whitlistEnabled) {
+        this.whitlistEnabled = whitlistEnabled;
+    }
+
+    public String getAllowedUnmarshallObjects() {
+        return allowedUnmarshallObjects;
+    }
+
+    public void setAllowedUnmarshallObjects(String allowedUnmarshallObjects) {
+        this.allowedUnmarshallObjects = allowedUnmarshallObjects;
+    }
+
+    public void setAllowClasses(Class... allowClasses) {
+        CollectionStringBuffer csb = new CollectionStringBuffer(",");
+        for (Class clazz : allowClasses) {
+            csb.append(clazz.getName());
+        }
+        this.allowedUnmarshallObjects = csb.toString();
+    }
+
+    public String getDeniedUnmarshallObjects() {
+        return deniedUnmarshallObjects;
+    }
+
+    public void setDeniedUnmarshallObjects(String deniedUnmarshallObjects) {
+        this.deniedUnmarshallObjects = deniedUnmarshallObjects;
     }
 
     @Override
