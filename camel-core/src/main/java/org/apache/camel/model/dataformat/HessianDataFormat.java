@@ -33,7 +33,7 @@ import org.apache.camel.spi.Metadata;
 @Deprecated
 public class HessianDataFormat extends DataFormatDefinition {
     @XmlAttribute
-    private Boolean whitelistEnabled;
+    private Boolean whitelistEnabled = true;
     
     @XmlAttribute
     private String allowedUnmarshallObjects;
