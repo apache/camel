@@ -27,7 +27,7 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">        
        
         <dataFormats>
-            <castor id="castor" mappingFile="map.xml"/>
+            <castor id="castor" mappingFile="map.xml" allowedUnmarshallObjects="org.apache.camel.dataformat.castor.Student"/>
         </dataFormats>
 
         <route>

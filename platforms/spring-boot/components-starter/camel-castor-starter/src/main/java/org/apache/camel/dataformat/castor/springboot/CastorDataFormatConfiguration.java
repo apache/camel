@@ -37,6 +37,28 @@ public class CastorDataFormatConfiguration
      */
     private String mappingFile;
     /**
+     * Define if Whitelist feature is enabled or not
+     */
+    private Boolean whitelistEnabled = true;
+    /**
+     * Define the allowed objects to be unmarshalled. You can specify the FQN
+     * class name of allowed objects and you can use comma to separate multiple
+     * entries. It is also possible to use wildcards and regular expression
+     * which is based on the pattern defined by link
+     * org.apache.camel.util.EndpointHelpermatchPattern(String String). Denied
+     * objects takes precedence over allowed objects.
+     */
+    private String allowedUnmarshallObjects;
+    /**
+     * Define the denied objects to be unmarshalled. You can specify the FQN
+     * class name of deined objects and you can use comma to separate multiple
+     * entries. It is also possible to use wildcards and regular expression
+     * which is based on the pattern defined by link
+     * org.apache.camel.util.EndpointHelpermatchPattern(String String). Denied
+     * objects takes precedence over allowed objects.
+     */
+    private String deniedUnmarshallObjects;
+    /**
      * Whether validation is turned on or off. Is by default true.
      */
     private Boolean validation = true;
@@ -66,6 +88,30 @@ public class CastorDataFormatConfiguration
 
     public void setMappingFile(String mappingFile) {
         this.mappingFile = mappingFile;
+    }
+
+    public Boolean getWhitelistEnabled() {
+        return whitelistEnabled;
+    }
+
+    public void setWhitelistEnabled(Boolean whitelistEnabled) {
+        this.whitelistEnabled = whitelistEnabled;
+    }
+
+    public String getAllowedUnmarshallObjects() {
+        return allowedUnmarshallObjects;
+    }
+
+    public void setAllowedUnmarshallObjects(String allowedUnmarshallObjects) {
+        this.allowedUnmarshallObjects = allowedUnmarshallObjects;
+    }
+
+    public String getDeniedUnmarshallObjects() {
+        return deniedUnmarshallObjects;
+    }
+
+    public void setDeniedUnmarshallObjects(String deniedUnmarshallObjects) {
+        this.deniedUnmarshallObjects = deniedUnmarshallObjects;
     }
 
     public Boolean getValidation() {
