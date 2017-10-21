@@ -597,6 +597,16 @@ public class AMQPComponentConfiguration
      */
     private String subscriptionName;
     /**
+     * Sets whether StreamMessage type is enabled or not. Message payloads of
+     * streaming kind such as files InputStream etc will either by sent as
+     * BytesMessage or StreamMessage. This option controls which kind will be
+     * used. By default BytesMessage is used which enforces the entire message
+     * payload to be read into memory. By enabling this option the message
+     * payload is read into memory in chunks and each chunk is then written to
+     * the StreamMessage until no more data.
+     */
+    private Boolean streamMessageTypeEnabled = false;
+    /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
      * header to and from Camel message.
      */
@@ -1228,6 +1238,14 @@ public class AMQPComponentConfiguration
 
     public void setSubscriptionName(String subscriptionName) {
         this.subscriptionName = subscriptionName;
+    }
+
+    public Boolean getStreamMessageTypeEnabled() {
+        return streamMessageTypeEnabled;
+    }
+
+    public void setStreamMessageTypeEnabled(Boolean streamMessageTypeEnabled) {
+        this.streamMessageTypeEnabled = streamMessageTypeEnabled;
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
