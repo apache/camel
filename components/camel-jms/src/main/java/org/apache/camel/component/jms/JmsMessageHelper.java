@@ -24,6 +24,7 @@ import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.Session;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ExchangeHelper;
@@ -118,6 +119,38 @@ public final class JmsMessageHelper {
             value = jmsMessage.getStringProperty(name);
         }
         return value;
+    }
+
+    /**
+     * Gets a JMS property in a safe way
+     *
+     * @param jmsMessage the JMS message
+     * @param name       name of the property to get
+     * @return the property value, or <tt>null</tt> if does not exists or failure to get the value
+     */
+    public static Long getSafeLongProperty(Message jmsMessage, String name) {
+        try {
+            return jmsMessage.getLongProperty(name);
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
+    }
+
+    /**
+     * Is the JMS session from a given vendor
+     *
+     * @param session the JMS session
+     * @param vendor the vendor, such as <tt>ActiveMQ</tt>, or <tt>Artemis</tt>
+     * @return <tt>true</tt> if from the vendor, <tt>false</tt> if not or not possible to determine
+     */
+    public static boolean isVendor(Session session, String vendor) {
+        if ("Artemis".equals(vendor)) {
+            return session.getClass().getName().startsWith("org.apache.activemq.artemis");
+        } else if ("ActiveMQ".equals(vendor)) {
+            return !isVendor(session, "Artemis") && session.getClass().getName().startsWith("org.apache.activemq");
+        }
+        return false;
     }
 
     /**
