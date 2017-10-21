@@ -1,4 +1,4 @@
-# Camel Artemis Stream
+# Camel Artemis Large Messages
 
 ### Introduction
 

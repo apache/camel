@@ -27,10 +27,10 @@
     <version>2.21.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-example-artemis-stream</artifactId>
+  <artifactId>camel-example-artemis-large-messages</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Example :: ActiveMQ Artemis Stream messaging</name>
-  <description>Demonstrates sending Stream messages to ActiveMQ Artemis</description>
+  <name>Camel :: Example :: ActiveMQ Artemis Large Messages</name>
+  <description>Demonstrates sending large messages (handles GBs in size) between Apache Camel and ActiveMQ Artemis in streaming mode</description>
 
   <properties>
     <category>Messaging</category>
@@ -48,7 +48,7 @@
       <artifactId>camel-jms</artifactId>
     </dependency>
 
-    <!-- artemis -->
+    <!-- activemq artemis -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>artemis-spring-integration</artifactId>
