@@ -50,17 +50,21 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsConstants.JMS_X_GROUP_ID;
+import static org.apache.camel.component.jms.JmsMessageHelper.getSafeLongProperty;
+import static org.apache.camel.component.jms.JmsMessageHelper.isVendor;
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 import static org.apache.camel.component.jms.JmsMessageType.Bytes;
 import static org.apache.camel.component.jms.JmsMessageType.Map;
@@ -154,11 +158,11 @@ public class JmsBinding {
                 return createMapFromMapMessage((MapMessage)message);
             } else if (message instanceof BytesMessage) {
                 LOG.trace("Extracting body as a BytesMessage from JMS message: {}", message);
-                return createByteArrayFromBytesMessage((BytesMessage)message);
+                return createByteArrayFromBytesMessage(exchange, (BytesMessage)message);
             } else if (message instanceof StreamMessage) {
                 LOG.trace("Extracting body as a StreamMessage from JMS message: {}", message);
                 StreamMessage streamMessage = (StreamMessage)message;
-                return createInputStreamFromStreamMessage(streamMessage);
+                return createInputStreamFromStreamMessage(exchange, streamMessage);
             } else {
                 return null;
             }
@@ -219,7 +223,11 @@ public class JmsBinding {
 
         return map;
     }
-    
+
+    /**
+     * @deprecated not in use
+     */
+    @Deprecated
     public Object getObjectProperty(Message jmsMessage, String name) throws JMSException {
         // try a direct lookup first
         Object answer = jmsMessage.getObjectProperty(name);
@@ -231,7 +239,26 @@ public class JmsBinding {
         return answer;
     }
 
-    protected byte[] createByteArrayFromBytesMessage(BytesMessage message) throws JMSException {
+    protected Object createByteArrayFromBytesMessage(Exchange exchange, BytesMessage message) throws JMSException {
+        // ActiveMQ has special optimised mode for bytes message, so we should use streaming if possible
+        Long size = getSafeLongProperty(message, "_AMQ_LARGE_SIZE");
+        if (size != null && size > 0) {
+            LOG.trace("Optimised for Artemis: Reading from BytesMessage in streaming mode directly into CachedOutputStream payload");
+            CachedOutputStream cos = new CachedOutputStream(exchange, true);
+            // this will save the stream and wait until the entire message is written before continuing.
+            message.setObjectProperty("JMS_AMQ_SaveStream", cos);
+            try {
+                // and then lets get the input stream of this so we can read it
+                return cos.getInputStream();
+            } catch (IOException e) {
+                JMSException cause = new MessageFormatException(e.getMessage());
+                cause.initCause(e);
+                throw cause;
+            } finally {
+                IOHelper.close(cos);
+            }
+        }
+
         if (message.getBodyLength() > Integer.MAX_VALUE) {
             LOG.warn("Length of BytesMessage is too long: {}", message.getBodyLength());
             return null;
@@ -241,7 +268,7 @@ public class JmsBinding {
         return result;
     }
 
-    protected InputStream createInputStreamFromStreamMessage(StreamMessage message) {
+    protected Object createInputStreamFromStreamMessage(Exchange exchange, StreamMessage message) throws JMSException {
         return new StreamMessageInputStream(message);
     }
 
@@ -574,6 +601,15 @@ public class JmsBinding {
                 || exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, body) != null) {
             type = streamingEnabled ? Stream : Bytes;
         }
+
+        if (type == Stream) {
+            boolean artemis = isVendor(session, "Artemis");
+            if (artemis) {
+                // if running ActiveMQ Artemis then it has optimised streaming mode using byte messages so enforce as bytes
+                type = Bytes;
+            }
+        }
+
         return type;
     }
     
@@ -596,8 +632,22 @@ public class JmsBinding {
         case Bytes: {
             BytesMessage message = session.createBytesMessage();
             if (body != null) {
-                byte[] payload = context.getTypeConverter().convertTo(byte[].class, exchange, body);
-                message.writeBytes(payload);
+                try {
+                    if (isVendor(session, "Artemis")) {
+                        LOG.trace("Optimised for Artemis: Streaming payload in BytesMessage");
+                        InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                        message.setObjectProperty("JMS_AMQ_InputStream", is);
+                        LOG.trace("Optimised for Artemis: Finished streaming payload in BytesMessage");
+                    } else {
+                        byte[] payload = context.getTypeConverter().mandatoryConvertTo(byte[].class, exchange, body);
+                        message.writeBytes(payload);
+                    }
+                } catch (NoTypeConversionAvailableException e) {
+                    // cannot convert to inputstream then thrown an exception to avoid sending a null message
+                    JMSException cause = new MessageFormatException(e.getMessage());
+                    cause.initCause(e);
+                    throw cause;
+                }
             }
             return message;
         }
@@ -629,8 +679,8 @@ public class JmsBinding {
             if (body != null) {
                 long size = 0;
                 try {
-                    LOG.trace("Writing payload in StreamMessage");
                     InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                    LOG.trace("Writing payload in StreamMessage");
                     // assume streaming is bigger payload so use same buffer size as the file component
                     byte[] buffer = new byte[FileUtil.BUFFER_SIZE];
                     int len = 0;
