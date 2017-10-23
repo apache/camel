@@ -43,7 +43,7 @@ The Atomix Queue component supports 5 options which are listed below.
 The Atomix Queue endpoint is configured using URI syntax:
 
 ----
-atomix-queue:queueName
+atomix-queue:resourceName
 ----
 
 with the following path and query parameters:
