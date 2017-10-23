@@ -88,6 +88,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <version>${mockito2-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
