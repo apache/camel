@@ -29,6 +29,11 @@
             <from uri="direct:stockQuoteWebservice"/>
             <to uri="spring-ws:http://localhost?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote"/>
         </route>
+        
+        <route>
+            <from uri="direct:stockQuoteWebserviceHeaderTransformation"/>
+            <to uri="spring-ws:http://localhost?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;messageFilter=#headerTransformationFilter"/>
+        </route>        
 
         <!-- consumer route (providing the actual web service) that responds with the request so we can see SOAP headers -->
         <route>
@@ -50,6 +55,10 @@
         <property name="messageSender">
             <bean class="net.javacrumbs.springws.test.helper.InMemoryWebServiceMessageSender"/>
         </property>
+    </bean>
+    
+    <bean id="headerTransformationFilter" class="org.apache.camel.component.spring.ws.filter.impl.HeaderTransformationMessageFilter">
+    		<constructor-arg index="0" value="org/apache/camel/component/spring/ws/soap-header-transform.xslt"/>
     </bean>
 
 </beans>
