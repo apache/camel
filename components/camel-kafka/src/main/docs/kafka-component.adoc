@@ -180,6 +180,7 @@ The following headers are available when consuming messages from Kafka.
 | KafkaConstants.PARTITION                 | "kafka.PARTITION"                 | Integer | The partition where the message was stored
 | KafkaConstants.OFFSET                    | "kafka.OFFSET"                    | Long    | The offset of the message
 | KafkaConstants.KEY                       | "kafka.KEY"                       | Object  | The key of the message if configured
+| KafkaConstants.HEADERS                   | "kafka.HEADERS"                   | org.apache.kafka.common.header.Headers  | The record headers
 | KafkaConstants.LAST_RECORD_BEFORE_COMMIT | "kafka.LAST_RECORD_BEFORE_COMMIT" | Boolean | Whether or not it's the last record before commit (only available if `autoCommitEnable` endpoint parameter is `false`)
 |=================================================================================================================================================================================================================
 
