@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriEndpoint;
  * IEC 60870 component used for telecontrol (supervisory control and data acquisition)
  * such as controlling electric power transmission grids and other geographically widespread control systems.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "iec60870-client", syntax = "iec60870-client:endpointUri",
+@UriEndpoint(firstVersion = "2.20.0", scheme = "iec60870-client", syntax = "iec60870-client:uriPath",
     title = "IEC 60870 Client", consumerClass = ClientConsumer.class, label = "iot")
 public class ClientEndpoint extends AbstractIecEndpoint<ClientConnectionMultiplexor> {
 
