@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriParam;
     firstVersion = "2.20.0",
     scheme = "atomix-map",
     title = "Atomix Map",
-    syntax = "atomix-map:mapName",
+    syntax = "atomix-map:resourceName",
     consumerClass = AtomixMapConsumer.class,
     label = "clustering")
 class AtomixMapEndpoint extends AbstractAtomixClientEndpoint<AtomixMapComponent, AtomixMapConfiguration> {
