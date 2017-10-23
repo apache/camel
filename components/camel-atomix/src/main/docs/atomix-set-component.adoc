@@ -43,7 +43,7 @@ The Atomix Set component supports 5 options which are listed below.
 The Atomix Set endpoint is configured using URI syntax:
 
 ----
-atomix-set:setName
+atomix-set:resourceName
 ----
 
 with the following path and query parameters:

@@ -43,7 +43,7 @@ The Atomix MultiMap component supports 5 options which are listed below.
 The Atomix MultiMap endpoint is configured using URI syntax:
 
 ----
-atomix-multimap:multiMapName
+atomix-multimap:resourceName
 ----
 
 with the following path and query parameters:

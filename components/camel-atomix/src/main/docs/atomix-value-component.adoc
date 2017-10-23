@@ -43,7 +43,7 @@ The Atomix Value component supports 5 options which are listed below.
 The Atomix Value endpoint is configured using URI syntax:
 
 ----
-atomix-value:valueName
+atomix-value:resourceName
 ----
 
 with the following path and query parameters:

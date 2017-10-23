@@ -43,7 +43,7 @@ The Atomix Messaging component supports 5 options which are listed below.
 The Atomix Messaging endpoint is configured using URI syntax:
 
 ----
-atomix-messaging:group
+atomix-messaging:resourceName
 ----
 
 with the following path and query parameters:
