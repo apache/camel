@@ -287,7 +287,7 @@
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.22</hawtdispatch-version>
-    <hazelcast-version>3.8.6</hazelcast-version>
+    <hazelcast-version>3.9</hazelcast-version>
     <hbase-version>1.2.6</hbase-version>
     <hessian-version>4.0.51</hessian-version>
     <hibernate-validator-version>5.4.1.Final</hibernate-validator-version>
