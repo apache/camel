@@ -15,7 +15,19 @@ from("atmos:foo/get?remotePath=/path").to("mock:test");
 
 
 // component options: START
-The Atmos component has no options.
+The Atmos component supports 5 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *fullTokenId* (security) | The token id to pass to the Atmos client |  | String
+| *secretKey* (security) | The secret key to pass to the Atmos client |  | String
+| *uri* (advanced) | The URI of the server for the Atmos client to connect to |  | String
+| *sslValidation* (security) | Whether the Atmos client should perform SSL validation | false | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
