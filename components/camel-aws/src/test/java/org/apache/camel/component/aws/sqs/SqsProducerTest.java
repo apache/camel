@@ -229,8 +229,8 @@ public class SqsProducerTest {
     @Test
     public void itSetsMessageGroupIdUsingHeaderValueStrategy() throws Exception {
         sqsConfiguration.setQueueName("queueName.fifo");
-        sqsConfiguration.setMessageGroupIdStrategy("useHeaderValue");
-        when(inMessage.getHeader(SqsConstants.MESSAGE_GROUP_ID_HEADER, String.class)).thenReturn("my-group-id");
+        sqsConfiguration.setMessageGroupIdStrategy("usePropertyValue");
+        when(exchange.getProperty(SqsConstants.MESSAGE_GROUP_ID_PROPERTY, String.class)).thenReturn("my-group-id");
 
         underTest.process(exchange);
 

@@ -18,10 +18,10 @@ package org.apache.camel.component.aws.sqs;
 
 import org.apache.camel.Exchange;
 
-public class ConstantMessageGroupIdStrategy implements StringValueFromExchangeStrategy {
+public class ConstantMessageGroupIdStrategy implements MessageGroupIdStrategy {
 
     @Override
-    public String value(Exchange exchange) {
+    public String getMessageGroupId(Exchange exchange) {
         return "CamelSingleMessageGroup";
     }
 

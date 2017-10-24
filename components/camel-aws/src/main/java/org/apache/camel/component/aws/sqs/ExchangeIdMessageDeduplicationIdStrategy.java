@@ -18,10 +18,10 @@ package org.apache.camel.component.aws.sqs;
 
 import org.apache.camel.Exchange;
 
-public class ExchangeIdStrategy implements StringValueFromExchangeStrategy {
+public class ExchangeIdMessageDeduplicationIdStrategy implements MessageDeduplicationIdStrategy {
 
     @Override
-    public String value(Exchange exchange) {
+    public String getMessageDeduplicationId(Exchange exchange) {
         return exchange.getExchangeId();
     }
 

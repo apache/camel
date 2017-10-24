@@ -18,9 +18,11 @@ package org.apache.camel.component.aws.sqs;
 
 import org.apache.camel.Exchange;
 
-@FunctionalInterface
-public interface StringValueFromExchangeStrategy {
-    
-    String value(Exchange exchange);
+public class PropertyValueMessageGroupIdStrategy implements MessageGroupIdStrategy {
+
+    @Override
+    public String getMessageGroupId(Exchange exchange) {
+        return exchange.getProperty(SqsConstants.MESSAGE_GROUP_ID_PROPERTY, String.class);
+    }
 
 }

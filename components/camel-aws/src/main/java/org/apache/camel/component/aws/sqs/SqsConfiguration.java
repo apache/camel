@@ -68,9 +68,9 @@ public class SqsConfiguration {
     @UriParam(label = "producer")
     private Integer delaySeconds;
     @UriParam(label = "producer")
-    private StringValueFromExchangeStrategy messageGroupIdStrategy;
+    private MessageGroupIdStrategy messageGroupIdStrategy;
     @UriParam(label = "producer", defaultValue = "useExchangeId")
-    private StringValueFromExchangeStrategy messageDeduplicationIdStrategy = new ExchangeIdStrategy();
+    private MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
 
     // queue properties
     @UriParam(label = "queue")
@@ -89,7 +89,7 @@ public class SqsConfiguration {
     /**
      *  Whether or not the queue is a FIFO queue
      */
-    public boolean isFifoQueue() {
+    boolean isFifoQueue() {
         // AWS docs suggest this is valid derivation.
         // FIFO queue names must end with .fifo, and standard queues cannot
         if (queueName.endsWith(".fifo")) {
@@ -383,26 +383,26 @@ public class SqsConfiguration {
 
     /**
      * Since *Camel 2.20*. Only for FIFO queues. Strategy for setting the messageGroupId on the message.
-     * Can be one of the following options: *useConstant*, *useExchangeId*, *useHeaderValue*.
-     * For the *useHeaderValue* option, the value of header "CamelAwsMessageGroupId" will be used.
+     * Can be one of the following options: *useConstant*, *useExchangeId*, *usePropertyValue*.
+     * For the *usePropertyValue* option, the value of property "CamelAwsMessageGroupId" will be used.
      */
     public void setMessageGroupIdStrategy(String strategy) {
         if ("useConstant".equalsIgnoreCase(strategy)) {
             messageGroupIdStrategy = new ConstantMessageGroupIdStrategy();
         } else if ("useExchangeId".equalsIgnoreCase(strategy)) {
-            messageGroupIdStrategy = new ExchangeIdStrategy();
-        } else if ("useHeaderValue".equalsIgnoreCase(strategy)) {
-            messageGroupIdStrategy = new HeaderValueStrategy();
+            messageGroupIdStrategy = new ExchangeIdMessageGroupIdStrategy();
+        } else if ("usePropertyValue".equalsIgnoreCase(strategy)) {
+            messageGroupIdStrategy = new PropertyValueMessageGroupIdStrategy();
         } else {
             throw new IllegalArgumentException("Unrecognised MessageGroupIdStrategy: " + strategy);
         }
     }
 
-    public StringValueFromExchangeStrategy getMessageGroupIdStrategy() {
+    public MessageGroupIdStrategy getMessageGroupIdStrategy() {
         return messageGroupIdStrategy;
     }
 
-    public StringValueFromExchangeStrategy getMessageDeduplicationIdStrategy() {
+    public MessageDeduplicationIdStrategy getMessageDeduplicationIdStrategy() {
         return messageDeduplicationIdStrategy;
     }
 
@@ -413,9 +413,9 @@ public class SqsConfiguration {
      */
     public void setMessageDeduplicationIdStrategy(String strategy) {
         if ("useExchangeId".equalsIgnoreCase(strategy)) {
-            messageDeduplicationIdStrategy = new ExchangeIdStrategy();
+            messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
         } else if ("useContentBasedDeduplication".equalsIgnoreCase(strategy)) {
-            messageDeduplicationIdStrategy = new NullStrategy();
+            messageDeduplicationIdStrategy = new NullMessageDeduplicationIdStrategy();
         } else {
             throw new IllegalArgumentException("Unrecognised MessageDeduplicationIdStrategy: " + strategy);
         }
