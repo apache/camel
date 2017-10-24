@@ -72,12 +72,12 @@ public class SqsProducer extends DefaultProducer {
     private void configureFifoAttributes(SendMessageRequest request, Exchange exchange) {
         if (getEndpoint().getConfiguration().isFifoQueue()) {
             // use strategies
-            StringValueFromExchangeStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
-            String messageGroupId = messageGroupIdStrategy.value(exchange);
+            MessageGroupIdStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
+            String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
             request.setMessageGroupId(messageGroupId);
 
-            StringValueFromExchangeStrategy messageDeduplicationIdStrategy = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
-            String messageDeduplicationId = messageDeduplicationIdStrategy.value(exchange);
+            MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
+            String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
             request.setMessageDeduplicationId(messageDeduplicationId);
 
         }

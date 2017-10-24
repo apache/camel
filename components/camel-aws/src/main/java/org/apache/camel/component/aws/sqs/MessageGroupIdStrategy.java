@@ -18,11 +18,8 @@ package org.apache.camel.component.aws.sqs;
 
 import org.apache.camel.Exchange;
 
-public class HeaderValueStrategy implements StringValueFromExchangeStrategy {
+public interface MessageGroupIdStrategy {
 
-    @Override
-    public String value(Exchange exchange) {
-        return exchange.getIn().getHeader(SqsConstants.MESSAGE_GROUP_ID_HEADER, String.class);
-    }
+    String getMessageGroupId(Exchange exchange);
 
 }
