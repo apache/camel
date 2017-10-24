@@ -39,22 +39,22 @@ Number of Components: 285 in 196 JAR artifacts (19 deprecated)
 `atom:feedUri` | 1.2 | The atom component is used for consuming Atom RSS feeds.
 
 | link:camel-atomix/src/main/docs/atomix-map-component.adoc[Atomix Map] (camel-atomix) +
-`atomix-map:mapName` | 2.20 | The atomix-map component is used to access Atomix's distributed map.
+`atomix-map:resourceName` | 2.20 | The atomix-map component is used to access Atomix's distributed map.
 
 | link:camel-atomix/src/main/docs/atomix-messaging-component.adoc[Atomix Messaging] (camel-atomix) +
-`atomix-messaging:group` | 2.20 | The atomix-messaging component is used to access Atomix's group messaging.
+`atomix-messaging:resourceName` | 2.20 | The atomix-messaging component is used to access Atomix's group messaging.
 
 | link:camel-atomix/src/main/docs/atomix-multimap-component.adoc[Atomix MultiMap] (camel-atomix) +
-`atomix-multimap:multiMapName` | 2.20 | The atomix-multimap component is used to access Atomix's distributed multi map.
+`atomix-multimap:resourceName` | 2.20 | The atomix-multimap component is used to access Atomix's distributed multi map.
 
 | link:camel-atomix/src/main/docs/atomix-queue-component.adoc[Atomix Queue] (camel-atomix) +
-`atomix-queue:queueName` | 2.20 | The atomix-queue component is used to access Atomix's distributed queue.
+`atomix-queue:resourceName` | 2.20 | The atomix-queue component is used to access Atomix's distributed queue.
 
 | link:camel-atomix/src/main/docs/atomix-set-component.adoc[Atomix Set] (camel-atomix) +
-`atomix-set:setName` | 2.20 | The atomix-set component is used to access Atomix's distributed set.
+`atomix-set:resourceName` | 2.20 | The atomix-set component is used to access Atomix's distributed set.
 
 | link:camel-atomix/src/main/docs/atomix-value-component.adoc[Atomix Value] (camel-atomix) +
-`atomix-value:valueName` | 2.20 | The atomix-value component is used to access Atomix's distributed value.
+`atomix-value:resourceName` | 2.20 | The atomix-value component is used to access Atomix's distributed value.
 
 | link:camel-avro/src/main/docs/avro-component.adoc[Avro] (camel-avro) +
 `avro:transport:host:port/messageName` | 2.10 | Working with Apache Avro for data serialization.
