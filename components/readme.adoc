@@ -360,10 +360,10 @@ Number of Components: 285 in 196 JAR artifacts (19 deprecated)
 `ibatis:statement` | 1.2 | *deprecated* Performs a query poll insert update or delete in a relational database using Apache iBATIS.
 
 | link:camel-iec60870/src/main/docs/iec60870-client-component.adoc[IEC 60870 Client] (camel-iec60870) +
-`iec60870-client:endpointUri` | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
+`iec60870-client:uriPath` | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
 
 | link:camel-iec60870/src/main/docs/iec60870-server-component.adoc[IEC 60870 Server] (camel-iec60870) +
-`iec60870-server:endpointUri` | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
+`iec60870-server:uriPath` | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
 
 | link:camel-ignite/src/main/docs/ignite-cache-component.adoc[Ignite Cache] (camel-ignite) +
 `ignite-cache:cacheName` | 2.17 | The Ignite Cache endpoint is one of camel-ignite endpoints which allows you to interact with an Ignite Cache.
