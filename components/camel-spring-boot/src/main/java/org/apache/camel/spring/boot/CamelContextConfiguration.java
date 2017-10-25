@@ -18,10 +18,21 @@ package org.apache.camel.spring.boot;
 
 import org.apache.camel.CamelContext;
 
+/**
+ * Callback that allows custom logic during starting up {@link CamelContext} and just after
+ * {@link CamelContext} has been fully started.
+ */
 public interface CamelContextConfiguration {
 
+    /**
+     * Called during Spring Boot is starting up and is starting up {@link CamelContext}.
+     */
     void beforeApplicationStart(CamelContext camelContext);
 
+    /**
+     * Called after Spring Boot and {@link CamelContext} has just been started up.
+     * This means there Camel routes may already be active and have started processing incoming messages.
+     */
     void afterApplicationStart(CamelContext camelContext);
 
 }
