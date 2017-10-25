@@ -32,7 +32,7 @@ kafka:topic[?options]
 
 
 // component options: START
-The Kafka component supports 6 options which are listed below.
+The Kafka component supports 8 options which are listed below.
 
 
 
@@ -44,6 +44,8 @@ The Kafka component supports 6 options which are listed below.
 | *workerPool* (advanced) | To use a shared custom worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing. If using this option then you must handle the lifecycle of the thread pool to shut the pool down when no longer needed. |  | ExecutorService
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *breakOnFirstError* (consumer) | This options controls what happens when a consumer is processing an exchange and it fails. If the option is false then the consumer continues to the next message and processes it. If the option is true then the consumer breaks out and will seek back to offset of the message that caused a failure and then re-attempt to process this message. However this can lead to endless processing of the same message if its bound to fail every time eg a poison message. Therefore its recommended to deal with that for example by using Camel's error handler. | false | boolean
+| *allowManualCommit* (consumer) | Whether to allow doing manual commits via KafkaManualCommit. If this option is enabled then an instance of KafkaManualCommit is stored on the Exchange message header which allows end users to access this API and perform manual offset commits via the Kafka consumer. | false | boolean
+| *kafkaManualCommit Factory* (consumer) | Factory to use for creating KafkaManualCommit instances. This allows to plugin a custom factory to create custom KafkaManualCommit instances in case special logic is needed when doing manual commits that deviates from the default implementation that comes out of the box. |  | KafkaManualCommit Factory
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -67,13 +69,14 @@ with the following path and query parameters:
 | *topic* | *Required* Name of the topic to use. On the consumer you can use comma to separate multiple topics. A producer can only send a message to a single topic. |  | String
 |===
 
-==== Query Parameters (86 parameters):
+==== Query Parameters (87 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *brokers* (common) | URL of the Kafka brokers to use. The format is host1:port1host2:port2 and the list can be a subset of brokers or a VIP pointing to a subset of brokers. This option is known as bootstrap.servers in the Kafka documentation. |  | String
 | *clientId* (common) | The client id is a user-specified string sent in each request to help trace calls. It should logically identify the application making the request. |  | String
+| *allowManualCommit* (consumer) | Whether to allow doing manual commits via KafkaManualCommit. If this option is enabled then an instance of KafkaManualCommit is stored on the Exchange message header which allows end users to access this API and perform manual offset commits via the Kafka consumer. | false | boolean
 | *autoCommitEnable* (consumer) | If true periodically commit to ZooKeeper the offset of messages already fetched by the consumer. This committed offset will be used when the process fails as the position from which the new consumer will begin. | true | Boolean
 | *autoCommitIntervalMs* (consumer) | The frequency in ms that the consumer offsets are committed to zookeeper. | 5000 | Integer
 | *autoCommitOnStop* (consumer) | Whether to perform an explicit auto commit when the consumer stops to ensure the broker has a commit from the last consumed message. This requires the option autoCommitEnable is turned on. The possible values are: sync async or none. And sync is the default value. | sync | String
@@ -383,7 +386,18 @@ In XML:
 By default the Kafka consumer will use auto commit, where the offset will be committed automaticcally in the background using a given interval.
 
 In case you want to force manual commits, you can use `KafkaManualCommit` API from the Camel Exchange, stored on the message header.
+This requires to turn on manual commits by either setting the option `allowManualCommit` to `true` on the `KafkaComponent`
+or on the endpoint, for example:
 
+[source,java]
+----
+KafkaComponent kafka = new KafkaComponent();
+kafka.setAllowManualCommit(true);
+...
+camelContext.addComponent("kafka", kafka);
+----
+
+You can then use the `KafkaManualCommit` from Java code such as a Camel `Processor`:
 [source,java]
 ----
 public void process(Exchange exchange) {
@@ -393,3 +407,7 @@ public void process(Exchange exchange) {
 ----
 
 This will force a synchronous commit which will block until the commit is acknowledge on Kafka, or if it fails an exception is thrown.
+
+If you want to use a custom implementation of `KafkaManualCommit` then you can configure a custom `KafkaManualCommitFactory`
+on the `KafkaComponent` that creates instances of your custom implementation.
+

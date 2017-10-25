@@ -244,8 +244,12 @@ public class KafkaConsumer extends DefaultConsumer {
                                 if (!isAutoCommitEnabled()) {
                                     exchange.getIn().setHeader(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, !recordIterator.hasNext());
                                 }
-                                // allow Camel users to access the Kafka consumer API to be able to do for example manual commits
-                                exchange.getIn().setHeader(KafkaConstants.MANUAL_COMMIT, new DefaultKafkaManualCommit(consumer, topicName, threadId, offsetRepository, partition, partitionLastOffset));
+                                if (endpoint.getComponent().isAllowManualCommit()) {
+                                    // allow Camel users to access the Kafka consumer API to be able to do for example manual commits
+                                    KafkaManualCommit manual = endpoint.getComponent().getKafkaManualCommitFactory().newInstance(exchange, consumer, topicName, threadId,
+                                        offsetRepository, partition, partitionLastOffset);
+                                    exchange.getIn().setHeader(KafkaConstants.MANUAL_COMMIT, manual);
+                                }
 
                                 try {
                                     processor.process(exchange);
