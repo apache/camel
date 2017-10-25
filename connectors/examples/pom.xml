@@ -39,11 +39,11 @@
     <module>bar-connector</module>
     <module>wine-connector</module>
     <module>foo-bar-wine-example</module>
+    <module>salesforce-upsert-contact-connector</module>
     <module>twitter-mention-connector</module>
     <module>twitter-find-connector</module>
     <module>twitter-find-example</module>
     <module>twitter-salesforce-example</module>
-    <module>salesforce-upsert-contact-connector</module>
     <module>petstore-connector</module>
     <module>petstore-example</module>
   </modules>
