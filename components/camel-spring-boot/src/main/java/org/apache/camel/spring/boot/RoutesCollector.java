@@ -19,6 +19,7 @@ package org.apache.camel.spring.boot;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -30,11 +31,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StartupListener;
 import org.apache.camel.main.MainDurationEventNotifier;
+import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -221,9 +224,27 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                     }
                 }
 
-                for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
-                    LOG.debug("CamelContextConfiguration found. Invoking afterApplicationStart: {}", camelContextConfiguration);
-                    camelContextConfiguration.afterApplicationStart(camelContext);
+                if (!camelContextConfigurations.isEmpty()) {
+                    // we want to call these notifications just after CamelContext has been fully started
+                    // so use an event notifier to trigger when this happens
+                    camelContext.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+                        @Override
+                        public void notify(EventObject eventObject) throws Exception {
+                            for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
+                                LOG.debug("CamelContextConfiguration found. Invoking afterApplicationStart: {}", camelContextConfiguration);
+                                try {
+                                    camelContextConfiguration.afterApplicationStart(camelContext);
+                                } catch (Exception e) {
+                                    LOG.warn("Error during calling afterApplicationStart due " + e.getMessage() + ". This exception is ignored", e);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public boolean isEnabled(EventObject eventObject) {
+                            return eventObject instanceof CamelContextStartedEvent;
+                        }
+                    });
                 }
             } catch (Exception e) {
                 throw new CamelSpringBootInitializationException(e);
