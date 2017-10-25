@@ -13,7 +13,7 @@ for this component:
 ----
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-everit-json-schema</artifactId>
+    <artifactId>camel-json-validator</artifactId>
     <version>x.y.z</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
