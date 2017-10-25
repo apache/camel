@@ -18,6 +18,7 @@ package org.apache.camel.component.kafka;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -33,6 +35,7 @@ import org.apache.camel.spi.StateRepository;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -95,8 +98,15 @@ public class KafkaConsumer extends DefaultConsumer {
         super.doStart();
 
         executor = endpoint.createExecutor();
+
+        String topic = endpoint.getConfiguration().getTopic();
+        Pattern pattern = null;
+        if (endpoint.getConfiguration().isTopicIsPattern()) {
+            pattern = Pattern.compile(topic);
+        }
+
         for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
-            KafkaFetchRecords task = new KafkaFetchRecords(endpoint.getConfiguration().getTopic(), i + "", getProps());
+            KafkaFetchRecords task = new KafkaFetchRecords(topic, pattern, i + "", getProps());
             executor.submit(task);
             tasks.add(task);
         }
@@ -123,15 +133,17 @@ public class KafkaConsumer extends DefaultConsumer {
         super.doStop();
     }
 
-    class KafkaFetchRecords implements Runnable {
+    class KafkaFetchRecords implements Runnable, ConsumerRebalanceListener {
 
         private org.apache.kafka.clients.consumer.KafkaConsumer consumer;
         private final String topicName;
+        private final Pattern topicPattern;
         private final String threadId;
         private final Properties kafkaProps;
 
-        KafkaFetchRecords(String topicName, String id, Properties kafkaProps) {
+        KafkaFetchRecords(String topicName, Pattern topicPattern, String id, Properties kafkaProps) {
             this.topicName = topicName;
+            this.topicPattern = topicPattern;
             this.threadId = topicName + "-" + "Thread " + id;
             this.kafkaProps = kafkaProps;
         }
@@ -177,8 +189,13 @@ public class KafkaConsumer extends DefaultConsumer {
             boolean reConnect = false;
 
             try {
-                log.info("Subscribing {} to topic {}", threadId, topicName);
-                consumer.subscribe(Arrays.asList(topicName.split(",")));
+                if (topicPattern != null) {
+                    log.info("Subscribing {} to topic pattern {}", threadId, topicName);
+                    consumer.subscribe(topicPattern, this);
+                } else {
+                    log.info("Subscribing {} to topic {}", threadId, topicName);
+                    consumer.subscribe(Arrays.asList(topicName.split(",")));
+                }
 
                 StateRepository<String, String> offsetRepository = endpoint.getConfiguration().getOffsetRepository();
                 if (offsetRepository != null) {
@@ -322,6 +339,7 @@ public class KafkaConsumer extends DefaultConsumer {
         private void commitOffset(StateRepository<String, String> offsetRepository, TopicPartition partition, long partitionLastOffset, boolean forceCommit) {
             if (partitionLastOffset != -1) {
                 if (offsetRepository != null) {
+                    log.debug("Saving offset repository state {} from topic {} with offset: {}", threadId, topicName, partitionLastOffset);
                     offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(partitionLastOffset));
                 } else if (forceCommit) {
                     log.debug("Forcing commitSync {} from topic {} with offset: {}", threadId, topicName, partitionLastOffset);
@@ -336,6 +354,38 @@ public class KafkaConsumer extends DefaultConsumer {
         private void shutdown() {
             // As advised in the KAFKA-1894 ticket, calling this wakeup method breaks the infinite loop
             consumer.wakeup();
+        }
+
+        @Override
+        public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+            log.debug("onPartitionsRevoked: {} from topic {}", threadId, topicName);
+
+            StateRepository<String, String> offsetRepository = endpoint.getConfiguration().getOffsetRepository();
+            if (offsetRepository != null) {
+                for (TopicPartition partition : partitions) {
+                    long offset = consumer.position(partition);
+                    log.debug("Saving offset repository state {} from topic {} with offset: {}", threadId, topicName, offset);
+                    offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(offset));
+                }
+            }
+        }
+
+        @Override
+        public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+            log.debug("onPartitionsAssigned: {} from topic {}", threadId, topicName);
+
+            StateRepository<String, String> offsetRepository = endpoint.getConfiguration().getOffsetRepository();
+            if (offsetRepository != null) {
+                for (TopicPartition partition : partitions) {
+                    String offsetState = offsetRepository.getState(serializeOffsetKey(partition));
+                    if (offsetState != null && !offsetState.isEmpty()) {
+                        // The state contains the last read offset so you need to seek from the next one
+                        long offset = deserializeOffsetValue(offsetState) + 1;
+                        log.debug("Resuming partition {} from offset {} from state", partition.partition(), offset);
+                        consumer.seek(partition, offset);
+                    }
+                }
+            }
         }
     }
 

@@ -54,6 +54,8 @@ public class KafkaConfiguration implements Cloneable {
     private String clientId;
 
     @UriParam(label = "consumer")
+    private boolean topicIsPattern;
+    @UriParam(label = "consumer")
     private String groupId;
     @UriParam(label = "consumer", defaultValue = "10")
     private int consumerStreams = 10;
@@ -493,6 +495,18 @@ public class KafkaConfiguration implements Cloneable {
         if (values != null && !values.isEmpty()) {
             props.put(key, values.stream().collect(Collectors.joining(",")));
         }
+    }
+
+    public boolean isTopicIsPattern() {
+        return topicIsPattern;
+    }
+
+    /**
+     * Whether the topic is a pattern (regular expression).
+     * This can be used to subscribe to dynamic number of topics matching the pattern.
+     */
+    public void setTopicIsPattern(boolean topicIsPattern) {
+        this.topicIsPattern = topicIsPattern;
     }
 
     public String getGroupId() {
