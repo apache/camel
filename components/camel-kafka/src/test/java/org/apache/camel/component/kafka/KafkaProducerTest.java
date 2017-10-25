@@ -38,11 +38,13 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.errors.ApiException;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 
 public class KafkaProducerTest {
 
@@ -72,7 +74,7 @@ public class KafkaProducerTest {
         Future future = Mockito.mock(Future.class);
         Mockito.when(future.get()).thenReturn(rm);
         org.apache.kafka.clients.producer.KafkaProducer kp = Mockito.mock(org.apache.kafka.clients.producer.KafkaProducer.class);
-        Mockito.when(kp.send(Matchers.any(ProducerRecord.class))).thenReturn(future);
+        Mockito.when(kp.send(any(ProducerRecord.class))).thenReturn(future);
 
         Mockito.when(exchange.getContext()).thenReturn(context);
         Mockito.when(context.getTypeConverter()).thenReturn(converter);
@@ -99,7 +101,7 @@ public class KafkaProducerTest {
         in.setHeader(KafkaConstants.PARTITION_KEY, 4);
 
         producer.process(exchange);
-        Mockito.verify(producer.getKafkaProducer()).send(Matchers.any(ProducerRecord.class));
+        Mockito.verify(producer.getKafkaProducer()).send(any(ProducerRecord.class));
         assertRecordMetadataExists();
     }
 
@@ -109,7 +111,7 @@ public class KafkaProducerTest {
         endpoint.getConfiguration().setTopic("sometopic");
         // setup the exception here
         org.apache.kafka.clients.producer.KafkaProducer kp = producer.getKafkaProducer();
-        Mockito.when(kp.send(Matchers.any(ProducerRecord.class))).thenThrow(new ApiException());
+        Mockito.when(kp.send(any(ProducerRecord.class))).thenThrow(new ApiException());
         Mockito.when(exchange.getIn()).thenReturn(in);
         in.setHeader(KafkaConstants.PARTITION_KEY, 4);
 
@@ -129,7 +131,7 @@ public class KafkaProducerTest {
         producer.process(exchange, callback);
 
         ArgumentCaptor<Callback> callBackCaptor = ArgumentCaptor.forClass(Callback.class);
-        Mockito.verify(producer.getKafkaProducer()).send(Matchers.any(ProducerRecord.class), callBackCaptor.capture());
+        Mockito.verify(producer.getKafkaProducer()).send(any(ProducerRecord.class), callBackCaptor.capture());
         Callback kafkaCallback = callBackCaptor.getValue();
         kafkaCallback.onCompletion(new RecordMetadata(null, 0, 0, 0, new Long(0), 0, 0), null);
         assertRecordMetadataExists();
@@ -143,16 +145,16 @@ public class KafkaProducerTest {
 
         // setup the exception here
         org.apache.kafka.clients.producer.KafkaProducer kp = producer.getKafkaProducer();
-        Mockito.when(kp.send(Matchers.any(ProducerRecord.class), Matchers.any(Callback.class))).thenThrow(new ApiException());
+        Mockito.when(kp.send(any(ProducerRecord.class), any(Callback.class))).thenThrow(new ApiException());
 
         in.setHeader(KafkaConstants.PARTITION_KEY, 4);
 
         producer.process(exchange, callback);
 
         ArgumentCaptor<Callback> callBackCaptor = ArgumentCaptor.forClass(Callback.class);
-        Mockito.verify(producer.getKafkaProducer()).send(Matchers.any(ProducerRecord.class), callBackCaptor.capture());
-        Mockito.verify(exchange).setException(Matchers.isA(ApiException.class));
-        Mockito.verify(callback).done(Matchers.eq(true));
+        Mockito.verify(producer.getKafkaProducer()).send(any(ProducerRecord.class), callBackCaptor.capture());
+        Mockito.verify(exchange).setException(isA(ApiException.class));
+        Mockito.verify(callback).done(eq(true));
         Callback kafkaCallback = callBackCaptor.getValue();
         kafkaCallback.onCompletion(new RecordMetadata(null, 0, 0, 0, new Long(0), 0, 0), null);
         assertRecordMetadataExists();
