@@ -7,7 +7,7 @@
  
 
 [Apache Camel](http://camel.apache.org/) is a powerful open source integration framework based on known
-Enterprise Integration Patterns with powerful Bean Integration.
+Enterprise Integration Patterns with powerful bean integration.
 
 ### Introduction
 
