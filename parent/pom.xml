@@ -563,7 +563,7 @@
     <protobuf-guava-version>20.0</protobuf-guava-version>
     <protobuf-maven-plugin-version>0.5.0</protobuf-maven-plugin-version>
     <protonpack-version>1.8</protonpack-version>
-    <pubnub-version>4.6.5</pubnub-version>
+    <pubnub-version>4.14.0</pubnub-version>
     <qpid-bundle-version>0.28_1</qpid-bundle-version>
     <qpid-proton-j-version>0.22.0</qpid-proton-j-version>
     <qpid-proton-j-bundle-version>0.22.0</qpid-proton-j-bundle-version>
