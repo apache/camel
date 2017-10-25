@@ -165,6 +165,11 @@ public class KafkaComponentConfiguration
     public static class KafkaConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.kafka.KafkaConfiguration.class;
         /**
+         * Whether the topic is a pattern (regular expression). This can be used
+         * to subscribe to dynamic number of topics matching the pattern.
+         */
+        private Boolean topicIsPattern = false;
+        /**
          * A string that uniquely identifies the group of consumer processes to
          * which this consumer belongs. By setting the same group id multiple
          * processes indicate that they are all part of the same consumer group.
@@ -729,6 +734,14 @@ public class KafkaComponentConfiguration
          * be set to 'all'.
          */
         private Boolean enableIdempotence = false;
+
+        public Boolean getTopicIsPattern() {
+            return topicIsPattern;
+        }
+
+        public void setTopicIsPattern(Boolean topicIsPattern) {
+            this.topicIsPattern = topicIsPattern;
+        }
 
         public String getGroupId() {
             return groupId;

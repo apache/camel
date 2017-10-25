@@ -69,7 +69,7 @@ with the following path and query parameters:
 | *topic* | *Required* Name of the topic to use. On the consumer you can use comma to separate multiple topics. A producer can only send a message to a single topic. |  | String
 |===
 
-==== Query Parameters (87 parameters):
+==== Query Parameters (88 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -100,6 +100,7 @@ with the following path and query parameters:
 | *pollTimeoutMs* (consumer) | The timeout used when polling the KafkaConsumer. | 5000 | Long
 | *seekTo* (consumer) | Set if KafkaConsumer will read from beginning or end on startup: beginning : read from beginning end : read from end This is replacing the earlier property seekToBeginning |  | String
 | *sessionTimeoutMs* (consumer) | The timeout used to detect failures when using Kafka's group management facilities. | 10000 | Integer
+| *topicIsPattern* (consumer) | Whether the topic is a pattern (regular expression). This can be used to subscribe to dynamic number of topics matching the pattern. | false | boolean
 | *valueDeserializer* (consumer) | Deserializer class for value that implements the Deserializer interface. | org.apache.kafka.common.serialization.StringDeserializer | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
