@@ -36,7 +36,7 @@ public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
     public static final String TOPIC = "test";
 
     @EndpointInject(uri = "kafka:" + TOPIC
-            + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+            + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false&allowManualCommit=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
     private Endpoint from;
 
     @EndpointInject(uri = "mock:result")

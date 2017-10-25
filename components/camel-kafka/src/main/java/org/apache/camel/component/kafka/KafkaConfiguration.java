@@ -113,6 +113,8 @@ public class KafkaConfiguration implements Cloneable {
     //Consumer configuration properties
     @UriParam(label = "consumer", defaultValue = "true")
     private Boolean autoCommitEnable = true;
+    @UriParam(label = "consumer")
+    private boolean allowManualCommit;
     @UriParam(label = "consumer", defaultValue = "sync", enums = "sync,async,none")
     private String autoCommitOnStop = "sync";
     @UriParam(label = "consumer")
@@ -602,6 +604,20 @@ public class KafkaConfiguration implements Cloneable {
      */
     public void setAutoCommitEnable(Boolean autoCommitEnable) {
         this.autoCommitEnable = autoCommitEnable;
+    }
+
+    public boolean isAllowManualCommit() {
+        return allowManualCommit;
+    }
+
+    /**
+     * Whether to allow doing manual commits via {@link KafkaManualCommit}.
+     * <p/>
+     * If this option is enabled then an instance of {@link KafkaManualCommit} is stored on the {@link Exchange} message header,
+     * which allows end users to access this API and perform manual offset commits via the Kafka consumer.
+     */
+    public void setAllowManualCommit(boolean allowManualCommit) {
+        this.allowManualCommit = allowManualCommit;
     }
 
     public StateRepository<String, String> getOffsetRepository() {
