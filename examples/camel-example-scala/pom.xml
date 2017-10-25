@@ -56,7 +56,7 @@
     </dependency>
     <dependency>
       <groupId>org.scala-lang.modules</groupId>
-      <artifactId>scala-xml_2.11</artifactId>
+      <artifactId>scala-xml_${base-scala-version}</artifactId>
       <version>${scalaxml-version}</version>
     </dependency>
 
