@@ -239,9 +239,13 @@ public class KafkaConsumer extends DefaultConsumer {
                                               record.value());
                                 }
                                 Exchange exchange = endpoint.createKafkaExchange(record);
-                                if (endpoint.getConfiguration().isAutoCommitEnable() != null && !endpoint.getConfiguration().isAutoCommitEnable()) {
+
+                                // if not auto commit then we have additional information on the exchange
+                                if (!isAutoCommitEnabled()) {
                                     exchange.getIn().setHeader(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, !recordIterator.hasNext());
                                 }
+                                // allow Camel users to access the Kafka consumer API to be able to do for example manual commits
+                                exchange.getIn().setHeader(KafkaConstants.MANUAL_COMMIT, new DefaultKafkaManualCommit(consumer, topicName, threadId, offsetRepository, partition, partitionLastOffset));
 
                                 try {
                                     processor.process(exchange);
@@ -283,7 +287,7 @@ public class KafkaConsumer extends DefaultConsumer {
                 }
 
                 if (!reConnect) {
-                    if (endpoint.getConfiguration().isAutoCommitEnable() != null && endpoint.getConfiguration().isAutoCommitEnable()) {
+                    if (isAutoCommitEnabled()) {
                         if ("async".equals(endpoint.getConfiguration().getAutoCommitOnStop())) {
                             log.info("Auto commitAsync on stop {} from topic {}", threadId, topicName);
                             consumer.commitAsync();
@@ -329,6 +333,10 @@ public class KafkaConsumer extends DefaultConsumer {
             // As advised in the KAFKA-1894 ticket, calling this wakeup method breaks the infinite loop
             consumer.wakeup();
         }
+    }
+
+    private boolean isAutoCommitEnabled() {
+        return endpoint.getConfiguration().isAutoCommitEnable() != null && endpoint.getConfiguration().isAutoCommitEnable();
     }
 
     protected String serializeOffsetKey(TopicPartition topicPartition) {
