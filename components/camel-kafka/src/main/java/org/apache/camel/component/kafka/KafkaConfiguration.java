@@ -54,6 +54,8 @@ public class KafkaConfiguration implements Cloneable {
     private String clientId;
 
     @UriParam(label = "consumer")
+    private boolean topicIsPattern;
+    @UriParam(label = "consumer")
     private String groupId;
     @UriParam(label = "consumer", defaultValue = "10")
     private int consumerStreams = 10;
@@ -113,6 +115,8 @@ public class KafkaConfiguration implements Cloneable {
     //Consumer configuration properties
     @UriParam(label = "consumer", defaultValue = "true")
     private Boolean autoCommitEnable = true;
+    @UriParam(label = "consumer")
+    private boolean allowManualCommit;
     @UriParam(label = "consumer", defaultValue = "sync", enums = "sync,async,none")
     private String autoCommitOnStop = "sync";
     @UriParam(label = "consumer")
@@ -493,6 +497,18 @@ public class KafkaConfiguration implements Cloneable {
         }
     }
 
+    public boolean isTopicIsPattern() {
+        return topicIsPattern;
+    }
+
+    /**
+     * Whether the topic is a pattern (regular expression).
+     * This can be used to subscribe to dynamic number of topics matching the pattern.
+     */
+    public void setTopicIsPattern(boolean topicIsPattern) {
+        this.topicIsPattern = topicIsPattern;
+    }
+
     public String getGroupId() {
         return groupId;
     }
@@ -602,6 +618,20 @@ public class KafkaConfiguration implements Cloneable {
      */
     public void setAutoCommitEnable(Boolean autoCommitEnable) {
         this.autoCommitEnable = autoCommitEnable;
+    }
+
+    public boolean isAllowManualCommit() {
+        return allowManualCommit;
+    }
+
+    /**
+     * Whether to allow doing manual commits via {@link KafkaManualCommit}.
+     * <p/>
+     * If this option is enabled then an instance of {@link KafkaManualCommit} is stored on the {@link Exchange} message header,
+     * which allows end users to access this API and perform manual offset commits via the Kafka consumer.
+     */
+    public void setAllowManualCommit(boolean allowManualCommit) {
+        this.allowManualCommit = allowManualCommit;
     }
 
     public StateRepository<String, String> getOffsetRepository() {

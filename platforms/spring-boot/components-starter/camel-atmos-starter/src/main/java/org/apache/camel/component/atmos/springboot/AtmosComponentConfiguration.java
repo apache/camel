@@ -32,11 +32,59 @@ public class AtmosComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * The token id to pass to the Atmos client
+     */
+    private String fullTokenId;
+    /**
+     * The secret key to pass to the Atmos client
+     */
+    private String secretKey;
+    /**
+     * The URI of the server for the Atmos client to connect to
+     */
+    private String uri;
+    /**
+     * Whether the Atmos client should perform SSL validation
+     */
+    private Boolean sslValidation = false;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public String getFullTokenId() {
+        return fullTokenId;
+    }
+
+    public void setFullTokenId(String fullTokenId) {
+        this.fullTokenId = fullTokenId;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    public Boolean getSslValidation() {
+        return sslValidation;
+    }
+
+    public void setSslValidation(Boolean sslValidation) {
+        this.sslValidation = sslValidation;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;

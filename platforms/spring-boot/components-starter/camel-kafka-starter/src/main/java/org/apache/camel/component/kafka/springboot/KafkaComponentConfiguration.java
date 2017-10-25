@@ -18,6 +18,7 @@ package org.apache.camel.component.kafka.springboot;
 
 import java.util.concurrent.ExecutorService;
 import javax.annotation.Generated;
+import org.apache.camel.component.kafka.KafkaManualCommitFactory;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -72,6 +73,21 @@ public class KafkaComponentConfiguration
      */
     private Boolean breakOnFirstError = false;
     /**
+     * Whether to allow doing manual commits via KafkaManualCommit. If this
+     * option is enabled then an instance of KafkaManualCommit is stored on the
+     * Exchange message header which allows end users to access this API and
+     * perform manual offset commits via the Kafka consumer.
+     */
+    private Boolean allowManualCommit = false;
+    /**
+     * Factory to use for creating KafkaManualCommit instances. This allows to
+     * plugin a custom factory to create custom KafkaManualCommit instances in
+     * case special logic is needed when doing manual commits that deviates from
+     * the default implementation that comes out of the box.
+     */
+    @NestedConfigurationProperty
+    private KafkaManualCommitFactory kafkaManualCommitFactory;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -120,6 +136,23 @@ public class KafkaComponentConfiguration
         this.breakOnFirstError = breakOnFirstError;
     }
 
+    public Boolean getAllowManualCommit() {
+        return allowManualCommit;
+    }
+
+    public void setAllowManualCommit(Boolean allowManualCommit) {
+        this.allowManualCommit = allowManualCommit;
+    }
+
+    public KafkaManualCommitFactory getKafkaManualCommitFactory() {
+        return kafkaManualCommitFactory;
+    }
+
+    public void setKafkaManualCommitFactory(
+            KafkaManualCommitFactory kafkaManualCommitFactory) {
+        this.kafkaManualCommitFactory = kafkaManualCommitFactory;
+    }
+
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
     }
@@ -131,6 +164,11 @@ public class KafkaComponentConfiguration
 
     public static class KafkaConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.kafka.KafkaConfiguration.class;
+        /**
+         * Whether the topic is a pattern (regular expression). This can be used
+         * to subscribe to dynamic number of topics matching the pattern.
+         */
+        private Boolean topicIsPattern = false;
         /**
          * A string that uniquely identifies the group of consumer processes to
          * which this consumer belongs. By setting the same group id multiple
@@ -186,6 +224,15 @@ public class KafkaComponentConfiguration
          * will begin.
          */
         private Boolean autoCommitEnable = true;
+        /**
+         * Whether to allow doing manual commits via {@link KafkaManualCommit} .
+         * <p/>
+         * If this option is enabled then an instance of
+         * {@link KafkaManualCommit} is stored on the {@link Exchange} message
+         * header, which allows end users to access this API and perform manual
+         * offset commits via the Kafka consumer.
+         */
+        private Boolean allowManualCommit = false;
         /**
          * The offset repository to use in order to locally store the offset of
          * each partition of the topic. Defining one will disable the
@@ -688,6 +735,14 @@ public class KafkaComponentConfiguration
          */
         private Boolean enableIdempotence = false;
 
+        public Boolean getTopicIsPattern() {
+            return topicIsPattern;
+        }
+
+        public void setTopicIsPattern(Boolean topicIsPattern) {
+            this.topicIsPattern = topicIsPattern;
+        }
+
         public String getGroupId() {
             return groupId;
         }
@@ -758,6 +813,14 @@ public class KafkaComponentConfiguration
 
         public void setAutoCommitEnable(Boolean autoCommitEnable) {
             this.autoCommitEnable = autoCommitEnable;
+        }
+
+        public Boolean getAllowManualCommit() {
+            return allowManualCommit;
+        }
+
+        public void setAllowManualCommit(Boolean allowManualCommit) {
+            this.allowManualCommit = allowManualCommit;
         }
 
         public StateRepository getOffsetRepository() {

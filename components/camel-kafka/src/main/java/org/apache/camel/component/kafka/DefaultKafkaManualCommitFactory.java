@@ -14,25 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.boot;
+package org.apache.camel.component.kafka;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.StateRepository;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
 
-/**
- * Callback that allows custom logic during starting up {@link CamelContext} and just after
- * {@link CamelContext} has been fully started.
- */
-public interface CamelContextConfiguration {
+public class DefaultKafkaManualCommitFactory implements KafkaManualCommitFactory {
 
-    /**
-     * Called during Spring Boot is starting up and is starting up {@link CamelContext}.
-     */
-    void beforeApplicationStart(CamelContext camelContext);
-
-    /**
-     * Called after Spring Boot and {@link CamelContext} has just been started up.
-     * This means there Camel routes may already be active and have started processing incoming messages.
-     */
-    void afterApplicationStart(CamelContext camelContext);
-
+    @Override
+    public KafkaManualCommit newInstance(Exchange exchange, KafkaConsumer consumer, String topicName,
+                                         String threadId, StateRepository<String, String> offsetRepository, TopicPartition partition, long partitionLastOffset) {
+        return new DefaultKafkaManualCommit(consumer, topicName, threadId, offsetRepository, partition, partitionLastOffset);
+    }
 }

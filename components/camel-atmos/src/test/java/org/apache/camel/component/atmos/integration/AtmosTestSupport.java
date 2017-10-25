@@ -16,40 +16,29 @@
  */
 package org.apache.camel.component.atmos.integration;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Properties;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.atmos.AtmosComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 
 public class AtmosTestSupport extends CamelTestSupport {
 
-    protected final Properties properties;
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
 
-    protected AtmosTestSupport() throws Exception {
-        URL url = getClass().getResource("/test-options.properties");
+        Properties properties = new Properties();
+        properties.load(getClass().getResourceAsStream("/atmos.properties"));
 
-        InputStream inStream;
-        try {
-            inStream = url.openStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new IllegalAccessError("test-options.properties could not be found");
-        }
+        AtmosComponent component = new AtmosComponent();
+        component.setFullTokenId(properties.getProperty("fullTokenId"));
+        component.setSecretKey(properties.getProperty("secretKey"));
+        component.setUri(properties.getProperty("uri"));
+        component.setSslValidation(Boolean.parseBoolean(properties.getProperty("sslValidation")));
+        context.addComponent("atmos", component);
 
-        properties = new Properties();
-        try {
-            properties.load(inStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new IllegalAccessError("test-options.properties could not be found");
-        }
-    }
-
-    protected String getAuthParams() {
-        return "accessToken=" + properties.get("accessToken")
-                + "&clientIdentifier=" + properties.get("clientIdentifier");
+        return camelContext;
     }
 }

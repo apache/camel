@@ -14,25 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.boot;
-
-import org.apache.camel.CamelContext;
+package org.apache.camel.component.kafka;
 
 /**
- * Callback that allows custom logic during starting up {@link CamelContext} and just after
- * {@link CamelContext} has been fully started.
+ * Can be used for forcing manual offset commit when using Kafka consumer.
  */
-public interface CamelContextConfiguration {
+public interface KafkaManualCommit {
 
     /**
-     * Called during Spring Boot is starting up and is starting up {@link CamelContext}.
+     * Commit synchronously.
+     *
+     * @see org.apache.kafka.clients.consumer.KafkaConsumer#commitSync()
      */
-    void beforeApplicationStart(CamelContext camelContext);
-
-    /**
-     * Called after Spring Boot and {@link CamelContext} has just been started up.
-     * This means there Camel routes may already be active and have started processing incoming messages.
-     */
-    void afterApplicationStart(CamelContext camelContext);
-
+    void commitSync();
 }

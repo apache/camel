@@ -55,7 +55,7 @@ with zero.
 The IEC 60870 Client endpoint is configured using URI syntax:
 
 ----
-iec60870-client:endpointUri
+iec60870-client:uriPath
 ----
 
 with the following path and query parameters:
