@@ -37,6 +37,8 @@ public final class KafkaConstants {
     public static final String PARTITIONER_RANGE_ASSIGNOR = "org.apache.kafka.clients.consumer.RangeAssignor";
     public static final String KAFKA_RECORDMETA = "org.apache.kafka.clients.producer.RecordMetadata";
 
+    public static final String MANUAL_COMMIT = "CamelKafkaManualCommit";
+
     private KafkaConstants() {
         // Utility class
     }
