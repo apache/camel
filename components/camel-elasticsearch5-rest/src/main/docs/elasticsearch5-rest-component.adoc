@@ -126,6 +126,8 @@ object in the body
 
 |Update |*Map*, *UpdateRequest*, *String*, *byte[]* or *XContentBuilder* content to update |Updates content to an index and returns the content's
 indexId in the body.
+
+|Ping |None  |Pings the remote Elasticsearch cluster and returns true if the ping succeeded, false otherwise
 |===
 
 === Configure the component and enable basic authentication
