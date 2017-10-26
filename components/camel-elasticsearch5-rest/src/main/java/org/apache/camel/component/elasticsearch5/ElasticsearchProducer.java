@@ -201,10 +201,11 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (operation == ElasticsearchOperation.Search) {
             SearchRequest searchRequest = ElasticsearchActionRequestConverter.toSearchRequest(message.getBody(), exchange);
             message.setBody(restHighLevelClient.search(searchRequest).getHits());
+        } else if (operation == ElasticsearchOperation.Ping) {
+            message.setBody(restHighLevelClient.ping());
         } else {
             throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
         }
-
         // If we set params via the configuration on this exchange, remove them
         // now. This preserves legacy behavior for this component and enables a
         // use case where one message can be sent to multiple elasticsearch

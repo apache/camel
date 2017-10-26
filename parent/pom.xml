@@ -64,7 +64,7 @@
     <arquillian-weld-embedded-version>2.0.0.Beta4</arquillian-weld-embedded-version>
     <asciidoctorj-version>1.5.6</asciidoctorj-version>
     <asm-version>5.0.4</asm-version>
-    <aspectj-version>1.8.10</aspectj-version>
+    <aspectj-version>1.8.12</aspectj-version>
     <assertj-version>3.8.0</assertj-version>
     <asterisk-java-version>1.0.0-final</asterisk-java-version>
     <asterisk-java-bundle-version>1.0.0-final_1</asterisk-java-bundle-version>
@@ -81,11 +81,11 @@
     <avro-bundle-version>1.8.2_1</avro-bundle-version>
     <avro-ipc-bundle-version>1.8.2_1</avro-ipc-bundle-version>
     <awaitility-version>3.0.0</awaitility-version>
-    <aws-java-sdk-bundle-version>1.11.186_1</aws-java-sdk-bundle-version>
-    <aws-java-sdk-version>1.11.186</aws-java-sdk-version>
+    <aws-java-sdk-bundle-version>1.11.213_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-version>1.11.213</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
-    <azure-storage-java-sdk-version>5.5.0</azure-storage-java-sdk-version>
-    <azure-storage-java-sdk-bundle-version>5.5.0_1</azure-storage-java-sdk-bundle-version>
+    <azure-storage-java-sdk-version>6.0.0</azure-storage-java-sdk-version>
+    <azure-storage-java-sdk-bundle-version>6.0.0_1</azure-storage-java-sdk-bundle-version>
     <azure-keyvault-core-bundle-version>1.0.0_1</azure-keyvault-core-bundle-version>
     <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
     <base-scala-version>2.12</base-scala-version>
@@ -127,9 +127,9 @@
     <chronicle-network-version>1.9.8</chronicle-network-version>
     <chronicle-queue-version>4.5.27</chronicle-queue-version>
     <chronicle-threads-version>1.8.2</chronicle-threads-version>
-    <chronicle-wire-version>1.9.24</chronicle-wire-version>
-    <chunk-templates-version>3.2.4</chunk-templates-version>
-    <chunk-templates-bundle-version>3.2.4_1</chunk-templates-bundle-version>
+    <chronicle-wire-version>1.9.26</chronicle-wire-version>
+    <chunk-templates-version>3.3.1</chunk-templates-version>
+    <chunk-templates-bundle-version>3.3.1_1</chunk-templates-bundle-version>
     <classmate-version>1.3.4</classmate-version>
     <cmis-version>0.13.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
@@ -184,8 +184,8 @@
     <disruptor-version>3.3.7</disruptor-version>
     <dnsjava-version>2.1.8</dnsjava-version>
     <dnsjava-bundle-version>2.1.8_1</dnsjava-bundle-version>
-    <docker-java-version>3.0.13</docker-java-version>
-    <docker-java-bundle-version>3.0.13_1</docker-java-bundle-version>
+    <docker-java-version>3.0.14</docker-java-version>
+    <docker-java-bundle-version>3.0.14_1</docker-java-bundle-version>
     <docker-maven-plugin-version>0.22.1</docker-maven-plugin-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>6.1.0</dozer-version>
@@ -201,7 +201,7 @@
     <elasticsearch-guava-version>18.0</elasticsearch-guava-version>
     <elasticsearch-version>2.4.4</elasticsearch-version>
     <elasticsearch5-version>5.6.3</elasticsearch5-version>
-    <elasticsearch5-bundle-version>5.5.2_1</elasticsearch5-bundle-version>
+    <elasticsearch5-bundle-version>5.6.3_1</elasticsearch5-bundle-version>
     <elasticsearch-sniffer-version>5.6.3</elasticsearch-sniffer-version>
     <elasticsearch-cluster-runner-version>2.4.0.0</elasticsearch-cluster-runner-version>
     <elasticsearch5-cluster-runner-version>5.6.3.0</elasticsearch5-cluster-runner-version>
@@ -217,8 +217,8 @@
     <facebook4j-core-version>2.4.10</facebook4j-core-version>
     <facebook4j-core-bundle-version>2.4.10_1</facebook4j-core-bundle-version>
     <fastinfoset-version>1.2.13_1</fastinfoset-version>
-    <fastjson-version>1.2.37</fastjson-version>
-    <fastjson-bundle-version>1.2.37_1</fastjson-bundle-version>
+    <fastjson-version>1.2.39</fastjson-version>
+    <fastjson-bundle-version>1.2.39_1</fastjson-bundle-version>
     <felix-configadmin-version>1.8.8</felix-configadmin-version>
     <felix-connect-version>0.1.0</felix-connect-version>
     <felix-fileinstall-version>3.5.2</felix-fileinstall-version>
@@ -330,7 +330,7 @@
     <jackson2-scala-version>2.6.1</jackson2-scala-version>
     <!-- jackson 2.9.x is not yet working with all camel components such as swagger-java -->
     <jackson2-version>2.8.10</jackson2-version>
-    <jackrabbit-version>2.15.6</jackrabbit-version>
+    <jackrabbit-version>2.15.7</jackrabbit-version>
     <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasn1-version>1.8.2</jasn1-version>
@@ -341,6 +341,7 @@
     <java-apns-version>1.0.0.Beta6</java-apns-version>
     <java-ewah-version>1.1.6</java-ewah-version>
     <java-util-version>1.31.1</java-util-version>
+    <java-util-bundle-version>1.31.1_1</java-util-bundle-version>
     <jna-version>4.2.2</jna-version>
     <jnats-version>1.0</jnats-version>
     <javacc-maven-plugin-version>2.6</javacc-maven-plugin-version>
@@ -422,8 +423,8 @@
     <jsoup-version>1.9.2</jsoup-version>
     <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
     <jsr311-api-version>1.1.1</jsr311-api-version>
-    <jt400-version>9.3</jt400-version>
-    <jt400-bundle-version>9.3_1</jt400-bundle-version>
+    <jt400-version>9.4</jt400-version>
+    <jt400-bundle-version>9.4_1</jt400-bundle-version>
     <juel-bundle-version>2.1.3_1</juel-bundle-version>
     <juel-version>2.1.3</juel-version>
     <!-- camel-itest-karaf doesn't work with JUnit 4.12 at present -->
@@ -435,7 +436,7 @@
     <jzlib-version>1.1.3</jzlib-version>
     <jzlib-bundle-version>1.1.3_2</jzlib-bundle-version>
     <kafka-version>0.11.0.1</kafka-version>
-    <kafka-bundle-version>0.11.0.0_1</kafka-bundle-version>
+    <kafka-bundle-version>0.11.0.1_1</kafka-bundle-version>
     <karaf2-version>2.4.4</karaf2-version>
     <karaf4-version>4.1.2</karaf4-version>
     <kie-version>7.3.0.Final</kie-version>
@@ -446,8 +447,8 @@
     <leveldbjni-version>1.8</leveldbjni-version>
     <leveldb-api-version>0.9</leveldb-api-version>
     <leveldb-version>0.9</leveldb-version>
-    <libphonenumber-version>8.8.0</libphonenumber-version>
-    <libphonenumber-bundle-version>8.8.0_1</libphonenumber-bundle-version>
+    <libphonenumber-version>8.8.3</libphonenumber-version>
+    <libphonenumber-bundle-version>8.8.3_1</libphonenumber-bundle-version>
     <!-- virtual dependency only used by Eclipse m2e -->
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <log4j-version>1.2.17</log4j-version>
@@ -526,8 +527,8 @@
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
     <openwebbeans-version>1.7.3</openwebbeans-version>
     <oauth-provider-bundle-version>20100527_1</oauth-provider-bundle-version>
-    <okclient-version>3.8.1</okclient-version>
-    <okclient-bundle-version>3.8.1_1</okclient-bundle-version>
+    <okclient-version>3.9.0</okclient-version>
+    <okclient-bundle-version>3.9.0_1</okclient-bundle-version>
     <olingo2-version>2.0.9</olingo2-version>
     <olingo-odata2-core-bundle-version>2.0.9_1</olingo-odata2-core-bundle-version>
     <olingo2-gson-version>2.4</olingo2-gson-version>

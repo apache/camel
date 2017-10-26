@@ -58,17 +58,17 @@ public class ChronicleEngineConsumerTest extends ChronicleEngineTestSupport {
         mock.assertIsSatisfied();
 
         assertEquals(
-            mock.getExchanges().get(0).getIn().getHeader(ChronicleEngineConstants.MAP_EVENT_TYPE),
-            ChronicleEngineMapEventType.INSERT);
+            ChronicleEngineMapEventType.INSERT,
+            mock.getExchanges().get(0).getIn().getHeader(ChronicleEngineConstants.MAP_EVENT_TYPE));
         assertEquals(
-            mock.getExchanges().get(0).getIn().getBody(String.class),
-            "val-1");
+            "val-1",
+            mock.getExchanges().get(0).getIn().getBody(String.class));
         assertEquals(
-            mock.getExchanges().get(1).getIn().getHeader(ChronicleEngineConstants.MAP_EVENT_TYPE),
-            ChronicleEngineMapEventType.REMOVE);
+            ChronicleEngineMapEventType.REMOVE,
+            mock.getExchanges().get(1).getIn().getHeader(ChronicleEngineConstants.MAP_EVENT_TYPE));
         assertEquals(
-            mock.getExchanges().get(1).getIn().getHeader(ChronicleEngineConstants.OLD_VALUE),
-            "val-2");
+            "val-2",
+            mock.getExchanges().get(1).getIn().getHeader(ChronicleEngineConstants.OLD_VALUE));
     }
 
     @Test
