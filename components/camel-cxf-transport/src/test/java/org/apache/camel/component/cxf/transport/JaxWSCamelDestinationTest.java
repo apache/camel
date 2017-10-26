@@ -21,7 +21,6 @@ import javax.xml.ws.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.cxf.transport.common.gzip.GZIPOutInterceptor;
 
 import org.junit.After;
 import org.junit.Test;
