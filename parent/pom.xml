@@ -340,6 +340,7 @@
     <java-apns-version>1.0.0.Beta6</java-apns-version>
     <java-ewah-version>1.1.6</java-ewah-version>
     <java-util-version>1.31.1</java-util-version>
+    <java-util-bundle-version>1.31.1_1</java-util-bundle-version>
     <jna-version>4.2.2</jna-version>
     <jnats-version>1.0</jnats-version>
     <javacc-maven-plugin-version>2.6</javacc-maven-plugin-version>
