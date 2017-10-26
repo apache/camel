@@ -84,8 +84,8 @@
     <aws-java-sdk-bundle-version>1.11.186_1</aws-java-sdk-bundle-version>
     <aws-java-sdk-version>1.11.186</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
-    <azure-storage-java-sdk-version>5.5.0</azure-storage-java-sdk-version>
-    <azure-storage-java-sdk-bundle-version>5.5.0_1</azure-storage-java-sdk-bundle-version>
+    <azure-storage-java-sdk-version>6.0.0</azure-storage-java-sdk-version>
+    <azure-storage-java-sdk-bundle-version>6.0.0_1</azure-storage-java-sdk-bundle-version>
     <azure-keyvault-core-bundle-version>1.0.0_1</azure-keyvault-core-bundle-version>
     <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
