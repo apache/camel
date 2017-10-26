@@ -108,7 +108,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
      * @parameter property="camel.anonymousRoutes"
      *            default-value="false"
      */
-    private boolean anonymousRoutes = false;
+    private boolean anonymousRoutes;
 
     // CHECKSTYLE:OFF
     @Override
