@@ -117,6 +117,10 @@ public class CastorDataFormat extends DataFormatDefinition {
         this.encoding = encoding;
     }
 
+    public Boolean getWhitelistEnabled() {
+        return whitelistEnabled;
+    }
+
     /**
      * Define if Whitelist feature is enabled or not
      */
