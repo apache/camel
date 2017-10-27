@@ -67,9 +67,9 @@ public class SqsConfiguration {
     // producer properties
     @UriParam(label = "producer")
     private Integer delaySeconds;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", enums = "useConstant,useExchangeId,usePropertyValue")
     private MessageGroupIdStrategy messageGroupIdStrategy;
-    @UriParam(label = "producer", defaultValue = "useExchangeId")
+    @UriParam(label = "producer", defaultValue = "useExchangeId", enums = "useExchangeId,useContentBasedDeduplication")
     private MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
 
     // queue properties
@@ -382,7 +382,7 @@ public class SqsConfiguration {
     }
 
     /**
-     * Since *Camel 2.20*. Only for FIFO queues. Strategy for setting the messageGroupId on the message.
+     * Only for FIFO queues. Strategy for setting the messageGroupId on the message.
      * Can be one of the following options: *useConstant*, *useExchangeId*, *usePropertyValue*.
      * For the *usePropertyValue* option, the value of property "CamelAwsMessageGroupId" will be used.
      */
@@ -407,7 +407,7 @@ public class SqsConfiguration {
     }
 
     /**
-     * Since *Camel 2.20*. Only for FIFO queues. Strategy for setting the messageDeduplicationId on the message.
+     * Only for FIFO queues. Strategy for setting the messageDeduplicationId on the message.
      * Can be one of the following options: *useExchangeId*, *useContentBasedDeduplication*.
      * For the *useContentBasedDeduplication* option, no messageDeduplicationId will be set on the message.
      */
