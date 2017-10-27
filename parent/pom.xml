@@ -641,8 +641,8 @@
     <spring-data-redis-version>1.8.6.RELEASE</spring-data-redis-version>
     <spring-integration-version>4.3.12.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
-    <spring-ldap-version>2.3.1.RELEASE</spring-ldap-version>
-    <spring-ldap-bundle-version>2.3.1.RELEASE_1</spring-ldap-bundle-version>
+    <spring-ldap-version>2.3.2.RELEASE</spring-ldap-version>
+    <spring-ldap-bundle-version>2.3.2.RELEASE_1</spring-ldap-bundle-version>
     <!-- spring 1.1.0 is not OSGi bundle any more -->
     <spring-retry-version>1.0.3.RELEASE</spring-retry-version>
     <spring-all-version-range>[3.2,5)</spring-all-version-range>
