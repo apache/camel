@@ -444,6 +444,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         LOG.debug("Renaming file: {} to: {}", from, to);
         try {
             reconnectIfNecessary();
+            //make use of the '/' separator because JSch expects this 
+            // as the file separator even on Windows
+            to = FileUtil.compactPath(to, '/');
             channel.rename(from, to);
             return true;
         } catch (SftpException e) {
