@@ -42,9 +42,9 @@ import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageFo
  * 
  */
 public class SqsProducer extends DefaultProducer {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(SqsProducer.class);
-    
+
     private transient String sqsProducerToString;
 
     public SqsProducer(SqsEndpoint endpoint) throws NoFactoryAvailableException {
@@ -56,16 +56,31 @@ public class SqsProducer extends DefaultProducer {
         SendMessageRequest request = new SendMessageRequest(getQueueUrl(), body);
         request.setMessageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
         addDelay(request, exchange);
+        configureFifoAttributes(request, exchange);
 
         LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
-        
+
         SendMessageResult result = getClient().sendMessage(request);
-        
+
         LOG.trace("Received result [{}]", result);
-        
+
         Message message = getMessageForResponse(exchange);
         message.setHeader(SqsConstants.MESSAGE_ID, result.getMessageId());
         message.setHeader(SqsConstants.MD5_OF_BODY, result.getMD5OfMessageBody());
+    }
+
+    private void configureFifoAttributes(SendMessageRequest request, Exchange exchange) {
+        if (getEndpoint().getConfiguration().isFifoQueue()) {
+            // use strategies
+            MessageGroupIdStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
+            String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
+            request.setMessageGroupId(messageGroupId);
+
+            MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
+            String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
+            request.setMessageDeduplicationId(messageDeduplicationId);
+
+        }
     }
 
     private void addDelay(SendMessageRequest request, Exchange exchange) {
@@ -81,20 +96,20 @@ public class SqsProducer extends DefaultProducer {
         LOG.trace("found delay: " + delayValue);
         request.setDelaySeconds(delayValue == null ? Integer.valueOf(0) : delayValue);
     }
-    
+
     protected AmazonSQS getClient() {
         return getEndpoint().getClient();
     }
-    
+
     protected String getQueueUrl() {
         return getEndpoint().getQueueUrl();
     }
-    
+
     @Override
     public SqsEndpoint getEndpoint() {
         return (SqsEndpoint) super.getEndpoint();
     }
-    
+
     @Override
     public String toString() {
         if (sqsProducerToString == null) {
@@ -102,7 +117,7 @@ public class SqsProducer extends DefaultProducer {
         }
         return sqsProducerToString;
     }
-    
+
     private Map<String, MessageAttributeValue> translateAttributes(Map<String, Object> headers, Exchange exchange) {
         Map<String, MessageAttributeValue> result = new HashMap<String, MessageAttributeValue>();
         HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();

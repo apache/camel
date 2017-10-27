@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.util.ObjectHelper;
 
 public class SqsComponent extends UriEndpointComponent {
     
@@ -60,6 +61,10 @@ public class SqsComponent extends UriEndpointComponent {
         // Verify that visibilityTimeout is set if extendMessageVisibility is set to true.
         if (configuration.isExtendMessageVisibility() && (configuration.getVisibilityTimeout() == null)) {
             throw new IllegalArgumentException("Extending message visibility (extendMessageVisibility) requires visibilityTimeout to be set on the Endpoint.");
+        }
+        
+        if (configuration.isFifoQueue() && ObjectHelper.isEmpty(configuration.getMessageGroupIdStrategy())) {
+            throw new IllegalArgumentException("messageGroupIdStrategy must be set for FIFO queues.");
         }
         
         SqsEndpoint sqsEndpoint = new SqsEndpoint(uri, this, configuration);

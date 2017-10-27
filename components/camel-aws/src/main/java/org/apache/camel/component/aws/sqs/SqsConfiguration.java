@@ -67,6 +67,10 @@ public class SqsConfiguration {
     // producer properties
     @UriParam(label = "producer")
     private Integer delaySeconds;
+    @UriParam(label = "producer")
+    private MessageGroupIdStrategy messageGroupIdStrategy;
+    @UriParam(label = "producer", defaultValue = "useExchangeId")
+    private MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
 
     // queue properties
     @UriParam(label = "queue")
@@ -83,6 +87,18 @@ public class SqsConfiguration {
     private String redrivePolicy;
 
     /**
+     *  Whether or not the queue is a FIFO queue
+     */
+    boolean isFifoQueue() {
+        // AWS docs suggest this is valid derivation.
+        // FIFO queue names must end with .fifo, and standard queues cannot
+        if (queueName.endsWith(".fifo")) {
+            return true;
+        }
+        return false;
+    }
+
+     /**
      * The region with which the AWS-SQS client wants to work with.
      * Only works if Camel creates the AWS-SQS client, i.e., if you explicitly set amazonSQSClient,
      * then this setting will have no effect. You would have to set it on the client you create directly
@@ -363,5 +379,45 @@ public class SqsConfiguration {
 
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    /**
+     * Since *Camel 2.20*. Only for FIFO queues. Strategy for setting the messageGroupId on the message.
+     * Can be one of the following options: *useConstant*, *useExchangeId*, *usePropertyValue*.
+     * For the *usePropertyValue* option, the value of property "CamelAwsMessageGroupId" will be used.
+     */
+    public void setMessageGroupIdStrategy(String strategy) {
+        if ("useConstant".equalsIgnoreCase(strategy)) {
+            messageGroupIdStrategy = new ConstantMessageGroupIdStrategy();
+        } else if ("useExchangeId".equalsIgnoreCase(strategy)) {
+            messageGroupIdStrategy = new ExchangeIdMessageGroupIdStrategy();
+        } else if ("usePropertyValue".equalsIgnoreCase(strategy)) {
+            messageGroupIdStrategy = new PropertyValueMessageGroupIdStrategy();
+        } else {
+            throw new IllegalArgumentException("Unrecognised MessageGroupIdStrategy: " + strategy);
+        }
+    }
+
+    public MessageGroupIdStrategy getMessageGroupIdStrategy() {
+        return messageGroupIdStrategy;
+    }
+
+    public MessageDeduplicationIdStrategy getMessageDeduplicationIdStrategy() {
+        return messageDeduplicationIdStrategy;
+    }
+
+    /**
+     * Since *Camel 2.20*. Only for FIFO queues. Strategy for setting the messageDeduplicationId on the message.
+     * Can be one of the following options: *useExchangeId*, *useContentBasedDeduplication*.
+     * For the *useContentBasedDeduplication* option, no messageDeduplicationId will be set on the message.
+     */
+    public void setMessageDeduplicationIdStrategy(String strategy) {
+        if ("useExchangeId".equalsIgnoreCase(strategy)) {
+            messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
+        } else if ("useContentBasedDeduplication".equalsIgnoreCase(strategy)) {
+            messageDeduplicationIdStrategy = new NullMessageDeduplicationIdStrategy();
+        } else {
+            throw new IllegalArgumentException("Unrecognised MessageDeduplicationIdStrategy: " + strategy);
+        }
     }
 }

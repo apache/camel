@@ -55,6 +55,7 @@ public class SqsProducerTest {
     private static final String SAMPLE_MESSAGE_HEADER_VALUE_3 = "heder_value_3";
     private static final String SAMPLE_MESSAGE_HEADER_NAME_4 = "CamelHeader_1";
     private static final String SAMPLE_MESSAGE_HEADER_VALUE_4 = "testValue";
+    private static final String SAMPLE_EXCHANGE_ID = "ID:whatever-the-hostname-is-32818-1506943497897-1:1:8:1:75939";
     
     Exchange exchange = mock(Exchange.class, RETURNS_DEEP_STUBS);
 
@@ -75,12 +76,14 @@ public class SqsProducerTest {
         sqsConfiguration = new SqsConfiguration();
         HeaderFilterStrategy headerFilterStrategy = new SqsHeaderFilterStrategy();
         sqsConfiguration.setDelaySeconds(Integer.valueOf(0));
+        sqsConfiguration.setQueueName("queueName");
         when(sqsEndpoint.getClient()).thenReturn(amazonSQSClient);
         when(sqsEndpoint.getConfiguration()).thenReturn(sqsConfiguration);
         when(amazonSQSClient.sendMessage(any(SendMessageRequest.class))).thenReturn(sendMessageResult);
         when(exchange.getOut()).thenReturn(outMessage);
         when(exchange.getIn()).thenReturn(inMessage);
         when(exchange.getPattern()).thenReturn(ExchangePattern.InOnly);
+        when(exchange.getExchangeId()).thenReturn(SAMPLE_EXCHANGE_ID);
         when(inMessage.getBody(String.class)).thenReturn(SAMPLE_MESSAGE_BODY);
         when(sqsEndpoint.getQueueUrl()).thenReturn(QUEUE_URL);
         when(sqsEndpoint.getHeaderFilterStrategy()).thenReturn(headerFilterStrategy);
@@ -194,8 +197,92 @@ public class SqsProducerTest {
                          .getStringValue());
         assertEquals(3, capture.getValue().getMessageAttributes().size());
     }
-    
-    
 
+    @Test
+    public void itSetsMessageGroupIdUsingConstantStrategy() throws Exception {
+        sqsConfiguration.setQueueName("queueName.fifo");
+        sqsConfiguration.setMessageGroupIdStrategy("useConstant");
+
+        underTest.process(exchange);
+
+        ArgumentCaptor<SendMessageRequest> capture = ArgumentCaptor.forClass(SendMessageRequest.class);
+        verify(amazonSQSClient).sendMessage(capture.capture());
+
+        assertEquals("CamelSingleMessageGroup", capture.getValue().getMessageGroupId());
+        
+    }
+    
+    @Test
+    public void itSetsMessageGroupIdUsingExchangeIdStrategy() throws Exception {
+        sqsConfiguration.setQueueName("queueName.fifo");
+        sqsConfiguration.setMessageGroupIdStrategy("useExchangeId");
+
+        underTest.process(exchange);
+
+        ArgumentCaptor<SendMessageRequest> capture = ArgumentCaptor.forClass(SendMessageRequest.class);
+        verify(amazonSQSClient).sendMessage(capture.capture());
+
+        assertEquals(SAMPLE_EXCHANGE_ID, capture.getValue().getMessageGroupId());
+        
+    }
+    
+    @Test
+    public void itSetsMessageGroupIdUsingHeaderValueStrategy() throws Exception {
+        sqsConfiguration.setQueueName("queueName.fifo");
+        sqsConfiguration.setMessageGroupIdStrategy("usePropertyValue");
+        when(exchange.getProperty(SqsConstants.MESSAGE_GROUP_ID_PROPERTY, String.class)).thenReturn("my-group-id");
+
+        underTest.process(exchange);
+
+        ArgumentCaptor<SendMessageRequest> capture = ArgumentCaptor.forClass(SendMessageRequest.class);
+        verify(amazonSQSClient).sendMessage(capture.capture());
+
+        assertEquals("my-group-id", capture.getValue().getMessageGroupId());
+        
+    }
+
+    @Test
+    public void itSetsMessageDedpulicationIdUsingExchangeIdStrategy() throws Exception {
+        sqsConfiguration.setQueueName("queueName.fifo");
+        sqsConfiguration.setMessageGroupIdStrategy("useConstant");
+        sqsConfiguration.setMessageDeduplicationIdStrategy("useExchangeId");
+
+        underTest.process(exchange);
+
+        ArgumentCaptor<SendMessageRequest> capture = ArgumentCaptor.forClass(SendMessageRequest.class);
+        verify(amazonSQSClient).sendMessage(capture.capture());
+
+        assertEquals(SAMPLE_EXCHANGE_ID, capture.getValue().getMessageDeduplicationId());
+        
+    }
+
+    @Test
+    public void itSetsMessageDedpulicationIdUsingExchangeIdStrategyAsDefault() throws Exception {
+        sqsConfiguration.setQueueName("queueName.fifo");
+        sqsConfiguration.setMessageGroupIdStrategy("useConstant");
+
+        underTest.process(exchange);
+
+        ArgumentCaptor<SendMessageRequest> capture = ArgumentCaptor.forClass(SendMessageRequest.class);
+        verify(amazonSQSClient).sendMessage(capture.capture());
+
+        assertEquals(SAMPLE_EXCHANGE_ID, capture.getValue().getMessageDeduplicationId());
+        
+    }
+
+    @Test
+    public void itDoesNotSetMessageDedpulicationIdUsingContentBasedDeduplicationStrategy() throws Exception {
+        sqsConfiguration.setQueueName("queueName.fifo");
+        sqsConfiguration.setMessageGroupIdStrategy("useConstant");
+        sqsConfiguration.setMessageDeduplicationIdStrategy("useContentBasedDeduplication");
+
+        underTest.process(exchange);
+
+        ArgumentCaptor<SendMessageRequest> capture = ArgumentCaptor.forClass(SendMessageRequest.class);
+        verify(amazonSQSClient).sendMessage(capture.capture());
+
+        assertNull(capture.getValue().getMessageDeduplicationId());
+        
+    }
 
 }
