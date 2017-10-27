@@ -713,11 +713,16 @@ And in Java DSL
 
 ==== Vendor Extensions
 
-The generated API documentation includes vendor extensions (https://swagger.io/specification/#specificationExtensions)
-which document the operations and definitons with additional information.
+The generated API documentation can be configured to include vendor extensions (https://swagger.io/specification/#specificationExtensions)
+which document the operations and definitions with additional information, such as class name of model classes, camel context id and route id's.
+This information can aid developers and during trouble shooting. However at production usage you may wish to not have this turned
+on to avoid leaking implementation details into your API docs.
 
-This information is stored using keys starting with `x-`. However there are some API tools that does not support parsing
-vendor extensions, and therefore you can turn this off on `RestConfiguration` via the `apiVendorExtension` option:
+The vendor extension information is stored in the API documentation with keys starting with `x-`.
+
+NOTE: Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs.
+
+The vendor extensions can be turned on `RestConfiguration` via the `apiVendorExtension` option:
 
 [source,java]
 ----
@@ -726,7 +731,7 @@ restConfiguration()
     .bindingMode(RestBindingMode.json)
     .dataFormatProperty("prettyPrint", "true")
     .apiContextPath("api-doc")
-    .apiVendorExtension(false)
+    .apiVendorExtension(true)
         .apiProperty("api.title", "User API").apiProperty("api.version", "1.0.0")
         .apiProperty("cors", "true");
 ----
@@ -736,7 +741,7 @@ And in XML DSL:
 ----
  <restConfiguration component="servlet" bindingMode="json"
                        apiContextPath="api-docs"
-                       apiVendorExtension="false">
+                       apiVendorExtension="true">
 
       <!-- we want json output in pretty mode -->
       <dataFormatProperty key="prettyPrint" value="true"/>
