@@ -28,9 +28,7 @@ import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import static org.apache.camel.swagger.SwaggerHelper.clearVendorExtensions;
-
-public class RestSwaggerReaderDisableVendorExtensionTest extends CamelTestSupport {
+public class RestSwaggerReaderEnableVendorExtensionTest extends CamelTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -44,6 +42,9 @@ public class RestSwaggerReaderDisableVendorExtensionTest extends CamelTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // enable vendor extensions
+                restConfiguration().apiVendorExtension(true);
+
                 // this user REST service is json only
                 rest("/user").tag("dude").description("User rest service")
                     .consumes("application/json").produces("application/json")
@@ -65,7 +66,7 @@ public class RestSwaggerReaderDisableVendorExtensionTest extends CamelTestSuppor
     }
 
     @Test
-    public void testDisableVendorExtension() throws Exception {
+    public void testEnableVendorExtension() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[]{"http"});
@@ -78,8 +79,6 @@ public class RestSwaggerReaderDisableVendorExtensionTest extends CamelTestSuppor
         Swagger swagger = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
         assertNotNull(swagger);
 
-        clearVendorExtensions(swagger);
-
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -87,12 +86,15 @@ public class RestSwaggerReaderDisableVendorExtensionTest extends CamelTestSuppor
 
         log.info(json);
 
+        String camelId = context.getName();
+        String routeId = context.getRouteDefinitions().get(0).getId();
+
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
         assertTrue(json.contains("\"description\" : \"The user returned\""));
         assertTrue(json.contains("\"$ref\" : \"#/definitions/User\""));
         assertFalse(json.contains("\"enum\""));
-        assertFalse(json.contains("\"x-camelContextId\" : \"camel-1\""));
-        assertFalse(json.contains("\"x-routeId\" : \"route1\""));
+        assertTrue(json.contains("\"x-camelContextId\" : \"" + camelId + "\""));
+        assertTrue(json.contains("\"x-routeId\" : \"" + routeId + "\""));
         context.stop();
     }
 
