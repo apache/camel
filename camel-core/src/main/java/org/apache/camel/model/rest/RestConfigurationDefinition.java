@@ -78,7 +78,7 @@ public class RestConfigurationDefinition {
     @XmlAttribute @Metadata(label = "consumer")
     private Boolean apiContextListing;
 
-    @XmlAttribute @Metadata(label = "consumer", defaultValue = "true")
+    @XmlAttribute @Metadata(label = "consumer")
     private Boolean apiVendorExtension;
 
     @XmlAttribute @Metadata(label = "consumer")
@@ -305,7 +305,7 @@ public class RestConfigurationDefinition {
     /**
      * Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information
      * as vendor extension (eg keys starting with x-) such as route ids, class names etc.
-     * Some API tooling may not support vendor extensions and this option can then be turned off.
+     * Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs.
      */
     public void setApiVendorExtension(Boolean apiVendorExtension) {
         this.apiVendorExtension = apiVendorExtension;
