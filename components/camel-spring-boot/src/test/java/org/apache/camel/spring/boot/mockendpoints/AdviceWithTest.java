@@ -28,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.junit.Assert.assertFalse;
+
 @RunWith(CamelSpringBootRunner.class)
 @UseAdviceWith
 @SpringBootApplication
@@ -42,6 +44,9 @@ public class AdviceWithTest {
 
     @Test
     public void shouldMockEndpoints() throws Exception {
+        // context should not be started because we enabled @UseAdviceWith
+        assertFalse(camelContext.getStatus().isStarted());
+
         camelContext.getRouteDefinitions().get(0).adviceWith(camelContext, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -50,6 +55,7 @@ public class AdviceWithTest {
             }
         });
 
+        // manual start camel
         camelContext.start();
 
         MockEndpoint mock = camelContext.getEndpoint("mock:result", MockEndpoint.class);

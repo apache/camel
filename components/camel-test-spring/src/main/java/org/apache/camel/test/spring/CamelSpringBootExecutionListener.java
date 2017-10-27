@@ -39,6 +39,7 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         // is added to Spring ApplicationContext, so we set the flag
         // not to start it just yet
         SpringCamelContext.setNoStart(true);
+        System.setProperty("skipStartingCamelContext", "true");
         ConfigurableApplicationContext context = (ConfigurableApplicationContext) testContext.getApplicationContext();
 
         // Post CamelContext(s) instantiation but pre CamelContext(s) start setup
@@ -47,11 +48,9 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         CamelAnnotationsHandler.handleMockEndpoints(context, testClass);
         CamelAnnotationsHandler.handleMockEndpointsAndSkip(context, testClass);
         CamelAnnotationsHandler.handleUseOverridePropertiesWithPropertiesComponent(context, testClass);
-        SpringCamelContext.setNoStart(false);
-        CamelContext camelContext = context.getBean(CamelContext.class);
 
-        // after our customizations we should start the CamelContext
-        camelContext.start();
+        System.clearProperty("skipStartingCamelContext");
+        SpringCamelContext.setNoStart(false);
     }
 
     @Override
