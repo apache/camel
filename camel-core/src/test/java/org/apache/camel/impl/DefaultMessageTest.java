@@ -16,14 +16,15 @@
  */
 package org.apache.camel.impl;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Attachment;
 import org.junit.Test;
-
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DefaultMessageTest {
 
@@ -34,6 +35,16 @@ public class DefaultMessageTest {
         Map<String, Attachment> attachments = message.createAttachments();
 
         assertThat(attachments, instanceOf(LinkedHashMap.class));
+    }
+
+    @Test
+    public void testCamelContextIsNull() {
+        @SuppressWarnings("deprecation")
+        DefaultMessage message = new DefaultMessage();
+        String body = "something";
+        message.setBody(body);
+        assertEquals(body, message.getBody());
+        assertEquals(null, message.getCamelContext());
     }
 
 }
