@@ -35,6 +35,9 @@ import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Contact;
 import io.swagger.models.Info;
 import io.swagger.models.License;
+import io.swagger.models.Model;
+import io.swagger.models.Path;
+import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
 import io.swagger.util.Yaml;
 import org.apache.camel.Exchange;
@@ -47,6 +50,8 @@ import org.apache.camel.util.CamelVersionHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.swagger.SwaggerHelper.clearVendorExtensions;
 
 /**
  * A support class for that allows SPI to plugin
@@ -207,6 +212,10 @@ public class RestSwaggerSupport {
                 // read the rest-dsl into swagger model
                 Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
 
+                if (!configuration.isApiVendorExtension()) {
+                    clearVendorExtensions(swagger);
+                }
+
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.enable(SerializationFeature.INDENT_OUTPUT);
                 mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -221,6 +230,10 @@ public class RestSwaggerSupport {
 
                 // read the rest-dsl into swagger model
                 Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
+
+                if (!configuration.isApiVendorExtension()) {
+                    clearVendorExtensions(swagger);
+                }
 
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.enable(SerializationFeature.INDENT_OUTPUT);

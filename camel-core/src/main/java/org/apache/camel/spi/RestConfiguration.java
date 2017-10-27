@@ -50,6 +50,7 @@ public class RestConfiguration {
     private String apiContextRouteId;
     private String apiContextIdPattern;
     private boolean apiContextListing;
+    private boolean apiVendorExtension = true;
     private RestHostNameResolver restHostNameResolver = RestHostNameResolver.allLocalIp;
     private RestBindingMode bindingMode = RestBindingMode.off;
     private boolean skipBindingOnErrorCode = true;
@@ -284,6 +285,19 @@ public class RestConfiguration {
      */
     public void setApiContextListing(boolean apiContextListing) {
         this.apiContextListing = apiContextListing;
+    }
+
+    public boolean isApiVendorExtension() {
+        return apiVendorExtension;
+    }
+
+    /**
+     * Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information
+     * as vendor extension (eg keys starting with x-) such as route ids, class names etc.
+     * Some API tooling may not support vendor extensions and this option can then be turned off.
+     */
+    public void setApiVendorExtension(boolean apiVendorExtension) {
+        this.apiVendorExtension = apiVendorExtension;
     }
 
     /**
