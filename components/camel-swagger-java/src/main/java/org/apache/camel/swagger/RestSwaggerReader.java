@@ -503,7 +503,28 @@ public class RestSwaggerReader {
 
         String ref = modelTypeAsRef(typeName, swagger);
 
-        Property prop = ref != null ? new RefProperty(ref) : new StringProperty(typeName);
+        Property prop;
+
+        if (ref != null) {
+            prop = new RefProperty(ref);
+        } else {
+            if ("java.lang.String".equals(typeName)) {
+                prop = new StringProperty();
+            } else if ("int".equals(typeName) || "java.lang.Integer".equals(typeName)) {
+                prop = new IntegerProperty();
+            } else if ("long".equals(typeName) || "java.lang.Long".equals(typeName)) {
+                prop = new LongProperty();
+            } else if ("float".equals(typeName) || "java.lang.Float".equals(typeName)) {
+                prop = new FloatProperty();
+            } else if ("double".equals(typeName) || "java.lang.Double".equals(typeName)) {
+                prop = new DoubleProperty();
+            } else if ("boolean".equals(typeName) || "java.lang.Boolean".equals(typeName)) {
+                prop = new BooleanProperty();
+            } else {
+                prop = new StringProperty(typeName);
+            }
+        }
+
         if (array) {
             return new ArrayProperty(prop);
         } else {
