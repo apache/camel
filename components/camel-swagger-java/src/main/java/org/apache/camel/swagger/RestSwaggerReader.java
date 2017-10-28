@@ -46,6 +46,7 @@ import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.parameters.SerializableParameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.BooleanProperty;
+import io.swagger.models.properties.ByteArrayProperty;
 import io.swagger.models.properties.DoubleProperty;
 import io.swagger.models.properties.FloatProperty;
 import io.swagger.models.properties.IntegerProperty;
@@ -508,7 +509,11 @@ public class RestSwaggerReader {
         if (ref != null) {
             prop = new RefProperty(ref);
         } else {
-            if ("java.lang.String".equals(typeName)) {
+            // special for byte arrays
+            if (array && ("byte".equals(typeName) || "java.lang.Byte".equals(typeName))) {
+                prop = new ByteArrayProperty();
+                array = false;
+            } else if ("java.lang.String".equals(typeName)) {
                 prop = new StringProperty();
             } else if ("int".equals(typeName) || "java.lang.Integer".equals(typeName)) {
                 prop = new IntegerProperty();
