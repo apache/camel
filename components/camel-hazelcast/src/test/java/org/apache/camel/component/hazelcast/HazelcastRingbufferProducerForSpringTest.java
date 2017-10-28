@@ -20,7 +20,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.ringbuffer.Ringbuffer;
 
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -51,14 +51,14 @@ public class HazelcastRingbufferProducerForSpringTest extends HazelcastCamelSpri
 
     @Test
     public void testReadTail() throws InterruptedException {
-        when(ringbuffer.readOne(Matchers.anyLong())).thenReturn("pippo");
+        when(ringbuffer.readOne(ArgumentMatchers.anyLong())).thenReturn("pippo");
         Object result = template.requestBody("direct:readonceTail", 12L, String.class);
         assertEquals("pippo", result);
     }
     
     @Test
     public void testAdd() throws InterruptedException {
-        when(ringbuffer.add(Matchers.anyLong())).thenReturn(13L);
+        when(ringbuffer.add(ArgumentMatchers.anyLong())).thenReturn(13L);
         Object result = template.requestBody("direct:add", 12L, Long.class);
         assertEquals(13L, result);
     }
