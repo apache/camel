@@ -430,10 +430,20 @@ public final class AdviceWithTasks {
         // first iterator and apply match by
         List<ProcessorDefinition<?>> matched = new ArrayList<ProcessorDefinition<?>>();
 
+        List<ProcessorDefinition<?>> outputs = new ArrayList<>();
+        // skip abstract nodes in the beginning as they are cross cutting functionality such as onException, onCompletion etc
+        for (ProcessorDefinition output : route.getOutputs()) {
+            boolean invalid = outputs.isEmpty() && output.isAbstract();
+            if (!invalid) {
+                outputs.add(output);
+            }
+        }
+
         @SuppressWarnings("rawtypes")
-        Iterator<ProcessorDefinition> itAll = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class, maxDeep);
+        Iterator<ProcessorDefinition> itAll = ProcessorDefinitionHelper.filterTypeInOutputs(outputs, ProcessorDefinition.class, maxDeep);
         while (itAll.hasNext()) {
             ProcessorDefinition<?> next = itAll.next();
+
             if (matchBy.match(next)) {
                 matched.add(next);
             }
