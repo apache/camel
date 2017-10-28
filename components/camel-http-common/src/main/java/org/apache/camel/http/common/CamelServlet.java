@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,7 +151,7 @@ public class CamelServlet extends HttpServlet {
         }
         
         // create exchange and set data on it
-        Exchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
+        Exchange exchange = consumer.getEndpoint().createExchange(ExchangePattern.InOut);
 
         if (consumer.getEndpoint().isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
@@ -166,7 +165,7 @@ public class CamelServlet extends HttpServlet {
         // does some class resolution
         ClassLoader oldTccl = overrideTccl(exchange);
         HttpHelper.setCharsetFromContentType(request.getContentType(), exchange);
-        exchange.setIn(new HttpMessage(exchange, request, response));
+        exchange.setIn(new HttpMessage(exchange, consumer.getEndpoint(), request, response));
         // set context path as header
         String contextPath = consumer.getEndpoint().getPath();
         exchange.getIn().setHeader("CamelServletContextPath", contextPath);
