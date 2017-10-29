@@ -28,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -40,14 +41,13 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
     @Mock
     private IQueue<String> queue;
 
-    private ArgumentCaptor<ItemListener> argument;
+    @Captor
+    private ArgumentCaptor<ItemListener<String>> argument;
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.<String>getQueue("foo")).thenReturn(queue);
-        argument = ArgumentCaptor.forClass(ItemListener.class);
-        when(queue.addItemListener(argument.capture(), eq(true))).thenReturn("foo");
+        when(queue.addItemListener(any(), eq(true))).thenReturn("foo");
     }
 
     @Override
@@ -58,11 +58,11 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void add() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:added");
         out.expectedMessageCount(1);
 
+        verify(queue).addItemListener(argument.capture(), eq(true));
         final ItemEvent<String> event = new ItemEvent<String>("foo", ItemEventType.ADDED, "foo", null);
         argument.getValue().itemAdded(event);
 
@@ -73,11 +73,11 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void remove() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:removed");
         out.expectedMessageCount(1);
 
+        verify(queue).addItemListener(argument.capture(), eq(true));
         final ItemEvent<String> event = new ItemEvent<String>("foo", ItemEventType.REMOVED, "foo", null);
         argument.getValue().itemRemoved(event);
 

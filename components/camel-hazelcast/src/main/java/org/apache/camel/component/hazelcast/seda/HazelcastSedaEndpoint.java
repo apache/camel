@@ -20,7 +20,6 @@ import java.util.concurrent.BlockingQueue;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastCommand;

@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -38,14 +39,13 @@ public class HazelcastReliableTopicConsumerTest extends HazelcastCamelTestSuppor
     @Mock
     private ITopic<String> reliableTopic;
 
-    private ArgumentCaptor<MessageListener> argument;
+    @Captor
+    private ArgumentCaptor<MessageListener<String>> argument;
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.<String>getReliableTopic("foo")).thenReturn(reliableTopic);
-        argument = ArgumentCaptor.forClass(MessageListener.class);
-        when(reliableTopic.addMessageListener(argument.capture())).thenReturn("foo");
+        when(reliableTopic.addMessageListener(any())).thenReturn("foo");
     }
 
     @Override
@@ -56,11 +56,11 @@ public class HazelcastReliableTopicConsumerTest extends HazelcastCamelTestSuppor
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void receive() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:received");
         out.expectedMessageCount(1);
 
+        verify(reliableTopic).addMessageListener(argument.capture());
         final Message<String> msg = new Message<String>("foo", "foo", new java.util.Date().getTime(), null);
         argument.getValue().onMessage(msg);
 

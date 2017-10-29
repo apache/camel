@@ -29,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -41,14 +42,13 @@ public class HazelcastReplicatedmapConsumerTest extends HazelcastCamelTestSuppor
     @Mock
     private ReplicatedMap<Object, Object> map;
 
-    private ArgumentCaptor<EntryListener> argument;
+    @Captor
+    private ArgumentCaptor<EntryListener<Object, Object>> argument;
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.getReplicatedMap("rm")).thenReturn(map);
-        argument = ArgumentCaptor.forClass(EntryListener.class);
-        when(map.addEntryListener(argument.capture(), eq(true))).thenReturn("foo");
+        when(map.addEntryListener(any(), eq(true))).thenReturn("foo");
     }
 
     @Override
@@ -59,11 +59,11 @@ public class HazelcastReplicatedmapConsumerTest extends HazelcastCamelTestSuppor
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testAdd() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:added");
         out.expectedMessageCount(1);
 
+        verify(map).addEntryListener(argument.capture(), eq(true));
         EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.ADDED.getType(), "4711", "my-foo");
         argument.getValue().entryAdded(event);
 
@@ -76,11 +76,11 @@ public class HazelcastReplicatedmapConsumerTest extends HazelcastCamelTestSuppor
      * mail from talip (hazelcast) on 21.02.2011: MultiMap doesn't support eviction yet. We can and should add this feature.
      */
     @Test
-    @SuppressWarnings("unchecked")
     public void testEvict() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:evicted");
         out.expectedMessageCount(1);
 
+        verify(map).addEntryListener(argument.capture(), eq(true));
         EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
         argument.getValue().entryEvicted(event);
 
@@ -88,11 +88,11 @@ public class HazelcastReplicatedmapConsumerTest extends HazelcastCamelTestSuppor
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testRemove() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:removed");
         out.expectedMessageCount(1);
 
+        verify(map).addEntryListener(argument.capture(), eq(true));
         EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.REMOVED.getType(), "4711", "my-foo");
         argument.getValue().entryRemoved(event);
 

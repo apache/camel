@@ -36,13 +36,11 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
     private IQueue<String> queue;
     
     @Override
-    @SuppressWarnings("unchecked")
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.<String>getQueue("foo")).thenReturn(queue);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
         verify(hazelcastInstance).getQueue("foo");
         try {
@@ -53,7 +51,6 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void add() throws InterruptedException {
         when(queue.poll(10000, TimeUnit.MILLISECONDS)).thenReturn("foo");
         
