@@ -56,7 +56,7 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.getCluster()).thenReturn(cluster);
         argument = ArgumentCaptor.forClass(MembershipListener.class);
-        when(cluster.addMembershipListener(argument.capture())).thenReturn("foo");
+        when(cluster.addMembershipListener(any())).thenReturn("foo");
     }
 
     @Override
@@ -72,6 +72,7 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
         added.setExpectedMessageCount(1);
         when(member.getSocketAddress()).thenReturn(new InetSocketAddress("foo.bar", 12345));
 
+        verify(cluster).addMembershipListener(argument.capture());
         MembershipEvent event = new MembershipEvent(cluster, member, MembershipEvent.MEMBER_ADDED, null);
         argument.getValue().memberAdded(event);
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
@@ -91,6 +92,7 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
 
         when(member.getSocketAddress()).thenReturn(new InetSocketAddress("foo.bar", 12345));
 
+        verify(cluster).addMembershipListener(argument.capture());
         MembershipEvent event = new MembershipEvent(cluster, member, MembershipEvent.MEMBER_REMOVED, null);
         argument.getValue().memberRemoved(event);
 

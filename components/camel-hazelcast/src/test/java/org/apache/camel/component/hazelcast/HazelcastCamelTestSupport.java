@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import java.util.ArrayList;
-import java.util.List;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;

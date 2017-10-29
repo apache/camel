@@ -28,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 
 import static org.mockito.Mockito.*;
@@ -37,14 +38,13 @@ public class HazelcastListConsumerTest extends HazelcastCamelTestSupport {
     @Mock
     private IList<String> list;
 
-    private ArgumentCaptor<ItemListener> argument;
+    @Captor
+    private ArgumentCaptor<ItemListener<String>> argument;
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.<String>getList("foo")).thenReturn(list);
-        argument = ArgumentCaptor.forClass(ItemListener.class);
-        when(list.addItemListener(argument.capture(), eq(true))).thenReturn("foo");
+        when(list.addItemListener(any(), eq(true))).thenReturn("foo");
     }
 
     @Override
@@ -55,11 +55,11 @@ public class HazelcastListConsumerTest extends HazelcastCamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void add() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:added");
         out.expectedMessageCount(1);
 
+        verify(list).addItemListener(argument.capture(), eq(true));
         final ItemEvent<String> event = new ItemEvent<String>("mm", ItemEventType.ADDED, "foo", null);
         argument.getValue().itemAdded(event);
 
@@ -69,11 +69,11 @@ public class HazelcastListConsumerTest extends HazelcastCamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void remove() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:removed");
         out.expectedMessageCount(1);
 
+        verify(list).addItemListener(argument.capture(), eq(true));
         final ItemEvent<String> event = new ItemEvent<String>("mm", ItemEventType.REMOVED, "foo", null);
         argument.getValue().itemRemoved(event);
 
