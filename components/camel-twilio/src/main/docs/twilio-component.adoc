@@ -163,7 +163,7 @@ Endpoint can be one of:
 Available endpoints differ depending on the endpoint prefixes.
 
 For more information on the endpoints and options see API documentation at:
-https://twilio.github.io/twilio-java/7.9.1/index.html
+https://www.twilio.com/docs/libraries/reference/twilio-java/index.html
 
 
 ### Consumer Endpoints:
