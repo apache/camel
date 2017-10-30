@@ -137,7 +137,7 @@
     <cometd-java-server>3.1.2</cometd-java-server>
     <commons-beanutils-version>1.9.3</commons-beanutils-version>
     <commons-beanutils-bundle-version>1.8.3_1</commons-beanutils-bundle-version>
-    <commons-codec-version>1.10</commons-codec-version>
+    <commons-codec-version>1.11</commons-codec-version>
     <commons-collections-version>3.2.2</commons-collections-version>
     <commons-compress-version>1.15</commons-compress-version>
     <commons-configuration-version>1.9</commons-configuration-version>
