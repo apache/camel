@@ -28,8 +28,9 @@ import org.apache.camel.impl.HeaderFilterStrategyComponent;
  * bean.  <b>Currently, only JAXRS annotated beans are supported.  In the
  * future, JAXwS annotated beans and POJO can be supported</b>.
  * 
- * @version 
+ * @deprecated
  */
+@Deprecated
 public class CxfBeanComponent extends HeaderFilterStrategyComponent {
 
     private Map<String, CxfBeanEndpoint> endpoints = new HashMap<String, CxfBeanEndpoint>();

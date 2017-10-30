@@ -42,8 +42,10 @@ import org.apache.cxf.transport.DestinationFactoryManager;
  * CXF Bean Endpoint is a {@link ProcessorEndpoint} which associated with 
  * a {@link CxfBeanDestination}.  It delegates the processing of Camel 
  * Exchanges to the associated CxfBeanDestination.
- *  
+ *
+ * @deprecated
  */
+@Deprecated
 public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterStrategyAware {
     private static final String URI_PREFIX = "cxfbean";
     private Server server;
