@@ -97,7 +97,7 @@ public class MailIdempotentRepositoryDuplicateTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo").routeId("foo").noAutoStartup()
+                from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo&consumer.initialDelay=100&consumer.delay=100").routeId("foo").noAutoStartup()
                         .to("mock:result");
             }
         };

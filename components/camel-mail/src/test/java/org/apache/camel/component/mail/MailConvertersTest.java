@@ -153,7 +153,7 @@ public class MailConvertersTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:a").to("smtp://localhost?username=james@localhost");
 
-                from("pop3://localhost?username=james&password=secret&consumer.delay=1000").to("mock:result");
+                from("pop3://localhost?username=james&password=secret&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

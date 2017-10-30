@@ -71,7 +71,7 @@ public class MailPollEnrichNoMailTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .pollEnrich("pop3://bill@localhost?password=secret&delay=1000", 0)
+                    .pollEnrich("pop3://bill@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100", 0)
                     .to("log:mail", "mock:result");
             }
         };

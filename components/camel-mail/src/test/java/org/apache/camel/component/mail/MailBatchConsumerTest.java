@@ -87,7 +87,7 @@ public class MailBatchConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&consumer.delay=5000"
+                from("pop3://jones@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100"
                     + "&delete=true").to("mock:result");
             }
         };

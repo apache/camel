@@ -90,8 +90,8 @@ public class NestedMimeMessageConsumeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://james3@localhost?consumer.delay=1000").removeHeader("to").to("smtp://james4@localhost");
-                from("pop3://james4@localhost?consumer.delay=2000").convertBodyTo(String.class).to("mock:result");
+                from("pop3://james3@localhost?consumer.initialDelay=100&consumer.delay=100").removeHeader("to").to("smtp://james4@localhost");
+                from("pop3://james4@localhost?consumer.initialDelay=200&consumer.delay=100").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

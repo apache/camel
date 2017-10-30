@@ -51,7 +51,7 @@ public class MailCommitOnCompletionTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // wait a bit because delete is on completion
-        Thread.sleep(1000);
+        Thread.sleep(500);
 
         assertEquals(0, mailbox.size());
     }
@@ -80,7 +80,7 @@ public class MailCommitOnCompletionTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&delete=true")
+                from("pop3://jones@localhost?password=secret&delete=true&consumer.initialDelay=100&consumer.delay=100")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             // now f*** up and create a new OUT Message (without propagating the IN message)

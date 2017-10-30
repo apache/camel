@@ -52,10 +52,6 @@ public class MailRouteTest extends CamelTestSupport {
         // lets test the first sent worked
         assertMailboxReceivedMessages("route-test-james@localhost");
 
-        // lets sleep to check that the mail poll does not redeliver duplicate
-        // mails
-        Thread.sleep(3000);
-
         // lets test the receive worked
         resultEndpoint.assertIsSatisfied();
 
@@ -117,7 +113,7 @@ public class MailRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://route-test-james@localhost?consumer.delay=1000").to("direct:a");
+                from("pop3://route-test-james@localhost?consumer.initialDelay=100&consumer.delay=100").to("direct:a");
 
                 // must use fixed to option to send the mail to the given
                 // reciever, as we have polled
@@ -130,7 +126,7 @@ public class MailRouteTest extends CamelTestSupport {
                     .setHeader("to", constant("route-test-result@localhost; route-test-copy@localhost"))
                     .to("smtp://localhost");
 
-                from("pop3://route-test-result@localhost?consumer.delay=1000").convertBodyTo(String.class)
+                from("pop3://route-test-result@localhost?consumer.initialDelay=100&consumer.delay=100").convertBodyTo(String.class)
                     .to("mock:result");
             }
         };

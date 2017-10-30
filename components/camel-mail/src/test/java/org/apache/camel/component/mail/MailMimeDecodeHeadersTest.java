@@ -97,10 +97,10 @@ public class MailMimeDecodeHeadersTest extends CamelTestSupport {
                         .setHeader("subject", constant(nonAsciiSubject))
                         .to("smtp://plain@localhost", "smtp://decoded@localhost");
 
-                from("pop3://localhost?username=plain&password=secret&consumer.delay=1000")
+                from("pop3://localhost?username=plain&password=secret&consumer.initialDelay=100&consumer.delay=100")
                         .to("mock:plain");
 
-                from("pop3://localhost?username=decoded&password=secret&consumer.delay=1000&mimeDecodeHeaders=true")
+                from("pop3://localhost?username=decoded&password=secret&consumer.initialDelay=100&consumer.delay=100&mimeDecodeHeaders=true")
                         .to("mock:decoded");
             }
         };

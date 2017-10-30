@@ -34,7 +34,7 @@ public class AdditionalMailPropertiesTest extends CamelTestSupport {
         // clear mailbox
         Mailbox.clearAll();
 
-        MailEndpoint endpoint = context.getEndpoint("pop3://localhost?username=james&mail.pop3.forgettopheaders=true", MailEndpoint.class);
+        MailEndpoint endpoint = context.getEndpoint("pop3://localhost?username=james&mail.pop3.forgettopheaders=true&consumer.initialDelay=100&consumer.delay=100", MailEndpoint.class);
         Properties prop = endpoint.getConfiguration().getAdditionalJavaMailProperties();
         assertEquals("true", prop.get("mail.pop3.forgettopheaders"));
     }
@@ -59,7 +59,7 @@ public class AdditionalMailPropertiesTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("pop3://james@localhost?mail.pop3.forgettopheaders=true").to("mock:result");
+                from("pop3://james@localhost?mail.pop3.forgettopheaders=true&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
 
