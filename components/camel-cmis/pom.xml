@@ -144,6 +144,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>target/dependency</outputDirectory>
+                            <stripVersion>true</stripVersion>
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.apache.chemistry.opencmis</groupId>
