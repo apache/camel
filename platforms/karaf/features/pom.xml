@@ -185,8 +185,7 @@
                 <!-- camel-cxf uses blueprint but its feature name is different in karaf 3.x vs 4.x -->
                 <!-- camel-ignite requires to install apache ignite first -->
                 <!-- camel-guice does not work in OSGi currently -->
-                <!-- camel-leveldb uses some wrap magic to install which validator fails but it works -->
-                <feature>camel|camel-(?!(blueprint|cdi|cxf|ignite|guice|leveldb))*</feature>
+                <feature>camel|camel-(?!(blueprint|cdi|cxf|ignite|guice))*</feature>
               </features>
 			        <configuration>file://${project.build.directory}/classes/config.properties</configuration>
             </configuration>
