@@ -17,6 +17,7 @@
 package org.apache.camel.component.rest.swagger;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +46,8 @@ public class RestSwaggerEndpointUriParsingTest {
     public void shouldParseEndpointUri() {
         final RestSwaggerComponent component = new RestSwaggerComponent();
 
-        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint(specificationUri, remaining, component);
+        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint(specificationUri, remaining, component,
+            Collections.emptyMap());
 
         assertThat(endpoint.getSpecificationUri().toString()).isEqualTo(specificationUri);
         assertThat(endpoint.getOperationId()).isEqualTo(operationId);

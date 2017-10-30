@@ -181,7 +181,7 @@ public final class RestSwaggerComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
         throws Exception {
-        final Endpoint endpoint = new RestSwaggerEndpoint(uri, remaining, this);
+        final Endpoint endpoint = new RestSwaggerEndpoint(uri, remaining, this, parameters);
 
         setProperties(endpoint, parameters);
 

@@ -20,10 +20,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 
 import io.swagger.models.Operation;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
+import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
 
 import org.apache.camel.CamelContext;
@@ -51,9 +53,21 @@ public class RestSwaggerEndpointTest {
 
         final RestSwaggerComponent component = new RestSwaggerComponent(camelContext);
 
-        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:unknown", "unknown", component);
+        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:unknown", "unknown", component,
+            Collections.emptyMap());
 
         endpoint.createProducer();
+    }
+
+    @Test
+    public void shouldComputeQueryParameters() {
+        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint();
+        endpoint.parameters = new HashMap<>();
+        endpoint.parameters.put("literal", "value");
+
+        assertThat(endpoint.queryParameter(new QueryParameter())).isEqualTo("");
+        assertThat(endpoint.queryParameter(new QueryParameter().name("param"))).isEqualTo("param={param?}");
+        assertThat(endpoint.queryParameter(new QueryParameter().name("literal"))).isEqualTo("literal=value");
     }
 
     @Test
@@ -68,8 +82,8 @@ public class RestSwaggerEndpointTest {
         final RestSwaggerComponent component = new RestSwaggerComponent(camelContext);
         component.setHost("http://petstore.swagger.io");
 
-        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:getPetById", "getPetById",
-            component);
+        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:getPetById", "getPetById", component,
+            Collections.emptyMap());
 
         final Producer producer = endpoint.createProducer();
 
@@ -78,7 +92,6 @@ public class RestSwaggerEndpointTest {
 
     @Test
     public void shouldCreateQueryParameterExpressions() {
-        assertThat(RestSwaggerEndpoint.queryParameterExpression(new QueryParameter())).isEmpty();
         assertThat(RestSwaggerEndpoint.queryParameterExpression(new QueryParameter().name("q").required(true)))
             .isEqualTo("q={q}");
         assertThat(RestSwaggerEndpoint.queryParameterExpression(new QueryParameter().name("q").required(false)))
@@ -96,8 +109,8 @@ public class RestSwaggerEndpointTest {
 
         final RestSwaggerComponent component = new RestSwaggerComponent();
         component.setCamelContext(camelContext);
-        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:getPetById", "getPetById",
-            component);
+        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:getPetById", "getPetById", component,
+            Collections.emptyMap());
 
         assertThat(endpoint.determineBasePath(swagger))
             .as("When no base path is specified on component, endpoint or rest configuration it should default to `/`")
@@ -131,7 +144,8 @@ public class RestSwaggerEndpointTest {
         final RestSwaggerComponent component = new RestSwaggerComponent();
         component.setCamelContext(camelContext);
 
-        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("uri", "remaining", component);
+        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("uri", "remaining", component,
+            Collections.emptyMap());
         endpoint.setHost("http://petstore.swagger.io");
 
         final Swagger swagger = new Swagger();
@@ -214,7 +228,7 @@ public class RestSwaggerEndpointTest {
         final RestSwaggerComponent component = new RestSwaggerComponent();
 
         final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:http://some-uri#getPetById",
-            "http://some-uri#getPetById", component);
+            "http://some-uri#getPetById", component, Collections.emptyMap());
 
         final Swagger swagger = new Swagger();
         swagger.host("petstore.swagger.io");
@@ -251,8 +265,8 @@ public class RestSwaggerEndpointTest {
         final RestSwaggerComponent component = new RestSwaggerComponent();
         component.setSpecificationUri(componentJsonUri);
 
-        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:getPetById", "getPetById",
-            component);
+        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:getPetById", "getPetById", component,
+            Collections.emptyMap());
 
         assertThat(endpoint.getSpecificationUri()).isEqualTo(componentJsonUri);
     }
@@ -263,7 +277,7 @@ public class RestSwaggerEndpointTest {
         component.setSpecificationUri(componentJsonUri);
 
         final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:endpoint.json#getPetById",
-            "endpoint.json#getPetById", component);
+            "endpoint.json#getPetById", component, Collections.emptyMap());
 
         assertThat(endpoint.getSpecificationUri()).isEqualTo(endpointUri);
     }
@@ -284,7 +298,7 @@ public class RestSwaggerEndpointTest {
         component.setCamelContext(camelContext);
 
         final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("petstore:http://specification-uri#getPetById",
-            "http://specification-uri#getPetById", component);
+            "http://specification-uri#getPetById", component, Collections.emptyMap());
 
         final Swagger swagger = new Swagger();
         assertThat(endpoint.determineHost(swagger)).isEqualTo("http://specification-uri");
@@ -346,11 +360,25 @@ public class RestSwaggerEndpointTest {
     }
 
     @Test
+    public void shouldSerializeGivenLiteralValues() {
+        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint();
+        endpoint.parameters = new HashMap<>();
+        endpoint.parameters.put("param", "va lue");
+
+        final QueryParameter queryParameter = new QueryParameter().name("param");
+
+        assertThat(endpoint.literalQueryParameterValue(queryParameter)).isEqualTo("param=va%20lue");
+
+        final PathParameter pathParameter = new PathParameter().name("param");
+        assertThat(endpoint.literalPathParameterValue(pathParameter)).isEqualTo("va%20lue");
+    }
+
+    @Test
     public void shouldUseDefaultSpecificationUri() throws Exception {
         final RestSwaggerComponent component = new RestSwaggerComponent();
 
-        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:getPetById", "getPetById",
-            component);
+        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:getPetById", "getPetById", component,
+            Collections.emptyMap());
 
         assertThat(endpoint.getSpecificationUri()).isEqualTo(RestSwaggerComponent.DEFAULT_SPECIFICATION_URI);
     }
@@ -360,7 +388,7 @@ public class RestSwaggerEndpointTest {
         final RestSwaggerComponent component = new RestSwaggerComponent();
 
         final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:#getPetById", "#getPetById",
-            component);
+            component, Collections.emptyMap());
 
         assertThat(endpoint.getSpecificationUri()).isEqualTo(RestSwaggerComponent.DEFAULT_SPECIFICATION_URI);
     }

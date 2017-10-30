@@ -100,6 +100,19 @@ public class RestSwaggerComponentTest extends CamelTestSupport {
     }
 
     @Test
+    public void shouldBeGettingPetsByIdSpecifiedInEndpointParameters() {
+        final Pet pet = template.requestBody("direct:getPetByIdWithEndpointParams", NO_BODY, Pet.class);
+
+        assertNotNull(pet);
+
+        assertEquals(Integer.valueOf(14), pet.id);
+        assertEquals("Olafur Eliason Arnalds", pet.name);
+
+        petstore.verify(getRequestedFor(urlEqualTo("/v2/pet/14")).withHeader("Accept",
+            equalTo("application/xml, application/json")));
+    }
+
+    @Test
     public void shouldBeGettingPetsByStatus() {
         final Pets pets = template.requestBodyAndHeader("direct:findPetsByStatus", NO_BODY, "status", "available",
             Pets.class);
@@ -138,6 +151,8 @@ public class RestSwaggerComponentTest extends CamelTestSupport {
                 jaxb.setJaxbProviderProperties(Collections.singletonMap(Marshaller.JAXB_FORMATTED_OUTPUT, false));
 
                 from("direct:getPetById").to("petStore:getPetById").unmarshal(jaxb);
+
+                from("direct:getPetByIdWithEndpointParams").to("petStore:getPetById?petId=14").unmarshal(jaxb);
 
                 from("direct:addPet").marshal(jaxb).to("petStore:addPet").unmarshal(jaxb);
 

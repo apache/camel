@@ -73,6 +73,13 @@ endpoint level, CLASSPATH is searched for a suitable delegate. There
 should be only one component present on the CLASSPATH that implements 
 the _RestProducerFactory_ interface for this to work.
 
+This component's endpoint URI is lenient which means that in addition
+to message headers you can specify REST operation's parameters as
+endpoint parameters, these will be constant for all subsequent
+invocations so it makes sense to use this feature only for parameters
+that are indeed constant for all invocations -- for example API version
+in path such as `/api/{version}/users/{id}`. 
+
 ### Options
 
 // component options: START
