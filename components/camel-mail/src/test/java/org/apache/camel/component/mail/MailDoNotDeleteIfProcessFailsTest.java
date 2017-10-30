@@ -84,7 +84,7 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
                 // no redelivery for unit test as we want it to be polled next time
                 onException(IllegalArgumentException.class).to("mock:error");
 
-                from("imap://localhost?username=claus&password=secret&unseen=true&delay=250")
+                from("imap://localhost?username=claus&password=secret&unseen=true&consumer.initialDelay=100&consumer.delay=100")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 counter++;
