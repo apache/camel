@@ -53,7 +53,7 @@ public class CMISTestSupport extends CamelTestSupport {
     protected static final String CMIS_ENDPOINT_TEST_SERVER
         = "http://localhost:%s/chemistry-opencmis-server-inmemory/atom11";
     protected static final String OPEN_CMIS_SERVER_WAR_PATH
-        = "target/dependency/chemistry-opencmis-server-inmemory-0.13.0.war";
+        = "target/dependency/chemistry-opencmis-server-inmemory.war";
 
     protected static Server cmisServer;
     protected static int port;

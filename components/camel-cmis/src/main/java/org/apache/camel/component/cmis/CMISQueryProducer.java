@@ -19,7 +19,6 @@ package org.apache.camel.component.cmis;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
