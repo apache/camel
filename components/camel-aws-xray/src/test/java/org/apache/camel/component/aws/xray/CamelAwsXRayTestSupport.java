@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.aws.xray.TestDataBuilder.TestTrace;
@@ -29,65 +30,64 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Rule;
 
-
 public class CamelAwsXRayTestSupport extends CamelTestSupport {
 
-  private List<TestTrace> testData;
+    @Rule
+    public FakeAWSDaemon socketListener = new FakeAWSDaemon();
 
-  @Rule
-  public FakeAWSDaemon socketListener = new FakeAWSDaemon();
+    private List<TestTrace> testData;
 
-  public CamelAwsXRayTestSupport(TestTrace... testData) {
-    this.testData = Arrays.asList(testData);
-  }
-
-  @Override
-  protected void postProcessTest() throws Exception {
-    super.postProcessTest();
-    socketListener.getReceivedData().clear();
-  }
-
-  @Override
-  protected void resetMocks() {
-    super.resetMocks();
-  }
-
-  @Override
-  protected CamelContext createCamelContext() throws Exception {
-    CamelContext context = super.createCamelContext();
-
-    context.setTracing(true);
-    final Tracer tracer = new Tracer();
-    tracer.getDefaultTraceFormatter().setShowBody(false);
-    tracer.setLogLevel(LoggingLevel.INFO);
-    context.getInterceptStrategies().add(tracer);
-
-    XRayTracer xRayTracer = new XRayTracer();
-    xRayTracer.setCamelContext(context);
-    xRayTracer.setTracingStrategy(getTracingStrategy());
-    xRayTracer.setExcludePatterns(getExcludePatterns());
-
-    xRayTracer.init(context);
-
-    return context;
-  }
-
-  protected InterceptStrategy getTracingStrategy() {
-    return new NoopTracingStrategy();
-  }
-
-  protected Set<String> getExcludePatterns() {
-    return new HashSet<>();
-  }
-
-  protected void verify() {
-    try {
-      // give the socket listener a bit time to receive the data and transform it to Java objects
-      Thread.sleep(500);
-    } catch (InterruptedException iEx) {
-      // ignore
+    public CamelAwsXRayTestSupport(TestTrace... testData) {
+        this.testData = Arrays.asList(testData);
     }
-    Map<String, TestTrace> receivedData = socketListener.getReceivedData();
-    TestUtils.checkData(receivedData, testData);
-  }
+
+    @Override
+    protected void postProcessTest() throws Exception {
+        super.postProcessTest();
+        socketListener.getReceivedData().clear();
+    }
+
+    @Override
+    protected void resetMocks() {
+        super.resetMocks();
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        context.setTracing(true);
+        final Tracer tracer = new Tracer();
+        tracer.getDefaultTraceFormatter().setShowBody(false);
+        tracer.setLogLevel(LoggingLevel.INFO);
+        context.getInterceptStrategies().add(tracer);
+
+        XRayTracer xRayTracer = new XRayTracer();
+        xRayTracer.setCamelContext(context);
+        xRayTracer.setTracingStrategy(getTracingStrategy());
+        xRayTracer.setExcludePatterns(getExcludePatterns());
+
+        xRayTracer.init(context);
+
+        return context;
+    }
+
+    protected InterceptStrategy getTracingStrategy() {
+        return new NoopTracingStrategy();
+    }
+
+    protected Set<String> getExcludePatterns() {
+        return new HashSet<>();
+    }
+
+    protected void verify() {
+        try {
+            // give the socket listener a bit time to receive the data and transform it to Java objects
+            Thread.sleep(500);
+        } catch (InterruptedException iEx) {
+            // ignore
+        }
+        Map<String, TestTrace> receivedData = socketListener.getReceivedData();
+        TestUtils.checkData(receivedData, testData);
+    }
 }

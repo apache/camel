@@ -23,53 +23,53 @@ import org.junit.Test;
 
 public class Route2ConcurrentTest extends CamelAwsXRayTestSupport {
 
-  public Route2ConcurrentTest() {
-    super(
-        TestDataBuilder.createTrace().inRandomOrder()
-            .withSegment(TestDataBuilder.createSegment("foo"))
-            .withSegment(TestDataBuilder.createSegment("bar")),
-        TestDataBuilder.createTrace().inRandomOrder()
-            .withSegment(TestDataBuilder.createSegment("foo"))
-            .withSegment(TestDataBuilder.createSegment("bar")),
-        TestDataBuilder.createTrace().inRandomOrder()
-            .withSegment(TestDataBuilder.createSegment("foo"))
-            .withSegment(TestDataBuilder.createSegment("bar")),
-        TestDataBuilder.createTrace().inRandomOrder()
-            .withSegment(TestDataBuilder.createSegment("foo"))
-            .withSegment(TestDataBuilder.createSegment("bar")),
-        TestDataBuilder.createTrace().inRandomOrder()
-            .withSegment(TestDataBuilder.createSegment("foo"))
-            .withSegment(TestDataBuilder.createSegment("bar"))
-    );
-  }
-
-  @Test
-  public void testConcurrentInvocationsOfRoute() throws Exception {
-    NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
-
-    for (int i = 0; i < 5; i++) {
-      template.sendBody("seda:foo", "Hello World");
+    public Route2ConcurrentTest() {
+        super(
+            TestDataBuilder.createTrace().inRandomOrder()
+                .withSegment(TestDataBuilder.createSegment("foo"))
+                .withSegment(TestDataBuilder.createSegment("bar")),
+            TestDataBuilder.createTrace().inRandomOrder()
+                .withSegment(TestDataBuilder.createSegment("foo"))
+                .withSegment(TestDataBuilder.createSegment("bar")),
+            TestDataBuilder.createTrace().inRandomOrder()
+                .withSegment(TestDataBuilder.createSegment("foo"))
+                .withSegment(TestDataBuilder.createSegment("bar")),
+            TestDataBuilder.createTrace().inRandomOrder()
+                .withSegment(TestDataBuilder.createSegment("foo"))
+                .withSegment(TestDataBuilder.createSegment("bar")),
+            TestDataBuilder.createTrace().inRandomOrder()
+                .withSegment(TestDataBuilder.createSegment("foo"))
+                .withSegment(TestDataBuilder.createSegment("bar"))
+        );
     }
 
-    assertTrue(notify.matches(30, TimeUnit.SECONDS));
+    @Test
+    public void testConcurrentInvocationsOfRoute() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
 
-    verify();
-  }
+        for (int i = 0; i < 5; i++) {
+            template.sendBody("seda:foo", "Hello World");
+        }
 
-  @Override
-  protected RouteBuilder createRouteBuilder() throws Exception {
-    return new RouteBuilder() {
-      @Override
-      public void configure() throws Exception {
-        from("seda:foo?concurrentConsumers=5").routeId("foo")
-            .log("routing at ${routeId}")
-            .delay(simple("${random(1000,2000)}"))
-            .to("seda:bar");
+        assertTrue(notify.matches(30, TimeUnit.SECONDS));
 
-        from("seda:bar?concurrentConsumers=5").routeId("bar")
-            .log("routing at ${routeId}")
-            .delay(simple("${random(0,500)}"));
-      }
-    };
-  }
+        verify();
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("seda:foo?concurrentConsumers=5").routeId("foo")
+                    .log("routing at ${routeId}")
+                    .delay(simple("${random(1000,2000)}"))
+                    .to("seda:bar");
+
+                from("seda:bar?concurrentConsumers=5").routeId("bar")
+                    .log("routing at ${routeId}")
+                    .delay(simple("${random(0,500)}"));
+            }
+        };
+    }
 }

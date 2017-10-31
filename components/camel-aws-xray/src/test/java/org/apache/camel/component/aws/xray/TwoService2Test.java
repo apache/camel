@@ -22,39 +22,39 @@ import org.junit.Test;
 
 public class TwoService2Test extends CamelAwsXRayTestSupport {
 
-  public TwoService2Test() {
-    super(
-        TestDataBuilder.createTrace().inRandomOrder()
-            .withSegment(TestDataBuilder.createSegment("route1")
-                .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_direct_ServiceB")
-                    .withSubsegment(TestDataBuilder.createSubsegment("route2"))
+    public TwoService2Test() {
+        super(
+            TestDataBuilder.createTrace().inRandomOrder()
+                .withSegment(TestDataBuilder.createSegment("route1")
+                    .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_direct_ServiceB")
+                        .withSubsegment(TestDataBuilder.createSubsegment("route2"))
+                    )
                 )
-            )
-    );
-  }
+        );
+    }
 
-  @Test
-  public void testRoute() throws Exception {
-    template.requestBody("direct:ServiceA", "Hello");
+    @Test
+    public void testRoute() throws Exception {
+        template.requestBody("direct:ServiceA", "Hello");
 
-    Thread.sleep(500);
-    verify();
-  }
+        Thread.sleep(500);
+        verify();
+    }
 
-  @Override
-  protected RoutesBuilder createRouteBuilder() throws Exception {
-    return new RouteBuilder() {
-      @Override
-      public void configure() throws Exception {
-        from("direct:ServiceA")
-            .log("ServiceA has been called")
-            .delay(simple("${random(1000,2000)}"))
-            .to("direct:ServiceB");
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:ServiceA")
+                    .log("ServiceA has been called")
+                    .delay(simple("${random(1000,2000)}"))
+                    .to("direct:ServiceB");
 
-        from("direct:ServiceB")
-            .log("ServiceB has been called")
-            .delay(simple("${random(0,500)}"));
-      }
-    };
-  }
+                from("direct:ServiceB")
+                    .log("ServiceB has been called")
+                    .delay(simple("${random(0,500)}"));
+            }
+        };
+    }
 }

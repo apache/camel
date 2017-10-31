@@ -24,187 +24,191 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @SuppressWarnings({"WeakerAccess", "unchecked"})
-class TestDataBuilder {
+final class TestDataBuilder {
 
-  static class TestTrace {
+    private TestDataBuilder() {
 
-    private boolean randomOrder = false;
-    private Set<TestSegment> segments = new TreeSet<>((TestSegment seg1, TestSegment seg2) -> {
-      if (seg1.equals(seg2)) {
-        return 0;
-      }
-      if (seg1.startTime != 0 && seg2.startTime != 0) {
-        if (seg1.startTime == seg2.startTime) {
-          return -1;
-        }
-        return seg1.startTime < seg2.startTime ? -1 : 1;
-      } else {
-        return 1;
-      }
-    });
-
-    public TestTrace withSegment(TestSegment segment) {
-      this.segments.add(segment);
-      return this;
     }
 
-    public Set<TestSegment> getSegments() {
-      return segments;
-    }
+    static class TestTrace {
 
-    public TestTrace inRandomOrder() {
-      randomOrder = true;
-      return this;
-    }
-
-    public boolean isRandomOrder() {
-      return randomOrder;
-    }
-  }
-
-  public static abstract class TestEntity<T> {
-    protected String name;
-    protected Map<String, Object> annotations = new LinkedHashMap<>();
-    protected Map<String, Map<String, Object>> metadata = new LinkedHashMap<>();
-    protected List<TestSubsegment> subsegments = new ArrayList<>();
-    protected boolean randomOrder = false;
-
-    protected TestEntity(String name) {
-      this.name = name;
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    public Map<String, Object> getAnnotations() {
-      return this.annotations;
-    }
-
-    public Map<String, Map<String, Object>> getMetadata() {
-      return metadata;
-    }
-
-    public List<TestSubsegment> getSubsegments() {
-      return subsegments;
-    }
-
-    public T withAnnotation(String name, Object value) {
-      this.annotations.put(name, value);
-      return (T)this;
-    }
-
-    public T withMetadata(String name, Object value) {
-      return this.withMetadata("default", name, value);
-    }
-
-    public T withMetadata(String namespace, String name, Object value) {
-      if (!this.metadata.containsKey(namespace)) {
-        this.metadata.put(namespace, new LinkedHashMap<>());
-      }
-      Map<String, Object> namespaceMap = this.metadata.get(namespace);
-      namespaceMap.put(name, value);
-      return (T)this;
-    }
-
-    public T withSubsegment(TestSubsegment subsegment) {
-      this.subsegments.add(subsegment);
-      return (T)this;
-    }
-
-    public T inRandomOrder() {
-      this.randomOrder = true;
-      return (T)this;
-    }
-
-    public boolean isRandomOrder() {
-      return randomOrder;
-    }
-
-    @Override
-    public String toString() {
-      String ret = this.getClass().getSimpleName() + "(name: " + name;
-
-      if (!subsegments.isEmpty()) {
-        ret += ", subsegments: [";
-        StringBuilder sb = new StringBuilder();
-        for (TestSubsegment sub : subsegments) {
-          if (sb.length() > 0) {
-            sb.append(", ");
-          }
-          sb.append(sub);
-        }
-        ret += sb.toString()+"]";
-      }
-      if (!annotations.isEmpty()) {
-        ret += ", annotations: {";
-        StringBuilder sb = new StringBuilder();
-        for (String key:  annotations.keySet()) {
-          if (sb.length() > 0) {
-            sb.append(", ");
-          }
-          sb.append(key).append("->").append(annotations.get(key));
-        }
-        ret += sb.toString() + "}";
-      }
-      if (!metadata.isEmpty()) {
-        ret += ", metadata: {";
-        StringBuilder sb = new StringBuilder();
-        for (String namespace : metadata.keySet()) {
-          if (sb.length() > 0) {
-            sb.append(", ");
-          }
-          sb.append(namespace).append(": [");
-          boolean first = true;
-          for (String key : metadata.get(namespace).keySet()) {
-            if (!first) {
-              sb.append(", ");
+        private boolean randomOrder;
+        private Set<TestSegment> segments = new TreeSet<>((TestSegment seg1, TestSegment seg2) -> {
+            if (seg1.equals(seg2)) {
+                return 0;
             }
-            sb.append(key).append("->").append(metadata.get(namespace).get(key));
-            first = false;
-          }
-          sb.append("]");
+            if (seg1.startTime != 0 && seg2.startTime != 0) {
+                if (seg1.startTime == seg2.startTime) {
+                    return -1;
+                }
+                return seg1.startTime < seg2.startTime ? -1 : 1;
+            } else {
+                return 1;
+            }
+        });
+
+        public TestTrace withSegment(TestSegment segment) {
+            this.segments.add(segment);
+            return this;
         }
-        ret += sb.toString() + "}";
-      }
-      ret += ")";
-      return ret;
-    }
-  }
 
-  static class TestSegment extends TestEntity<TestSegment> {
-    private double startTime;
+        public Set<TestSegment> getSegments() {
+            return segments;
+        }
 
-    public TestSegment(String name) {
-      super(name);
-    }
+        public TestTrace inRandomOrder() {
+            randomOrder = true;
+            return this;
+        }
 
-    public TestSegment(String name, double startTime) {
-      this(name);
-      this.startTime = startTime;
+        public boolean isRandomOrder() {
+            return randomOrder;
+        }
     }
 
-    public double getStartTime() {
-      return this.startTime;
+    public abstract static class TestEntity<T> {
+        protected String name;
+        protected Map<String, Object> annotations = new LinkedHashMap<>();
+        protected Map<String, Map<String, Object>> metadata = new LinkedHashMap<>();
+        protected List<TestSubsegment> subsegments = new ArrayList<>();
+        protected boolean randomOrder;
+
+        protected TestEntity(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Map<String, Object> getAnnotations() {
+            return this.annotations;
+        }
+
+        public Map<String, Map<String, Object>> getMetadata() {
+            return metadata;
+        }
+
+        public List<TestSubsegment> getSubsegments() {
+            return subsegments;
+        }
+
+        public T withAnnotation(String name, Object value) {
+            this.annotations.put(name, value);
+            return (T) this;
+        }
+
+        public T withMetadata(String name, Object value) {
+            return this.withMetadata("default", name, value);
+        }
+
+        public T withMetadata(String namespace, String name, Object value) {
+            if (!this.metadata.containsKey(namespace)) {
+                this.metadata.put(namespace, new LinkedHashMap<>());
+            }
+            Map<String, Object> namespaceMap = this.metadata.get(namespace);
+            namespaceMap.put(name, value);
+            return (T) this;
+        }
+
+        public T withSubsegment(TestSubsegment subsegment) {
+            this.subsegments.add(subsegment);
+            return (T) this;
+        }
+
+        public T inRandomOrder() {
+            this.randomOrder = true;
+            return (T) this;
+        }
+
+        public boolean isRandomOrder() {
+            return randomOrder;
+        }
+
+        @Override
+        public String toString() {
+            String ret = this.getClass().getSimpleName() + "(name: " + name;
+
+            if (!subsegments.isEmpty()) {
+                ret += ", subsegments: [";
+                StringBuilder sb = new StringBuilder();
+                for (TestSubsegment sub : subsegments) {
+                    if (sb.length() > 0) {
+                        sb.append(", ");
+                    }
+                    sb.append(sub);
+                }
+                ret += sb.toString() + "]";
+            }
+            if (!annotations.isEmpty()) {
+                ret += ", annotations: {";
+                StringBuilder sb = new StringBuilder();
+                for (String key : annotations.keySet()) {
+                    if (sb.length() > 0) {
+                        sb.append(", ");
+                    }
+                    sb.append(key).append("->").append(annotations.get(key));
+                }
+                ret += sb.toString() + "}";
+            }
+            if (!metadata.isEmpty()) {
+                ret += ", metadata: {";
+                StringBuilder sb = new StringBuilder();
+                for (String namespace : metadata.keySet()) {
+                    if (sb.length() > 0) {
+                        sb.append(", ");
+                    }
+                    sb.append(namespace).append(": [");
+                    boolean first = true;
+                    for (String key : metadata.get(namespace).keySet()) {
+                        if (!first) {
+                            sb.append(", ");
+                        }
+                        sb.append(key).append("->").append(metadata.get(namespace).get(key));
+                        first = false;
+                    }
+                    sb.append("]");
+                }
+                ret += sb.toString() + "}";
+            }
+            ret += ")";
+            return ret;
+        }
     }
-  }
 
-  static class TestSubsegment extends TestEntity<TestSubsegment> {
+    static class TestSegment extends TestEntity<TestSegment> {
+        private double startTime;
 
-    public TestSubsegment(String name) {
-      super(name);
+        public TestSegment(String name) {
+            super(name);
+        }
+
+        public TestSegment(String name, double startTime) {
+            this(name);
+            this.startTime = startTime;
+        }
+
+        public double getStartTime() {
+            return this.startTime;
+        }
     }
-  }
 
-  public static TestTrace createTrace() {
-    return new TestTrace();
-  }
+    static class TestSubsegment extends TestEntity<TestSubsegment> {
 
-  public static TestSegment createSegment(String name) {
-    return new TestSegment(name);
-  }
+        public TestSubsegment(String name) {
+            super(name);
+        }
+    }
 
-  public static TestSubsegment createSubsegment(String name) {
-    return new TestSubsegment(name);
-  }
+    public static TestTrace createTrace() {
+        return new TestTrace();
+    }
+
+    public static TestSegment createSegment(String name) {
+        return new TestSegment(name);
+    }
+
+    public static TestSubsegment createSubsegment(String name) {
+        return new TestSubsegment(name);
+    }
 }

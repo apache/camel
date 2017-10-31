@@ -29,25 +29,25 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringAwsXRaySimpleRouteTest extends CamelSpringTestSupport {
 
-  @Rule
-  public FakeAWSDaemon socketListener = new FakeAWSDaemon();
+    @Rule
+    public FakeAWSDaemon socketListener = new FakeAWSDaemon();
 
-  @Override
-  protected AbstractApplicationContext createApplicationContext() {
-    return new ClassPathXmlApplicationContext("/org/apache/camel/aws/xray/AwsXRaySimpleRouteTest.xml");
-  }
-
-  @Test
-  public void testRoute() throws Exception {
-    NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
-
-    for (int i = 0; i < 5; i++) {
-      template.sendBody("seda:dude", "Hello World");
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/aws/xray/AwsXRaySimpleRouteTest.xml");
     }
 
-    assertTrue(notify.matches(30, TimeUnit.SECONDS));
+    @Test
+    public void testRoute() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
 
-    List<TestTrace> testData = Arrays.asList(
+        for (int i = 0; i < 5; i++) {
+            template.sendBody("seda:dude", "Hello World");
+        }
+
+        assertTrue(notify.matches(30, TimeUnit.SECONDS));
+
+        List<TestTrace> testData = Arrays.asList(
         TestDataBuilder.createTrace()
             .withSegment(TestDataBuilder.createSegment("dude")
                 .withSubsegment(TestDataBuilder.createSubsegment("car"))
@@ -68,10 +68,10 @@ public class SpringAwsXRaySimpleRouteTest extends CamelSpringTestSupport {
             .withSegment(TestDataBuilder.createSegment("dude")
                 .withSubsegment(TestDataBuilder.createSubsegment("car"))
             )
-    );
+        );
 
-    Thread.sleep(2000);
+        Thread.sleep(2000);
 
-    TestUtils.checkData(socketListener.getReceivedData(), testData);
-  }
+        TestUtils.checkData(socketListener.getReceivedData(), testData);
+    }
 }

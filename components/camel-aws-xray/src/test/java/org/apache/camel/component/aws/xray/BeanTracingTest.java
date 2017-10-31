@@ -29,79 +29,79 @@ import org.junit.Test;
 
 public class BeanTracingTest extends CamelAwsXRayTestSupport {
 
-  public BeanTracingTest() {
-    super(
-        TestDataBuilder.createTrace()
-            .withSegment(TestDataBuilder.createSegment("start")
-                .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
-                .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_seda_otherRoute"))
-                .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_mock_end"))
-                .withAnnotation("body", "HELLO")
-                .withMetadata("originBody", "Hello")
-            )
-            .withSegment(TestDataBuilder.createSegment("otherRoute")
-                .withSubsegment(TestDataBuilder.createSubsegment("processor"))
-            )
-    );
-  }
-
-  @Override
-  protected InterceptStrategy getTracingStrategy() {
-    return new TraceAnnotatedTracingStrategy();
-  }
-
-  @Test
-  public void testRoute() throws Exception {
-    MockEndpoint mockEndpoint = context.getEndpoint("mock:end", MockEndpoint.class);
-    mockEndpoint.expectedMessageCount(1);
-    mockEndpoint.expectedBodiesReceived("HELLO");
-    mockEndpoint.expectedHeaderReceived("TEST", "done");
-
-    template.requestBody("direct:start", "Hello");
-
-    mockEndpoint.assertIsSatisfied();
-
-    verify();
-  }
-
-  @Override
-  protected RoutesBuilder createRouteBuilder() throws Exception {
-    return new RouteBuilder() {
-      @Override
-      public void configure() throws Exception {
-        from("direct:start").routeId("start")
-            .log("start has been called")
-            .bean(TraceBean.class)
-            .delay(simple("${random(1000,2000)}"))
-            .to("seda:otherRoute")
-            .to("mock:end");
-
-        from("seda:otherRoute").routeId("otherRoute")
-            .log("otherRoute has been called")
-            .process(new CustomProcessor())
-            .delay(simple("${random(0,500)}"));
-      }
-    };
-  }
-
-  @XRayTrace
-  public static class TraceBean {
-
-    @Handler
-    public String convertBocyToUpperCase(@Body String body) {
-      String converted = body.toUpperCase();
-      AWSXRay.getCurrentSegment().putAnnotation("body", converted);
-      AWSXRay.getCurrentSegment().putMetadata("originBody", body);
-      return converted;
+    public BeanTracingTest() {
+        super(
+            TestDataBuilder.createTrace()
+                .withSegment(TestDataBuilder.createSegment("start")
+                    .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_seda_otherRoute"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_mock_end"))
+                    .withAnnotation("body", "HELLO")
+                    .withMetadata("originBody", "Hello")
+                )
+                .withSegment(TestDataBuilder.createSegment("otherRoute")
+                    .withSubsegment(TestDataBuilder.createSubsegment("processor"))
+                )
+        );
     }
-  }
-
-  @XRayTrace(metricName = "processor")
-  public static class CustomProcessor implements Processor {
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-      exchange.getIn().setHeader("TEST", "done");
+    protected InterceptStrategy getTracingStrategy() {
+        return new TraceAnnotatedTracingStrategy();
     }
-  }
+
+    @Test
+    public void testRoute() throws Exception {
+        MockEndpoint mockEndpoint = context.getEndpoint("mock:end", MockEndpoint.class);
+        mockEndpoint.expectedMessageCount(1);
+        mockEndpoint.expectedBodiesReceived("HELLO");
+        mockEndpoint.expectedHeaderReceived("TEST", "done");
+
+        template.requestBody("direct:start", "Hello");
+
+        mockEndpoint.assertIsSatisfied();
+
+        verify();
+    }
+
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").routeId("start")
+                    .log("start has been called")
+                    .bean(TraceBean.class)
+                    .delay(simple("${random(1000,2000)}"))
+                    .to("seda:otherRoute")
+                    .to("mock:end");
+
+                from("seda:otherRoute").routeId("otherRoute")
+                    .log("otherRoute has been called")
+                    .process(new CustomProcessor())
+                    .delay(simple("${random(0,500)}"));
+            }
+        };
+    }
+
+    @XRayTrace
+    public static class TraceBean {
+
+        @Handler
+        public String convertBocyToUpperCase(@Body String body) {
+            String converted = body.toUpperCase();
+            AWSXRay.getCurrentSegment().putAnnotation("body", converted);
+            AWSXRay.getCurrentSegment().putMetadata("originBody", body);
+            return converted;
+        }
+    }
+
+    @XRayTrace(metricName = "processor")
+    public static class CustomProcessor implements Processor {
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            exchange.getIn().setHeader("TEST", "done");
+        }
+    }
 }

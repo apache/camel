@@ -16,14 +16,16 @@
  */
 package org.apache.camel.component.aws.xray;
 
-import com.amazonaws.xray.AWSXRay;
-import com.amazonaws.xray.entities.Segment;
-import com.amazonaws.xray.entities.Subsegment;
-import com.amazonaws.xray.entities.TraceID;
 import java.lang.invoke.MethodHandles;
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.amazonaws.xray.AWSXRay;
+import com.amazonaws.xray.entities.Segment;
+import com.amazonaws.xray.entities.Subsegment;
+import com.amazonaws.xray.entities.TraceID;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -62,10 +64,11 @@ import org.slf4j.LoggerFactory;
  */
 public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, StaticService, CamelContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     /** Header value kept in the message of the exchange **/
     public static final String XRAY_TRACE_ID = "Camel-AWS-XRay-Trace-ID";
+
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     /** Exchange property for passing a segment between threads **/
     private static final String CURRENT_SEGMENT = "CAMEL_PROPERTY_AWS_XRAY_CURRENT_SEGMENT";
 
@@ -224,15 +227,15 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
             if (event instanceof ExchangeSendingEvent) {
                 ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
                 LOG.trace("-> {} - target: {} (routeId: {})",
-                    event.getClass().getSimpleName(), ese.getEndpoint(),
-                    ese.getExchange().getFromRouteId());
+                        event.getClass().getSimpleName(), ese.getEndpoint(),
+                        ese.getExchange().getFromRouteId());
 
                 if (Thread.currentThread().getName().contains("Multicast")) {
                     // copy the segment from the exchange to the thread (local) context
-                    Segment segment = (Segment)ese.getExchange().getProperty(CURRENT_SEGMENT);
+                    Segment segment = (Segment) ese.getExchange().getProperty(CURRENT_SEGMENT);
                     LOG.trace("Copying over segment {}/{} from exchange received from {} to exchange processing {}",
-                        segment.getId(), segment.getName(), ese.getExchange().getFromEndpoint(),
-                        ese.getEndpoint());
+                            segment.getId(), segment.getName(), ese.getExchange().getFromEndpoint(),
+                            ese.getEndpoint());
                     AWSXRay.setTraceEntity(segment);
                 }
 
@@ -244,7 +247,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                     endpointName = endpointName.replaceAll("\\?", "&");
                     Subsegment subsegment = AWSXRay.beginSubsegment("SendingTo_" + endpointName);
                     LOG.trace("Creating new subsegment with ID {} and name {}",
-                        subsegment.getId(), subsegment.getName());
+                            subsegment.getId(), subsegment.getName());
                 } else {
                     LOG.trace("Ignoring creation of XRay subsegment as no segment exists in the current thread");
                 }
@@ -252,13 +255,13 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
             } else if (event instanceof ExchangeSentEvent) {
                 ExchangeSentEvent ese = (ExchangeSentEvent) event;
                 LOG.trace("-> {} - target: {} (routeId: {})",
-                    event.getClass().getSimpleName(), ese.getEndpoint(), ese.getExchange().getFromRouteId());
+                        event.getClass().getSimpleName(), ese.getEndpoint(), ese.getExchange().getFromRouteId());
 
                 if (AWSXRay.getCurrentSubsegmentOptional().isPresent()) {
                     Subsegment subsegment = AWSXRay.getCurrentSubsegment();
                     subsegment.close();
                     LOG.trace("Closing down subsegment with ID {} and name {}",
-                        subsegment.getId(), subsegment.getName());
+                            subsegment.getId(), subsegment.getName());
                 }
             } else {
                 LOG.trace("Received event {} from source {}", event, event.getSource());
@@ -269,7 +272,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
         public boolean isEnabled(EventObject event) {
             // listen for either when an exchange invoked an other endpoint
             return event instanceof ExchangeSendingEvent
-                || event instanceof ExchangeSentEvent;
+                    || event instanceof ExchangeSentEvent;
         }
     }
 
@@ -317,12 +320,12 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 Segment segment = AWSXRay.beginSegment(route.getId());
                 segment.setTraceId(traceID);
                 LOG.trace("Created new XRay segment {} with name {}",
-                    segment.getId(), segment.getName());
+                        segment.getId(), segment.getName());
                 exchange.setProperty(CURRENT_SEGMENT, segment);
             } else {
                 Subsegment subsegment = AWSXRay.beginSubsegment(route.getId());
                 LOG.trace("Created new XRay subsegment {} with name {}",
-                    subsegment.getId(), subsegment.getName());
+                        subsegment.getId(), subsegment.getName());
             }
         }
 
@@ -339,12 +342,12 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 Subsegment subsegment = AWSXRay.getCurrentSubsegment();
                 subsegment.close();
                 LOG.trace("Closing down Subsegment {} with name {}",
-                    subsegment.getId(), subsegment.getName());
+                        subsegment.getId(), subsegment.getName());
             } else if (AWSXRay.getCurrentSegmentOptional().isPresent()) {
                 Segment segment = AWSXRay.getCurrentSegment();
                 segment.close();
                 LOG.trace("Closing down Segment {} with name {}",
-                    segment.getId(), segment.getName());
+                        segment.getId(), segment.getName());
             }
         }
     }
