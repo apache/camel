@@ -108,95 +108,98 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         }
 
         // setup json data format
-        String name = config.getJsonDataFormat();
-        if (name != null) {
-            // must only be a name, not refer to an existing instance
-            Object instance = context.getRegistry().lookupByName(name);
-            if (instance != null) {
-                throw new IllegalArgumentException("JsonDataFormat name: " + name + " must not be an existing bean instance from the registry");
+        DataFormat json = null;
+        DataFormat outJson = null;
+        if (mode.contains("json") || "auto".equals(mode)) {
+            String name = config.getJsonDataFormat();
+            if (name != null) {
+                // must only be a name, not refer to an existing instance
+                Object instance = context.getRegistry().lookupByName(name);
+                if (instance != null) {
+                    throw new IllegalArgumentException("JsonDataFormat name: " + name + " must not be an existing bean instance from the registry");
+                }
+            } else {
+                name = "json-jackson";
             }
-        } else {
-            name = "json-jackson";
-        }
-        // this will create a new instance as the name was not already pre-created
-        DataFormat json = context.resolveDataFormat(name);
-        DataFormat outJson = context.resolveDataFormat(name);
+            // this will create a new instance as the name was not already pre-created
+            json = context.resolveDataFormat(name);
+            outJson = context.resolveDataFormat(name);
 
-        // is json binding required?
-        if (mode.contains("json") && json == null) {
-            throw new IllegalArgumentException("JSon DataFormat " + name + " not found.");
-        }
+            if (json != null) {
+                Class<?> clazz = null;
+                if (type != null) {
+                    String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
+                    clazz = context.getClassResolver().resolveMandatoryClass(typeName);
+                }
+                if (clazz != null) {
+                    IntrospectionSupport.setProperty(context.getTypeConverter(), json, "unmarshalType", clazz);
+                    IntrospectionSupport.setProperty(context.getTypeConverter(), json, "useList", type.endsWith("[]"));
+                }
+                setAdditionalConfiguration(config, context, json, "json.in.");
 
-        if (json != null) {
-            Class<?> clazz = null;
-            if (type != null) {
-                String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
-                clazz = context.getClassResolver().resolveMandatoryClass(typeName);
+                Class<?> outClazz = null;
+                if (outType != null) {
+                    String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
+                    outClazz = context.getClassResolver().resolveMandatoryClass(typeName);
+                }
+                if (outClazz != null) {
+                    IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "unmarshalType", outClazz);
+                    IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "useList", outType.endsWith("[]"));
+                }
+                setAdditionalConfiguration(config, context, outJson, "json.out.");
             }
-            if (clazz != null) {
-                IntrospectionSupport.setProperty(context.getTypeConverter(), json, "unmarshalType", clazz);
-                IntrospectionSupport.setProperty(context.getTypeConverter(), json, "useList", type.endsWith("[]"));
-            }
-            setAdditionalConfiguration(config, context, json, "json.in.");
-
-            Class<?> outClazz = null;
-            if (outType != null) {
-                String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
-                outClazz = context.getClassResolver().resolveMandatoryClass(typeName);
-            }
-            if (outClazz != null) {
-                IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "unmarshalType", outClazz);
-                IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "useList", outType.endsWith("[]"));
-            }
-            setAdditionalConfiguration(config, context, outJson, "json.out.");
         }
 
         // setup xml data format
-        name = config.getXmlDataFormat();
-        if (name != null) {
-            // must only be a name, not refer to an existing instance
-            Object instance = context.getRegistry().lookupByName(name);
-            if (instance != null) {
-                throw new IllegalArgumentException("XmlDataFormat name: " + name + " must not be an existing bean instance from the registry");
+        DataFormat jaxb = null;
+        DataFormat outJaxb = null;
+        if (mode.contains("xml") || "auto".equals(mode)) {
+            String name = config.getXmlDataFormat();
+            if (name != null) {
+                // must only be a name, not refer to an existing instance
+                Object instance = context.getRegistry().lookupByName(name);
+                if (instance != null) {
+                    throw new IllegalArgumentException("XmlDataFormat name: " + name + " must not be an existing bean instance from the registry");
+                }
+            } else {
+                name = "jaxb";
             }
-        } else {
-            name = "jaxb";
-        }
-        // this will create a new instance as the name was not already pre-created
-        DataFormat jaxb = context.resolveDataFormat(name);
-        DataFormat outJaxb = context.resolveDataFormat(name);
+            // this will create a new instance as the name was not already pre-created
+            jaxb = context.resolveDataFormat(name);
+            outJaxb = context.resolveDataFormat(name);
 
-        // is xml binding required?
-        if (mode.contains("xml") && jaxb == null) {
-            throw new IllegalArgumentException("XML DataFormat " + name + " not found.");
-        }
+            // is xml binding required?
+            if (mode.contains("xml") && jaxb == null) {
+                throw new IllegalArgumentException("XML DataFormat " + name + " not found.");
+            }
 
-        if (jaxb != null) {
-            Class<?> clazz = null;
-            if (type != null) {
-                String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
-                clazz = context.getClassResolver().resolveMandatoryClass(typeName);
-            }
-            if (clazz != null) {
-                JAXBContext jc = JAXBContext.newInstance(clazz);
-                IntrospectionSupport.setProperty(context.getTypeConverter(), jaxb, "context", jc);
-            }
-            setAdditionalConfiguration(config, context, jaxb, "xml.in.");
+            if (jaxb != null) {
+                Class<?> clazz = null;
+                if (type != null) {
+                    String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
+                    clazz = context.getClassResolver().resolveMandatoryClass(typeName);
+                }
+                if (clazz != null) {
+                    JAXBContext jc = JAXBContext.newInstance(clazz);
+                    IntrospectionSupport.setProperty(context.getTypeConverter(), jaxb, "context", jc);
+                }
+                setAdditionalConfiguration(config, context, jaxb, "xml.in.");
 
-            Class<?> outClazz = null;
-            if (outType != null) {
-                String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
-                outClazz = context.getClassResolver().resolveMandatoryClass(typeName);
+                Class<?> outClazz = null;
+                if (outType != null) {
+                    String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
+                    outClazz = context.getClassResolver().resolveMandatoryClass(typeName);
+                }
+                if (outClazz != null) {
+                    JAXBContext jc = JAXBContext.newInstance(outClazz);
+                    IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
+                } else if (clazz != null) {
+                    // fallback and use the context from the input
+                    JAXBContext jc = JAXBContext.newInstance(clazz);
+                    IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
+                }
+                setAdditionalConfiguration(config, context, outJaxb, "xml.out.");
             }
-            if (outClazz != null) {
-                JAXBContext jc = JAXBContext.newInstance(outClazz);
-                IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
-            } else if (clazz != null) {
-                // fallback and use the context from the input
-                JAXBContext jc = JAXBContext.newInstance(clazz);
-                IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
-            }
-            setAdditionalConfiguration(config, context, outJaxb, "xml.out.");
         }
 
         return new RestBindingAdvice(context, json, jaxb, outJson, outJaxb, consumes, produces, mode, skip, cors, corsHeaders, defaultValues);
