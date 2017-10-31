@@ -356,6 +356,11 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      * Default is <tt>true</tt>. In some use cases you may want to download
      * a specific file and are not allowed to use the LIST command, and therefore
      * you can set this option to <tt>false</tt>.
+     * Notice when using this option, then the specific file to download does <b>not</b>
+     * include meta-data information such as file size, timestamp, permissions etc, because
+     * those information is only possible to retrieve when LIST command is in use.
+     *
+     * This option is not available for SFTP.
      */
     public void setUseList(boolean useList) {
         this.useList = useList;
