@@ -298,6 +298,7 @@
     <module>camel-zipkin</module>
     <module>camel-zookeeper</module>
     <module>camel-zookeeper-master</module>
+    <module>camel-aws-xray</module>
   </modules>
 
 
