@@ -358,7 +358,7 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public void deleteObject(DeleteObjectRequest deleteObjectRequest) throws AmazonClientException, AmazonServiceException {
-        throw new UnsupportedOperationException();
+        // noop
     }
 
     @Override
