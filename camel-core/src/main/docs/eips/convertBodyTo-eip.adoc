@@ -1,0 +1,14 @@
+== Convert Body To EIP
+
+
+// eip options: START
+The Convert Body To EIP supports 2 options which are listed below:
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *type* | *Required* The java type to convert to |  | String
+| *charset* | To use a specific charset when converting |  | String
+|===
+// eip options: END
