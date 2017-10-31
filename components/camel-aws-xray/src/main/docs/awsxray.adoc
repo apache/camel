@@ -30,7 +30,7 @@ To include both, AWS XRay and Camel, dependencies use the following Maven import
   <dependencies>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-aws.xray</artifactId>
+        <artifactId>camel-aws-xray</artifactId>
       </dependency>
 
       <dependency>
