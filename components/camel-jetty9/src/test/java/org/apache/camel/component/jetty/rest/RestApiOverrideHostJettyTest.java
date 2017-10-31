@@ -32,7 +32,6 @@ public class RestApiOverrideHostJettyTest extends BaseJettyTest {
     public void testApi() throws Exception {
         String out = template.requestBody("jetty:http://localhost:{{port}}/api-doc", null, String.class);
         assertNotNull(out);
-        System.out.println(out);
 
         assertTrue(out.contains("\"version\" : \"1.2.3\""));
         assertTrue(out.contains("\"title\" : \"The hello rest thing\""));
