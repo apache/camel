@@ -31,18 +31,18 @@ public class YqlProducer extends DefaultProducer {
     static final String CAMEL_YQL_HTTP_REQUEST = "CamelYqlHttpRequest";
 
     private final YqlEndpoint endpoint;
-    private final YqlClient yahooClient;
+    private final YqlClient yqlClient;
 
     YqlProducer(final YqlEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.yahooClient = new YqlClient();
+        this.yqlClient = new YqlClient(endpoint.getHttpClient());
     }
 
     @Override
     public void process(final Exchange exchange) throws Exception {
         final YqlConfiguration configuration = endpoint.getConfiguration();
-        final YqlResponse yqlResponse = yahooClient.get(
+        final YqlResponse yqlResponse = yqlClient.get(
                 configuration.getQuery(),
                 configuration.getFormat(),
                 configuration.isDiagnostics(),

@@ -21,7 +21,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +28,12 @@ import org.slf4j.LoggerFactory;
 public class YqlClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(YqlClient.class);
-    private static final CloseableHttpClient HTTP_CLIENT = HttpClients.createDefault();
+
+    private final CloseableHttpClient httpClient;
+
+    public YqlClient(final CloseableHttpClient httpClient){
+        this.httpClient = httpClient;
+    }
 
     public YqlResponse get(final String query, final String format, final boolean diagnostics, final String callback) throws Exception {
 
@@ -47,7 +51,7 @@ public class YqlClient {
         LOG.debug("YQL query: {}", uri);
 
         final HttpGet httpget = new HttpGet(uri);
-        try (final CloseableHttpResponse response = HTTP_CLIENT.execute(httpget)) {
+        try (final CloseableHttpResponse response = httpClient.execute(httpget)) {
             final YqlResponse yqlResponse = YqlResponse.builder()
                     .httpRequest(uri.toString())
                     .status(response.getStatusLine().getStatusCode())

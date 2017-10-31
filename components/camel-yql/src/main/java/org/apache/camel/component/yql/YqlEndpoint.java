@@ -23,16 +23,23 @@ import org.apache.camel.component.yql.configuration.YqlConfiguration;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 @UriEndpoint(firstVersion = "2.21.0", scheme = "yql", title = "Yahoo Query Language", syntax = "yql:query", producerOnly = true, label = "api,http")
 public class YqlEndpoint extends DefaultEndpoint {
 
     @UriParam
     private final YqlConfiguration configuration;
+    private final HttpClientConnectionManager connectionManager;
+    private CloseableHttpClient httpClient;
 
-    YqlEndpoint(final String uri, final YqlComponent component, final YqlConfiguration configuration) {
+    YqlEndpoint(final String uri, final YqlComponent component, final YqlConfiguration configuration, final HttpClientConnectionManager connectionManager) {
         super(uri, component);
         this.configuration = configuration;
+        this.connectionManager = connectionManager;
     }
 
     @Override
@@ -48,6 +55,22 @@ public class YqlEndpoint extends DefaultEndpoint {
     @Override
     public boolean isSingleton() {
         return true;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (httpClient != null) {
+            httpClient.close();
+        }
+    }
+
+    synchronized CloseableHttpClient getHttpClient() {
+        if (httpClient == null) {
+            httpClient = HttpClients.custom()
+                .setConnectionManager(connectionManager)
+                .build();
+        }
+        return httpClient;
     }
 
     YqlConfiguration getConfiguration() {

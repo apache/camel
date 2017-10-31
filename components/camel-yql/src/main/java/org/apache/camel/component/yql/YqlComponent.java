@@ -21,19 +21,47 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.yql.configuration.YqlConfiguration;
 import org.apache.camel.component.yql.configuration.YqlConfigurationValidator;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 public class YqlComponent extends DefaultComponent {
+
+    private HttpClientConnectionManager localConnectionManager;
 
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
         final YqlConfiguration configuration = new YqlConfiguration();
         configuration.setQuery(remaining);
 
-        final Endpoint endpoint = new YqlEndpoint(uri, this, configuration);
+        final HttpClientConnectionManager connectionManager = createConnectionManager();
+
+        final Endpoint endpoint = new YqlEndpoint(uri, this, configuration, connectionManager);
 
         YqlConfigurationValidator.validateProperties(configuration);
 
         setProperties(configuration, parameters);
         return endpoint;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+      if (localConnectionManager != null) {
+        localConnectionManager.shutdown();
+      }
+    }
+
+    public void setConnectionManager(final HttpClientConnectionManager connectionManager){
+      this.localConnectionManager = connectionManager;
+    }
+
+    private HttpClientConnectionManager createConnectionManager(){
+      if (localConnectionManager != null) {
+        return localConnectionManager;
+      }
+      final PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+      connectionManager.setMaxTotal(200);
+      connectionManager.setDefaultMaxPerRoute(20);
+      setConnectionManager(connectionManager);
+      return connectionManager;
     }
 }
