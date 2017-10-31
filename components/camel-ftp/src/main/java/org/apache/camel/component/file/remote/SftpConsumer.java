@@ -27,6 +27,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * Secure FTP consumer
@@ -34,6 +35,8 @@ import org.apache.camel.util.ObjectHelper;
 public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 
     private String endpointPath;
+
+    private transient String sftpConsumerToString;
 
     public SftpConsumer(RemoteFileEndpoint<ChannelSftp.LsEntry> endpoint, Processor processor, RemoteFileOperations<ChannelSftp.LsEntry> operations) {
         super(endpoint, processor, operations);
@@ -241,6 +244,19 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
     private boolean isStepwise() {
         RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
         return config.isStepwise();
+    }
+
+    private boolean isUseList() {
+        RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
+        return config.isUseList();
+    }
+
+    @Override
+    public String toString() {
+        if (sftpConsumerToString == null) {
+            sftpConsumerToString = "SftpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return sftpConsumerToString;
     }
 
 }
