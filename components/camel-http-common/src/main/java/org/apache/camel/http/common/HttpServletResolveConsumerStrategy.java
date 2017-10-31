@@ -16,7 +16,11 @@
  */
 package org.apache.camel.http.common;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.support.RestConsumerContextPathMatcher;
@@ -35,6 +39,7 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
         HttpConsumer answer = consumers.get(path);
 
         if (answer == null) {
+            List<HttpConsumer> candidates = new ArrayList<>();
             for (String key : consumers.keySet()) {
                 //We need to look up the consumer path here
                 String consumerPath = consumers.get(key).getPath();
@@ -42,13 +47,27 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
                 boolean matchOnUriPrefix = consumer.getEndpoint().isMatchOnUriPrefix();
                 // Just make sure the we get the right consumer path first
                 if (RestConsumerContextPathMatcher.matchPath(path, consumerPath, matchOnUriPrefix)) {
-                    answer = consumers.get(key);
-                    break;
+                    candidates.add(consumer);
+                }
+            }
+
+            if (candidates.size() == 1) {
+                answer = candidates.get(0);
+            } else {
+                // extra filter by restrict
+                candidates = candidates.stream().filter(c -> matchRestMethod(request.getMethod(), c.getEndpoint().getHttpMethodRestrict())).collect(Collectors.toList());
+                if (candidates.size() == 1) {
+                    answer = candidates.get(0);
                 }
             }
         }
 
         return answer;
     }
+
+    private static boolean matchRestMethod(String method, String restrict) {
+        return restrict == null || restrict.toLowerCase(Locale.ENGLISH).contains(method.toLowerCase(Locale.ENGLISH));
+    }
+
 
 }
