@@ -31,108 +31,108 @@ import org.slf4j.LoggerFactory;
 
 public class ErrorTest extends CamelAwsXRayTestSupport {
 
-  private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  // FIXME: check why processors invoked in onRedelivery do not generate a subsegment
-  public ErrorTest() {
-    super(
-        TestDataBuilder.createTrace()
-            .withSegment(TestDataBuilder.createSegment("start")
-                .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
-                .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
-                .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
-                .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
-                .withSubsegment(TestDataBuilder.createSubsegment("ExceptionProcessor"))
-            )
-    );
-  }
-
-  @Override
-  protected RoutesBuilder createRouteBuilder() throws Exception {
-    return new RouteBuilder() {
-      @Override
-      public void configure() throws Exception {
-
-        onException(Exception.class)
-            .process(new ExceptionProcessor())
-            .maximumRedeliveries(3)
-            .redeliveryDelay(200)
-            .useExponentialBackOff()
-            .backOffMultiplier(1.5D)
-            .onRedelivery(new ExceptionRetryProcessor())
-            .handled(true)
-            .log(LoggingLevel.WARN, "Caught error while performing task. Reason: ${exception.message} Stacktrace: ${exception.stacktrace}")
-            .end();
-
-        from("direct:start").routeId("start")
-            .log("start has been called")
-            .bean(TraceBean.class)
-            .delay(simple("${random(1000,2000)}"))
-            .to("seda:otherRoute")
-            .to("mock:end");
-
-        from("seda:otherRoute").routeId("otherRoute")
-            .log("otherRoute has been called")
-            .delay(simple("${random(0,500)}"));
-      }
-    };
-  }
-
-  @Override
-  protected InterceptStrategy getTracingStrategy() {
-    return new TraceAnnotatedTracingStrategy();
-  }
-
-  @Test
-  public void testRoute() throws Exception {
-    template.requestBody("direct:start", "Hello");
-
-    verify();
-  }
-
-  @XRayTrace
-  public static class TraceBean {
-
-    @Handler
-    public String convertBodyToUpperCase(@Body String body) throws Exception {
-      throw new Exception("test");
+    // FIXME: check why processors invoked in onRedelivery do not generate a subsegment
+    public ErrorTest() {
+        super(
+            TestDataBuilder.createTrace()
+                .withSegment(TestDataBuilder.createSegment("start")
+                    .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("ExceptionProcessor"))
+                )
+        );
     }
 
     @Override
-    public String toString() {
-      return "TraceBean";
-    }
-  }
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
 
-  @XRayTrace
-  public static class ExceptionProcessor implements Processor {
+                onException(Exception.class)
+                    .process(new ExceptionProcessor())
+                    .maximumRedeliveries(3)
+                    .redeliveryDelay(200)
+                    .useExponentialBackOff()
+                    .backOffMultiplier(1.5D)
+                    .onRedelivery(new ExceptionRetryProcessor())
+                    .handled(true)
+                    .log(LoggingLevel.WARN, "Caught error while performing task. Reason: ${exception.message} Stacktrace: ${exception.stacktrace}")
+                    .end();
+
+                from("direct:start").routeId("start")
+                    .log("start has been called")
+                    .bean(TraceBean.class)
+                    .delay(simple("${random(1000,2000)}"))
+                    .to("seda:otherRoute")
+                    .to("mock:end");
+
+                from("seda:otherRoute").routeId("otherRoute")
+                    .log("otherRoute has been called")
+                    .delay(simple("${random(0,500)}"));
+            }
+        };
+    }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-      Exception ex = (Exception)exchange.getProperties().get(Exchange.EXCEPTION_CAUGHT);
-      LOG.debug("Processing caught exception {}", ex.getLocalizedMessage());
-      exchange.getIn().getHeaders().put("HandledError",ex.getLocalizedMessage());
+    protected InterceptStrategy getTracingStrategy() {
+        return new TraceAnnotatedTracingStrategy();
     }
 
-    @Override
-    public String toString() {
-      return "ExceptionProcessor";
-    }
-  }
+    @Test
+    public void testRoute() throws Exception {
+        template.requestBody("direct:start", "Hello");
 
-  @XRayTrace
-  public static class ExceptionRetryProcessor implements Processor {
-
-    @Override
-    public void process(Exchange exchange) throws Exception {
-      Exception ex = (Exception)exchange.getProperties().get(Exchange.EXCEPTION_CAUGHT);
-      LOG.debug(">> Attempting redelivery of handled exception {} with message: {}",
-          ex.getClass().getSimpleName(), ex.getLocalizedMessage());
+        verify();
     }
 
-    @Override
-    public String toString() {
-      return "ExceptionRetryProcessor";
+    @XRayTrace
+    public static class TraceBean {
+
+        @Handler
+        public String convertBodyToUpperCase(@Body String body) throws Exception {
+            throw new Exception("test");
+        }
+
+        @Override
+        public String toString() {
+            return "TraceBean";
+        }
     }
-  }
+
+    @XRayTrace
+    public static class ExceptionProcessor implements Processor {
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            Exception ex = (Exception)exchange.getProperties().get(Exchange.EXCEPTION_CAUGHT);
+            LOG.debug("Processing caught exception {}", ex.getLocalizedMessage());
+            exchange.getIn().getHeaders().put("HandledError", ex.getLocalizedMessage());
+        }
+
+        @Override
+        public String toString() {
+            return "ExceptionProcessor";
+        }
+    }
+
+    @XRayTrace
+    public static class ExceptionRetryProcessor implements Processor {
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            Exception ex = (Exception)exchange.getProperties().get(Exchange.EXCEPTION_CAUGHT);
+            LOG.debug(">> Attempting redelivery of handled exception {} with message: {}",
+                ex.getClass().getSimpleName(), ex.getLocalizedMessage());
+        }
+
+        @Override
+        public String toString() {
+            return "ExceptionRetryProcessor";
+        }
+    }
 }

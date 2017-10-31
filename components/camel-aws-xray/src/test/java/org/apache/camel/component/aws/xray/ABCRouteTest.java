@@ -21,60 +21,60 @@ import org.junit.Test;
 
 public class ABCRouteTest extends CamelAwsXRayTestSupport {
 
-  public ABCRouteTest() {
-    super(
-        TestDataBuilder.createTrace().inRandomOrder()
-            .withSegment(TestDataBuilder.createSegment("start")
-                .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_direct_a")
-                    .withSubsegment(TestDataBuilder.createSubsegment("a")
-                        .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_seda_b"))
-                        .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_seda_c"))
+    public ABCRouteTest() {
+        super(
+            TestDataBuilder.createTrace().inRandomOrder()
+                .withSegment(TestDataBuilder.createSegment("start")
+                    .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_direct_a")
+                        .withSubsegment(TestDataBuilder.createSubsegment("a")
+                            .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_seda_b"))
+                            .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_seda_c"))
+                        )
                     )
                 )
-            )
-            .withSegment(TestDataBuilder.createSegment("b"))
-            .withSegment(TestDataBuilder.createSegment("c")
-                .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_log_test"))
-            )
-            .withSegment(TestDataBuilder.createSegment("d"))
-    );
-  }
+                .withSegment(TestDataBuilder.createSegment("b"))
+                .withSegment(TestDataBuilder.createSegment("c")
+                    .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_log_test"))
+                )
+                .withSegment(TestDataBuilder.createSegment("d"))
+        );
+    }
 
-  @Test
-  public void testRoute() throws Exception {
-    template.requestBody("direct:start", "Hello");
+    @Test
+    public void testRoute() throws Exception {
+        template.requestBody("direct:start", "Hello");
 
-    verify();
-  }
+        verify();
+    }
 
-  @Override
-  protected RouteBuilder createRouteBuilder() throws Exception {
-    return new RouteBuilder() {
-      @Override
-      public void configure() throws Exception {
-        from("direct:start").routeId("start")
-            .wireTap("seda:d")
-            .to("direct:a");
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").routeId("start")
+                    .wireTap("seda:d")
+                    .to("direct:a");
 
-        from("direct:a").routeId("a")
-            .log("routing at ${routeId}")
-            .to("seda:b")
-            .delay(2000)
-            .to("seda:c")
-            .log("End of routing");
+                from("direct:a").routeId("a")
+                    .log("routing at ${routeId}")
+                    .to("seda:b")
+                    .delay(2000)
+                    .to("seda:c")
+                    .log("End of routing");
 
-        from("seda:b").routeId("b")
-            .log("routing at ${routeId}")
-            .delay(simple("${random(1000,2000)}"));
+                from("seda:b").routeId("b")
+                    .log("routing at ${routeId}")
+                    .delay(simple("${random(1000,2000)}"));
 
-        from("seda:c").routeId("c")
-            .to("log:test")
-            .delay(simple("${random(0,100)}"));
+                from("seda:c").routeId("c")
+                    .to("log:test")
+                    .delay(simple("${random(0,100)}"));
 
-        from("seda:d").routeId("d")
-            .log("routing at ${routeId}")
-            .delay(simple("${random(10,50)}"));
-      }
-    };
-  }
+                from("seda:d").routeId("d")
+                    .log("routing at ${routeId}")
+                    .delay(simple("${random(10,50)}"));
+            }
+        };
+    }
 }
