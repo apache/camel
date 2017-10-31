@@ -29,13 +29,13 @@ public class YqlConfiguration {
     private String query;
 
     @UriParam
-    private String format;
+    private String format = "json";
 
     @UriParam
-    private boolean diagnostics;
+    private boolean diagnostics = false;
 
     @UriParam
-    private String callback;
+    private String callback = "";
 
     public String getQuery() {
         return query;
