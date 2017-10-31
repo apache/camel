@@ -1,0 +1,52 @@
+== Idempotent Consumer EIP
+
+The
+http://www.enterpriseintegrationpatterns.com/IdempotentReceiver.html[Idempotent
+Consumer] from the link:enterprise-integration-patterns.html[EIP
+patterns] is used to filter out duplicate messages.
+
+The Idempotent Consumer essentially acts like a
+link:message-filter.html[Message Filter] to filter out duplicates.
+
+Camel will add the message id eagerly to the repository to detect
+duplication also for Exchanges currently in progress. 
+ On completion Camel will remove the message id from the repository if
+the Exchange failed, otherwise it stays there.
+
+Camel provides the following Idempotent Consumer implementations:
+
+* MemoryIdempotentRepository
+* link:file2.html[FileIdempotentRepository]
+* link:hazelcast-component.html[HazelcastIdempotentRepository]
+(*Available as of Camel 2.8*)
+* link:sql-component.html[JdbcMessageIdRepository] (*Available as of
+Camel 2.7*)
+* link:jpa.html[JpaMessageIdRepository]
+* link:infinispan.html[InfinispanIdempotentRepository] (*Available as of
+Camel 2.13.0)*
+* link:jcache.html[JCacheIdempotentRepository]* (*Available as of Camel
+2.17.0)**
+* link:spring.html[SpringCacheIdempotentRepository] *(*Available as of
+Camel 2.17.1)**** 
+**
+* link:ehcache.html[EhcacheIdempotentRepository]** *(*Available as of
+Camel 2.18.0)****
+* link:kafka.html[KafkaIdempotentRepository] (*Available as of Camel
+2.19.0)*
+
+=== Options
+
+// eip options: START
+The Idempotent Consumer EIP supports 5 options which are listed below:
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *messageIdRepositoryRef* | *Required* Sets the reference name of the message id repository |  | String
+| *eager* | Sets whether to eagerly add the key to the idempotent repository or wait until the exchange is complete. Eager is default enabled. | true | Boolean
+| *completionEager* | Sets whether to complete the idempotent consumer eager or when the exchange is done. If this option is true to complete eager then the idempotent consumer will trigger its completion when the exchange reached the end of the block of the idempotent consumer pattern. So if the exchange is continued routed after the block ends then whatever happens there does not affect the state. If this option is false (default) to not complete eager then the idempotent consumer will complete when the exchange is done being routed. So if the exchange is continued routed after the block ends then whatever happens there also affect the state. For example if the exchange failed due to an exception then the state of the idempotent consumer will be a rollback. | false | Boolean
+| *skipDuplicate* | Sets whether to skip duplicates or not. The default behavior is to skip duplicates. A duplicate message would have the Exchange property link org.apache.camel.ExchangeDUPLICATE_MESSAGE set to a link BooleanTRUE value. A none duplicate message will not have this property set. | true | Boolean
+| *removeOnFailure* | Sets whether to remove or keep the key on failure. The default behavior is to remove the key on failure. | true | Boolean
+|===
+// eip options: END
