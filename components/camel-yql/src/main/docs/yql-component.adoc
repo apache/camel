@@ -1,0 +1,117 @@
+== Yahoo Query Language Component
+
+*Available as of Camel version 2.21*
+
+The *yql* component is used for accessing the https://developer.yahoo.com/yql/[Yahoo Query Language platform].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-yql</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+--------------------------------------------
+yql://query[?options]
+--------------------------------------------
+
+Where *query* represents the YQL query.
+
+### Options
+
+// component options: START
+The Yahoo Query Language component has no options.
+// component options: END
+
+// endpoint options: START
+The Yahoo Query Language endpoint is configured using URI syntax:
+
+----
+yql:query
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *query* | *Required* Set the YQL query |  | String
+|===
+
+==== Query Parameters (4 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *callback* (producer) | Set the callback function |  | String
+| *diagnostics* (producer) | Set if diagnostics should be included in the query | false | boolean
+| *format* (producer) | Set the YQL format xml or json |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+### Exchange data format
+
+Camel will deliver the body as a JSON or XML formatted java.lang.String (see
+the `format` option above).
+
+### Message Headers
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Header |Description
+|`CamelYqlHttpRequest` | Http request sent to YQL
+|`CamelYqlHttpStatus` | Status code from the response
+|=======================================================================
+
+### Samples
+
+In this example we query YQL to obtain Google quote:
+
+[source,java]
+--------------------------------------------------------
+from("direct:start")
+  .to("yql://select * from yahoo.finance.quotes where symbol in ('GOOG')?format=json");
+--------------------------------------------------------
+
+Which will setup the body as:
+
+[source,json]
+--------------------------------------------------------
+{
+ "query": {
+  "count": 1,
+  "created": "2017-10-29T03:17:28Z",
+  "lang": "en-US",
+  "results": {
+   "quote": {
+    "symbol": "GOOG",
+    "Ask": "1024.50",
+    "AverageDailyVolume": "1356700",
+    "Bid": "1019.27",
+    ...
+   }
+  }
+ }
+}
+--------------------------------------------------------
+
+and the headers:
+
+[width="100%",cols="30%,70%",options="header",]
+|=======================================================================
+|Header |Value
+|`CamelYqlHttpRequest` |http://query.yahooapis.com/v1/public/yql?format=json&diagnostics=false&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=yqlCallback&q=select+*+from+yahoo.finance.quotes+where+symbol+in+%28%27GOOG%27%29
+|`CamelYqlHttpStatus` |200
+|=======================================================================
