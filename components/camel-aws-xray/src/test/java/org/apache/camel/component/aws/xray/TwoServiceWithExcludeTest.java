@@ -24,42 +24,42 @@ import org.junit.Test;
 
 public class TwoServiceWithExcludeTest extends CamelAwsXRayTestSupport {
 
-  public TwoServiceWithExcludeTest() {
-    super(
-        TestDataBuilder.createTrace().inRandomOrder()
-            .withSegment(TestDataBuilder.createSegment("ServiceA")
-                .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_direct_ServiceB"))
-            )
-    );
-  }
+    public TwoServiceWithExcludeTest() {
+        super(
+            TestDataBuilder.createTrace().inRandomOrder()
+                .withSegment(TestDataBuilder.createSegment("ServiceA")
+                    .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_direct_ServiceB"))
+                )
+        );
+    }
 
-  @Override
-  protected Set<String> getExcludePatterns() {
-    return Collections.singleton("ServiceB");
-  }
+    @Override
+    protected Set<String> getExcludePatterns() {
+        return Collections.singleton("ServiceB");
+    }
 
-  @Test
-  public void testRoute() throws Exception {
-    template.requestBody("direct:ServiceA", "Hello");
+    @Test
+    public void testRoute() throws Exception {
+        template.requestBody("direct:ServiceA", "Hello");
 
-    Thread.sleep(500);
-    verify();
-  }
+        Thread.sleep(500);
+        verify();
+    }
 
-  @Override
-  protected RoutesBuilder createRouteBuilder() throws Exception {
-    return new RouteBuilder() {
-      @Override
-      public void configure() throws Exception {
-        from("direct:ServiceA").routeId("ServiceA")
-            .log("ServiceA has been called")
-            .delay(simple("${random(1000,2000)}"))
-            .to("direct:ServiceB");
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:ServiceA").routeId("ServiceA")
+                    .log("ServiceA has been called")
+                    .delay(simple("${random(1000,2000)}"))
+                    .to("direct:ServiceB");
 
-        from("direct:ServiceB").routeId("ServiceB")
-            .log("ServiceB has been called")
-            .delay(simple("${random(0,500)}"));
-      }
-    };
-  }
+                from("direct:ServiceB").routeId("ServiceB")
+                    .log("ServiceB has been called")
+                    .delay(simple("${random(0,500)}"));
+            }
+        };
+    }
 }

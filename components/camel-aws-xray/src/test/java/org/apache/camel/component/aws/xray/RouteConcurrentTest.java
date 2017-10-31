@@ -23,39 +23,39 @@ import org.junit.Test;
 
 public class RouteConcurrentTest extends CamelAwsXRayTestSupport {
 
-  public RouteConcurrentTest() {
-    super(
-        TestDataBuilder.createTrace().inRandomOrder()
-            .withSegment(TestDataBuilder.createSegment("foo"))
-            .withSegment(TestDataBuilder.createSegment("bar"))
-    );
-  }
+    public RouteConcurrentTest() {
+        super(
+            TestDataBuilder.createTrace().inRandomOrder()
+                .withSegment(TestDataBuilder.createSegment("foo"))
+                .withSegment(TestDataBuilder.createSegment("bar"))
+        );
+    }
 
-  @Test
-  public void testRoute() throws Exception {
-    NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
+    @Test
+    public void testRoute() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 
-    template.sendBody("seda:foo", "Hello World");
+        template.sendBody("seda:foo", "Hello World");
 
-    assertTrue(notify.matches(30, TimeUnit.SECONDS));
+        assertTrue(notify.matches(30, TimeUnit.SECONDS));
 
-    verify();
-  }
+        verify();
+    }
 
-  @Override
-  protected RouteBuilder createRouteBuilder() throws Exception {
-    return new RouteBuilder() {
-      @Override
-      public void configure() throws Exception {
-        from("seda:foo?concurrentConsumers=5").routeId("foo")
-            .log("routing at ${routeId}")
-            .delay(simple("${random(1000,2000)}"))
-            .to("seda:bar");
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("seda:foo?concurrentConsumers=5").routeId("foo")
+                    .log("routing at ${routeId}")
+                    .delay(simple("${random(1000,2000)}"))
+                    .to("seda:bar");
 
-        from("seda:bar?concurrentConsumers=5").routeId("bar")
-            .log("routing at ${routeId}")
-            .delay(simple("${random(0,500)}"));
-      }
-    };
-  }
+                from("seda:bar?concurrentConsumers=5").routeId("bar")
+                    .log("routing at ${routeId}")
+                    .delay(simple("${random(0,500)}"));
+            }
+        };
+    }
 }
