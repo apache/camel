@@ -28,9 +28,6 @@ public class YqlComponent extends DefaultComponent {
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
         final YqlConfiguration configuration = new YqlConfiguration();
         configuration.setQuery(remaining);
-        configuration.setFormat((String) parameters.getOrDefault("format", "json"));
-        configuration.setDiagnostics(Boolean.getBoolean((String) parameters.getOrDefault("diagnostics", "false")));
-        configuration.setCallback((String) parameters.getOrDefault("callback", ""));
 
         final Endpoint endpoint = new YqlEndpoint(uri, this, configuration);
 

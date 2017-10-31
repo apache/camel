@@ -82,20 +82,6 @@ public class YqlConfigurationValidatorTest {
     }
 
     @Test
-    public void testEmptyFormat() {
-        // then
-        thrown.expect(YqlException.class);
-        thrown.expectMessage("<format> is not valid!");
-
-        // given
-        final YqlConfiguration yqlConfiguration = new YqlConfiguration();
-        yqlConfiguration.setQuery("query");
-
-        // when
-        YqlConfigurationValidator.validateProperties(yqlConfiguration);
-    }
-
-    @Test
     public void testWrongFormat() {
         // then
         thrown.expect(YqlException.class);
