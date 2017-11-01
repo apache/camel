@@ -27,11 +27,13 @@ public class YqlConfigurationValidatorTest {
     public final ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void testGoodQuery() {
+    public void testValidQuery() {
         // given
         final YqlConfiguration yqlConfiguration = new YqlConfiguration();
         yqlConfiguration.setQuery("select * from ...");
         yqlConfiguration.setFormat("json");
+        yqlConfiguration.setCrossProduct("optimized");
+        yqlConfiguration.setJsonCompat("new");
 
         // when
         YqlConfigurationValidator.validateProperties(yqlConfiguration);
@@ -91,6 +93,39 @@ public class YqlConfigurationValidatorTest {
         final YqlConfiguration yqlConfiguration = new YqlConfiguration();
         yqlConfiguration.setQuery("query");
         yqlConfiguration.setFormat("format");
+
+        // when
+        YqlConfigurationValidator.validateProperties(yqlConfiguration);
+    }
+
+    @Test
+    public void testWrongCrossProduct() {
+        // then
+        thrown.expect(YqlException.class);
+        thrown.expectMessage("<crossProduct> is not valid!");
+
+        // given
+        final YqlConfiguration yqlConfiguration = new YqlConfiguration();
+        yqlConfiguration.setQuery("query");
+        yqlConfiguration.setFormat("xml");
+        yqlConfiguration.setCrossProduct("optimizedddd");
+
+        // when
+        YqlConfigurationValidator.validateProperties(yqlConfiguration);
+    }
+
+    @Test
+    public void testWrongJsonCompat() {
+        // then
+        thrown.expect(YqlException.class);
+        thrown.expectMessage("<jsonCompat> is not valid!");
+
+        // given
+        final YqlConfiguration yqlConfiguration = new YqlConfiguration();
+        yqlConfiguration.setQuery("query");
+        yqlConfiguration.setFormat("xml");
+        yqlConfiguration.setCrossProduct("optimized");
+        yqlConfiguration.setJsonCompat("neww");
 
         // when
         YqlConfigurationValidator.validateProperties(yqlConfiguration);

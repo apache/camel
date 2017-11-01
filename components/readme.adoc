@@ -1044,7 +1044,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 38 in 38 JAR artifacts (14 deprecated)
+Number of Miscellaneous Components: 37 in 37 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1099,8 +1099,6 @@ Number of Miscellaneous Components: 38 in 38 JAR artifacts (14 deprecated)
 | link:camel-spring-cloud/src/main/docs/spring-cloud.adoc[Spring Cloud] (camel-spring-cloud) | 2.19 | Camel Cloud integration with Spring Cloud
 
 | link:camel-spring-cloud-netflix/src/main/docs/spring-cloud-netflix.adoc[Spring Cloud Netflix] (camel-spring-cloud-netflix) | 2.19 | Camel Cloud integration with Spring Cloud Netflix
-
-| link:camel-spring-dm/src/main/docs/spring-dm.adoc[Spring DM] (camel-spring-dm) | 2.18 | *deprecated* Camel SpringDM (OSGi) XML DSL
 
 | link:camel-spring-javaconfig/src/main/docs/spring-javaconfig.adoc[Spring Java Configuration] (camel-spring-javaconfig) | 2.0 | Using Camel with Spring Java Configuration
 
