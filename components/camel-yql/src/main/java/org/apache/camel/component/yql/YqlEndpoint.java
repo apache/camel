@@ -28,7 +28,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
-@UriEndpoint(firstVersion = "2.21.0", scheme = "yql", title = "Yahoo Query Language", syntax = "yql:query", producerOnly = true, label = "api,http")
+@UriEndpoint(firstVersion = "2.21.0", scheme = "yql", title = "Yahoo Query Language", syntax = "yql:query", producerOnly = true, label = "yql")
 public class YqlEndpoint extends DefaultEndpoint {
 
     @UriParam
