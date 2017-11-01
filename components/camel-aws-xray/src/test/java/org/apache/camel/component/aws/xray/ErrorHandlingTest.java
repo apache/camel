@@ -46,8 +46,8 @@ public class ErrorHandlingTest extends CamelAwsXRayTestSupport {
                         .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
 //                      .withSubsegment(TestDataBuilder.createSubsegment("ExceptionRetryProcessor"))
                         .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
-                        .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_seda_otherRoute"))
-                        .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_mock_end"))
+                        .withSubsegment(TestDataBuilder.createSubsegment("seda-otherRoute"))
+                        .withSubsegment(TestDataBuilder.createSubsegment("mock-end"))
                 )
                 .withSegment(TestDataBuilder.createSegment("otherRoute"))
         );

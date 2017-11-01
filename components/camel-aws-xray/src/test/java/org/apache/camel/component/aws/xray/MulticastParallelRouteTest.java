@@ -25,15 +25,15 @@ public class MulticastParallelRouteTest extends CamelAwsXRayTestSupport {
         super(
             TestDataBuilder.createTrace().inRandomOrder()
                 .withSegment(TestDataBuilder.createSegment("start")
-                    .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_seda_a"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("seda-a"))
                 )
                 .withSegment(TestDataBuilder.createSegment("a").inRandomOrder()
-                    .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_seda_b"))
-                    .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_seda_c"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("seda-b"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("seda-c"))
                 )
                 .withSegment(TestDataBuilder.createSegment("b"))
                 .withSegment(TestDataBuilder.createSegment("c")
-                    .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_log_routing%20at%20$%7BrouteId%7D"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("log-routing%20at%20$%7BrouteId%7D"))
                 )
         );
     }
