@@ -1449,7 +1449,6 @@
     <bundle dependency='true'>mvn:org.bouncycastle/bcpkix-jdk15on/${bouncycastle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.pdfbox/pdfbox/${pdfbox-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.pdfbox/fontbox/${pdfbox-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.pdfbox/jempbox/${pdfbox-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-pdf/${project.version}</bundle>
   </feature>
   <feature name='camel-pgevent' version='${project.version}' resolver='(obr)' start-level='50'>

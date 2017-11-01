@@ -45,14 +45,14 @@ public class PdfConfiguration {
     private static final Map<String, PDRectangle> PAGE_MAP = new HashMap<String, PDRectangle>();
 
     static {
-        PAGE_MAP.put(PAGE_SIZE_A0, PDPage.PAGE_SIZE_A0);
-        PAGE_MAP.put(PAGE_SIZE_A1, PDPage.PAGE_SIZE_A1);
-        PAGE_MAP.put(PAGE_SIZE_A2, PDPage.PAGE_SIZE_A2);
-        PAGE_MAP.put(PAGE_SIZE_A3, PDPage.PAGE_SIZE_A3);
-        PAGE_MAP.put(PAGE_SIZE_A4, PDPage.PAGE_SIZE_A4);
-        PAGE_MAP.put(PAGE_SIZE_A5, PDPage.PAGE_SIZE_A5);
-        PAGE_MAP.put(PAGE_SIZE_A6, PDPage.PAGE_SIZE_A6);
-        PAGE_MAP.put(PAGE_SIZE_LETTER, PDPage.PAGE_SIZE_LETTER);
+        PAGE_MAP.put(PAGE_SIZE_A0, PDRectangle.A0);
+        PAGE_MAP.put(PAGE_SIZE_A1, PDRectangle.A1);
+        PAGE_MAP.put(PAGE_SIZE_A2, PDRectangle.A2);
+        PAGE_MAP.put(PAGE_SIZE_A3, PDRectangle.A3);
+        PAGE_MAP.put(PAGE_SIZE_A4, PDRectangle.A4);
+        PAGE_MAP.put(PAGE_SIZE_A5, PDRectangle.A5);
+        PAGE_MAP.put(PAGE_SIZE_A6, PDRectangle.A6);
+        PAGE_MAP.put(PAGE_SIZE_LETTER, PDRectangle.LETTER);
     }
 
     @UriPath(description = "Operation type")
@@ -69,7 +69,7 @@ public class PdfConfiguration {
     @UriParam(defaultValue = "14")
     private float fontSize = 14;
     @UriParam(defaultValue = "PAGE_SIZE_A4", enums = "PAGE_SIZE_A0,PAGE_SIZE_A1,PAGE_SIZE_A2,PAGE_SIZE_A3,PAGE_SIZE_A4,PAGE_SIZE_A5,PAGE_SIZE_A6,PAGE_SIZE_LETTER")
-    private PDRectangle pageSize = PDPage.PAGE_SIZE_A4;
+    private PDRectangle pageSize = PDRectangle.A4;
     @UriParam(defaultValue = "Helvetica")
     private PDFont font = PDType1Font.HELVETICA;
     @UriParam(defaultValue = "lineTermination")
@@ -169,7 +169,7 @@ public class PdfConfiguration {
     }
 
     public void setFont(String font) {
-        setFont(PDType1Font.getStandardFont(font));
+        setFont(Standard14Fonts.getByName(font));
     }
 
     public TextProcessingFactory getTextProcessingFactory() {

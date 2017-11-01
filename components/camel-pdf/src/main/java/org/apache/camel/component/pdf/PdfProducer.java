@@ -29,15 +29,11 @@ import org.apache.camel.component.pdf.text.SplitStrategy;
 import org.apache.camel.component.pdf.text.TextProcessingAbstractFactory;
 import org.apache.camel.component.pdf.text.WriteStrategy;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.pdfbox.exceptions.COSVisitorException;
-import org.apache.pdfbox.exceptions.CryptographyException;
-import org.apache.pdfbox.exceptions.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
 import org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.ProtectionPolicy;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
-import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +79,7 @@ public class PdfProducer extends DefaultProducer {
         exchange.getOut().setBody(result);
     }
 
-    private Object doAppend(Exchange exchange) throws IOException, BadSecurityHandlerException, CryptographyException, InvalidPasswordException, COSVisitorException {
+    private Object doAppend(Exchange exchange) throws IOException {
         LOG.debug("Got {} operation, going to append text to provided pdf.", pdfConfiguration.getOperation());
         String body = exchange.getIn().getBody(String.class);
         PDDocument document = exchange.getIn().getHeader(PDF_DOCUMENT_HEADER_NAME, PDDocument.class);
@@ -93,16 +89,6 @@ public class PdfProducer extends DefaultProducer {
         }
 
         if (document.isEncrypted()) {
-            DecryptionMaterial decryptionMaterial = exchange.getIn().getHeader(DECRYPTION_MATERIAL_HEADER_NAME,
-                    DecryptionMaterial.class);
-            if (decryptionMaterial == null) {
-                throw new IllegalArgumentException(String.format("%s header is expected for %s operation "
-                                + "on encrypted document",
-                        DECRYPTION_MATERIAL_HEADER_NAME,
-                        pdfConfiguration.getOperation()));
-            }
-
-            document.openProtection(decryptionMaterial);
             document.setAllSecurityToBeRemoved(true);
         }
 
@@ -115,27 +101,16 @@ public class PdfProducer extends DefaultProducer {
         return byteArrayOutputStream;
     }
 
-    private String doExtractText(Exchange exchange) throws IOException, CryptographyException, InvalidPasswordException, BadSecurityHandlerException {
+    private String doExtractText(Exchange exchange) throws IOException {
         LOG.debug("Got {} operation, going to extract text from provided pdf.", pdfConfiguration.getOperation());
         PDDocument document = exchange.getIn().getBody(PDDocument.class);
 
-        if (document.isEncrypted()) {
-            DecryptionMaterial decryptionMaterial = exchange.getIn().getHeader(DECRYPTION_MATERIAL_HEADER_NAME,
-                    DecryptionMaterial.class);
-            if (decryptionMaterial == null) {
-                throw new IllegalArgumentException(String.format("%s header is expected for %s operation "
-                                + "on encrypted document",
-                        DECRYPTION_MATERIAL_HEADER_NAME,
-                        pdfConfiguration.getOperation()));
-            }
-            document.openProtection(decryptionMaterial);
-        }
 
         PDFTextStripper pdfTextStripper = new PDFTextStripper();
         return pdfTextStripper.getText(document);
     }
 
-    private OutputStream doCreate(Exchange exchange) throws IOException, BadSecurityHandlerException, COSVisitorException {
+    private OutputStream doCreate(Exchange exchange) throws IOException {
         LOG.debug("Got {} operation, going to create and write provided string to pdf document.",
                 pdfConfiguration.getOperation());
         String body = exchange.getIn().getBody(String.class);
@@ -148,7 +123,7 @@ public class PdfProducer extends DefaultProducer {
         return byteArrayOutputStream;
     }
 
-    private void appendToPdfDocument(String text, PDDocument document, ProtectionPolicy protectionPolicy) throws IOException, BadSecurityHandlerException {
+    private void appendToPdfDocument(String text, PDDocument document, ProtectionPolicy protectionPolicy) throws IOException {
         Collection<String> words = splitStrategy.split(text);
         Collection<String> lines = lineBuilderStrategy.buildLines(words);
         writeStrategy.write(lines, document);

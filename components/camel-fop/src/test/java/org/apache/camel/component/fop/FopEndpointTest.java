@@ -80,12 +80,15 @@ public class FopEndpointTest extends CamelTestSupport {
         Endpoint endpoint = context().getEndpoint("fop:pdf");
         Producer producer = endpoint.createProducer();
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader("CamelFop.Encrypt.userPassword", "secret");
+        final String password = "secret";
+        exchange.getIn().setHeader("CamelFop.Encrypt.userPassword", password);
         exchange.getIn().setBody(FopHelper.decorateTextWithXSLFO("Test Content"));
 
         producer.process(exchange);
-        PDDocument document = getDocumentFrom(exchange);
-        assertTrue(document.isEncrypted());
+        try (InputStream inputStream = exchange.getOut().getBody(InputStream.class)) {
+            PDDocument document = PDDocument.load(inputStream, password);
+            assertTrue(document.isEncrypted());
+        }
     }
 
     @Test
