@@ -17,9 +17,8 @@
 package org.apache.camel.component.aws.xray;
 
 import java.lang.invoke.MethodHandles;
-import java.util.EventObject;
-import java.util.HashSet;
-import java.util.Set;
+import java.net.URI;
+import java.util.*;
 
 import com.amazonaws.xray.AWSXRay;
 import com.amazonaws.xray.entities.Segment;
@@ -28,6 +27,7 @@ import com.amazonaws.xray.entities.TraceID;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.StaticService;
@@ -69,6 +69,8 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    private static Map<String, SegmentDecorator> decorators = new HashMap<>();
+
     /** Exchange property for passing a segment between threads **/
     private static final String CURRENT_SEGMENT = "CAMEL_PROPERTY_AWS_XRAY_CURRENT_SEGMENT";
 
@@ -77,6 +79,17 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
 
     private Set<String> excludePatterns = new HashSet<>();
     private InterceptStrategy tracingStrategy;
+
+    static {
+        ServiceLoader.load(SegmentDecorator.class).forEach(d -> {
+            SegmentDecorator existing = decorators.get(d.getComponent());
+            // Add segment decorator only if no existing decorator for the component exists yet or if we have have a
+            // derived one. This allows custom decorators to be added if they extend the standard decorators
+            if (existing == null || existing.getClass().isInstance(d)) {
+                decorators.put(d.getComponent(), d);
+            }
+        });
+    }
 
     @Override
     public void setCamelContext(CamelContext camelContext) {
@@ -153,10 +166,10 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     /**
      * Specifies the instance responsible for tracking invoked EIP and beans with AWS XRay.
      *
-     * @param traceingStrategy The instance which tracks invoked EIP and beans
+     * @param tracingStrategy The instance which tracks invoked EIP and beans
      */
-    public void setTracingStrategy(InterceptStrategy traceingStrategy) {
-        this.tracingStrategy = traceingStrategy;
+    public void setTracingStrategy(InterceptStrategy tracingStrategy) {
+        this.tracingStrategy = tracingStrategy;
     }
 
     /**
@@ -202,6 +215,14 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
         return false;
     }
 
+    protected SegmentDecorator getSegmentDecorator(Endpoint endpoint) {
+        SegmentDecorator sd = decorators.get(URI.create(endpoint.getEndpointUri()).getScheme());
+        if (null == sd) {
+            return SegmentDecorator.DEFAULT;
+        }
+        return sd;
+    }
+
     /**
      * Custom camel event handler that will create a new {@link Subsegment XRay subsegment} in case
      * the current exchange is forwarded via <code>.to(someEndpoint)</code> to some endpoint and
@@ -239,13 +260,16 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                     AWSXRay.setTraceEntity(segment);
                 }
 
+                SegmentDecorator sd = getSegmentDecorator(ese.getEndpoint());
+                if (!sd.newSegment()) {
+                    return;
+                }
+
                 if (AWSXRay.getCurrentSegmentOptional().isPresent()) {
-                    String endpointName = ese.getEndpoint().getEndpointKey();
-                    // AWS XRay does only allow a certain set of characters to appear within a name
-                    // Allowed characters: a-z, A-Z, 0-9, _, ., :, /, %, &, #, =, +, \, -, @
-                    endpointName = endpointName.replaceAll("://", "_");
-                    endpointName = endpointName.replaceAll("\\?", "&");
-                    Subsegment subsegment = AWSXRay.beginSubsegment("SendingTo_" + endpointName);
+//                    // AWS XRay does only allow a certain set of characters to appear within a name
+//                    // Allowed characters: a-z, A-Z, 0-9, _, ., :, /, %, &, #, =, +, \, -, @
+                    Subsegment subsegment = AWSXRay.beginSubsegment(sd.getOperationName(ese.getExchange(), ese.getEndpoint()));
+                    sd.pre(subsegment, ese.getExchange(), ese.getEndpoint());
                     LOG.trace("Creating new subsegment with ID {} and name {}",
                             subsegment.getId(), subsegment.getName());
                 } else {
@@ -257,8 +281,11 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 LOG.trace("-> {} - target: {} (routeId: {})",
                         event.getClass().getSimpleName(), ese.getEndpoint(), ese.getExchange().getFromRouteId());
 
+                SegmentDecorator sd = getSegmentDecorator(ese.getEndpoint());
+
                 if (AWSXRay.getCurrentSubsegmentOptional().isPresent()) {
                     Subsegment subsegment = AWSXRay.getCurrentSubsegment();
+                    sd.post(subsegment, ese.getExchange(), ese.getEndpoint());
                     subsegment.close();
                     LOG.trace("Closing down subsegment with ID {} and name {}",
                             subsegment.getId(), subsegment.getName());
@@ -273,6 +300,11 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
             // listen for either when an exchange invoked an other endpoint
             return event instanceof ExchangeSendingEvent
                     || event instanceof ExchangeSentEvent;
+        }
+
+        @Override
+        public String toString() {
+            return "XRayEventNotifier";
         }
     }
 
@@ -316,14 +348,17 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 exchange.getIn().setHeader(XRAY_TRACE_ID, traceID.toString());
             }
 
+            SegmentDecorator sd = getSegmentDecorator(route.getEndpoint());
             if (!AWSXRay.getCurrentSegmentOptional().isPresent()) {
                 Segment segment = AWSXRay.beginSegment(route.getId());
                 segment.setTraceId(traceID);
+                sd.pre(segment, exchange, route.getEndpoint());
                 LOG.trace("Created new XRay segment {} with name {}",
                         segment.getId(), segment.getName());
                 exchange.setProperty(CURRENT_SEGMENT, segment);
             } else {
                 Subsegment subsegment = AWSXRay.beginSubsegment(route.getId());
+                sd.pre(subsegment, exchange, route.getEndpoint());
                 LOG.trace("Created new XRay subsegment {} with name {}",
                         subsegment.getId(), subsegment.getName());
             }
@@ -338,17 +373,25 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
 
             LOG.trace("=> RoutePolicy-Done: Route: {} - RouteId: {}", routeId, route.getId());
 
+            SegmentDecorator sd = getSegmentDecorator(route.getEndpoint());
             if (AWSXRay.getCurrentSubsegmentOptional().isPresent()) {
                 Subsegment subsegment = AWSXRay.getCurrentSubsegment();
+                sd.post(subsegment, exchange, route.getEndpoint());
                 subsegment.close();
                 LOG.trace("Closing down Subsegment {} with name {}",
                         subsegment.getId(), subsegment.getName());
             } else if (AWSXRay.getCurrentSegmentOptional().isPresent()) {
                 Segment segment = AWSXRay.getCurrentSegment();
+                sd.post(segment, exchange, route.getEndpoint());
                 segment.close();
                 LOG.trace("Closing down Segment {} with name {}",
                         segment.getId(), segment.getName());
             }
+        }
+
+        @Override
+        public String toString() {
+            return "XRayRoutePolicy";
         }
     }
 }
