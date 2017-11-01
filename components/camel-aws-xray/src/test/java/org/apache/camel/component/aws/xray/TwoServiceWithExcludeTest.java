@@ -28,7 +28,7 @@ public class TwoServiceWithExcludeTest extends CamelAwsXRayTestSupport {
         super(
             TestDataBuilder.createTrace().inRandomOrder()
                 .withSegment(TestDataBuilder.createSegment("ServiceA")
-                    .withSubsegment(TestDataBuilder.createSubsegment("SendingTo_direct_ServiceB"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("direct-ServiceB"))
                 )
         );
     }
