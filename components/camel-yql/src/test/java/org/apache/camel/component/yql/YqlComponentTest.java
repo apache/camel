@@ -60,7 +60,7 @@ public class YqlComponentTest extends CamelTestSupport {
     @Test
     public void testConfigurationSetup() {
         // given
-        final YqlEndpoint yqlEndpoint = (YqlEndpoint) context.getEndpoint("yql://query?format=xml&callback=yqlCallback&diagnostics=true");
+        final YqlEndpoint yqlEndpoint = (YqlEndpoint) context.getEndpoint("yql://query?format=xml&callback=yqlCallback&diagnostics=true&debug=true&https=false&throwExceptionOnFailure=false&jsonCompat=new");
 
         // when
         final YqlConfiguration yqlConfiguration = yqlEndpoint.getConfiguration();
@@ -70,7 +70,10 @@ public class YqlComponentTest extends CamelTestSupport {
         assertEquals("query", yqlConfiguration.getQuery());
         assertEquals("xml", yqlConfiguration.getFormat());
         assertEquals("yqlCallback", yqlConfiguration.getCallback());
+        assertTrue(yqlConfiguration.isDebug());
         assertTrue(yqlConfiguration.isDiagnostics());
+        assertFalse(yqlConfiguration.isHttps());
+        assertFalse(yqlConfiguration.isThrowExceptionOnFailure());
     }
 
     @Test
@@ -86,7 +89,13 @@ public class YqlComponentTest extends CamelTestSupport {
         assertEquals("query", yqlConfiguration.getQuery());
         assertEquals("json", yqlConfiguration.getFormat());
         assertThat(yqlConfiguration.getCallback(), is(emptyString()));
+        assertNull(yqlConfiguration.getCrossProduct());
         assertFalse(yqlConfiguration.isDiagnostics());
+        assertFalse(yqlConfiguration.isDebug());
+        assertNull(yqlConfiguration.getEnv());
+        assertNull(yqlConfiguration.getJsonCompat());
+        assertTrue(yqlConfiguration.isThrowExceptionOnFailure());
+        assertTrue(yqlConfiguration.isHttps());
     }
 
     @Test
