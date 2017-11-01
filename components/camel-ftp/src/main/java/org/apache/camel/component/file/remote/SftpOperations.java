@@ -24,9 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
@@ -46,7 +43,6 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LoggingLevel;
@@ -59,7 +55,6 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
-
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
@@ -72,7 +67,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * <p/>
  * The JSCH session and channel are not thread-safe so we need to synchronize access to using this operation.
  */
-public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry> {
+public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     private static final Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
     private static final Pattern UP_DIR_PATTERN = Pattern.compile("/[^/]+");
     private Proxy proxy;
@@ -93,7 +88,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     public interface ExtendedUserInfo extends UserInfo, UIKeyboardInteractive {
     }
 
-    public void setEndpoint(GenericFileEndpoint<ChannelSftp.LsEntry> endpoint) {
+    public void setEndpoint(GenericFileEndpoint<SftpRemoteFile> endpoint) {
         this.endpoint = (SftpEndpoint) endpoint;
     }
 
@@ -623,11 +618,11 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         changeCurrentDirectory(parent);
     }
 
-    public synchronized List<ChannelSftp.LsEntry> listFiles() throws GenericFileOperationFailedException {
+    public synchronized List<SftpRemoteFile> listFiles() throws GenericFileOperationFailedException {
         return listFiles(".");
     }
 
-    public synchronized List<ChannelSftp.LsEntry> listFiles(String path) throws GenericFileOperationFailedException {
+    public synchronized List<SftpRemoteFile> listFiles(String path) throws GenericFileOperationFailedException {
         LOG.trace("listFiles({})", path);
         if (ObjectHelper.isEmpty(path)) {
             // list current directory if file path is not given
@@ -635,14 +630,14 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
 
         try {
-            final List<ChannelSftp.LsEntry> list = new ArrayList<ChannelSftp.LsEntry>();
+            final List<SftpRemoteFile> list = new ArrayList<>();
 
             @SuppressWarnings("rawtypes")
             Vector files = channel.ls(path);
             // can return either null or an empty list depending on FTP servers
             if (files != null) {
                 for (Object file : files) {
-                    list.add((ChannelSftp.LsEntry) file);
+                    list.add(new SftpRemoteFileJCraft((ChannelSftp.LsEntry) file));
                 }
             }
             return list;
