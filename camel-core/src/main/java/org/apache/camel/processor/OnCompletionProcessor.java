@@ -143,6 +143,8 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
         Object errorhandlerHandled = exchange.removeProperty(Exchange.ERRORHANDLER_HANDLED);
         Object rollbackOnly = exchange.removeProperty(Exchange.ROLLBACK_ONLY);
         Object rollbackOnlyLast = exchange.removeProperty(Exchange.ROLLBACK_ONLY_LAST);
+        // and we should not be regarded as exhausted as we are in a onCompletion block
+        Object exhausted = exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
 
         Exception cause = exchange.getException();
         exchange.setException(null);
@@ -167,6 +169,9 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
             }
             if (rollbackOnlyLast != null) {
                 exchange.setProperty(Exchange.ROLLBACK_ONLY_LAST, rollbackOnlyLast);
+            }
+            if (exhausted != null) {
+                exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, exhausted);
             }
             if (cause != null) {
                 exchange.setException(cause);
