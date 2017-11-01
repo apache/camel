@@ -32,13 +32,13 @@ import org.apache.camel.util.URISupport;
 /**
  * Secure FTP consumer
  */
-public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
+public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
 
     private String endpointPath;
 
     private transient String sftpConsumerToString;
 
-    public SftpConsumer(RemoteFileEndpoint<ChannelSftp.LsEntry> endpoint, Processor processor, RemoteFileOperations<ChannelSftp.LsEntry> operations) {
+    public SftpConsumer(RemoteFileEndpoint<SftpRemoteFile> endpoint, Processor processor, RemoteFileOperations<SftpRemoteFile> operations) {
         super(endpoint, processor, operations);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
@@ -70,7 +70,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
     }
 
     @Override
-    protected boolean pollDirectory(String fileName, List<GenericFile<ChannelSftp.LsEntry>> fileList, int depth) {
+    protected boolean pollDirectory(String fileName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
         String currentDir = null;
         if (isStepwise()) {
             // must remember current dir so we stay in that directory after the poll
@@ -88,7 +88,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         return answer;
     }
 
-    protected boolean pollSubDirectory(String absolutePath, String dirName, List<GenericFile<ChannelSftp.LsEntry>> fileList, int depth) {
+    protected boolean pollSubDirectory(String absolutePath, String dirName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
         boolean answer = doSafePollSubDirectory(absolutePath, dirName, fileList, depth);
         // change back to parent directory when finished polling sub directory
         if (isStepwise()) {
@@ -97,7 +97,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         return answer;
     }
 
-    protected boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<ChannelSftp.LsEntry>> fileList, int depth) {
+    protected boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
         log.trace("doPollDirectory from absolutePath: {}, dirName: {}", absolutePath, dirName);
 
         depth++;
@@ -114,7 +114,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         }
 
         log.trace("Polling directory: {}", dir);
-        List<ChannelSftp.LsEntry> files;
+        List<SftpRemoteFile> files;
         if (isStepwise()) {
             files = operations.listFiles();
         } else {
@@ -129,10 +129,10 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
             log.trace("Found {} in directory: {}", files.size(), dir);
         }
 
-        for (ChannelSftp.LsEntry file : files) {
+        for (SftpRemoteFile file : files) {
 
             if (log.isTraceEnabled()) {
-                log.trace("SftpFile[fileName={}, longName={}, dir={}]", new Object[]{file.getFilename(), file.getLongname(), file.getAttrs().isDir()});
+                log.trace("SftpFile[fileName={}, longName={}, dir={}]", new Object[]{file.getFilename(), file.getLongname(), file.isDirectory()});
             }
 
             // check if we can continue polling in files
@@ -140,8 +140,8 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
                 return false;
             }
 
-            if (file.getAttrs().isDir()) {
-                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
+            if (file.isDirectory()) {
+                RemoteFile<SftpRemoteFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = file.getFilename();
@@ -154,7 +154,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
                 // we cannot use file.getAttrs().isLink on Windows, so we dont invoke the method
                 // just assuming its a file we should poll
             } else {
-                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
+                RemoteFile<SftpRemoteFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
                 if (depth >= endpoint.getMinDepth() && isValidFile(remote, false, files)) {
                     // matched file so add
                     fileList.add(remote);
@@ -166,10 +166,10 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
     }
 
     @Override
-    protected boolean isMatched(GenericFile<ChannelSftp.LsEntry> file, String doneFileName, List<ChannelSftp.LsEntry> files) {
+    protected boolean isMatched(GenericFile<SftpRemoteFile> file, String doneFileName, List<SftpRemoteFile> files) {
         String onlyName = FileUtil.stripPath(doneFileName);
 
-        for (ChannelSftp.LsEntry f : files) {
+        for (SftpRemoteFile f : files) {
             if (f.getFilename().equals(onlyName)) {
                 return true;
             }
@@ -190,17 +190,17 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         return super.ignoreCannotRetrieveFile(name, exchange, cause);
     }
 
-    private RemoteFile<ChannelSftp.LsEntry> asRemoteFile(String absolutePath, ChannelSftp.LsEntry file, String charset) {
-        RemoteFile<ChannelSftp.LsEntry> answer = new RemoteFile<ChannelSftp.LsEntry>();
+    private RemoteFile<SftpRemoteFile> asRemoteFile(String absolutePath, SftpRemoteFile file, String charset) {
+        RemoteFile<SftpRemoteFile> answer = new RemoteFile<SftpRemoteFile>();
 
         answer.setCharset(charset);
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileNameOnly(file.getFilename());
-        answer.setFileLength(file.getAttrs().getSize());
-        answer.setLastModified(file.getAttrs().getMTime() * 1000L);
+        answer.setFileLength(file.getFileLength());
+        answer.setLastModified(file.getLastModified());
         answer.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
-        answer.setDirectory(file.getAttrs().isDir());
+        answer.setDirectory(file.isDirectory());
 
         // absolute or relative path
         boolean absolute = FileUtil.hasLeadingSeparator(absolutePath);
@@ -228,16 +228,20 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
     }
 
     @Override
-    protected void updateFileHeaders(GenericFile<ChannelSftp.LsEntry> file, Message message) {
-        long length = file.getFile().getAttrs().getSize();
-        long modified = file.getFile().getAttrs().getMTime() * 1000L;
-        file.setFileLength(length);
-        file.setLastModified(modified);
-        if (length >= 0) {
-            message.setHeader(Exchange.FILE_LENGTH, length);
-        }
-        if (modified >= 0) {
-            message.setHeader(Exchange.FILE_LAST_MODIFIED, modified);
+    protected void updateFileHeaders(GenericFile<SftpRemoteFile> file, Message message) {
+        Object rf = file.getFile().getRemoteFile();
+        if (rf != null) {
+            ChannelSftp.LsEntry e = (ChannelSftp.LsEntry) rf;
+            long length = e.getAttrs().getSize();
+            long modified = e.getAttrs().getMTime() * 1000L;
+            file.setFileLength(length);
+            file.setLastModified(modified);
+            if (length >= 0) {
+                message.setHeader(Exchange.FILE_LENGTH, length);
+            }
+            if (modified >= 0) {
+                message.setHeader(Exchange.FILE_LAST_MODIFIED, modified);
+            }
         }
     }
 
