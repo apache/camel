@@ -29,7 +29,7 @@
 
   <artifactId>camel-xmljson</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: XML JSON</name>
+  <name>Camel :: XML JSON (deprecated)</name>
   <description>Camel XML JSON Data Format</description>
 
   <properties>

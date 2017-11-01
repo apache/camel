@@ -1130,6 +1130,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the xmljson dataformat, based on json-lib
      */
+    @Deprecated
     public T xmljson() {
         return dataFormat(new XmlJsonDataFormat());
     }
@@ -1137,6 +1138,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the xmljson dataformat, based on json-lib, initializing custom options with a Map
      */
+    @Deprecated
     public T xmljson(Map<String, String> options) {
         return dataFormat(new XmlJsonDataFormat(options));
     }

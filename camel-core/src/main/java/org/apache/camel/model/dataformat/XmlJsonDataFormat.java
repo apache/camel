@@ -38,6 +38,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "2.10.0", label = "dataformat,transformation,xml,json", title = "XML JSon")
 @XmlRootElement(name = "xmljson")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class XmlJsonDataFormat extends DataFormatDefinition {
     
     public static final String TYPE_HINTS = "typeHints";

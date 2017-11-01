@@ -37,6 +37,7 @@ import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
+import org.apache.camel.model.dataformat.HessianDataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
@@ -94,6 +95,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
         @XmlElement(required = false, name = "custom", type = CustomDataFormat.class),
         @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
         @XmlElement(required = false, name = "gzip", type = GzipDataFormat.class),
+        @XmlElement(required = false, name = "hessian", type = HessianDataFormat.class),
         @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
         @XmlElement(required = false, name = "ical", type = IcalDataFormat.class),
         @XmlElement(required = false, name = "jacksonxml", type = JacksonXMLDataFormat.class),
