@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.jcraft.jsch.ChannelSftp;
@@ -28,6 +29,7 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.commons.net.ftp.FTPFile;
 
 /**
  * Secure FTP consumer
@@ -114,12 +116,24 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         }
 
         log.trace("Polling directory: {}", dir);
-        List<SftpRemoteFile> files;
-        if (isStepwise()) {
-            files = operations.listFiles();
+        List<SftpRemoteFile> files = null;
+        if (isUseList()) {
+            if (isStepwise()) {
+                files = operations.listFiles();
+            } else {
+                files = operations.listFiles(dir);
+            }
         } else {
-            files = operations.listFiles(dir);
+            // we cannot use the LIST command(s) so we can only poll a named file
+            // so created a pseudo file with that name
+            fileExpressionResult = evaluateFileExpression();
+            if (fileExpressionResult != null) {
+                SftpRemoteFile file = new SftpRemoteFileSingle(fileExpressionResult);
+                files = new ArrayList<SftpRemoteFile>(1);
+                files.add(file);
+            }
         }
+
         if (files == null || files.isEmpty()) {
             // no files in this directory to poll
             log.trace("No files found in directory: {}", dir);
