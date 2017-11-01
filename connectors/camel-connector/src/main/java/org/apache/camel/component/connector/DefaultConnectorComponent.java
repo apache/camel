@@ -133,7 +133,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
             log.info("Connector resolved: {} -> {}", sanitizeUri(uri), sanitizeUri(delegateUri));
         }
 
-        Endpoint answer;
+        DefaultConnectorEndpoint answer;
         // are we scheduler based?
         if ("timer".equals(model.getScheduler())) {
             SchedulerTimerConnectorEndpoint endpoint = new SchedulerTimerConnectorEndpoint(uri, this, delegate, model.getInputDataType(), model.getOutputDataType());
@@ -142,6 +142,11 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         } else {
             answer = new DefaultConnectorEndpoint(uri, this, delegate, model.getInputDataType(), model.getOutputDataType());
         }
+
+        answer.setBeforeProducer(getBeforeProducer());
+        answer.setAfterProducer(getAfterProducer());
+        answer.setBeforeConsumer(getBeforeConsumer());
+        answer.setAfterConsumer(getAfterConsumer());
 
         // clean-up parameters so that validation won't fail later on
         // in DefaultConnectorComponent.validateParameters()
