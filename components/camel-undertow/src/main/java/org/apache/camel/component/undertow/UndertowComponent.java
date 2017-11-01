@@ -228,7 +228,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
         String url;
         if (api) {
-            url = "undertow:%s://%s:%s/%s?httpMethodRestrict=%s";
+            url = "undertow:%s://%s:%s/%s?matchOnUriPrefix=true&httpMethodRestrict=%s";
         } else {
             url = "undertow:%s://%s:%s/%s?matchOnUriPrefix=false&httpMethodRestrict=%s";
         }
