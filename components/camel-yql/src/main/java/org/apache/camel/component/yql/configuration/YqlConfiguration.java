@@ -24,25 +24,30 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class YqlConfiguration {
 
-    @UriPath
+    @UriPath(label="producer", description = "The YQL query to be sent.")
     @Metadata(required = "true")
     private String query;
 
-    @UriParam
+    @UriParam(label="producer", enums = "json,xml", defaultValue = "json", description = "The expected format. Can only be json or xml.")
     private String format = "json";
 
-    @UriParam
+    @UriParam(label="producer", defaultValue = "false", description = "If true, the option will be included in the HTTP request to YQL and the response will contain some diagnostics data.")
     private boolean diagnostics = false;
 
-    @UriParam
+    @UriParam(label="producer", description = "If specified, the option will be included in the HTTP request to YQL. If the format is json, then the response will contain a JSONP callback method. "
+            + "If the format is xml, then the response will contain a JSONP-X callback method. More information: https://developer.yahoo.com/yql/guide/response.html")
     private String callback = "";
+
+    @UriParam(label = "producer", defaultValue = "true", description = "Option to disable throwing the YqlHttpException in case of failed responses from the remote server. "
+            + "This allows you to get all responses regardless of the HTTP status code.")
+    private boolean throwExceptionOnFailure = true;
 
     public String getQuery() {
         return query;
     }
 
     /**
-     * Set the YQL query
+     * The YQL query to be sent.
      */
     public void setQuery(final String query) {
         this.query = query;
@@ -53,7 +58,7 @@ public class YqlConfiguration {
     }
 
     /**
-     * Set the YQL format, xml or json
+     * The expected format. Can only be json or xml.
      */
     public void setFormat(final String format) {
         this.format = format;
@@ -64,7 +69,7 @@ public class YqlConfiguration {
     }
 
     /**
-     * Set if diagnostics should be included in the query
+     * If true, the option will be included in the HTTP request to YQL and the response will contain some diagnostics data.
      */
     public void setDiagnostics(final boolean diagnostics) {
         this.diagnostics = diagnostics;
@@ -75,9 +80,22 @@ public class YqlConfiguration {
     }
 
     /**
-     * Set the callback function
+     * If specified, the option will be included in the HTTP request to YQL. If the format is json, then the response will contain a JSONP callback method.
+     * If the format is xml, then the response will contain a JSONP-X callback method. More information: https://developer.yahoo.com/yql/guide/response.html
      */
     public void setCallback(final String callback) {
         this.callback = callback;
+    }
+
+    public boolean isThrowExceptionOnFailure() {
+        return throwExceptionOnFailure;
+    }
+
+    /**
+     * Option to disable throwing the YqlHttpException in case of failed responses from the remote server.
+     * This allows you to get all responses regardless of the HTTP status code.
+     */
+    public void setThrowExceptionOnFailure(final boolean throwExceptionOnFailure) {
+        this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
 }
