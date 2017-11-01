@@ -147,9 +147,9 @@
   </modules>
 
   <scm>
-    <connection>scm:git:http://git-wip-us.apache.org/repos/asf/camel.git</connection>
-    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/camel.git</developerConnection>
-    <url>https://fisheye6.atlassian.com/browse/~br=master/camel-git</url>
+    <connection>scm:git:http://gitbox.apache.org/repos/asf/camel.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/camel.git</developerConnection>
+    <url>https://gitbox.apache.org/repos/asf?p=camel.git;a=summary</url>
     <tag>HEAD</tag>
   </scm>
 
