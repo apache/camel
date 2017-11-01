@@ -30,12 +30,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -58,7 +59,7 @@ public class PdfAppendTest extends CamelTestSupport {
         final String originalText = "Test";
         final String textToAppend = "Append";
         PDDocument document = new PDDocument();
-        PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
+        PDPage page = new PDPage(PDRectangle.A4);
         document.addPage(page);
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
         contentStream.setFont(PDType1Font.HELVETICA, 12);
@@ -98,7 +99,7 @@ public class PdfAppendTest extends CamelTestSupport {
         final String originalText = "Test";
         final String textToAppend = "Append";
         PDDocument document = new PDDocument();
-        PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
+        PDPage page = new PDPage(PDRectangle.A4);
         document.addPage(page);
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
         contentStream.setFont(PDType1Font.HELVETICA, 12);
@@ -121,7 +122,7 @@ public class PdfAppendTest extends CamelTestSupport {
         document.save(output);
 
         // Encryption happens after saving.
-        PDDocument encryptedDocument = PDDocument.load(new ByteArrayInputStream(output.toByteArray()));
+        PDDocument encryptedDocument = PDDocument.load(new ByteArrayInputStream(output.toByteArray()), userPass);
 
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(PdfHeaderConstants.PDF_DOCUMENT_HEADER_NAME, encryptedDocument);
@@ -136,7 +137,7 @@ public class PdfAppendTest extends CamelTestSupport {
                 Object body = exchange.getIn().getBody();
                 assertThat(body, instanceOf(ByteArrayOutputStream.class));
                 try {
-                    PDDocument doc = PDDocument.load(new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray()));
+                    PDDocument doc = PDDocument.load(new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray()), userPass);
                     PDFTextStripper pdfTextStripper = new PDFTextStripper();
                     String text = pdfTextStripper.getText(doc);
                     assertEquals(2, doc.getNumberOfPages());
