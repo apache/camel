@@ -359,8 +359,6 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      * Notice when using this option, then the specific file to download does <b>not</b>
      * include meta-data information such as file size, timestamp, permissions etc, because
      * those information is only possible to retrieve when LIST command is in use.
-     *
-     * This option is not available for SFTP.
      */
     public void setUseList(boolean useList) {
         this.useList = useList;
