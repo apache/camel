@@ -27,7 +27,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
@@ -46,7 +47,7 @@ public class PdfTextExtractionTest extends CamelTestSupport {
     public void testExtractText() throws Exception {
         final String expectedText = "Test string";
         PDDocument document = new PDDocument();
-        PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
+        PDPage page = new PDPage(PDRectangle.A4);
         document.addPage(page);
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
         contentStream.setFont(PDType1Font.HELVETICA, 12);
@@ -82,7 +83,7 @@ public class PdfTextExtractionTest extends CamelTestSupport {
         PDDocument document = new PDDocument();
 
         final String expectedText = "Test string";
-        PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
+        PDPage page = new PDPage(PDRectangle.A4);
         document.addPage(page);
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
         contentStream.setFont(PDType1Font.HELVETICA, 12);
@@ -98,7 +99,7 @@ public class PdfTextExtractionTest extends CamelTestSupport {
         document.save(output);
 
         // Encryption happens after saving.
-        PDDocument encryptedDocument = PDDocument.load(new ByteArrayInputStream(output.toByteArray()));
+        PDDocument encryptedDocument = PDDocument.load(new ByteArrayInputStream(output.toByteArray()), userPass);
 
         template.sendBodyAndHeader("direct:start",
                 encryptedDocument,
