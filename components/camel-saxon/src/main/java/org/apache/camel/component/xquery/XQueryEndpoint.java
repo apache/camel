@@ -238,6 +238,7 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         this.xquery.setStripsAllWhiteSpace(isStripsAllWhiteSpace());
         this.xquery.setAllowStAX(isAllowStAX());
         this.xquery.setHeaderName(getHeaderName());
+        this.xquery.setModuleURIResolver(getModuleURIResolver());
 
         setProcessor(xquery);
 
