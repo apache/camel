@@ -44,15 +44,12 @@ public class YqlProducer extends DefaultProducer {
     @Override
     public void process(final Exchange exchange) throws Exception {
         final YqlConfiguration configuration = endpoint.getConfiguration();
-        final YqlResponse yqlResponse = yqlClient.get(
-                configuration.getQuery(),
-                configuration.getFormat(),
-                configuration.isDiagnostics(),
-                configuration.getCallback()
-        );
+        final YqlResponse yqlResponse = yqlClient.get(configuration);
+
         if (configuration.isThrowExceptionOnFailure() && yqlResponse.getStatus() != HttpStatus.SC_OK) {
             throw YqlHttpException.failedWith(yqlResponse.getStatus(), yqlResponse.getBody(), yqlResponse.getHttpRequest());
         }
+
         exchange.getIn().setHeader(CAMEL_YQL_HTTP_STATUS, yqlResponse.getStatus());
         exchange.getIn().setHeader(CAMEL_YQL_HTTP_REQUEST, yqlResponse.getHttpRequest());
         exchange.getIn().setBody(yqlResponse.getBody());

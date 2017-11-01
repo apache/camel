@@ -21,33 +21,52 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
+/**
+ * YQL configuration that should reflect https://developer.yahoo.com/yql/guide/users-overview.html
+ */
 @UriParams
 public class YqlConfiguration {
 
-    @UriPath(label="producer", description = "The YQL query to be sent.")
+    @UriPath(label = "producer", description = "The YQL statement to execute.")
     @Metadata(required = "true")
     private String query;
 
-    @UriParam(label="producer", enums = "json,xml", defaultValue = "json", description = "The expected format. Can only be json or xml.")
+    @UriParam(label = "producer", enums = "json,xml", defaultValue = "json", description = "The expected format. Allowed values: xml or json.")
     private String format = "json";
 
-    @UriParam(label="producer", defaultValue = "false", description = "If true, the option will be included in the HTTP request to YQL and the response will contain some diagnostics data.")
+    @UriParam(label = "producer", description = "The name of the JavaScript callback function for JSONP format. If callback is set and if format=json, then the response format is JSON. For more "
+            + "information on using XML instead of JSON, see JSONP-X.")
+    private String callback = "";
+
+    @UriParam(label = "producer", description = "When given the value optimized, the projected fields in SELECT statements that may be returned in separate item elements in the response are "
+            + "optimized to be in a single item element instead. The only allowed value is optimized.")
+    private String crossProduct;
+
+    @UriParam(label = "producer", defaultValue = "false", description = "If true, diagnostic information is returned with the response.")
     private boolean diagnostics = false;
 
-    @UriParam(label="producer", description = "If specified, the option will be included in the HTTP request to YQL. If the format is json, then the response will contain a JSONP callback method. "
-            + "If the format is xml, then the response will contain a JSONP-X callback method. More information: https://developer.yahoo.com/yql/guide/response.html")
-    private String callback = "";
+    @UriParam(label = "producer", defaultValue = "false", description = "If true, and if diagnostic is set to true, debug data is returned with the response.")
+    private boolean debug = false;
+
+    @UriParam(label = "producer", description = "Allows you to use multiple Open Data Tables through a YQL environment file.")
+    private String env;
+
+    @UriParam(label = "producer", description = "Enables lossless JSON processing. The only allowed value is new.")
+    private String jsonCompat;
 
     @UriParam(label = "producer", defaultValue = "true", description = "Option to disable throwing the YqlHttpException in case of failed responses from the remote server. "
             + "This allows you to get all responses regardless of the HTTP status code.")
     private boolean throwExceptionOnFailure = true;
+
+    @UriParam(label = "producer", defaultValue = "true", description = "Option to use HTTPS to communicate with YQL.")
+    private boolean https = true;
 
     public String getQuery() {
         return query;
     }
 
     /**
-     * The YQL query to be sent.
+     * The YQL statement to execute.
      */
     public void setQuery(final String query) {
         this.query = query;
@@ -58,21 +77,10 @@ public class YqlConfiguration {
     }
 
     /**
-     * The expected format. Can only be json or xml.
+     * The expected format. Allowed values: xml or json.
      */
     public void setFormat(final String format) {
         this.format = format;
-    }
-
-    public boolean isDiagnostics() {
-        return diagnostics;
-    }
-
-    /**
-     * If true, the option will be included in the HTTP request to YQL and the response will contain some diagnostics data.
-     */
-    public void setDiagnostics(final boolean diagnostics) {
-        this.diagnostics = diagnostics;
     }
 
     public String getCallback() {
@@ -80,11 +88,70 @@ public class YqlConfiguration {
     }
 
     /**
-     * If specified, the option will be included in the HTTP request to YQL. If the format is json, then the response will contain a JSONP callback method.
-     * If the format is xml, then the response will contain a JSONP-X callback method. More information: https://developer.yahoo.com/yql/guide/response.html
+     * The name of the JavaScript callback function for JSONP format. If callback is set and if format=json, then the response format is JSON. For more
+     * information on using XML instead of JSON, see JSONP-X. https://developer.yahoo.com/yql/guide/response.html
      */
     public void setCallback(final String callback) {
         this.callback = callback;
+    }
+
+    public String getCrossProduct() {
+        return crossProduct;
+    }
+
+    /**
+     * When given the value optimized, the projected fields in SELECT statements that may be returned in separate item elements in the response are optimized to be in a single item element instead.
+     * The only allowed value is optimized. More information https://developer.yahoo.com/yql/guide/response.html#response-optimizing=
+     */
+    public void setCrossProduct(final String crossProduct) {
+        this.crossProduct = crossProduct;
+    }
+
+    public boolean isDiagnostics() {
+        return diagnostics;
+    }
+
+    /**
+     * If true, diagnostic information is returned with the response.
+     */
+    public void setDiagnostics(final boolean diagnostics) {
+        this.diagnostics = diagnostics;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    /**
+     * If true, and if diagnostic is set to true, debug data is returned with the response.
+     * More information: https://developer.yahoo.com/yql/guide/dev-external_tables.html#odt-enable-logging=
+     */
+    public void setDebug(final boolean debug) {
+        this.debug = debug;
+    }
+
+    public String getEnv() {
+        return env;
+    }
+
+    /**
+     * Allows you to use multiple Open Data Tables through a YQL environment file.
+     * More information https://developer.yahoo.com/yql/guide/yql_storage.html#using-records-env-files=
+     */
+    public void setEnv(final String env) {
+        this.env = env;
+    }
+
+    public String getJsonCompat() {
+        return jsonCompat;
+    }
+
+    /**
+     * Enables lossless JSON processing. The only allowed value is new.
+     * More information https://developer.yahoo.com/yql/guide/response.html#json-to-json=
+     */
+    public void setJsonCompat(final String jsonCompat) {
+        this.jsonCompat = jsonCompat;
     }
 
     public boolean isThrowExceptionOnFailure() {
@@ -97,5 +164,16 @@ public class YqlConfiguration {
      */
     public void setThrowExceptionOnFailure(final boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
+    }
+
+    public boolean isHttps() {
+        return https;
+    }
+
+    /**
+     * Option to use HTTPS to communicate with YQL.
+     */
+    public void setHttps(final boolean https) {
+        this.https = https;
     }
 }

@@ -17,10 +17,15 @@
 package org.apache.camel.component.yql.client;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.camel.component.yql.configuration.YqlConfiguration;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,21 +36,17 @@ public class YqlClient {
 
     private final CloseableHttpClient httpClient;
 
-    public YqlClient(final CloseableHttpClient httpClient){
+    public YqlClient(final CloseableHttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
-    public YqlResponse get(final String query, final String format, final boolean diagnostics, final String callback) throws Exception {
+    public YqlResponse get(final YqlConfiguration yqlConfiguration) throws Exception {
 
         final URI uri = new URIBuilder()
-                .setScheme("http")
+                .setScheme(yqlConfiguration.isHttps() ? "https" : "http")
                 .setHost("query.yahooapis.com")
                 .setPath("/v1/public/yql")
-                .setParameter("format", format)
-                .setParameter("diagnostics", Boolean.toString(diagnostics))
-                .setParameter("env", "store://datatables.org/alltableswithkeys")
-                .setParameter("callback", callback)
-                .setParameter("q", query)
+                .setParameters(buildParameters(yqlConfiguration))
                 .build();
 
         LOG.debug("YQL query: {}", uri);
@@ -60,5 +61,24 @@ public class YqlClient {
             LOG.debug("YQL response: {}", yqlResponse.getBody());
             return yqlResponse;
         }
+    }
+
+    private List<NameValuePair> buildParameters(final YqlConfiguration yqlConfiguration) {
+        final List<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("q", yqlConfiguration.getQuery()));
+        nameValuePairs.add(new BasicNameValuePair("format", yqlConfiguration.getFormat()));
+        nameValuePairs.add(new BasicNameValuePair("callback", yqlConfiguration.getCallback()));
+        if (yqlConfiguration.getCrossProduct() != null) {
+            nameValuePairs.add(new BasicNameValuePair("crossProduct", yqlConfiguration.getCrossProduct()));
+        }
+        nameValuePairs.add(new BasicNameValuePair("diagnostics", Boolean.toString(yqlConfiguration.isDiagnostics())));
+        nameValuePairs.add(new BasicNameValuePair("debug", Boolean.toString(yqlConfiguration.isDebug())));
+        if (yqlConfiguration.getEnv() != null) {
+            nameValuePairs.add(new BasicNameValuePair("env", yqlConfiguration.getEnv()));
+        }
+        if (yqlConfiguration.getJsonCompat() != null) {
+            nameValuePairs.add(new BasicNameValuePair("jsonCompat", yqlConfiguration.getJsonCompat()));
+        }
+        return nameValuePairs;
     }
 }
