@@ -29,7 +29,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
-import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -93,9 +93,8 @@ public class PdfCreationTest extends CamelTestSupport {
                 Object body = exchange.getIn().getBody();
                 assertThat(body, instanceOf(ByteArrayOutputStream.class));
                 try {
-                    PDDocument doc = PDDocument.load(new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray()));
+                    PDDocument doc = PDDocument.load(new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray()), userPass);
                     assertTrue("Expected encrypted document", doc.isEncrypted());
-                    doc.decrypt(userPass);
                     assertFalse("Printing should not be permitted", doc.getCurrentAccessPermission().canPrint());
                     PDFTextStripper pdfTextStripper = new PDFTextStripper();
                     String text = pdfTextStripper.getText(doc);
