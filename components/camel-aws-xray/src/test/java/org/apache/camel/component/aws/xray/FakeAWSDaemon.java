@@ -28,13 +28,15 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.component.aws.xray.TestDataBuilder.TestEntity;
 import org.apache.camel.component.aws.xray.TestDataBuilder.TestSegment;
 import org.apache.camel.component.aws.xray.TestDataBuilder.TestSubsegment;
 import org.apache.camel.component.aws.xray.TestDataBuilder.TestTrace;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.apache.camel.component.aws.xray.json.JsonArray;
+import org.apache.camel.component.aws.xray.json.JsonObject;
+import org.apache.camel.component.aws.xray.json.JsonParser;
+import org.apache.commons.lang.StringUtils;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,8 +97,8 @@ public class FakeAWSDaemon extends ExternalResource {
                 serverSocket = new DatagramSocket(2000);
 
                 StringBuilder sb = new StringBuilder();
-                byte[] receiveData = new byte[8096];
                 while (!done) {
+                    byte[] receiveData = new byte[2048];
                     DatagramPacket receivedPacket = new DatagramPacket(receiveData, receiveData.length);
                     serverSocket.receive(receivedPacket);
 
@@ -105,17 +107,26 @@ public class FakeAWSDaemon extends ExternalResource {
 
                     String locSegment = null;
                     try {
-                        String raw = sb.toString();
+                        String raw = sb.toString().trim();
                         String[] segments = raw.split("\\n");
                         for (String segment : segments) {
                             locSegment = segment;
                             LOG.trace("Processing received segment: {}", segment);
                             if (!"".equals(segment)) {
+                                if (!segment.endsWith("}")
+                                        || StringUtils.countMatches(segment, "{") != StringUtils.countMatches(segment, "}")
+                                        || StringUtils.countMatches(segment, "[") != StringUtils.countMatches(segment, "]")) {
+                                    LOG.trace("Skipping incomplete content: {}", segment);
+                                    continue;
+                                }
                                 if (segment.contains("format") && segment.contains("version")) {
                                     LOG.trace("Skipping format and version JSON");
                                 } else {
                                     LOG.trace("Converting segment {} to a Java object", segment);
-                                    JSONObject json = new JSONObject(segment);
+                                    // clean the JSON string received
+                                    LOG.trace("Original JSON content: {}", segment);
+                                    locSegment = segment;
+                                    JsonObject json = (JsonObject) JsonParser.parse(segment);
                                     String traceId = json.getString("trace_id");
                                     TestTrace testTrace = receivedTraces.get(traceId);
                                     if (null == testTrace) {
@@ -131,8 +142,8 @@ public class FakeAWSDaemon extends ExternalResource {
                             }
                         }
                         LOG.trace("Item {} received. JSON content: {}, Raw: {}",
-                            receivedTraces.size(), receivedTraces, raw);
-                    } catch (JSONException jsonEx) {
+                                receivedTraces.size(), receivedTraces, raw);
+                    } catch (Exception jsonEx) {
                         LOG.warn("Could not convert segment " + locSegment + " to a Java object", jsonEx);
                     }
                 }
@@ -143,12 +154,12 @@ public class FakeAWSDaemon extends ExternalResource {
             }
         }
 
-        private TestSegment convertData(JSONObject json) {
+        private TestSegment convertData(JsonObject json) {
             String name = json.getString("name");
             double startTime = json.getDouble("start_time");
             TestSegment segment = new TestSegment(name, startTime);
             if (json.has("subsegments")) {
-                JSONArray jsonSubsegments = json.getJSONArray("subsegments");
+                JsonArray jsonSubsegments = (JsonArray) json.get("subsegments");
                 List<TestSubsegment> subsegments = convertSubsegments(jsonSubsegments);
                 for (TestSubsegment subsegment : subsegments) {
                     segment.withSubsegment(subsegment);
@@ -159,19 +170,19 @@ public class FakeAWSDaemon extends ExternalResource {
             return segment;
         }
 
-        private List<TestSubsegment> convertSubsegments(JSONArray jsonSubsegments) {
-            List<TestSubsegment> subsegments = new ArrayList<>(jsonSubsegments.length());
-            for (int i = 0; i < jsonSubsegments.length(); i++) {
-                JSONObject jsonSubsegment = jsonSubsegments.getJSONObject(i);
+        private List<TestSubsegment> convertSubsegments(JsonArray jsonSubsegments) {
+            List<TestSubsegment> subsegments = new ArrayList<>(jsonSubsegments.size());
+            for (int i = 0; i < jsonSubsegments.size(); i++) {
+                JsonObject jsonSubsegment = jsonSubsegments.toArray(new JsonObject[jsonSubsegments.size()])[i];
                 subsegments.add(convertSubsegment(jsonSubsegment));
             }
             return subsegments;
         }
 
-        private TestSubsegment convertSubsegment(JSONObject json) {
-            TestSubsegment subsegment = new TestSubsegment(json.getString("name"));
+        private TestSubsegment convertSubsegment(JsonObject json) {
+            TestSubsegment subsegment = new TestSubsegment((String)json.get("name"));
             if (json.has("subsegments")) {
-                List<TestSubsegment> subsegments = convertSubsegments(json.getJSONArray("subsegments"));
+                List<TestSubsegment> subsegments = convertSubsegments((JsonArray) json.get("subsegments"));
                 for (TestSubsegment tss : subsegments) {
                     subsegment.withSubsegment(tss);
                 }
@@ -181,18 +192,19 @@ public class FakeAWSDaemon extends ExternalResource {
             return subsegment;
         }
 
-        private void addAnnotationsIfAvailable(TestEntity<?> entity, JSONObject json) {
+        private void addAnnotationsIfAvailable(TestEntity<?> entity, JsonObject json) {
             if (json.has("annotations")) {
-                Map<String, Object> annotations = parseAnnotations(json.getJSONObject("annotations"));
-                for (String key : annotations.keySet()) {
-                    entity.withAnnotation(key, annotations.get(key));
+                JsonObject annotations = (JsonObject) json.get("annotations");
+                for (String key : annotations.getKeys()) {
+                    entity.withAnnotation((String)key, annotations.get(key));
                 }
             }
         }
 
-        private void addMetadataIfAvailable(TestEntity<?> entity, JSONObject json) {
+        private void addMetadataIfAvailable(TestEntity<?> entity, JsonObject json) {
             if (json.has("metadata")) {
-                Map<String, Map<String, Object>> metadata = parseMetadata(json.getJSONObject("metadata"));
+                JsonObject rawMetadata = (JsonObject) json.get("metadata");
+                Map<String, Map<String, Object>> metadata = parseMetadata(rawMetadata);
                 for (String namespace : metadata.keySet()) {
                     for (String key : metadata.get(namespace).keySet()) {
                         entity.withMetadata(namespace, key, metadata.get(namespace).get(key));
@@ -201,22 +213,7 @@ public class FakeAWSDaemon extends ExternalResource {
             }
         }
 
-        private Map<String, Object> parseAnnotations(JSONObject json) {
-            /*
-             "annotations" : {
-                "test2" : 1,
-                "test3" : true,
-                "test1" : "test"
-             }
-             */
-            Map<String, Object> annotations = new LinkedHashMap<>(json.keySet().size());
-            for (String key : json.keySet()) {
-                annotations.put(key, json.get(key));
-            }
-            return annotations;
-        }
-
-        private Map<String, Map<String, Object>> parseMetadata(JSONObject json) {
+        private Map<String, Map<String, Object>> parseMetadata(JsonObject json) {
             /*
              "metadata" : {
                 "default" : {
@@ -227,13 +224,13 @@ public class FakeAWSDaemon extends ExternalResource {
                 }
              }
              */
-            Map<String, Map<String, Object>> metadata = new LinkedHashMap<>(json.keySet().size());
-            for (String namespace : json.keySet()) {
-                JSONObject namespaceData = json.getJSONObject(namespace);
+            Map<String, Map<String, Object>> metadata = new LinkedHashMap<>(json.getKeys().size());
+            for (String namespace : json.getKeys()) {
+                JsonObject namespaceData = (JsonObject) json.get(namespace);
                 if (!metadata.containsKey(namespace)) {
-                    metadata.put(namespace, new LinkedHashMap<>(namespaceData.keySet().size()));
+                    metadata.put(namespace, new LinkedHashMap<>(namespaceData.getKeys().size()));
                 }
-                for (String key : namespaceData.keySet()) {
+                for (String key : namespaceData.getKeys()) {
                     metadata.get(namespace).put(key, namespaceData.get(key));
                 }
             }
