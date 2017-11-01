@@ -325,6 +325,11 @@ public class RestSwaggerReader {
                 }
             }
 
+            // clear parameters if its empty
+            if (op.getParameters().isEmpty()) {
+                op.setParameters(null);
+            }
+
             // if we have an out type then set that as response message
             if (verb.getOutType() != null) {
                 Response response = new Response();
@@ -461,6 +466,11 @@ public class RestSwaggerReader {
             }
 
             op.addResponse(msg.getCode(), response);
+        }
+
+        // must include an empty noop response if none exists
+        if (op.getResponses() == null) {
+            op.addResponse("200", new Response());
         }
     }
 
