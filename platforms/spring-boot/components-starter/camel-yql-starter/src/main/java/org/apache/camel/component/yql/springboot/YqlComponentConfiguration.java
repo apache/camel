@@ -18,7 +18,9 @@ package org.apache.camel.component.yql.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
+import org.apache.http.conn.HttpClientConnectionManager;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Camel Yahoo Query Language Component
@@ -32,11 +34,25 @@ public class YqlComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Set the connection manager.
+     */
+    @NestedConfigurationProperty
+    private HttpClientConnectionManager connectionManager;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public HttpClientConnectionManager getConnectionManager() {
+        return connectionManager;
+    }
+
+    public void setConnectionManager(
+            HttpClientConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;

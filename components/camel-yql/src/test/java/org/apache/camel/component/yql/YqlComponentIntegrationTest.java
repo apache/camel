@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.yql;
 
+import static org.apache.camel.component.yql.YqlProducer.CAMEL_YQL_HTTP_REQUEST;
+import static org.apache.camel.component.yql.YqlProducer.CAMEL_YQL_HTTP_STATUS;
+import static org.hamcrest.CoreMatchers.containsString;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -23,46 +30,133 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.http.HttpStatus;
+import org.junit.Rule;
 import org.junit.Test;
-
-import static org.apache.camel.component.yql.YqlProducer.CAMEL_YQL_HTTP_REQUEST;
-import static org.apache.camel.component.yql.YqlProducer.CAMEL_YQL_HTTP_STATUS;
-import static org.hamcrest.CoreMatchers.containsString;
+import org.junit.rules.ExpectedException;
 
 public class YqlComponentIntegrationTest extends CamelTestSupport {
 
-    private static final String QUERY = "select * from yahoo.finance.quotes where symbol in ('GOOG')";
+    private static final String FINANCE_QUERY = "select symbol, Ask, Bid,  from yahoo.finance.quotes where symbol in ('GOOG')";
+    private static final String WEATHER_QUERY = "select wind, atmosphere from weather.forecast where woeid in (select woeid from geo.places(1) where text='chicago, il')";
+    private static final String BOOK_QUERY = "select * from google.books where q='barack obama' and maxResults=1";
     private static final String CALLBACK = "yqlCallback";
+    private static final String ENV = "store://datatables.org/alltableswithkeys";
 
-    @Produce(uri = "direct:start")
-    private ProducerTemplate template;
+    @Rule
+    public final ExpectedException thrown = ExpectedException.none();
 
-    @EndpointInject(uri = "mock:result")
-    private MockEndpoint end;
+    @Produce(uri = "direct:startFinance")
+    private ProducerTemplate templateFinance;
+
+    @EndpointInject(uri = "mock:resultFinance")
+    private MockEndpoint endFinance;
+
+    @Produce(uri = "direct:startWeather")
+    private ProducerTemplate templateWeather;
+
+    @EndpointInject(uri = "mock:resultWeather")
+    private MockEndpoint endWeather;
+
+    @Produce(uri = "direct:startBook")
+    private ProducerTemplate templateBook;
+
+    @EndpointInject(uri = "mock:resultBook")
+    private MockEndpoint endBook;
+
+    @Produce(uri = "direct:startFail")
+    private ProducerTemplate templateFail;
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .to("yql://" + QUERY + "?format=json&callback=" + CALLBACK)
-                        .to("mock:result");
+                from("direct:startFinance")
+                        .to("yql://" + FINANCE_QUERY + "?format=json&callback=" + CALLBACK + "&https=false&env=" + ENV)
+                        .to("mock:resultFinance");
+
+                from("direct:startWeather")
+                        .to("yql://" + WEATHER_QUERY)
+                        .to("mock:resultWeather");
+
+                from("direct:startBook")
+                        .to("yql://" + BOOK_QUERY + "?format=xml&crossProduct=optimized&env=" + ENV)
+                        .to("mock:resultBook");
+
+                from("direct:startFail")
+                        .to("yql://" + FINANCE_QUERY)
+                        .to("mock:resultBook");
             }
         };
     }
 
     @Test
-    public void testFinanceQuote() {
-        template.sendBody("");
+    public void testFinanceQuote() throws UnsupportedEncodingException {
+        // when
+        templateFinance.sendBody("");
 
-        final Exchange exchange = end.getReceivedExchanges().get(0);
+        // then
+        final Exchange exchange = endFinance.getReceivedExchanges().get(0);
         final String body = exchange.getIn().getBody(String.class);
         final Integer status = exchange.getIn().getHeader(CAMEL_YQL_HTTP_STATUS, Integer.class);
         final String httpRequest = exchange.getIn().getHeader(CAMEL_YQL_HTTP_REQUEST, String.class);
+        assertThat(httpRequest, containsString("http"));
+        assertThat(httpRequest, containsString("q=" + URLEncoder.encode(FINANCE_QUERY, "UTF-8")));
+        assertThat(httpRequest, containsString("format=json"));
+        assertThat(httpRequest, containsString("callback=" + CALLBACK));
+        assertThat(httpRequest, containsString("diagnostics=false"));
+        assertThat(httpRequest, containsString("debug=false"));
+        assertThat(httpRequest, containsString("env=" + URLEncoder.encode(ENV, "UTF-8")));
         assertNotNull(body);
         assertThat(body, containsString(CALLBACK + "("));
-        assertNotNull(status);
-        assertEquals("http://query.yahooapis.com/v1/public/yql?format=json&diagnostics=false&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=yqlCallback&q=select+*+from+"
-                + "yahoo.finance.quotes+where+symbol+in+%28%27GOOG%27%29", httpRequest);
+        assertEquals(HttpStatus.SC_OK, status.intValue());
+    }
+
+    @Test
+    public void testWeather() throws UnsupportedEncodingException {
+        // when
+        templateWeather.sendBody("");
+
+        // then
+        final Exchange exchange = endWeather.getReceivedExchanges().get(0);
+        final String body = exchange.getIn().getBody(String.class);
+        final Integer status = exchange.getIn().getHeader(CAMEL_YQL_HTTP_STATUS, Integer.class);
+        final String httpRequest = exchange.getIn().getHeader(CAMEL_YQL_HTTP_REQUEST, String.class);
+        assertThat(httpRequest, containsString("https"));
+        assertThat(httpRequest, containsString("q=" + URLEncoder.encode(WEATHER_QUERY, "UTF-8")));
+        assertThat(httpRequest, containsString("format=json"));
+        assertThat(httpRequest, containsString("diagnostics=false"));
+        assertThat(httpRequest, containsString("debug=false"));
+        assertNotNull(body);
+        assertEquals(HttpStatus.SC_OK, status.intValue());
+    }
+
+    @Test
+    public void testBook() throws UnsupportedEncodingException {
+        // when
+        templateBook.sendBody("");
+
+        // then
+        final Exchange exchange = endBook.getReceivedExchanges().get(0);
+        final String body = exchange.getIn().getBody(String.class);
+        final Integer status = exchange.getIn().getHeader(CAMEL_YQL_HTTP_STATUS, Integer.class);
+        final String httpRequest = exchange.getIn().getHeader(CAMEL_YQL_HTTP_REQUEST, String.class);
+        assertThat(httpRequest, containsString("https"));
+        assertThat(httpRequest, containsString("q=" + URLEncoder.encode(BOOK_QUERY, "UTF-8")));
+        assertThat(httpRequest, containsString("format=xml"));
+        assertThat(httpRequest, containsString("diagnostics=false"));
+        assertThat(httpRequest, containsString("debug=false"));
+        assertThat(httpRequest, containsString("crossProduct=optimized"));
+        assertNotNull(body);
+        assertEquals(HttpStatus.SC_OK, status.intValue());
+    }
+
+    @Test
+    public void testFail() throws UnsupportedEncodingException {
+        // then
+        thrown.expect(CamelExecutionException.class);
+
+        // when
+        templateFail.sendBody("");
     }
 }

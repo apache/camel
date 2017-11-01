@@ -32,15 +32,12 @@ public class YqlComponent extends DefaultComponent {
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
         final YqlConfiguration configuration = new YqlConfiguration();
         configuration.setQuery(remaining);
+        setProperties(configuration, parameters);
+        YqlConfigurationValidator.validateProperties(configuration);
 
         final HttpClientConnectionManager connectionManager = createConnectionManager();
 
-        final Endpoint endpoint = new YqlEndpoint(uri, this, configuration, connectionManager);
-
-        YqlConfigurationValidator.validateProperties(configuration);
-
-        setProperties(configuration, parameters);
-        return endpoint;
+        return new YqlEndpoint(uri, this, configuration, connectionManager);
     }
 
     @Override

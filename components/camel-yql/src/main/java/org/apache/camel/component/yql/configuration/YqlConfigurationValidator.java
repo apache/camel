@@ -32,5 +32,13 @@ public final class YqlConfigurationValidator {
         if (!StringUtils.equalsAny(configuration.getFormat(), "json", "xml")) {
             throw new YqlException("<format> is not valid!");
         }
+
+        if (configuration.getCrossProduct() != null && !configuration.getCrossProduct().equals("optimized")) {
+            throw new YqlException("<crossProduct> is not valid!");
+        }
+
+        if (configuration.getJsonCompat() != null && !configuration.getJsonCompat().equals("new")) {
+            throw new YqlException("<jsonCompat> is not valid!");
+        }
     }
 }
