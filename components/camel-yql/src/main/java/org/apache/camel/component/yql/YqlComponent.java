@@ -50,6 +50,9 @@ public class YqlComponent extends DefaultComponent {
       }
     }
 
+    /**
+     * Set the connection manager.
+     */
     public void setConnectionManager(final HttpClientConnectionManager connectionManager){
       this.localConnectionManager = connectionManager;
     }

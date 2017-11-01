@@ -29,7 +29,16 @@ Where *query* represents the YQL query.
 ### Options
 
 // component options: START
-The Yahoo Query Language component has no options.
+The Yahoo Query Language component supports 2 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connectionManager* (producer) | Set the connection manager. |  | HttpClientConnection Manager
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 // endpoint options: START
@@ -46,17 +55,18 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *query* | *Required* Set the YQL query |  | String
+| *query* | *Required* The YQL query to be sent. |  | String
 |===
 
-==== Query Parameters (4 parameters):
+==== Query Parameters (5 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *callback* (producer) | Set the callback function |  | String
-| *diagnostics* (producer) | Set if diagnostics should be included in the query | false | boolean
-| *format* (producer) | Set the YQL format xml or json |  | String
+| *callback* (producer) | If specified the option will be included in the HTTP request to YQL. If the format is json then the response will contain a JSONP callback method. If the format is xml then the response will contain a JSONP-X callback method. More information: https://developer.yahoo.com/yql/guide/response.html |  | String
+| *diagnostics* (producer) | If true the option will be included in the HTTP request to YQL and the response will contain some diagnostics data. | false | boolean
+| *format* (producer) | The expected format. Can only be json or xml. | json | String
+| *throwExceptionOnFailure* (producer) | Option to disable throwing the YqlHttpException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | true | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END

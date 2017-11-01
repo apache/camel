@@ -20,7 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.yql.client.YqlClient;
 import org.apache.camel.component.yql.client.YqlResponse;
 import org.apache.camel.component.yql.configuration.YqlConfiguration;
+import org.apache.camel.component.yql.exception.YqlHttpException;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.http.HttpStatus;
 
 /**
  * A Producer that send messages to YQL
@@ -48,6 +50,9 @@ public class YqlProducer extends DefaultProducer {
                 configuration.isDiagnostics(),
                 configuration.getCallback()
         );
+        if (configuration.isThrowExceptionOnFailure() && yqlResponse.getStatus() != HttpStatus.SC_OK) {
+            throw YqlHttpException.failedWith(yqlResponse.getStatus(), yqlResponse.getBody(), yqlResponse.getHttpRequest());
+        }
         exchange.getIn().setHeader(CAMEL_YQL_HTTP_STATUS, yqlResponse.getStatus());
         exchange.getIn().setHeader(CAMEL_YQL_HTTP_REQUEST, yqlResponse.getHttpRequest());
         exchange.getIn().setBody(yqlResponse.getBody());
