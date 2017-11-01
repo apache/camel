@@ -22,6 +22,9 @@ public class FooComponent extends DefaultConnectorComponent {
 
     public FooComponent() {
         super("foo", "org.foo.connector.FooComponent");
+
+        // show how you can add a fixed header
+        setBeforeConsumer(e -> e.getIn().setHeader("whoami", "I am foo"));
     }
 
 }
