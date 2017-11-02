@@ -68,7 +68,7 @@ public class Application {
                             pod.getStatus().getPhase(),
                             pod.getStatus().getContainerStatuses().stream()
                                 .mapToInt(ContainerStatus::getRestartCount).sum(),
-                            formatDuration(Duration.between(ZonedDateTime.parse(pod.getStatus().getStartTime().getTime()), ZonedDateTime.now()))))
+                            formatDuration(Duration.between(ZonedDateTime.parse(pod.getStatus().getStartTime()), ZonedDateTime.now()))))
                         .forEach(System.out::println);
                 });
         }

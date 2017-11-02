@@ -871,7 +871,7 @@ Data Formats
 ^^^^^^^^^^^^
 
 // dataformats: START
-Number of Data Formats: 48 in 39 JAR artifacts (3 deprecated)
+Number of Data Formats: 48 in 39 JAR artifacts (4 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -959,7 +959,7 @@ Number of Data Formats: 48 in 39 JAR artifacts (3 deprecated)
 
 | link:camel-xmlbeans/src/main/docs/xmlBeans-dataformat.adoc[XML Beans] (camel-xmlbeans) | 1.2 | *deprecated* XML Beans data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
 
-| link:camel-xmljson/src/main/docs/xmljson-dataformat.adoc[XML JSon] (camel-xmljson) | 2.10 | XML JSon data format can convert from XML to JSON and vice-versa directly without stepping through intermediate POJOs.
+| link:camel-xmljson/src/main/docs/xmljson-dataformat.adoc[XML JSon] (camel-xmljson) | 2.10 | *deprecated* XML JSon data format can convert from XML to JSON and vice-versa directly without stepping through intermediate POJOs.
 
 | link:camel-xmlrpc/src/main/docs/xmlrpc-dataformat.adoc[XML RPC] (camel-xmlrpc) | 2.11 | The XML RPC data format is used for working with the XML RPC protocol.
 
