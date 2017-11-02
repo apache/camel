@@ -56,6 +56,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.IsSingleton;
@@ -3194,6 +3195,15 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") started in " + TimeUtils.printDuration(stopWatch.taken()));
             }
             EventHelper.notifyCamelContextStarted(this);
+
+            // now call the startup listeners where the routes has been warmed up
+            // (only the actual route consumer has not yet been started)
+            for (StartupListener startup : startupListeners) {
+                if (startup instanceof ExtendedStartupListener) {
+                    ((ExtendedStartupListener) startup).onCamelContextFullyStarted(this, isStarted());
+                }
+            }
+
         }
     }
 
