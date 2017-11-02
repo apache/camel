@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -41,6 +40,8 @@ import quickfix.field.MsgType;
 import quickfix.field.SenderCompID;
 import quickfix.field.TargetCompID;
 import quickfix.fix42.Email;
+
+import static org.mockito.ArgumentMatchers.isA;
 
 public class QuickfixjProducerTest {
     private Exchange mockExchange;
@@ -83,21 +84,21 @@ public class QuickfixjProducerTest {
     public void setExceptionOnExchange() throws Exception {
         Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
         Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
-        Mockito.doThrow(new TestException()).when(mockSession).send(Matchers.isA(Message.class));
+        Mockito.doThrow(new TestException()).when(mockSession).send(isA(Message.class));
 
         producer.process(mockExchange);
-        Mockito.verify(mockExchange).setException(Matchers.isA(TestException.class));
+        Mockito.verify(mockExchange).setException(isA(TestException.class));
     }
     
     @Test
     public void processInOnlyExchangeSuccess() throws Exception {
         Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
         Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
-        Mockito.doReturn(true).when(mockSession).send(Matchers.isA(Message.class));
+        Mockito.doReturn(true).when(mockSession).send(isA(Message.class));
         
         producer.process(mockExchange);
         
-        Mockito.verify(mockExchange, Mockito.never()).setException(Matchers.isA(IllegalStateException.class));
+        Mockito.verify(mockExchange, Mockito.never()).setException(isA(IllegalStateException.class));
         Mockito.verify(mockSession).send(inboundFixMessage);
     }
     
@@ -105,12 +106,12 @@ public class QuickfixjProducerTest {
     public void processInOnlyExchangeSendUnsuccessful() throws Exception {
         Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
         Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
-        Mockito.doReturn(false).when(mockSession).send(Matchers.isA(Message.class));
+        Mockito.doReturn(false).when(mockSession).send(isA(Message.class));
 
         producer.process(mockExchange);
         
         Mockito.verify(mockSession).send(inboundFixMessage);
-        Mockito.verify(mockExchange).setException(Matchers.isA(CannotSendException.class));
+        Mockito.verify(mockExchange).setException(isA(CannotSendException.class));
     }    
 
     @Test
@@ -147,11 +148,11 @@ public class QuickfixjProducerTest {
                 }, 10);
                 return true;
             }            
-        }).when(mockSession).send(Matchers.isA(Message.class));
+        }).when(mockSession).send(isA(Message.class));
 
         producer.process(mockExchange);
         
-        Mockito.verify(mockExchange, Mockito.never()).setException(Matchers.isA(IllegalStateException.class));
+        Mockito.verify(mockExchange, Mockito.never()).setException(isA(IllegalStateException.class));
         Mockito.verify(mockSession).send(inboundFixMessage);
         Mockito.verify(mockOutboundCamelMessage).getHeaders();
         Mockito.verify(mockOutboundCamelMessage).setBody(outboundFixMessage);
@@ -190,12 +191,12 @@ public class QuickfixjProducerTest {
                 }, 10);
                 return false;
             }            
-        }).when(mockSession).send(Matchers.isA(Message.class));
+        }).when(mockSession).send(isA(Message.class));
 
         producer.process(mockExchange);
         
-        Mockito.verify(mockOutboundCamelMessage, Mockito.never()).setBody(Matchers.isA(Message.class));
+        Mockito.verify(mockOutboundCamelMessage, Mockito.never()).setBody(isA(Message.class));
         Mockito.verify(mockSession).send(inboundFixMessage);
-        Mockito.verify(mockExchange).setException(Matchers.isA(CannotSendException.class));
+        Mockito.verify(mockExchange).setException(isA(CannotSendException.class));
     }    
 }
