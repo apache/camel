@@ -392,7 +392,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
 
         // replace http with http4 in the host part
-        host = host.replace("http", "http4");
+        host = host.replaceFirst(":", "4:");
 
         // get the endpoint
         String url = host;
