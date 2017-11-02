@@ -24,10 +24,14 @@ package org.apache.camel;
  * is invoked.
  * <p/>
  * The state of {@link CamelContext} may still be in <tt>starting</tt> when this callback is invoked, this is by design.
- * The callback is invoked as the last step during all the processes that occur during starting {@link CamelContext}.
+ * The callback is invoked during the routes startup procedure when starting {@link CamelContext}.
  * <p/>
  * For example the QuartzComponent leverages this to ensure the Quartz scheduler does not start until after all the
  * Camel routes and services have already been started.
+ * <p/>
+ * <b>Important:</b> You cannot use this listener to add and start new routes to the {@link CamelContext} as this is not
+ * supported by design, as this listener plays a role during starting up routes. Instead you can use an {@link org.apache.camel.spi.EventNotifier}
+ * and listen on the {@link org.apache.camel.management.event.CamelContextStartedEvent} event and then add and start new routes from there.
  *
  * @version 
  */
