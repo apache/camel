@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -439,7 +440,20 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
     @Override
     protected void doStart() throws Exception {
         if (objectMapper == null) {
-            objectMapper = new ObjectMapper();
+            // lookup if there is a single default mapper we can use
+            if (camelContext != null) {
+                Set<ObjectMapper> set = camelContext.getRegistry().findByType(ObjectMapper.class);
+                if (set.size() == 1) {
+                    objectMapper = set.iterator().next();
+                    LOG.info("Found single ObjectMapper in Registry to use: {}", objectMapper);
+                } else if (set.size() > 1) {
+                    LOG.debug("Found {} ObjectMapper in Registry cannot use as default as there are more than one instance.", set.size());
+                }
+            }
+            if (objectMapper == null) {
+                objectMapper = new ObjectMapper();
+                LOG.debug("Creating new ObjectMapper to use: {}", objectMapper);
+            }
         }
         
         if (enableJaxbAnnotationModule) {

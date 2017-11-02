@@ -28,6 +28,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class JacksonDataFormatTest {
+
     @Test
     public void testString() throws Exception {
         testJson("\"A string\"", "A string");
@@ -41,7 +42,6 @@ public class JacksonDataFormatTest {
     @Test
     public void testList() throws Exception {
         testJson("[{\"value\":123}]", new ArrayList<>(Collections.singletonList(Collections.singletonMap("value", 123))));
-
     }
 
     private void testJson(String json, Object expected) throws Exception {
