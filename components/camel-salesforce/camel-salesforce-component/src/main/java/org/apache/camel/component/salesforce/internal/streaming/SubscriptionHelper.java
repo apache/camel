@@ -137,6 +137,14 @@ public class SubscriptionHelper extends ServiceSupport {
                                     LOG.error("Error renewing OAuth token on 401 error: " + e.getMessage(), e);
                                 }
                             }
+                            if (handshakeError.startsWith("403::")) {
+                                try {
+                                    LOG.info("Cleaning Session from SalesforceSession before restarting client");
+                                    session.logout();
+                                } catch (SalesforceException e) {
+                                    LOG.error("Error while cleaning session : " + e.getMessage(), e);
+                                }
+                            }
                         }
 
                         // restart if handshake fails for any reason
