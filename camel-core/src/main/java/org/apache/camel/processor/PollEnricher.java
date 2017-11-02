@@ -384,6 +384,9 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
                 LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
             }
         }
+        if (aggregationStrategy instanceof CamelContextAware) {
+            ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
+        }
         ServiceHelper.startServices(consumerCache, aggregationStrategy);
     }
 

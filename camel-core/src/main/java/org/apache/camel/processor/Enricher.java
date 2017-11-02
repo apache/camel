@@ -341,6 +341,9 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
         if (aggregationStrategy == null) {
             aggregationStrategy = defaultAggregationStrategy();
         }
+        if (aggregationStrategy instanceof CamelContextAware) {
+            ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
+        }
 
         if (producerCache == null) {
             if (cacheSize < 0) {
