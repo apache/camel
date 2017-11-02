@@ -158,8 +158,8 @@ public class MongoDbTailingProcess implements Runnable {
         boolean persistRegularly = persistRecords > 0;
         // while the cursor has more values, keepRunning is true and the cursorId is not 0, which symbolizes that the cursor is dead
         try {
-            while (cursor.hasNext() && keepRunning) { //cursor.getCursorId() != 0 &&
-                DBObject dbObj = cursor.next();
+            DBObject dbObj = null;
+            while ((dbObj = cursor.tryNext()) != null && keepRunning) { //cursor.getCursorId() != 0 &&
                 Exchange exchange = endpoint.createMongoDbExchange(dbObj);
                 try {
                     if (LOG.isTraceEnabled()) {
