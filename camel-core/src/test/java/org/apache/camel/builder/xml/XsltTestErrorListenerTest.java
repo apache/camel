@@ -21,7 +21,7 @@ import javax.xml.transform.ErrorListener;
 
 import junit.framework.TestCase;
 
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -45,7 +45,7 @@ public class XsltTestErrorListenerTest extends TestCase {
         } catch (Exception ex) {
             // expected
         }
-        verify(errorListener, atLeastOnce()).error(anyObject());
-        verify(errorListener).fatalError(anyObject());
+        verify(errorListener, atLeastOnce()).error(any());
+        verify(errorListener).fatalError(any());
     }
 }
