@@ -17,7 +17,7 @@
 package org.apache.camel;
 
 /**
- * Allows objects to be notified when {@link CamelContext} has done all work when starting.
+ * Allows objects to be notified when {@link CamelContext} has almost done all work when starting.
  * <p/>
  * This can be used to perform any custom work when the entire {@link CamelContext} has been initialized and <b>almost</b>
  * started. For example this ensures that all Camel routes have been started and are up and running, before this callback
@@ -33,19 +33,20 @@ package org.apache.camel;
  * supported by design, as this listener plays a role during starting up routes. Instead you can use an {@link org.apache.camel.spi.EventNotifier}
  * and listen on the {@link org.apache.camel.management.event.CamelContextStartedEvent} event and then add and start new routes from there.
  *
- * @version 
+ * @version
  */
 public interface StartupListener {
 
     /**
-     * Callback invoked when the {@link CamelContext} has just been started.
+     * Callback invoked when the {@link CamelContext} is about to be fully started (not started yet).
+     * Yes we are aware of the method name, but we can all have a bad-naming day.
      *
      * @param context        the Camel context
      * @param alreadyStarted whether or not the {@link CamelContext} already has been started. For example the context
      *                       could already have been started, and then a service is added/started later which still
      *                       triggers this callback to be invoked.
-     * @throws Exception can be thrown in case of errors to fail the startup process and have the application
-     *                   fail on startup.
+     * @throws Exception     can be thrown in case of errors to fail the startup process and have the application
+     *                       fail on startup.
      */
     void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception;
 }
