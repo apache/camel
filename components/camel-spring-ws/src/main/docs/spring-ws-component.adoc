@@ -163,10 +163,10 @@ the message.
 |`CamelSpringWebserviceAddressingAction` |URI |Use this header to specify the WS-Addressing action of the message,
 overrides `wsAddressingAction` option if present
 
-|CamelSpringWebserviceAddressingFaultTo |URI |Use this header to specify the  WS-Addressing FaultTo , overrides
+|CamelSpringWebserviceAddressingFaultTo |URI |Use this header to specify the  WS-Addressing FaultTo , overrides
 faultTo option if present
 
-|CamelSpringWebserviceAddressingReplyTo |URI |Use this header to specify the  WS-Addressing ReplyTo , overrides
+|CamelSpringWebserviceAddressingReplyTo |URI |Use this header to specify the  WS-Addressing ReplyTo , overrides
 replyTo option if present
 
 |CamelSpringWebserviceAddressingOutputAction |URI |Use this header to specify the WS-Addressing Action , overrides
@@ -250,10 +250,10 @@ test].
 ### The header and attachment propagation
 
 Spring WS Camel supports propagation of the headers and attachments into
-Spring-WS WebServiceMessage response since version *2.10.3*. The
+Spring-WS WebServiceMessage response since version *2.10.3*. The
 endpoint will use so called "hook" the MessageFilter (default
 implementation is provided by BasicMessageFilter) to propagate the
-exchange headers and attachments into WebServiceMessage response. Now
+exchange headers and attachments into WebServiceMessage response. Now
 you can use
 
 [source,java]
@@ -265,6 +265,28 @@ exchange.getIn().addAttachment("myAttachment", new DataHandler(...))
 Note: If the exchange header in the pipeline contains text, it generates
 Qname(key)=value attribute in the soap header. Recommended is to create
 a QName class directly and put into any key into header.
+
+### How to transform the soap header using a stylesheet
+The header transformation filter (HeaderTransformationMessageFilter.java)
+can be used to transform the soap header for a soap request. If you want to use 
+the header transformation filter, see the below example:
+
+[source,java]
+------------------------------------------------------------------
+<bean id="headerTransformationFilter" class="org.apache.camel.component.spring.ws.filter.impl.HeaderTransformationMessageFilter">
+    <constructor-arg index="0" value="org/apache/camel/component/spring/ws/soap-header-transform.xslt"/>
+</bean
+------------------------------------------------------------------
+Use the bead defined above in the camel endpoint
+
+[source,java]
+------------------------------------------------------------------
+<route>
+    <from uri="direct:stockQuoteWebserviceHeaderTransformation"/>
+    <to uri="spring-ws:http://localhost?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;messageFilter=#headerTransformationFilter"/>
+</route> 
+------------------------------------------------------------------
+
 
 ### How to use MTOM attachments
 
