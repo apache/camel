@@ -90,7 +90,9 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
                 result.setDefaultProtocol(scf.getProtocol());
             }
             connectionFactories.add(httpFactory);
-            result.setConnectionFactories(connectionFactories);
+            for (ConnectionFactory cf : connectionFactories) {
+                result.addConnectionFactory(cf);
+            }
             result.setPort(port);
             if (host != null) {
                 result.setHost(host);
