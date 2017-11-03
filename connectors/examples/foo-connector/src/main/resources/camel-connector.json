@@ -2,7 +2,7 @@
   "baseScheme" : "timer",
   "baseGroupId" : "org.apache.camel",
   "baseArtifactId" : "camel-core",
-  "baseVersion" : "2.21.0-SNAPSHOT",
+  "baseVersion" : "2.21.0-20171103.151330-25",
   "baseJavaType" : "org.apache.camel.component.timer.TimerComponent",
   "name" : "Foo",
   "scheme" : "foo",

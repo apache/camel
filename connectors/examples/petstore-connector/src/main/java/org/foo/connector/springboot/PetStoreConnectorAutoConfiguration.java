@@ -105,7 +105,7 @@ public class PetStoreConnectorAutoConfiguration {
         for (Map.Entry<String, PetStoreConnectorConfigurationCommon> entry : configuration
                 .getConfigurations().entrySet()) {
             parameters.clear();
-            PetStoreComponent connector = new PetStoreComponent();
+            PetStoreComponent connector = new PetStoreComponent(entry.getKey());
             connector.setCamelContext(camelContext);
             try {
                 IntrospectionSupport.getProperties(entry.getValue(),

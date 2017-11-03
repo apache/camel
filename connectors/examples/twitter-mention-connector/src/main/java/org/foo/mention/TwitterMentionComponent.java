@@ -27,4 +27,8 @@ public class TwitterMentionComponent extends DefaultConnectorComponent {
         super("twitter-mention", "org.foo.mention.TwitterMentionComponent");
     }
 
+    public TwitterMentionComponent(String componentScheme) {
+        super("twitter-mention", componentScheme, "org.foo.mention.TwitterMentionComponent");
+    }
+
 }

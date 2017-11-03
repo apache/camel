@@ -24,4 +24,8 @@ public class WineComponent extends DefaultConnectorComponent {
         super("wine", "org.foo.connector.WineComponent");
     }
 
+    public WineComponent(String componentScheme) {
+        super("wine", componentScheme, "org.foo.connector.WineComponent");
+    }
+
 }
