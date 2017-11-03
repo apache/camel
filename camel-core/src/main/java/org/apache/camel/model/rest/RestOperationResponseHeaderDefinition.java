@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * To specify the rest operation response headers using Swagger.
@@ -65,6 +65,9 @@ public class RestOperationResponseHeaderDefinition {
     @XmlElementWrapper(name = "allowableValues")
     @XmlElement(name = "value")
     private List<String> allowableValues;
+
+    @XmlAttribute
+    private String example;
 
     public RestOperationResponseHeaderDefinition(RestOperationResponseMsgDefinition response) {
         this();
@@ -143,6 +146,17 @@ public class RestOperationResponseHeaderDefinition {
         return new ArrayList<String>();
     }
 
+    public String getExample() {
+        return example;
+    }
+
+    /**
+     * Sets the Swagger example
+     */
+    public void setExample(String example) {
+        this.example = example;
+    }
+
     /**
      * Sets the Swagger Parameter list of allowable values.
      */
@@ -209,12 +223,20 @@ public class RestOperationResponseHeaderDefinition {
     }
 
     /**
+     * Sets an example of this header.
+     */
+    public RestOperationResponseHeaderDefinition example(String example) {
+        setExample(example);
+        return this;
+    }
+
+    /**
      * Ends the configuration of this header
      */
     public RestOperationResponseMsgDefinition endHeader() {
         // name and type is mandatory
-        ObjectHelper.notEmpty(name, "name");
-        ObjectHelper.notEmpty(dataType, "dataType");
+        StringHelper.notEmpty(name, "name");
+        StringHelper.notEmpty(dataType, "dataType");
         return response;
     }
 
