@@ -259,6 +259,9 @@ public class RestSwaggerReader {
 
                         if (param.getDataType() != null) {
                             serializableParameter.setType(param.getDataType());
+                            if (param.getDataFormat() != null) {
+                                serializableParameter.setFormat(param.getDataFormat());
+                            }
                             if (param.getDataType().equalsIgnoreCase("array")) {
                                 if (param.getArrayType() != null) {
                                     if (param.getArrayType().equalsIgnoreCase("string")) {
@@ -367,9 +370,13 @@ public class RestSwaggerReader {
                 for (RestOperationResponseHeaderDefinition header : msg.getHeaders()) {
                     String name = header.getName();
                     String type = header.getDataType();
+                    String format = header.getDataFormat();
                     if ("string".equals(type)) {
                         StringProperty sp = new StringProperty();
                         sp.setName(name);
+                        if (format != null) {
+                            sp.setFormat(format);
+                        }
                         sp.setDescription(header.getDescription());
                         if (header.getAllowableValues() != null) {
                             sp.setEnum(header.getAllowableValues());
@@ -378,6 +385,9 @@ public class RestSwaggerReader {
                     } else if ("int".equals(type) || "integer".equals(type)) {
                         IntegerProperty ip = new IntegerProperty();
                         ip.setName(name);
+                        if (format != null) {
+                            ip.setFormat(format);
+                        }
                         ip.setDescription(header.getDescription());
 
                         List<Integer> values;
@@ -392,6 +402,9 @@ public class RestSwaggerReader {
                     } else if ("long".equals(type)) {
                         LongProperty lp = new LongProperty();
                         lp.setName(name);
+                        if (format != null) {
+                            lp.setFormat(format);
+                        }
                         lp.setDescription(header.getDescription());
 
                         List<Long> values;
@@ -404,9 +417,18 @@ public class RestSwaggerReader {
                         }
                         response.addHeader(name, lp);
                     } else if ("float".equals(type)) {
+<<<<<<< HEAD
                         FloatProperty lp = new FloatProperty();
                         lp.setName(name);
                         lp.setDescription(header.getDescription());
+=======
+                        FloatProperty fp = new FloatProperty();
+                        fp.setName(name);
+                        if (format != null) {
+                            fp.setFormat(format);
+                        }
+                        fp.setDescription(header.getDescription());
+>>>>>>> a1d661c4d3... CAMEL-11991: camel-swagger - Allow to specify data format so you can say a parameter is a date, password etc.
 
                         List<Float> values;
                         if (!header.getAllowableValues().isEmpty()) {
@@ -420,6 +442,9 @@ public class RestSwaggerReader {
                     } else if ("double".equals(type)) {
                         DoubleProperty dp = new DoubleProperty();
                         dp.setName(name);
+                        if (format != null) {
+                            dp.setFormat(format);
+                        }
                         dp.setDescription(header.getDescription());
 
                         List<Double> values;
@@ -434,6 +459,9 @@ public class RestSwaggerReader {
                     } else if ("boolean".equals(type)) {
                         BooleanProperty bp = new BooleanProperty();
                         bp.setName(name);
+                        if (format != null) {
+                            bp.setFormat(format);
+                        }
                         bp.setDescription(header.getDescription());
                         response.addHeader(name, bp);
                     } else if ("array".equals(type)) {
