@@ -52,7 +52,7 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
                                 .example("success", "123").example("error", "-1").endResponseMessage()
                             .to("log:bye")
                         .post("/bye").description("To update the greeting message").consumes("application/xml").produces("application/xml")
-                            .param().name("greeting").type(RestParamType.body).dataType("string").description("Message to use as greeting").example("application/xml","<hello>Hi</hello>").endParam()
+                            .param().name("greeting").type(RestParamType.body).dataType("string").description("Message to use as greeting").example("application/xml", "<hello>Hi</hello>").endParam()
                             .to("log:bye");
             }
         };

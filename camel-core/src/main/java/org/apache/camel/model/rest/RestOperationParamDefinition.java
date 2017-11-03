@@ -74,6 +74,9 @@ public class RestOperationParamDefinition {
     @Metadata(defaultValue = "string")
     private String dataType;
 
+    @XmlAttribute
+    private String dataFormat;
+
     @XmlElementWrapper(name = "allowableValues")
     @XmlElement(name = "value")
     private List<String> allowableValues;
@@ -181,6 +184,17 @@ public class RestOperationParamDefinition {
         this.dataType = dataType;
     }
 
+    public String getDataFormat() {
+        return dataFormat;
+    }
+
+    /**
+     * Sets the Swagger Parameter data format.
+     */
+    public void setDataFormat(String dataFormat) {
+        this.dataFormat = dataFormat;
+    }
+
     public List<String> getAllowableValues() {
         if (allowableValues != null) {
             return allowableValues;
@@ -281,6 +295,16 @@ public class RestOperationParamDefinition {
      * The data type of the parameter such as <tt>string</tt>, <tt>integer</tt>, <tt>boolean</tt>
      */
     public RestOperationParamDefinition dataType(String type) {
+        setDataType(type);
+        return this;
+    }
+
+    /**
+     * The data format of the parameter such as <tt>binary</tt>, <tt>date</tt>, <tt>date-time</tt>, <tt>password</tt>.
+     * The format is usually derived from the dataType alone. However you can set this option for more fine grained control
+     * of the format in use.
+     */
+    public RestOperationParamDefinition dataFormat(String type) {
         setDataType(type);
         return this;
     }
