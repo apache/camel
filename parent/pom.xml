@@ -376,7 +376,7 @@
     <jersey-version>2.11</jersey-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
     <jetty92-version>9.2.22.v20170606</jetty92-version>
-    <jetty9-version>9.3.21.v20170918</jetty9-version>
+    <jetty9-version>9.4.7.v20170914</jetty9-version>
     <jetty-version>${jetty9-version}</jetty-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
