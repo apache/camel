@@ -212,7 +212,7 @@ public class RestOperationResponseHeaderDefinition {
      * of the format in use.
      */
     public RestOperationResponseHeaderDefinition dataFormat(String type) {
-        setDataType(type);
+        setDataFormat(type);
         return this;
     }
 
