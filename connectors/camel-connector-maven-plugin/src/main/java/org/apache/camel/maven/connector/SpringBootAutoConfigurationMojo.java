@@ -445,7 +445,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("for (Map.Entry<String, " + commonConfigurationName + "> entry : configuration.getConfigurations().entrySet()) {\n");
         sb.append("parameters.clear();\n");
         sb.append("\n");
-        sb.append(shortJavaType).append(" connector = new ").append(shortJavaType).append("();\n");
+        sb.append(shortJavaType).append(" connector = new ").append(shortJavaType).append("(").append("entry.getKey()").append(");\n");
         sb.append("connector.setCamelContext(camelContext);\n");
         sb.append("\n");
         sb.append("try {\n");

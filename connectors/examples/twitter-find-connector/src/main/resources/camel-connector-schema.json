@@ -1,13 +1,13 @@
 {
   "component":{
     "kind":"component",
-    "baseScheme":"twitter",
+    "baseScheme":"twitter-search",
     "scheme":"twitter-find",
-    "syntax":"twitter-find:kind",
+    "syntax":"twitter-find:keywords",
     "title":"TwitterFind",
     "description":"Find for twitter",
     "label":"twitter",
-    "deprecated":true,
+    "deprecated":false,
     "async":false,
     "consumerOnly":true,
     "lenientProperties":false,
@@ -67,6 +67,17 @@
     }
   },
   "properties":{
+    "keywords":{
+      "kind":"path",
+      "displayName":"Keywords",
+      "group":"common",
+      "required":true,
+      "type":"string",
+      "javaType":"java.lang.String",
+      "deprecated":false,
+      "secret":false,
+      "description":"The search keywords. Multiple values can be separated with comma."
+    },
     "filterOld":{
       "kind":"parameter",
       "displayName":"Filter Old",
@@ -79,18 +90,6 @@
       "secret":false,
       "defaultValue":true,
       "description":"Filter out old tweets that has previously been polled. This state is stored in memory only and based on last tweet id."
-    },
-    "keywords":{
-      "kind":"parameter",
-      "displayName":"Keywords",
-      "group":"filter",
-      "label":"consumer,filter",
-      "required":false,
-      "type":"string",
-      "javaType":"java.lang.String",
-      "deprecated":false,
-      "secret":false,
-      "description":"Can be used for search and streaming\/filter. Multiple values can be separated with comma."
     },
     "delay":{
       "kind":"parameter",

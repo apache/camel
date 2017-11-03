@@ -1,9 +1,9 @@
 {
-  "baseScheme" : "twitter",
+  "baseScheme" : "twitter-search",
   "baseGroupId" : "org.apache.camel",
   "baseArtifactId" : "camel-twitter",
   "baseVersion" : "2.20.0-SNAPSHOT",
-  "baseJavaType" : "org.apache.camel.component.twitter.TwitterComponent",
+  "baseJavaType" : "org.apache.camel.component.twitter.search.TwitterSearchComponent",
   "name" : "TwitterFind",
   "scheme" : "twitter-find",
   "javaType" : "org.foo.find.TwitterFindComponent",
@@ -18,7 +18,6 @@
   "componentOptions" : [ "accessToken", "accessTokenSecret", "consumerKey", "consumerSecret" ],
   "endpointOptions" : [ "delay", "keywords", "filterOld" ],
   "endpointValues" : {
-    "kind" : "search",
     "type" : "POLLING",
     "delay" : 5000
   },
