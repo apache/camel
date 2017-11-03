@@ -29,6 +29,7 @@ import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.SecurityHandler;
+import org.eclipse.jetty.security.UserStore;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -85,7 +86,9 @@ public final class JettyTestServer {
 
     private SecurityHandler basicAuth(String username, String password, String realm) {
         HashLoginService l = new HashLoginService();
-        l.putUser(username, Credential.getCredential(password), new String[]{"user"});
+        UserStore us = new UserStore();
+        us.addUser(username, Credential.getCredential(password), new String[]{"user"});
+        l.setUserStore(us);
         l.setName(realm);
 
         Constraint constraint = new Constraint();
