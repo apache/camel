@@ -33,7 +33,7 @@ public final class PahoConstants {
     public static final String CAMEL_PAHO = "CamelPaho";
     public static final String CAMEL_PAHO_MSG_QOS = CAMEL_PAHO + "Qos";
     public static final String CAMEL_PAHO_MSG_RETAINED = CAMEL_PAHO + "Retained";
-
+    public static final String CAMEL_PAHO_OVERRIDE_TOPIC = CAMEL_PAHO + "OverrideTopic";
 
     private PahoConstants() {
     }
