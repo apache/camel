@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * To specify the rest operation response messages using Swagger.
@@ -54,6 +54,9 @@ public class RestOperationResponseMsgDefinition {
 
     @XmlElement(name = "header")
     private List<RestOperationResponseHeaderDefinition> headers;
+
+    @XmlElement(name = "examples")
+    private List<RestPropertyDefinition> examples;
 
     public RestOperationResponseMsgDefinition(VerbDefinition verb) {
         this();
@@ -97,6 +100,14 @@ public class RestOperationResponseMsgDefinition {
         this.headers = headers;
     }
 
+    public List<RestPropertyDefinition> getExamples() {
+        return examples;
+    }
+
+    public void setExamples(List<RestPropertyDefinition> examples) {
+        this.examples = examples;
+    }
+
     /**
      * The response code such as a HTTP status code.
      */
@@ -131,11 +142,22 @@ public class RestOperationResponseMsgDefinition {
     }
 
     /**
+     * Adds an example
+     */
+    public RestOperationResponseMsgDefinition example(String key, String example) {
+        if (examples == null) {
+            examples = new ArrayList<>();
+        }
+        examples.add(new RestPropertyDefinition(key, example));
+        return this;
+    }
+
+    /**
      * Adds a response header
      */
     public RestOperationResponseHeaderDefinition header(String name) {
         if (headers == null) {
-            headers = new ArrayList<RestOperationResponseHeaderDefinition>();
+            headers = new ArrayList<>();
         }
         RestOperationResponseHeaderDefinition header = new RestOperationResponseHeaderDefinition(this);
         header.setName(name);
@@ -148,8 +170,8 @@ public class RestOperationResponseMsgDefinition {
      */
     public RestDefinition endResponseMessage() {
         // code and message is mandatory
-        ObjectHelper.notEmpty(code, "code");
-        ObjectHelper.notEmpty(message, "message");
+        StringHelper.notEmpty(code, "code");
+        StringHelper.notEmpty(message, "message");
         verb.getResponseMsgs().add(this);
         return verb.getRest();
     }

@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * To specify the rest operation parameters using Swagger.
@@ -81,6 +81,9 @@ public class RestOperationParamDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "")
     private String access;
+
+    @XmlElement(name = "examples")
+    private List<RestPropertyDefinition> examples;
 
     public RestOperationParamDefinition() {
     }
@@ -213,6 +216,17 @@ public class RestOperationParamDefinition {
         this.access = access;
     }
 
+    public List<RestPropertyDefinition> getExamples() {
+        return examples;
+    }
+
+    /**
+     * Sets the Swagger Parameter examples.
+     */
+    public void setExamples(List<RestPropertyDefinition> examples) {
+        this.examples = examples;
+    }
+
     /**
      * Name of the parameter.
      * <p/>
@@ -308,11 +322,33 @@ public class RestOperationParamDefinition {
     }
 
     /**
+     * Adds a body example with the given content-type
+     */
+    public RestOperationParamDefinition example(String contentType, String example) {
+        if (examples == null) {
+            examples = new ArrayList<>();
+        }
+        examples.add(new RestPropertyDefinition(contentType, example));
+        return this;
+    }
+
+    /**
+     * Adds a single example
+     */
+    public RestOperationParamDefinition example(String example) {
+        if (examples == null) {
+            examples = new ArrayList<>();
+        }
+        examples.add(new RestPropertyDefinition("", example));
+        return this;
+    }
+
+    /**
      * Ends the configuration of this parameter
      */
     public RestDefinition endParam() {
         // name is mandatory
-        ObjectHelper.notEmpty(name, "name");
+        StringHelper.notEmpty(name, "name");
         verb.getParams().add(this);
         return verb.getRest();
     }

@@ -44,14 +44,15 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
             public void configure() throws Exception {
                 rest("/hello").consumes("application/json").produces("application/json")
                         .get("/hi/{name}").description("Saying hi")
-                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
+                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").example("Donald Duck").endParam()
                             .to("log:hi")
                         .get("/bye/{name}").description("Saying bye")
-                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
-                            .responseMessage().code(200).message("A reply number").responseModel(float.class).endResponseMessage()
+                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").example("Donald Duck").endParam()
+                            .responseMessage().code(200).message("A reply number").responseModel(float.class)
+                                .example("success", "123").example("error", "-1").endResponseMessage()
                             .to("log:bye")
                         .post("/bye").description("To update the greeting message").consumes("application/xml").produces("application/xml")
-                            .param().name("greeting").type(RestParamType.body).dataType("string").description("Message to use as greeting").endParam()
+                            .param().name("greeting").type(RestParamType.body).dataType("string").description("Message to use as greeting").example("application/xml","<hello>Hi</hello>").endParam()
                             .to("log:bye");
             }
         };
@@ -74,7 +75,6 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         String json = mapper.writeValueAsString(swagger);
 
         log.info(json);
-        System.out.println(json);
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
         assertTrue(json.contains("\"basePath\" : \"/api\""));
@@ -84,6 +84,10 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         assertTrue(json.contains("\"/hello/hi/{name}\""));
         assertTrue(json.contains("\"type\" : \"number\""));
         assertTrue(json.contains("\"format\" : \"float\""));
+        assertTrue(json.contains("\"application/xml\" : \"<hello>Hi</hello>\""));
+        assertTrue(json.contains("\"x-example\" : \"Donald Duck\""));
+        assertTrue(json.contains("\"success\" : \"123\""));
+        assertTrue(json.contains("\"error\" : \"-1\""));
 
         context.stop();
     }
