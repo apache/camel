@@ -262,6 +262,9 @@ public class RestSwaggerReader {
 
                         if (param.getDataType() != null) {
                             serializableParameter.setType(param.getDataType());
+                            if (param.getDataFormat() != null) {
+                                serializableParameter.setFormat(param.getDataFormat());
+                            }
                             if (param.getDataType().equalsIgnoreCase("array")) {
                                 if (param.getArrayType() != null) {
                                     if (param.getArrayType().equalsIgnoreCase("string")) {
@@ -383,9 +386,13 @@ public class RestSwaggerReader {
                 for (RestOperationResponseHeaderDefinition header : msg.getHeaders()) {
                     String name = header.getName();
                     String type = header.getDataType();
+                    String format = header.getDataFormat();
                     if ("string".equals(type)) {
                         StringProperty sp = new StringProperty();
                         sp.setName(name);
+                        if (format != null) {
+                            sp.setFormat(format);
+                        }
                         sp.setDescription(header.getDescription());
                         if (header.getAllowableValues() != null) {
                             sp.setEnum(header.getAllowableValues());
@@ -398,6 +405,9 @@ public class RestSwaggerReader {
                     } else if ("int".equals(type) || "integer".equals(type)) {
                         IntegerProperty ip = new IntegerProperty();
                         ip.setName(name);
+                        if (format != null) {
+                            ip.setFormat(format);
+                        }
                         ip.setDescription(header.getDescription());
 
                         List<Integer> values;
@@ -416,6 +426,9 @@ public class RestSwaggerReader {
                     } else if ("long".equals(type)) {
                         LongProperty lp = new LongProperty();
                         lp.setName(name);
+                        if (format != null) {
+                            lp.setFormat(format);
+                        }
                         lp.setDescription(header.getDescription());
 
                         List<Long> values;
@@ -434,6 +447,9 @@ public class RestSwaggerReader {
                     } else if ("float".equals(type)) {
                         FloatProperty fp = new FloatProperty();
                         fp.setName(name);
+                        if (format != null) {
+                            fp.setFormat(format);
+                        }
                         fp.setDescription(header.getDescription());
 
                         List<Float> values;
@@ -452,6 +468,9 @@ public class RestSwaggerReader {
                     } else if ("double".equals(type)) {
                         DoubleProperty dp = new DoubleProperty();
                         dp.setName(name);
+                        if (format != null) {
+                            dp.setFormat(format);
+                        }
                         dp.setDescription(header.getDescription());
 
                         List<Double> values;
@@ -470,6 +489,9 @@ public class RestSwaggerReader {
                     } else if ("boolean".equals(type)) {
                         BooleanProperty bp = new BooleanProperty();
                         bp.setName(name);
+                        if (format != null) {
+                            bp.setFormat(format);
+                        }
                         bp.setDescription(header.getDescription());
                         // add example
                         if (header.getExample() != null) {
