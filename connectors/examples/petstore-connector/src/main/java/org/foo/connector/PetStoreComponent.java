@@ -24,4 +24,8 @@ public class PetStoreComponent extends DefaultConnectorComponent {
         super("petstore", "org.foo.connector.PetStoreComponent");
     }
 
+    public PetStoreComponent(String componentScheme) {
+        super("petstore", componentScheme, "org.foo.connector.PetStoreComponent");
+    }
+
 }

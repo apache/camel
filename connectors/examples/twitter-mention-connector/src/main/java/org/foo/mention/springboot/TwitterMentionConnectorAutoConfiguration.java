@@ -106,7 +106,8 @@ public class TwitterMentionConnectorAutoConfiguration {
         for (Map.Entry<String, TwitterMentionConnectorConfigurationCommon> entry : configuration
                 .getConfigurations().entrySet()) {
             parameters.clear();
-            TwitterMentionComponent connector = new TwitterMentionComponent();
+            TwitterMentionComponent connector = new TwitterMentionComponent(
+                    entry.getKey());
             connector.setCamelContext(camelContext);
             try {
                 IntrospectionSupport.getProperties(entry.getValue(),
