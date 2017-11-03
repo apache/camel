@@ -114,6 +114,7 @@ The following headers are recognized by the Paho component:
 |Header |Java constant |Endpoint type |Value type |Description
 
 |CamelMqttTopic |PahoConstants.MQTT_TOPIC |Consumer |String |The name of the topic
+|CamelPahoOverrideTopic |PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC |Producer |String |Name of topic to override and send to instead of topic specified on endpoint
 |===
 
 
@@ -175,3 +176,11 @@ from("paho:some/queue?brokerUrl=tcp://iot.eclipse.org:1883")
     .to("mock:test");
 ----
 
+And here we override the default topic and set to a dynamic topic
+
+[source,java]
+----
+from("direct:test")
+    .setHeader(PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC, simple("${header.customerId}"))
+    .to("paho:some/target/queue");
+----
