@@ -305,7 +305,7 @@ public class RestOperationParamDefinition {
      * of the format in use.
      */
     public RestOperationParamDefinition dataFormat(String type) {
-        setDataType(type);
+        setDataFormat(type);
         return this;
     }
 
