@@ -773,7 +773,7 @@
       org.apache.commons.httpclient.*;version="[3.1,4.0)",
       org.apache.velocity.*;version="[1.6.2,2)",
       org.apache.xmlbeans.*;version="[2.4,3)",
-      org.eclipse.jetty.*;version="[9.2,10)",
+      org.eclipse.jetty.*;version="[9.3,10)",
       com.thoughtworks.xstream.*;version="[1.4.7,2)",
       org.antlr.stringtemplate.*;version="[3.0,4)",
       org.ccil.cowan.tagsoup.*;version="[1.2,2)",
