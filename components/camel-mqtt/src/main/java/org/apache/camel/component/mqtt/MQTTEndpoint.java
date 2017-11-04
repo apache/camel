@@ -236,7 +236,7 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
             // Without this, the fusesource MQTT client seems to be holding the old connection object, and connection contention can ensue.
             connection.disconnect(null);
         }
-    	
+
         connection = configuration.callbackConnection();
 
         connection.listener(new Listener() {
