@@ -23,12 +23,18 @@ import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import org.apache.camel.component.salesforce.api.dto.ActionOverride;
+import org.apache.camel.component.salesforce.api.dto.FilteredLookupInfo;
+
 
 /**
  * Salesforce DTO for SObject Case
  */
 @Generated("org.apache.camel.maven.CamelSalesforceMojo")
 @XStreamAlias("Case")
+@JsonPropertyOrder({ "PickListAccentMark", "PickListSlash", "PickListQuotationMark" })
 public class Case extends AbstractDescribedSObjectBase {
 
     private static final SObjectDescription DESCRIPTION = createSObjectDescription();

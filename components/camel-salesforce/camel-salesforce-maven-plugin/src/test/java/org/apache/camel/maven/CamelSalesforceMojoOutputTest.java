@@ -57,7 +57,7 @@ public class CamelSalesforceMojoOutputTest {
     public String source;
 
     private CamelSalesforceMojo mojo;
-    private CamelSalesforceMojo.GeneratorUtility utility = new CamelSalesforceMojo.GeneratorUtility(false);
+    private CamelSalesforceMojo.GeneratorUtility utility = new CamelSalesforceMojo.GeneratorUtility(false, mojo);
 
     @Parameters(name = "json = {0}, source = {2}")
     public static Iterable<Object[]> parameters() throws IOException {

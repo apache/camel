@@ -1,0 +1,20 @@
+{
+  "compositeResponse" : [ {
+    "body" : null,
+    "httpHeaders" : { },
+    "httpStatusCode" : 204,
+    "referenceId" : "UpsertPayment"
+  }, {
+    "body" : {
+      "id" : "a1V3E000000EXomUAG",
+      "success" : true,
+      "errors" : [ ],
+      "warnings" : [ ]
+    },
+    "httpHeaders" : {
+      "Location" : "/services/data/v41.0/sobjects/blng__PaymentAllocationInvoice__c/a1V3E000000EXomUAG"
+    },
+    "httpStatusCode" : 201,
+    "referenceId" : "NewPaymentAllocation"
+  } ]
+}

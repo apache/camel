@@ -48,6 +48,8 @@ import org.apache.camel.component.salesforce.api.dto.AnnotationFieldKeySorter;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatchResponse;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectComposite;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectCompositeResponse;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTreeResponse;
 import org.apache.camel.component.salesforce.api.utils.DateTimeConverter;
@@ -121,6 +123,23 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
         return xStream;
     }
+    
+    @Override
+    public void submitComposite(final SObjectComposite composite, final ResponseCallback<SObjectCompositeResponse> callback)
+        throws SalesforceException {
+    	// composite interface supports only json payload
+    	checkCompositeFormat(format, SObjectComposite.REQUIRED_PAYLOAD_FORMAT);
+    	
+    	final String url = versionUrl() + "composite";
+
+        final Request post = createRequest(HttpMethod.POST, url);
+
+        final ContentProvider content = serialize(composite, composite.objectTypes());
+        post.content(content);
+
+        doHttpRequest(post, (response, exception) -> callback
+            .onResponse(tryToReadResponse(SObjectCompositeResponse.class, response), exception));
+    }
 
     @Override
     public void submitCompositeBatch(final SObjectBatch batch, final ResponseCallback<SObjectBatchResponse> callback)
@@ -159,6 +178,14 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
                 + ", but the payload of the Composite API batch operation requires at least " + batchVersion, 0);
         }
     }
+    
+    static void checkCompositeFormat(final PayloadFormat configuredFormat, final PayloadFormat requiredFormat)
+            throws SalesforceException {
+            if (configuredFormat != requiredFormat) {
+                throw new SalesforceException("Component is configured with Salesforce Composite API format " + configuredFormat
+                    + ", but the payload of the Composite API operation requires format " + requiredFormat, 0);
+            }
+        }
 
     Request createRequest(final HttpMethod method, final String url) {
         final Request request = getRequest(method, url);

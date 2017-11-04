@@ -58,6 +58,7 @@ import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 #if ( $hasMultiSelectPicklists )
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -65,11 +66,17 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 #end
 
+import org.apache.camel.component.salesforce.api.dto.ActionOverride;
+import org.apache.camel.component.salesforce.api.dto.FilteredLookupInfo;
+
+
 /**
  * Salesforce DTO for SObject $desc.Name
  */
 @Generated("org.apache.camel.maven.CamelSalesforceMojo")
 @XStreamAlias("$desc.Name")
+#set ( $sizeOfList = $desc.Fields.size() )
+@JsonPropertyOrder({ #foreach ( $field in $desc.Fields)#if ( $utility.notBaseField($field.Name) )"$field.Name"#set ( $indexOfElement = $desc.Fields.indexOf($field) )#if(!($sizeOfList - 1  == $indexOfElement)), #end#end#end })
 public class $desc.Name extends AbstractDescribedSObjectBase {
 
     private static final SObjectDescription DESCRIPTION = createSObjectDescription();
@@ -128,6 +135,25 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
         this.$propertyName = $propertyName;
     }
 
+#set ( $isLookupField = $utility.isLookup($field) )
+#if ( $isLookupField )
+#set ( $lookupObjectType = $utility.getLookupType($field) )
+#set ( $generateLookupRelation = $utility.hasExternalIds($lookupObjectType, $descriptions) )
+#if ( $generateLookupRelation )
+#set( $relationshipAsFieldName = $utility.getLookupRelationshipName($field) )
+    private ${lookupObjectType}_Lookup $relationshipAsFieldName;
+    
+    @JsonProperty("$relationshipAsFieldName")
+    public ${lookupObjectType}_Lookup get$relationshipAsFieldName() {
+        return this.$relationshipAsFieldName;
+    }
+    
+    @JsonProperty("$relationshipAsFieldName")
+    public void set$relationshipAsFieldName(${lookupObjectType}_Lookup $relationshipAsFieldName) {
+        this.$relationshipAsFieldName = $relationshipAsFieldName;
+    }
+#end
+#end
 #end
 #end
 
@@ -170,7 +196,8 @@ ${utility.pop()}
 ${utility.push($var)}
         final ${p.value.class.simpleName} $var = new ${p.value.class.simpleName}();
 #generateSource( ${p.value} )
-${utility.pop()}        ${utility.current()}.set${p.key}(${var});
+#set ( $var = ${utility.popAndReturn()} )
+        ${utility.current()}.set${p.key}(${var});
 #end## END TYPE CONDITION
 #end## VALUE DEFINED CONDITION
 #end## END PROPERTY LOOP

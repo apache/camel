@@ -1,0 +1,33 @@
+{
+    "allOrNone" : true,
+    "compositeRequest" : [
+{
+        "method" : "PATCH",
+        "url" : "/services/data/v41.0/sobjects/blng__Payment__c/MQ2C_Payment_External_Id__c/121000386",
+        "referenceId" : "UpsertPayment",
+        "body" : {
+            "blng__Amount__c": 101.0,
+            "blng__Account__r":
+            {
+                "MQ2C_ECR_Id__c" : "ECR-1"
+            }
+        }
+    },
+    {
+        "method" : "POST",
+        "url" : "/services/data/v41.0/sobjects/blng__PaymentAllocationInvoice__c/",
+        "referenceId" : "NewPaymentAllocation",
+        "body" : {
+                "blng__Amount__c": 10.0,
+                "blng__Type__c": "Allocation",
+                "blng__Payment__r":
+                {
+                   "MQ2C_Payment_External_Id__c" : "121000386"
+                },
+                "blng__Invoice__r":
+                {
+                    "MQ2C_Invoice_External_Id__c" : "0116"
+                }
+        }
+    }]
+}

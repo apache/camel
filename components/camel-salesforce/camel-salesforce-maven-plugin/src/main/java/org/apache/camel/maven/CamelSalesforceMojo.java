@@ -109,6 +109,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
     private static final String SOBJECT_QUERY_RECORDS_VM = "/sobject-query-records.vm";
     private static final String SOBJECT_QUERY_RECORDS_OPTIONAL_VM = "/sobject-query-records-optional.vm";
     private static final String SOBJECT_PICKLIST_VM = "/sobject-picklist.vm";
+    private static final String SOBJECT_LOOKUP_VM = "/sobject-lookup.vm";
 
     // used for velocity logging, to avoid creating velocity.log
     private static final Logger LOG = Logger.getLogger(CamelSalesforceMojo.class.getName());
@@ -273,6 +274,91 @@ public class CamelSalesforceMojo extends AbstractMojo {
     VelocityEngine engine;
 
     private long responseTimeout;
+    
+    final Map<String, SObjectDescription> descriptions = new HashMap<String, SObjectDescription>();
+    
+	RestClient restClient = null;
+	SalesforceHttpClient httpClient = null;
+	SalesforceSession session = null;
+	
+	public void disconnectFromSalesfore() {
+		// remember to stop the client
+		try {
+			((DefaultRestClient) restClient).stop();
+		} catch (Exception ignore) {
+		}
+
+		// Salesforce session stop
+		try {
+			session.stop();
+		} catch (Exception ignore) {
+		}
+
+		// release HttpConnections
+		try {
+			httpClient.stop();
+		} catch (Exception ignore) {
+		}
+	}
+
+	public void connectToSalesforce() throws MojoExecutionException {
+		try {
+			if(httpClient != null && session != null && restClient != null) {
+				return;
+			}
+			httpClient = createHttpClient();
+			session = httpClient.getSession();
+
+			// connect to Salesforce
+			getLog().info("Salesforce login...");
+			try {
+				session.login(null);
+			} catch (SalesforceException e) {
+				String msg = "Salesforce login error " + e.getMessage();
+				throw new MojoExecutionException(msg, e);
+			}
+			getLog().info("Salesforce login successful");
+
+			// create rest client
+
+			restClient = new DefaultRestClient(httpClient,
+					version, PayloadFormat.JSON, session);
+			// remember to start the active client object
+			((DefaultRestClient) restClient).start();
+
+
+		} catch (Exception e) {
+			String msg = "Error connecting to Salesforce: " + e.getMessage();
+			disconnectFromSalesfore();
+			throw new MojoExecutionException(msg, e);
+		}
+	}
+    
+    public SObjectDescription getDescriptionOf(String name) throws MojoExecutionException {
+
+    	try {
+    		final ObjectMapper mapper = JsonUtils.createObjectMapper();
+    		final SyncResponseCallback callback = new SyncResponseCallback();
+    		
+    		connectToSalesforce();
+
+    		restClient.getDescription(name, callback);
+    		if (!callback.await(responseTimeout, TimeUnit.MILLISECONDS)) {
+    			throw new MojoExecutionException("Timeout waiting for getDescription for sObject " + name);
+    		}
+    		final SalesforceException ex = callback.getException();
+    		if (ex != null) {
+    			throw ex;
+    		}
+    		SObjectDescription description = mapper.readValue(callback.getResponse(), SObjectDescription.class);
+    		//descriptions.put(name, description);
+    		return description;
+    	} catch (Exception e) {
+    		String msg = "Error getting SObject description for '" + name + "': " + e.getMessage();
+    		disconnectFromSalesfore();
+    		throw new MojoExecutionException(msg, e);
+    	}
+    }
 
     /**
      * Execute the mojo to generate SObject DTOs
@@ -291,29 +377,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
         }
 
         // connect to Salesforce
-        final SalesforceHttpClient httpClient = createHttpClient();
-        final SalesforceSession session = httpClient.getSession();
-
-        getLog().info("Salesforce login...");
-        try {
-            session.login(null);
-        } catch (SalesforceException e) {
-            String msg = "Salesforce login error " + e.getMessage();
-            throw new MojoExecutionException(msg, e);
-        }
-        getLog().info("Salesforce login successful");
-
-        // create rest client
-        RestClient restClient;
-        try {
-            restClient = new DefaultRestClient(httpClient,
-                    version, PayloadFormat.JSON, session);
-            // remember to start the active client object
-            ((DefaultRestClient) restClient).start();
-        } catch (Exception e) {
-            final String msg = "Unexpected exception creating Rest client: " + e.getMessage();
-            throw new MojoExecutionException(msg, e);
-        }
+        connectToSalesforce();
 
         try {
             // use Jackson json
@@ -357,27 +421,10 @@ public class CamelSalesforceMojo extends AbstractMojo {
             }
 
             // for every accepted name, get SObject description
-            final Set<SObjectDescription> descriptions = new HashSet<SObjectDescription>();
-
             getLog().info("Retrieving Object descriptions...");
             for (String name : objectNames) {
-                try {
-                    callback.reset();
-                    restClient.getDescription(name, callback);
-                    if (!callback.await(responseTimeout, TimeUnit.MILLISECONDS)) {
-                        throw new MojoExecutionException("Timeout waiting for getDescription for sObject " + name);
-                    }
-                    final SalesforceException ex = callback.getException();
-                    if (ex != null) {
-                        throw ex;
-                    }
-                    descriptions.add(mapper.readValue(callback.getResponse(), SObjectDescription.class));
-                } catch (Exception e) {
-                    String msg = "Error getting SObject description for '" + name + "': " + e.getMessage();
-                    throw new MojoExecutionException(msg, e);
-                }
+            	descriptions.put(name, getDescriptionOf(name));
             }
-
             // create package directory
             // validate package name
             if (!packageName.matches(PACKAGE_NAME_PATTERN)) {
@@ -395,10 +442,10 @@ public class CamelSalesforceMojo extends AbstractMojo {
 
             getLog().info("Generating Java Classes...");
             // generate POJOs for every object description
-            final GeneratorUtility utility = new GeneratorUtility(useStringsForPicklists);
+            final GeneratorUtility utility = new GeneratorUtility(useStringsForPicklists, this);
             // should we provide a flag to control timestamp generation?
             final String generatedDate = new Date().toString();
-            for (SObjectDescription description : descriptions) {
+            for (SObjectDescription description : descriptions.values()) {
                 try {
                     processDescription(pkgDir, description, utility, generatedDate);
                 } catch (IOException e) {
@@ -408,23 +455,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
             getLog().info(String.format("Successfully generated %s Java Classes", descriptions.size() * 2));
 
         } finally {
-            // remember to stop the client
-            try {
-                ((DefaultRestClient) restClient).stop();
-            } catch (Exception ignore) {
-            }
-
-            // Salesforce session stop
-            try {
-                session.stop();
-            } catch (Exception ignore) {
-            }
-
-            // release HttpConnections
-            try {
-                httpClient.stop();
-            } catch (Exception ignore) {
-            }
+            disconnectFromSalesfore();
         }
     }
 
@@ -589,7 +620,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
         return httpClient;
     }
 
-    void processDescription(File pkgDir, SObjectDescription description, GeneratorUtility utility, String generatedDate) throws IOException {
+    void processDescription(File pkgDir, SObjectDescription description, GeneratorUtility utility, String generatedDate) throws IOException, MojoExecutionException {
         // generate a source file for SObject
         final VelocityContext context = new VelocityContext();
         context.put("packageName", packageName);
@@ -601,6 +632,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
 
         final String pojoFileName = description.getName() + JAVA_EXT;
         final File pojoFile = new File(pkgDir, pojoFileName);
+        context.put("descriptions", descriptions);
         try (final Writer writer = new OutputStreamWriter(new FileOutputStream(pojoFile), StandardCharsets.UTF_8)) {
             final Template pojoTemplate = engine.getTemplate(SOBJECT_POJO_VM, UTF_8);
             pojoTemplate.merge(context, writer);
@@ -614,7 +646,29 @@ public class CamelSalesforceMojo extends AbstractMojo {
                 optionalTemplate.merge(context, writer);
             }
         }
-
+        
+        // generate ExternalIds Lookup class for all lookup fields that point to an Object that has at least one externalId        
+        for (SObjectField field : description.getFields()) {
+        	if (utility.isLookup(field) 
+        			&& utility.hasExternalIds(utility.getLookupType(field), descriptions)) {
+        		final String lookupFieldTargetObjectType = utility.getLookupType(field);
+        		final String lookupClassName = lookupFieldTargetObjectType + "_Lookup";
+        		final String lookupClassFileName = lookupClassName + JAVA_EXT;
+                final File lookupClassFile = new File(pkgDir, lookupClassFileName);
+                
+                context.put("field", field);
+                context.put("lookupRelationshipName", utility.getLookupRelationshipName(field));
+                context.put("lookupType", lookupClassName);
+                context.put("externalIdsList", utility.getExternalIdsOf(utility.getLookupType(field), descriptions));
+                context.put("lookupClassName", lookupClassName);
+                
+                try (final Writer writer = new OutputStreamWriter(new FileOutputStream(lookupClassFile), StandardCharsets.UTF_8)) {
+                    final Template lookupClassTemplate = engine.getTemplate(SOBJECT_LOOKUP_VM, UTF_8);
+                    lookupClassTemplate.merge(context, writer);
+                }
+        	}
+        }
+        
         // write required Enumerations for any picklists
         for (SObjectField field : description.getFields()) {
             if (utility.isPicklist(field) || utility.isMultiSelectPicklist(field)) {
@@ -721,9 +775,13 @@ public class CamelSalesforceMojo extends AbstractMojo {
         private boolean useStringsForPicklists;
         private final Map<String, AtomicInteger> varNames = new HashMap<>();
         private Stack<String> stack;
+        private CamelSalesforceMojo camelSalesforceMojo;
+        
+        private static final Logger LOG = Logger.getLogger(GeneratorUtility.class.getName());
 
-        public GeneratorUtility(Boolean useStringsForPicklists) {
+        public GeneratorUtility(Boolean useStringsForPicklists, CamelSalesforceMojo camelSalesforceMojo) {
             this.useStringsForPicklists = Boolean.TRUE.equals(useStringsForPicklists);
+            this.camelSalesforceMojo = camelSalesforceMojo;
         }
 
         public boolean isBlobField(SObjectField field) {
@@ -807,9 +865,64 @@ public class CamelSalesforceMojo extends AbstractMojo {
             });
             return result;
         }
+        
+        public boolean isLookup(SObjectField field) {
+        	return "reference".equals(field.getType());
+        }
+        
+        public String getLookupType(SObjectField field) throws MojoExecutionException {
+        	if(!isLookup(field))
+        		 throw new MojoExecutionException("Cannot get the Type of a non lookup field");
+        	
+        	if(field.getReferenceTo().get(0) == null || field.getReferenceTo().get(0).equals(""))
+        		throw new MojoExecutionException(String.format("Cannot get the Type of lookup field %s", field.getName()));
+        	
+        	return field.getReferenceTo().get(0);
+        }
+        
+        public String getLookupRelationshipName(SObjectField field) throws MojoExecutionException {
+        	if(!isLookup(field))
+        		 throw new MojoExecutionException("Cannot get the relationship name of a non lookup field");
+        	
+        	if(field.getRelationshipName() == null || field.getRelationshipName().equals(""))
+        		throw new MojoExecutionException(String.format("Cannot get relationship name of lookup field %s", field.getName()));
+        	
+        	return field.getRelationshipName();
+        }
+        
+        public boolean isExternalId(SObjectField field) {
+        	return field.isExternalId();
+        }
 
         public boolean isPicklist(SObjectField field) {
             return PICKLIST.equals(field.getType());
+        }
+        
+        public List<SObjectField> getExternalIdsOf(SObjectDescription description) {
+        	List<SObjectField> externalIds = new ArrayList<SObjectField>();
+        	for (SObjectField field : description.getFields()) {
+        		if (isExternalId(field)) {
+        			externalIds.add(field);
+        		}
+        	}
+        	return externalIds;
+        }
+        
+        public List<SObjectField> getExternalIdsOf(String objectName, Map<String, SObjectDescription> descriptions) throws MojoExecutionException {
+        	SObjectDescription description = descriptions.get(objectName);
+        	LOG.info(String.format("Description of %s is %s", objectName, description));
+        	if(description == null) {
+        		description = camelSalesforceMojo.getDescriptionOf(objectName);
+        	}
+        	return getExternalIdsOf(description);
+        }
+
+        public boolean hasExternalIds(String objectName, Map<String, SObjectDescription> descriptions) throws MojoExecutionException {
+            return getExternalIdsOf(objectName, descriptions).size() > 0 ? true : false;
+        }
+        
+        public boolean hasExternalIds(SObjectDescription description) {
+            return getExternalIdsOf(description).size() > 0 ? true : false;
         }
 
         public String enumTypeName(String name) {
@@ -896,6 +1009,10 @@ public class CamelSalesforceMojo extends AbstractMojo {
             stack.push(additional);
         }
 
+        public String popAndReturn() {
+            return stack.pop();
+        }
+        
         public void pop() {
             stack.pop();
         }

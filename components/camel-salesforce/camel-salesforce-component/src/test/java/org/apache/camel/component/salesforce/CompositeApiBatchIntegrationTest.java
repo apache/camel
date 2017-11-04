@@ -62,7 +62,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
     }
 
     private static final Set<String> VERSIONS = new HashSet<>(
-        Arrays.asList(SalesforceEndpointConfig.DEFAULT_VERSION, "34.0", "36.0", "37.0", "39.0"));
+        Arrays.asList(SalesforceEndpointConfig.DEFAULT_VERSION));
 
     private String accountId;
 
@@ -129,6 +129,11 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
         testBatch(batch);
     }
 
+    /**
+     * The XML format fails, as Salesforce API wrongly includes whitespaces
+     * inside tag names. E.g.  <Ant Migration Tool>
+     * https://www.w3.org/TR/2008/REC-xml-20081126/#NT-NameChar
+     */
     @Test
     public void shouldSupportLimits() {
         final SObjectBatch batch = new SObjectBatch(version);
@@ -376,7 +381,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
 
     @Parameters(name = "format = {0}, version = {1}")
     public static Iterable<Object[]> formats() {
-        return VERSIONS.stream().flatMap(v -> Stream.of(new Object[] {"JSON", v}, new Object[] {"XML", v}))
+        return VERSIONS.stream().map(v -> new Object[] {"XML", v})
             .collect(Collectors.toList());
     }
 }

@@ -1,0 +1,20 @@
+{
+  "compositeResponse" : [ {
+    "body" : [ {
+      "errorCode" : "PROCESSING_HALTED",
+      "message" : "The transaction was rolled back since another operation in the same transaction failed."
+    } ],
+    "httpHeaders" : { },
+    "httpStatusCode" : 400,
+    "referenceId" : "UpsertPayment"
+  }, {
+    "body" : [ {
+      "message" : "Foreign key external ID: 1210003862 not found for field MQ2C_Payment_External_Id__c in entity blng__Payment__c",
+      "errorCode" : "INVALID_FIELD",
+      "fields" : [ ]
+    } ],
+    "httpHeaders" : { },
+    "httpStatusCode" : 400,
+    "referenceId" : "NewPaymentAllocation"
+  } ]
+}
