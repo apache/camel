@@ -155,6 +155,6 @@ The first step is contributing to the project; if you want to take that a step f
 ## More resources
 
 Git is not a brand new technology and therefore Camel is not the only ASF project thinking about using it. So here are some more resources you mind find useful:
+- [https://gitbox.apache.org/repos/asf/camel.git](https://gitbox.apache.org/repos/asf/camel.git): Apache Camel GitBox repository
 - [http://wiki.apache.org/general/GitAtApache](http://wiki.apache.org/general/GitAtApache): Some basic notes about git@asf
-- [http://git.apache.org/](http://git.apache.org/): List of mgit-mirrors at ASF
-- [https://git-wip-us.apache.org/](https://git-wip-us.apache.org/): More Git infos from Apache
+- [http://git.apache.org/](http://git.apache.org/): List of git-mirrors at ASF
