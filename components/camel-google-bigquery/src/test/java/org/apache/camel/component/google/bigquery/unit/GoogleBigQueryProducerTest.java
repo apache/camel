@@ -22,14 +22,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.api.services.bigquery.model.TableDataInsertAllRequest;
-import com.google.common.collect.Lists;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 public class GoogleBigQueryProducerTest extends BaseBigQueryTest {

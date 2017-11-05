@@ -18,7 +18,6 @@ package org.apache.camel.component.google.bigquery.unit;
 
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.TableDataInsertAllResponse;
-import org.apache.camel.component.google.bigquery.GoogleBigQueryComponent;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConfiguration;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryEndpoint;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryProducer;

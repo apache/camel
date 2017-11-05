@@ -24,15 +24,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.same;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -57,9 +57,10 @@ public class NonXmlFilterReaderTest {
         when(readerMock.read(same(buffer), eq(3), eq(5))).thenAnswer(new Answer<Integer>() {
 
             public Integer answer(InvocationOnMock invocation) throws Throwable {
-                ConstantReader reader = new ConstantReader(new char[] {'a', 'b', 'c'});
-                Object[] args = invocation.getArguments();
-                return reader.read((char[]) args[0], (Integer) args[1], (Integer)args[2]);
+                try (ConstantReader reader = new ConstantReader(new char[] {'a', 'b', 'c'})) {
+                    Object[] args = invocation.getArguments();
+                    return reader.read((char[])args[0], (Integer)args[1], (Integer)args[2]);
+                }
             }
         });
 
