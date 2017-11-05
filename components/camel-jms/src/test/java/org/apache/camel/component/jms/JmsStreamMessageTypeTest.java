@@ -58,7 +58,7 @@ public class JmsStreamMessageTypeTest extends CamelTestSupport {
         StreamMessageInputStream is = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody(StreamMessageInputStream.class);
         assertNotNull(is);
 
-        // no more bytes more should be available on the inputstream
+        // no more bytes should be available on the inputstream
         assertEquals(0, is.available());
 
         // assert on the content of input versus output file
