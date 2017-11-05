@@ -309,8 +309,7 @@ the generated keys will be provided as headers with the keys listed in
 the table above.
 
 You can see more details in this
-https://git-wip-us.apache.org/repos/asf?p=camel.git;a=blob_plain;f=components/camel-sql/src/test/java/org/apache/camel/component/sql/SqlGeneratedKeysTest.java;hb=3962b23f94bb4bc23011b931add08c3f6833c82e[unit
-test].
+https://gitbox.apache.org/repos/asf?p=camel.git;a=blob;f=components/camel-sql/src/test/java/org/apache/camel/component/sql/SqlGeneratedKeysTest.java;h=54c19b7332bb0aa81ee24ff3d3a66885a6b9e9aa;hb=HEAD[unit test].
 
 ### Configuration
 
