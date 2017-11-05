@@ -37,7 +37,7 @@ public class FallbackTypeConverterObjectFactoryEnabledTest extends CamelTestSupp
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        context.getProperties().put(FallbackTypeConverter.OBJECT_FACTORY, "true");
+        context.getGlobalOptions().put(FallbackTypeConverter.OBJECT_FACTORY, "true");
         return new RouteBuilder(context) {
 
             @Override
