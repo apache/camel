@@ -29,6 +29,8 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.composite.ReferenceId;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatchResponse;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectComposite;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectCompositeResponse;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTreeResponse;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
@@ -75,6 +77,9 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             case COMPOSITE_BATCH:
                 return processInternal(SObjectBatch.class, exchange, compositeClient::submitCompositeBatch,
                     this::processCompositeBatchResponse, callback);
+            case COMPOSITE:
+                return processInternal(SObjectComposite.class, exchange, compositeClient::submitComposite,
+                        this::processCompositeResponse, callback);
             default:
                 throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
@@ -95,6 +100,25 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
     @Override
     public void stop() throws Exception {
         ServiceHelper.stopService(compositeClient);
+    }
+    
+    void processCompositeResponse(final Exchange exchange, final Optional<SObjectCompositeResponse> responseBody,
+        final SalesforceException exception, final AsyncCallback callback) {
+        try {
+            if (!responseBody.isPresent()) {
+                exchange.setException(exception);
+            } else {
+                final Message in = exchange.getIn();
+                final Message out = exchange.getOut();
+
+                final SObjectCompositeResponse response = responseBody.get();
+
+                out.copyFromWithNewBody(in, response);
+            }
+        } finally {
+            // notify callback that exchange is done
+            callback.done(false);
+        }
     }
 
     void processCompositeBatchResponse(final Exchange exchange, final Optional<SObjectBatchResponse> responseBody,

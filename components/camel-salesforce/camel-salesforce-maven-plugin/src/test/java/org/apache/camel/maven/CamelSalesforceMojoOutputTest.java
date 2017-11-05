@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,6 +31,7 @@ import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -35,55 +39,66 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class CamelSalesforceMojoOutputTest {
     private static final String TEST_CASE_FILE = "case.json";
+    private static final String TEST_INVOICE_FILE = "blng__Invoice__c.json";
+    private static final String TEST_PAYMENT_FILE = "blng__Payment__c.json";
     private static final String TEST_CALCULATED_FORMULA_FILE = "complex_calculated_formula.json";
     private static final String FIXED_DATE = "Thu Mar 09 16:15:49 ART 2017";
 
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
 
-    @Parameter(0)
     public String json;
-
-    @Parameter(1)
-    public SObjectDescription description;
-
-    @Parameter(2)
+    
     public String source;
 
+    Map<String, SObjectDescription> descriptions;
+    
     private CamelSalesforceMojo mojo;
-    private CamelSalesforceMojo.GeneratorUtility utility = new CamelSalesforceMojo.GeneratorUtility(false);
-
-    @Parameters(name = "json = {0}, source = {2}")
-    public static Iterable<Object[]> parameters() throws IOException {
-        return Arrays.asList(pair(TEST_CASE_FILE, "Case.java"),
-            pair(TEST_CASE_FILE, "Case_PickListAccentMarkEnum.java"),
-            pair(TEST_CASE_FILE, "Case_PickListQuotationMarkEnum.java"),
-            pair(TEST_CASE_FILE, "Case_PickListSlashEnum.java"), pair(TEST_CASE_FILE, "QueryRecordsCase.java"),
-            pair(TEST_CALCULATED_FORMULA_FILE, "ComplexCalculatedFormula.java"),
-            pair(TEST_CALCULATED_FORMULA_FILE, "QueryRecordsComplexCalculatedFormula.java"));
+    private CamelSalesforceMojo.GeneratorUtility utility;
+    
+    public CamelSalesforceMojoOutputTest(String json, Map<String, SObjectDescription> descriptions, String source) {
+        this.json = json;
+        this.descriptions = descriptions;
+        this.source = source;
     }
 
-    static Object[] pair(String json, String source) throws IOException {
-        return new Object[] {json, createSObjectDescription(json), source};
+    @Parameters(name = "json = {0}, source = {2}")
+    public static Collection<Object[]> parameters() throws IOException {
+        return Arrays.asList(
+                             pair("Case.java", TEST_CASE_FILE),
+                             pair("Case_PickListAccentMarkEnum.java", TEST_CASE_FILE),
+                             pair("Case_PickListQuotationMarkEnum.java", TEST_CASE_FILE),
+                             pair("Case_PickListSlashEnum.java", TEST_CASE_FILE), 
+                             pair("QueryRecordsCase.java", TEST_CASE_FILE),
+                             pair("ComplexCalculatedFormula.java", TEST_CALCULATED_FORMULA_FILE),
+                             pair("QueryRecordsComplexCalculatedFormula.java", TEST_CALCULATED_FORMULA_FILE),
+                             pair("blng__Payment__c.java", TEST_PAYMENT_FILE, TEST_INVOICE_FILE),
+                             pair("blng__Invoice__c_Lookup.java", TEST_PAYMENT_FILE, TEST_INVOICE_FILE)
+            );
+    }
+
+    static Object[] pair(String source, String... jsons) throws IOException {
+        return new Object[] {jsons[0], createSObjectsDescriptions(jsons), source};
     }
 
     @Before
     public void setUp() throws Exception {
         mojo = new CamelSalesforceMojo();
         mojo.engine = CamelSalesforceMojo.createVelocityEngine();
+        mojo.descriptions = descriptions;
+        utility = new CamelSalesforceMojo.GeneratorUtility(false, mojo);
     }
 
     @Test
     public void testProcessDescriptionPickLists() throws Exception {
         final File pkgDir = temp.newFolder();
 
-        mojo.processDescription(pkgDir, description, utility, FIXED_DATE);
+        mojo.processDescription(pkgDir, descriptions.get(removeJsonFileExtension(json)), utility, FIXED_DATE);
 
         File generatedFile = new File(pkgDir, source);
         String generatedContent = FileUtils.readFileToString(generatedFile, StandardCharsets.UTF_8);
@@ -93,14 +108,21 @@ public class CamelSalesforceMojoOutputTest {
 
         Assert.assertEquals(
             "Generated source file in " + source + " must be equal to the one present in test/resources",
-            generatedContent, expectedContent);
+            expectedContent, generatedContent);
+    }
+    
+    static String removeJsonFileExtension(String name) {
+        return name.replace(".json", "");
     }
 
-    static SObjectDescription createSObjectDescription(String name) throws IOException {
-        try (InputStream inputStream = CamelSalesforceMojoOutputTest.class.getResourceAsStream("/" + name)) {
-            ObjectMapper mapper = JsonUtils.createObjectMapper();
-
-            return mapper.readValue(inputStream, SObjectDescription.class);
+    static Map<String, SObjectDescription> createSObjectsDescriptions(String... names) throws IOException {
+        Map<String, SObjectDescription> descriptions = new HashMap<>();
+        for (String name : names) {
+            try (InputStream inputStream = CamelSalesforceMojoOutputTest.class.getResourceAsStream("/" + name)) {
+                ObjectMapper mapper = JsonUtils.createObjectMapper();
+                descriptions.put(removeJsonFileExtension(name), mapper.readValue(inputStream, SObjectDescription.class));
+            }
         }
+        return descriptions;
     }
 }
