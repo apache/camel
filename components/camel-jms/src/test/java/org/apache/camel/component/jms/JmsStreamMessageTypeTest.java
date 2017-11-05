@@ -55,11 +55,16 @@ public class JmsStreamMessageTypeTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        InputStream is = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody(InputStream.class);
+        StreamMessageInputStream is = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody(StreamMessageInputStream.class);
         assertNotNull(is);
-        String xml = context.getTypeConverter().convertTo(String.class, is);
 
-        System.out.println(xml);
+        // no more bytes more should be available on the inputstream
+        assertEquals(0, is.available());
+
+        // assert on the content of input versus output file
+        String srcContent = context.getTypeConverter().convertTo(String.class, new File("src/test/data/message1.xml"));
+        String dstContent = context.getTypeConverter().convertTo(String.class, new File("target/stream/out/message1.xml"));
+        assertEquals("both the source and destination files should have the same content", srcContent, dstContent);
     }
 
     @Override
