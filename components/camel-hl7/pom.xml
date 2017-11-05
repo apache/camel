@@ -71,13 +71,11 @@
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v24</artifactId>
-            <version>${hapi-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v25</artifactId>
-            <version>${hapi-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
