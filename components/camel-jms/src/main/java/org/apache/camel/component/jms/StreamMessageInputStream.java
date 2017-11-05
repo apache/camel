@@ -33,9 +33,8 @@ public class StreamMessageInputStream extends InputStream {
 
     @Override
     public int read() throws IOException {
-        byte[] array = new byte[1];
         try {
-            return message.readBytes(array);
+            return message.readByte();
         } catch (MessageEOFException e) {
             eof = true;
             return -1;
