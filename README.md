@@ -68,7 +68,7 @@ It is also recommended to get started by trying out some of the beginner example
 
 We welcome contributions of all kinds, for details of how you can help
   
-<http://camel.apache.org/contributing.html>
+<https://github.com/apache/camel/blob/master/CONTRIBUTING.md>
 
 Please refer to the website for details of finding the issue tracker, 
 email lists, IRC and Gitter chat
