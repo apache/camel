@@ -25,9 +25,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.text.IsEmptyString.emptyString;
-
 public class YqlComponentTest extends CamelTestSupport {
 
     @Rule
@@ -89,7 +86,7 @@ public class YqlComponentTest extends CamelTestSupport {
         assertNotNull(yqlConfiguration);
         assertEquals("query", yqlConfiguration.getQuery());
         assertEquals("json", yqlConfiguration.getFormat());
-        assertThat(yqlConfiguration.getCallback(), is(emptyString()));
+        assertNull(yqlConfiguration.getCallback());
         assertNull(yqlConfiguration.getCrossProduct());
         assertFalse(yqlConfiguration.isDiagnostics());
         assertFalse(yqlConfiguration.isDebug());
