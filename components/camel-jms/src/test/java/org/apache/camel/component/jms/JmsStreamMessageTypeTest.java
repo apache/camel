@@ -62,8 +62,8 @@ public class JmsStreamMessageTypeTest extends CamelTestSupport {
         assertEquals(0, is.available());
 
         // assert on the content of input versus output file
-        String srcContent = context.getTypeConverter().convertTo(String.class, new File("src/test/data/message1.xml"));
-        String dstContent = context.getTypeConverter().convertTo(String.class, new File("target/stream/out/message1.xml"));
+        String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/message1.xml"));
+        String dstContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("target/stream/out/message1.xml"));
         assertEquals("both the source and destination files should have the same content", srcContent, dstContent);
     }
 
