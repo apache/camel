@@ -380,6 +380,7 @@
 	* [XML Security](xmlsecurity-component.adoc)
 	* [XMPP](xmpp-component.adoc)
 	* [XQuery](xquery-component.adoc)
+	* [Yahoo Query Language](yql-component.adoc)
 	* [Yammer](yammer-component.adoc)
 	* [Zendesk](zendesk-component.adoc)
 	* [ZooKeeper](zookeeper-component.adoc)
