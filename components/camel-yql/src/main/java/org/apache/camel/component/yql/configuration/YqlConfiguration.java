@@ -145,7 +145,7 @@ public class YqlConfiguration {
 
     /**
      * Enables lossless JSON processing. The only allowed value is new.
-     * More information https://developer.yahoo.com/yql/guide/response.html#json-to-json=
+     * More information https://developer.yahoo.com/yql/guide/response.html#json-to-json
      */
     public void setJsonCompat(final String jsonCompat) {
         this.jsonCompat = jsonCompat;

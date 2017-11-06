@@ -576,6 +576,7 @@
         <include>org.apache.camel:camel-xmpp-starter</include>
         <include>org.apache.camel:camel-xstream-starter</include>
         <include>org.apache.camel:camel-yammer-starter</include>
+        <include>org.apache.camel:camel-yql-starter</include>
         <include>org.apache.camel:camel-zendesk-starter</include>
         <include>org.apache.camel:camel-zipfile-starter</include>
         <include>org.apache.camel:camel-zipkin-starter</include>

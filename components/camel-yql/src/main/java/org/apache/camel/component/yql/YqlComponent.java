@@ -22,11 +22,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.yql.configuration.YqlConfiguration;
 import org.apache.camel.component.yql.configuration.YqlConfigurationValidator;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 public class YqlComponent extends DefaultComponent {
 
+    @Metadata(label = "advanced")
     private HttpClientConnectionManager localConnectionManager;
 
     @Override
@@ -48,8 +50,12 @@ public class YqlComponent extends DefaultComponent {
         }
     }
 
+    public HttpClientConnectionManager getLocalConnectionManager() {
+        return localConnectionManager;
+    }
+
     /**
-     * Set the connection manager.
+     * To use a custom configured HttpClientConnectionManager.
      */
     public void setConnectionManager(final HttpClientConnectionManager connectionManager) {
         this.localConnectionManager = connectionManager;
