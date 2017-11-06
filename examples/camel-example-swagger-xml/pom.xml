@@ -206,7 +206,7 @@
         </configuration>
       </plugin>
 
-      <!-- allows running this example with mvn:jetty-run -->
+      <!-- allows running this example with mvn jetty:run -->
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
