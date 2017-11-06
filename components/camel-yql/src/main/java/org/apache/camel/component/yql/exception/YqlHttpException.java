@@ -19,7 +19,7 @@ package org.apache.camel.component.yql.exception;
 /**
  * Signal a non 200 HTTP response
  */
-public class YqlHttpException extends YqlException {
+public final class YqlHttpException extends YqlException {
 
     private final int httpStatus;
     private final String body;

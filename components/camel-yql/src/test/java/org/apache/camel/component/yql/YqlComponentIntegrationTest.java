@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.yql;
 
-import static org.apache.camel.component.yql.YqlProducer.CAMEL_YQL_HTTP_REQUEST;
-import static org.apache.camel.component.yql.YqlProducer.CAMEL_YQL_HTTP_STATUS;
-import static org.hamcrest.CoreMatchers.containsString;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -34,6 +31,10 @@ import org.apache.http.HttpStatus;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import static org.apache.camel.component.yql.YqlProducer.CAMEL_YQL_HTTP_REQUEST;
+import static org.apache.camel.component.yql.YqlProducer.CAMEL_YQL_HTTP_STATUS;
+import static org.hamcrest.CoreMatchers.containsString;
 
 public class YqlComponentIntegrationTest extends CamelTestSupport {
 

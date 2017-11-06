@@ -27,38 +27,35 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class YqlConfiguration {
 
-    @UriPath(label = "producer", description = "The YQL statement to execute.")
+    @UriPath
     @Metadata(required = "true")
     private String query;
 
-    @UriParam(label = "producer", enums = "json,xml", defaultValue = "json", description = "The expected format. Allowed values: xml or json.")
+    @UriParam(enums = "json,xml", defaultValue = "json")
     private String format = "json";
 
-    @UriParam(label = "producer", description = "The name of the JavaScript callback function for JSONP format. If callback is set and if format=json, then the response format is JSON. For more "
-            + "information on using XML instead of JSON, see JSONP-X.")
-    private String callback = "";
+    @UriParam
+    private String callback;
 
-    @UriParam(label = "producer", description = "When given the value optimized, the projected fields in SELECT statements that may be returned in separate item elements in the response are "
-            + "optimized to be in a single item element instead. The only allowed value is optimized.")
+    @UriParam
     private String crossProduct;
 
-    @UriParam(label = "producer", defaultValue = "false", description = "If true, diagnostic information is returned with the response.")
-    private boolean diagnostics = false;
+    @UriParam
+    private boolean diagnostics;
 
-    @UriParam(label = "producer", defaultValue = "false", description = "If true, and if diagnostic is set to true, debug data is returned with the response.")
-    private boolean debug = false;
+    @UriParam
+    private boolean debug;
 
-    @UriParam(label = "producer", description = "Allows you to use multiple Open Data Tables through a YQL environment file.")
+    @UriParam
     private String env;
 
-    @UriParam(label = "producer", description = "Enables lossless JSON processing. The only allowed value is new.")
+    @UriParam
     private String jsonCompat;
 
-    @UriParam(label = "producer", defaultValue = "true", description = "Option to disable throwing the YqlHttpException in case of failed responses from the remote server. "
-            + "This allows you to get all responses regardless of the HTTP status code.")
+    @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
 
-    @UriParam(label = "producer", defaultValue = "true", description = "Option to use HTTPS to communicate with YQL.")
+    @UriParam(label = "security", defaultValue = "true")
     private boolean https = true;
 
     public String getQuery() {
