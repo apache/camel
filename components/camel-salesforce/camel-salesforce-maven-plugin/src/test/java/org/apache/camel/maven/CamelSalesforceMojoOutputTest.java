@@ -29,6 +29,7 @@ import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.test.junit4.TestSupport;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.testing.SilentLog;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -58,7 +59,7 @@ public class CamelSalesforceMojoOutputTest {
     public String source;
 
     private CamelSalesforceMojo mojo;
-    private CamelSalesforceMojo.GeneratorUtility utility = new CamelSalesforceMojo.GeneratorUtility(false);
+    private CamelSalesforceMojo.GeneratorUtility utility = new CamelSalesforceMojo.GeneratorUtility(false, new SilentLog());
 
     @Parameters(name = "json = {0}, source = {2}")
     public static Iterable<Object[]> parameters() throws IOException {
