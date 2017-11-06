@@ -43,7 +43,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.Invocation;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
@@ -83,7 +83,7 @@ public class AbstractCamelContextFactoryBeanTest {
 
         // program the property resolution in context mock
         when(context.resolvePropertyPlaceholders(anyString())).thenAnswer(invocation -> {
-            final String placeholder = invocation.getArgumentAt(0, String.class);
+            final String placeholder = invocation.getArgument(0);
 
             // we receive the argument and check if the method should return a
             // value that can be converted to boolean
