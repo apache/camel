@@ -25,7 +25,7 @@
     <errorHandler id="error-handler"
                   type="DeadLetterChannel"
                   deadLetterUri="mock:exception"
-                  onPrepareFailureRef="processor"/>
+                  onPrepareFailureRef="processor" xmlns="http://camel.apache.org/schema/spring"/>
 
     <camelContext id="test" errorHandlerRef="error-handler"
                   xmlns="http://camel.apache.org/schema/spring">
