@@ -17,6 +17,7 @@
 package org.apache.camel.component.yql;
 
 import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.yql.configuration.YqlConfiguration;
 import org.apache.camel.component.yql.configuration.YqlConfigurationValidator;
@@ -42,26 +43,26 @@ public class YqlComponent extends DefaultComponent {
 
     @Override
     protected void doStop() throws Exception {
-      if (localConnectionManager != null) {
-        localConnectionManager.shutdown();
-      }
+        if (localConnectionManager != null) {
+            localConnectionManager.shutdown();
+        }
     }
 
     /**
      * Set the connection manager.
      */
-    public void setConnectionManager(final HttpClientConnectionManager connectionManager){
-      this.localConnectionManager = connectionManager;
+    public void setConnectionManager(final HttpClientConnectionManager connectionManager) {
+        this.localConnectionManager = connectionManager;
     }
 
-    private HttpClientConnectionManager createConnectionManager(){
-      if (localConnectionManager != null) {
-        return localConnectionManager;
-      }
-      final PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-      connectionManager.setMaxTotal(200);
-      connectionManager.setDefaultMaxPerRoute(20);
-      setConnectionManager(connectionManager);
-      return connectionManager;
+    private HttpClientConnectionManager createConnectionManager() {
+        if (localConnectionManager != null) {
+            return localConnectionManager;
+        }
+        final PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        connectionManager.setMaxTotal(200);
+        connectionManager.setDefaultMaxPerRoute(20);
+        setConnectionManager(connectionManager);
+        return connectionManager;
     }
 }

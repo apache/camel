@@ -67,7 +67,11 @@ public class YqlClient {
         final List<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("q", yqlConfiguration.getQuery()));
         nameValuePairs.add(new BasicNameValuePair("format", yqlConfiguration.getFormat()));
-        nameValuePairs.add(new BasicNameValuePair("callback", yqlConfiguration.getCallback()));
+        String callback = yqlConfiguration.getCallback();
+        if (callback == null) {
+            callback = "";
+        }
+        nameValuePairs.add(new BasicNameValuePair("callback", callback));
         if (yqlConfiguration.getCrossProduct() != null) {
             nameValuePairs.add(new BasicNameValuePair("crossProduct", yqlConfiguration.getCrossProduct()));
         }

@@ -60,7 +60,8 @@ public class YqlComponentTest extends CamelTestSupport {
     @Test
     public void testConfigurationSetup() {
         // given
-        final YqlEndpoint yqlEndpoint = (YqlEndpoint) context.getEndpoint("yql://query?format=xml&callback=yqlCallback&diagnostics=true&debug=true&https=false&throwExceptionOnFailure=false&jsonCompat=new");
+        final YqlEndpoint yqlEndpoint = (YqlEndpoint) context.getEndpoint("yql://query?format=xml&callback=yqlCallback&diagnostics=true"
+            + "&debug=true&https=false&throwExceptionOnFailure=false&jsonCompat=new");
 
         // when
         final YqlConfiguration yqlConfiguration = yqlEndpoint.getConfiguration();
