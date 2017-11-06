@@ -61,9 +61,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 public class ${desc.Name}Optional extends AbstractSObjectBase {
 
 #foreach ( $field in $desc.Fields )
+#set ( ($fieldType = $utility.getFieldType($desc, $field)) && ($fieldType) )
 #if ( $utility.notBaseField($field.Name) )
 #set ( $fieldName = $field.Name )
-#set ( $fieldType = $utility.getFieldType($desc, $field) )
 #set ( $isMultiSelectPicklist = $utility.isMultiSelectPicklist($field) )
     // $fieldName
 #if ( $utility.isBlobField($field) )

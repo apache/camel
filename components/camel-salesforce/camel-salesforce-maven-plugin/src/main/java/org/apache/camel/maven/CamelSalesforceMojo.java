@@ -73,6 +73,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -426,7 +427,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
 
                 getLog().info("Generating Java Classes...");
                 // generate POJOs for every object description
-                final GeneratorUtility utility = new GeneratorUtility(useStringsForPicklists);
+                final GeneratorUtility utility = new GeneratorUtility(useStringsForPicklists, getLog());
                 // should we provide a flag to control timestamp generation?
                 final String generatedDate = new Date().toString();
                 for (SObjectDescription description : descriptions) {
@@ -724,8 +725,6 @@ public class CamelSalesforceMojo extends AbstractMojo {
 
             // create a type map
             // using JAXB mapping, for the most part
-            // uses Joda time instead of XmlGregorianCalendar
-            // TODO do we need support for commented types???
             final String[][] typeMap = new String[][]{
                 {"ID", "String"}, // mapping for tns:ID SOAP type
                 {"string", "String"},
@@ -738,35 +737,25 @@ public class CamelSalesforceMojo extends AbstractMojo {
                 {"double", "Double"},
                 {"boolean", "Boolean"},
                 {"byte", "Byte"},
-//                {"QName", "javax.xml.namespace.QName"},
 
                 {"dateTime", "java.time.ZonedDateTime"},
 
-                    // the blob base64Binary type is mapped to String URL for retrieving the blob
+                // the blob base64Binary type is mapped to String URL for retrieving the blob
                 {"base64Binary", "String"},
-//                {"hexBinary", "byte[]"},
 
                 {"unsignedInt", "Long"},
                 {"unsignedShort", "Integer"},
                 {"unsignedByte", "Short"},
 
-//                {"time", "javax.xml.datatype.XMLGregorianCalendar"},
                 {"time", "java.time.ZonedDateTime"},
-//                {"date", "javax.xml.datatype.XMLGregorianCalendar"},
                 {"date", "java.time.ZonedDateTime"},
-//                {"g", "javax.xml.datatype.XMLGregorianCalendar"},
                 {"g", "java.time.ZonedDateTime"},
 
-                    // Salesforce maps any types like string, picklist, reference, etc. to string
+                // Salesforce maps any types like string, picklist, reference, etc. to string
                 {"anyType", "String"},
-/*
-                {"anySimpleType", "java.lang.Object"},
-                {"anySimpleType", "java.lang.String"},
-                {"duration", "javax.xml.datatype.Duration"},
-                {"NOTATION", "javax.xml.namespace.QName"}
-*/
                 {"address", "org.apache.camel.component.salesforce.api.dto.Address"},
-                {"location", "org.apache.camel.component.salesforce.api.dto.GeoLocation"}
+                {"location", "org.apache.camel.component.salesforce.api.dto.GeoLocation"},
+                {"RelationshipReferenceTo", "String"}
             };
             LOOKUP_MAP = new HashMap<String, String>();
             for (String[] entry : typeMap) {
@@ -781,8 +770,10 @@ public class CamelSalesforceMojo extends AbstractMojo {
         private boolean useStringsForPicklists;
         private final Map<String, AtomicInteger> varNames = new HashMap<>();
         private Stack<String> stack;
+        private final Log log;
 
-        public GeneratorUtility(Boolean useStringsForPicklists) {
+        public GeneratorUtility(Boolean useStringsForPicklists, Log log) {
+            this.log = log;
             this.useStringsForPicklists = Boolean.TRUE.equals(useStringsForPicklists);
         }
 
@@ -816,8 +807,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
                 final String soapType = field.getSoapType();
                 final String type = LOOKUP_MAP.get(soapType.substring(soapType.indexOf(':') + 1));
                 if (type == null) {
-                    throw new MojoExecutionException(
-                            String.format("Unsupported type %s for field %s", soapType, field.getName()));
+                    log.warn(String.format("Unsupported field type %s in field %s of object %s", soapType, field.getName(), description.getName()));
                 }
                 return type;
             }
