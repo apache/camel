@@ -59,12 +59,12 @@ public class TokenizeWrapLanguageTest extends ContextTestSupport {
 
     public void testSendMixedClosingTagMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(
-            "<?xml version='1.0' encoding='UTF-8'?><parent><child some_attr='a' anotherAttr='a'>ha</child></parent>", 
+            "<?xml version='1.0' encoding='UTF-8'?><parent><child some_attr='a' anotherAttr='a'>cluster</child></parent>",
             "<?xml version='1.0' encoding='UTF-8'?><parent><child some_attr='b' anotherAttr='b' /></parent>", 
             "<?xml version='1.0' encoding='UTF-8'?><parent><child some_attr='c'></child></parent>");
 
         template.sendBody("direct:start",
-            "<?xml version='1.0' encoding='UTF-8'?><parent><child some_attr='a' anotherAttr='a'>ha</child><child some_attr='b' anotherAttr='b' /><child some_attr='c'></child></parent>");
+            "<?xml version='1.0' encoding='UTF-8'?><parent><child some_attr='a' anotherAttr='a'>cluster</child><child some_attr='b' anotherAttr='b' /><child some_attr='c'></child></parent>");
 
         assertMockEndpointsSatisfied();
     }

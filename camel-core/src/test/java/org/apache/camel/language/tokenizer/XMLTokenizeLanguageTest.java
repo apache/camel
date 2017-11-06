@@ -60,12 +60,12 @@ public class XMLTokenizeLanguageTest extends ContextTestSupport {
 
     public void testSendMixedClosingTagMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(
-            "<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\">ha</c:child>", 
+            "<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\">cluster</c:child>",
             "<c:child some_attr='b' anotherAttr='b'  xmlns:c=\"urn:c\"/>", 
             "<c:child some_attr='c' xmlns:c=\"urn:c\"></c:child>");
 
         template.sendBody("direct:start",
-            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'>ha</c:child>"
+            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'>cluster</c:child>"
             + "<c:child some_attr='b' anotherAttr='b' /><c:child some_attr='c'></c:child></c:parent>");
 
         assertMockEndpointsSatisfied();

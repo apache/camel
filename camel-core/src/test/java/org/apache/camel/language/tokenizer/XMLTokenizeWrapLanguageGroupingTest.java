@@ -60,12 +60,12 @@ public class XMLTokenizeWrapLanguageGroupingTest extends ContextTestSupport {
 
     public void testSendMixedClosingTagMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(
-            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'>ha</c:child>"
+            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'>cluster</c:child>"
             + "<c:child some_attr='b' anotherAttr='b' /></c:parent>", 
             "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='c'></c:child></c:parent>");
 
         template.sendBody("direct:start",
-            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'>ha</c:child>"
+            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'>cluster</c:child>"
             + "<c:child some_attr='b' anotherAttr='b' /><c:child some_attr='c'></c:child></c:parent>");
 
         assertMockEndpointsSatisfied();

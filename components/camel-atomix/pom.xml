@@ -35,15 +35,15 @@
 
   <properties>
     <camel.osgi.export.pkg>
-      org.apache.camel.component.atomix.*,
-      org.apache.camel.component.atomix.client.*,
-      org.apache.camel.component.atomix.client.map.*,
-      org.apache.camel.component.atomix.client.multimap.*,
-      org.apache.camel.component.atomix.client.set.*,
-      org.apache.camel.component.atomix.client.queue.*,
-      org.apache.camel.component.atomix.client.value.*,
-      org.apache.camel.component.atomix.client.messaging.*,
-      org.apache.camel.component.atomix.ha.*
+        org.apache.camel.component.atomix.*,
+        org.apache.camel.component.atomix.client.*,
+        org.apache.camel.component.atomix.client.map.*,
+        org.apache.camel.component.atomix.client.multimap.*,
+        org.apache.camel.component.atomix.client.set.*,
+        org.apache.camel.component.atomix.client.queue.*,
+        org.apache.camel.component.atomix.client.value.*,
+        org.apache.camel.component.atomix.client.messaging.*,
+        org.apache.camel.component.atomix.cluster.*
     </camel.osgi.export.pkg>
     <camel.osgi.export.service>
       org.apache.camel.spi.ComponentResolver;component=atomix-map,

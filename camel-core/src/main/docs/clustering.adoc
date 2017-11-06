@@ -45,11 +45,11 @@ Out of the box camel provides the following implementations:
 [cols="1,1,2", options="header"]
 |====
 |Type       |Module           | Class
-|atomix     |camel-atomix     | org.apache.camel.component.atomix.ha.AtomixClusterService
-|consul     |camel-consul     | org.apache.camel.component.consul.ha.ConsulClusterService
-|file       |camel-core       | org.apache.camel.component.file.ha.FileLockClusterService
-|kubernetes |camel-kubernetes | org.apache.camel.component.kubernetes.ha.KubernetesClusterService
-|zookeeper  |camel-zookeeper  | org.apache.camel.component.zookeeper.ha.ZooKeeperClusterService
+|atomix     |camel-atomix     | org.apache.camel.component.atomix.cluster.AtomixClusterService
+|consul     |camel-consul     | org.apache.camel.component.consul.cluster.ConsulClusterService
+|file       |camel-core       | org.apache.camel.component.file.cluster.FileLockClusterService
+|kubernetes |camel-kubernetes | org.apache.camel.component.kubernetes.cluster.KubernetesClusterService
+|zookeeper  |camel-zookeeper  | org.apache.camel.component.zookeeper.cluster.ZooKeeperClusterService
 |====
 
 On Spring/Bluepring all the _Cluster Service_ instances are automatically added to the camel context.
@@ -80,9 +80,9 @@ camel.component.file.cluster.service.root = ${java.io.tmpdir}
          http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 
-  <bean id="zx" class="org.apache.camel.component.zookeeper.ha.ZooKeeperClusterService">
+  <bean id="zx" class="org.apache.camel.component.zookeeper.cluster.ZooKeeperClusterService">
     <property name="id" value="node-1"/>
-    <property name="basePath" value="/camel/ha"/>
+    <property name="basePath" value="/camel/cluster"/>
     <property name="nodes" value="localhost:2181"/>
   </bean>
 

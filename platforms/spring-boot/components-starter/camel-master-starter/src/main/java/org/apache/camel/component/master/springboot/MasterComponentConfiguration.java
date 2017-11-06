@@ -17,8 +17,8 @@
 package org.apache.camel.component.master.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.ha.CamelClusterService;
-import org.apache.camel.ha.CamelClusterService.Selector;
+import org.apache.camel.cluster.CamelClusterService;
+import org.apache.camel.cluster.CamelClusterService.Selector;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
