@@ -417,18 +417,12 @@ public class RestSwaggerReader {
                         }
                         response.addHeader(name, lp);
                     } else if ("float".equals(type)) {
-<<<<<<< HEAD
-                        FloatProperty lp = new FloatProperty();
-                        lp.setName(name);
-                        lp.setDescription(header.getDescription());
-=======
                         FloatProperty fp = new FloatProperty();
                         fp.setName(name);
                         if (format != null) {
                             fp.setFormat(format);
                         }
                         fp.setDescription(header.getDescription());
->>>>>>> a1d661c4d3... CAMEL-11991: camel-swagger - Allow to specify data format so you can say a parameter is a date, password etc.
 
                         List<Float> values;
                         if (!header.getAllowableValues().isEmpty()) {
@@ -436,9 +430,9 @@ public class RestSwaggerReader {
                             for (String text : header.getAllowableValues()) {
                                 values.add(Float.valueOf(text));
                             }
-                            lp.setEnum(values);
+                            fp.setEnum(values);
                         }
-                        response.addHeader(name, lp);
+                        response.addHeader(name, fp);
                     } else if ("double".equals(type)) {
                         DoubleProperty dp = new DoubleProperty();
                         dp.setName(name);
