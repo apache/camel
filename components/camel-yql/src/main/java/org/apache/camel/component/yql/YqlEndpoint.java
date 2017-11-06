@@ -26,17 +26,20 @@ import org.apache.camel.spi.UriParam;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
-@UriEndpoint(firstVersion = "2.21.0", scheme = "yql", title = "Yahoo Query Language", syntax = "yql:query", producerOnly = true, label = "yql")
+/**
+ * The YQL (Yahoo! Query Language) platform enables you to query, filter, and combine data across the web.
+ */
+@UriEndpoint(firstVersion = "2.21.0", scheme = "yql", title = "Yahoo Query Language", syntax = "yql:query", producerOnly = true, label = "cloud")
 public class YqlEndpoint extends DefaultEndpoint {
 
-    @UriParam
-    private final YqlConfiguration configuration;
     private final HttpClientConnectionManager connectionManager;
     private CloseableHttpClient httpClient;
 
-    YqlEndpoint(final String uri, final YqlComponent component, final YqlConfiguration configuration, final HttpClientConnectionManager connectionManager) {
+    @UriParam
+    private final YqlConfiguration configuration;
+
+    public YqlEndpoint(String uri, YqlComponent component, YqlConfiguration configuration, HttpClientConnectionManager connectionManager) {
         super(uri, component);
         this.configuration = configuration;
         this.connectionManager = connectionManager;
@@ -49,7 +52,7 @@ public class YqlEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Consumer does not supported for YQL component: " + getEndpointUri());
+        throw new UnsupportedOperationException("Consumer is not supported for YQL component");
     }
 
     @Override
@@ -61,6 +64,7 @@ public class YqlEndpoint extends DefaultEndpoint {
     protected void doStop() throws Exception {
         if (httpClient != null) {
             httpClient.close();
+            httpClient = null;
         }
     }
 

@@ -4,6 +4,10 @@
 
 The *yql* component is used for accessing the https://developer.yahoo.com/yql/[Yahoo Query Language platform].
 
+The YQL (Yahoo! Query Language) platform enables you to query, filter, and combine data across the web through
+a single interface. It exposes a SQL-like syntax that is both familiar to developers and expressive enough for
+getting the right data.
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -35,7 +39,7 @@ The Yahoo Query Language component supports 2 options which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connectionManager* (producer) | Set the connection manager. |  | HttpClientConnection Manager
+| *connectionManager* (producer) | To use a custom configured HttpClientConnectionManager. |  | HttpClientConnection Manager
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -68,7 +72,7 @@ with the following path and query parameters:
 | *diagnostics* (producer) | If true diagnostic information is returned with the response. | false | boolean
 | *env* (producer) | Allows you to use multiple Open Data Tables through a YQL environment file. More information https://developer.yahoo.com/yql/guide/yql_storage.htmlusing-records-env-files= |  | String
 | *format* (producer) | The expected format. Allowed values: xml or json. | json | String
-| *jsonCompat* (producer) | Enables lossless JSON processing. The only allowed value is new. More information https://developer.yahoo.com/yql/guide/response.htmljson-to-json= |  | String
+| *jsonCompat* (producer) | Enables lossless JSON processing. The only allowed value is new. More information https://developer.yahoo.com/yql/guide/response.htmljson-to-json |  | String
 | *throwExceptionOnFailure* (producer) | Option to disable throwing the YqlHttpException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | true | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *https* (security) | Option to use HTTPS to communicate with YQL. | true | boolean
