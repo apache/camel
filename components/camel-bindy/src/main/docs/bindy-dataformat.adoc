@@ -704,7 +704,14 @@ field, we can then add 'padd' characters.
 |crlf |string |optional - possible values = WINDOWS,UNIX,MAC, or custom; default value.
 WINDOWS - allow to define the carriage return character to use. If you
 specify a value other than the three listed before, the value you enter
-(custom) will be used as the CRLF character(s)
+(custom) will be used as the CRLF character(s). This option is used only during marshalling, 
+whereas unmarshalling uses system default JDK provided line delimiter unless eol is customized
+
+|eol |string |optional - default="" which is empty string. Character to be used to process
+considering end of line after each record while unmarshalling (optional - default = "" 
+which help default JDK provided line delimiter to be used unless any other line delimiter
+provided). This option is used only during unmarshalling, where marshalling uses system default
+provided line delimiter as "WINDOWS" unless any other value is provided
 
 |paddingChar |char |mandatory - default value = ' '
 
