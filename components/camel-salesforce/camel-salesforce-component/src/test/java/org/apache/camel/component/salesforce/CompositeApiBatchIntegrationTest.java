@@ -129,6 +129,11 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
         testBatch(batch);
     }
 
+    /**
+     * The XML format fails, as Salesforce API wrongly includes whitespaces
+     * inside tag names. E.g.  <Ant Migration Tool>
+     * https://www.w3.org/TR/2008/REC-xml-20081126/#NT-NameChar
+     */
     @Test
     public void shouldSupportLimits() {
         final SObjectBatch batch = new SObjectBatch(version);

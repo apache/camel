@@ -30,6 +30,8 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.composite.ReferenceId;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatchResponse;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectComposite;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectCompositeResponse;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTreeResponse;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
@@ -42,7 +44,8 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
     @FunctionalInterface
     interface ResponseHandler<T> {
 
-        void handleResponse(Exchange exchange, Optional<T> body, Map<String, String> headers, SalesforceException exception, AsyncCallback callback);
+        void handleResponse(Exchange exchange, Optional<T> body, Map<String, String> headers,
+            SalesforceException exception, AsyncCallback callback);
 
     }
 
@@ -76,6 +79,9 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             case COMPOSITE_BATCH:
                 return processInternal(SObjectBatch.class, exchange, compositeClient::submitCompositeBatch,
                     this::processCompositeBatchResponse, callback);
+            case COMPOSITE:
+                return processInternal(SObjectComposite.class, exchange, compositeClient::submitComposite,
+                    this::processCompositeResponse, callback);
             default:
                 throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
@@ -108,6 +114,26 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
                 final Message out = exchange.getOut();
 
                 final SObjectBatchResponse response = responseBody.get();
+
+                out.copyFromWithNewBody(in, response);
+                out.getHeaders().putAll(headers);
+            }
+        } finally {
+            // notify callback that exchange is done
+            callback.done(false);
+        }
+    }
+
+    void processCompositeResponse(final Exchange exchange, final Optional<SObjectCompositeResponse> responseBody,
+        final Map<String, String> headers, final SalesforceException exception, final AsyncCallback callback) {
+        try {
+            if (!responseBody.isPresent()) {
+                exchange.setException(exception);
+            } else {
+                final Message in = exchange.getIn();
+                final Message out = exchange.getOut();
+
+                final SObjectCompositeResponse response = responseBody.get();
 
                 out.copyFromWithNewBody(in, response);
                 out.getHeaders().putAll(headers);
@@ -158,13 +184,6 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
         }
     }
 
-    boolean processException(final Exchange exchange, final AsyncCallback callback, final Exception e) {
-        exchange.setException(e);
-        callback.done(true);
-
-        return true;
-    }
-
     <T, R> boolean processInternal(final Class<T> bodyType, final Exchange exchange,
         final CompositeApiClient.Operation<T, R> clientOperation, final ResponseHandler<R> responseHandler,
         final AsyncCallback callback) throws SalesforceException {
@@ -178,10 +197,17 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             throw new SalesforceException(e);
         }
 
-        clientOperation.submit(body, determineHeaders(exchange),
-            (response, responseHeaders, exception) -> responseHandler.handleResponse(exchange, response, responseHeaders, exception, callback));
+        clientOperation.submit(body, determineHeaders(exchange), (response, responseHeaders,
+            exception) -> responseHandler.handleResponse(exchange, response, responseHeaders, exception, callback));
 
         return false;
+    }
+
+    static boolean processException(final Exchange exchange, final AsyncCallback callback, final Exception e) {
+        exchange.setException(e);
+        callback.done(true);
+
+        return true;
     }
 
 }

@@ -44,7 +44,7 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         + "recent,createJob,getJob,closeJob,abortJob,createBatch,getBatch,getAllBatches,getRequest,getResults,"
         + "createBatchQuery,getQueryResultIds,getQueryResult,getRecentReports,getReportDescription,executeSyncReport,"
         + "executeAsyncReport,getReportInstances,getReportResults,limits,approval,approvals,composite-tree,"
-        + "composite-batch")
+        + "composite-batch,composite")
     private final OperationName operationName;
     @UriPath(label = "consumer", description = "The name of the topic to use")
     private final String topicName;
