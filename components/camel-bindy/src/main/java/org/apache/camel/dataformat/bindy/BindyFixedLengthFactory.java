@@ -535,7 +535,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 LOG.debug("Carriage return defined for the CSV: {}", crlf);
                 
                 eol = record.eol();
-                LOG.debug("EOL(end-of-line) defined for the CSV: {}", crlf);
+                LOG.debug("EOL(end-of-line) defined for the CSV: {}", eol);
 
                 // Get header parameter
                 header =  record.header();
