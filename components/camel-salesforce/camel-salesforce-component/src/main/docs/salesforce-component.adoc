@@ -136,6 +136,7 @@ results) using result link returned from the 'query' API
 * recent - fetching recent items
 * approval - submit a record or records (batch) for approval process
 * approvals - fetch a list of all approval processes
+* composite - submit up to 25 possibly related REST requests and receive individual responses
 * composite-tree - create up to 200 records with parent-child relationships (up to 5 levels) in one go
 * composite-batch - submit a composition of requests in batch
 
@@ -430,7 +431,7 @@ final String firstId = succeeded.get(0).getId();
 ### Using Salesforce Composite API to submit multiple requests in a batch
 The Composite API batch operation (`composite-batch`) allows you to accumulate multiple requests in a batch and then
 submit them in one go, saving the round trip cost of multiple individual requests. Each response is then received in a
-list of responses with the order perserved, so that the n-th requests response is in the n-th place of the response.
+list of responses with the order preserved, so that the n-th requests response is in the n-th place of the response.
 
 NOTE: The results can vary from API to API so the result of the request is given as a `java.lang.Object`. In most cases
 the result will be a `java.util.Map` with string keys and values or other `java.util.Map` as value. Requests made in
@@ -483,6 +484,56 @@ final int updateStatus = deleteResult.getStatusCode(); // probably 204
 final Object updateResultData = deleteResult.getResult(); // probably null
 
 -----------------------------------------------------------------------------------------------------
+
+### Using Salesforce Composite API to submit multiple chained requests
+The `composite` operation allows submitting up to 25 requests that can be chained together, for instance identifier
+generated in previous request can be used in subsequent request. Individual requests and responses are linked with the
+provided _reference_.
+
+NOTE: Composite API supports only JSON payloads.
+
+NOTE: As with the batch API the results can vary from API to API so the result of the request is given as a
+`java.lang.Object`. In most cases the result will be a `java.util.Map` with string keys and values or other
+`java.util.Map` as value. Requests made in JSON format hold some type information (i.e. it is known what values are
+strings and what values are numbers), so in general those will be more type friendly.
+
+Lets look at an example:
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+SObjectComposite composite = new SObjectComposite("38.0", true);
+
+// first insert operation via an external id
+final Account updateAccount = new TestAccount();
+updateAccount.setName("Salesforce");
+updateAccount.setBillingStreet("Landmark @ 1 Market Street");
+updateAccount.setBillingCity("San Francisco");
+updateAccount.setBillingState("California");
+updateAccount.setIndustry(Account_IndustryEnum.TECHNOLOGY);
+composite.addUpdate("Account", "001xx000003DIpcAAG", updateAccount, "UpdatedAccount");
+
+final Contact newContact = new TestContact();
+newContact.setLastName("John Doe");
+newContact.setPhone("1234567890");
+composite.addCreate(newContact, "NewContact");
+
+final AccountContactJunction__c junction = new AccountContactJunction__c();
+junction.setAccount__c("001xx000003DIpcAAG");
+junction.setContactId__c("@{NewContact.id}");
+composite.addCreate(junction, "JunctionRecord");
+
+final SObjectCompositeResponse response = template.requestBody("salesforce:composite?format=JSON", composite, SObjectCompositeResponse.class);
+final List<SObjectCompositeResult> results = response.getCompositeResponse();
+
+final SObjectCompositeResult accountUpdateResult = results.stream().filter(r -> "UpdatedAccount".equals(r.getReferenceId())).findFirst().get()
+final int statusCode = accountUpdateResult.getHttpStatusCode(); // should be 200
+final Map<String, ?> accountUpdateBody = accountUpdateResult.getBody();
+
+final SObjectCompositeResult contactCreationResult = results.stream().filter(r -> "JunctionRecord".equals(r.getReferenceId())).findFirst().get()
+// ...
+
+-----------------------------------------------------------------------------------------------------
+
 
 ### Camel Salesforce Maven Plugin
 

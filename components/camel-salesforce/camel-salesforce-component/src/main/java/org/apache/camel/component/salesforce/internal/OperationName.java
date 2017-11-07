@@ -70,7 +70,8 @@ public enum OperationName {
 
     // Composite API
     COMPOSITE_TREE("composite-tree"),
-    COMPOSITE_BATCH("composite-batch");
+    COMPOSITE_BATCH("composite-batch"),
+    COMPOSITE("composite");
 
     private final String value;
 
