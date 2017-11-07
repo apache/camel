@@ -16,6 +16,9 @@
  */
 package org.apache.camel.model.dataformat;
 
+import java.text.DateFormat;
+import java.util.TimeZone;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -31,9 +34,10 @@ import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
+ * JSon data format is used for unmarshal a JSon payload to POJO or to marshal
+ * POJO back to JSon payload.
  *
- * @version 
+ * @version
  */
 @Metadata(label = "dataformat,transformation,json", title = "JSon")
 @XmlRootElement(name = "json")
@@ -43,7 +47,8 @@ public class JsonDataFormat extends DataFormatDefinition {
     private String objectMapper;
     @XmlAttribute
     private Boolean prettyPrint;
-    @XmlAttribute @Metadata(defaultValue = "XStream")
+    @XmlAttribute
+    @Metadata(defaultValue = "XStream")
     private JsonLibrary library = JsonLibrary.XStream;
     @XmlAttribute
     private String unmarshalTypeName;
@@ -75,7 +80,9 @@ public class JsonDataFormat extends DataFormatDefinition {
     private String permissions;
     @XmlAttribute
     private Boolean allowUnmarshallType;
-
+    @XmlAttribute
+    private String timezone;
+    
     public JsonDataFormat() {
         super("json");
     }
@@ -89,7 +96,8 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Lookup and use the existing ObjectMapper with the given id when using Jackson.
+     * Lookup and use the existing ObjectMapper with the given id when using
+     * Jackson.
      */
     public void setObjectMapper(String objectMapper) {
         this.objectMapper = objectMapper;
@@ -146,9 +154,10 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output.
-     * With Jackson you can use JSON views to accomplish this. This option is to refer to the class
-     * which has @JsonView annotations
+     * When marshalling a POJO to JSON you might want to exclude certain fields
+     * from the JSON output. With Jackson you can use JSON views to accomplish
+     * this. This option is to refer to the class which has @JsonView
+     * annotations
      */
     public void setJsonView(Class<?> jsonView) {
         this.jsonView = jsonView;
@@ -159,8 +168,9 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * If you want to marshal a pojo to JSON, and the pojo has some fields with null values.
-     * And you want to skip these null values, you can set this option to <tt>NOT_NULL</tt>
+     * If you want to marshal a pojo to JSON, and the pojo has some fields with
+     * null values. And you want to skip these null values, you can set this
+     * option to <tt>NOT_NULL</tt>
      */
     public void setInclude(String include) {
         this.include = include;
@@ -171,8 +181,8 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname
-     * to use to unmarshal to.
+     * Used for JMS users to allow the JMSType header from the JMS spec to
+     * specify a FQN classname to use to unmarshal to.
      */
     public void setAllowJmsType(Boolean allowJmsType) {
         this.allowJmsType = allowJmsType;
@@ -183,8 +193,9 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows
-     * to use different collection types than java.util.Collection based as default.
+     * Refers to a custom collection type to lookup in the registry to use. This
+     * option should rarely be used, but allows to use different collection
+     * types than java.util.Collection based as default.
      */
     public void setCollectionTypeName(String collectionTypeName) {
         this.collectionTypeName = collectionTypeName;
@@ -206,8 +217,8 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations
-     * can be used by Jackson.
+     * Whether to enable the JAXB annotations module when using jackson. When
+     * enabled then JAXB annotations can be used by Jackson.
      */
     public void setEnableJaxbAnnotationModule(Boolean enableJaxbAnnotationModule) {
         this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
@@ -218,8 +229,9 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names.
-     * Multiple classes can be separated by comma.
+     * To use custom Jackson modules com.fasterxml.jackson.databind.Module
+     * specified as a String with FQN class names. Multiple classes can be
+     * separated by comma.
      */
     public void setModuleClassNames(String moduleClassNames) {
         this.moduleClassNames = moduleClassNames;
@@ -230,8 +242,8 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * To use custom Jackson modules referred from the Camel registry.
-     * Multiple modules can be separated by comma.
+     * To use custom Jackson modules referred from the Camel registry. Multiple
+     * modules can be separated by comma.
      */
     public void setModuleRefs(String moduleRefs) {
         this.moduleRefs = moduleRefs;
@@ -242,10 +254,13 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Set of features to enable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
+     * Set of features to enable on the Jackson
+     * <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
      * <p/>
-     * The features should be a name that matches a enum from <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
+     * The features should be a name that matches a enum from
+     * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
+     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
+     * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
      * <p/>
      * Multiple features can be separated by comma
      */
@@ -258,10 +273,13 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Set of features to disable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
+     * Set of features to disable on the Jackson
+     * <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
      * <p/>
-     * The features should be a name that matches a enum from <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
+     * The features should be a name that matches a enum from
+     * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
+     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
+     * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
      * <p/>
      * Multiple features can be separated by comma
      */
@@ -274,18 +292,20 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Adds permissions that controls which Java packages and classes XStream is allowed to use during
-     * unmarshal from xml/json to Java beans.
+     * Adds permissions that controls which Java packages and classes XStream is
+     * allowed to use during unmarshal from xml/json to Java beans.
      * <p/>
-     * A permission must be configured either here or globally using a JVM system property. The permission
-     * can be specified in a syntax where a plus sign is allow, and minus sign is deny.
-     * <br/>
-     * Wildcards is supported by using <tt>.*</tt> as prefix. For example to allow <tt>com.foo</tt> and all subpackages
-     * then specfy <tt>+com.foo.*</tt>. Multiple permissions can be configured separated by comma, such as
-     * <tt>+com.foo.*,-com.foo.bar.MySecretBean</tt>.
-     * <br/>
-     * The following default permission is always included: <tt>"-*,java.lang.*,java.util.*"</tt> unless
-     * its overridden by specifying a JVM system property with they key <tt>org.apache.camel.xstream.permissions</tt>.
+     * A permission must be configured either here or globally using a JVM
+     * system property. The permission can be specified in a syntax where a plus
+     * sign is allow, and minus sign is deny. <br/>
+     * Wildcards is supported by using <tt>.*</tt> as prefix. For example to
+     * allow <tt>com.foo</tt> and all subpackages then specfy
+     * <tt>+com.foo.*</tt>. Multiple permissions can be configured separated by
+     * comma, such as <tt>+com.foo.*,-com.foo.bar.MySecretBean</tt>. <br/>
+     * The following default permission is always included:
+     * <tt>"-*,java.lang.*,java.util.*"</tt> unless its overridden by specifying
+     * a JVM system property with they key
+     * <tt>org.apache.camel.xstream.permissions</tt>.
      */
     public void setPermissions(String permissions) {
         this.permissions = permissions;
@@ -293,6 +313,7 @@ public class JsonDataFormat extends DataFormatDefinition {
 
     /**
      * To add permission for the given pojo classes.
+     * 
      * @param type the pojo class(es) xstream should use as allowed permission
      * @see #setPermissions(String)
      */
@@ -310,12 +331,26 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling.
+     * If enabled then Jackson is allowed to attempt to use the
+     * CamelJacksonUnmarshalType header during the unmarshalling.
      * <p/>
      * This should only be enabled when desired to be used.
      */
     public void setAllowUnmarshallType(Boolean allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    /**
+     * If set then Jackson will use the Timezone when marshalling/unmarshalling.
+     * This option will have no effect on the others Json DataFormat, like gson,
+     * fastjson and xstream.
+     */
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
     }
 
     @Override
@@ -405,7 +440,8 @@ public class JsonDataFormat extends DataFormatDefinition {
         if (allowUnmarshallType != null) {
             setProperty(camelContext, dataFormat, "allowUnmarshallType", allowUnmarshallType);
         }
-        // if we have the unmarshal type, but no permission set, then use it to be allowed
+        // if we have the unmarshal type, but no permission set, then use it to
+        // be allowed
         if (permissions == null && unmarshalType != null) {
             String allow = "+" + unmarshalType.getName();
             setProperty(camelContext, dataFormat, "permissions", allow);

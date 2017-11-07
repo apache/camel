@@ -135,6 +135,12 @@ public class JacksonDataFormatConfiguration
      */
     private Boolean allowUnmarshallType = false;
     /**
+     * If set then Jackson will use the Timezone when marshalling/unmarshalling.
+     * This option will have no effect on the others Json DataFormat like gson
+     * fastjson and xstream.
+     */
+    private String timezone;
+    /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
      * example application/xml for data formats marshalling to XML or
@@ -268,6 +274,14 @@ public class JacksonDataFormatConfiguration
 
     public void setAllowUnmarshallType(Boolean allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
     }
 
     public Boolean getContentTypeHeader() {
