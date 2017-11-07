@@ -42,6 +42,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     protected Set<Class<?>> models;
     protected Set<String> modelClassNames;
     protected String crlf;
+    protected String eol;
     
     private String locale;
     private Class<?> type;
@@ -220,6 +221,13 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      */
     public String getCarriageReturn() {
         return crlf;
+    }
+    
+    /**
+     * Find the carriage return set
+     */
+    public String getEndOfLine() {
+        return eol;
     }
     
     /**
