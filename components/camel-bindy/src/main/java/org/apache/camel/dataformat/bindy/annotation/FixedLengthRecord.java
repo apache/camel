@@ -39,10 +39,23 @@ public @interface FixedLengthRecord {
     /**
      * Character to be used to add a carriage return after each record
      * (optional) Three values can be used : WINDOWS, UNIX or MAC
-     * 
+     * This option is used only during marshalling, whereas unmarshalling
+     * uses system default JDK provided line delimiter unless eol is customized
      * @return String
      */
     String crlf() default "WINDOWS";
+    
+    /**
+     * Character to be used to process considering end of line  
+     * after each record while unmarshalling (optional - default = "" 
+     * which help default JDK provided line delimiter to be used 
+     * unless any other line delimiter provided)
+     * This option is used only during unmarshalling, where marshalling
+     * uses system default provided line delimiter as "WINDOWS" unless
+     * any other value is provided
+     * @return String
+     */
+    String eol() default "";
     
     /**
      * The char to pad with.
