@@ -1,0 +1,3 @@
+# Unix line endings for the Maven wrapper script
+mvnw text eol=lf
+
