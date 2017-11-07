@@ -852,7 +852,7 @@ Number of Components: 286 in 197 JAR artifacts (19 deprecated)
 `xslt:resourceUri` | 1.3 | Transforms the message using a XSLT template.
 
 | link:camel-yql/src/main/docs/yql-component.adoc[Yahoo Query Language] (camel-yql) +
-`yql:query` | 2.21 | Camel Yahoo Query Language Component
+`yql:query` | 2.21 | The YQL (Yahoo! Query Language) platform enables you to query filter and combine data across the web.
 
 | link:camel-yammer/src/main/docs/yammer-component.adoc[Yammer] (camel-yammer) +
 `yammer:function` | 2.12 | The yammer component allows you to interact with the Yammer enterprise social network.
