@@ -38,7 +38,8 @@ import ${package}.internal.${name}PropertiesHelper;
 /**
  * Represents a ${name} endpoint.
  */
-@UriEndpoint(scheme = "${scheme}", title = "${name}", syntax="${scheme}:name", consumerClass = ${name}Consumer.class, label = "${name}")
+@UriEndpoint(firstVersion = "${version}", scheme = "${scheme}", title = "${name}", syntax="${scheme}:name", 
+             consumerClass = ${name}Consumer.class, label = "custom")
 public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}Configuration> {
 
     @UriPath @Metadata(required = "true")
