@@ -81,6 +81,11 @@
             <version>${cometd-java-server}</version>
         </dependency>
         <dependency>
+            <groupId>org.cometd.java</groupId>
+            <artifactId>bayeux-api</artifactId>
+            <version>${cometd-java-server}</version>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
@@ -92,10 +97,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<scope>test</scope>
-		</dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito2-version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -114,12 +120,6 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- stream is used for interactive test -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-stream</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

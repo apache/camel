@@ -25,8 +25,6 @@ import org.apache.camel.ValidationException;
 
 /**
  * A bean validation exception occurred
- * 
- * @version 
  */
 public class BeanValidationException extends ValidationException {
 

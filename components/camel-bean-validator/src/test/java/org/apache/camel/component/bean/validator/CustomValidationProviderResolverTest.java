@@ -21,6 +21,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 import javax.validation.ValidationProviderResolver;
+import javax.validation.spi.ValidationProvider;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -41,7 +42,7 @@ public class CustomValidationProviderResolverTest extends CamelTestSupport {
 
     @Override
     protected void doPreSetup() throws Exception {
-        List validationProviders = asList(new HibernateValidator());
+        List<ValidationProvider<?>> validationProviders = asList(new HibernateValidator());
         given(validationProviderResolver.getValidationProviders()).willReturn(validationProviders);
         super.doPreSetup();
     }
