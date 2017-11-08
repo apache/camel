@@ -30,18 +30,17 @@ import org.eclipse.jetty.util.log.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CometdConsumerTest {
 
     private static final String USER_NAME = "userName";
-    private static final String MEMEBER_USER_NAME = "bob";
     private CometdConsumer testObj;
     @Mock
     private CometdEndpoint endpoint;
@@ -62,10 +61,8 @@ public class CometdConsumerTest {
 
     @Before
     public void before() {
-        when(bayeuxServerImpl.newLocalSession(anyString())).thenReturn(localSession);
-        //when(bayeuxServerImpl.get).thenReturn(logger);
-        when(bayeuxServerImpl.getChannel(anyString())).thenReturn(serverChannel);
-        when(bayeuxServerImpl.createChannelIfAbsent(anyString())).thenReturn(markedReferenceServerChannel);
+        when(bayeuxServerImpl.newLocalSession(ArgumentMatchers.isNull())).thenReturn(localSession);
+        when(bayeuxServerImpl.createChannelIfAbsent(ArgumentMatchers.isNull())).thenReturn(markedReferenceServerChannel);
         when(markedReferenceServerChannel.getReference()).thenReturn(serverChannel);
 
         testObj = new CometdConsumer(endpoint, processor);
@@ -74,8 +71,6 @@ public class CometdConsumerTest {
         Set<String> attributeNames = new HashSet<String>();
         String attributeKey = USER_NAME;
         attributeNames.add(attributeKey);
-        when(remote.getAttributeNames()).thenReturn(attributeNames);
-        when(remote.getAttribute(attributeKey)).thenReturn(MEMEBER_USER_NAME);
     }
 
     @Test
@@ -93,6 +88,4 @@ public class CometdConsumerTest {
     }
     
 }
-
-
 
