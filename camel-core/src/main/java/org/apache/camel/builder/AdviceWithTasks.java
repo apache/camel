@@ -183,7 +183,7 @@ public final class AdviceWithTasks {
                                 Object old = outputs.remove(index);
                                 // must set parent on the node we added in the route
                                 replace.setParent(output.getParent());
-                                LOG.info("AdviceWith (" + matchBy.getId() + ") : [" + old + "] --> replace [" + replace + "]");
+                                LOG.info("AdviceWith ({}) : [{}] --> replace [{}]", matchBy.getId(), old, replace);
                             }
                         }
                     }
@@ -235,7 +235,7 @@ public final class AdviceWithTasks {
                             if (index != -1) {
                                 match = true;
                                 Object old = outputs.remove(index);
-                                LOG.info("AdviceWith (" + matchBy.getId() + ") : [" + old + "] --> remove");
+                                LOG.info("AdviceWith ({}) : [{}] --> remove", matchBy.getId(), old);
                             }
                         }
                     }
@@ -290,7 +290,7 @@ public final class AdviceWithTasks {
                                 outputs.add(index, before);
                                 // must set parent on the node we added in the route
                                 before.setParent(output.getParent());
-                                LOG.info("AdviceWith (" + matchBy.getId() + ") : [" + existing + "] --> before [" + before + "]");
+                                LOG.info("AdviceWith ({}) : [{}] --> before [{}]", matchBy.getId(), existing, before);
                             }
                         }
                     }
@@ -345,7 +345,7 @@ public final class AdviceWithTasks {
                                 outputs.add(index + 1, after);
                                 // must set parent on the node we added in the route
                                 after.setParent(output.getParent());
-                                LOG.info("AdviceWith (" + matchBy.getId() + ") : [" + existing + "] --> after [" + after + "]");
+                                LOG.info("AdviceWith ({}) : [{}] --> after [{}]", matchBy.getId(), existing, after);
                             }
                         }
                     }

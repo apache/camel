@@ -58,7 +58,7 @@ public class TokenPairIteratorSplitChoicePerformanceTest extends ContextTestSupp
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(size).create();
 
         boolean matches = notify.matches(5, TimeUnit.MINUTES);
-        log.info("Processed file with " + size + " elements in: " + TimeUtils.printDuration(watch.taken()));
+        log.info("Processed file with {} elements in: {}", size, TimeUtils.printDuration(watch.taken()));
 
         log.info("Processed " + tiny.get() + " tiny messages");
         log.info("Processed " + small.get() + " small messages");
@@ -108,7 +108,7 @@ public class TokenPairIteratorSplitChoicePerformanceTest extends ContextTestSupp
 
                                         int num = small.incrementAndGet();
                                         if (num % 100 == 0) {
-                                            log.info("Processed " + num + " small messages: " + xml);
+                                            log.info("Processed {} small messages: {}", num, xml);
                                             log.debug(xml);
                                         }
                                     }

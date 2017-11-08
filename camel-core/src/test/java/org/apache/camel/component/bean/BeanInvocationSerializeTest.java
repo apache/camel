@@ -60,7 +60,7 @@ public class BeanInvocationSerializeTest extends TestSupport {
     }
 
     public void cheese(String a, String b) {
-        log.debug("Called with a: " + a + " b: " + b);
+        log.debug("Called with a: {} b: {}", a, b);
     }
 
 }

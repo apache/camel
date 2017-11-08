@@ -72,7 +72,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
             }
         } catch (Exception e) {
             // Ignore this exception
-            log.warn("Cannot add ContextClassLoader from current thread due " + e.getMessage() + ". This exception will be ignored.");
+            log.warn("Cannot add ContextClassLoader from current thread due {}. This exception will be ignored.", e.getMessage());
         }
 
         classLoaders.add(DefaultPackageScanClassResolver.class.getClassLoader());

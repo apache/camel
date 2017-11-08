@@ -190,9 +190,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         }
 
         if (suspendOnly) {
-            LOG.info("Starting to graceful suspend " + routesOrdered.size() + " routes (timeout " + timeout + " " + timeUnit.toString().toLowerCase(Locale.ENGLISH) + ")");
+            LOG.info("Starting to graceful suspend {} routes (timeout {} {})", routesOrdered.size(), timeout, timeUnit.toString().toLowerCase(Locale.ENGLISH));
         } else {
-            LOG.info("Starting to graceful shutdown " + routesOrdered.size() + " routes (timeout " + timeout + " " + timeUnit.toString().toLowerCase(Locale.ENGLISH) + ")");
+            LOG.info("Starting to graceful shutdown {} routes (timeout {} {})", routesOrdered.size(), timeout, timeUnit.toString().toLowerCase(Locale.ENGLISH));
         }
 
         // use another thread to perform the shutdowns so we can support timeout
@@ -257,7 +257,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         // convert to seconds as its easier to read than a big milli seconds number
         long seconds = TimeUnit.SECONDS.convert(watch.taken(), TimeUnit.MILLISECONDS);
 
-        LOG.info("Graceful shutdown of " + routesOrdered.size() + " routes completed in " + seconds + " seconds");
+        LOG.info("Graceful shutdown of {} routes completed in {} seconds", routesOrdered.size(), seconds);
         return true;
     }
 

@@ -141,7 +141,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
                                            Exchange exchange, GenericFile<T> file) {
 
         if (log.isWarnEnabled()) {
-            log.warn("Rollback file strategy: " + processStrategy + " for file: " + file);
+            log.warn("Rollback file strategy: {} for file: {}", processStrategy, file);
         }
 
         // only delete done file if moveFailed option is enabled, as otherwise on rollback,
@@ -172,7 +172,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
                     boolean deleted = operations.deleteFile(doneFileName);
                     log.trace("Done file: {} was deleted: {}", doneFileName, deleted);
                     if (!deleted) {
-                        log.warn("Done file: " + doneFileName + " could not be deleted");
+                        log.warn("Done file: {} could not be deleted", doneFileName);
                     }
                 } catch (Exception e) {
                     handleException("Error deleting done file: " + doneFileName, exchange, e);

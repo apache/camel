@@ -61,7 +61,7 @@ public class RedeliveryErrorHandlerNonBlockedRedeliveryHeaderTest extends Contex
                     .to("mock:before")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            LOG.info("Processing at attempt " + attempt + " " + exchange);
+                            LOG.info("Processing at attempt {} {}", attempt, exchange);
 
                             String body = exchange.getIn().getBody(String.class);
                             if (body.contains("World")) {
@@ -72,7 +72,7 @@ public class RedeliveryErrorHandlerNonBlockedRedeliveryHeaderTest extends Contex
                             }
 
                             exchange.getIn().setBody("Hello " + body);
-                            LOG.info("Processing at attempt " + attempt + " complete " + exchange);
+                            LOG.info("Processing at attempt {} complete {}", attempt, exchange);
                         }
                     })
                     .to("log:after")

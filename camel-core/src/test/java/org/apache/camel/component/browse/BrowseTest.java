@@ -44,7 +44,7 @@ public class BrowseTest extends ContextTestSupport {
 
         for (Endpoint endpoint : list) {
             List<Exchange> exchanges = ((BrowseEndpoint) endpoint).getExchanges();
-            LOG.debug(">>>> " + endpoint + " has: " + exchanges);
+            LOG.debug(">>>> {} has: {}", endpoint, exchanges);
 
             assertEquals("Exchanges received on " + endpoint, 2, exchanges.size());
             assertInMessageBodyEquals(exchanges.get(0), body1);

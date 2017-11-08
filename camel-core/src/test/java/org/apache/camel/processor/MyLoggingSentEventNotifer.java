@@ -31,7 +31,7 @@ public class MyLoggingSentEventNotifer extends EventNotifierSupport {
 
         if (event instanceof ExchangeSentEvent) {
             ExchangeSentEvent sent = (ExchangeSentEvent) event;
-            log.info("Took " + sent.getTimeTaken() + " millis to send to: " + sent.getEndpoint());
+            log.info("Took {} millis to send to: {}", sent.getTimeTaken(), sent.getEndpoint());
         }
 
     }

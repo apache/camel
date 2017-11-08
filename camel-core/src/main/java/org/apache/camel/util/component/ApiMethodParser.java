@@ -190,7 +190,7 @@ public abstract class ApiMethodParser<T> {
                             }
                         }
                         // duplicate methods???
-                        log.warn("Duplicate methods found [" + model1 + "], [" + model2 + "]");
+                        log.warn("Duplicate methods found [{}], [{}]", model1, model2);
                         return 0;
                     }
                 }

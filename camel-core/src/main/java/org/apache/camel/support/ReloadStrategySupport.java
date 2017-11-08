@@ -76,7 +76,7 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
             dom = XmlLineNumberParser.parseXml(new ByteArrayInputStream(xml.getBytes()), null, "camelContext,routeContext,routes", "http://camel.apache.org/schema/spring");
         } catch (Exception e) {
             failed++;
-            log.warn("Cannot load the resource " + name + " as XML");
+            log.warn("Cannot load the resource {} as XML", name);
             return;
         }
 

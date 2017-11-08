@@ -371,14 +371,14 @@ public class XmlParseTest extends XmlTestSupport {
         ProcessorDefinition<?> processor = assertOneElement(route.getOutputs());
         ToDefinition value = assertIsInstanceOf(ToDefinition.class, processor);
         String text = message + "To URI";
-        log.info("Testing: " + text + " is equal to: " + uri + " for processor: " + processor);
+        log.info("Testing: {} is equal to: {} for processor: {}", text, uri, processor);
         assertEquals(text, uri, value.getUri());
     }
 
     protected void assertTo(String message, ProcessorDefinition<?> processor, String uri) {
         ToDefinition value = assertIsInstanceOf(ToDefinition.class, processor);
         String text = message + "To URI";
-        log.info("Testing: " + text + " is equal to: " + uri + " for processor: " + processor);
+        log.info("Testing: {} is equal to: {} for processor: {}", text, uri, processor);
         assertEquals(text, uri, value.getUri());
     }
 
