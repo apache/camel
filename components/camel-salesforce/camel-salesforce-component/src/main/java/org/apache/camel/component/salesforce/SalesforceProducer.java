@@ -62,7 +62,7 @@ public class SalesforceProducer extends DefaultAsyncProducer {
         }
     }
 
-    private boolean isBulkOperation(OperationName operationName) {
+    private static boolean isBulkOperation(OperationName operationName) {
         switch (operationName) {
         case CREATE_JOB:
         case GET_JOB:
@@ -82,7 +82,7 @@ public class SalesforceProducer extends DefaultAsyncProducer {
         }
     }
 
-    private boolean isAnalyticsOperation(OperationName operationName) {
+    private static boolean isAnalyticsOperation(OperationName operationName) {
         switch (operationName) {
         case GET_RECENT_REPORTS:
         case GET_REPORT_DESCRIPTION:
@@ -96,10 +96,11 @@ public class SalesforceProducer extends DefaultAsyncProducer {
         }
     }
 
-    private boolean isCompositeOperation(OperationName operationName) {
+    private static  boolean isCompositeOperation(OperationName operationName) {
         switch (operationName) {
         case COMPOSITE_TREE:
         case COMPOSITE_BATCH:
+        case COMPOSITE:
             return true;
         default:
             return false;
