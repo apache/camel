@@ -95,7 +95,7 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
             value = expression.evaluate(exchange, Object.class);
         }
 
-        log.debug("Evaluated expression: " + expression + " on exchange: " + exchange + " result: " + value);
+        log.debug("Evaluated expression: {} on exchange: {} result: {}", expression, exchange, value);
 
         return value;
     }

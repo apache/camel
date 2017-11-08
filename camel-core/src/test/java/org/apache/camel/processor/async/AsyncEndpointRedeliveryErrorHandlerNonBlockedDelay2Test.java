@@ -69,7 +69,7 @@ public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay2Test extends Con
                     .to("async:camel")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            LOG.info("Processing at attempt " + attempt + " " + exchange);
+                            LOG.info("Processing at attempt {} {}", attempt, exchange);
 
                             String body = exchange.getIn().getBody(String.class);
                             if (body.contains("Camel")) {
@@ -80,7 +80,7 @@ public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay2Test extends Con
                             }
 
                             exchange.getIn().setBody("Hello " + body);
-                            LOG.info("Processing at attempt " + attempt + " complete " + exchange);
+                            LOG.info("Processing at attempt {} complete {}", attempt, exchange);
                         }
                     })
                     .to("log:after")

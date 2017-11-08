@@ -566,7 +566,7 @@ public class MethodInfo {
                         if (answer == null) {
                             answer = another;
                         } else {
-                            LOG.warn("Duplicate pattern annotation: " + another + " found on annotation: " + annotation + " which will be ignored");
+                            LOG.warn("Duplicate pattern annotation: {} found on annotation: {} which will be ignored", another, annotation);
                         }
                     }
                 }

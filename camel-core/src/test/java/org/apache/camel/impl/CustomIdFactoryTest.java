@@ -118,7 +118,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
             return new DelegateProcessor(target) {
                 @Override
                 protected void processNext(Exchange exchange) throws Exception {
-                    LOG.debug("Debugging at: " + definition.toString() + " with id: " + definition.getId() + " with exchange: " + exchange);
+                    LOG.debug("Debugging at: {} with id: {} with exchange: {}", definition.toString(), definition.getId(), exchange);
 
                     // record the path taken at runtime
                     ids += definition.getId();

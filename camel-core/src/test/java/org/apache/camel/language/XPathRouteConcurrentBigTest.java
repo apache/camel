@@ -79,11 +79,11 @@ public class XPathRouteConcurrentBigTest extends ContextTestSupport {
             }
         }
 
-        LOG.info("Sent " + messageCount + " messages in " + (System.currentTimeMillis() - now) + " ms");
+        LOG.info("Sent {} messages in {} ms", messageCount, (System.currentTimeMillis() - now));
 
         assertMockEndpointsSatisfied();
 
-        LOG.info("Processed " + messageCount + " messages in " + (System.currentTimeMillis() - now) + " ms");
+        LOG.info("Processed {} messages in {} ms", messageCount, (System.currentTimeMillis() - now));
     }
 
     @Override

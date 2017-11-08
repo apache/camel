@@ -469,18 +469,18 @@ public abstract class MainSupport extends ServiceSupport {
             try {
                 if (duration > 0) {
                     TimeUnit unit = getTimeUnit();
-                    LOG.info("Waiting for: " + duration + " " + unit);
+                    LOG.info("Waiting for: {} {}", duration, unit);
                     latch.await(duration, unit);
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, durationHitExitCode);
                     completed.set(true);
                 } else if (durationIdle > 0) {
                     TimeUnit unit = getTimeUnit();
-                    LOG.info("Waiting to be idle for: " + duration + " " + unit);
+                    LOG.info("Waiting to be idle for: {} {}", duration, unit);
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, durationHitExitCode);
                     latch.await();
                     completed.set(true);
                 } else if (durationMaxMessages > 0) {
-                    LOG.info("Waiting until: " + durationMaxMessages + " messages has been processed");
+                    LOG.info("Waiting until: {} messages has been processed", durationMaxMessages);
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, durationHitExitCode);
                     latch.await();
                     completed.set(true);

@@ -188,7 +188,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         Collection<AwaitThread> threads = browse();
         int count = threads.size();
         if (count > 0) {
-            LOG.warn("Shutting down while there are still " + count + " inflight threads currently blocked.");
+            LOG.warn("Shutting down while there are still {} inflight threads currently blocked.", count);
 
             StringBuilder sb = new StringBuilder();
             for (AwaitThread entry : threads) {

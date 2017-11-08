@@ -95,7 +95,7 @@ public class BeanRouteTest extends ContextTestSupport {
 
         public void read(String body) {
             this.body = body;
-            LOG.info("read() method on " + this + " with body: " + body);
+            LOG.info("read() method on {} with body: {}", this, body);
         }
 
         public void wrongMethod(String body) {

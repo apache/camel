@@ -46,7 +46,7 @@ public final class TestSupportJmxCleanup {
         String d = getDomainName(domain);
         Set<ObjectName> s = mbsc.queryNames(new ObjectName(d + ":*"), null);
         if (s.size() > 0) {
-            LOG.warn(" + " + s.size() + " ObjectNames registered in domain \"" + d + "\"");
+            LOG.warn(" + {} ObjectNames registered in domain \"{}\"", s.size(), d);
             for (ObjectName on : s) {
                 LOG.warn(" |  " + on);
             }

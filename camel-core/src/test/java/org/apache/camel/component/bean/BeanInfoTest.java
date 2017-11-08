@@ -154,7 +154,7 @@ public class BeanInfoTest extends TestCase {
         ExchangePattern actualPattern = methodInfo.getPattern();
         assertEquals("Pattern for: " + method, expectedPattern, actualPattern);
 
-        LOG.info("Method: " + method + " has pattern: " + actualPattern);
+        LOG.info("Method: {} has pattern: {}", method, actualPattern);
     }
 
     public interface Foo {

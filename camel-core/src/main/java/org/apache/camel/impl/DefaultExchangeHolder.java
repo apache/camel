@@ -264,7 +264,7 @@ public class DefaultExchangeHolder implements Serializable {
         if (converted != null) {
             return converted;
         } else {
-            LOG.warn("Exchange " + type + " containing object: " + object + " of type: " + object.getClass().getCanonicalName() + " cannot be serialized, it will be excluded by the holder.");
+            LOG.warn("Exchange {} containing object: {} of type: {} cannot be serialized, it will be excluded by the holder.", type, object, object.getClass().getCanonicalName());
             return null;
         }
     }

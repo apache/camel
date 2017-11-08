@@ -59,7 +59,7 @@ public class TypeConverterConcurrencyIssueTest extends ContextTestSupport {
         }
         
         assertTrue("The expected mandatory conversions failed!", latch.await(1, TimeUnit.MINUTES));
-        log.info("Took " + watch.taken() + " millis to convert " + size + " objects");
+        log.info("Took {} millis to convert {} objects", watch.taken(), size);
     }
     
     public static MyCamelBean toMyCamelBean(String body) {

@@ -104,7 +104,7 @@ public abstract class UriEndpointComponent extends DefaultComponent {
                         populateParameterConfigurationMap(parameterMap, fieldType, nestedPrefix);
                     } else {
                         if (parameterMap.containsKey(propertyName)) {
-                            LOG.warn("Duplicate property name " + propertyName + " defined on field " + field);
+                            LOG.warn("Duplicate property name {} defined on field {}", propertyName, field);
                         } else {
                             parameterMap.put(propertyName,
                                     ParameterConfiguration.newInstance(propertyName, field, uriParam));

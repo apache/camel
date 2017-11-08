@@ -53,7 +53,7 @@ public class ComponentDiscoveryTest {
 
         Set<Map.Entry<String, Properties>> entries = map.entrySet();
         for (Map.Entry<String, Properties> entry : entries) {
-            LOG.info("Found component " + entry.getKey() + " with properties: " + entry.getValue());
+            LOG.info("Found component {} with properties: {}", entry.getKey(), entry.getValue());
         }
     }
 

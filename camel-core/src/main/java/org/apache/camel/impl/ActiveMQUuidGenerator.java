@@ -91,7 +91,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort, e);
                 } else {
-                    LOG.warn("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort + " due " + e.getMessage());
+                    LOG.warn("Cannot generate unique stub by using DNS and binding to local port: {} due {}", idGeneratorPort, e.getMessage());
                 }
                 // Restore interrupted state so higher level code can deal with it.
                 if (e instanceof InterruptedException) {

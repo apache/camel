@@ -178,7 +178,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     protected void doStop() throws Exception {
         int count = size();
         if (count > 0) {
-            LOG.warn("Shutting down while there are still " + count + " inflight exchanges.");
+            LOG.warn("Shutting down while there are still {} inflight exchanges.", count);
         } else {
             LOG.debug("Shutting down with no inflight exchanges.");
         }

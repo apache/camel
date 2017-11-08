@@ -91,7 +91,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
             if (key.contains("?")) {
                 key = ObjectHelper.before(key, "?");
             }
-            LOG.info("Adviced endpoint [" + uri + "] with mock endpoint [" + key + "]");
+            LOG.info("Adviced endpoint [{}] with mock endpoint [{}]", uri, key);
 
             MockEndpoint mock = endpoint.getCamelContext().getEndpoint(key, MockEndpoint.class);
             Producer producer;

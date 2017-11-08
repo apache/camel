@@ -89,7 +89,7 @@ public class AggregatorConcurrencyTest extends ContextTestSupport {
                             int total = SUM.addAndGet(newIndex);
                             answer.getIn().setHeader("total", total);
 
-                            LOG.debug("Index: " + newIndex + ". Total so far: " + total);
+                            LOG.debug("Index: {}. Total so far: {}", newIndex, total);
                             return answer;
                         }
                     }).completionTimeout(60000).completionPredicate(property(Exchange.AGGREGATED_SIZE).isEqualTo(100))

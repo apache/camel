@@ -380,12 +380,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      *                should wait for the test to be true
      */
     public void assertIsSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
-        LOG.info("Asserting: " + this + " is satisfied");
+        LOG.info("Asserting: {} is satisfied", this);
         doAssertIsSatisfied(timeoutForEmptyEndpoints);
         if (assertPeriod > 0) {
             // if an assert period was set then re-assert again to ensure the assertion is still valid
             Thread.sleep(assertPeriod);
-            LOG.info("Re-asserting: " + this + " is satisfied after " + assertPeriod + " millis");
+            LOG.info("Re-asserting: {} is satisfied after {} millis", this, assertPeriod);
             // do not use timeout when we re-assert
             doAssertIsSatisfied(0);
         }
@@ -394,7 +394,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     protected void doAssertIsSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
         if (expectedCount == 0) {
             if (timeoutForEmptyEndpoints > 0) {
-                LOG.debug("Sleeping for: " + timeoutForEmptyEndpoints + " millis to check there really are no messages received");
+                LOG.debug("Sleeping for: {} millis to check there really are no messages received", timeoutForEmptyEndpoints);
                 Thread.sleep(timeoutForEmptyEndpoints);
             }
             assertEquals("Received message count", expectedCount, getReceivedCounter());
@@ -1467,7 +1467,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         long waitTime = timeout == 0 ? 10000L : timeout;
 
         // now let's wait for the results
-        LOG.debug("Waiting on the latch for: " + timeout + " millis");
+        LOG.debug("Waiting on the latch for: {} millis", timeout);
         latch.await(waitTime, TimeUnit.MILLISECONDS);
     }
 

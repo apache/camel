@@ -207,7 +207,7 @@ public abstract class TestSupport extends TestCase {
         }
         assertEquals("in body of: " + exchange, expected, actual);
 
-        LOG.debug("Received response: " + exchange + " with in: " + exchange.getIn());
+        LOG.debug("Received response: {} with in: {}", exchange, exchange.getIn());
     }
 
     /**
@@ -229,7 +229,7 @@ public abstract class TestSupport extends TestCase {
         }
         assertEquals("output body of: " + exchange, expected, actual);
 
-        LOG.debug("Received response: " + exchange + " with out: " + exchange.getOut());
+        LOG.debug("Received response: {} with out: {}", exchange, exchange.getOut());
     }
 
     public static Object assertMessageHeader(Message message, String name, Object expected) {
@@ -255,7 +255,7 @@ public abstract class TestSupport extends TestCase {
             value = expression.evaluate(exchange, Object.class);
         }
 
-        LOG.debug("Evaluated expression: " + expression + " on exchange: " + exchange + " result: " + value);
+        LOG.debug("Evaluated expression: {} on exchange: {} result: {}", expression, exchange, value);
 
         assertEquals("Expression: " + expression + " on Exchange: " + exchange, expected, value);
         return value;
@@ -289,7 +289,7 @@ public abstract class TestSupport extends TestCase {
         }
         boolean value = predicate.matches(exchange);
 
-        LOG.debug("Evaluated predicate: " + predicate + " on exchange: " + exchange + " result: " + value);
+        LOG.debug("Evaluated predicate: {} on exchange: {} result: {}", predicate, exchange, value);
 
         assertEquals("Predicate: " + predicate + " on Exchange: " + exchange, expected, value);
         return value;

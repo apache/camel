@@ -61,7 +61,7 @@ public class DefaultUuidGenerator implements UuidGenerator {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Cannot generate unique stub by using DNS", e);
                 } else {
-                    LOG.warn("Cannot generate unique stub by using DNS due " + e.getMessage() + ". This exception is ignored.");
+                    LOG.warn("Cannot generate unique stub by using DNS due {}. This exception is ignored.", e.getMessage());
                 }
             }
         }

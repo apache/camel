@@ -125,7 +125,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         } catch (Exception e) {
             // during poll directory we add files to the in progress repository, in case of any exception thrown after this work
             // we must then drain the in progress files before rethrowing the exception
-            log.debug("Error occurred during poll directory: " + name + " due " + e.getMessage() + ". Removing " + files.size() + " files marked as in-progress.");
+            log.debug("Error occurred during poll directory: {} due {}. Removing {} files marked as in-progress.", name, e.getMessage(), files.size());
             removeExcessiveInProgressFiles(files);
             throw e;
         }
