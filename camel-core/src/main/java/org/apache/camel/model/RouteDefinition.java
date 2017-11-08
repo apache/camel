@@ -296,7 +296,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         camelContext.getRouteDefinitions().add(0, merged);
 
         // log the merged route at info level to make it easier to end users to spot any mistakes they may have made
-        log.info("AdviceWith route after: " + merged);
+        log.info("AdviceWith route after: {}", merged);
 
         // If the camel context is started then we start the route
         if (camelContext instanceof StatefulService) {

@@ -87,7 +87,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
             aliasPatterns.put(Pattern.compile(alias.getKey()), alias.getValue());
         }
 
-        LOG.debug("Processing " + apiMethodEnum.getName());
+        LOG.debug("Processing {}", apiMethodEnum.getName());
         final T[] methods = apiMethodEnum.getEnumConstants();
 
         // load lookup maps

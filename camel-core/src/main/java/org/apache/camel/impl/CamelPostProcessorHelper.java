@@ -92,7 +92,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     public void consumerInjection(Method method, Object bean, String beanName) {
         Consume consume = method.getAnnotation(Consume.class);
         if (consume != null && matchContext(consume.context())) {
-            LOG.debug("Creating a consumer for: " + consume);
+            LOG.debug("Creating a consumer for: {}", consume);
             subscribeMethod(method, bean, beanName, consume.uri(), consume.ref(), consume.property(), consume.predicate());
         }
     }

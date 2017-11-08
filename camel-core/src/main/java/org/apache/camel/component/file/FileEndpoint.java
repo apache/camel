@@ -107,7 +107,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
         // if idempotent and no repository set then create a default one
         if (isIdempotentSet() && isIdempotent() && idempotentRepository == null) {
-            log.info("Using default memory based idempotent repository with cache max size: " + DEFAULT_IDEMPOTENT_CACHE_SIZE);
+            log.info("Using default memory based idempotent repository with cache max size: {}", DEFAULT_IDEMPOTENT_CACHE_SIZE);
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
 
