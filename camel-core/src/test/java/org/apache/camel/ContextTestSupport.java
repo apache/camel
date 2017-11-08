@@ -111,7 +111,7 @@ public abstract class ContextTestSupport extends TestSupport {
         if (isUseRouteBuilder()) {
             RouteBuilder[] builders = createRouteBuilders();
             for (RouteBuilder builder : builders) {
-                log.debug("Using created route builder: " + builder);
+                log.debug("Using created route builder: {}", builder);
                 context.addRoutes(builder);
             }
             startCamelContext();
@@ -123,7 +123,7 @@ public abstract class ContextTestSupport extends TestSupport {
 
     @Override
     protected void tearDown() throws Exception {
-        log.debug("tearDown test: " + getName());
+        log.debug("tearDown test: {}", getName());
         if (consumer != null) {
             consumer.stop();
         }

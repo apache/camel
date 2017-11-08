@@ -43,7 +43,7 @@ public class DirectVmProducer extends DefaultAsyncProducer {
             if (endpoint.isFailIfNoConsumers()) {
                 exchange.setException(new DirectVmConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange));
             } else {
-                log.debug("message ignored, no consumers available on endpoint: " + endpoint);
+                log.debug("message ignored, no consumers available on endpoint: {}", endpoint);
             }
             callback.done(true);
             return true;

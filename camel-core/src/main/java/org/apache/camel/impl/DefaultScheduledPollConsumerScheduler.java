@@ -180,7 +180,7 @@ public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.supp
     @Override
     protected void doStop() throws Exception {
         if (isSchedulerStarted()) {
-            LOG.debug("This consumer is stopping, so cancelling scheduled task: " + futures);
+            LOG.debug("This consumer is stopping, so cancelling scheduled task: {}", futures);
             for (ScheduledFuture<?> future : futures) {
                 future.cancel(true);
             }

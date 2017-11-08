@@ -116,7 +116,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         threadPoolProfiles.remove(defaultThreadPoolProfileId);
         defaultThreadPoolProfile.addDefaults(defaultProfile);
 
-        LOG.info("Using custom DefaultThreadPoolProfile: " + defaultThreadPoolProfile);
+        LOG.info("Using custom DefaultThreadPoolProfile: {}", defaultThreadPoolProfile);
 
         this.defaultThreadPoolProfileId = defaultThreadPoolProfile.getId();
         defaultThreadPoolProfile.setDefaultProfile(true);

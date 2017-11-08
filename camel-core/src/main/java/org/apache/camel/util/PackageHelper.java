@@ -65,7 +65,7 @@ public final class PackageHelper {
                         double number = Double.parseDouble(value);
                         return number >= minimumVersion;
                     } else {
-                        LOG.debug("Could not determine version of package: " + packageName);
+                        LOG.debug("Could not determine version of package: {}", packageName);
                     }
                 }
             }

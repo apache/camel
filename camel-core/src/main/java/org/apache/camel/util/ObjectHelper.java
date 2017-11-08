@@ -1151,9 +1151,9 @@ public final class ObjectHelper {
 
         if (clazz == null) {
             if (needToWarn) {
-                LOG.warn("Cannot find class: " + name);
+                LOG.warn("Cannot find class: {}", name);
             } else {
-                LOG.debug("Cannot find class: " + name);
+                LOG.debug("Cannot find class: {}", name);
             }
         }
 
