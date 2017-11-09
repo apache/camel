@@ -136,10 +136,10 @@ public class QueueServiceComponentConfigurationTest extends CamelTestSupport {
     public void testTooFewPathSegments() throws Exception {
         QueueServiceComponent component = new QueueServiceComponent(context);
         try {
-            component.createEndpoint("azure-queue://camelazure");
+            component.createEndpoint("azure-queue://camelazure?operation=addMessage");
             fail();
         } catch (IllegalArgumentException ex) {
-            assertEquals("The account and queue names must be specified.", ex.getMessage());
+            assertEquals("The queue name must be specified.", ex.getMessage());
         }
     }
     
