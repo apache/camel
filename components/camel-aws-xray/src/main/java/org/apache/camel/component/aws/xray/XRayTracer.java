@@ -86,6 +86,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
             // Add segment decorator only if no existing decorator for the component exists yet or if we have have a
             // derived one. This allows custom decorators to be added if they extend the standard decorators
             if (existing == null || existing.getClass().isInstance(d)) {
+                LOG.trace("Adding segment decorator {}", d.getComponent());
                 decorators.put(d.getComponent(), d);
             }
         });
@@ -266,9 +267,13 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 }
 
                 if (AWSXRay.getCurrentSegmentOptional().isPresent()) {
-//                    // AWS XRay does only allow a certain set of characters to appear within a name
-//                    // Allowed characters: a-z, A-Z, 0-9, _, ., :, /, %, &, #, =, +, \, -, @
-                    Subsegment subsegment = AWSXRay.beginSubsegment(sd.getOperationName(ese.getExchange(), ese.getEndpoint()));
+                    // AWS XRay does only allow a certain set of characters to appear within a name
+                    // Allowed characters: a-z, A-Z, 0-9, _, ., :, /, %, &, #, =, +, \, -, @
+                    String name = sd.getOperationName(ese.getExchange(), ese.getEndpoint());
+                    if (sd.getComponent() != null) {
+                        name = sd.getComponent() + ":" + name;
+                    }
+                    Subsegment subsegment = AWSXRay.beginSubsegment(sanitizeName(name));
                     sd.pre(subsegment, ese.getExchange(), ese.getEndpoint());
                     LOG.trace("Creating new subsegment with ID {} and name {}",
                             subsegment.getId(), subsegment.getName());
@@ -350,7 +355,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
 
             SegmentDecorator sd = getSegmentDecorator(route.getEndpoint());
             if (!AWSXRay.getCurrentSegmentOptional().isPresent()) {
-                Segment segment = AWSXRay.beginSegment(route.getId());
+                Segment segment = AWSXRay.beginSegment(sanitizeName(route.getId()));
                 segment.setTraceId(traceID);
                 sd.pre(segment, exchange, route.getEndpoint());
                 LOG.trace("Created new XRay segment {} with name {}",
@@ -393,5 +398,18 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
         public String toString() {
             return "XRayRoutePolicy";
         }
+    }
+
+    /**
+     * Removes invalid characters from AWS XRay (sub-)segment names and replaces the invalid characters with an
+     * underscore character.
+     *
+     * @param name The name to assign to an AWS XRay (sub-)segment
+     * @return The sanitized name of the (sub-)segment
+     */
+    public static String sanitizeName(String name) {
+        // Allowed characters: a-z, A-Z, 0-9, _, ., :, /, %, &, #, =, +, \, -, @
+        // \w = a-zA-Z0-9_
+        return name.replaceAll("[^\\w.:/%&#=+\\-@]", "_");
     }
 }

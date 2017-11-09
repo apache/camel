@@ -28,6 +28,8 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.aws.xray.XRayTracer.sanitizeName;
+
 public class EIPTracingStrategy implements InterceptStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -41,7 +43,7 @@ public class EIPTracingStrategy implements InterceptStrategy {
 
         return new DelegateAsyncProcessor((Exchange exchange) -> {
             LOG.trace("Creating new subsegment for {} - EIP {}", defName, target);
-            Subsegment subsegment = AWSXRay.beginSubsegment(defName);
+            Subsegment subsegment = AWSXRay.beginSubsegment(sanitizeName(defName));
             try {
                 LOG.trace("Processing EIP {}", target);
                 target.process(exchange);

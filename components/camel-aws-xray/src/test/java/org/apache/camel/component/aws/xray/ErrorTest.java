@@ -38,11 +38,11 @@ public class ErrorTest extends CamelAwsXRayTestSupport {
         super(
             TestDataBuilder.createTrace()
                 .withSegment(TestDataBuilder.createSegment("start")
-                    .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
-                    .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
-                    .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
-                    .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
-                    .withSubsegment(TestDataBuilder.createSubsegment("ExceptionProcessor"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("bean:TraceBean"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("bean:TraceBean"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("bean:TraceBean"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("bean:TraceBean"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("process:ExceptionProcessor"))
                 )
         );
     }
