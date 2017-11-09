@@ -32,42 +32,34 @@ public class QueueServiceUtilTest extends CamelTestSupport {
     @Test
     public void testPrepareUri() throws Exception {
         registerCredentials();
-        
+
         QueueServiceComponent component = new QueueServiceComponent(context);
-        QueueServiceEndpoint endpoint = 
-            (QueueServiceEndpoint) component.createEndpoint("azure-queue://camelazure/testqueue?credentials=#creds");
-        URI uri = 
-            QueueServiceUtil.prepareStorageQueueUri(endpoint.getConfiguration());
-        assertEquals("https://camelazure.queue.core.windows.net/testqueue/messages", uri.toString());
+        QueueServiceEndpoint endpoint = (QueueServiceEndpoint) component.createEndpoint("azure-queue://camelazure/testqueue?credentials=#creds");
+        URI uri = QueueServiceUtil.prepareStorageQueueUri(endpoint.getConfiguration());
+        assertEquals("https://camelazure.queue.core.windows.net/testqueue", uri.toString());
     }
 
     @Test
     public void testGetConfiguredClient() throws Exception {
-        CloudQueue client = 
-            new CloudQueue(URI.create("https://camelazure.queue.core.windows.net/testqueue/messages"),
-                           newAccountKeyCredentials());
-        
+        CloudQueue client = new CloudQueue(URI.create("https://camelazure.queue.core.windows.net/testqueue"), newAccountKeyCredentials());
         JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
         registry.bind("azureQueueClient", client);
-        
+
         QueueServiceComponent component = new QueueServiceComponent(context);
-        QueueServiceEndpoint endpoint = 
-            (QueueServiceEndpoint) component.createEndpoint("azure-queue://camelazure/testqueue?azureQueueClient=#azureQueueClient");
+        QueueServiceEndpoint endpoint = (QueueServiceEndpoint) component.createEndpoint("azure-queue://camelazure/testqueue?azureQueueClient=#azureQueueClient");
         assertSame(client, QueueServiceUtil.getConfiguredClient(endpoint.getConfiguration()));
     }
+
     @Test
     public void testGetConfiguredClientUriMismatch() throws Exception {
-        CloudQueue client = 
-            new CloudQueue(URI.create("https://camelazure.queue.core.windows.net/testqueue"),
-                           newAccountKeyCredentials());
-        
+        CloudQueue client = new CloudQueue(URI.create("https://camelazure.queue.core.windows.net/testqueue"), newAccountKeyCredentials());
+
         JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
         registry.bind("azureQueueClient", client);
-        
+
         QueueServiceComponent component = new QueueServiceComponent(context);
-        QueueServiceEndpoint endpoint = 
-            (QueueServiceEndpoint) component.createEndpoint("azure-queue://camelazure/testqueue2?azureQueueClient=#azureQueueClient");
-        
+        QueueServiceEndpoint endpoint = (QueueServiceEndpoint) component.createEndpoint("azure-queue://camelazure/testqueue2?azureQueueClient=#azureQueueClient");
+
         try {
             QueueServiceUtil.getConfiguredClient(endpoint.getConfiguration());
             fail();
@@ -82,7 +74,6 @@ public class QueueServiceUtilTest extends CamelTestSupport {
     }
 
     private StorageCredentials newAccountKeyCredentials() {
-        return new StorageCredentialsAccountAndKey("camelazure", 
-                                                   Base64.encode("key".getBytes()));
+        return new StorageCredentialsAccountAndKey("camelazure", Base64.encode("key".getBytes()));
     }
 }
