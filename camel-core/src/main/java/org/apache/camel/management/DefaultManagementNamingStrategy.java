@@ -34,7 +34,7 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.StaticService;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
-import org.apache.camel.ha.CamelClusterService;
+import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InterceptStrategy;
@@ -53,7 +53,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     public static final String KEY_TYPE = "type";
     public static final String KEY_CONTEXT = "context";
     public static final String TYPE_CONTEXT = "context";
-    public static final String TYPE_ROUTE_CONTROLLER = "routecontroller";
+    public static final String TYPE_ROUTE_CONTROLLER = "routecontrollers";
     public static final String TYPE_HEALTH = "health";
     public static final String TYPE_ENDPOINT = "endpoints";
     public static final String TYPE_DATAFORMAT = "dataformats";
@@ -67,7 +67,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     public static final String TYPE_ERRORHANDLER = "errorhandlers";
     public static final String TYPE_THREAD_POOL = "threadpools";
     public static final String TYPE_SERVICE = "services";
-    public static final String TYPE_HA = "ha";
+    public static final String TYPE_HA = "clusterservices";
 
     protected String domainName;
     protected String hostName = "localhost";

@@ -30,7 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.ha.CamelClusterService;
+import org.apache.camel.cluster.CamelClusterService;
 
 /**
  * Strategy for computing {@link ObjectName} names for the various beans that Camel register for management.

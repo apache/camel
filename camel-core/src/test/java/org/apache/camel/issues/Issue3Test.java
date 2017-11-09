@@ -29,7 +29,7 @@ public class Issue3Test extends ContextTestSupport {
     protected String fromQueue = "direct:A";
 
     public void testIssue() throws Exception {
-        sendBody(fromQueue, "ha!");
+        sendBody(fromQueue, "cluster!");
     }
 
     @Override

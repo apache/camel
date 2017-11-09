@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @deprecated use {@link org.apache.camel.component.consul.ha.ConsulClusterService} and {@link org.apache.camel.impl.ha.ClusteredRoutePolicy} instead.
+ * @deprecated use {@link org.apache.camel.component.consul.cluster.ConsulClusterService} and {@link org.apache.camel.impl.cluster.ClusteredRoutePolicy} instead.
  */
 @Deprecated
 @ManagedResource(description = "Route policy using Consul as clustered lock")

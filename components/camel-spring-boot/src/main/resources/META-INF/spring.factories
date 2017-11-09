@@ -28,7 +28,7 @@ org.apache.camel.spring.boot.cloud.CamelCloudServiceCallConfigurationAutoConfigu
 org.apache.camel.spring.boot.cloud.CamelCloudServiceDiscoveryAutoConfiguration,\
 org.apache.camel.spring.boot.cloud.CamelCloudServiceFilterAutoConfiguration,\
 org.apache.camel.spring.boot.cloud.CamelCloudServiceChooserAutoConfiguration,\
-org.apache.camel.spring.boot.ha.ClusteredRouteControllerAutoConfiguration,\
+org.apache.camel.spring.boot.cluster.ClusteredRouteControllerAutoConfiguration,\
 org.apache.camel.spring.boot.health.HealthCheckRoutesAutoConfiguration,\
 org.apache.camel.spring.boot.health.HealthCheckServiceAutoConfiguration,\
 org.apache.camel.spring.boot.security.CamelSSLAutoConfiguration
