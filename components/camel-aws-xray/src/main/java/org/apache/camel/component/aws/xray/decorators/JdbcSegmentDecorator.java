@@ -35,7 +35,7 @@ public class JdbcSegmentDecorator extends AbstractSegmentDecorator {
 
         Object body = exchange.getIn().getBody();
         if (body instanceof String) {
-            segment.putMetadata("db.statement", body);
+            segment.putSql("db.statement", body);
         }
     }
 }

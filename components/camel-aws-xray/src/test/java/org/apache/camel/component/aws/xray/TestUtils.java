@@ -87,6 +87,8 @@ public final class TestUtils {
             } else {
                 for (int i = 0; i < expected.getSubsegments().size(); i++) {
                     if (actual.getName().equals(expected.getName())) {
+                        assertThat("An expected subsegment is missing in the actual payload of segment " + actual.getName(),
+                                actual.getSubsegments().size(), is(greaterThanOrEqualTo(expected.getSubsegments().size())));
                         verifySubsegments(expected.getSubsegments().get(i), actual.getSubsegments().get(i));
                     }
                 }

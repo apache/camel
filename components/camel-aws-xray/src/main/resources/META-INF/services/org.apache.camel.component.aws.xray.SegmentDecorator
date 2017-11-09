@@ -1,0 +1,56 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+org.apache.camel.component.aws.xray.decorators.CqlSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.ElasticsearchSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.JdbcSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.LogSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.MongoDBSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.SqlSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.TimerSegmentDecorator
+
+org.apache.camel.component.aws.xray.decorators.http.AhcSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.http.Http4SegmentDecorator
+org.apache.camel.component.aws.xray.decorators.http.HttpSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.http.JettySegmentDecorator
+org.apache.camel.component.aws.xray.decorators.http.NettyHttp4SegmentDecorator
+org.apache.camel.component.aws.xray.decorators.http.NettyHttpSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.http.RestletSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.http.RestSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.http.ServletSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.http.UndertowSegmentDecorator
+
+org.apache.camel.component.aws.xray.decorators.internal.DirectSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.internal.DirectvmSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.internal.DisruptorSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.internal.DisruptorvmSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.internal.SedaSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.internal.VmSegmentDecorator
+
+org.apache.camel.component.aws.xray.decorators.messaging.AmqpSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.messaging.AwsSnsSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.messaging.AwsSqsSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.messaging.CometdSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.messaging.CometdsSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.messaging.IronmqSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.messaging.JmsSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.messaging.KafkaSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.messaging.MqttSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.messaging.PahoSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.messaging.RabbitmqSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.messaging.SjmsSegmentDecorator
+org.apache.camel.component.aws.xray.decorators.messaging.StompSegmentDecorator
