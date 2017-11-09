@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -37,12 +37,15 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DdbStreamEndpointTest {
-    @Rule public ExpectedException expectedException = ExpectedException.none();
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     private CamelContext context;
 
-    @Mock private SequenceNumberProvider sequenceNumberProvider;
-    @Mock private AmazonDynamoDBStreams amazonDynamoDBStreams;
+    @Mock
+    private SequenceNumberProvider sequenceNumberProvider;
+    @Mock
+    private AmazonDynamoDBStreams amazonDynamoDBStreams;
 
     @Before
     public void setup() throws Exception {
@@ -78,8 +81,6 @@ public class DdbStreamEndpointTest {
 
     @Test
     public void onSequenceNumberAgnosticIteratorsTheProviderIsIgnored() throws Exception {
-        when(sequenceNumberProvider.getSequenceNumber()).thenReturn("seq");
-
         DdbStreamEndpoint undertest = (DdbStreamEndpoint)context.getEndpoint("aws-ddbstream://table"
                 + "?amazonDynamoDbStreamsClient=#ddbStreamsClient"
                 + "&iteratorType=LATEST"
@@ -91,8 +92,6 @@ public class DdbStreamEndpointTest {
 
     @Test
     public void sequenceNumberFetchingThrowsSomethingUsefulIfMisconfigurered() throws Exception {
-        when(sequenceNumberProvider.getSequenceNumber()).thenReturn("seq");
-
         expectedException.expectMessage(containsString("sequenceNumberProvider"));
 
         DdbStreamEndpoint undertest = (DdbStreamEndpoint)context.getEndpoint("aws-ddbstream://table"

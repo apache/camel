@@ -29,9 +29,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -57,10 +57,10 @@ public class KinesisFirehoseProducerTest {
     private Exchange exchange;
 
     private KinesisFirehoseProducer kinesisFirehoseProducer;
+
     @Before
     public void setup() throws Exception {
         when(kinesisFirehoseEndpoint.getClient()).thenReturn(kinesisFirehoseClient);
-        when(kinesisFirehoseEndpoint.getEndpointUri()).thenReturn("aws-kinesis-firehose://etl");
         when(kinesisFirehoseEndpoint.getStreamName()).thenReturn(STREAM_NAME);
         when(exchange.getOut()).thenReturn(outMessage);
         when(exchange.getIn()).thenReturn(inMessage);

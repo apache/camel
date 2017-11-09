@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -72,7 +72,7 @@ public class CamelSWFWorkflowClientTest {
         Date closeTimestamp = new Date();
         executionInfo.setCloseTimestamp(closeTimestamp);
         executionInfo.setExecutionStatus("CLOSED");
-        executionInfo.setTagList(Collections.EMPTY_LIST);
+        executionInfo.setTagList(Collections.emptyList());
 
         WorkflowExecutionDetail workflowExecutionDetail = new WorkflowExecutionDetail();
         workflowExecutionDetail.setExecutionInfo(executionInfo);
@@ -89,7 +89,7 @@ public class CamelSWFWorkflowClientTest {
         assertThat((String) description.get("closeStatus"), is("COMPLETED"));
         assertThat((Date) description.get("closeTimestamp"), is(closeTimestamp));
         assertThat((String) description.get("executionStatus"), is("CLOSED"));
-        assertThat((List) description.get("tagList"), is(Collections.EMPTY_LIST));
+        assertThat((List<?>) description.get("tagList"), is(Collections.EMPTY_LIST));
         assertThat((WorkflowExecutionDetail) description.get("executionDetail"), is(workflowExecutionDetail));
     }
 

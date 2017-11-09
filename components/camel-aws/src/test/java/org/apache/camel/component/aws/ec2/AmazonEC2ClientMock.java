@@ -73,7 +73,7 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
             res.setOwnerId("1");
             res.setRequesterId("user-test");
             res.setReservationId("res-1");
-            Collection<Instance> instances = new ArrayList();
+            Collection<Instance> instances = new ArrayList<>();
             Instance ins = new Instance();
             ins.setImageId(runInstancesRequest.getImageId());
             ins.setInstanceType(runInstancesRequest.getInstanceType());
@@ -86,7 +86,7 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
                     GroupIdentifier id2 = new GroupIdentifier();
                     id2.setGroupId("id-2");
                     id2.setGroupName("secgroup-2");
-                    Collection secGroups = new ArrayList<GroupIdentifier>();
+                    Collection<GroupIdentifier> secGroups = new ArrayList<>();
                     secGroups.add(id1);
                     secGroups.add(id2);
                     ins.setSecurityGroups(secGroups);
@@ -98,7 +98,7 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
                         GroupIdentifier id2 = new GroupIdentifier();
                         id2.setGroupId("id-4");
                         id2.setGroupName("secgroup-4");
-                        Collection secGroups = new ArrayList<GroupIdentifier>();
+                        Collection<GroupIdentifier> secGroups = new ArrayList<>();
                         secGroups.add(id1);
                         secGroups.add(id2);
                         ins.setSecurityGroups(secGroups);
@@ -193,7 +193,7 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
             res.setOwnerId("1");
             res.setRequesterId("user-test");
             res.setReservationId("res-1");
-            Collection<Instance> instances = new ArrayList();
+            Collection<Instance> instances = new ArrayList<>();
             Instance ins = new Instance();
             ins.setImageId("id-1");
             ins.setInstanceType(InstanceType.T2Micro);
@@ -214,7 +214,7 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
                 res.setOwnerId("1");
                 res.setRequesterId("user-test");
                 res.setReservationId("res-1");
-                Collection<Instance> instances = new ArrayList();
+                Collection<Instance> instances = new ArrayList<>();
                 Instance ins = new Instance();
                 ins.setImageId("id-1");
                 ins.setInstanceType(InstanceType.T2Micro);
@@ -231,7 +231,7 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
     @Override
     public DescribeInstanceStatusResult describeInstanceStatus(DescribeInstanceStatusRequest describeInstanceStatusRequest) {
         DescribeInstanceStatusResult result = new DescribeInstanceStatusResult();
-        Collection<InstanceStatus> instanceStatuses = new ArrayList();
+        Collection<InstanceStatus> instanceStatuses = new ArrayList<>();
         if (describeInstanceStatusRequest.getInstanceIds().isEmpty()) {
             InstanceStatus status = new InstanceStatus();
             status.setInstanceId("test-1");
@@ -267,8 +267,8 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
     public MonitorInstancesResult monitorInstances(MonitorInstancesRequest monitorInstancesRequest) {
         MonitorInstancesResult result = new MonitorInstancesResult();
         if (!monitorInstancesRequest.getInstanceIds().isEmpty()) {
-            Collection<InstanceMonitoring> coll = new ArrayList();
-            Iterator it = monitorInstancesRequest.getInstanceIds().iterator();
+            Collection<InstanceMonitoring> coll = new ArrayList<>();
+            Iterator<String> it = monitorInstancesRequest.getInstanceIds().iterator();
             while (it.hasNext()) {
                 String id = (String) it.next();
                 InstanceMonitoring mon = new InstanceMonitoring();
@@ -287,8 +287,8 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
     public UnmonitorInstancesResult unmonitorInstances(UnmonitorInstancesRequest unmonitorInstancesRequest) {
         UnmonitorInstancesResult result = new UnmonitorInstancesResult();
         if (!unmonitorInstancesRequest.getInstanceIds().isEmpty()) {
-            Collection<InstanceMonitoring> coll = new ArrayList();
-            Iterator it = unmonitorInstancesRequest.getInstanceIds().iterator();
+            Collection<InstanceMonitoring> coll = new ArrayList<>();
+            Iterator<String> it = unmonitorInstancesRequest.getInstanceIds().iterator();
             while (it.hasNext()) {
                 String id = (String) it.next();
                 InstanceMonitoring mon = new InstanceMonitoring();

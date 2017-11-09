@@ -48,12 +48,12 @@ public class SqsEndpointTest {
     public void doStartShouldNotCallUpdateQueueAttributesIfQueueExistAndNoOptionIsSpecified() throws Exception {
         Mockito.when(amazonSQSClient.listQueues())
             .thenReturn(new ListQueuesResult().withQueueUrls("https://sqs.us-east-1.amazonaws.com/ID/dummy-queue", "https://sqs.us-east-1.amazonaws.com/ID/test-queue"));
-        
+
         endpoint.doStart();
-        
+
         Mockito.verify(amazonSQSClient).listQueues();
     }
-    
+
     @Test
     public void doStartWithDifferentQueueOwner() throws Exception {
 

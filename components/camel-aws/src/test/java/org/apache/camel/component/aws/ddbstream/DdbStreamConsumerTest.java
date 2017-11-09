@@ -40,16 +40,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -59,9 +58,13 @@ public class DdbStreamConsumerTest {
 
     private DdbStreamConsumer undertest;
 
-    @Mock private AmazonDynamoDBStreams amazonDynamoDBStreams;
-    @Mock private AsyncProcessor processor;
-    @Mock private ShardIteratorHandler shardIteratorHandler;
+    @Mock
+    private AmazonDynamoDBStreams amazonDynamoDBStreams;
+    @Mock
+    private AsyncProcessor processor;
+    @Mock
+    private ShardIteratorHandler shardIteratorHandler;
+
     private final CamelContext context = new DefaultCamelContext();
     private final DdbStreamComponent component = new DdbStreamComponent(context);
     private final DdbStreamEndpoint endpoint = new DdbStreamEndpoint(null, "table_name", component);
@@ -105,8 +108,8 @@ public class DdbStreamConsumerTest {
     @Test
     public void itResumesFromAfterTheLastSeenSequenceNumberWhenAShardIteratorHasExpired() throws Exception {
         endpoint.setIteratorType(ShardIteratorType.LATEST);
-        when(shardIteratorHandler.getShardIterator(anyString())).thenReturn("shard_iterator_b_000", "shard_iterator_b_001", "shard_iterator_b_001");
-        Mockito.reset(amazonDynamoDBStreams);
+        when(shardIteratorHandler.getShardIterator(ArgumentMatchers.isNull())).thenReturn("shard_iterator_b_000", "shard_iterator_b_001");
+        when(shardIteratorHandler.getShardIterator(ArgumentMatchers.anyString())).thenReturn("shard_iterator_b_001");
         when(amazonDynamoDBStreams.getRecords(any(GetRecordsRequest.class)))
                 .thenAnswer(recordsAnswer)
                 .thenThrow(new ExpiredIteratorException("expired shard"))
@@ -128,7 +131,7 @@ public class DdbStreamConsumerTest {
     public void atSeqNumber35GivesFirstRecordWithSeq35() throws Exception {
         endpoint.setIteratorType(ShardIteratorType.AT_SEQUENCE_NUMBER);
         endpoint.setSequenceNumberProvider(new StaticSequenceNumberProvider("35"));
-        when(shardIteratorHandler.getShardIterator(anyString())).thenReturn("shard_iterator_d_001", "shard_iterator_d_002");
+        when(shardIteratorHandler.getShardIterator(ArgumentMatchers.isNull())).thenReturn("shard_iterator_d_001", "shard_iterator_d_002");
 
         for (int i = 0; i < 10; ++i) { // poll lots.
             undertest.poll();
@@ -145,7 +148,7 @@ public class DdbStreamConsumerTest {
     public void afterSeqNumber35GivesFirstRecordWithSeq40() throws Exception {
         endpoint.setIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER);
         endpoint.setSequenceNumberProvider(new StaticSequenceNumberProvider("35"));
-        when(shardIteratorHandler.getShardIterator(anyString())).thenReturn("shard_iterator_d_001", "shard_iterator_d_002");
+        when(shardIteratorHandler.getShardIterator(ArgumentMatchers.isNull())).thenReturn("shard_iterator_d_001", "shard_iterator_d_002");
 
         for (int i = 0; i < 10; ++i) { // poll lots.
             undertest.poll();
@@ -201,5 +204,4 @@ public class DdbStreamConsumerTest {
                     .withNextShardIterator(nextShardIterator);
         }
     }
-    
 }

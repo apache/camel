@@ -190,7 +190,7 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
         foo.setName("foobar");
 
         try {
-            TestPartiallySerializableObject reply = template.requestBodyAndHeader("direct:rabbitMQ", foo, RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, TestPartiallySerializableObject.class);
+            template.requestBodyAndHeader("direct:rabbitMQ", foo, RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, TestPartiallySerializableObject.class);
         } catch (CamelExecutionException e) {
             // expected
         }
@@ -256,7 +256,7 @@ public class RabbitMQInOutIntTest extends CamelTestSupport {
         resultEndpoint.expectedMessageCount(1);
 
         try {
-            String reply = template.requestBodyAndHeaders("direct:rabbitMQNoAutoAck", "testMessage", headers, String.class);
+            template.requestBodyAndHeaders("direct:rabbitMQNoAutoAck", "testMessage", headers, String.class);
             fail("This should have thrown an exception");
         } catch (CamelExecutionException e) {
             if (!(e.getCause() instanceof IllegalStateException)) {

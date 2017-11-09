@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -46,7 +46,8 @@ public class ShardIteratorHandlerTest {
 
     private ShardIteratorHandler undertest;
 
-    @Mock private AmazonDynamoDBStreams amazonDynamoDBStreams;
+    @Mock
+    private AmazonDynamoDBStreams amazonDynamoDBStreams;
     private final CamelContext context = new DefaultCamelContext();
     private final DdbStreamComponent component = new DdbStreamComponent(context);
     private final DdbStreamEndpoint endpoint = new DdbStreamEndpoint(null, "table_name", component);
