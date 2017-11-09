@@ -31,19 +31,12 @@ public final class QueueServiceUtil {
     }
     
     public static URI prepareStorageQueueUri(QueueServiceConfiguration cfg) {
-        return prepareStorageQueueUri(cfg, true);
-    }
-
-    public static URI prepareStorageQueueUri(QueueServiceConfiguration cfg, boolean isForMessages) {
         StringBuilder uriBuilder = new StringBuilder();
         uriBuilder.append("https://")
             .append(cfg.getAccountName())
             .append(QueueServiceConstants.SERVICE_URI_SEGMENT)
-            .append("/")
-            .append(cfg.getQueueName());
-        if (isForMessages) {
-            uriBuilder.append("/messages");
-        }
+            .append("/" + cfg.getQueueName());
+        
         return URI.create(uriBuilder.toString());
     }
     
@@ -73,7 +66,9 @@ public final class QueueServiceUtil {
     public static void retrieveMessage(Exchange exchange, QueueServiceConfiguration cfg) throws Exception {
         CloudQueue client = createQueueClient(cfg);
         QueueServiceRequestOptions opts = getRequestOptions(exchange);  
-        CloudQueueMessage message = client.retrieveMessage(cfg.getMessageVisibilityDelay(),
+        int visibilityTimeout = cfg.getMessageVisibilityDelay();
+        visibilityTimeout = visibilityTimeout != 0 ? visibilityTimeout : 30;
+        CloudQueueMessage message = client.retrieveMessage(visibilityTimeout,
                                opts.getRequestOpts(), opts.getOpContext());
         ExchangeUtil.getMessageForResponse(exchange).setBody(message);
     }
