@@ -2,7 +2,11 @@
   "baseScheme" : "rest-swagger",
   "baseGroupId" : "org.apache.camel",
   "baseArtifactId" : "camel-rest-swagger",
+<<<<<<< HEAD
   "baseVersion" : "2.20.1-20171103.161431-29",
+=======
+  "baseVersion" : "2.21.0-20171109.020941-31",
+>>>>>>> 176975e3de... CAMEL-12001: Cannot create a component based on the SqlComponent
   "baseJavaType" : "org.apache.camel.component.rest.swagger.RestSwaggerComponent",
   "name" : "PetStore",
   "scheme" : "petstore",

@@ -58,7 +58,7 @@ public class TwitterFindConnectorTest {
         Assert.assertFalse(endpoints.isEmpty());
 
         endpoints.forEach(endpoint -> {
-            if (endpoint.getEndpointUri().startsWith("twitter-find-component:")) {
+            if (endpoint.getEndpointUri().startsWith("twitter-search-twitter-find-component:")) {
                 Assert.assertEquals("cameltest", endpoint.getKeywords());
                 Assert.assertTrue(endpoint.isFilterOld());
             } else if (endpoint.getEndpointUri().startsWith("twitter-search-tw-find1:")) {

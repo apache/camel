@@ -2,7 +2,11 @@
   "baseScheme" : "timer",
   "baseGroupId" : "org.apache.camel",
   "baseArtifactId" : "camel-core",
+<<<<<<< HEAD
   "baseVersion" : "2.20.1-20171103.154156-30",
+=======
+  "baseVersion" : "2.21.0-SNAPSHOT",
+>>>>>>> 176975e3de... CAMEL-12001: Cannot create a component based on the SqlComponent
   "baseJavaType" : "org.apache.camel.component.timer.TimerComponent",
   "name" : "Foo",
   "scheme" : "foo",

@@ -470,10 +470,30 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         try {
+            // Flag used to mark a component of being created.
+            final AtomicBoolean created = new AtomicBoolean(false);
+
             // atomic operation to get/create a component. Avoid global locks.
-            return components.computeIfAbsent(name, comp -> initComponent(name, autoCreateComponents, autoStart));
+            final Component component = components.computeIfAbsent(name, comp -> {
+                created.set(true);
+                return initComponent(name, autoCreateComponents);
+            });
+
+            // Start the component after its creation as if it is a component proxy
+            // that creates/start a delegated component, we may end up in a deadlock
+            if (component != null && created.get() && autoStart && (isStarted() || isStarting())) {
+                // If the component is looked up after the context is started,
+                // lets start it up.
+                if (component instanceof Service) {
+                    startService((Service)component);
+                }
+            }
+
+            return  component;
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Cannot auto create component: " + name, e);
         } finally {
-            // cremove the reference to the component being created
+            // remove the reference to the component being created
             componentsInCreation.get().remove(name);
         }
     }
@@ -481,7 +501,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     /**
      * Function to initialize a component and auto start. Returns null if the autoCreateComponents is disabled
      */
-    private Component initComponent(String name, boolean autoCreateComponents, boolean autoStart) {
+    private Component initComponent(String name, boolean autoCreateComponents) {
         Component component = null;
         if (autoCreateComponents) {
             try {
@@ -524,13 +544,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 if (component != null) {
                     component.setCamelContext(this);
                     postInitComponent(name, component);
-                    if (autoStart && (isStarted() || isStarting())) {
-                        // If the component is looked up after the context is started,
-                        // lets start it up.
-                        if (component instanceof Service) {
-                            startService((Service)component);
-                        }
-                    }
                 }
             } catch (Exception e) {
                 throw new RuntimeCamelException("Cannot auto create component: " + name, e);
@@ -3391,7 +3404,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         validatorRegistry = new DefaultValidatorRegistry(this, validators);
         addService(validatorRegistry, true, true);
 
-        // optimised to not include runtimeEndpointRegistry unless its enabled or JMX statistics is in extended mode
+        // optimised to not include runtimeEndpointRegistry unlesstartServices its enabled or JMX statistics is in extended mode
         if (runtimeEndpointRegistry == null && getManagementStrategy() != null && getManagementStrategy().getManagementAgent() != null) {
             Boolean isEnabled = getManagementStrategy().getManagementAgent().getEndpointRuntimeStatisticsEnabled();
             boolean isExtended = getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();

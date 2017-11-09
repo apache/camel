@@ -2,7 +2,11 @@
   "baseScheme" : "twitter-search",
   "baseGroupId" : "org.apache.camel",
   "baseArtifactId" : "camel-twitter",
+<<<<<<< HEAD
   "baseVersion" : "2.20.1-20171103.162737-28",
+=======
+  "baseVersion" : "2.21.0-20171109.022511-29",
+>>>>>>> 176975e3de... CAMEL-12001: Cannot create a component based on the SqlComponent
   "baseJavaType" : "org.apache.camel.component.twitter.search.TwitterSearchComponent",
   "name" : "TwitterFind",
   "scheme" : "twitter-find",
