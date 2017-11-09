@@ -46,7 +46,7 @@ org.apache.camel.component.mock.springboot.MockComponentAutoConfiguration,\
 org.apache.camel.component.browse.springboot.BrowseComponentAutoConfiguration,\
 org.apache.camel.component.language.springboot.LanguageComponentAutoConfiguration,\
 org.apache.camel.component.file.springboot.FileComponentAutoConfiguration,\
-org.apache.camel.component.file.springboot.ha.FileLockClusterServiceAutoConfiguration,\
+org.apache.camel.component.file.springboot.cluster.FileLockClusterServiceAutoConfiguration,\
 org.apache.camel.component.timer.springboot.TimerComponentAutoConfiguration,\
 org.apache.camel.component.test.springboot.TestComponentAutoConfiguration,\
 org.apache.camel.component.beanclass.springboot.ClassComponentAutoConfiguration,\

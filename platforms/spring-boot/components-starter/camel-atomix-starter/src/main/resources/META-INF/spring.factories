@@ -28,7 +28,7 @@ org.apache.camel.component.atomix.client.map.springboot.AtomixMapComponentAutoCo
 org.apache.camel.component.atomix.client.multimap.springboot.AtomixMultiMapComponentAutoConfiguration,\
 org.apache.camel.component.atomix.client.value.springboot.AtomixValueComponentAutoConfiguration,\
 org.apache.camel.component.atomix.client.messaging.springboot.AtomixMessagingComponentAutoConfiguration,\
-org.apache.camel.component.atomix.ha.springboot.AtomixClusterServiceAutoConfiguration
+org.apache.camel.component.atomix.cluster.springboot.AtomixClusterServiceAutoConfiguration
 
 
 

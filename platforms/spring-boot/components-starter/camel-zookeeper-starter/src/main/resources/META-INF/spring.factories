@@ -16,4 +16,4 @@
 ## ---------------------------------------------------------------------------
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.apache.camel.component.zookeeper.springboot.ZooKeeperComponentAutoConfiguration,\
-org.apache.camel.component.zookeeper.ha.springboot.ZooKeeperClusterServiceAutoConfiguration
+org.apache.camel.component.zookeeper.cluster.springboot.ZooKeeperClusterServiceAutoConfiguration

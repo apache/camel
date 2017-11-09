@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.component.atomix.ha.AtomixClusterService
+class=org.apache.camel.component.atomix.cluster.AtomixClusterService
