@@ -53,7 +53,6 @@ public class BasicSubscriberTest extends CamelTestSupport {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void doPostSetup() throws Exception {
 
         Subscriber<Integer> sub = CamelReactiveStreams.get(context()).streamSubscriber("sub", Integer.class);

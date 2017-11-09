@@ -215,7 +215,7 @@ public class EC2ProducerTest extends CamelTestSupport {
     public void ec2CreateAndRunKoTest() throws Exception {
 
         mock.expectedMessageCount(0);
-        Exchange exchange = template.request("direct:createAndRun", new Processor() {
+        template.request("direct:createAndRun", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
@@ -237,7 +237,7 @@ public class EC2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -258,7 +258,7 @@ public class EC2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:stop", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -280,7 +280,7 @@ public class EC2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:terminate", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -321,7 +321,7 @@ public class EC2ProducerTest extends CamelTestSupport {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("instance-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -360,7 +360,7 @@ public class EC2ProducerTest extends CamelTestSupport {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -377,11 +377,11 @@ public class EC2ProducerTest extends CamelTestSupport {
     public void ec2RebootInstancesTest() throws Exception {
 
         mock.expectedMessageCount(1);
-        Exchange exchange = template.request("direct:reboot", new Processor() {
+        template.request("direct:reboot", new Processor() {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -399,7 +399,7 @@ public class EC2ProducerTest extends CamelTestSupport {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -422,7 +422,7 @@ public class EC2ProducerTest extends CamelTestSupport {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -445,10 +445,10 @@ public class EC2ProducerTest extends CamelTestSupport {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
-                Collection tags = new ArrayList();
+                Collection<String> tags = new ArrayList<>();
                 tags.add("pacific");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_TAGS, tags);
             }
@@ -469,10 +469,10 @@ public class EC2ProducerTest extends CamelTestSupport {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
-                Collection tags = new ArrayList();
+                Collection<String> tags = new ArrayList<>();
                 tags.add("pacific");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_TAGS, tags);
             }

@@ -79,7 +79,7 @@ public class RabbitMQLoadIntTest extends CamelTestSupport {
     public void testSendEndReceive() throws Exception {
         // Start producers
         ExecutorService executorService = Executors.newFixedThreadPool(PRODUCER_COUNT);
-        List<Future> futures = new ArrayList<Future>(PRODUCER_COUNT);
+        List<Future<?>> futures = new ArrayList<>(PRODUCER_COUNT);
         for (int i = 0; i < PRODUCER_COUNT; i++) {
             futures.add(executorService.submit(new Runnable() {
                 @Override
@@ -92,7 +92,7 @@ public class RabbitMQLoadIntTest extends CamelTestSupport {
             }));
         }
         // Wait for producers to end
-        for (Future future : futures) {
+        for (Future<?> future : futures) {
             future.get(5, TimeUnit.SECONDS);
         }
         // Check message count

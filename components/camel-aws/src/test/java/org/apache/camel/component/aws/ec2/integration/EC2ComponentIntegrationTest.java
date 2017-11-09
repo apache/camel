@@ -32,7 +32,7 @@ import org.junit.Test;
 
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class EC2ComponentIntegrationTest extends CamelTestSupport {
-    
+
     @Test
     public void createAndRunInstancesTest() {
         
@@ -41,7 +41,7 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setHeader(EC2Constants.IMAGE_ID, "ami-fd65ba94");
                 exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
                 exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1); 
-                exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);               
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
             }
         });
     }
@@ -65,8 +65,8 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
     
     @Test
     public void ec2CreateAndRunTestWithKeyPair() throws Exception {
-
-        Exchange exchange = template.request("direct:createAndRun", new Processor() {
+        
+        template.request("direct:createAndRun", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
@@ -84,9 +84,9 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
         
         template.send("direct:stop", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
-                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);            
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
             }
         });
     }
@@ -96,9 +96,9 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
         
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
-                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);            
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
             }
         });
     }
@@ -108,114 +108,107 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
         
         template.send("direct:terminate", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
-                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);            
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
             }
         });
     }
     
     @Test
     public void ec2DescribeInstancesTest() throws Exception {
-
-        Exchange exchange = template.request("direct:describe", new Processor() {
+        
+        template.request("direct:describe", new Processor() {
             
             @Override
             public void process(Exchange exchange) throws Exception {
                 
             }
         });
-
     }
     
     @Test
     public void ec2DescribeSpecificInstancesTest() throws Exception {
-
-        Exchange exchange = template.request("direct:describe", new Processor() {
+        
+        template.request("direct:describe", new Processor() {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("instance-1");
-                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
             }
         });
-
     }
     
     @Test
     public void ec2DescribeInstancesStatusTest() throws Exception {
-
-        Exchange exchange = template.request("direct:describeStatus", new Processor() {
+        
+        template.request("direct:describeStatus", new Processor() {
             
             @Override
             public void process(Exchange exchange) throws Exception {
                 
             }
         });
-
     }
     
     @Test
     public void ec2DescribeStatusSpecificInstancesTest() throws Exception {
-
-        Exchange exchange = template.request("direct:describeStatus", new Processor() {
+        
+        template.request("direct:describeStatus", new Processor() {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
-                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
             }
         });
-
     }
     
     @Test
     public void ec2RebootInstancesTest() throws Exception {
-
-        Exchange exchange = template.request("direct:reboot", new Processor() {
+        
+        template.request("direct:reboot", new Processor() {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
-                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
             }
         });
-
     }
-    
     
     @Test
     public void ec2MonitorInstancesTest() throws Exception {
-
-        Exchange exchange = template.request("direct:monitor", new Processor() {
+        
+        template.request("direct:monitor", new Processor() {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
-                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
             }
         });
-        
     }
     
     @Test
     public void ec2UnmonitorInstancesTest() throws Exception {
-
-        Exchange exchange = template.request("direct:unmonitor", new Processor() {
+        
+        template.request("direct:unmonitor", new Processor() {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
-                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
             }
         });
     }
-
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

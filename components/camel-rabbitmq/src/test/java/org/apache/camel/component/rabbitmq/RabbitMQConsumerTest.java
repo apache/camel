@@ -27,14 +27,13 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Consumer;
 import org.apache.camel.Processor;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 
 public class RabbitMQConsumerTest {
 
@@ -50,7 +49,7 @@ public class RabbitMQConsumerTest {
         ThreadPoolExecutor e = (ThreadPoolExecutor) Executors.newFixedThreadPool(3);
         Mockito.when(endpoint.createExecutor()).thenReturn(e);
         Mockito.when(endpoint.getConcurrentConsumers()).thenReturn(1);
-        Mockito.when(endpoint.connect(Matchers.any(ExecutorService.class))).thenReturn(conn);
+        Mockito.when(endpoint.connect(any(ExecutorService.class))).thenReturn(conn);
         Mockito.when(conn.createChannel()).thenReturn(channel);
 
         consumer.doStart();
@@ -66,7 +65,7 @@ public class RabbitMQConsumerTest {
 
         Mockito.when(endpoint.createExecutor()).thenReturn(Executors.newFixedThreadPool(3));
         Mockito.when(endpoint.getConcurrentConsumers()).thenReturn(1);
-        Mockito.when(endpoint.connect(Matchers.any(ExecutorService.class))).thenReturn(conn);
+        Mockito.when(endpoint.connect(any(ExecutorService.class))).thenReturn(conn);
         Mockito.when(conn.createChannel()).thenReturn(channel);
 
         consumer.doStart();
@@ -83,7 +82,7 @@ public class RabbitMQConsumerTest {
 
         Mockito.when(endpoint.createExecutor()).thenReturn(Executors.newFixedThreadPool(3));
         Mockito.when(endpoint.getConcurrentConsumers()).thenReturn(1);
-        Mockito.when(endpoint.connect(Matchers.any(ExecutorService.class))).thenReturn(conn);
+        Mockito.when(endpoint.connect(any(ExecutorService.class))).thenReturn(conn);
         Mockito.when(conn.createChannel()).thenReturn(channel);
         Mockito.when(channel.basicConsume(anyString(), anyBoolean(), any(Consumer.class))).thenReturn("TAG");
         Mockito.when(channel.isOpen()).thenReturn(false);

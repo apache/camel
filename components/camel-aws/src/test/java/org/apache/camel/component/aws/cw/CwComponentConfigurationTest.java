@@ -24,7 +24,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 public class CwComponentConfigurationTest extends CamelTestSupport {
     private static final Date NOW = new Date();

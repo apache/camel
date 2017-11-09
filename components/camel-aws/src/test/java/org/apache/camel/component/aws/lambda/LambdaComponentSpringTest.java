@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws.lambda;
 
 import java.io.*;
-import com.amazonaws.services.lambda.AWSLambdaClient;
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
 import com.amazonaws.services.lambda.model.DeleteFunctionResult;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
@@ -27,22 +26,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class LambdaComponentSpringTest extends CamelSpringTestSupport {
-
-    private AWSLambdaClient awsLambdaClient;
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-
-        awsLambdaClient = context.getRegistry().lookupByNameAndType("awsLambdaClient", AmazonLambdaClientMock.class);
-    }
 
     @Test
     public void lambdaCreateFunctionTest() throws Exception {

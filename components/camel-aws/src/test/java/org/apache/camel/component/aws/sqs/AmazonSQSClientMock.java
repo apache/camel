@@ -53,7 +53,7 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
     Map<String, Map<String, String>> queueAttributes = new HashMap<String, Map<String, String>>();
     List<ChangeMessageVisibilityRequest> changeMessageVisibilityRequests = new CopyOnWriteArrayList<ChangeMessageVisibilityRequest>();
     private Map<String, CreateQueueRequest> queues = new LinkedHashMap<String, CreateQueueRequest>();
-    private Map<String, ScheduledFuture> inFlight = new LinkedHashMap<String, ScheduledFuture>();
+    private Map<String, ScheduledFuture<?>> inFlight = new LinkedHashMap<>();
     private ScheduledExecutorService scheduler;
 
     public AmazonSQSClientMock() {
@@ -122,7 +122,7 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
         if (scheduler != null) {
             int visibility = getVisibilityForQueue(queueUrl);
             if (visibility > 0) {
-                ScheduledFuture task = scheduler.schedule(new Runnable() {
+                ScheduledFuture<?> task = scheduler.schedule(new Runnable() {
                     @Override
                     public void run() {
                         synchronized (messages) {
@@ -157,7 +157,7 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
     public DeleteMessageResult deleteMessage(DeleteMessageRequest deleteMessageRequest) throws AmazonClientException {
         String receiptHandle = deleteMessageRequest.getReceiptHandle();
         if (inFlight.containsKey(receiptHandle)) {
-            ScheduledFuture inFlightTask = inFlight.get(receiptHandle);
+            ScheduledFuture<?> inFlightTask = inFlight.get(receiptHandle);
             inFlightTask.cancel(true);
         }
         return new DeleteMessageResult();
