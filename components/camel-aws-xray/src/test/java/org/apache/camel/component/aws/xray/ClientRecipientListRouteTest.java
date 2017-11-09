@@ -25,9 +25,9 @@ public class ClientRecipientListRouteTest extends CamelAwsXRayTestSupport {
         super(
             TestDataBuilder.createTrace().inRandomOrder()
                 .withSegment(TestDataBuilder.createSegment("start")
-                    .withSubsegment(TestDataBuilder.createSubsegment("seda-a"))
-                    .withSubsegment(TestDataBuilder.createSubsegment("seda-b"))
-                    .withSubsegment(TestDataBuilder.createSubsegment("seda-c"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("seda:a"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("seda:b"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("seda:c"))
                 )
                 .withSegment(TestDataBuilder.createSegment("a"))
                 .withSegment(TestDataBuilder.createSegment("b"))

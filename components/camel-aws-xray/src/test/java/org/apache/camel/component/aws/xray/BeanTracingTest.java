@@ -33,14 +33,14 @@ public class BeanTracingTest extends CamelAwsXRayTestSupport {
         super(
             TestDataBuilder.createTrace()
                 .withSegment(TestDataBuilder.createSegment("start")
-                    .withSubsegment(TestDataBuilder.createSubsegment("TraceBean"))
-                    .withSubsegment(TestDataBuilder.createSubsegment("seda-otherRoute"))
-                    .withSubsegment(TestDataBuilder.createSubsegment("mock-end"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("bean:TraceBean"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("seda:otherRoute"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("mock:end"))
                     .withAnnotation("body", "HELLO")
                     .withMetadata("originBody", "Hello")
                 )
                 .withSegment(TestDataBuilder.createSegment("otherRoute")
-                    .withSubsegment(TestDataBuilder.createSubsegment("processor"))
+                    .withSubsegment(TestDataBuilder.createSubsegment("process:processor"))
                 )
         );
     }

@@ -40,7 +40,7 @@ public abstract class AbstractSegmentDecorator implements SegmentDecorator {
     @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
         URI uri = URI.create(endpoint.getEndpointUri());
-        return uri.getScheme() + "-" + uri.getRawAuthority();
+        return uri.getScheme() + ":" + uri.getRawAuthority();
     }
 
     @Override
