@@ -2,7 +2,7 @@
   "baseScheme" : "twitter",
   "baseGroupId" : "org.apache.camel",
   "baseArtifactId" : "camel-twitter",
-  "baseVersion" : "2.21.0-20171103.155850-19",
+  "baseVersion" : "2.21.0-20171109.022511-29",
   "baseJavaType" : "org.apache.camel.component.twitter.TwitterComponent",
   "name" : "TwitterMention",
   "scheme" : "twitter-mention",

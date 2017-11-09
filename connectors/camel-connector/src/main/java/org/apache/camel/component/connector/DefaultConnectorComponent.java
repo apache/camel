@@ -56,7 +56,6 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
     private final CamelCatalog catalog = new DefaultCamelCatalog(false);
 
     private final String baseScheme;
-    private final String componentAlias;
     private final String componentScheme;
     private final String componentName;
     private final ConnectorModel model;
@@ -82,8 +81,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         this.model = new ConnectorModel(componentName, componentClass);
         this.baseScheme = this.model.getBaseScheme();
         this.componentName = componentName;
-        this.componentScheme = componentScheme != null ? componentScheme : componentName + "-component";
-        this.componentAlias = componentScheme != null ? baseScheme + "-" + componentScheme : componentName + "-component";
+        this.componentScheme = componentScheme != null ? baseScheme + "-" + componentScheme : baseScheme + "-" + componentName + "-component";
         this.options = new HashMap<>();
 
         // add to catalog
@@ -96,8 +94,8 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
 
         // Add an alias for the base component so there's no clash between connectors
         // if they set options targeting the component.
-        if (!catalog.findComponentNames().contains(componentAlias)) {
-            this.catalog.addComponent(componentAlias, this.model.getBaseJavaType(), catalog.componentJSonSchema(baseScheme));
+        if (!catalog.findComponentNames().contains(this.componentScheme)) {
+            this.catalog.addComponent(this.componentScheme, this.model.getBaseJavaType(), catalog.componentJSonSchema(baseScheme));
         }
 
         registerExtension(this::getComponentVerifierExtension);
@@ -135,7 +133,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         Map<String, String> options = buildEndpointOptions(remaining, parameters);
 
         // create the uri of the base component
-        String delegateUri = createEndpointUri(componentAlias, options);
+        String delegateUri = createEndpointUri(componentScheme, options);
         Endpoint delegate = getCamelContext().getEndpoint(delegateUri);
 
         if (log.isInfoEnabled()) {
@@ -288,19 +286,18 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
 
         Component component = createNewBaseComponent();
         if (component != null) {
-            log.info("Register component: {} (type: {}) with scheme: {} and alias: {}",
+            log.info("Register component: {} (type: {}) with scheme: {}",
                 this.componentName,
                 component.getClass().getName(),
-                this.componentScheme,
-                this.componentAlias
+                this.componentScheme
             );
 
             //String delegateComponentScheme =
-            getCamelContext().removeComponent(this.componentAlias);
+            getCamelContext().removeComponent(this.componentScheme);
 
             // ensure component is started and stopped when Camel shutdown
             getCamelContext().addService(component, true, true);
-            getCamelContext().addComponent(this.componentAlias, component);
+            getCamelContext().addComponent(this.componentScheme, component);
         }
 
         log.debug("Starting connector: {}", componentName);
