@@ -104,7 +104,7 @@ The master component leverages CamelClusterService you can configure using
 ZooKeeperClusterService service = new ZooKeeperClusterService();
 service.setId("camel-node-1");
 service.setNodes("myzk:2181");
-service.setBasePath("/camel/ha");
+service.setBasePath("/camel/cluster");
 
 context.addService(service)
 ----
@@ -122,9 +122,9 @@ context.addService(service)
      http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 
-  <bean id="ha" class="org.apache.camel.component.zookeeper.ha.ZooKeeperClusterService">
+  <bean id="cluster" class="org.apache.camel.component.zookeeper.cluster.ZooKeeperClusterService">
     <property name="id" value="camel-node-1"/>
-    <property name="basePath" value="/camel/ha"/>
+    <property name="basePath" value="/camel/cluster"/>
     <property name="nodes" value="myzk:2181"/>
   </bean>
 
@@ -141,7 +141,7 @@ context.addService(service)
 ----
 camel.component.zookeeper.cluster.service.enabled   = true
 camel.component.zookeeper.cluster.service.id        = camel-node-1
-camel.component.zookeeper.cluster.service.base-path = /camel/ha
+camel.component.zookeeper.cluster.service.base-path = /camel/cluster
 camel.component.zookeeper.cluster.service.nodes     = myzk:2181
 ----
 

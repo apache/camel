@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.ha.FileLockClusterService;
+import org.apache.camel.component.file.cluster.FileLockClusterService;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -66,7 +66,7 @@ public class MasterComponentTest {
 
             FileLockClusterService service = new FileLockClusterService();
             service.setId(id);
-            service.setRoot("target/ha");
+            service.setRoot("target/cluster");
             service.setAcquireLockDelay(1, TimeUnit.SECONDS);
             service.setAcquireLockInterval(1, TimeUnit.SECONDS);
 

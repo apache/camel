@@ -46,7 +46,7 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.TimerListener;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.api.management.PerformanceCounter;
-import org.apache.camel.ha.CamelClusterService;
+import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.impl.ConsumerCache;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultEndpointRegistry;

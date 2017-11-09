@@ -27,7 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.ha.CamelClusterService;
+import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
