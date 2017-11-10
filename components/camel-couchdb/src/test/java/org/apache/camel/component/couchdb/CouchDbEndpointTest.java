@@ -19,7 +19,6 @@ package org.apache.camel.component.couchdb;
 import java.util.UUID;
 
 import com.google.gson.JsonObject;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
