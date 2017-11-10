@@ -21,7 +21,7 @@ import org.apache.camel.Component;
 import org.apache.camel.component.direct.DirectComponent;
 import org.junit.Test;
 
-public class CamelContextDeadlockText {
+public class CamelContextDeadlockTest {
 
     @Test(timeout = 5000)
     public void testComponentDeadlock() throws Exception {
