@@ -151,7 +151,8 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <argLine>--add-modules java.activation,java.xml.bind --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                            <!-- required to make MailMimeDecodeHeadersTest work on operating systems with a different default encoding -->
+                            <argLine>-Dfile.encoding=UTF-8 --add-modules java.activation,java.xml.bind --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
                         </configuration>
                     </plugin>
                 </plugins>
