@@ -83,6 +83,7 @@ public class KafkaComponentTest {
         assertEquals(new Integer(1029), endpoint.getConfiguration().getMetadataMaxAgeMs());
         assertEquals(new Integer(23), endpoint.getConfiguration().getReceiveBufferBytes());
         assertEquals(new Integer(234), endpoint.getConfiguration().getReconnectBackoffMs());
+        assertEquals(new Integer(234), endpoint.getConfiguration().getReconnectBackoffMaxMs());
         assertEquals(new Integer(0), endpoint.getConfiguration().getRetries());
         assertEquals(3782, endpoint.getConfiguration().getRetryBackoffMs().intValue());
         assertEquals(765, endpoint.getConfiguration().getSendBufferBytes().intValue());
@@ -146,6 +147,7 @@ public class KafkaComponentTest {
         props.put(ProducerConfig.METRICS_NUM_SAMPLES_CONFIG, "2");
         props.put(ProducerConfig.METRICS_SAMPLE_WINDOW_MS_CONFIG, "30000");
         props.put(ProducerConfig.RECONNECT_BACKOFF_MS_CONFIG, "50");
+        props.put(ProducerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, "1000");
         props.put(ProducerConfig.RETRY_BACKOFF_MS_CONFIG, "100");
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
@@ -185,6 +187,7 @@ public class KafkaComponentTest {
         params.put("metadataFetchTimeoutMs", 9043);
         params.put("metadataMaxAgeMs", 1029);
         params.put("reconnectBackoffMs", 234);
+        params.put("reconnectBackoffMaxMs", 234);
         params.put("retryBackoffMs", 3782);
         params.put("noOfMetricsSample", 3);
         params.put("metricReporters", "org.apache.camel.reporters.TestReport,org.apache.camel.reporters.SampleReport");

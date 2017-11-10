@@ -214,6 +214,9 @@ public class KafkaConfiguration implements Cloneable {
     //reconnect.backoff.ms
     @UriParam(label = "producer", defaultValue = "false")
     private boolean enableIdempotence;
+    //reconnect.backoff.max.ms
+    @UriParam(label = "common", defaultValue = "1000")
+    private Integer reconnectBackoffMaxMs = 1000;
 
     // SSL
     @UriParam(label = "common,security")
@@ -337,6 +340,8 @@ public class KafkaConfiguration implements Cloneable {
         addPropertyIfNotNull(props, ProducerConfig.RECONNECT_BACKOFF_MS_CONFIG, getReconnectBackoffMs());
         addPropertyIfNotNull(props, ProducerConfig.RETRY_BACKOFF_MS_CONFIG, getRetryBackoffMs());
         addPropertyIfNotNull(props, ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, isEnableIdempotence());
+        addPropertyIfNotNull(props, ProducerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, getReconnectBackoffMaxMs());
+        
         // SSL
         applySslConfiguration(props, getSslContextParameters());
         addPropertyIfNotNull(props, CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, getSecurityProtocol());
@@ -394,6 +399,7 @@ public class KafkaConfiguration implements Cloneable {
         addPropertyIfNotNull(props, ConsumerConfig.METRICS_SAMPLE_WINDOW_MS_CONFIG, getMetricsSampleWindowMs());
         addPropertyIfNotNull(props, ConsumerConfig.RECONNECT_BACKOFF_MS_CONFIG, getReconnectBackoffMs());
         addPropertyIfNotNull(props, ConsumerConfig.RETRY_BACKOFF_MS_CONFIG, getRetryBackoffMs());
+        addPropertyIfNotNull(props, ConsumerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, getReconnectBackoffMaxMs());
         
         // SSL
         applySslConfiguration(props, getSslContextParameters());
@@ -1558,4 +1564,18 @@ public class KafkaConfiguration implements Cloneable {
     public void setEnableIdempotence(boolean enableIdempotence) {
         this.enableIdempotence = enableIdempotence;
     }
+
+	public Integer getReconnectBackoffMaxMs() {
+		return reconnectBackoffMaxMs;
+	}
+
+	/**
+	 * 
+     * The maximum amount of time in milliseconds to wait when reconnecting to a broker that has repeatedly failed to connect. 
+     * If provided, the backoff per host will increase exponentially for each consecutive connection failure, up to this maximum. 
+     * After calculating the backoff increase, 20% random jitter is added to avoid connection storms.
+	 */
+	public void setReconnectBackoffMaxMs(Integer reconnectBackoffMaxMs) {
+		this.reconnectBackoffMaxMs = reconnectBackoffMaxMs;
+	}
 }
