@@ -77,7 +77,7 @@ public class SqlConsumerTest extends CamelTestSupport {
             public void configure() throws Exception {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("sql:select * from projects order by id")
+                from("sql:select * from projects order by id?consumer.initialDelay=0&consumer.delay=50")
                     .to("mock:result");
             }
         };

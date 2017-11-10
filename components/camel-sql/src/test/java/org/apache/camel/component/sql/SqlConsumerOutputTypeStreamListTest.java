@@ -97,18 +97,18 @@ public class SqlConsumerOutputTypeStreamListTest extends CamelTestSupport {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("sql:select * from projects order by id?outputType=StreamList").routeId("route1").noAutoStartup()
+                from("sql:select * from projects order by id?outputType=StreamList&consumer.initialDelay=0&consumer.delay=50").routeId("route1").noAutoStartup()
                         .to("log:stream")
                         .to("mock:result");
 
-                from("sql:select * from projects order by id?outputType=StreamList").routeId("route2").noAutoStartup()
+                from("sql:select * from projects order by id?outputType=StreamList&consumer.initialDelay=0&consumer.delay=50").routeId("route2").noAutoStartup()
                         .to("log:stream")
                         .split(body()).streaming()
                             .to("log:row")
                             .to("mock:result")
                         .end();
 
-                from("sql:select * from projects order by id?outputType=StreamList&outputClass=org.apache.camel.component.sql.ProjectModel").routeId("route3").noAutoStartup()
+                from("sql:select * from projects order by id?outputType=StreamList&outputClass=org.apache.camel.component.sql.ProjectModel&consumer.initialDelay=0&consumer.delay=50").routeId("route3").noAutoStartup()
                         .to("log:stream")
                         .split(body()).streaming()
                             .to("log:row")

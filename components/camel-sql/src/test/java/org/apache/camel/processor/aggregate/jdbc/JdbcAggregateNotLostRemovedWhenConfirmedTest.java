@@ -36,8 +36,6 @@ public class JdbcAggregateNotLostRemovedWhenConfirmedTest extends AbstractJdbcAg
 
         assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
 
-        Thread.sleep(1000);
-
         String exchangeId = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getExchangeId();
 
         // the exchange should NOT be in the completed repo as it was confirmed
