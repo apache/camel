@@ -23,6 +23,12 @@ import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
+import com.microsoft.azure.storage.OperationContext;
+import com.microsoft.azure.storage.StorageCredentials;
+import com.microsoft.azure.storage.StorageCredentialsAccountAndKey;
+import com.microsoft.azure.storage.queue.CloudQueue;
+import com.microsoft.azure.storage.queue.CloudQueueMessage;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,12 +37,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
-
-import com.microsoft.azure.storage.OperationContext;
-import com.microsoft.azure.storage.StorageCredentials;
-import com.microsoft.azure.storage.StorageCredentialsAccountAndKey;
-import com.microsoft.azure.storage.queue.CloudQueue;
-import com.microsoft.azure.storage.queue.CloudQueueMessage;
 
 public class QueueServiceProducerTest {
 
@@ -49,42 +49,37 @@ public class QueueServiceProducerTest {
         Assume.assumeNotNull("Credentials not null", creds);
 
         OperationContext.setLoggingEnabledByDefault(true);
-        
+
         CamelContext camelctx = createCamelContext(creds);
         camelctx.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:createQueue")
-                .to("azure-queue://camelqueue/queue1?credentials=#creds&operation=createQueue");
+                from("direct:createQueue").to("azure-queue://camelqueue/queue1?credentials=#creds&operation=createQueue");
 
-                from("direct:listQueues")
-                .to("azure-queue://camelqueue?credentials=#creds&operation=listQueues");
+                from("direct:listQueues").to("azure-queue://camelqueue?credentials=#creds&operation=listQueues");
 
-                from("direct:deleteQueue")
-                .to("azure-queue://camelqueue/queue1?credentials=#creds&operation=deleteQueue");
+                from("direct:deleteQueue").to("azure-queue://camelqueue/queue1?credentials=#creds&operation=deleteQueue");
 
-                from("direct:addMessage")
-                .to("azure-queue://camelqueue/queue1?credentials=#creds&operation=addMessage");
+                from("direct:addMessage").to("azure-queue://camelqueue/queue1?credentials=#creds&operation=addMessage");
 
-                from("direct:retrieveMessage")
-                .to("azure-queue://camelqueue/queue1?credentials=#creds&operation=retrieveMessage");
+                from("direct:retrieveMessage").to("azure-queue://camelqueue/queue1?credentials=#creds&operation=retrieveMessage");
             }
         });
 
         camelctx.start();
         try {
             ProducerTemplate producer = camelctx.createProducerTemplate();
-            
+
             Iterator<?> it = producer.requestBody("direct:listQueues", null, Iterable.class).iterator();
             Assert.assertFalse("No more queues", it.hasNext());
 
             producer.sendBody("direct:addMessage", "SomeMsg");
-            
+
             it = producer.requestBody("direct:listQueues", null, Iterable.class).iterator();
             Assert.assertTrue("Has queues", it.hasNext());
-            CloudQueue queue = (CloudQueue) it.next();
+            CloudQueue queue = (CloudQueue)it.next();
             Assert.assertEquals("queue1", queue.getName());
             Assert.assertFalse("No more queues", it.hasNext());
-            
+
             try {
                 CloudQueueMessage msg = producer.requestBody("direct:retrieveMessage", null, CloudQueueMessage.class);
                 Assert.assertNotNull("Retrieve a message", msg);
@@ -92,7 +87,7 @@ public class QueueServiceProducerTest {
             } finally {
                 queue.delete();
             }
-            
+
         } finally {
             camelctx.stop();
         }
