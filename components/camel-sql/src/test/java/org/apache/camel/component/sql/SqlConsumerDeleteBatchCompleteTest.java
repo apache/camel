@@ -61,8 +61,8 @@ public class SqlConsumerDeleteBatchCompleteTest extends CamelTestSupport {
 
         // some servers may be a bit slow for this
         for (int i = 0; i < 5; i++) {
-            // give it a little tine to delete
-            Thread.sleep(1000);
+            // give it a little time to delete
+            Thread.sleep(200);
             int rows = jdbcTemplate.queryForObject("select count(*) from projects", Integer.class);
             if (rows == 0) {
                 break;
@@ -78,7 +78,7 @@ public class SqlConsumerDeleteBatchCompleteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("sql:select * from projects order by id?consumer.onConsumeBatchComplete=delete from projects")
+                from("sql:select * from projects order by id?consumer.initialDelay=0&consumer.delay=50&consumer.onConsumeBatchComplete=delete from projects")
                     .to("mock:result");
             }
         };
