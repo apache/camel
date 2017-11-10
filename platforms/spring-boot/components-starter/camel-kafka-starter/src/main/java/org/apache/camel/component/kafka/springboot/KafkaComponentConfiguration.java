@@ -734,6 +734,14 @@ public class KafkaComponentConfiguration
          * be set to 'all'.
          */
         private Boolean enableIdempotence = false;
+        /**
+         * The maximum amount of time in milliseconds to wait when reconnecting
+         * to a broker that has repeatedly failed to connect. If provided, the
+         * backoff per host will increase exponentially for each consecutive
+         * connection failure, up to this maximum. After calculating the backoff
+         * increase, 20% random jitter is added to avoid connection storms.
+         */
+        private Integer reconnectBackoffMaxMs = 1000;
 
         public Boolean getTopicIsPattern() {
             return topicIsPattern;
@@ -1418,6 +1426,14 @@ public class KafkaComponentConfiguration
 
         public void setEnableIdempotence(Boolean enableIdempotence) {
             this.enableIdempotence = enableIdempotence;
+        }
+
+        public Integer getReconnectBackoffMaxMs() {
+            return reconnectBackoffMaxMs;
+        }
+
+        public void setReconnectBackoffMaxMs(Integer reconnectBackoffMaxMs) {
+            this.reconnectBackoffMaxMs = reconnectBackoffMaxMs;
         }
     }
 }
