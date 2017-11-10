@@ -3,7 +3,7 @@
 *Available as of Camel version 2.11*
 
 This component allows sending and receiving messages from
-http://http//redis.io/[Redis]. Redis is advanced key-value store where
+https://redis.io/[Redis]. Redis is advanced key-value store where
 keys can contain strings, hashes, lists, sets and sorted sets. In
 addition it provides pub/sub functionality for inter-app
 communications. +
