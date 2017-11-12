@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms.tx;
 
+import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -75,7 +77,9 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         // need a little sleep to ensure JMX is updated
         Thread.sleep(500);
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"myRoute\"");
+        Set<ObjectName> objectNames = getMBeanServer().queryNames(new ObjectName("org.apache.camel:context=camel-*,type=routes,name=\"myRoute\""), null);
+        assertEquals(1, objectNames.size());
+        ObjectName name = objectNames.iterator().next();
 
         Long total = (Long) getMBeanServer().getAttribute(name, "ExchangesTotal");
         assertEquals(3, total.intValue());
