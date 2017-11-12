@@ -44,7 +44,7 @@ public class SplitStreamFileTest extends CamelTestSupport {
         File file = new File("target/stream/splitFile.txt");
         String result = IOConverter
                 .toString(file, new DefaultExchange(context));
-        assertEquals("Get a wrong result", "A\nB\nC\nD\nA\nB\n", result);
+        assertEquals("Get a wrong result", "A" + LS + "B" + LS + "C" + LS + "D" + LS + "A" + LS + "B" + LS, result);
 
     }
 
