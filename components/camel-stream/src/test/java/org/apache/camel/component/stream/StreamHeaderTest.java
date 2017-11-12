@@ -36,7 +36,7 @@ public class StreamHeaderTest extends CamelTestSupport {
     public void testStringContent() {
         template.sendBody("direct:in", "Hello");
         // StreamProducer appends \n in text mode
-        assertEquals("Hello\n", sb.toString());
+        assertEquals("Hello" + LS, sb.toString());
     }
 
     @Test
