@@ -28,6 +28,8 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
+import java.util.Set;
+
 /**
  *
  */
@@ -55,7 +57,10 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
     public void testJmsEndpoint() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"activemq://queue:start\"");
+        Set<ObjectName> objectNames = mbeanServer.queryNames(new ObjectName("org.apache.camel:context=camel-*,type=endpoints,name=\"activemq://queue:start\""), null);
+        assertEquals(1, objectNames.size());
+        ObjectName name = objectNames.iterator().next();
+
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("activemq://queue:start", uri);
 
