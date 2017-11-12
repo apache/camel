@@ -146,8 +146,6 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkCount>1</forkCount>
-          <reuseForks>false</reuseForks>
           <forkedProcessTimeoutInSeconds>6000</forkedProcessTimeoutInSeconds>
         </configuration>
       </plugin>
