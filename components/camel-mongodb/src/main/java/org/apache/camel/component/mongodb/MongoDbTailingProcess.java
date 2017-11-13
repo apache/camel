@@ -180,6 +180,8 @@ public class MongoDbTailingProcess implements Runnable {
             if (keepRunning) {
                 LOG.debug("Cursor not found exception from MongoDB, will regenerate cursor. This is normal behaviour with tailable cursors.", e);
             }
+        } catch (IllegalStateException e) {
+            // do nothing
         }
 
         // the loop finished, persist the lastValue just in case we are shutting down
