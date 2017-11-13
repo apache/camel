@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.websocket;
 
+import static org.junit.Assume.assumeTrue;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.websocket.WebsocketComponent.ConnectorRef;
@@ -74,6 +76,7 @@ public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
     
     @Test
     public void testSetServletNoMinThreadsNoMaxThreadsNoThreadPool() throws Exception {
+        assumeTrue("At lease 18 CPUs available", 1 + Runtime.getRuntime().availableProcessors() * 2 >= 19);
         port = AvailablePortFinder.getNextAvailable(16331);
         String uri = "websocket://localhost:" + port + "/bar?bufferSize=25000&maxIdleTime=3000";
         WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
