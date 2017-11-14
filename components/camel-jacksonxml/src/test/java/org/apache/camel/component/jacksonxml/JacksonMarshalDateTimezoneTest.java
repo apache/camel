@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jacksonxml;
 
+import static java.lang.String.format;
+import static org.junit.Assume.assumeTrue;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -49,7 +52,9 @@ public class JacksonMarshalDateTimezoneTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 JacksonXMLDataFormat format = new JacksonXMLDataFormat();
-                TimeZone timeZone = TimeZone.getTimeZone("Africa/Ouagadougou");
+                String timeZoneId = "Africa/Ouagadougou";
+                TimeZone timeZone = TimeZone.getTimeZone(timeZoneId);
+                assumeTrue(format("TimeZone with id '%s' is available", timeZoneId), timeZone.getID().equals(timeZoneId));
                 format.setTimezone(timeZone);
 
                 from("direct:in").marshal(format).to("mock:result");
