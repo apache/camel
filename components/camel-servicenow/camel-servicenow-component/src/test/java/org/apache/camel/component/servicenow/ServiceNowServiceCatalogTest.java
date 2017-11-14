@@ -32,7 +32,7 @@ public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
 
     @Test
     public void testRetrieveServiceCatalogsAndCategories() throws Exception {
-        List<Map> result1 = template.requestBodyAndHeaders(
+        List<Map<?, ?>> result1 = template.requestBodyAndHeaders(
             "direct:servicenow",
             null,
             kvBuilder()
@@ -44,7 +44,7 @@ public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
 
         assertFalse(result1.isEmpty());
 
-        List<Map> result2 = template.requestBodyAndHeaders(
+        List<Map<?, ?>> result2 = template.requestBodyAndHeaders(
             "direct:servicenow",
             null,
             kvBuilder()
@@ -61,7 +61,7 @@ public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
 
     @Test(expected = CamelExecutionException.class)
     public void testWrongSubject() throws Exception {
-        List<Map> result = template.requestBodyAndHeaders(
+        List<Map<?, ?>> result = template.requestBodyAndHeaders(
             "direct:servicenow",
             null,
             kvBuilder()
