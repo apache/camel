@@ -16,6 +16,7 @@
  */
 package org.apache.camel.catalog.maven;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -26,6 +27,7 @@ import java.util.Map;
 import groovy.grape.Grape;
 import groovy.lang.GroovyClassLoader;
 import org.apache.camel.catalog.VersionManager;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
 /**
@@ -34,7 +36,7 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
  * <p/>
  * This implementation uses Groovy Grape to download the Maven JARs.
  */
-public class MavenVersionManager implements VersionManager {
+public class MavenVersionManager implements VersionManager, Closeable {
 
     private final ClassLoader classLoader = new GroovyClassLoader();
     private final TimeoutHttpClientHandler httpClient = new TimeoutHttpClientHandler();
@@ -190,5 +192,12 @@ public class MavenVersionManager implements VersionManager {
         }
 
         return null;
+    }
+
+    @Override
+    public void close() throws IOException {
+        // the http client uses this MultiThreadedHttpConnectionManager for handling http connections
+        // and we should ensure its shutdown to not leak connections/threads
+        MultiThreadedHttpConnectionManager.shutdownAll();
     }
 }
