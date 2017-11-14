@@ -146,7 +146,7 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
-                websocketComponent.setMaxThreads(20);
+                websocketComponent.setMaxThreads(25);
                 websocketComponent.setMinThreads(1);
                 from("direct:shop")
                     .log(">>> Message received from Shopping center : ${body}")

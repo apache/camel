@@ -98,7 +98,7 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
                 WebsocketComponent websocketComponent = getContext().getComponent("websocket", WebsocketComponent.class);
                 websocketComponent.setPort(port);
                 websocketComponent.setMinThreads(1);
-                websocketComponent.setMaxThreads(20);
+                websocketComponent.setMaxThreads(25);
 
                 from("websocket://test")
                         .log(">>> Message received from WebSocket Client : ${body}")

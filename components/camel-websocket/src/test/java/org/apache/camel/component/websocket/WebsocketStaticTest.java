@@ -101,7 +101,7 @@ public class WebsocketStaticTest extends CamelTestSupport {
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
                 websocketComponent.setPort(port);
                 websocketComponent.setMinThreads(1);
-                websocketComponent.setMaxThreads(20);
+                websocketComponent.setMaxThreads(25);
                 websocketComponent.setStaticResources("classpath:.");
 
                 // START SNIPPET: e1
