@@ -21,7 +21,6 @@ import com.googlecode.jsendnsca.MessagePayload;
 import com.googlecode.jsendnsca.NagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.PassiveCheckSender;
 
-import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -76,12 +75,12 @@ public class NagiosXorEncryptionTest extends CamelTestSupport {
 
                 NagiosComponent nagiosComponent = new NagiosComponent();
                 nagiosComponent.setCamelContext(context);
-                NagiosEndpoint nagiousEndpoint = (NagiosEndpoint) nagiosComponent.createEndpoint(uri);
-                nagiousEndpoint.setSender(nagiosPassiveCheckSender);
-                Producer nagiosProducer = nagiousEndpoint.createProducer();
+                NagiosEndpoint nagiosEndpoint = (NagiosEndpoint) nagiosComponent.createEndpoint(uri);
+                nagiosEndpoint.setSender(nagiosPassiveCheckSender);
+                nagiosEndpoint.createProducer();
 
                 from("direct:start")
-                        .to(nagiousEndpoint)
+                        .to(nagiosEndpoint)
                         .to("mock:result");
             }
         };
