@@ -138,19 +138,8 @@
       </plugins>
   </build>
 
-    <!-- skip tests on Windows and AIX -->
+    <!-- skip tests on AIX -->
     <profiles>
-        <profile>
-            <id>windows</id>
-            <activation>
-                <os>
-                    <family>Windows</family>
-                </os>
-            </activation>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
-        </profile>
         <profile>
             <id>aix</id>
             <activation>
