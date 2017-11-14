@@ -182,6 +182,11 @@ public final class IOConverter {
         return IOHelper.buffered(new InputStreamReader(in, IOHelper.getCharsetName(exchange)));
     }
 
+    @Converter
+    public static Reader toReader(byte[] data, Exchange exchange) throws IOException {
+        return toReader(new ByteArrayInputStream(data), exchange);
+    }
+
     /**
      * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */

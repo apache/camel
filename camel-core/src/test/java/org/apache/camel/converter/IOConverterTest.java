@@ -94,6 +94,15 @@ public class IOConverterTest extends ContextTestSupport {
         assertEquals("Hello", IOConverter.toString(reader));
     }
 
+    public void testBytesToReader() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        String defaultCharacterSet = ObjectHelper.getDefaultCharacterSet();
+        exchange.setProperty(Exchange.CHARSET_NAME, defaultCharacterSet);
+        byte[] bytes = "Hello World".getBytes(defaultCharacterSet);
+        Reader reader = IOConverter.toReader(bytes, exchange);
+        assertEquals("Hello World", IOConverter.toString(reader));
+    }
+
     public void testToInputStreamExchange() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(Exchange.CHARSET_NAME, ObjectHelper.getDefaultCharacterSet());
