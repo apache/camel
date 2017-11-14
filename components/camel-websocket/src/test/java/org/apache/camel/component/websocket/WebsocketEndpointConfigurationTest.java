@@ -43,7 +43,7 @@ public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
         WebsocketEndpoint websocketEndpoint = (WebsocketEndpoint)context.getEndpoint(uri);
         WebsocketComponent component = websocketEndpoint.getComponent();
         component.setMinThreads(1);
-        component.setMaxThreads(20);
+        component.setMaxThreads(25);
         Consumer consumer = websocketEndpoint.createConsumer(processor);
         component.connect((WebsocketProducerConsumer) consumer);
         

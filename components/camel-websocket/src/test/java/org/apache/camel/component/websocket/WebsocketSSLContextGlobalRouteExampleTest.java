@@ -175,7 +175,7 @@ public class WebsocketSSLContextGlobalRouteExampleTest extends CamelTestSupport 
             public void configure() {
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
                 websocketComponent.setMinThreads(1);
-                websocketComponent.setMaxThreads(20);
+                websocketComponent.setMaxThreads(25);
                 from(uri)
                      .log(">>> Message received from WebSocket Client : ${body}")
                      .to("mock:client")
