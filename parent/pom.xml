@@ -209,7 +209,7 @@
     <!-- embedmongo 1.50.2 do not work -->
     <embedmongo-version>1.50.1</embedmongo-version>
     <etcd4j-version>2.13.0</etcd4j-version>
-    <everit-org-json-schema-version>1.6.0</everit-org-json-schema-version>
+    <everit-org-json-schema-version>1.6.1</everit-org-json-schema-version>
     <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <fabric8-maven-plugin-version>3.5.32</fabric8-maven-plugin-version>
