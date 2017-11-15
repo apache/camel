@@ -19,71 +19,69 @@ package org.apache.camel.component.gora;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.gora.persistency.Persistent;
 import org.apache.gora.query.Query;
 import org.apache.gora.store.DataStore;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
  * GORA Consumer Tests
  */
+@RunWith(MockitoJUnitRunner.class)
 public class GoraConsumerTest extends GoraTestSupport {
 
     /**
      * Mock CamelExchange
      */
+    @Mock
     private Exchange mockCamelExchange;
 
     /**
      * Mock Gora Endpoint
      */
+    @Mock
     private GoraEndpoint mockGoraEndpoint;
 
     /**
      * Mock Gora Configuration
      */
+    @Mock
     private GoraConfiguration mockGoraConfiguration;
 
     /**
      * Mock Camel Message
      */
+    @Mock
     private Message mockCamelMessage;
 
     /**
      * Mock Gora DataStore
      */
-    private DataStore mockDatastore;
+    @Mock
+    private DataStore<Object, Persistent> mockDatastore;
 
     /**
      * Mock Processor
      */
     private Processor mockGoraProcessor;
-    
-    @Before
-    public void setUp()  {
-        //setup mocks
-        mockCamelExchange = mock(Exchange.class);
-        mockGoraEndpoint = mock(GoraEndpoint.class);
-        mockGoraConfiguration = mock(GoraConfiguration.class);
-        mockCamelMessage = mock(Message.class);
-        mockDatastore = mock(DataStore.class);
 
-        //setup default conditions
-        when(mockCamelExchange.getIn()).thenReturn(mockCamelMessage);
-        when(mockCamelExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
-    }
+    /**
+     * Mock Query
+     */
+    @Mock
+    private Query<Object, Persistent> mockQuery;
 
     @Test
     public void consumerInstantiationWithMocksShouldSucceed() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        final Query mockQuery = mock(Query.class);
         when(mockDatastore.newQuery()).thenReturn(mockQuery);
-        GoraConsumer goraConsumer = new GoraConsumer(mockGoraEndpoint, mockGoraProcessor, mockGoraConfiguration, mockDatastore);
+        new GoraConsumer(mockGoraEndpoint, mockGoraProcessor, mockGoraConfiguration, mockDatastore);
     }
 
 }
