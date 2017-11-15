@@ -224,8 +224,9 @@ public class PackageLanguageMojo extends AbstractMojo {
                             fos.close();
 
                             buildContext.refresh(out);
-
-                            log.debug("Generated " + out + " containing JSon schema for " + name + " language");
+                            if (log.isDebugEnabled()) {
+                                log.debug("Generated " + out + " containing JSon schema for " + name + " language");
+                            }
                         }
                     }
                 }
