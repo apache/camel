@@ -17,6 +17,8 @@
 package org.apache.camel.dataformat.bindy;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.dataformat.bindy.annotation.Link;
+import org.apache.camel.dataformat.bindy.annotation.OneToMany;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +95,24 @@ public abstract class BindyAbstractFactory implements BindyFactory {
                 
                 loadModels(field.getType());
             }
+
+            OneToMany oneToManyField = field.getAnnotation(OneToMany.class);
+
+            if (oneToManyField != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Class (OneToMany) linked: {}, Field: {}", field.getType(), field);
+                }
+
+                Type listType = field.getGenericType();
+                Type type = ((ParameterizedType) listType).getActualTypeArguments()[0];
+                Class clazz = (Class<?>)type;
+
+                models.add(clazz);
+                modelClassNames.add(clazz.getName());
+
+                loadModels(clazz);
+            }
+
         }
     }
 
