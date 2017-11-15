@@ -131,7 +131,9 @@ public class QueueReplyManager extends ReplyManagerSupport {
                 answer = new SharedQueueMessageListenerContainer(endpoint, fixedMessageSelector);
                 // must use cache level consumer for fixed message selector
                 answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
-                log.debug("Using shared queue: " + endpoint.getReplyTo() + " with fixed message selector [" + fixedMessageSelector + "] as reply listener: " + answer);
+                if (log.isDebugEnabled()) {
+                    log.debug("Using shared queue: " + endpoint.getReplyTo() + " with fixed message selector [" + fixedMessageSelector + "] as reply listener: " + answer);
+                }
             } else {
                 // use a dynamic message selector which will select the message we want to receive as reply
                 dynamicMessageSelector = new MessageSelectorCreator(correlation);
