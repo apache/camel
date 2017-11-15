@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 99 (8 deprecated)
+Number of Examples: 100 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -138,6 +138,8 @@ Number of Examples: 99 (8 deprecated)
 | link:camel-example-zipkin/README.md[Zipkin] (camel-example-zipkin) | Management and Monitoring | An example showing how to trace incoming and outgoing messages from Camel with Zipkin
 
 | link:camel-example-activemq-tomcat/README.md[ActiveMQ Tomcat] (camel-example-activemq-tomcat) | Messaging | An example using ActiveMQ Broker and Camel with Apache Tomcat
+
+| link:camel-example-artemis-amqp-blueprint/README.md[Artemis Amqp Blueprint] (camel-example-artemis-amqp-blueprint) | Messaging | Demonstrates ActiveMQ Artemis using Camel's AMQP component. The example includes a JUnit showcasing how to embed for testing an AMQP enabled Artemis broker.
 
 | link:camel-example-artemis-large-messages/README.md[Artemis Large Messages] (camel-example-artemis-large-messages) | Messaging | Demonstrates sending large messages (handles GBs in size) between Apache Camel and ActiveMQ Artemis in streaming mode
 
