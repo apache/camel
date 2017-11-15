@@ -51,7 +51,7 @@ karaf@root()> install -s mvn:org.apache.camel.example/camel-example-netty-myapp-
 karaf@root()> install -s mvn:org.apache.camel.example/camel-example-netty-myapp-two/${version}
 ```
 
-From a web browser you can then try the example by accessing the followign URLs:
+From a web browser you can then try the example by accessing the following URLs:
 
 <http://localhost:8888/one>
 
