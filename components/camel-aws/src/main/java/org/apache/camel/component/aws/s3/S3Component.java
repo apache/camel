@@ -20,16 +20,19 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.VerifiableComponent;
+import org.apache.camel.impl.DefaultComponent;
 
-public class S3Component extends UriEndpointComponent {
+public class S3Component extends DefaultComponent {
     
     public S3Component() {
-        super(S3Endpoint.class);
+        this(null);
     }
 
     public S3Component(CamelContext context) {
-        super(context, S3Endpoint.class);
+        super(context);
+        
+        registerExtension(new S3ComponentVerifierExtension());
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
