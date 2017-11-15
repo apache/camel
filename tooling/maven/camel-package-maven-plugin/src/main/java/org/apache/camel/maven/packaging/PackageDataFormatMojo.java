@@ -190,8 +190,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
                             OutputStream fos = buildContext.newFileOutputStream(out);
                             fos.write(schema.getBytes());
                             fos.close();
-
-                            log.debug("Generated " + out + " containing JSon schema for " + name + " data format");
+                            if (log.isDebugEnabled()) {
+                                log.debug("Generated " + out + " containing JSon schema for " + name + " data format");
+                            }
                         }
                     }
                 }

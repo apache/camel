@@ -395,9 +395,9 @@ public class SpringBootStarterMojo extends AbstractMojo {
         List<DependencyNode> nodes = visitor.getNodes();
         for (DependencyNode dependencyNode : nodes) {
             Artifact artifact = dependencyNode.getArtifact();
-
-            getLog().debug("Found dependency node: " + artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion() + " - scope=" + artifact.getScope());
-
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Found dependency node: " + artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion() + " - scope=" + artifact.getScope());
+            }
             if (!Artifact.SCOPE_TEST.equals(artifact.getScope()) && !Artifact.SCOPE_PROVIDED.equals(artifact.getScope())) {
                 String canonicalName = artifact.getGroupId() + ":" + artifact.getArtifactId();
                 if (artifacts.contains(canonicalName)) {
