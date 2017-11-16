@@ -23,9 +23,12 @@ import com.github.dockerjava.core.command.PullImageResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Pull Image Request headers are applied properly
@@ -54,15 +57,15 @@ public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).pullImageCmd(repository);
-        Mockito.verify(mockObject, Mockito.times(1)).withTag(Matchers.eq(tag));
-        Mockito.verify(mockObject, Mockito.times(1)).withRegistry(Matchers.eq(registry));
+        Mockito.verify(mockObject, Mockito.times(1)).withTag(eq(tag));
+        Mockito.verify(mockObject, Mockito.times(1)).withRegistry(eq(registry));
 
     }
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.pullImageCmd(Matchers.anyString())).thenReturn(mockObject);
-        Mockito.when(mockObject.exec(Matchers.anyObject())).thenReturn(callback);
+        Mockito.when(dockerClient.pullImageCmd(anyString())).thenReturn(mockObject);
+        Mockito.when(mockObject.exec(any())).thenReturn(callback);
         try {
             Mockito.when(callback.awaitCompletion()).thenReturn(callback);
         } catch (InterruptedException e) {

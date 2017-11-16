@@ -23,9 +23,11 @@ import com.github.dockerjava.api.command.KillContainerCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Kill Container Request headers are applied properly
@@ -48,13 +50,13 @@ public class KillContainerCmdHeaderTest extends BaseDockerHeaderTest<KillContain
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).killContainerCmd(containerId);
-        Mockito.verify(mockObject, Mockito.times(1)).withSignal(Matchers.eq(signal));
+        Mockito.verify(mockObject, Mockito.times(1)).withSignal(eq(signal));
 
     }
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.killContainerCmd(Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.killContainerCmd(anyString())).thenReturn(mockObject);
     }
 
     @Override

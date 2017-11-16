@@ -24,9 +24,10 @@ import com.github.dockerjava.api.model.ExposedPort;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Start Container Request headers are applied properly
@@ -55,7 +56,7 @@ public class StartContainerCmdHeaderTest extends BaseDockerHeaderTest<StartConta
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.startContainerCmd(Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.startContainerCmd(anyString())).thenReturn(mockObject);
     }
 
     @Override
