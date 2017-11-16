@@ -28,9 +28,11 @@ import com.github.dockerjava.api.model.VolumesFrom;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Create Container Request headers are parsed properly
@@ -106,9 +108,9 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).createContainerCmd(image);
-        Mockito.verify(mockObject, Mockito.times(1)).withExposedPorts(Matchers.eq(exposedPort));
-        Mockito.verify(mockObject, Mockito.times(1)).withTty(Matchers.eq(tty));
-        Mockito.verify(mockObject, Mockito.times(1)).withName(Matchers.eq(name));
+        Mockito.verify(mockObject, Mockito.times(1)).withExposedPorts(eq(exposedPort));
+        Mockito.verify(mockObject, Mockito.times(1)).withTty(eq(tty));
+        Mockito.verify(mockObject, Mockito.times(1)).withName(eq(name));
         Mockito.verify(mockObject, Mockito.times(1)).withWorkingDir(workingDir);
         Mockito.verify(mockObject, Mockito.times(1)).withNetworkDisabled(disableNetwork);
         Mockito.verify(mockObject, Mockito.times(1)).withHostName(hostname);
@@ -138,7 +140,7 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.createContainerCmd(Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.createContainerCmd(anyString())).thenReturn(mockObject);
     }
 
     @Override

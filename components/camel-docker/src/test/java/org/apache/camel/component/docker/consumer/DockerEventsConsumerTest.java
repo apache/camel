@@ -27,10 +27,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Consumer test for events on Docker Platform
@@ -50,7 +51,7 @@ public class DockerEventsConsumerTest extends CamelTestSupport {
 
     public void setupMocks() {
         Mockito.when(dockerClient.eventsCmd()).thenReturn(eventsCmd);
-        Mockito.when(eventsCmd.withSince(Matchers.anyString())).thenReturn(eventsCmd);
+        Mockito.when(eventsCmd.withSince(anyString())).thenReturn(eventsCmd);
     }
 
     @Test

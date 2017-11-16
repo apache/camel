@@ -24,9 +24,11 @@ import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Push Image Request headers are applied properly
@@ -69,8 +71,8 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.pushImageCmd(Matchers.anyString())).thenReturn(mockObject);
-        Mockito.when(mockObject.exec(Matchers.anyObject())).thenReturn(callback);
+        Mockito.when(dockerClient.pushImageCmd(anyString())).thenReturn(mockObject);
+        Mockito.when(mockObject.exec(any())).thenReturn(callback);
         try {
             Mockito.when(callback.awaitCompletion()).thenReturn(callback);
         } catch (InterruptedException e) {

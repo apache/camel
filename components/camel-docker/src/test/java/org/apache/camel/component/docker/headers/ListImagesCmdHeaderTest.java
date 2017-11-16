@@ -23,9 +23,10 @@ import com.github.dockerjava.api.command.ListImagesCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates List Image Request headers are parsed properly
@@ -50,8 +51,7 @@ public class ListImagesCmdHeaderTest extends BaseDockerHeaderTest<ListImagesCmd>
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).listImagesCmd();
-//        Mockito.verify(mockObject, Mockito.times(1)).withFilters(Matchers.eq(filter));
-        Mockito.verify(mockObject, Mockito.times(1)).withShowAll(Matchers.eq(showAll));
+        Mockito.verify(mockObject, Mockito.times(1)).withShowAll(eq(showAll));
 
     }
 

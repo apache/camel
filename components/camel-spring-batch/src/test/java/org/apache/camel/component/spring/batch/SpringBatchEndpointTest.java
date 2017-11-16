@@ -35,7 +35,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
@@ -68,7 +68,6 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     Job dynamicMockjob;
 
     // Camel fixtures
-
     @EndpointInject(uri = "mock:test")
     MockEndpoint mockEndpoint;
 
@@ -88,7 +87,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
                 from("direct:dynamicWithJobRegistry").
                         to("spring-batch:fake?jobFromHeader=true&jobRegistry=#jobRegistry").
                         errorHandler(deadLetterChannel("mock:error")).
-                        to("mock:test");                
+                        to("mock:test");
             }
         };
     }
@@ -105,7 +104,6 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     }
 
     // Tests
-
     @Test
     public void dynamicJobFailsIfHeaderNotPressent() throws Exception {
 
@@ -159,7 +157,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         final Map<String, Object> headers = new HashMap<>();
         headers.put(SpringBatchConstants.JOB_NAME, "dyanmicMockJobFromJobRegistry");
         headers.put("jobRegistry", "#jobRegistry");
-        
+
         sendBody("direct:dynamicWithJobRegistry", "Start the job, please.", headers);
 
         mockEndpoint.assertIsSatisfied();
@@ -224,7 +222,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     
     @Test 
     public void setNullValueToJobParams() throws Exception {
-     // Given
+        // Given
         String headerKey = "headerKey";
         Date headerValue = null;
 
@@ -446,6 +444,6 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         // Then
         SpringBatchEndpoint batchEndpoint = context().getEndpoint("spring-batch:mockJobFromJobRegistry?jobRegistry=#jobRegistry", SpringBatchEndpoint.class);
         Job batchEndpointJob = (Job) FieldUtils.readField(batchEndpoint, "job", true);
-        assertSame(mockJobFromJobRegistry, batchEndpointJob);     
+        assertSame(mockJobFromJobRegistry, batchEndpointJob);
     }
 }
