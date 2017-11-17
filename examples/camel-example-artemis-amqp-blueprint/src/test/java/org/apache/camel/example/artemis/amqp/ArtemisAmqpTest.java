@@ -24,32 +24,29 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class ArtemisAmqpTest extends CamelBlueprintTestSupport {
-	
+
     @Override
-    protected String getBlueprintDescriptor()
-    {
-        return  "/OSGI-INF/blueprint/camel-context.xml,"+
+    protected String getBlueprintDescriptor() {
+        return    "/OSGI-INF/blueprint/camel-context.xml,"
 
                 //We add the embedded Artemis Broker
-                "/OSGI-INF/blueprint/embedded-broker.xml";
+                + "/OSGI-INF/blueprint/embedded-broker.xml";
     }
 
     @Override
-    protected String useOverridePropertiesWithConfigAdmin(Dictionary props)
-    { 
+    protected String useOverridePropertiesWithConfigAdmin(Dictionary props) { 
         //obtain an available port
         int port = AvailablePortFinder.getNextAvailable();
 
         //override the netty port to use
-        props.put("netty.port", ""+port);
+        props.put("netty.port", "" + port);
 
         //return the PID of the config-admin we are using in the blueprint xml file
         return "my-placeholders";
     }
 
     @Test
-    public void testEmbeddedBroker() throws Exception
-    {
+    public void testEmbeddedBroker() throws Exception {
         //trigger
         String response = template.requestBody("netty4-http:localhost:{{netty.port}}/message", null, String.class);
 
