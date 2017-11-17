@@ -45,7 +45,7 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
         m1.put("nestedField", m1Nested);
         m1.put("_id", "testInsertMap");
 
-        Object result = template.requestBody("direct:insertMap", m1);
+        template.requestBody("direct:insertMap", m1);
         BasicDBObject b = testCollection.find(new BasicDBObject("_id", "testInsertMap")).first();
         assertNotNull("No record with 'testInsertMap' _id", b);
 
@@ -54,7 +54,7 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
     @Test
     public void testInsertPojo() {
         assertEquals(0, testCollection.count());
-        Object result = template.requestBody("direct:insertPojo", new MyPojoTest());
+        template.requestBody("direct:insertPojo", new MyPojoTest());
         DBObject b = testCollection.find(new BasicDBObject("_id", "testInsertPojo")).first();
         assertNotNull("No record with 'testInsertPojo' _id", b);
     }
@@ -62,8 +62,7 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
     @Test
     public void testInsertJsonString() {
         assertEquals(0, testCollection.count());
-        Object result = template.requestBody("direct:insertJsonString", "{\"fruits\": [\"apple\", \"banana\", \"papaya\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}");
-        //assertTrue(result instanceof WriteResult);
+        template.requestBody("direct:insertJsonString", "{\"fruits\": [\"apple\", \"banana\", \"papaya\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}");
         DBObject b = testCollection.find(new BasicDBObject("_id", "testInsertJsonString")).first();
         assertNotNull("No record with 'testInsertJsonString' _id", b);
     }
@@ -71,7 +70,7 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
     @Test
     public void testInsertJsonInputStream() throws Exception {
         assertEquals(0, testCollection.count());
-        Object result = template.requestBody("direct:insertJsonString", 
+        template.requestBody("direct:insertJsonString", 
                         IOConverter.toInputStream("{\"fruits\": [\"apple\", \"banana\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}\n", null));
         DBObject b = testCollection.find(new BasicDBObject("_id", "testInsertJsonString")).first();
         assertNotNull("No record with 'testInsertJsonString' _id", b);
@@ -85,7 +84,7 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
         BSONObject bsonObject = new BasicDBObject();
         bsonObject.put("_id", "testInsertBsonString");
         
-        Object result = template.requestBody("direct:insertJsonString", new ByteArrayInputStream(encoder.encode(bsonObject)));
+        template.requestBody("direct:insertJsonString", new ByteArrayInputStream(encoder.encode(bsonObject)));
         DBObject b = testCollection.find(new BasicDBObject("_id", "testInsertBsonString")).first();
         assertNotNull("No record with 'testInsertBsonString' _id", b);
     }
