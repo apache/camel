@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.restlet;
 
-import java.io.IOException;
 import java.net.URI;
-import java.security.GeneralSecurityException;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,8 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -50,18 +45,13 @@ import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.Component;
 import org.restlet.Restlet;
-import org.restlet.Server;
 import org.restlet.data.ChallengeScheme;
 import org.restlet.data.Method;
-import org.restlet.data.Parameter;
-import org.restlet.data.Protocol;
 import org.restlet.engine.Engine;
 import org.restlet.security.ChallengeAuthenticator;
 import org.restlet.security.MapVerifier;
-import org.restlet.util.Series;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,8 +64,8 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
     private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);
     private static final Object LOCK = new Object();
 
-    private final Map<String, Server> servers = new HashMap<String, Server>();
-    private final Map<String, MethodBasedRouter> routers = new HashMap<String, MethodBasedRouter>();
+    private final Map<String, RestletHost> restletHostRegistry = new HashMap<>();
+    private final Map<String, MethodBasedRouter> routers = new HashMap<>();
     private final Component component;
 
     // options that can be set on the restlet server
@@ -233,7 +223,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
     protected void doStop() throws Exception {
         component.stop();
         // component stop will stop servers so we should clear our list as well
-        servers.clear();
+        restletHostRegistry.clear();
         // routers map entries are removed as consumer stops and servers map
         // is not touch so to keep in sync with component's servers
         super.doStop();
@@ -329,150 +319,72 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
         }
     }
 
-    protected Server createServer(RestletEndpoint endpoint) {
-        // Consider hostname if provided. This is useful when loopback interface is required for security reasons.
-        if (endpoint.getHost() != null) {
-            return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getHost(), endpoint.getPort(), null);
-        } else {
-            return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
-        }
-    }
-
-    protected String stringArrayToString(String[] strings) {
-        StringBuffer result = new StringBuffer();
-        for (String str : strings) {
-            result.append(str);
-            result.append(" ");
-        }
-        return result.toString();
-    }
-
-    protected void setupServerWithSSLContext(Series<Parameter> params, SSLContextParameters scp) throws GeneralSecurityException, IOException {
-        // set the SSLContext parameters
-        params.add("sslContextFactory",
-            "org.restlet.engine.ssl.DefaultSslContextFactory");
-
-        SSLContext context = scp.createSSLContext(getCamelContext());
-        SSLEngine engine = context.createSSLEngine();
-
-        params.add("enabledProtocols", stringArrayToString(engine.getEnabledProtocols()));
-        params.add("enabledCipherSuites", stringArrayToString(engine.getEnabledCipherSuites()));
-
-        if (scp.getSecureSocketProtocol() != null) {
-            params.add("protocol", scp.getSecureSocketProtocol());
-        }
-        if (scp.getServerParameters() != null && scp.getServerParameters().getClientAuthentication() != null) {
-            boolean b = !scp.getServerParameters().getClientAuthentication().equals("NONE");
-            params.add("needClientAuthentication", String.valueOf(b));
-        }
-        if (scp.getKeyManagers() != null) {
-            if (scp.getKeyManagers().getAlgorithm() != null) {
-                params.add("keyManagerAlgorithm", scp.getKeyManagers().getAlgorithm());
-            }
-            if (scp.getKeyManagers().getKeyPassword() != null) {
-                params.add("keyPassword", scp.getKeyManagers().getKeyPassword());
-            }
-            if (scp.getKeyManagers().getKeyStore().getResource() != null) {
-                params.add("keyStorePath", scp.getKeyManagers().getKeyStore().getResource());
-            }
-            if (scp.getKeyManagers().getKeyStore().getPassword() != null) {
-                params.add("keyStorePassword", scp.getKeyManagers().getKeyStore().getPassword());
-            }
-            if (scp.getKeyManagers().getKeyStore().getType() != null) {
-                params.add("keyStoreType", scp.getKeyManagers().getKeyStore().getType());
-            }
-        }
-
-        if (scp.getTrustManagers() != null) {
-            if (scp.getTrustManagers().getAlgorithm() != null) {
-                params.add("trustManagerAlgorithm", scp.getKeyManagers().getAlgorithm());
-            }
-            if (scp.getTrustManagers().getKeyStore().getResource() != null) {
-                params.add("trustStorePath", scp.getTrustManagers().getKeyStore().getResource());
-            }
-            if (scp.getTrustManagers().getKeyStore().getPassword() != null) {
-                params.add("trustStorePassword", scp.getTrustManagers().getKeyStore().getPassword());
-            }
-            if (scp.getTrustManagers().getKeyStore().getType() != null) {
-                params.add("trustStoreType", scp.getTrustManagers().getKeyStore().getType());
-            }
-        }
-    }
-
     protected void addServerIfNecessary(RestletEndpoint endpoint) throws Exception {
         String key = buildKey(endpoint);
-        Server server;
-        synchronized (servers) {
-            server = servers.get(key);
-            if (server == null) {
-                server = createServer(endpoint);
-                component.getServers().add(server);
+        RestletHost host;
+        synchronized (restletHostRegistry) {
+            host = restletHostRegistry.get(key);
+            if (host == null) {
+                host = createRestletHost();
+                host.configure(endpoint, component);
 
-                // Add any Restlet server parameters that were included
-                Series<Parameter> params = server.getContext().getParameters();
-
-                if ("https".equals(endpoint.getProtocol())) {
-                    SSLContextParameters scp = endpoint.getSslContextParameters();
-                    if (endpoint.getSslContextParameters() == null) {
-                        throw new InvalidParameterException("Need to specify the SSLContextParameters option here!");
-                    }
-                    setupServerWithSSLContext(params, scp);
-                }
-
-                if (getControllerDaemon() != null) {
-                    params.add("controllerDaemon", getControllerDaemon().toString());
-                }
-                if (getControllerSleepTimeMs() != null) {
-                    params.add("controllerSleepTimeMs", getControllerSleepTimeMs().toString());
-                }
-                if (getInboundBufferSize() != null) {
-                    params.add("inboundBufferSize", getInboundBufferSize().toString());
-                }
-                if (getMinThreads() != null) {
-                    params.add("minThreads", getMinThreads().toString());
-                }
-                if (getMaxThreads() != null) {
-                    params.add("maxThreads", getMaxThreads().toString());
-                }
-                if (getLowThreads() != null) {
-                    params.add("lowThreads", getLowThreads().toString());
-                }
-                if (getMaxQueued() != null) {
-                    params.add("maxQueued", getMaxQueued().toString());
-                }
-                if (getMaxConnectionsPerHost() != null) {
-                    params.add("maxConnectionsPerHost", getMaxConnectionsPerHost().toString());
-                }
-                if (getMaxTotalConnections() != null) {
-                    params.add("maxTotalConnections", getMaxTotalConnections().toString());
-                }
-                if (getOutboundBufferSize() != null) {
-                    params.add("outboundBufferSize", getOutboundBufferSize().toString());
-                }
-                if (getPersistingConnections() != null) {
-                    params.add("persistingConnections", getPersistingConnections().toString());
-                }
-                if (getPipeliningConnections() != null) {
-                    params.add("pipeliningConnections", getPipeliningConnections().toString());
-                }
-                if (getThreadMaxIdleTimeMs() != null) {
-                    params.add("threadMaxIdleTimeMs", getThreadMaxIdleTimeMs().toString());
-                }
-                if (getUseForwardedForHeader() != null) {
-                    params.add("useForwardedForHeader", getUseForwardedForHeader().toString());
-                }
-                if (getReuseAddress() != null) {
-                    params.add("reuseAddress", getReuseAddress().toString());
-                }
-
-                LOG.debug("Setting parameters: {} to server: {}", params, server);
-                server.getContext().setParameters(params);
-
-                servers.put(key, server);
-                LOG.debug("Added server: {}", key);
-                server.start();
+                restletHostRegistry.put(key, host);
+                LOG.debug("Added host: {}", key);
+                host.start();
             }
         }
+    }
+
+    protected RestletHost createRestletHost() {
+        RestletHostOptions options = new RestletHostOptions();
+
+        if (getControllerDaemon() != null) {
+            options.setControllerDaemon(getControllerDaemon());
+        }
+        if (getControllerSleepTimeMs() != null) {
+            options.setControllerSleepTimeMs(getControllerSleepTimeMs());
+        }
+        if (getInboundBufferSize() != null) {
+            options.setInboundBufferSize(getInboundBufferSize());
+        }
+        if (getMinThreads() != null) {
+            options.setMinThreads(getMinThreads());
+        }
+        if (getMaxThreads() != null) {
+            options.setMaxThreads(getMaxThreads());
+        }
+        if (getLowThreads() != null) {
+            options.setLowThreads(getLowThreads());
+        }
+        if (getMaxQueued() != null) {
+            options.setMaxQueued(getMaxQueued());
+        }
+        if (getMaxConnectionsPerHost() != null) {
+            options.setMaxConnectionsPerHost(getMaxConnectionsPerHost());
+        }
+        if (getMaxTotalConnections() != null) {
+            options.setMaxTotalConnections(getMaxTotalConnections());
+        }
+        if (getOutboundBufferSize() != null) {
+            options.setOutboundBufferSize(getOutboundBufferSize());
+        }
+        if (getPersistingConnections() != null) {
+            options.setPersistingConnections(getPersistingConnections());
+        }
+        if (getPipeliningConnections() != null) {
+            options.setPipeliningConnections(getPipeliningConnections());
+        }
+        if (getThreadMaxIdleTimeMs() != null) {
+            options.setThreadMaxIdleTimeMs(getThreadMaxIdleTimeMs());
+        }
+        if (getUseForwardedForHeader() != null) {
+            options.setUseForwardedForHeader(getUseForwardedForHeader());
+        }
+        if (getReuseAddress() != null) {
+            options.setReuseAddress(getReuseAddress());
+        }
+
+        return new DefaultRestletHost(options);
     }
 
     private static String buildKey(RestletEndpoint endpoint) {
