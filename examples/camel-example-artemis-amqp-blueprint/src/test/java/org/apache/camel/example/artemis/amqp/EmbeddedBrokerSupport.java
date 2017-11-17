@@ -26,10 +26,9 @@ import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager
 // Blueprint does not support Bean inheritance (necessary for Artemis EmbeddedJMS)
 // We need therefore a 'support' class
 //#################################################
-public class EmbeddedBrokerSupport extends EmbeddedJMS
-{
-    public EmbeddedBrokerSupport(ActiveMQJAASSecurityManager securityManager) throws Exception
-    {
+public class EmbeddedBrokerSupport extends EmbeddedJMS {
+    
+    public EmbeddedBrokerSupport(ActiveMQJAASSecurityManager securityManager) throws Exception {
         super();
         this.setSecurityManager(securityManager);
         this.start();
@@ -43,8 +42,7 @@ public class EmbeddedBrokerSupport extends EmbeddedJMS
             // this.setSecurityManager(securityManager);
     }
 
-    public void close() throws Exception
-    {
+    public void close() throws Exception {
         this.stop();
     }
 }
