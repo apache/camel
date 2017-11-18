@@ -642,6 +642,7 @@ public class NettyProducer extends DefaultAsyncProducer {
                 }
                 exchange.setException(cause);
                 callback.done(false);
+                releaseChannel(future);
                 return;
             }
 
