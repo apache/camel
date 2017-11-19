@@ -251,7 +251,7 @@ To send messages to an exchange called C
 
 [source,java]
 -------------------------------
-...to("rabbitmq://localhost/B")
+...to("rabbitmq://localhost/C")
 -------------------------------
 
 Declaring a headers exchange and queue
