@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import java.util.function.Supplier;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
@@ -146,6 +147,17 @@ public class ExpressionClause<T> extends ExpressionDefinition {
         return delegate.expression(new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return function.apply(exchange.getIn().getBody());
+            }
+        });
+    }
+
+    /**
+     * A functional expression of an inbound message body
+     */
+    public T body(final Supplier<Object> supplier) {
+        return delegate.expression(new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return supplier.get();
             }
         });
     }
