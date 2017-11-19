@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -3047,6 +3048,42 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type setBody(Expression expression) {
         SetBodyDefinition answer = new SetBodyDefinition(expression);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a processor which sets the body on the IN message
+     *
+     * @param supplier   the supplier that provides a value to the IN message body
+     * @return the builder
+     */
+    public Type setBody(Supplier supplier) {
+        SetBodyDefinition answer = new SetBodyDefinition(new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return supplier.get();
+            }
+        });
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a processor which sets the body on the IN message
+     *
+     * @param function   the function that provides a value to the IN message body
+     * @return the builder
+     */
+    public Type setBody(Function<Exchange, ?> function) {
+        SetBodyDefinition answer = new SetBodyDefinition(new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return function.apply(exchange);
+            }
+        });
         addOutput(answer);
         return (Type) this;
     }
