@@ -274,24 +274,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <dependencies>
-          <!-- need JAXB on the classpath to use the xjc SchemaGenTask -->
-          <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>${jaxb-version}</version>
-          </dependency>
-          <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb-version}</version>
-          </dependency>
-          <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-xjc</artifactId>
-            <version>${jaxb-version}</version>
-          </dependency>
-        </dependencies>
         <executions>
           <execution>
             <id>store-camel-schema-version-in-file</id>
@@ -595,35 +577,13 @@
             <version>1.8</version>
             <executions>
               <execution>
-                <id>generate-schema</id>
-                <phase>process-classes</phase>
-                 <configuration>
-                  <target>
-                    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
-                    <path id ="source.files.list">
-                      <fileset dir="${project.build.directory}/schema-src">
-                        <include name="**/*.java" />
-                      </fileset>
-                    </path>
-                    <property name="source.files.property" refid="source.files.list"/>
-                    <propertyregex property="schema.source.formatted" input="${source.files.property}" regexp=":" replace=" " global="true" />
-                    <property name="schema.source.files" value="${schema.source.formatted}"/>
-                    <echo>Schema files ${schema.source.files}</echo>
-                  </target>
-                  <exportAntProperties>true</exportAntProperties>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-              <execution>
                 <id>cpy-schema</id>
                 <phase>process-test-sources</phase>
                 <configuration>
                   <target>
                     <echo>Copying XSD schema to be included in JAR</echo>
-                    <move file="${project.basedir}/schema1.xsd" tofile="${project.build.directory}/schema/camel-spring.xsd" />
-                    <delete file="${project.basedir}/schema2.xsd"/>
+                    <move file="${project.build.directory}/schema/schema1.xsd" tofile="${project.build.directory}/schema/camel-spring.xsd" />
+                    <delete file="${project.build.directory}/schema/schema2.xsd"/>
                   </target>
                 </configuration>
                 <goals>
@@ -634,19 +594,23 @@
           </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
+            <artifactId>jaxb2-maven-plugin</artifactId>
+            <version>2.3.1</version>
             <executions>
               <execution>
                 <id>generate schema</id>
                 <phase>generate-test-sources</phase>
                 <goals>
-                  <goal>exec</goal>
+                  <goal>schemagen</goal>
                 </goals>
               </execution>
             </executions>
             <configuration>
-              <executable>schemagen</executable>
-              <commandlineArgs>-cp %classpath ${schema.source.files}</commandlineArgs>
+              <outputDirectory>${project.build.directory}/schema</outputDirectory>
+              <sources>
+                <source>${project.build.directory}/schema-src</source>
+              </sources>
+              <createJavaDocAnnotations>false</createJavaDocAnnotations>
             </configuration>
           </plugin>
         </plugins>
@@ -681,35 +645,16 @@
             <version>1.8</version>
             <executions>
               <execution>
-                <id>list-source-files-for-schema-generation</id>
-                <phase>process-classes</phase>
-                <configuration>
-                  <target>
-                    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
-                    <path id ="source.files.list">
-                      <fileset dir="${project.build.directory}/schema-src">
-                        <include name="**/*.java" />
-                      </fileset>
-                    </path>
-                    <property name="source.files.property" refid="source.files.list"/>
-                    <propertyregex property="schema.source.formatted" input="${source.files.property}" regexp=":" replace=" " global="true" />
-                    <property name="schema.source.files" value="${schema.source.formatted}"/>
-                    <echo>Schema files ${schema.source.files}</echo>
-                  </target>
-                  <exportAntProperties>true</exportAntProperties>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-              <execution>
                 <id>cpy-schema</id>
                 <phase>process-test-sources</phase>
                 <configuration>
                   <target>
                     <echo>Copying XSD schema to be included in JAR</echo>
-                    <move file="${project.basedir}/schema1.xsd" tofile="${project.build.directory}/schema/camel-spring.xsd" />
-                    <delete file="${project.basedir}/schema2.xsd"/>
+                    <replace file="${project.build.directory}/schema/schema1.xsd"
+                      token="xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;"
+                      value="xmlns=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;"/>
+                    <move file="${project.build.directory}/schema/schema1.xsd" tofile="${project.build.directory}/schema/camel-spring.xsd" />
+                    <delete file="${project.build.directory}/schema/schema2.xsd"/>
                   </target>
                 </configuration>
                 <goals>
@@ -720,19 +665,35 @@
           </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
+            <artifactId>jaxb2-maven-plugin</artifactId>
+            <version>2.3.1</version>
+            <dependencies>
+              <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-jxc-jdk9</artifactId>
+                <version>2.3.0</version>
+              </dependency>
+              <dependency>
+                <groupId>javax.activation</groupId>
+                <artifactId>javax.activation-api</artifactId>
+                <version>1.2.0</version>
+              </dependency>
+            </dependencies>
             <executions>
               <execution>
                 <id>generate schema</id>
                 <phase>generate-test-sources</phase>
                 <goals>
-                  <goal>exec</goal>
+                  <goal>schemagen</goal>
                 </goals>
               </execution>
             </executions>
             <configuration>
-              <executable>schemagen</executable>
-              <commandlineArgs>-cp %classpath ${schema.source.files}</commandlineArgs>
+              <outputDirectory>${project.build.directory}/schema</outputDirectory>
+              <sources>
+                <source>${project.build.directory}/schema-src</source>
+              </sources>
+              <createJavaDocAnnotations>false</createJavaDocAnnotations>
             </configuration>
           </plugin>
         </plugins>
