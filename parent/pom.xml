@@ -502,7 +502,7 @@
     <mina2-version>2.0.16</mina2-version>
     <minimal-json-version>0.9.4</minimal-json-version>
     <mock-javamail-version>1.9</mock-javamail-version>
-    <mockwebserver-version>0.0.15</mockwebserver-version>
+    <mockwebserver-version>0.0.17</mockwebserver-version>
     <mockito-version>1.10.19</mockito-version>
     <mockito2-version>2.11.0</mockito2-version>
     <mongo-java-driver-version>3.5.0</mongo-java-driver-version>
