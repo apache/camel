@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.VerifiableComponent;
 import org.apache.camel.impl.DefaultComponent;
 
 public class S3Component extends DefaultComponent {
