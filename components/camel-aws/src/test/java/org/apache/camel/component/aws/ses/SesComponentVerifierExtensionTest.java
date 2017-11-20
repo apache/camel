@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.sdb;
+package org.apache.camel.component.aws.ses;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +25,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class SdbComponentVerifierExtensionTest extends CamelTestSupport {
+public class SesComponentVerifierExtensionTest extends CamelTestSupport {
 
     // *************************************************
     // Tests (parameters)
@@ -37,7 +37,7 @@ public class SdbComponentVerifierExtensionTest extends CamelTestSupport {
 
     @Test
     public void testParameters() throws Exception {
-        Component component = context().getComponent("aws-sdb");
+        Component component = context().getComponent("aws-ses");
 
         ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
@@ -45,7 +45,7 @@ public class SdbComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("secretKey", "l");
         parameters.put("accessKey", "k");
         parameters.put("region", "l");
-        parameters.put("domainName", "domain1");
+        parameters.put("from", "test@test.com");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
@@ -54,14 +54,14 @@ public class SdbComponentVerifierExtensionTest extends CamelTestSupport {
 
     @Test
     public void testConnectivity() throws Exception {
-        Component component = context().getComponent("aws-sdb");
+        Component component = context().getComponent("aws-ses");
         ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
         parameters.put("accessKey", "k");
         parameters.put("region", "us-east-1");
-        parameters.put("domainName", "domain1");
+        parameters.put("from", "test@test.com");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 

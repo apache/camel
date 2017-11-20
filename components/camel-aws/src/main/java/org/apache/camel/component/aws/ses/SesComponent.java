@@ -20,16 +20,18 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
-public class SesComponent extends UriEndpointComponent {
+public class SesComponent extends DefaultComponent {
 
     public SesComponent() {
-        super(SesEndpoint.class);
+        this(null);
     }
 
     public SesComponent(CamelContext context) {
-        super(context, SesEndpoint.class);
+        super(context);
+        
+        registerExtension(new SesComponentVerifierExtension());
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
