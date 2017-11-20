@@ -20,27 +20,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RedisTransactionTest extends RedisTestSupport {
-    private RedisTemplate redisTemplate;
+
+    @Mock
+    private RedisTemplate<String, ?> redisTemplate;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
         registry.bind("redisTemplate", redisTemplate);
         return registry;
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        redisTemplate = mock(RedisTemplate.class);
-        super.setUp();
     }
 
     @Test

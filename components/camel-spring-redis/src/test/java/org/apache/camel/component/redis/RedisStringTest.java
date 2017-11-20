@@ -23,21 +23,24 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RedisStringTest extends RedisTestSupport {
-    private ValueOperations valueOperations;
+
+    @Mock
+    private ValueOperations<String, String> valueOperations;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -46,13 +49,6 @@ public class RedisStringTest extends RedisTestSupport {
         JndiRegistry registry = super.createRegistry();
         registry.bind("redisTemplate", redisTemplate);
         return registry;
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        redisTemplate = mock(RedisTemplate.class);
-        valueOperations = mock(ValueOperations.class);
-        super.setUp();
     }
 
     @Test
@@ -123,20 +119,20 @@ public class RedisStringTest extends RedisTestSupport {
                 RedisConstants.OFFSET, "10",
                 RedisConstants.VALUE, "0");
 
-        verify(redisTemplate).execute(any(RedisCallback.class));
+        verify(redisTemplate).execute(ArgumentMatchers.<RedisCallback<String>>any());
     }
 
 
     @Test
     public void shouldExecuteGETBIT() throws Exception {
-        when(redisTemplate.execute(any(RedisCallback.class))).thenReturn(true);
+        when(redisTemplate.execute(ArgumentMatchers.<RedisCallback<Boolean>>any())).thenReturn(true);
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "GETBIT",
                 RedisConstants.KEY, "key",
                 RedisConstants.OFFSET, "2");
 
-        verify(redisTemplate).execute(any(RedisCallback.class));
+        verify(redisTemplate).execute(ArgumentMatchers.<RedisCallback<String>>any());
         assertEquals(true, result);
     }
 

@@ -40,7 +40,7 @@ public class RedisConsumerIntegrationTest extends RedisTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
 
-        redisTemplate = new RedisTemplate();
+        redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(CONNECTION_FACTORY);
         redisTemplate.afterPropertiesSet();
 

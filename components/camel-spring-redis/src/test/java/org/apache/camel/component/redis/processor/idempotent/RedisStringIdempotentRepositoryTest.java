@@ -20,6 +20,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisOperations;
@@ -27,32 +30,32 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RedisStringIdempotentRepositoryTest {
 
     private static final String REPOSITORY = "testRepository";
     private static final String KEY = "KEY";
-    private RedisTemplate redisTemplate;
+
+    @Mock
+    private RedisTemplate<String, String> redisTemplate;
+    @Mock
     private RedisConnectionFactory redisConnectionFactory;
+    @Mock
     private RedisConnection redisConnection;
-    private RedisOperations redisOperations;
-    private ValueOperations valueOperations;
+    @Mock
+    private RedisOperations<String, String> redisOperations;
+    @Mock
+    private ValueOperations<String, String> valueOperations;
+
     private RedisStringIdempotentRepository idempotentRepository;
 
     @Before
     public void setUp() throws Exception {
-        redisTemplate = mock(RedisTemplate.class);
-        valueOperations = mock(ValueOperations.class);
-        redisConnection = mock(RedisConnection.class);
-        redisOperations = mock(RedisOperations.class);
-        redisConnectionFactory = mock(RedisConnectionFactory.class);
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        when(redisTemplate.getConnectionFactory()).thenReturn(redisConnectionFactory);
         when(valueOperations.getOperations()).thenReturn(redisOperations);
-        when(redisTemplate.getConnectionFactory().getConnection()).thenReturn(redisConnection);
         idempotentRepository = new RedisStringIdempotentRepository(redisTemplate, REPOSITORY);
         idempotentRepository.setExpiry(1000L);
     }

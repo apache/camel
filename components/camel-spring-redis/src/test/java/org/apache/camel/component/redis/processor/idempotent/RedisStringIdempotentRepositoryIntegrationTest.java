@@ -45,7 +45,7 @@ public class RedisStringIdempotentRepositoryIntegrationTest extends CamelTestSup
     private MockEndpoint mockResult;
 
     @Resource
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
     static {
         CONNECTION_FACTORY.afterPropertiesSet();
@@ -54,7 +54,7 @@ public class RedisStringIdempotentRepositoryIntegrationTest extends CamelTestSup
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        redisTemplate = new RedisTemplate();
+        redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(CONNECTION_FACTORY);
         redisTemplate.afterPropertiesSet();
 
