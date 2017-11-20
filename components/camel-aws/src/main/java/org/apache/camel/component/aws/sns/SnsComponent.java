@@ -20,16 +20,19 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.UriEndpointComponent;
 
-public class SnsComponent extends UriEndpointComponent {
+public class SnsComponent extends DefaultComponent {
     
     public SnsComponent() {
-        super(SnsEndpoint.class);
+        this(null);
     }
 
     public SnsComponent(CamelContext context) {
-        super(context, SnsEndpoint.class);
+        super(context);
+        
+        registerExtension(new SnsComponentVerifierExtension());
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
