@@ -20,17 +20,19 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
-public class SqsComponent extends UriEndpointComponent {
+public class SqsComponent extends DefaultComponent {
     
     public SqsComponent() {
-        super(SqsEndpoint.class);
+        this(null);
     }
 
     public SqsComponent(CamelContext context) {
-        super(context, SqsEndpoint.class);
+        super(context);
+        
+        registerExtension(new SqsComponentVerifierExtension());
     }
 
     @Override
