@@ -62,7 +62,7 @@ public class S3ComponentVerifierExtensionTest extends CamelTestSupport {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
         parameters.put("accessKey", "k");
-        parameters.put("region", Regions.US_EAST_1);
+        parameters.put("region", "us-east-1");
         parameters.put("bucketNameOrArn", "test12");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
