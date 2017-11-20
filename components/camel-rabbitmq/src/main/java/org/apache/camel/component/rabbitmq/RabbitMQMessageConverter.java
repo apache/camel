@@ -247,6 +247,7 @@ public class RabbitMQMessageConverter {
             message.setHeader(RabbitMQConstants.ROUTING_KEY, envelope.getRoutingKey());
             message.setHeader(RabbitMQConstants.EXCHANGE_NAME, envelope.getExchange());
             message.setHeader(RabbitMQConstants.DELIVERY_TAG, envelope.getDeliveryTag());
+            message.setHeader(RabbitMQConstants.REDELIVERY_TAG, envelope.isRedelivery());
         }
     }
 
