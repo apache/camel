@@ -17,21 +17,22 @@
 package org.apache.camel.component.redis;
 
 import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.data.redis.connection.RedisConnection;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RedisConnectionTest extends RedisTestSupport {
 
-    private RedisTemplate redisTemplate;
-    private RedisConnection redisConnection;
+    @Mock
+    private RedisTemplate<String, String> redisTemplate;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -40,16 +41,9 @@ public class RedisConnectionTest extends RedisTestSupport {
         return registry;
     }
 
-    @Before
-    public void setUp() throws Exception {
-        redisTemplate = mock(RedisTemplate.class);
-        redisConnection = mock(RedisConnection.class);
-        super.setUp();
-    }
-
     @Test
     public void shouldExecuteECHO() throws Exception {
-        when(redisTemplate.execute(any(RedisCallback.class))).thenReturn("value");
+        when(redisTemplate.execute(ArgumentMatchers.<RedisCallback<String>>any())).thenReturn("value");
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "ECHO",
@@ -60,7 +54,7 @@ public class RedisConnectionTest extends RedisTestSupport {
 
     @Test
     public void shouldExecutePING() throws Exception {
-        when(redisTemplate.execute(any(RedisCallback.class))).thenReturn("PONG");
+        when(redisTemplate.execute(ArgumentMatchers.<RedisCallback<String>>any())).thenReturn("PONG");
 
         Object result = sendHeaders(RedisConstants.COMMAND, "PING");
 
@@ -71,9 +65,8 @@ public class RedisConnectionTest extends RedisTestSupport {
     public void shouldExecuteQUIT() throws Exception {
         sendHeaders(RedisConstants.COMMAND, "QUIT");
 
-        verify(redisTemplate).execute(any(RedisCallback.class));
+        verify(redisTemplate).execute(ArgumentMatchers.<RedisCallback<String>>any());
     }
-
 
     @Test
     public void shouldExecutePUBLISH() throws Exception {

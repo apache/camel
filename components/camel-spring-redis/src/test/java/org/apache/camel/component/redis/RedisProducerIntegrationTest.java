@@ -33,7 +33,7 @@ public class RedisProducerIntegrationTest extends RedisTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        redisTemplate = new RedisTemplate();
+        redisTemplate = new RedisTemplate<String, String>();
         redisTemplate.setConnectionFactory(CONNECTION_FACTORY);
         redisTemplate.afterPropertiesSet();
 
