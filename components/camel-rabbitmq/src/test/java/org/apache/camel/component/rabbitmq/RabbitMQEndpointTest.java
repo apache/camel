@@ -19,10 +19,7 @@ package org.apache.camel.component.rabbitmq;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeoutException;
@@ -76,10 +73,12 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         String routingKey = UUID.randomUUID().toString();
         String exchangeName = UUID.randomUUID().toString();
         long tag = UUID.randomUUID().toString().hashCode();
+        Boolean redelivery = new Random().nextBoolean();
 
         Mockito.when(envelope.getRoutingKey()).thenReturn(routingKey);
         Mockito.when(envelope.getExchange()).thenReturn(exchangeName);
         Mockito.when(envelope.getDeliveryTag()).thenReturn(tag);
+        Mockito.when(envelope.isRedelivery()).thenReturn(redelivery);
         Mockito.when(properties.getHeaders()).thenReturn(null);
 
         byte[] body = new byte[20];
@@ -87,6 +86,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         assertEquals(exchangeName, exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_NAME));
         assertEquals(routingKey, exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY));
         assertEquals(tag, exchange.getIn().getHeader(RabbitMQConstants.DELIVERY_TAG));
+        assertEquals(redelivery, exchange.getIn().getHeader(RabbitMQConstants.REDELIVERY_TAG));
         assertEquals(body, exchange.getIn().getBody());
     }
 
