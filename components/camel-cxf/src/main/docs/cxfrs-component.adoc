@@ -130,14 +130,14 @@ You can also configure the CXF REST endpoint through the spring
 configuration. Since there are lots of difference between the CXF REST
 client and CXF REST Server, we provide different configuration for
 them. Please check out the
-http://svn.apache.org/repos/asf/camel/trunk/components/camel-cxf/src/main/resources/schema/cxfEndpoint.xsd[schema
-file] and https://cwiki.apache.org/CXF20DOC/JAX-RS[CXF JAX-RS
+https://github.com/apache/camel/blob/master/components/camel-cxf/src/main/resources/schema/cxfEndpoint.xsd[schema
+file] and http://cxf.apache.org/docs/jax-rs.html[CXF JAX-RS
 documentation] for more information.
 
 ### How to configure the REST endpoint in Camel
 
 In
-http://svn.apache.org/repos/asf/camel/trunk/components/camel-cxf/src/main/resources/schema/cxfEndpoint.xsd[camel-cxf
+https://github.com/apache/camel/blob/master/components/camel-cxf/src/main/resources/schema/cxfEndpoint.xsd[camel-cxf
 schema file], there are two elements for the REST endpoint definition.
 *cxf:rsServer* for REST consumer, *cxf:rsClient* for REST producer. +
  You can find a Camel REST service route configuration example here.
@@ -285,10 +285,10 @@ https://svn.apache.org/repos/asf/camel/trunk/components/camel-cxf/src/test/java/
 
 ### Consuming a REST Request - Default Binding Style
 
-The https://cwiki.apache.org/CXF20DOC/JAX-RS[CXF JAXRS front end]
-implements the https://jsr311.java.net/[JAX-RS (JSR-311) API], so we can
+The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end]
+implements the https://javaee.github.io/jsr311/[JAX-RS (JSR-311) API], so we can
 export the resources classes as a REST service. And we leverage the
-http://cwiki.apache.org/confluence/display/CXF20DOC/Invokers[CXF Invoker
+http://cxf.apache.org/docs/invokers.html[CXF Invoker
 API] to turn a REST request into a normal Java object method
 invocation. +
  Unlike the link:restlet.html[Camel Restlet] component, you don't need
@@ -320,12 +320,12 @@ for post-processing JAX-RS Responses in custom processors.
 
 ### How to invoke the REST service through camel-cxfrs producer
 
-The https://cwiki.apache.org/CXF20DOC/JAX-RS[CXF JAXRS front end]
+The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end]
 implements
-https://cwiki.apache.org/CXF20DOC/JAX-RS+Client+API#JAX-RSClientAPI-Proxy-basedAPI[a
+http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-Proxy-basedAPI[a
 proxy-based client API], with this API you can invoke the remote REST
 service through a proxy. The `camel-cxfrs` producer is based on this
-https://cwiki.apache.org/CXF20DOC/JAX-RS+Client+API#JAX-RSClientAPI-Proxy-basedAPI[proxy
+http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-Proxy-basedAPI[proxy
 API]. +
  You just need to specify the operation name in the message header and
 prepare the parameter in the message body, the camel-cxfrs producer will
@@ -333,9 +333,9 @@ generate right REST request for you.
 
 Here is an example:
 
-The https://cwiki.apache.org/CXF20DOC/JAX-RS[CXF JAXRS front end] also
+The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end] also
 provides
-https://cwiki.apache.org/confluence/display/CXF20DOC/JAX-RS+Client+API#JAX-RSClientAPI-CXFWebClientAPI[a
+http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-CXFWebClientAPI[a
 http centric client API]. You can also invoke this API from
 `camel-cxfrs` producer. You need to specify the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Exchange.html#HTTP_PATH[HTTP_PATH]
@@ -355,5 +355,5 @@ Error formatting macro: snippet: java.lang.IndexOutOfBoundsException:
 Index: 20, Size: 20
 
 To support the Dynamical routing, you can override the URI's query
-parameters by using the CxfConstants.CAMEL_CXF_RS_QUERY_MAP header to
-set the parameter map for it.
+parameters by using the http://camel.apache.org/maven/current/camel-cxf/apidocs/org/apache/camel/component/cxf/CxfConstants.html#CAMEL_CXF_RS_QUERY_MAP[CxfConstants.CAMEL_CXF_RS_QUERY_MAP]
+header to set the parameter map for it.

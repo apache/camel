@@ -29,24 +29,19 @@ relayHeaders option]
 **** link:#CXF-ChangessinceRelease2.0[Changes since Release 2.0]
 ** link:#CXF-ConfiguretheCXFendpointswithSpring[Configure the CXF
 endpoints with Spring]
-**
-link:#CXF-ConfiguringtheCXFEndpointswithApacheAriesBlueprint.[Configuring
+** link:#CXF-ConfiguringtheCXFEndpointswithApacheAriesBlueprint.[Configuring
 the CXF Endpoints with Apache Aries Blueprint.]
-**
-link:#CXF-Howtomakethecamel-cxfcomponentuselog4jinsteadofjava.util.logging[How
+** link:#CXF-Howtomakethecamel-cxfcomponentuselog4jinsteadofjava.util.logging[How
 to make the camel-cxf component use log4j instead of java.util.logging]
 ** link:#CXF-Howtoletcamel-cxfresponsemessagewithxmlstartdocument[How to
 let camel-cxf response message with xml start document]
 ** link:#CXF-HowtooverridetheCXFproduceraddressfrommessageheader[How to
 override the CXF producer address from message header]
-**
-link:#CXF-Howtoconsumeamessagefromacamel-cxfendpointinPOJOdataformat[How
+** link:#CXF-Howtoconsumeamessagefromacamel-cxfendpointinPOJOdataformat[How
 to consume a message from a camel-cxf endpoint in POJO data format]
-**
-link:#CXF-Howtopreparethemessageforthecamel-cxfendpointinPOJOdataformat[How
+** link:#CXF-Howtopreparethemessageforthecamel-cxfendpointinPOJOdataformat[How
 to prepare the message for the camel-cxf endpoint in POJO data format]
-**
-link:#CXF-Howtodealwiththemessageforacamel-cxfendpointinPAYLOADdataformat[How
+** link:#CXF-Howtodealwiththemessageforacamel-cxfendpointinPAYLOADdataformat[How
 to deal with the message for a camel-cxf endpoint in PAYLOAD data
 format]
 ** link:#CXF-HowtogetandsetSOAPheadersinPOJOmode[How to get and set SOAP
@@ -57,8 +52,7 @@ SOAP headers in PAYLOAD mode]
 not available in MESSAGE mode]
 ** link:#CXF-HowtothrowaSOAPFaultfromCamel[How to throw a SOAP Fault
 from Camel]
-**
-link:#CXF-Howtopropagateacamel-cxfendpointrequestandresponsecontext[How
+** link:#CXF-Howtopropagateacamel-cxfendpointrequestandresponsecontext[How
 to propagate a camel-cxf endpoint's request and response context]
 ** link:#CXF-AttachmentSupport[Attachment Support]
 ** link:#CXF-StreamingSupportinPAYLOADmode[Streaming Support in PAYLOAD
@@ -316,7 +310,7 @@ ambiguity in name spaces to relay instance mappings.
 Take a look at the tests that show how you'd be able to relay/drop
 headers here:
 
-https://svn.apache.org/repos/asf/camel/branches/camel-1.x/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java[https://svn.apache.org/repos/asf/camel/branches/camel-1.x/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java]
+https://github.com/apache/camel/blob/master/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java[https://github.com/apache/camel/blob/master/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java]
 
 [[CXF-ChangessinceRelease2.0]]
 Changes since Release 2.0
@@ -507,7 +501,7 @@ the Spring `<bean class="MyServiceFactory"/>` syntax
 
 You can find more advanced examples that show how to provide
 interceptors, properties and handlers on the CXF
-https://cwiki.apache.org/CXF20DOC/JAX-WS+Configuration[JAX-WS
+http://cxf.apache.org/docs/jax-ws-configuration.html[JAX-WS
 Configuration page].
 
 *NOTE* 
@@ -655,7 +649,7 @@ setting the message with the key of "CamelDestinationOverrideUrl".
 ### How to consume a message from a camel-cxf endpoint in POJO data format
 
 The `camel-cxf` endpoint consumer POJO data format is based on the
-http://cwiki.apache.org/CXF20DOC/invokers.html[cxf invoker], so the
+http://cxf.apache.org/docs/invokers.html[CXF invoker], so the
 message header has a property with the name of
 `CxfConstants.OPERATION_NAME` and the message body is a list of the SEI
 method parameters.
@@ -663,7 +657,7 @@ method parameters.
 ### How to prepare the message for the camel-cxf endpoint in POJO data format
 
 The `camel-cxf` endpoint producer is based on the
-https://svn.apache.org/repos/asf/cxf/trunk/api/src/main/java/org/apache/cxf/endpoint/Client.java[cxf
+https://github.com/apache/cxf/blob/master/core/src/main/java/org/apache/cxf/endpoint/Client.java[CXF
 client API]. First you need to specify the operation name in the message
 header, then add the method parameters to a list, and initialize the
 message with this parameter list. The response message's body is a
@@ -763,7 +757,7 @@ body and also indicate it's a fault by calling Message.setFault(true):
 
 ### How to propagate a camel-cxf endpoint's request and response context
 
-https://svn.apache.org/repos/asf/cxf/trunk/api/src/main/java/org/apache/cxf/endpoint/Client.java[cxf
+https://github.com/apache/cxf/blob/master/core/src/main/java/org/apache/cxf/endpoint/Client.java[CXF
 client API] provides a way to invoke the operation with request and
 response context. If you are using a `camel-cxf` endpoint producer to
 invoke the outside web service, you can set the request context and get
