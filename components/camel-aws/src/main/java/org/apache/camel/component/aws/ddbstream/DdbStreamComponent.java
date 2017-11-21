@@ -19,19 +19,22 @@ package org.apache.camel.component.aws.ddbstream;
 import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.component.aws.ddb.DdbComponentVerifierExtension;
+import org.apache.camel.impl.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DdbStreamComponent extends UriEndpointComponent {
+public class DdbStreamComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(DdbStreamComponent.class);
 
     public DdbStreamComponent() {
-        super(DdbStreamEndpoint.class);
+        this(null);
     }
 
     public DdbStreamComponent(CamelContext context) {
-        super(context, DdbStreamEndpoint.class);
+        super(context);
+        
+        registerExtension(new DdbComponentVerifierExtension());
     }
 
     @Override
