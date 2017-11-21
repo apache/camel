@@ -20,16 +20,18 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
-public class DdbComponent extends UriEndpointComponent {
+public class DdbComponent extends DefaultComponent {
 
     public DdbComponent() {
-        super(DdbEndpoint.class);
+        this(null);
     }
 
     public DdbComponent(CamelContext context) {
-        super(context, DdbEndpoint.class);
+        super(context);
+        
+        registerExtension(new DdbComponentVerifierExtension());
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
