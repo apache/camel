@@ -78,7 +78,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         Mockito.when(envelope.getRoutingKey()).thenReturn(routingKey);
         Mockito.when(envelope.getExchange()).thenReturn(exchangeName);
         Mockito.when(envelope.getDeliveryTag()).thenReturn(tag);
-        Mockito.when(envelope.isRedelivery()).thenReturn(redelivery);
+        Mockito.when(envelope.isRedeliver()).thenReturn(redelivery);
         Mockito.when(properties.getHeaders()).thenReturn(null);
 
         byte[] body = new byte[20];
