@@ -54,13 +54,14 @@ with the following path and query parameters:
 | *function* | *Required* Name of the Lambda function. |  | String
 |===
 
-==== Query Parameters (8 parameters):
+==== Query Parameters (9 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *awsLambdaEndpoint* (producer) | The region with which the AWS-Lambda client wants to work with. |  | String
 | *operation* (producer) | *Required* The operation to perform. It can be listFunctions getFunction createFunction deleteFunction or invokeFunction |  | LambdaOperations
+| *region* (producer) | Amazon AWS Region |  | String
 | *awsLambdaClient* (advanced) | To use a existing configured AwsLambdaClient as client |  | AWSLambda
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *proxyHost* (proxy) | To define a proxy host when instantiating the Lambda client |  | String

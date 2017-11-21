@@ -26,10 +26,13 @@ import org.apache.camel.util.ObjectHelper;
 public class LambdaComponent extends DefaultComponent {
 
     public LambdaComponent() {
+        this(null);
     }
 
     public LambdaComponent(CamelContext context) {
         super(context);
+        
+        registerExtension(new LambdaComponentVerifierExtension());
     }
 
     @Override

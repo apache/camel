@@ -37,6 +37,8 @@ public class LambdaConfiguration {
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
+    @UriParam(label = "producer")
+    private String region;
     @UriParam(label = "proxy")
     private String proxyHost;
     @UriParam(label = "proxy")
@@ -86,6 +88,17 @@ public class LambdaConfiguration {
      */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    /**
+     * Amazon AWS Region
+     */
+    public void setRegion(String region) {
+        this.region = region;
     }
 
     public String getAwsLambdaEndpoint() {
