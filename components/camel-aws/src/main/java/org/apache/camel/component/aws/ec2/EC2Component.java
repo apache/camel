@@ -20,19 +20,21 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * For working with Amazon's Elastic Compute Cloud (EC2).
  */
-public class EC2Component extends UriEndpointComponent {
+public class EC2Component extends DefaultComponent {
 
     public EC2Component() {
-        super(EC2Endpoint.class);
+        this(null);
     }
     
     public EC2Component(CamelContext context) {
-        super(context, EC2Endpoint.class);
+        super(context);
+        
+        registerExtension(new EC2ComponentVerifierExtension());
     }
 
     @Override
