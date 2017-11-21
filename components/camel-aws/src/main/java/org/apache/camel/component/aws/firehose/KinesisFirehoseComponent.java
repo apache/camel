@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultComponent;
 public class KinesisFirehoseComponent extends DefaultComponent {
 
     public KinesisFirehoseComponent() {
-
+        this(null);
     }
 
     public KinesisFirehoseComponent(CamelContext context) {
