@@ -20,16 +20,16 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
-public class KinesisComponent extends UriEndpointComponent {
+public class KinesisComponent extends DefaultComponent {
 
     public KinesisComponent() {
-        super(KinesisEndpoint.class);
+        this(null);
     }
 
     public KinesisComponent(CamelContext context) {
-        super(context, KinesisEndpoint.class);
+        super(context);
     }
 
     @Override
