@@ -21,11 +21,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -84,6 +86,9 @@ public class FileConsumer extends GenericFileConsumer<File> {
             }
         }
         List<File> files = Arrays.asList(dirFiles);
+        if (getEndpoint().isPreSort()) {
+            Collections.sort(files, (a, b) -> a.getAbsoluteFile().compareTo(a.getAbsoluteFile()));
+        }
 
         for (File file : dirFiles) {
             // check if we can continue polling in files
