@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Experimental;
 import org.apache.camel.Route;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.impl.DefaultRouteController;
@@ -42,6 +43,7 @@ import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Experimental
 public class ClusteredRouteController extends DefaultRouteController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClusteredRouteController.class);
 

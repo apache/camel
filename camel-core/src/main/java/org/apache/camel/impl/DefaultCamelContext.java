@@ -314,8 +314,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final RuntimeCamelCatalog runtimeCamelCatalog = new DefaultRuntimeCamelCatalog(this, true);
     private SSLContextParameters sslContextParameters;
     private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(HashSet::new);
-    private RouteController routeController;
-    private HealthCheckRegistry healthCheckRegistry;
+    private RouteController routeController = new DefaultRouteController(this);
+    private HealthCheckRegistry healthCheckRegistry = new DefaultHealthCheckRegistry(this);
 
     /**
      * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
@@ -352,12 +352,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // using the management strategy before the CamelContext has been started
         this.managementStrategy = createManagementStrategy();
         this.managementMBeanAssembler = createManagementMBeanAssembler();
-
-        // Route controller
-        this.routeController = new DefaultRouteController(this);
-
-        // Health check registry
-        this.healthCheckRegistry = new DefaultHealthCheckRegistry(this);
 
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
@@ -3200,7 +3194,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         getRoutes().size(),
                         started,
                         controlledRoutes.size(),
-                        getRouteController()
+                        getRouteController().getClass().getName()
                     );
                 }
                 log.info("Apache Camel {} (CamelContext: {}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
