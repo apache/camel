@@ -1,0 +1,55 @@
+baseURL = "https://camel.apache.org/"
+languageCode = "en-us"
+title = "Apache Camel: Integration that you want"
+
+[params]
+    comments = "false"
+    copyrightStartYear = "2004"
+    copyrightOwner = "The Apache Software Foundation."
+    copyrightNotice = "Apache Camel, Camel, Apache, the Apache feather logo, and the Apache Camel project logo are trademarks of The Apache Software Foundation. All other marks mentioned may be trademarks or registered trademarks of their respective owners."
+    description = "Apache Camel framework for easy integration"
+
+[taxonomies]
+    version = "versions"
+
+[[menu.main]]
+    name = "Home"
+    identifier = "home"
+    pre = "<i class='fa fa-space-shuttle'></i>"
+    weight = 1
+    url = "/"
+
+[[menu.main]]
+    name = "About"
+    identifier = "about"
+    pre = "<i class='fa fa-space-shuttle'></i>"
+    weight = 10
+    url = "/about/"
+
+[[menu.main]]
+    name = "News"
+    identifier = "news"
+    pre = "<i class='fa fa-space-shuttle'></i>"
+    weight = 20
+    url = "/blog/"
+
+[[menu.main]]
+    name = "Getting started"
+    identifier = "getting-started"
+    pre = "<i class='fa fa-space-shuttle'></i>"
+    weight = 30
+    url = "/getting-started/"
+
+[[menu.main]]
+    name = "Manual"
+    identifier = "manual"
+    pre = "<i class='fa fa-space-shuttle'></i>"
+    weight = 40
+    url = "/manual/"
+
+[[menu.main]]
+    name = "Components"
+    identifier = "components"
+    pre = "<i class='fa fa-space-shuttle'></i>"
+    weight = 50
+    url = "/components/"

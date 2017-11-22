@@ -1,0 +1,41 @@
+[by]
+  other = "by"
+
+[currentPage]
+  other = "Current page"
+
+[mainMenu]
+  other = "Main Menu"
+
+[next]
+  other = "Next"
+
+[nextPage]
+  other = "Next page"
+
+[nextPost]
+  other = "Next post"
+
+[openSomethingInNewTab]
+  other = "Open {{ .Something }} in new tab"
+
+[page]
+  other = "Page"
+
+[previous]
+  other = "Previous"
+
+[previousPage]
+  other = "Previous page"
+
+[previousPost]
+  other = "Previous post"
+
+[postedOn]
+  other = "Posted on"
+
+[recentPosts]
+  other = "Recent Posts"
+
+[socialMenu]
+  other = "Social Menu"

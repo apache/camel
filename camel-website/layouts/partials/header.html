@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang='{{ .Site.Language.Lang }}'>
+
+{{ partial "head/head" . }}
+
+<body class='{{ .Kind }}'>
+  <div class='u-full-width u-max-full-width container'>
+    <header class='header'>
+      <div class='site-header'>
+        {{ if eq .Kind "home" }}
+        <h1 class='title'>{{ .Site.Title }}</h1>
+        {{ else }}
+        <p class='title'>{{ .Site.Title }}</p>
+        {{ end }}
+        <p>{{ .Site.Params.description }}</p>
+      </div>
+    </header>
+
+    {{ partial "nav/menus/main" . }}

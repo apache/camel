@@ -1,0 +1,11 @@
+{{ partial "header" . }}
+
+<main class='main'>
+  {{ if .Content }}
+  <article class='entry'>
+    {{ partial "entry/content" . }}
+  </article>
+  {{ end }}
+</main>
+
+{{ partial "footer" . }}

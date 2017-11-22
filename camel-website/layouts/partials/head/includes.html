@@ -1,0 +1,7 @@
+<link rel='icon' href='{{ ( or .Site.Params.favicon "favicon.ico" ) | relURL }}'>
+<link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+<link rel='stylesheet' href='{{ print "css/" .Site.Data.assets.site.css | relURL }}'>
+{{ range .Site.Params.customCSS }}
+  <link rel='stylesheet' href='{{ . | relURL }}'>
+{{ end }}
+{{ template "_internal/google_analytics_async.html" . }}
