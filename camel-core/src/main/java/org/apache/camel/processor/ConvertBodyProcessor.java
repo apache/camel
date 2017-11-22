@@ -80,6 +80,13 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
             return true;
         }
 
+        if (exchange.getException() != null) {
+            // do not convert if an exception has been thrown as if we attempt to convert and it also fails with a new
+            // exception then it will override the existing exception
+            callback.done(true);
+            return true;
+        }
+
         if (charset != null) {
             // override existing charset with configured charset as that is what the user
             // have explicit configured and expects to be used
