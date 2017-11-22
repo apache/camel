@@ -17,7 +17,9 @@
 package org.apache.camel.component.file.remote;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
@@ -141,6 +143,10 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         } else {
             // we found some files
             log.trace("Found {} in directory: {}", files.size(), dir);
+        }
+        
+        if (getEndpoint().isPreSort()) {
+            Collections.sort(files, (a, b) -> a.getFilename().compareTo(b.getFilename()));
         }
 
         for (SftpRemoteFile file : files) {
