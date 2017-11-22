@@ -28,6 +28,7 @@ import org.apache.camel.spi.RouteController;
 @Experimental
 public class DefaultRouteController extends org.apache.camel.support.ServiceSupport implements RouteController  {
     private CamelContext camelContext;
+
     public DefaultRouteController() {
         this(null);
     }
@@ -56,10 +57,12 @@ public class DefaultRouteController extends org.apache.camel.support.ServiceSupp
 
     @Override
     protected void doStart() throws Exception {
+        // noop
     }
 
     @Override
     protected void doStop() throws Exception {
+        // noop
     }
 
     // ***************************************************

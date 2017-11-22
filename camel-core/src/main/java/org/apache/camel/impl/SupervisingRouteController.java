@@ -155,7 +155,6 @@ public class SupervisingRouteController extends DefaultRouteController {
      * #see {@link this#setInitialDelay(Duration)}
      *
      * @param initialDelay the initial delay amount.
-     * @param initialDelay the initial delay time unit.
      */
     public void setInitialDelay(long initialDelay, TimeUnit initialDelayUnit) {
         this.initialDelay = Duration.ofMillis(initialDelayUnit.toMillis(initialDelay));
