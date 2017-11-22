@@ -24,12 +24,15 @@ import org.apache.camel.Experimental;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 
+// TODO: Add javadoc
+
 @Experimental
 public interface RouteController extends CamelContextAware, Service {
+
     /**
      * Return the list of routes controlled by this controller.
      *
-     * @return the list of controlled routes;
+     * @return the list of controlled routes
      */
     Collection<Route> getControlledRoutes();
 
