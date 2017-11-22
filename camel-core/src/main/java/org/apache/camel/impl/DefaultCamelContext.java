@@ -3191,32 +3191,30 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
 
                 final Collection<Route> controlledRoutes = getRouteController().getControlledRoutes();
-
                 if (controlledRoutes.isEmpty()) {
                     log.info("Total {} routes, of which {} are started",
                         getRoutes().size(),
                         started);
                 } else {
-                    log.info("Total {} routes, of which {} are started and {} are managed by the route controller ({})",
+                    log.info("Total {} routes, of which {} are started, and {} are managed by RouteController: {}",
                         getRoutes().size(),
                         started,
                         controlledRoutes.size(),
-                        getRouteController().getClass().getName()
+                        getRouteController()
                     );
                 }
-
                 log.info("Apache Camel {} (CamelContext: {}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
             }
+
+            // okay the routes has been started so emit event that CamelContext has started (here at the end)
             EventHelper.notifyCamelContextStarted(this);
 
-            // now call the startup listeners where the routes has been warmed up
-            // (only the actual route consumer has not yet been started)
+            // now call the startup listeners where the routes has been started
             for (StartupListener startup : startupListeners) {
                 if (startup instanceof ExtendedStartupListener) {
                     ((ExtendedStartupListener) startup).onCamelContextFullyStarted(this, isStarted());
                 }
             }
-
         }
     }
 
