@@ -697,8 +697,10 @@ public class RunMojo extends AbstractExecMojo {
                 // even log in future
                 Thread[] threadsArray = new Thread[1];
                 threadGroup.enumerate(threadsArray);
-                getLog().debug("strange; " + activeCount + " thread(s) still active in the group "
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("strange; " + activeCount + " thread(s) still active in the group "
                                    + threadGroup + " such as " + threadsArray[0]);
+                }
             }
         }
     }
@@ -806,7 +808,9 @@ public class RunMojo extends AbstractExecMojo {
                 // we must skip org.osgi.core, otherwise we get a
                 // java.lang.NoClassDefFoundError: org.osgi.vendor.framework property not set
                 if (classPathElement.getArtifactId().equals("org.osgi.core")) {
-                    getLog().debug("Skipping org.osgi.core -> " + classPathElement.getGroupId() + "/" + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
+                    if (getLog().isDebugEnabled()) {
+                        getLog().debug("Skipping org.osgi.core -> " + classPathElement.getGroupId() + "/" + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
+                    }
                     continue;
                 }
 

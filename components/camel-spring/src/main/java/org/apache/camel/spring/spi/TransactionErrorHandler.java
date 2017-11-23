@@ -154,7 +154,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
             if (log.isDebugEnabled()) {
                 // log exception if there was a cause exception so we have the stack trace
                 Exception cause = exchange.getException();
-                if (cause != null) {
+                if (cause != null && log.isDebugEnabled()) {
                     log.debug("Transaction rollback (" + transactionKey + ") redelivered(" + redelivered + ") for "
                         + ids + " due exchange was marked for rollbackOnlyLast and caught: ", cause);
                 } else {
