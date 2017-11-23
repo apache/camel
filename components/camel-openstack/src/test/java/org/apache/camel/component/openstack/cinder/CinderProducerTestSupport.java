@@ -18,13 +18,14 @@ package org.apache.camel.component.openstack.cinder;
 
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.storage.BlockStorageService;
-import org.openstack4j.api.storage.BlockVolumeService;
-import org.openstack4j.api.storage.BlockVolumeSnapshotService;
 
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CinderProducerTestSupport extends AbstractProducerTestSupport {
 
     @Mock
@@ -33,16 +34,8 @@ public class CinderProducerTestSupport extends AbstractProducerTestSupport {
     @Mock
     protected BlockStorageService blockStorageService;
 
-    @Mock
-    protected BlockVolumeService volumeService;
-
-    @Mock
-    protected BlockVolumeSnapshotService snapshotService;
-
     @Before
     public void setUpComputeService() {
         when(client.blockStorage()).thenReturn(blockStorageService);
-        when(blockStorageService.volumes()).thenReturn(volumeService);
-        when(blockStorageService.snapshots()).thenReturn(snapshotService);
     }
 }

@@ -26,10 +26,13 @@ import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.nova.producer.FlavorsProducer;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.Builders;
+import org.openstack4j.api.compute.FlavorService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.compute.Flavor;
 import org.openstack4j.model.compute.builder.FlavorBuilder;
@@ -39,23 +42,37 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class FlavorProducerTest extends NovaProducerTestSupport {
 
     @Mock
     private Flavor testOSFlavor;
 
+    @Mock
+    private FlavorService flavorService;
+
+    @Captor
+    private ArgumentCaptor<Flavor> flavorCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> flavorIdCaptor;
+
     private Flavor dummyFlavor;
 
     @Before
     public void setUp() {
+        when(computeService.flavors()).thenReturn(flavorService);
+
         producer = new FlavorsProducer(endpoint, client);
 
-        when(flavorService.create(Matchers.any(org.openstack4j.model.compute.Flavor.class))).thenReturn(testOSFlavor);
-        when(flavorService.get(Matchers.anyString())).thenReturn(testOSFlavor);
+        when(flavorService.create(any())).thenReturn(testOSFlavor);
+        when(flavorService.get(anyString())).thenReturn(testOSFlavor);
 
         List<org.openstack4j.model.compute.Flavor> getAllList = new ArrayList<>();
         getAllList.add(testOSFlavor);
@@ -69,7 +86,6 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
         when(testOSFlavor.getRam()).thenReturn(dummyFlavor.getRam());
         when(testOSFlavor.getVcpus()).thenReturn(dummyFlavor.getVcpus());
         when(testOSFlavor.getDisk()).thenReturn(dummyFlavor.getDisk());
-        when(testOSFlavor.getSwap()).thenReturn(dummyFlavor.getSwap());
     }
 
     @Test
@@ -82,7 +98,6 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
         msg.setBody(dummyFlavor);
         producer.process(exchange);
 
-        ArgumentCaptor<Flavor> flavorCaptor = ArgumentCaptor.forClass(Flavor.class);
         verify(flavorService).create(flavorCaptor.capture());
         assertEquals(dummyFlavor, flavorCaptor.getValue());
 
@@ -103,7 +118,6 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
         msg.setHeaders(headers);
         producer.process(exchange);
 
-        ArgumentCaptor<Flavor> flavorCaptor = ArgumentCaptor.forClass(Flavor.class);
         verify(flavorService).create(flavorCaptor.capture());
         assertEqualsFlavors(dummyFlavor, flavorCaptor.getValue());
 
@@ -141,15 +155,14 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
 
     @Test
     public void deleteSuccess() throws Exception {
-        when(flavorService.delete(Matchers.anyString())).thenReturn(ActionResponse.actionSuccess());
+        when(flavorService.delete(anyString())).thenReturn(ActionResponse.actionSuccess());
         when(endpoint.getOperation()).thenReturn(OpenstackConstants.DELETE);
         String id = "myID";
         msg.setHeader(OpenstackConstants.ID, id);
         producer.process(exchange);
 
-        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
-        verify(flavorService).delete(argumentCaptor.capture());
-        assertEquals(id, argumentCaptor.getValue());
+        verify(flavorService).delete(flavorIdCaptor.capture());
+        assertEquals(id, flavorIdCaptor.getValue());
 
         assertFalse(msg.isFault());
         assertNull(msg.getBody());
@@ -158,15 +171,14 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
     @Test
     public void deleteFailure() throws Exception {
         final String failReason = "unknown";
-        when(flavorService.delete(Matchers.anyString())).thenReturn(ActionResponse.actionFailed(failReason, 401));
+        when(flavorService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failReason, 401));
         when(endpoint.getOperation()).thenReturn(OpenstackConstants.DELETE);
         String id = "myID";
         msg.setHeader(OpenstackConstants.ID, id);
         producer.process(exchange);
 
-        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
-        verify(flavorService).delete(argumentCaptor.capture());
-        assertEquals(id, argumentCaptor.getValue());
+        verify(flavorService).delete(flavorIdCaptor.capture());
+        assertEquals(id, flavorIdCaptor.getValue());
 
         assertTrue(msg.isFault());
         assertTrue(msg.getBody(String.class).contains(failReason));

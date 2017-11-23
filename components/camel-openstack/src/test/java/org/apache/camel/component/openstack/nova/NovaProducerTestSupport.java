@@ -18,14 +18,14 @@ package org.apache.camel.component.openstack.nova;
 
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.compute.ComputeService;
-import org.openstack4j.api.compute.FlavorService;
-import org.openstack4j.api.compute.KeypairService;
-import org.openstack4j.api.compute.ServerService;
 
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class NovaProducerTestSupport extends AbstractProducerTestSupport {
 
     @Mock
@@ -34,20 +34,8 @@ public class NovaProducerTestSupport extends AbstractProducerTestSupport {
     @Mock
     protected ComputeService computeService;
 
-    @Mock
-    FlavorService flavorService;
-
-    @Mock
-    ServerService serverService;
-
-    @Mock
-    KeypairService keypairService;
-
     @Before
     public void setUpComputeService() {
         when(client.compute()).thenReturn(computeService);
-        when(computeService.flavors()).thenReturn(flavorService);
-        when(computeService.servers()).thenReturn(serverService);
-        when(computeService.keypairs()).thenReturn(keypairService);
     }
 }

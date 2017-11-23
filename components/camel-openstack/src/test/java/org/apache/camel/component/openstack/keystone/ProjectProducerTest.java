@@ -21,12 +21,15 @@ import java.util.List;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.keystone.producer.ProjectProducer;
-import org.apache.camel.component.openstack.neutron.NeutronConstants;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.Builders;
+import org.openstack4j.api.identity.v3.ProjectService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Project;
 import org.openstack4j.model.network.Network;
@@ -35,12 +38,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ProjectProducerTest extends KeystoneProducerTestSupport {
 
     private Project dummyProject;
@@ -48,11 +52,22 @@ public class ProjectProducerTest extends KeystoneProducerTestSupport {
     @Mock
     private Project testOSproject;
 
+    @Mock
+    private ProjectService projectService;
+
+    @Captor
+    private ArgumentCaptor<Project> projectCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> projectIdCaptor;
+
     @Before
     public void setUp() {
+        when(identityService.projects()).thenReturn(projectService);
+
         producer = new ProjectProducer(endpoint, client);
 
-        when(projectService.create(any(Project.class))).thenReturn(testOSproject);
+        when(projectService.create(any())).thenReturn(testOSproject);
         when(projectService.get(anyString())).thenReturn(testOSproject);
 
         List<Project> getAllList = new ArrayList<>();
@@ -77,10 +92,9 @@ public class ProjectProducerTest extends KeystoneProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<Project> captor = ArgumentCaptor.forClass(Project.class);
-        verify(projectService).create(captor.capture());
+        verify(projectService).create(projectCaptor.capture());
 
-        assertEqualsProject(dummyProject, captor.getValue());
+        assertEqualsProject(dummyProject, projectCaptor.getValue());
     }
 
     @Test
@@ -91,10 +105,9 @@ public class ProjectProducerTest extends KeystoneProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(projectService).get(captor.capture());
+        verify(projectService).get(projectIdCaptor.capture());
 
-        assertEquals(id, captor.getValue());
+        assertEquals(id, projectIdCaptor.getValue());
         assertEqualsProject(testOSproject, msg.getBody(Project.class));
     }
 
@@ -119,16 +132,15 @@ public class ProjectProducerTest extends KeystoneProducerTestSupport {
         when(testOSproject.getName()).thenReturn(newName);
         when(testOSproject.getDescription()).thenReturn("desc");
 
-        when(projectService.update(any(Project.class))).thenReturn(testOSproject);
+        when(projectService.update(any())).thenReturn(testOSproject);
         msg.setBody(testOSproject);
 
         producer.process(exchange);
 
-        ArgumentCaptor<Project> captor = ArgumentCaptor.forClass(Project.class);
-        verify(projectService).update(captor.capture());
+        verify(projectService).update(projectCaptor.capture());
 
-        assertEqualsProject(testOSproject, captor.getValue());
-        assertNotNull(captor.getValue().getId());
+        assertEqualsProject(testOSproject, projectCaptor.getValue());
+        assertNotNull(projectCaptor.getValue().getId());
         assertEquals(newName, msg.getBody(Project.class).getName());
     }
 
@@ -141,9 +153,8 @@ public class ProjectProducerTest extends KeystoneProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(projectService).delete(captor.capture());
-        assertEquals(networkID, captor.getValue());
+        verify(projectService).delete(projectIdCaptor.capture());
+        assertEquals(networkID, projectIdCaptor.getValue());
         assertFalse(msg.isFault());
 
         //in case of failure

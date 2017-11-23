@@ -24,9 +24,13 @@ import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.neutron.producer.PortProducer;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.Builders;
+import org.openstack4j.api.networking.PortService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.Port;
 
@@ -34,12 +38,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class PortProducerTest extends NeutronProducerTestSupport {
 
     private Port dummyPort;
@@ -47,10 +52,21 @@ public class PortProducerTest extends NeutronProducerTestSupport {
     @Mock
     private Port testOSport;
 
+    @Mock
+    private PortService portService;
+
+    @Captor
+    private ArgumentCaptor<Port> portCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> portIdCaptor;
+
     @Before
     public void setUp() {
+        when(networkingService.port()).thenReturn(portService);
+
         producer = new PortProducer(endpoint, client);
-        when(portService.create(any(Port.class))).thenReturn(testOSport);
+        when(portService.create(any())).thenReturn(testOSport);
         when(portService.get(anyString())).thenReturn(testOSport);
 
         List<Port> getAllList = new ArrayList<>();
@@ -77,10 +93,9 @@ public class PortProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<Port> captor = ArgumentCaptor.forClass(Port.class);
-        verify(portService).create(captor.capture());
+        verify(portService).create(portCaptor.capture());
 
-        assertEqualsPort(dummyPort, captor.getValue());
+        assertEqualsPort(dummyPort, portCaptor.getValue());
         assertNotNull(msg.getBody(Port.class).getId());
     }
 
@@ -92,10 +107,9 @@ public class PortProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(portService).get(captor.capture());
+        verify(portService).get(portIdCaptor.capture());
 
-        assertEquals(portID, captor.getValue());
+        assertEquals(portID, portIdCaptor.getValue());
         assertEqualsPort(testOSport, msg.getBody(Port.class));
     }
 
@@ -117,17 +131,16 @@ public class PortProducerTest extends NeutronProducerTestSupport {
         final String newDevId = "dev";
         when(testOSport.getDeviceId()).thenReturn(newDevId);
         when(testOSport.getId()).thenReturn(portID);
-        when(portService.update(any(Port.class))).thenReturn(testOSport);
+        when(portService.update(any())).thenReturn(testOSport);
 
         msg.setBody(testOSport);
 
         producer.process(exchange);
 
-        ArgumentCaptor<Port> captor = ArgumentCaptor.forClass(Port.class);
-        verify(portService).update(captor.capture());
+        verify(portService).update(portCaptor.capture());
 
-        assertEqualsPort(testOSport, captor.getValue());
-        assertNotNull(captor.getValue().getId());
+        assertEqualsPort(testOSport, portCaptor.getValue());
+        assertNotNull(portCaptor.getValue().getId());
     }
 
     @Test
@@ -139,9 +152,8 @@ public class PortProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(portService).delete(captor.capture());
-        assertEquals(portID, captor.getValue());
+        verify(portService).delete(portIdCaptor.capture());
+        assertEquals(portID, portIdCaptor.getValue());
         assertFalse(msg.isFault());
 
         //in case of failure

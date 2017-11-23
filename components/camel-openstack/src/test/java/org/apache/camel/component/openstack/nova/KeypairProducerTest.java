@@ -23,18 +23,23 @@ import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.nova.producer.KeypairProducer;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openstack4j.api.compute.KeypairService;
 import org.openstack4j.model.compute.Keypair;
 import org.openstack4j.openstack.compute.domain.NovaKeypair;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class KeypairProducerTest extends NovaProducerTestSupport {
     private static final String KEYPAIR_NAME = "keypairName";
 
@@ -43,18 +48,28 @@ public class KeypairProducerTest extends NovaProducerTestSupport {
 
     private Keypair dummyKeypair;
 
+    @Mock
+    private KeypairService keypairService;
+
+    @Captor
+    private ArgumentCaptor<String> nameCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> keypairCaptor;
+
     @Before
     public void setUp() {
+        when(computeService.keypairs()).thenReturn(keypairService);
+
         producer = new KeypairProducer(endpoint, client);
         dummyKeypair = createDummyKeypair();
 
-        when(keypairService.get(Matchers.anyString())).thenReturn(osTestKeypair);
-        when(keypairService.create(Matchers.anyString(), Matchers.anyString())).thenReturn(osTestKeypair);
+        when(keypairService.create(anyString(), anyString())).thenReturn(osTestKeypair);
+        when(keypairService.create(anyString(), isNull())).thenReturn(osTestKeypair);
 
         List<org.openstack4j.model.compute.Keypair> getAllList = new ArrayList<>();
         getAllList.add(osTestKeypair);
         getAllList.add(osTestKeypair);
-        doReturn(getAllList).when(keypairService).list();
 
         when(osTestKeypair.getName()).thenReturn(dummyKeypair.getName());
         when(osTestKeypair.getPublicKey()).thenReturn(dummyKeypair.getPublicKey());
@@ -74,8 +89,6 @@ public class KeypairProducerTest extends NovaProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> nameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> keypairCaptor = ArgumentCaptor.forClass(String.class);
         verify(keypairService).create(nameCaptor.capture(), keypairCaptor.capture());
 
         assertEquals(KEYPAIR_NAME, nameCaptor.getValue());
@@ -99,8 +112,6 @@ public class KeypairProducerTest extends NovaProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> nameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> keypairCaptor = ArgumentCaptor.forClass(String.class);
         verify(keypairService).create(nameCaptor.capture(), keypairCaptor.capture());
 
         assertEquals(KEYPAIR_NAME, nameCaptor.getValue());

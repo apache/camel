@@ -18,15 +18,14 @@ package org.apache.camel.component.openstack.neutron;
 
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.openstack4j.api.networking.NetworkService;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.networking.NetworkingService;
-import org.openstack4j.api.networking.PortService;
-import org.openstack4j.api.networking.RouterService;
-import org.openstack4j.api.networking.SubnetService;
 
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class NeutronProducerTestSupport extends AbstractProducerTestSupport {
 
     @Mock
@@ -35,24 +34,8 @@ public class NeutronProducerTestSupport extends AbstractProducerTestSupport {
     @Mock
     protected NetworkingService networkingService;
 
-    @Mock
-    PortService portService;
-
-    @Mock
-    RouterService routerService;
-
-    @Mock
-    SubnetService subnetService;
-
-    @Mock
-    NetworkService networkService;
-
     @Before
     public void setUpComputeService() {
         when(client.networking()).thenReturn(networkingService);
-        when(networkingService.port()).thenReturn(portService);
-        when(networkingService.router()).thenReturn(routerService);
-        when(networkingService.subnet()).thenReturn(subnetService);
-        when(networkingService.network()).thenReturn(networkService);
     }
 }

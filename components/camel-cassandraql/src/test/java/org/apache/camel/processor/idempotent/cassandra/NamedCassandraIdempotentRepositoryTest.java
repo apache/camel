@@ -138,7 +138,7 @@ public class NamedCassandraIdempotentRepositoryTest extends BaseCassandraTest {
         // When
         boolean result = idempotentRepository.contains(key);
         // Then
-        // assertFalse(result);
+        assertFalse(result);
     }
 
     @Test

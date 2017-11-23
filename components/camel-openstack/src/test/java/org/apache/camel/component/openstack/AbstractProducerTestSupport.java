@@ -27,8 +27,8 @@ import org.apache.camel.impl.DefaultMessage;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.openstack4j.api.OSClient;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openstack4j.api.OSClient.OSClientV3;
 
 import static org.mockito.Mockito.when;
 
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 public abstract class AbstractProducerTestSupport {
 
     @Mock
-    protected OSClient.OSClientV3 client;
+    protected OSClientV3 client;
 
     @Mock
     protected Exchange exchange;

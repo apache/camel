@@ -28,8 +28,12 @@ import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.swift.producer.ObjectProducer;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openstack4j.api.storage.ObjectStorageObjectService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Payload;
 import org.openstack4j.model.common.Payloads;
@@ -39,12 +43,13 @@ import org.openstack4j.model.storage.object.options.ObjectLocation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ObjectProducerTest extends SwiftProducerTestSupport {
 
     private static final String CONTAINER_NAME = "containerName";
@@ -54,8 +59,28 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
     @Mock
     private SwiftObject mockOsObject;
 
+    @Mock
+    private ObjectStorageObjectService objectService;
+
+    @Captor
+    private ArgumentCaptor<String> containerNameCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> objectNameCaptor;
+
+    @Captor
+    private ArgumentCaptor<Payload<?>> payloadArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<ObjectLocation> locationCaptor;
+
+    @Captor
+    private ArgumentCaptor<Map<String, String>> dataCaptor;
+
     @Before
     public void setUp() {
+        when(objectStorageService.objects()).thenReturn(objectService);
+
         producer = new ObjectProducer(endpoint, client);
 
         when(mockOsObject.getETag()).thenReturn(ETAG);
@@ -63,18 +88,15 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
 
     @Test
     public void createTest() throws Exception {
-        when(objectService.put(anyString(), anyString(), any(Payload.class))).thenReturn(ETAG);
+        when(objectService.put(anyString(), anyString(), any())).thenReturn(ETAG);
         msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
         msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
-        final Payload payload = getTmpPayload();
+        final Payload<?> payload = getTmpPayload();
         msg.setBody(payload);
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> containerNameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> objectNameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Payload> payloadArgumentCaptor = ArgumentCaptor.forClass(Payload.class);
         verify(objectService).put(containerNameCaptor.capture(), objectNameCaptor.capture(), payloadArgumentCaptor.capture());
         assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
         assertEquals(OBJECT_NAME, objectNameCaptor.getValue());
@@ -113,7 +135,6 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
 
     @Test
     public void deleteObjectTest() throws Exception {
-        final String failMessage = "fail";
         when(objectService.delete(anyString(), anyString())).thenReturn(ActionResponse.actionSuccess());
         msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.DELETE);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
@@ -121,8 +142,6 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> containerNameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> objectNameCaptor = ArgumentCaptor.forClass(String.class);
         verify(objectService).delete(containerNameCaptor.capture(), objectNameCaptor.capture());
         assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
         assertEquals(OBJECT_NAME, objectNameCaptor.getValue());
@@ -157,8 +176,6 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<ObjectLocation> locationCaptor = ArgumentCaptor.forClass(ObjectLocation.class);
-        ArgumentCaptor<Map> dataCaptor = ArgumentCaptor.forClass(Map.class);
         verify(objectService).updateMetadata(locationCaptor.capture(), dataCaptor.capture());
         ObjectLocation location = locationCaptor.getValue();
         assertEquals(CONTAINER_NAME, location.getContainerName());
@@ -182,7 +199,7 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
     }
 
 
-    private Payload getTmpPayload() throws IOException {
+    private Payload<File> getTmpPayload() throws IOException {
         return Payloads.create(File.createTempFile("payloadPreffix", ".txt"));
     }
 }

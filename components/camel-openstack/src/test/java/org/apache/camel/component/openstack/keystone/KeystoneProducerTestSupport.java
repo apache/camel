@@ -18,16 +18,14 @@ package org.apache.camel.component.openstack.keystone;
 
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.openstack4j.api.identity.v3.DomainService;
-import org.openstack4j.api.identity.v3.GroupService;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.identity.v3.IdentityService;
-import org.openstack4j.api.identity.v3.ProjectService;
-import org.openstack4j.api.identity.v3.RegionService;
-import org.openstack4j.api.identity.v3.UserService;
 
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class KeystoneProducerTestSupport extends AbstractProducerTestSupport {
 
     @Mock
@@ -36,28 +34,8 @@ public class KeystoneProducerTestSupport extends AbstractProducerTestSupport {
     @Mock
     protected IdentityService identityService;
 
-    @Mock
-    protected DomainService domainService;
-
-    @Mock
-    protected GroupService groupService;
-
-    @Mock
-    protected ProjectService projectService;
-
-    @Mock
-    protected RegionService regionService;
-
-    @Mock
-    protected UserService userService;
-
     @Before
     public void setUpComputeService() {
         when(client.identity()).thenReturn(identityService);
-        when(identityService.domains()).thenReturn(domainService);
-        when(identityService.groups()).thenReturn(groupService);
-        when(identityService.projects()).thenReturn(projectService);
-        when(identityService.regions()).thenReturn(regionService);
-        when(identityService.users()).thenReturn(userService);
     }
 }
