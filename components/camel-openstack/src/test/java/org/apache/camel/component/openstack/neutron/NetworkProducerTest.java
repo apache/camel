@@ -24,9 +24,13 @@ import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.neutron.producer.NetworkProducer;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.Builders;
+import org.openstack4j.api.networking.NetworkService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.NetworkType;
@@ -35,12 +39,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class NetworkProducerTest extends NeutronProducerTestSupport {
 
     private Network dummyNetwork;
@@ -48,10 +53,21 @@ public class NetworkProducerTest extends NeutronProducerTestSupport {
     @Mock
     private Network testOSnetwork;
 
+    @Mock
+    private NetworkService networkService;
+
+    @Captor
+    private ArgumentCaptor<Network> networkCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> networkIdCaptor;
+
     @Before
     public void setUp() {
+        when(networkingService.network()).thenReturn(networkService);
+
         producer = new NetworkProducer(endpoint, client);
-        when(networkService.create(any(Network.class))).thenReturn(testOSnetwork);
+        when(networkService.create(any())).thenReturn(testOSnetwork);
         when(networkService.get(anyString())).thenReturn(testOSnetwork);
 
         List<Network> getAllList = new ArrayList<>();
@@ -75,10 +91,9 @@ public class NetworkProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<Network> captor = ArgumentCaptor.forClass(Network.class);
-        verify(networkService).create(captor.capture());
+        verify(networkService).create(networkCaptor.capture());
 
-        assertEqualsNetwork(dummyNetwork, captor.getValue());
+        assertEqualsNetwork(dummyNetwork, networkCaptor.getValue());
         assertNotNull(msg.getBody(Network.class).getId());
     }
 
@@ -90,10 +105,9 @@ public class NetworkProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(networkService).get(captor.capture());
+        verify(networkService).get(networkIdCaptor.capture());
 
-        assertEquals(networkID, captor.getValue());
+        assertEquals(networkID, networkIdCaptor.getValue());
         assertEqualsNetwork(testOSnetwork, msg.getBody(Network.class));
     }
 
@@ -117,9 +131,8 @@ public class NetworkProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(networkService).delete(captor.capture());
-        assertEquals(networkID, captor.getValue());
+        verify(networkService).delete(networkIdCaptor.capture());
+        assertEquals(networkID, networkIdCaptor.getValue());
         assertFalse(msg.isFault());
 
         //in case of failure

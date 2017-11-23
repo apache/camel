@@ -24,9 +24,13 @@ import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.neutron.producer.RouterProducer;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.Builders;
+import org.openstack4j.api.networking.RouterService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.AttachInterfaceType;
 import org.openstack4j.model.network.Router;
@@ -37,12 +41,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RouterProducerTest extends NeutronProducerTestSupport {
 
     private Router dummyRouter;
@@ -50,10 +55,30 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
     @Mock
     private Router testOSrouter;
 
+    @Mock
+    private RouterService routerService;
+
+    @Captor
+    private ArgumentCaptor<Router> routerCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> routerIdCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> subnetIdCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> portIdCaptor;
+
+    @Captor
+    private ArgumentCaptor<AttachInterfaceType> itfTypeCaptor;
+
     @Before
     public void setUp() {
+        when(networkingService.router()).thenReturn(routerService);
+
         producer = new RouterProducer(endpoint, client);
-        when(routerService.create(any(Router.class))).thenReturn(testOSrouter);
+        when(routerService.create(any())).thenReturn(testOSrouter);
         when(routerService.get(anyString())).thenReturn(testOSrouter);
 
         List<Router> getAllList = new ArrayList<>();
@@ -75,10 +100,9 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<Router> captor = ArgumentCaptor.forClass(Router.class);
-        verify(routerService).create(captor.capture());
+        verify(routerService).create(routerCaptor.capture());
 
-        assertEqualsRouter(dummyRouter, captor.getValue());
+        assertEqualsRouter(dummyRouter, routerCaptor.getValue());
         assertNotNull(msg.getBody(Router.class).getId());
     }
 
@@ -90,10 +114,9 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(routerService).get(captor.capture());
+        verify(routerService).get(routerIdCaptor.capture());
 
-        assertEquals(routerID, captor.getValue());
+        assertEquals(routerID, routerIdCaptor.getValue());
         assertEqualsRouter(testOSrouter, msg.getBody(Router.class));
     }
 
@@ -115,17 +138,16 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
         final Router tmp = createRouter();
         final String newName = "newName";
         tmp.setName(newName);
-        when(routerService.update(any(Router.class))).thenReturn(tmp);
+        when(routerService.update(any())).thenReturn(tmp);
         dummyRouter.setId(routerID);
         msg.setBody(dummyRouter);
 
         producer.process(exchange);
 
-        ArgumentCaptor<Router> captor = ArgumentCaptor.forClass(Router.class);
-        verify(routerService).update(captor.capture());
+        verify(routerService).update(routerCaptor.capture());
 
-        assertEqualsRouter(dummyRouter, captor.getValue());
-        assertNotNull(captor.getValue().getId());
+        assertEqualsRouter(dummyRouter, routerCaptor.getValue());
+        assertNotNull(routerCaptor.getValue().getId());
         assertEquals(newName, msg.getBody(Router.class).getName());
     }
 
@@ -138,9 +160,8 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(routerService).delete(captor.capture());
-        assertEquals(routerID, captor.getValue());
+        verify(routerService).delete(routerIdCaptor.capture());
+        assertEquals(routerID, routerIdCaptor.getValue());
         assertFalse(msg.isFault());
 
         //in case of failure
@@ -166,14 +187,11 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> routerC = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> portC = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> subnetC = ArgumentCaptor.forClass(String.class);
-        verify(routerService).detachInterface(routerC.capture(), subnetC.capture(), portC.capture());
+        verify(routerService).detachInterface(routerIdCaptor.capture(), subnetIdCaptor.capture(), portIdCaptor.capture());
 
-        assertEquals(routerID, routerC.getValue());
-        assertEquals(subnetId, subnetC.getValue());
-        assertEquals(portId, portC.getValue());
+        assertEquals(routerID, routerIdCaptor.getValue());
+        assertEquals(subnetId, subnetIdCaptor.getValue());
+        assertEquals(portId, portIdCaptor.getValue());
 
         assertEquals(ifce, msg.getBody(RouterInterface.class));
     }
@@ -183,7 +201,7 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
         final String routerID = "myRouterID";
         final String subnetId = "subnet";
         final RouterInterface ifce = new NeutronRouterInterface(subnetId, null);
-        when(routerService.attachInterface(anyString(), any(AttachInterfaceType.class), anyString())).thenReturn(ifce);
+        when(routerService.attachInterface(anyString(), any(), anyString())).thenReturn(ifce);
 
         msg.setHeader(OpenstackConstants.OPERATION, NeutronConstants.ATTACH_INTERFACE);
         msg.setHeader(NeutronConstants.ROUTER_ID, routerID);
@@ -192,14 +210,11 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> routerC = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<AttachInterfaceType> itfType = ArgumentCaptor.forClass(AttachInterfaceType.class);
-        ArgumentCaptor<String> subnetC = ArgumentCaptor.forClass(String.class);
-        verify(routerService).attachInterface(routerC.capture(), itfType.capture(), subnetC.capture());
+        verify(routerService).attachInterface(routerIdCaptor.capture(), itfTypeCaptor.capture(), subnetIdCaptor.capture());
 
-        assertEquals(routerID, routerC.getValue());
-        assertEquals(AttachInterfaceType.SUBNET, itfType.getValue());
-        assertEquals(subnetId, subnetC.getValue());
+        assertEquals(routerID, routerIdCaptor.getValue());
+        assertEquals(AttachInterfaceType.SUBNET, itfTypeCaptor.getValue());
+        assertEquals(subnetId, subnetIdCaptor.getValue());
 
         assertEquals(ifce, msg.getBody(RouterInterface.class));
     }

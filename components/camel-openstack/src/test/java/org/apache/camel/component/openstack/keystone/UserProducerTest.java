@@ -21,12 +21,15 @@ import java.util.List;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.keystone.producer.UserProducer;
-import org.apache.camel.component.openstack.neutron.NeutronConstants;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.Builders;
+import org.openstack4j.api.identity.v3.UserService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.User;
 import org.openstack4j.model.network.Network;
@@ -35,12 +38,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class UserProducerTest extends KeystoneProducerTestSupport {
 
     private User dummyUser;
@@ -48,11 +52,22 @@ public class UserProducerTest extends KeystoneProducerTestSupport {
     @Mock
     private User testOSuser;
 
+    @Mock
+    private UserService userService;
+
+    @Captor
+    private ArgumentCaptor<User> userCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> userIdCaptor;
+
     @Before
     public void setUp() {
+        when(identityService.users()).thenReturn(userService);
+
         producer = new UserProducer(endpoint, client);
 
-        when(userService.create(any(User.class))).thenReturn(testOSuser);
+        when(userService.create(any())).thenReturn(testOSuser);
         when(userService.get(anyString())).thenReturn(testOSuser);
 
         List<User> getAllList = new ArrayList<>();
@@ -80,10 +95,9 @@ public class UserProducerTest extends KeystoneProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
-        verify(userService).create(captor.capture());
+        verify(userService).create(userCaptor.capture());
 
-        assertEqualsUser(dummyUser, captor.getValue());
+        assertEqualsUser(dummyUser, userCaptor.getValue());
     }
 
     @Test
@@ -94,10 +108,9 @@ public class UserProducerTest extends KeystoneProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(userService).get(captor.capture());
+        verify(userService).get(userIdCaptor.capture());
 
-        assertEquals(id, captor.getValue());
+        assertEquals(id, userIdCaptor.getValue());
         assertEqualsUser(testOSuser, msg.getBody(User.class));
     }
 
@@ -121,16 +134,15 @@ public class UserProducerTest extends KeystoneProducerTestSupport {
         final String newDescription = "ndesc";
         when(testOSuser.getDescription()).thenReturn(newDescription);
 
-        when(userService.update(any(User.class))).thenReturn(testOSuser);
+        when(userService.update(any())).thenReturn(testOSuser);
         msg.setBody(testOSuser);
 
         producer.process(exchange);
 
-        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
-        verify(userService).update(captor.capture());
+        verify(userService).update(userCaptor.capture());
 
-        assertEqualsUser(testOSuser, captor.getValue());
-        assertNotNull(captor.getValue().getId());
+        assertEqualsUser(testOSuser, userCaptor.getValue());
+        assertNotNull(userCaptor.getValue().getId());
         assertEquals(newDescription, msg.getBody(User.class).getDescription());
     }
 
@@ -143,9 +155,8 @@ public class UserProducerTest extends KeystoneProducerTestSupport {
 
         producer.process(exchange);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(userService).delete(captor.capture());
-        assertEquals(networkID, captor.getValue());
+        verify(userService).delete(userIdCaptor.capture());
+        assertEquals(networkID, userIdCaptor.getValue());
         assertFalse(msg.isFault());
 
         //in case of failure

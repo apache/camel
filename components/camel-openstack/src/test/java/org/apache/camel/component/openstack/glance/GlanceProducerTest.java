@@ -25,25 +25,29 @@ import org.apache.camel.component.openstack.AbstractProducerTestSupport;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.image.ImageService;
 import org.openstack4j.model.common.Payload;
 import org.openstack4j.model.image.ContainerFormat;
 import org.openstack4j.model.image.DiskFormat;
 import org.openstack4j.model.image.Image;
-import org.openstack4j.openstack.image.domain.GlanceImage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class GlanceProducerTest extends AbstractProducerTestSupport {
 
     @Mock
@@ -51,6 +55,18 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
 
     @Mock
     private ImageService imageService;
+
+    @Captor
+    private ArgumentCaptor<Image> captor;
+
+    @Captor
+    private ArgumentCaptor<Payload<?>> payloadCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> imageIdCaptor;
+
+    @Captor
+    private ArgumentCaptor<org.openstack4j.model.image.Image> imageCaptor;
 
     private Image dummyImage;
 
@@ -63,10 +79,10 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
         when(client.images()).thenReturn(imageService);
         dummyImage = createImage();
 
-        when(imageService.get(anyString())).thenReturn(osImage);
-        when(imageService.create(any(org.openstack4j.model.image.Image.class), any(Payload.class))).thenReturn(osImage);
-        when(imageService.reserve(any(org.openstack4j.model.image.Image.class))).thenReturn(osImage);
-        when(imageService.upload(anyString(), any(Payload.class), any(GlanceImage.class))).thenReturn(osImage);
+        when(imageService.create(any(), any())).thenReturn(osImage);
+        when(imageService.reserve(any())).thenReturn(osImage);
+        when(imageService.upload(anyString(), any(), isNull())).thenReturn(osImage);
+        when(imageService.upload(anyString(), any(), any())).thenReturn(osImage);
 
         when(osImage.getContainerFormat()).thenReturn(ContainerFormat.BARE);
         when(osImage.getDiskFormat()).thenReturn(DiskFormat.ISO);
@@ -83,7 +99,7 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
         when(endpoint.getOperation()).thenReturn(GlanceConstants.RESERVE);
         msg.setBody(dummyImage);
         producer.process(exchange);
-        ArgumentCaptor<Image> captor = ArgumentCaptor.forClass(Image.class);
+
         verify(imageService).reserve(captor.capture());
         assertEquals(dummyImage, captor.getValue());
 
@@ -104,7 +120,6 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
         msg.setHeader(GlanceConstants.OWNER, dummyImage.getOwner());
 
         producer.process(exchange);
-        final ArgumentCaptor<Image> captor = ArgumentCaptor.forClass(Image.class);
         verify(imageService).reserve(captor.capture());
         assertEqualsImages(dummyImage, captor.getValue());
 
@@ -128,8 +143,6 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
         msg.setBody(is);
         producer.process(exchange);
 
-        final ArgumentCaptor<Payload> payloadCaptor = ArgumentCaptor.forClass(Payload.class);
-        final ArgumentCaptor<org.openstack4j.model.image.Image> imageCaptor = ArgumentCaptor.forClass(org.openstack4j.model.image.Image.class);
         verify(imageService).create(imageCaptor.capture(), payloadCaptor.capture());
         assertEquals(is, payloadCaptor.getValue().open());
 
@@ -148,9 +161,6 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
         msg.setBody(file);
         producer.process(exchange);
 
-        final ArgumentCaptor<Payload> payloadCaptor = ArgumentCaptor.forClass(Payload.class);
-        final ArgumentCaptor<String> imageIdCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<org.openstack4j.model.image.Image> imageCaptor = ArgumentCaptor.forClass(org.openstack4j.model.image.Image.class);
         verify(imageService).upload(imageIdCaptor.capture(), payloadCaptor.capture(), imageCaptor.capture());
         assertEquals(file, payloadCaptor.getValue().getRaw());
         assertEquals(id, imageIdCaptor.getValue());
@@ -181,9 +191,6 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
         msg.setBody(file);
         producer.process(exchange);
 
-        ArgumentCaptor<Payload> payloadCaptor = ArgumentCaptor.forClass(Payload.class);
-        ArgumentCaptor<String> imageIdCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<org.openstack4j.model.image.Image> imageCaptor = ArgumentCaptor.forClass(org.openstack4j.model.image.Image.class);
         verify(imageService).upload(imageIdCaptor.capture(), payloadCaptor.capture(), imageCaptor.capture());
         assertEquals(id, imageIdCaptor.getValue());
         assertEquals(file, payloadCaptor.getValue().getRaw());
@@ -197,7 +204,7 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
     @Test
     public void updateTest() throws Exception {
         msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.UPDATE);
-        when(imageService.update(any(Image.class))).thenReturn(osImage);
+        when(imageService.update(any())).thenReturn(osImage);
         final String newName = "newName";
         when(osImage.getName()).thenReturn(newName);
         dummyImage.setName(newName);
@@ -205,7 +212,6 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
         msg.setBody(dummyImage);
         producer.process(exchange);
 
-        final ArgumentCaptor<org.openstack4j.model.image.Image> imageCaptor = ArgumentCaptor.forClass(org.openstack4j.model.image.Image.class);
         verify(imageService).update(imageCaptor.capture());
 
         assertEquals(dummyImage, imageCaptor.getValue());

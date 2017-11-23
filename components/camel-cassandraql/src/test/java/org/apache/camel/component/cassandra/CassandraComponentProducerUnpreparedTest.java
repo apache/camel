@@ -64,7 +64,7 @@ public class CassandraComponentProducerUnpreparedTest extends BaseCassandraTest 
 
     @Test
     public void testRequestUriCql() throws Exception {
-        Object response = producerTemplate.requestBody(Arrays.asList("w_jiang", "Willem", "Jiang"));
+        producerTemplate.requestBody(Arrays.asList("w_jiang", "Willem", "Jiang"));
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
         Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
@@ -97,8 +97,8 @@ public class CassandraComponentProducerUnpreparedTest extends BaseCassandraTest 
 
     @Test
     public void testRequestMessageCql() throws Exception {
-        Object response = producerTemplate.requestBodyAndHeader(new Object[]{"Claus 2", "Ibsen 2", "c_ibsen"},
-                CassandraConstants.CQL_QUERY, "update camel_user set first_name=?, last_name=? where login=?");
+        producerTemplate.requestBodyAndHeader(new Object[] {"Claus 2", "Ibsen 2", "c_ibsen"}, CassandraConstants.CQL_QUERY,
+                                              "update camel_user set first_name=?, last_name=? where login=?");
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
         Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
@@ -120,8 +120,7 @@ public class CassandraComponentProducerUnpreparedTest extends BaseCassandraTest 
                 .with(set("first_name", "Claus 2"))
                 .and(set("last_name", "Ibsen 2"))
                 .where(eq("login", "c_ibsen"));
-        Object response = producerTemplate.requestBodyAndHeader(null,
-                CassandraConstants.CQL_QUERY, update);
+        producerTemplate.requestBodyAndHeader(null, CassandraConstants.CQL_QUERY, update);
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
         Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
