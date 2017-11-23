@@ -48,7 +48,7 @@ with the following path and query parameters:
 | *directoryName* | The starting directory |  | String
 |===
 
-==== Query Parameters (111 parameters):
+==== Query Parameters (110 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
