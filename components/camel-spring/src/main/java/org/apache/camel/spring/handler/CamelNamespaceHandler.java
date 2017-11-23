@@ -81,7 +81,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinition> autoRegisterMap = new HashMap<String, BeanDefinition>();
-    private boolean osgi = false;
+
     /**
      * Prepares the nodes before parsing.
      */
@@ -154,6 +154,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         parserMap.put("errorHandler", errorHandlerParser);
 
         // camel context
+        boolean osgi = false;
         Class<?> cl = CamelContextFactoryBean.class;
         // These code will try to detected if we are in the OSGi environment.
         // If so, camel will use the OSGi version of CamelContextFactoryBean to create the CamelContext.
@@ -679,16 +680,14 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 LOG.debug("Registered default: {} with id: {} on camel context: {}", new Object[]{definition.getBeanClassName(), id, contextId});
             }
         } else {
-            if (!osgi) {
-                // ups we have already registered it before with same id, but on another camel context
-                // this is not good so we need to remove all traces of this auto registering.
-                // end user must manually add the needed XML elements and provide unique ids access all camel context himself.
-                LOG.debug("Unregistered default: {} with id: {} as we have multiple camel contexts and they must use unique ids."
+            // ups we have already registered it before with same id, but on another camel context
+            // this is not good so we need to remove all traces of this auto registering.
+            // end user must manually add the needed XML elements and provide unique ids access all camel context himself.
+            LOG.debug("Unregistered default: {} with id: {} as we have multiple camel contexts and they must use unique ids."
                     + " You must define the definition in the XML file manually to avoid id clashes when using multiple camel contexts",
                     definition.getBeanClassName(), id);
 
-                parserContext.getRegistry().removeBeanDefinition(id);
-            }
+            parserContext.getRegistry().removeBeanDefinition(id);
         }
     }
 
