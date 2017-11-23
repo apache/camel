@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.reactor.engine;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,7 +39,7 @@ import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 
 public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport {
-    
+
     // ************************************************
     // Setup
     // ************************************************
@@ -287,70 +291,74 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
     public void testTo() throws Exception {
         context.start();
 
-        AtomicInteger value = new AtomicInteger(0);
-        CountDownLatch latch = new CountDownLatch(1);
+        Set<String> values = Collections.synchronizedSet(new TreeSet<>());
+        CountDownLatch latch = new CountDownLatch(3);
 
         Flux.just(1, 2, 3)
             .flatMap(e -> crs.to("bean:hello", e, String.class))
-            .doOnNext(res -> Assert.assertEquals("Hello " + value.incrementAndGet(), res))
+            .doOnNext(res -> values.add(res))
             .doOnNext(res -> latch.countDown())
             .subscribe();
 
         Assert.assertTrue(latch.await(2, TimeUnit.SECONDS));
+        Assert.assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
     }
 
     @Test
     public void testToWithExchange() throws Exception {
         context.start();
 
-        AtomicInteger value = new AtomicInteger(0);
-        CountDownLatch latch = new CountDownLatch(1);
+        Set<String> values = Collections.synchronizedSet(new TreeSet<>());
+        CountDownLatch latch = new CountDownLatch(3);
 
         Flux.just(1, 2, 3)
             .flatMap(e -> crs.to("bean:hello", e))
             .map(e -> e.getOut())
             .map(e -> e.getBody(String.class))
-            .doOnNext(res -> Assert.assertEquals("Hello " + value.incrementAndGet(), res))
+            .doOnNext(res -> values.add(res))
             .doOnNext(res -> latch.countDown())
             .subscribe();
 
         Assert.assertTrue(latch.await(2, TimeUnit.SECONDS));
+        Assert.assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
     }
 
     @Test
     public void testToFunction() throws Exception {
         context.start();
 
-        AtomicInteger value = new AtomicInteger(0);
-        CountDownLatch latch = new CountDownLatch(1);
+        Set<String> values = Collections.synchronizedSet(new TreeSet<>());
+        CountDownLatch latch = new CountDownLatch(3);
         Function<Object, Publisher<String>> fun = crs.to("bean:hello", String.class);
 
         Flux.just(1, 2, 3)
             .flatMap(fun)
-            .doOnNext(res -> Assert.assertEquals("Hello " + value.incrementAndGet(), res))
+            .doOnNext(res -> values.add(res))
             .doOnNext(res -> latch.countDown())
             .subscribe();
 
         Assert.assertTrue(latch.await(2, TimeUnit.SECONDS));
+        Assert.assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
     }
 
     @Test
     public void testToFunctionWithExchange() throws Exception {
         context.start();
 
-        AtomicInteger value = new AtomicInteger(0);
-        CountDownLatch latch = new CountDownLatch(1);
+        Set<String> values = Collections.synchronizedSet(new TreeSet<>());
+        CountDownLatch latch = new CountDownLatch(3);
         Function<Object, Publisher<Exchange>> fun = crs.to("bean:hello");
 
         Flux.just(1, 2, 3)
             .flatMap(fun)
             .map(e -> e.getOut())
             .map(e -> e.getBody(String.class))
-            .doOnNext(res -> Assert.assertEquals("Hello " + value.incrementAndGet(), res))
+            .doOnNext(res -> values.add(res))
             .doOnNext(res -> latch.countDown())
             .subscribe();
 
         Assert.assertTrue(latch.await(2, TimeUnit.SECONDS));
+        Assert.assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
     }
 
     // ************************************************
