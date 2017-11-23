@@ -116,17 +116,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
-     * A functional expression of an inbound message
-     */
-    public T inMessage(final Supplier<Object> supplier) {
-        return delegate.expression(new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                return supplier.get();
-            }
-        });
-    }
-
-    /**
      * An expression of an outbound message
      */
     public T outMessage() {
