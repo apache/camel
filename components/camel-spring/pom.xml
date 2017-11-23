@@ -65,11 +65,24 @@
       org.apache.camel.spi.ComponentResolver;component=spring-event,
       org.apache.camel.spi.LanguageResolver;language=spel
     </camel.osgi.export.service>
+    <camel.osgi.activator>
+      org.apache.camel.osgi.Activator
+    </camel.osgi.activator>
     <!-- do not skip any tests by default -->
     <platform.skip.tests/>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core-osgi</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
