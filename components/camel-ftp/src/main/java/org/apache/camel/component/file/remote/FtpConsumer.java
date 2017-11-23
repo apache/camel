@@ -17,9 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -144,11 +142,6 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         } else {
             // we found some files
             log.trace("Found {} in directory: {}", files.size(), dir);
-        }
-        
-        
-        if (getEndpoint().isPreSort()) {
-            Collections.sort(files, (a, b) -> a.getName().compareTo(b.getName()));
         }
 
         for (FTPFile file : files) {

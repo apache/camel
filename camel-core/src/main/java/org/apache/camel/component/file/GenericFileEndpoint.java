@@ -111,8 +111,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected boolean recursive;
     @UriParam(label = "consumer")
     protected boolean delete;
-    @UriParam(label = "consumer")
-    protected boolean preSort;
     @UriParam(label = "consumer,filter")
     protected int maxMessagesPerPoll;
     @UriParam(label = "consumer,filter", defaultValue = "true")
@@ -415,20 +413,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     public GenericFileFilter<T> getAntFilter() {
         return antFilter;
-    }
-    
-    public boolean isPreSort() {
-        return preSort;
-    }
-
-    /**
-     * When pre-sort is enabled then the consumer will sort the file and directory names during polling, 
-     * that was retrieved from the file system. You may want to do this in case you need to operate on the files 
-     * in a sorted order. The pre-sort is executed before the consumer starts to filter, and accept files 
-     * to process by Camel. This option is default=false meaning disabled.
-     */
-    public void setPreSort(boolean preSort) {
-        this.preSort = preSort;
     }
 
     public boolean isDelete() {
