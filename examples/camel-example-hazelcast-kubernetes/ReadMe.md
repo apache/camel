@@ -6,7 +6,7 @@ This quickstart is based on the Kubernetes example here: https://github.com/kube
 
 This example is based on:
 
-- Minikube (Kubernetes version >= 1.5)
+- Minikube (Kubernetes version >= 1.5) or Minishift (Openshift >= 3.5)
 - Fabric8 Maven Plugin (version >= 3.2)
 
 First thing you'll need to do is preparing the environment.
@@ -19,10 +19,25 @@ $ kubectl create -f src/main/resources/fabric8/hazelcast-service.yaml
 $ kubectl create -f src/main/resources/fabric8/hazelcast-deployment.yaml
 ```
 
+or once your Minishift cluster is up and running:
+
+```
+$ oc create -f src/main/resources/fabric8/hazelcast-service.yaml
+$ oc create -f src/main/resources/fabric8/hazelcast-deployment.yaml
+```
+
 To check the correct startup of the Hazelcast instance run the following command:
 
 ```
 $ kubectl get deployment
+NAME        DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+hazelcast   1         1         1            1           1m
+```
+
+or on Minishift
+
+```
+$ oc get deployment
 NAME        DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 hazelcast   1         1         1            1           1m
 ```
@@ -35,10 +50,24 @@ NAME                         READY     STATUS    RESTARTS   AGE
 hazelcast-1638707704-n64tk   1/1       Running   0          1m
 ```
 
+on Minishift:
+
+```
+$ oc get pods
+NAME                         READY     STATUS    RESTARTS   AGE
+hazelcast-1638707704-n64tk   1/1       Running   0          1m
+```
+
 Now you can decide to scale-up your Hazelcast cluster
 
 ```
 $ kubectl scale deployment hazelcast --replicas 4
+```
+
+on Minishift
+
+```
+$ oc scale deployment hazelcast --replicas=4
 ```
 
 and again check the status of your pods
@@ -53,7 +82,19 @@ hazelcast-1638707704-z1g6r   1/1       Running   0          1m
 
 ```
 
-You can also take a look at the logs from the pods:
+on Minishift
+
+```
+$ oc get pods
+NAME                         READY     STATUS    RESTARTS   AGE
+hazelcast-1638707704-g8qwh   1/1       Running   0          1m
+hazelcast-1638707704-n64tk   1/1       Running   0          3m
+hazelcast-1638707704-wwwff   1/1       Running   0          1m
+hazelcast-1638707704-z1g6r   1/1       Running   0          1m
+
+```
+
+You can also take a look at the logs from the pods with kubectl or oc
 
 ```
 kubectl logs hazelcast-414548760-fb5bh
@@ -103,11 +144,19 @@ Navigate to the project folder and the example can be built with
 
 When the example runs in fabric8, you can use the Kubectl command tool to inspect the status
 
-To list all the running pods:
+To list all the running pods on Minikube:
 
     $ kubectl get pods
 
-Then find the name of the pod that runs this quickstart, and output the logs from the running pods with:
+Then find the name on Minikube of the pod that runs this quickstart, and output the logs from the running pods with:
+
+    $ kubectl logs <name of pod>
+
+To list all the running pods on Minishift:
+
+    $ oc get pods
+
+Then find the name on Minishift of the pod that runs this quickstart, and output the logs from the running pods with:
 
     $ kubectl logs <name of pod>
 
@@ -155,7 +204,7 @@ INFO: hz.client_0 [someGroup] [3.9] Authenticated with server [172.17.0.9]:5701,
 
 ### Cleanup
 
-Run following to undeploy
+Run following to undeploy on Minikube
 
 ```
 $ mvn -Pkubernetes-install fabric8:undeploy
@@ -163,8 +212,21 @@ $ kubectl delete -f src/main/resources/fabric8/hazelcast-deployment.yaml
 $ kubectl delete -f src/main/resources/fabric8/hazelcast-service.yaml
 ```
 
+Run following to undeploy on Minishift
+
+```
+$ mvn -Pkubernetes-install fabric8:undeploy
+$ oc delete -f src/main/resources/fabric8/hazelcast-deployment.yaml
+$ oc delete -f src/main/resources/fabric8/hazelcast-service.yaml
+```
+
 Make sure no pod is running
 ```
 $ kubectl get pods
+No resources found.
+```
+
+```
+$ oc get pods
 No resources found.
 ```
