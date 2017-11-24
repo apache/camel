@@ -80,7 +80,7 @@ jpa:entityClassName[?options]
 -----------------------------
 
 For sending to the endpoint, the _entityClassName_ is optional. If
-specified, it helps the link:type-converter.html[Type Converter] to
+specified, it helps the link:http://camel.apache.org/type-converter.html[Type Converter] to
 ensure the body is of the correct type.
 
 For consuming, the _entityClassName_ is mandatory.
@@ -359,27 +359,30 @@ the message body.
 
 ### Example
 
-See link:tracer-example.html[Tracer Example] for an example using
+See link:http://camel.apache.org/tracer-example.html[Tracer Example] for an example using
 link:jpa.html[JPA] to store traced messages into a database.
 
-### Using the JPA based idempotent repository
+### Using the JPA-Based Idempotent Repository
 
-In this section we will use the JPA based idempotent repository.
+The Idempotent Consumer from the http://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] is used to filter out duplicate messages. A JPA-based idempotent repository is provided.
 
-First we need to setup a `persistence-unit` in the persistence.xml file:
+To use the JPA based idempotent repository.
 
-Second we have to setup a `org.springframework.orm.jpa.JpaTemplate`
+.Procedure
+
+. Set up a `persistence-unit` in the persistence.xml file:
+
+. Set up a `org.springframework.orm.jpa.JpaTemplate`
 which is used by the
 `org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository`:
 
-Error formatting macro: snippet: java.lang.IndexOutOfBoundsException:
+. Configure the error formatting macro: snippet: java.lang.IndexOutOfBoundsException:
 Index: 20, Size: 20
 
-Afterwards we can configure our
+. Configure the idempotent repository:
 `org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository`:
 
-And finally we can create our JPA idempotent repository in the spring
-XML file as well:
+. Create the JPA idempotent repository in the Spring XML file:
 
 [source,xml]
 ---------------------------------------------------------------
@@ -396,10 +399,10 @@ XML file as well:
 
 *When running this Camel component tests inside your IDE*
 
-In case you run the
+If you run the
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-jpa/src/test[tests
-of this component] directly inside your IDE (and not necessarily through
-Maven itself) then you could spot exceptions like:
+of this component] directly inside your IDE, and not through
+Maven, then you could see exceptions like these:
 
 [source,java]
 --------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -415,14 +418,14 @@ but the following listed types were not enhanced at build time or at class load 
     at org.apache.camel.test.junit4.CamelTestSupport.setUp(CamelTestSupport.java:208)
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 
-The problem here is that the source has been compiled/recompiled through
-your IDE and not through Maven itself which would
+The problem here is that the source has been compiled or recompiled through
+your IDE and not through Maven, which would
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-jpa/pom.xml[enhance
-the byte-code at build time]. To overcome this you would need to enable
+the byte-code at build time]. To overcome this you need to enable
 http://openjpa.apache.org/entity-enhancement.html#dynamic-enhancement[dynamic
-byte-code enhancement of OpenJPA]. As an example assuming the current
-OpenJPA version being used in Camel itself is 2.2.1, then as running the
-tests inside your favorite IDE you would need to pass the following
+byte-code enhancement of OpenJPA]. For example, assuming the current
+OpenJPA version being used in Camel is 2.2.1, to run the 
+tests inside your IDE you would need to pass the following
 argument to the JVM:
 
 [source,java]
@@ -431,14 +434,13 @@ argument to the JVM:
 -javaagent:<path_to_your_local_m2_cache>/org/apache/openjpa/openjpa/2.2.1/openjpa-2.2.1.jar
 -------------------------------------------------------------------------------------------
 
-Then it will all become green again
-image:https://cwiki.apache.org/confluence/s/en_GB/5982/f2b47fb3d636c8bc9fd0b11c0ec6d0ae18646be7.1/_/images/icons/emoticons/smile.png[(smile)]
+
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* link:http://camel.apache.org/configuring-camel.html[Configuring Camel]
+* link:http://camel.apache.org/component.html[Component]
+* link:http://camel.apache.org/endpoint.html[Endpoint]
+* link:http://camel.apache.org/getting-started.html[Getting Started]
 
-* link:tracer-example.html[Tracer Example]
+* link:http://camel.apache.org/tracer-example.html[Tracer Example]
