@@ -62,6 +62,7 @@ import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.config.MessageConstraints;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -476,13 +477,9 @@ public final class Olingo4AppImpl implements Olingo4App {
                             UriResourceKind lastResourceKind = listResource.get(listResource.size() - 1).getKind();
                             switch (lastResourceKind) {
                             case entitySet:
-                                if (content instanceof ClientEntity) {
-                                    ClientEntity entity = odataReader.readEntity(result.getEntity().getContent(),
-                                                                                 ContentType.parse(result.getEntity().getContentType().getValue()));
-                                    responseHandler.onResponse((T)entity, headersToMap(result.getAllHeaders()));
-                                } else {
-                                    throw new ODataException("Unsupported content type: " + content);
-                                }
+                                ClientEntity entity = odataReader.readEntity(result.getEntity().getContent(),
+                                                                             ContentType.parse(result.getEntity().getContentType().getValue()));
+                                responseHandler.onResponse((T)entity, headersToMap(result.getAllHeaders()));
                                 break;
                             default:
                                 break;
@@ -515,6 +512,10 @@ public final class Olingo4AppImpl implements Olingo4App {
             case entitySet:
                 if (content instanceof ClientEntity) {
                     requestStream = odataWriter.writeEntity((ClientEntity)content, getResourceContentType(uriInfo));
+                } else if (content instanceof String) {
+                    httpEntity = new StringEntity((String) content, org.apache.http.entity.ContentType.APPLICATION_JSON);
+                    httpEntity.setChunked(false);
+                    return httpEntity;
                 } else {
                     throw new ODataException("Unsupported content type: " + content);
                 }
