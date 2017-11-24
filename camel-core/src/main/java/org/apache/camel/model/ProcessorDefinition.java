@@ -3080,7 +3080,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public <Result> Type setBody(Function<Exchange, Result> function) {
         SetBodyDefinition answer = new SetBodyDefinition(new ExpressionAdapter() {
             @Override
-            public Object evaluate(Exchange exchange) {
+            public Result evaluate(Exchange exchange) {
                 return function.apply(exchange);
             }
         });
