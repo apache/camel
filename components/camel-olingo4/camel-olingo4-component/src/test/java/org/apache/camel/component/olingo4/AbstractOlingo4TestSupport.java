@@ -70,7 +70,7 @@ public class AbstractOlingo4TestSupport extends CamelTestSupport {
      * Every request to the demo OData 4.0
      * (http://services.odata.org/TripPinRESTierService) generates unique
      * service URL with postfix like (S(tuivu3up5ygvjzo5fszvnwfv)) for each
-     * session This method makes reuest to the base URL and return URL with
+     * session This method makes request to the base URL and return URL with
      * generated postfix
      */
     @SuppressWarnings("deprecation")
