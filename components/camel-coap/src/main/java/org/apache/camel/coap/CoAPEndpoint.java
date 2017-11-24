@@ -34,8 +34,8 @@ import org.eclipse.californium.core.CoapServer;
 public class CoAPEndpoint extends DefaultEndpoint {
     @UriPath
     private URI uri;
-    @UriParam(defaultValue = "*")
-    private String coapMethod = "*";
+    @UriParam(label = "consumer")
+    private String coapMethodRestrict;
         
     private CoAPComponent component;
     
@@ -49,17 +49,17 @@ public class CoAPEndpoint extends DefaultEndpoint {
         this.component = component;
     }
 
-    public void setCoapMethod(String m) {
-        coapMethod = m;
+    public void setCoapMethodRestrict(String coapMethodRestrict) {
+        this.coapMethodRestrict = coapMethodRestrict;
     }
+
     /**
-     * The CoAP method this endpoint binds to. Default is to bind to all ("*") but can
-     * be restricted to GET, POST, PUT, DELETE, PING 
-     * @return
+     * Comma separated list of methods that the CoAP consumer will bind to. The default is to bind to all methods (DELETE, GET, POST, PUT).
      */
-    public String getCoapMethod() {
-        return coapMethod;
+    public String getCoapMethodRestrict() {
+        return this.coapMethodRestrict;
     }
+
     public Producer createProducer() throws Exception {
         return new CoAPProducer(this);
     }

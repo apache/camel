@@ -52,10 +52,31 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *coapMethod* (common) | The CoAP method this endpoint binds to. Default is to bind to all () but can be restricted to GET POST PUT DELETE PING | * | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *coapMethodRestrict* (consumer) | Comma separated list of methods that the CoAP consumer will bind to. The default is to bind to all methods (DELETE GET POST PUT). |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+
+### Message Headers
+
+[width="100%",cols="10%,20%,70%",options="header",]
+|=======================================================================
+|Name |Type |Description
+
+|`CamelCoapMethod` |`String` |The request method that the CoAP producer should use when calling the target CoAP
+server URI. Valid options are DELETE, GET, PING, POST & PUT.
+
+|`CamelCoapUri` |`String` |The URI of a CoAP server to call. Will override any existing URI configured directly on the endpoint.
+|=======================================================================
+
+#### Configuring the CoAP producer request method
+
+The following rules determine which request method the CoAP producer will use to invoke the target URI:
+
+ 1. The value of the `CamelCoapMethod` header
+ 2. **GET** if a query string is provided on the target CoAP server URI.
+ 3. **POST** if the message exchange body is not null.
+ 4. **GET** otherwise.

@@ -36,7 +36,7 @@ final class CamelCoapResource extends CoapResource {
 
     CamelCoapResource(String name, CoAPConsumer consumer) {
         super(name);
-        consumers.put(consumer.getCoapEndpoint().getCoapMethod(), consumer);
+        addConsumer(consumer);
         possibles = null;
     }
 
@@ -46,7 +46,11 @@ final class CamelCoapResource extends CoapResource {
     }
     
     void addConsumer(CoAPConsumer consumer) {
-        consumers.put(consumer.getCoapEndpoint().getCoapMethod(), consumer);
+        CoAPEndpoint coapEndpoint = consumer.getCoapEndpoint();
+        String coapMethodRestrict = CoAPHelper.getDefaultMethodRestrict(coapEndpoint.getCoapMethodRestrict());
+        for (String method : coapMethodRestrict.split(",")) {
+            consumers.put(method.trim(), consumer);
+        }
     }
     
     @Override
@@ -81,10 +85,6 @@ final class CamelCoapResource extends CoapResource {
         CoapExchange cexchange = new CoapExchange(exchange, this);
         try {
             consumer = consumers.get(exchange.getRequest().getCode().name());
-            if (consumer == null) {
-                consumer = consumers.get("*");
-            }
-
             if (consumer == null) {
                 cexchange.respond(ResponseCode.METHOD_NOT_ALLOWED);
                 return;

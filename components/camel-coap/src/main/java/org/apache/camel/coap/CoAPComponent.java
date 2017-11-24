@@ -107,7 +107,7 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
             }
         }
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         // setup endpoint options
         if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
             map.putAll(config.getEndpointProperties());
@@ -122,7 +122,7 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
         if (uriTemplate == null) {
             uriTemplate = "";
         }
-        url += basePath + uriTemplate + "?coapMethod=" + verb.toUpperCase(Locale.US);
+        url += basePath + uriTemplate + "?coapMethodRestrict=" + verb.toUpperCase(Locale.US);
         if (!query.isEmpty()) {
             url += "&" + query;
         }
