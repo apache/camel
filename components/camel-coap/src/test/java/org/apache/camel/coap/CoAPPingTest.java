@@ -37,7 +37,7 @@ public class CoAPPingTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived(true);
-        sender.sendBody("Hello");
+        sender.sendBodyAndHeader("Hello", CoAPConstants.COAP_METHOD, CoAPConstants.METHOD_PING);
         assertMockEndpointsSatisfied();
     }
 
@@ -46,12 +46,12 @@ public class CoAPPingTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception { 
-                from("coap://localhost:" + PORT + "/TestResource?coapMethod=PING")
+                from("coap://localhost:" + PORT + "/TestResource")
                     .to("log:exch")
                     .transform(body().convertTo(Boolean.class))
                     .to("log:exch");
                 
-                from("direct:start").to("coap://localhost:" + PORT + "/TestResource?coapMethod=PING").to("mock:result");
+                from("direct:start").to("coap://localhost:" + PORT + "/TestResource").to("mock:result");
             }
         };
     }
