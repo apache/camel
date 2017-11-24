@@ -84,7 +84,12 @@ final class CamelCoapResource extends CoapResource {
             if (consumer == null) {
                 consumer = consumers.get("*");
             }
-            
+
+            if (consumer == null) {
+                cexchange.respond(ResponseCode.METHOD_NOT_ALLOWED);
+                return;
+            }
+
             camelExchange = consumer.getEndpoint().createExchange();
             consumer.createUoW(camelExchange);
             
@@ -125,8 +130,8 @@ final class CamelCoapResource extends CoapResource {
             
             byte bytes[] = exchange.getCurrentRequest().getPayload();
             camelExchange.getIn().setBody(bytes);
-                       
-            consumer.getProcessor().process(camelExchange);            
+
+            consumer.getProcessor().process(camelExchange);
             Message target = camelExchange.hasOut() ? camelExchange.getOut() : camelExchange.getIn();
             
             int format = MediaTypeRegistry.parse(target.getHeader(org.apache.camel.Exchange.CONTENT_TYPE, String.class));
