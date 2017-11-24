@@ -3059,10 +3059,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param supplier   the supplier that provides a value to the IN message body
      * @return the builder
      */
-    public Type setBody(Supplier supplier) {
+    public <Result> Type setBody(Supplier<Result> supplier) {
         SetBodyDefinition answer = new SetBodyDefinition(new ExpressionAdapter() {
             @Override
-            public Object evaluate(Exchange exchange) {
+            public Result evaluate(Exchange exchange) {
                 return supplier.get();
             }
         });
@@ -3077,7 +3077,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param function   the function that provides a value to the IN message body
      * @return the builder
      */
-    public Type setBody(Function<Exchange, ?> function) {
+    public <Result> Type setBody(Function<Exchange, Result> function) {
         SetBodyDefinition answer = new SetBodyDefinition(new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
