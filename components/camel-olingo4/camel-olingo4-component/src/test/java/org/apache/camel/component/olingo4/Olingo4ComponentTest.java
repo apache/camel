@@ -62,6 +62,17 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
     private static final String TEST_CREATE_PEOPLE = PEOPLE + "(" + TEST_CREATE_KEY + ")";
     private static final String TEST_CREATE_RESOURCE_CONTENT_ID = "1";
     private static final String TEST_UPDATE_RESOURCE_CONTENT_ID = "2";
+    private static final String TEST_CREATE_JSON = "{\n"
+            + "  \"UserName\": \"lewisblack\",\n"
+            + "  \"FirstName\": \"Lewis\",\n"
+            + "  \"LastName\": \"Black\"\n"
+            + "}";
+    private static final String TEST_UPDATE_JSON = "{\n"
+            + "  \"UserName\": \"lewisblack\",\n"
+            + "  \"FirstName\": \"Lewis\",\n"
+            + "  \"MiddleName\": \"Black\",\n"
+            + "  \"LastName\": \"Black\"\n"
+            + "}";
 
     @Test
     public void testRead() throws Exception {
@@ -121,6 +132,35 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         clientEntity.getProperties().add(objFactory.newPrimitiveProperty("MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
 
         HttpStatusCode status = requestBody("direct://update-entity", clientEntity);
+        assertNotNull("Update status", status);
+        assertEquals("Update status", HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
+        LOG.info("Update entity status: {}", status);
+
+        // delete
+        status = requestBody("direct://delete-entity", null);
+        assertNotNull("Delete status", status);
+        assertEquals("Delete status", HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
+        LOG.info("Delete status: {}", status);
+
+        // check for delete
+        try {
+            requestBody("direct://read-deleted-entity", null);
+        } catch (CamelExecutionException e) {
+            assertEquals("Resource Not Found [HTTP/1.1 404 Not Found]", e.getCause().getMessage());
+        }
+    }
+
+    @Test
+    public void testCreateUpdateDeleteFromJson() throws Exception {
+        ClientEntity entity = requestBody("direct://create-entity", TEST_CREATE_JSON);
+        assertNotNull(entity);
+        assertEquals("Lewis", entity.getProperty("FirstName").getValue().toString());
+        assertEquals("Black", entity.getProperty("LastName").getValue().toString());
+        assertEquals("lewisblack", entity.getProperty("UserName").getValue().toString());
+        assertEquals("", entity.getProperty("MiddleName").getValue().toString());
+
+        // update
+        HttpStatusCode status = requestBody("direct://update-entity", TEST_UPDATE_JSON);
         assertNotNull("Update status", status);
         assertEquals("Update status", HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
         LOG.info("Update entity status: {}", status);
