@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jsonvalidator;
 
+import com.github.fge.jsonschema.main.JsonSchema;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 
@@ -34,6 +36,6 @@ public interface JsonValidatorErrorHandler {
      * @param e   the exception triggering the error
      * @throws ValidationException is thrown in case of validation errors
      */
-    void handleErrors(Exchange exchange, org.everit.json.schema.Schema schema, Exception e) throws ValidationException;
+    void handleErrors(Exchange exchange, JsonSchema schema, Exception e) throws ValidationException;
 
 }

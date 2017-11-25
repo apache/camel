@@ -17,6 +17,12 @@
 package org.apache.camel.component.jsonvalidator;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import com.github.fge.jackson.JsonLoader;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
+import com.github.fge.jsonschema.main.JsonSchema;
 
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
@@ -26,18 +32,12 @@ import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IOHelper;
-import org.everit.json.schema.ObjectSchema;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.ValidationException;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Validates the payload of a message using Everit JSON schema validator.
+ * Validates the payload of a message using json-schema-validator.
  */
 @ManagedResource(description = "Managed JsonValidatorEndpoint")
 @UriEndpoint(scheme = "json-validator", firstVersion = "2.20.0", title = "JSON Schema Validator", syntax = "json-validator:resourceUri",
@@ -46,7 +46,7 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonValidatorEndpoint.class);
 
-    private volatile Schema schema;
+    private volatile JsonSchema schema;
 
     @UriParam(defaultValue = "true")
     private boolean failOnNullBody = true;
@@ -76,10 +76,9 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
-        Object jsonPayload;
         InputStream is = null;
         // Get a local copy of the current schema to improve concurrency.
-        Schema localSchema = this.schema;
+        JsonSchema localSchema = this.schema;
         if (localSchema == null) {
             localSchema = getOrCreateSchema();
         }
@@ -95,16 +94,14 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
                 }
             }
             if (is != null) {
-                if (schema instanceof ObjectSchema) {
-                    jsonPayload = new JSONObject(new JSONTokener(is));
-                } else { 
-                    jsonPayload = new JSONArray(new JSONTokener(is));
+                ProcessingReport report = schema.validate(JsonLoader.fromReader(new InputStreamReader(is)));
+                if (report.isSuccess()) { 
+                    LOG.debug("JSON is valid");
+                } else {
+                    throw new JsonValidationException(exchange, schema, report);
                 }
-                // throws a ValidationException if this object is invalid
-                schema.validate(jsonPayload); 
-                LOG.debug("JSON is valid");
             }
-        } catch (ValidationException | JSONException e) {
+        } catch (ProcessingException e) {
             this.errorHandler.handleErrors(exchange, schema, e);
         } finally {
             IOHelper.close(is);
@@ -128,7 +125,7 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
      * 
      * @return The currently loaded schema
      */
-    private Schema getOrCreateSchema() throws Exception {
+    private JsonSchema getOrCreateSchema() throws Exception {
         synchronized (this) {
             if (this.schema == null) {
                 this.schema = this.schemaLoader.createSchema(getCamelContext(), this.getResourceAsInputStream());
@@ -160,8 +157,8 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     }
     
     /**
-     * To use a custom schema loader allowing for adding custom format validation. See Everit JSON Schema documentation.
-     * The default implementation will create a schema loader builder with draft v6 support.
+     * To use a custom schema loader allowing for adding custom format validation. See json-schema-validator documentation.
+     * The default implementation will create a JsonSchema with JsonSchemaFactory's default
      */
     public void setSchemaLoader(JsonSchemaLoader schemaLoader) {
         this.schemaLoader = schemaLoader;

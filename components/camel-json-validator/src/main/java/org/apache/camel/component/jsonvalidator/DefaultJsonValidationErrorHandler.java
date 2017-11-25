@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jsonvalidator;
 
+import com.github.fge.jsonschema.main.JsonSchema;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 
@@ -27,12 +29,8 @@ public class DefaultJsonValidationErrorHandler implements JsonValidatorErrorHand
     }
     
     @Override
-    public void handleErrors(Exchange exchange, org.everit.json.schema.Schema schema, Exception e) throws ValidationException {
-        if (e instanceof org.everit.json.schema.ValidationException) {
-            throw new JsonValidationException(exchange, schema, (org.everit.json.schema.ValidationException)e);
-        } else {
-            throw new JsonValidationException(exchange, schema, e);
-        }
+    public void handleErrors(Exchange exchange, JsonSchema schema, Exception e) throws ValidationException {
+        throw new JsonValidationException(exchange, schema, e);
     }
 
 }

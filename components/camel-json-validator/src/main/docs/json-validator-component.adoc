@@ -3,8 +3,8 @@
 *Available as of Camel version 2.20*
 
 The JSON Schema Validator component performs bean validation of the message body
-agains JSON Schemas using the Everit.org JSON Schema library
-(https://github.com/everit-org/json-schema). 
+agains JSON Schemas using Json Schema Validator library
+(https://github.com/java-json-tools/json-schema-validator). 
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -67,7 +67,7 @@ with the following path and query parameters:
 | *failOnNullHeader* (producer) | Whether to fail if no header exists when validating against a header. | true | boolean
 | *headerName* (producer) | To validate against a header instead of the message body. |  | String
 | *errorHandler* (advanced) | To use a custom ValidatorErrorHandler. The default error handler captures the errors and throws an exception. |  | JsonValidatorError Handler
-| *schemaLoader* (advanced) | To use a custom schema loader allowing for adding custom format validation. See Everit JSON Schema documentation. The default implementation will create a schema loader builder with draft v6 support. |  | JsonSchemaLoader
+| *schemaLoader* (advanced) | To use a custom schema loader allowing for adding custom format validation. See json-schema-validator documentation. The default implementation will create a JsonSchema with JsonSchemaFactory's default |  | JsonSchemaLoader
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END

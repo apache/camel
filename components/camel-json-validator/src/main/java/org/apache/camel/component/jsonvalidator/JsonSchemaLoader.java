@@ -17,18 +17,15 @@
 package org.apache.camel.component.jsonvalidator;
 
 import java.io.InputStream;
-
+import com.github.fge.jsonschema.main.JsonSchema;
 import org.apache.camel.CamelContext;
-import org.everit.json.schema.FormatValidator;
-import org.everit.json.schema.Schema;
-
 /**
  * Can be used to create custom schema for the JSON validator endpoint.
- * This interface is useful to add custom {@link FormatValidator} to the {@link Schema}
+ * This interface is useful to add custom {@link AbstractFormatAttribute} to the {@link JsonSchema}
  * 
  * For more information see 
- * <a href="https://github.com/everit-org/json-schema#format-validators">Format Validators</a>
- * in the Everit JSON Schema documentation. 
+ * <a href="https://github.com/java-json-tools/json-schema-validator/blob/master/src/main/java/com/github/fge/jsonschema/format/AbstractFormatAttribute.java">AbstractFormatAttribute</a>
+ * in json-schema-validator documentation. 
  */
 public interface JsonSchemaLoader {
     
@@ -39,6 +36,6 @@ public interface JsonSchemaLoader {
      * @param schemaInputStream the resource input stream
      * @return a Schema to be used when validating incoming requests
      */
-    Schema createSchema(CamelContext camelContext, InputStream schemaInputStream) throws Exception;
+    JsonSchema createSchema(CamelContext camelContext, InputStream schemaInputStream) throws Exception;
 
 }
