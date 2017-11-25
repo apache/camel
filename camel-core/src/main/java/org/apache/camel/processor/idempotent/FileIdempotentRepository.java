@@ -334,8 +334,11 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     protected void doStart() throws Exception {
         ObjectHelper.notNull(fileStore, "fileStore", this);
 
-        // default use a 1st level cache
-        this.cache = LRUCacheFactory.newLRUCache(1000);
+        //CAMEL-12037
+        if (this.cache == null) {
+        	// default use a 1st level cache
+        	this.cache = LRUCacheFactory.newLRUCache(1000);
+        }
 
         // init store if not loaded before
         if (init.compareAndSet(false, true)) {
