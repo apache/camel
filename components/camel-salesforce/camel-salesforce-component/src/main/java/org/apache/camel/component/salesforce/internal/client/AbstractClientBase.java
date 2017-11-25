@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,6 +31,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -277,7 +280,7 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
     protected abstract SalesforceException createRestException(Response response, InputStream responseContent);
 
-    private static Map<String, String> determineHeadersFrom(final Response response) {
+    static Map<String, String> determineHeadersFrom(final Response response) {
         final HttpFields headers = response.getHeaders();
 
         final Map<String, String> answer = new LinkedHashMap<>();
@@ -311,8 +314,19 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
         final Map<String, List<String>> answer = new HashMap<>();
         for (final String headerName : headers.keySet()) {
             if (headerName.startsWith("Sforce") || headerName.startsWith("x-sfdc")) {
-                final String[] values = inboundMessage.getHeader(headerName, String[].class);
-                answer.put(headerName, Arrays.asList(values));
+                final Object headerValue = inboundMessage.getHeader(headerName);
+
+                if (headerValue instanceof String) {
+                    answer.put(headerName, Collections.singletonList((String) headerValue));
+                } else if (headerValue instanceof String[]) {
+                    answer.put(headerName, Arrays.asList((String[]) headerValue));
+                } else if (headerValue instanceof Collection) {
+                    answer.put(headerName, ((Collection<?>) headerValue).stream().map(String::valueOf)
+                        .collect(Collectors.<String>toList()));
+                } else {
+                    throw new IllegalArgumentException(
+                        "Given value for header `" + headerName + "`, is not String, String array or a Collection");
+                }
             }
         }
 

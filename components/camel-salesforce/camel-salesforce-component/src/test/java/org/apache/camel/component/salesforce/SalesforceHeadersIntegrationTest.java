@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,7 +29,7 @@ public class SalesforceHeadersIntegrationTest extends AbstractSalesforceTestBase
     @Test
     public void shouldSendCustomHeaders() {
         final Exchange exchange = template().request("salesforce:getGlobalObjects", (Processor) exchange1 -> {
-            exchange1.getIn().setHeader("Sforce-Limit-Info", Arrays.asList("api-usage"));
+            exchange1.getIn().setHeader("Sforce-Limit-Info", Collections.singletonList("api-usage"));
         });
 
         Assertions.assertThat(exchange.getOut().getBody(GlobalObjects.class)).isNotNull();
