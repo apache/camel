@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -34,6 +34,7 @@ public class WeatherQueryTest {
     private static final String LONGITUDE = "4.13";
     private static final String LATITUDE = "51.98";
     private static final String APPID = "9162755b2efa555823cfe0451d7fff38";
+
     @Mock
     private GeoLocationProvider geoLocationProvider;
 
@@ -44,7 +45,6 @@ public class WeatherQueryTest {
     public void setup() throws Exception {
         GeoLocation location = new GeoLocation(LONGITUDE, LATITUDE);
         when(geoLocationProvider.getCurrentGeoLocation()).thenReturn(location);
-        when(exceptionThrowingGeoLocationProvider.getCurrentGeoLocation()).thenThrow(new IllegalStateException("Error in getting current location"));
     }
 
     @Test
