@@ -42,7 +42,7 @@ public class CustomSchemaLoaderValidatorRouteTest extends CamelTestSupport {
 
         template.sendBody("direct:start",
                 "{ \"name\": \"Even Joe\", \"id\": 1, \"price\": 12.5 }");
-
+        
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 

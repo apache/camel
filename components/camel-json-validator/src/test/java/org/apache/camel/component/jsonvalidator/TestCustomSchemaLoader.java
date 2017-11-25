@@ -18,25 +18,62 @@ package org.apache.camel.component.jsonvalidator;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jackson.JsonLoader;
+import com.github.fge.jsonschema.cfg.ValidationConfiguration;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.library.DraftV4Library;
+import com.github.fge.jsonschema.library.Library;
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.github.fge.jsonschema.messages.JsonSchemaValidationBundle;
+import com.github.fge.msgsimple.bundle.MessageBundle;
+import com.github.fge.msgsimple.load.MessageBundles;
+import com.github.fge.msgsimple.source.MapMessageSource;
+import com.github.fge.msgsimple.source.MessageSource;
 
 import org.apache.camel.CamelContext;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.everit.json.schema.loader.SchemaLoader.SchemaLoaderBuilder;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 public class TestCustomSchemaLoader implements JsonSchemaLoader {
 
     @Override
-    public Schema createSchema(CamelContext camelContext, InputStream schemaInputStream) throws IOException {
+    public JsonSchema createSchema(CamelContext camelContext, InputStream schemaInputStream) throws IOException, ProcessingException {
 
-        SchemaLoaderBuilder schemaLoaderBuilder = SchemaLoader.builder().draftV6Support();
+        JsonNode schemaNode = JsonLoader.fromReader(new InputStreamReader(schemaInputStream));
+        
+        /*
+         * Build a new library with our added format attribute
+         */
+        final Library library = DraftV4Library.get().thaw()
+            .addFormatAttribute("evenlength", EvenCharNumValidator.getInstance())
+            .freeze();
 
-        try (InputStream inputStream = schemaInputStream) {
-            JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
-            return schemaLoaderBuilder.schemaJson(rawSchema).addFormatValidator(new EvenCharNumValidator()).build().load().build();
-        }
+        /*
+         * Build a new message bundle with our added error message
+         */
+        final String key = "evenlength";
+        final String value = "oddlength";
+        final MessageSource source = MapMessageSource.newBuilder()
+            .put(key, value).build();
+        final MessageBundle bundle
+            = MessageBundles.getBundle(JsonSchemaValidationBundle.class)
+            .thaw().appendSource(source).freeze();
+
+        /*
+         * Build our dedicated validation configuration
+         */
+        final ValidationConfiguration cfg = ValidationConfiguration.newBuilder()
+            .setDefaultLibrary("http://json-schema.org/draft-06/schema#", library)
+            .setValidationMessages(bundle).freeze();
+
+        final JsonSchemaFactory factory = JsonSchemaFactory.newBuilder()
+            .setValidationConfiguration(cfg).freeze();
+
+        final JsonSchema schema = factory.getJsonSchema(schemaNode);
+        
+        return schema;
     }
 
 }

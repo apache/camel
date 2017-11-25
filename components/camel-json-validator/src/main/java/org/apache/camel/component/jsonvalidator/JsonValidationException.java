@@ -16,21 +16,21 @@
  */
 package org.apache.camel.component.jsonvalidator;
 
-import java.util.stream.Collectors;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
+import com.github.fge.jsonschema.main.JsonSchema;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
-import org.everit.json.schema.Schema;
 
 public class JsonValidationException extends ValidationException {
     
     private static final long serialVersionUID = 1L;
-    
-    public JsonValidationException(Exchange exchange, Schema schema, org.everit.json.schema.ValidationException e) {
-        super(e.getAllMessages().stream().collect(Collectors.joining(", ")), exchange, e);
-    }
 
-    public JsonValidationException(Exchange exchange, Schema schema, Exception e) {
+    public JsonValidationException(Exchange exchange, JsonSchema schema, Exception e) {
         super(e.getMessage(), exchange, e);
+    }
+    
+    public JsonValidationException(Exchange exchange, JsonSchema schema, ProcessingReport report) {
+        super(" report: " + report, exchange, null);
     }
 }

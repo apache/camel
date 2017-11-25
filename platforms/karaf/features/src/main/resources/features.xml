@@ -1249,7 +1249,7 @@
   </feature>
   <feature name='camel-json-validator' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:com.github.everit-org.json-schema/org.everit.json.schema/${everit-org-json-schema-version}</bundle>
+    <bundle dependency='true'>mvn:com.github.fge/json-schema-validator/${java-json-schema-validator-version}</bundle>
     <bundle dependency='true'>mvn:org.json/json/20170516</bundle>
     <bundle dependency='true'>mvn:com.damnhandy/handy-uri-templates/2.1.6</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
