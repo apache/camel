@@ -26,7 +26,9 @@ import java.util.Set;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.EventDrivenPollingConsumer;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -116,6 +118,23 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         result.setEagerLimitMaxMessagesPerPoll(isEagerMaxMessagesPerPoll());
 
         configureConsumer(result);
+        return result;
+    }
+
+    @Override
+    public PollingConsumer createPollingConsumer() throws Exception {
+        ObjectHelper.notNull(operations, "operations");
+        ObjectHelper.notNull(file, "file");
+
+        if (log.isDebugEnabled()) {
+            log.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+                getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout());
+        }
+        GenericFilePollingConsumer result = new GenericFilePollingConsumer(this);
+        // should not call configurePollingConsumer when its GenericFilePollingConsumer
+        result.setBlockWhenFull(isPollingConsumerBlockWhenFull());
+        result.setBlockTimeout(getPollingConsumerBlockTimeout());
+
         return result;
     }
 

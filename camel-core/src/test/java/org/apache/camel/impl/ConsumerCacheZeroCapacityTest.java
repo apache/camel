@@ -45,7 +45,7 @@ public class ConsumerCacheZeroCapacityTest extends ContextTestSupport {
         consumer.receive(50);
 
         boolean found = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains("target/foo"));
-        assertTrue("Should find file consumer thread", found);
+        assertFalse("Should not find file consumer thread", found);
 
         cache.releasePollingConsumer(endpoint, consumer);
 

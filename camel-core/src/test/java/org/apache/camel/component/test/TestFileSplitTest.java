@@ -41,7 +41,7 @@ public class TestFileSplitTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("test:file:target/testme?noop=true&split=true");
+                        .to("test:file:target/testme?noop=true&split=true&timeout=1000");
             }
         });
         context.start();
