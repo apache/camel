@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.Proxy;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFileConfiguration;

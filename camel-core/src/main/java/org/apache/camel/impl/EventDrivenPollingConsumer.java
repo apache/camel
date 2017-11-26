@@ -211,9 +211,17 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         }
     }
 
+    protected Consumer getConsumer() {
+        return consumer;
+    }
+
+    protected Consumer createConsumer() throws Exception {
+        return getEndpoint().createConsumer(this);
+    }
+
     protected void doStart() throws Exception {
         // lets add ourselves as a consumer
-        consumer = getEndpoint().createConsumer(this);
+        consumer = createConsumer();
 
         // if the consumer has a polling strategy then invoke that
         if (consumer instanceof PollingConsumerPollingStrategy) {

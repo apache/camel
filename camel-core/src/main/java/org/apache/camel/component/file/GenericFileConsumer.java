@@ -93,7 +93,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     /**
      * Poll for files
      */
-    protected int poll() throws Exception {
+    public int poll() throws Exception {
         // must prepare on startup the very first time
         if (!prepareOnStartup) {
             // prepare on startup
@@ -720,4 +720,21 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         prepareOnStartup = false;
         super.doStop();
     }
+
+    @Override
+    public void onInit() throws Exception {
+        // noop as we do a manual on-demand poll with GenericFilePolllingConsumer
+    }
+
+    @Override
+    public long beforePoll(long timeout) throws Exception {
+        // noop as we do a manual on-demand poll with GenericFilePolllingConsumer
+        return timeout;
+    }
+
+    @Override
+    public void afterPoll() throws Exception {
+        // noop as we do a manual on-demand poll with GenericFilePolllingConsumer
+    }
+
 }

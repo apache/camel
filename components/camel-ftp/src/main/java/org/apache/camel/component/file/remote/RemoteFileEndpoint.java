@@ -19,10 +19,12 @@ package org.apache.camel.component.file.remote;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
+import org.apache.camel.component.file.GenericFilePollingConsumer;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.UriParam;
@@ -126,6 +128,20 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
         configureConsumer(consumer);
         return consumer;
+    }
+
+    @Override
+    public PollingConsumer createPollingConsumer() throws Exception {
+        if (log.isDebugEnabled()) {
+            log.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+                getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout());
+        }
+        GenericFilePollingConsumer result = new GenericFilePollingConsumer(this);
+        // should not call configurePollingConsumer when its GenericFilePollingConsumer
+        result.setBlockWhenFull(isPollingConsumerBlockWhenFull());
+        result.setBlockTimeout(getPollingConsumerBlockTimeout());
+
+        return result;
     }
 
     /**
