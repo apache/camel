@@ -16,11 +16,28 @@
  */
 package org.apache.camel.component.splunk;
 
+import java.io.IOException;
+
+import com.splunk.Args;
+import com.splunk.Index;
+import com.splunk.IndexCollection;
+import com.splunk.InputCollection;
+import com.splunk.TcpInput;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
 public class RawProducerTest extends SplunkMockTestSupport {
     private static final String PAYLOAD = "{foo:1, bar:2}";
 
@@ -32,6 +49,29 @@ public class RawProducerTest extends SplunkMockTestSupport {
 
     @EndpointInject(uri = "splunk://tcp")
     protected SplunkEndpoint tcpEndpoint;
+
+    @Mock
+    private TcpInput input;
+
+    @Mock
+    private Index index;
+
+    @Mock
+    private IndexCollection indexColl;
+
+    @Mock
+    private InputCollection inputCollection;
+
+    @Before
+    public void setup() throws IOException {
+        when(service.getIndexes()).thenReturn(indexColl);
+        when(service.getInputs()).thenReturn(inputCollection);
+        when(input.attach()).thenReturn(socket);
+        when(inputCollection.get(anyString())).thenReturn(input);
+        when(indexColl.get(anyString())).thenReturn(index);
+        when(index.attach(isA(Args.class))).thenReturn(socket);
+        when(socket.getOutputStream()).thenReturn(System.out);
+    }
 
     @Test
     public void testStreamWriter() throws Exception {
