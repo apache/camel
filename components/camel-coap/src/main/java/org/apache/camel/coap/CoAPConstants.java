@@ -39,5 +39,6 @@ public interface CoAPConstants {
      * CoAP exchange header names
      */
     String COAP_METHOD = "CamelCoapMethod";
+    String COAP_RESPONSE_CODE = "CamelCoapResponseCode";
     String COAP_URI = "CamelCoapUri";
 }

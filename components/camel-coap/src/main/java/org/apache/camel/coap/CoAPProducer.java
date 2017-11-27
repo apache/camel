@@ -74,6 +74,7 @@ public class CoAPProducer extends DefaultProducer {
             Message resp = exchange.getOut();
             String mt = MediaTypeRegistry.toString(response.getOptions().getContentFormat());
             resp.setHeader(org.apache.camel.Exchange.CONTENT_TYPE, mt);
+            resp.setHeader(CoAPConstants.COAP_RESPONSE_CODE, response.getCode().toString());
             resp.setBody(response.getPayload());
         }
 
