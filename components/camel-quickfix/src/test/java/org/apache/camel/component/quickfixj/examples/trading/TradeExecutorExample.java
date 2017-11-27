@@ -19,6 +19,7 @@ package org.apache.camel.component.quickfixj.examples.trading;
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.time.LocalDateTime;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -128,7 +129,7 @@ public class TradeExecutorExample {
             new HandlInst('1'), 
             new Symbol("GOOG"), 
             new Side(Side.BUY), 
-            new TransactTime(new Date()), 
+            new TransactTime(LocalDateTime.now()), 
             new OrdType(OrdType.LIMIT));
         
         order.set(new OrderQty(10));
