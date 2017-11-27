@@ -69,6 +69,9 @@ with the following path and query parameters:
 |`CamelCoapMethod` |`String` |The request method that the CoAP producer should use when calling the target CoAP
 server URI. Valid options are DELETE, GET, PING, POST & PUT.
 
+|`CamelCoapResponseCode` |`String` |The CoAP response code sent by the external server. See RFC 7252 for details
+of what each code means.
+
 |`CamelCoapUri` |`String` |The URI of a CoAP server to call. Will override any existing URI configured directly on the endpoint.
 |=======================================================================
 
