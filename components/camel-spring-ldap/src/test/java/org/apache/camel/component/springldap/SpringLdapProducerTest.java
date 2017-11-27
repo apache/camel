@@ -33,30 +33,37 @@ import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.query.LdapQuery;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SpringLdapProducerTest extends CamelTestSupport {
 
-    private SpringLdapEndpoint ldapEndpoint = Mockito.mock(SpringLdapEndpoint.class);
-    private LdapTemplate ldapTemplate = Mockito.mock(LdapTemplate.class);
+    @Mock
+    private SpringLdapEndpoint ldapEndpoint;
 
-    private SpringLdapProducer ldapProducer = new SpringLdapProducer(ldapEndpoint);
+    @Mock
+    private LdapTemplate ldapTemplate;
+
+    private SpringLdapProducer ldapProducer;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
         when(ldapEndpoint.getLdapTemplate()).thenReturn(ldapTemplate);
+        ldapProducer = new SpringLdapProducer(ldapEndpoint);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -80,7 +87,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
-        Map<String, Object> body = new HashMap<String, Object>();
+        Map<String, Object> body = new HashMap<>();
 
         processBody(exchange, in, body);
     }
@@ -90,8 +97,8 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
-        Map<String, Object> body = new HashMap<String, Object>();
-        body.put(SpringLdapProducer.FUNCTION, Mockito.mock(BiFunction.class));
+        Map<String, Object> body = new HashMap<>();
+        body.put(SpringLdapProducer.FUNCTION, mock(BiFunction.class));
 
         when(ldapEndpoint.getOperation()).thenReturn(LdapOperation.FUNCTION_DRIVEN);
 
@@ -109,7 +116,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
-        Map<String, Object> body = new HashMap<String, Object>();
+        Map<String, Object> body = new HashMap<>();
         body.put(SpringLdapProducer.DN, "");
 
         processBody(exchange, in, body);
@@ -120,7 +127,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
-        Map<String, Object> body = new HashMap<String, Object>();
+        Map<String, Object> body = new HashMap<>();
         body.put(SpringLdapProducer.DN, null);
 
         processBody(exchange, in, body);
@@ -131,7 +138,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
-        Map<String, Object> body = new HashMap<String, Object>();
+        Map<String, Object> body = new HashMap<>();
         body.put(SpringLdapProducer.DN, " ");
 
         processBody(exchange, in, body);
@@ -146,7 +153,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
-        Map<String, Object> body = new HashMap<String, Object>();
+        Map<String, Object> body = new HashMap<>();
         body.put(SpringLdapProducer.DN, dn);
         body.put(SpringLdapProducer.FILTER, filter);
 
@@ -154,7 +161,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         when(ldapEndpoint.scopeValue()).thenReturn(scope);
 
         processBody(exchange, in, body);
-        verify(ldapTemplate).search(eq(dn), eq(filter), eq(scope), any(AttributesMapper.class));
+        verify(ldapTemplate).search(eq(dn), eq(filter), eq(scope), ArgumentMatchers.<AttributesMapper<String>>any());
     }
 
     @Test
@@ -165,7 +172,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
-        Map<String, Object> body = new HashMap<String, Object>();
+        Map<String, Object> body = new HashMap<>();
         body.put(SpringLdapProducer.DN, dn);
         body.put(SpringLdapProducer.ATTRIBUTES, attributes);
 
@@ -182,7 +189,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
-        Map<String, Object> body = new HashMap<String, Object>();
+        Map<String, Object> body = new HashMap<>();
         body.put(SpringLdapProducer.DN, dn);
 
         when(ldapEndpoint.getOperation()).thenReturn(LdapOperation.UNBIND);
@@ -200,7 +207,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
-        Map<String, Object> body = new HashMap<String, Object>();
+        Map<String, Object> body = new HashMap<>();
         body.put(SpringLdapProducer.DN, dn);
         body.put(SpringLdapProducer.FILTER, filter);
         body.put(SpringLdapProducer.PASSWORD, password);
@@ -208,7 +215,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         when(ldapEndpoint.getOperation()).thenReturn(LdapOperation.AUTHENTICATE);
 
         processBody(exchange, in, body);
-        verify(ldapTemplate).authenticate(Matchers.any(LdapQuery.class), eq(password));
+        verify(ldapTemplate).authenticate(ArgumentMatchers.any(LdapQuery.class), eq(password));
     }
 
     @Test
@@ -219,7 +226,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
-        Map<String, Object> body = new HashMap<String, Object>();
+        Map<String, Object> body = new HashMap<>();
         body.put(SpringLdapProducer.DN, dn);
         body.put(SpringLdapProducer.MODIFICATION_ITEMS, modificationItems);
 
@@ -236,7 +243,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
-        Map<String, Object> body = new HashMap<String, Object>();
+        Map<String, Object> body = new HashMap<>();
         body.put(SpringLdapProducer.DN, dn);
         body.put(SpringLdapProducer.REQUEST, dn);
         body.put(SpringLdapProducer.FUNCTION, (BiFunction<LdapOperations, String, Void>)(l, q) -> {
