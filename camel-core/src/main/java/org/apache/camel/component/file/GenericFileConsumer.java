@@ -22,6 +22,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
@@ -53,6 +54,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected volatile boolean prepareOnStartup;
     private final Pattern includePattern;
     private final Pattern excludePattern;
+    private Pattern fileNamePattern;
+    private Predicate<GenericFile> fileNamePredicate;
 
     public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations) {
         super(endpoint, processor);
@@ -88,6 +91,14 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
     public void setEagerLimitMaxMessagesPerPoll(boolean eagerLimitMaxMessagesPerPoll) {
         this.eagerLimitMaxMessagesPerPoll = eagerLimitMaxMessagesPerPoll;
+    }
+
+    public void setFileNamePattern(String fileNamePattern) {
+        this.fileNamePattern = Pattern.compile(fileNamePattern, Pattern.CASE_INSENSITIVE);
+    }
+
+    public void setFileNamePredicate(Predicate<GenericFile> fileNamePredicate) {
+        this.fileNamePredicate = fileNamePredicate;
     }
 
     /**
@@ -662,6 +673,18 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             }
 
             if (!isMatched(file, doneFileName, files)) {
+                return false;
+            }
+        }
+
+        if (fileNamePattern != null) {
+            if (!fileNamePattern.matcher(name).matches()) {
+                return false;
+            }
+        }
+
+        if (fileNamePredicate != null) {
+            if (!fileNamePredicate.test(file)) {
                 return false;
             }
         }
