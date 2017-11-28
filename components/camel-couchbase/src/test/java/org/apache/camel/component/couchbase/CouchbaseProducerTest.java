@@ -21,28 +21,29 @@ import java.util.Map;
 
 import com.couchbase.client.CouchbaseClient;
 
-import net.spy.memcached.PersistTo;
-import net.spy.memcached.ReplicateTo;
 import net.spy.memcached.internal.OperationFuture;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_TTL;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CouchbaseProducerTest {
 
     @Mock
@@ -58,22 +59,22 @@ public class CouchbaseProducerTest {
     private Message msg;
 
     @Mock
-    private OperationFuture response;
+    private OperationFuture<?> response;
+
+    @Mock
+    private OperationFuture<Boolean> of;
 
     private CouchbaseProducer producer;
 
     @Before
     public void before() throws Exception {
-        initMocks(this);
         when(endpoint.getProducerRetryAttempts()).thenReturn(CouchbaseConstants.DEFAULT_PRODUCER_RETRIES);
         producer = new CouchbaseProducer(endpoint, client, 0, 0);
         when(exchange.getIn()).thenReturn(msg);
     }
 
-    @SuppressWarnings("unchecked")
     @Test(expected = CouchbaseException.class)
     public void testBodyMandatory() throws Exception {
-        when(msg.getMandatoryBody()).thenThrow(InvalidPayloadException.class);
         producer.process(exchange);
     }
 
@@ -108,7 +109,6 @@ public class CouchbaseProducerTest {
 
     @Test
     public void testExpiryTimeIsSet() throws Exception {
-        OperationFuture of = mock(OperationFuture.class);
         when(of.get()).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Exception {
@@ -117,31 +117,27 @@ public class CouchbaseProducerTest {
             }
         });
 
-        when(client.set(org.mockito.Matchers.anyString(), org.mockito.Matchers.anyInt(), org.mockito.Matchers.anyObject(), org.mockito.Matchers.any(PersistTo.class),
-                        org.mockito.Matchers.any(ReplicateTo.class))).thenReturn(of);
+        when(client.set(anyString(), anyInt(), any(), any(), any())).thenReturn(of);
+
         // Mock out some headers so we can set an expiry
         int expiry = 5000;
-        Map<String, Object> testHeaders = new HashMap<String, Object>();
+        Map<String, Object> testHeaders = new HashMap<>();
         testHeaders.put("CCB_TTL", Integer.toString(expiry));
         when(msg.getHeaders()).thenReturn(testHeaders);
         when(msg.getHeader(HEADER_TTL, String.class)).thenReturn(Integer.toString(expiry));
 
         when(endpoint.getId()).thenReturn("123");
         when(endpoint.getOperation()).thenReturn("CCB_PUT");
-        Message outmsg = mock(Message.class);
         when(exchange.getOut()).thenReturn(msg);
 
         producer.process(exchange);
 
-        verify(client).set(org.mockito.Matchers.anyString(), Mockito.eq(expiry), org.mockito.Matchers.anyObject(), org.mockito.Matchers.any(PersistTo.class),
-                           org.mockito.Matchers.any(ReplicateTo.class));
-
+        verify(client).set(anyString(), eq(expiry), any(), any(), any());
     }
 
     @Test
     public void testTimeOutRetryToException() throws Exception {
 
-        OperationFuture of = mock(OperationFuture.class);
         when(of.get()).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Exception {
@@ -150,8 +146,7 @@ public class CouchbaseProducerTest {
             }
         });
 
-        when(client.set(org.mockito.Matchers.anyString(), org.mockito.Matchers.anyInt(), org.mockito.Matchers.anyObject(), org.mockito.Matchers.any(PersistTo.class),
-                        org.mockito.Matchers.any(ReplicateTo.class))).thenReturn(of);
+        when(client.set(anyString(), anyInt(), any(), any(), any())).thenReturn(of);
         when(endpoint.getId()).thenReturn("123");
         when(endpoint.getOperation()).thenReturn("CCB_PUT");
         try {
@@ -166,23 +161,19 @@ public class CouchbaseProducerTest {
     @Test
     public void testTimeOutRetryThenSuccess() throws Exception {
 
-        OperationFuture of = mock(OperationFuture.class);
         when(of.get()).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Exception {
                 throw new RuntimeException("Timed out waiting for operation");
-
             }
         }).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Exception {
                 return true;
-
             }
         });
 
-        when(client.set(org.mockito.Matchers.anyString(), org.mockito.Matchers.anyInt(), org.mockito.Matchers.anyObject(), org.mockito.Matchers.any(PersistTo.class),
-                        org.mockito.Matchers.any(ReplicateTo.class))).thenReturn(of);
+        when(client.set(anyString(), anyInt(), any(), any(), any())).thenReturn(of);
         when(endpoint.getId()).thenReturn("123");
         when(endpoint.getOperation()).thenReturn("CCB_PUT");
         when(exchange.getOut()).thenReturn(msg);
@@ -196,29 +187,24 @@ public class CouchbaseProducerTest {
     @Test
     public void testTimeOutRetryTwiceThenSuccess() throws Exception {
 
-        OperationFuture of = mock(OperationFuture.class);
         when(of.get()).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Exception {
                 throw new RuntimeException("Timed out waiting for operation");
-
             }
         }).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Exception {
                 throw new RuntimeException("Timed out waiting for operation");
-
             }
         }).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Exception {
                 return true;
-
             }
         });
 
-        when(client.set(org.mockito.Matchers.anyString(), org.mockito.Matchers.anyInt(), org.mockito.Matchers.anyObject(), org.mockito.Matchers.any(PersistTo.class),
-                        org.mockito.Matchers.any(ReplicateTo.class))).thenReturn(of);
+        when(client.set(anyString(), anyInt(), any(), any(), any())).thenReturn(of);
         when(endpoint.getId()).thenReturn("123");
         when(endpoint.getOperation()).thenReturn("CCB_PUT");
         when(exchange.getOut()).thenReturn(msg);
