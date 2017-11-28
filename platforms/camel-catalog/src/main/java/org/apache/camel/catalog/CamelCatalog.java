@@ -29,13 +29,26 @@ import javax.management.MXBean;
 public interface CamelCatalog {
 
     /**
+     * Returns the {@link JSonSchemaResolver} used by this catalog.
+     *
+     * @return the resolver
+     */
+    JSonSchemaResolver getJSonSchemaResolver();
+
+    /**
+     * To use a custom {@link JSonSchemaResolver} with this catalog.
+     *
+     * @param resolver  the custom resolver
+     */
+    void setJSonSchemaResolver(JSonSchemaResolver resolver);
+
+    /**
      * To plugin a custom {@link RuntimeProvider} that amends the catalog to only include information that is supported on the runtime.
      */
     void setRuntimeProvider(RuntimeProvider provider);
 
     /**
      * Gets the {@link RuntimeProvider} in use.
-     * @return
      */
     RuntimeProvider getRuntimeProvider();
 
