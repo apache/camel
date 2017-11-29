@@ -309,7 +309,18 @@ public class AmazonLambdaClientMock extends AWSLambdaClient {
 
     @Override
     public UpdateFunctionCodeResult updateFunctionCode(UpdateFunctionCodeRequest updateFunctionCodeRequest) {
-        throw new UnsupportedOperationException();
+        UpdateFunctionCodeResult result = new UpdateFunctionCodeResult();
+
+        result.setFunctionName(updateFunctionCodeRequest.getFunctionName());
+        result.setFunctionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + updateFunctionCodeRequest.getFunctionName());
+        result.setCodeSize(340L);
+        result.setCodeSha256("PKt5ygvZ6G8vWJASlWIypsBmKzAdmRrvTO");
+        result.setMemorySize(128);
+        result.setTimeout(3);
+        result.setLastModified(DateTime.now().toString());
+        result.setVersion("$LATEST");
+        result.setTracingConfig(new TracingConfigResponse().withMode(TracingMode.PassThrough));
+        return result;
     }
 
     @Override

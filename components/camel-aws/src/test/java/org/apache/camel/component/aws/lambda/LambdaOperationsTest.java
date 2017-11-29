@@ -26,7 +26,7 @@ public class LambdaOperationsTest {
 
     @Test
     public void supportedOperationCount() {
-        assertEquals(5, LambdaOperations.values().length);
+        assertEquals(6, LambdaOperations.values().length);
     }
 
     @Test
@@ -36,6 +36,7 @@ public class LambdaOperationsTest {
         assertEquals(LambdaOperations.listFunctions, LambdaOperations.valueOf("listFunctions"));
         assertEquals(LambdaOperations.invokeFunction, LambdaOperations.valueOf("invokeFunction"));
         assertEquals(LambdaOperations.deleteFunction, LambdaOperations.valueOf("deleteFunction"));
+        assertEquals(LambdaOperations.updateFunction, LambdaOperations.valueOf("updateFunction"));
     }
 
     @Test
@@ -45,5 +46,6 @@ public class LambdaOperationsTest {
         assertEquals(LambdaOperations.listFunctions.toString(), "listFunctions");
         assertEquals(LambdaOperations.invokeFunction.toString(), "invokeFunction");
         assertEquals(LambdaOperations.deleteFunction.toString(), "deleteFunction");
+        assertEquals(LambdaOperations.updateFunction.toString(), "updateFunction");
     }
 }
