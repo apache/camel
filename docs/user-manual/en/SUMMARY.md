@@ -428,6 +428,7 @@
 	* [Test Spring](test-spring.adoc)
 	* [TestNG](testng.adoc)
 	* [URLRewrite](urlrewrite.adoc)
+	* [XRay](aws-xray.adoc)
 	* [Zipkin](zipkin.adoc)
 <!-- others: END -->
 

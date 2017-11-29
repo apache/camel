@@ -1044,7 +1044,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 37 in 37 JAR artifacts (13 deprecated)
+Number of Miscellaneous Components: 38 in 38 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1121,6 +1121,8 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (13 deprecated)
 | link:camel-testng/src/main/docs/testng.adoc[TestNG] (camel-testng) | 2.8 | *deprecated* Camel unit testing with TestNG
 
 | link:camel-urlrewrite/src/main/docs/urlrewrite.adoc[URLRewrite] (camel-urlrewrite) | 2.11 | *deprecated* URL rewrite support for HTTP components
+
+| link:camel-aws-xray/src/main/docs/aws-xray.adoc[XRay] (camel-aws-xray) | 2.21 | Distributed tracing using AWS XRay
 
 | link:camel-zipkin/src/main/docs/zipkin.adoc[Zipkin] (camel-zipkin) | 2.18 | Distributed message tracing using Zipkin
 |===
