@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -38,14 +38,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-/**
- *
- */
 @RunWith(MockitoJUnitRunner.class)
 public class WebsocketComponentTest {
 
@@ -72,9 +69,7 @@ public class WebsocketComponentTest {
     public void setUp() throws Exception {
         component = new WebsocketComponent();
         component.setCamelContext(new DefaultCamelContext());
-        System.out.println("Server : " + server.isStarted());
         server = component.createServer();
-        System.out.println("Server : " + server.isStarted());
         ServerConnector connector = new ServerConnector(server);
         connector.setHost("localhost");
         connector.setPort(1988);
@@ -107,7 +102,7 @@ public class WebsocketComponentTest {
         assertEquals("/", handler.getContextPath());
         assertNull(handler.getSessionHandler());
         assertNull(handler.getResourceBase());
-        assertNull(handler.getServletHandler().getHolderEntry("/"));
+        assertNull(handler.getServletHandler().getMappedServlet("/"));
     }
 
     @Test
@@ -125,7 +120,7 @@ public class WebsocketComponentTest {
         assertNotNull(handler.getSessionHandler());
         assertNotNull(handler.getResourceBase());
         assertTrue(handler.getResourceBase().startsWith(JettyClassPathResource.class.getName()));
-        assertNotNull(handler.getServletHandler().getHolderEntry("/"));
+        assertNotNull(handler.getServletHandler().getMappedServlet("/"));
     }
 
     @Test

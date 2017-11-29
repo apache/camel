@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.websocket;
 
-import static org.junit.Assume.assumeTrue;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.websocket.WebsocketComponent.ConnectorRef;
@@ -27,8 +25,13 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.Assume.assumeTrue;
+
+@RunWith(MockitoJUnitRunner.class)
 public class WebsocketEndpointConfigurationTest extends CamelTestSupport {
     
     private int port;

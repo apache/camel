@@ -20,16 +20,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-/**
- *
- */
 @RunWith(MockitoJUnitRunner.class)
 public class NodeSynchronizationImplTest {
 
@@ -47,9 +44,6 @@ public class NodeSynchronizationImplTest {
 
     private MemoryWebsocketStore store1;
 
-    /**
-     * @throws Exception
-     */
     @Before
     public void setUp() throws Exception {
 
@@ -60,9 +54,6 @@ public class NodeSynchronizationImplTest {
 
         websocket2 = new DefaultWebsocket(sync, null, consumer);
         websocket2.setConnectionKey(KEY_2);
-
-        // when(websocket1.getConnectionKey()).thenReturn(KEY_1);
-        // when(websocket2.getConnectionKey()).thenReturn(KEY_2);
     }
 
     /**
