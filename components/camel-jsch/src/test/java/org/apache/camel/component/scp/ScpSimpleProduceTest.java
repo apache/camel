@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.scp;
 
+import java.io.File;
+import java.nio.file.Files;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.JndiRegistry;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -121,5 +125,26 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
         template.sendBodyAndHeader(uri, "Hallo Welt", Exchange.FILE_NAME, "welt.txt");
 
         assertMockEndpointsSatisfied();
+    }
+  
+    @Test
+    @Ignore("Fails on CI servers")
+    public void testScpProducePrivateKeyByte() throws Exception {
+        Assume.assumeTrue(this.isSetupComplete());
+
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        String uri = getScpUri() + "?username=admin&privateKeyBytes=#privKey&privateKeyFilePassphrase=password&knownHostsFile=" + getKnownHostsFile();
+        template.sendBodyAndHeader(uri, "Hallo Welt", Exchange.FILE_NAME, "welt.txt");
+
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        byte[] privKey = Files.readAllBytes(new File("src/test/resources/camel-key.priv").toPath());
+        registry.bind("privKey", privKey);
+        return registry;
     }
 }

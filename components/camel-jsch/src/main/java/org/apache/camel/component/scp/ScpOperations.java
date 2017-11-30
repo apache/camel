@@ -238,7 +238,20 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 } catch (Exception e) {
                     throw new GenericFileOperationFailedException("Cannot load private keyfile: " + config.getPrivateKeyFile(), e);
                 }
+            } else if (ObjectHelper.isNotEmpty(config.getPrivateKeyBytes())) {
+                LOG.trace("Using private key bytes: {}", config.getPrivateKeyBytes());
+
+                String pkfp = config.getPrivateKeyFilePassphrase();
+
+                byte[] data = config.getPrivateKeyBytes();
+                
+                try {
+                    jsch.addIdentity("camel-jsch", data, null, pkfp != null ? pkfp.getBytes() : null);
+                } catch (Exception e) {
+                    throw new GenericFileOperationFailedException("Cannot load private key bytes: " + config.getPrivateKeyBytes(), e);
+                }                
             }
+
 
             String knownHostsFile = config.getKnownHostsFile();
             if (knownHostsFile == null && config.isUseUserKnownHostsFile()) {
