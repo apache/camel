@@ -80,7 +80,7 @@ with the following path and query parameters:
 | *directoryName* | The starting directory |  | String
 |===
 
-==== Query Parameters (19 parameters):
+==== Query Parameters (20 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -99,6 +99,7 @@ with the following path and query parameters:
 | *knownHostsFile* (security) | Sets the known_hosts file so that the jsch endpoint can do host key verification. You can prefix with classpath: to load the file from classpath instead of file system. |  | String
 | *password* (security) | Password to use for login |  | String
 | *preferredAuthentications* (security) | Set a comma separated list of authentications that will be used in order of preference. Possible authentication methods are defined by JCraft JSCH. Some examples include: gssapi-with-micpublickeykeyboard-interactivepassword If not specified the JSCH and/or system defaults will be used. |  | String
+| *privateKeyBytes* (security) | Set the private key bytes to that the endpoint can do private key verification. This must be used only if privateKeyFile wasn't set. Otherwise the file will have the priority. |  | byte[]
 | *privateKeyFile* (security) | Set the private key file to that the endpoint can do private key verification. You can prefix with classpath: to load the file from classpath instead of file system. |  | String
 | *privateKeyFilePassphrase* (security) | Set the private key file passphrase to that the endpoint can do private key verification. |  | String
 | *username* (security) | Username to use for login |  | String
