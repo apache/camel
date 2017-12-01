@@ -38,7 +38,7 @@ import static org.awaitility.Awaitility.await;
 public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTestSupport {
     private static Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyHalfOpenHandlerTest.class);
     
-    private String url = "direct:start";
+    private String url = "direct:start?block=false";
     private MockEndpoint result;
     
     @Before
