@@ -82,7 +82,7 @@ public class DirectVmNoConsumerTest extends ContextTestSupport {
         try {
             template.sendBody("direct-vm:start", "Hello World");
         } catch (CamelExecutionException e) {
-            fail("Should not throw an exception");
+            assertIsInstanceOf(DirectVmConsumerNotAvailableException.class, e.getCause());
         }
     }
 
@@ -146,10 +146,12 @@ public class DirectVmNoConsumerTest extends ContextTestSupport {
         context.start();
 
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
-
-        template.sendBody("direct-vm:in", "Hello World");
-
-        assertMockEndpointsSatisfied();
+        try {
+            template.sendBody("direct-vm:in", "Hello World");
+            fail("Should throw an exception");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(DirectVmConsumerNotAvailableException.class, e.getCause());
+        }
 
     }
 

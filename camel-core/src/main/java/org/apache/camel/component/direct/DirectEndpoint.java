@@ -43,8 +43,8 @@ public class DirectEndpoint extends DefaultEndpoint {
     @UriPath(description = "Name of direct endpoint") @Metadata(required = "true")
     private String name;
 
-    @UriParam(label = "producer")
-    private boolean block;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean block = true;
     @UriParam(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
     @UriParam(label = "producer")
