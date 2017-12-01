@@ -82,7 +82,7 @@ public class DirectNoConsumerTest extends ContextTestSupport {
         try {
             template.sendBody("direct:start", "Hello World");
         } catch (CamelExecutionException e) {
-            fail("Should not throw an exception");
+            assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
         }
     }
 
@@ -146,10 +146,12 @@ public class DirectNoConsumerTest extends ContextTestSupport {
         context.start();
 
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
-
-        template.sendBody("direct:in", "Hello World");
-
-        assertMockEndpointsSatisfied();
+        try {
+            template.sendBody("direct:in", "Hello World");
+            fail("Should throw an exception");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
+        }
 
     }
 

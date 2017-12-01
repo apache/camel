@@ -39,8 +39,8 @@ public class DirectVmComponent extends UriEndpointComponent {
     // later in case the DirectVmEndpoint was re-created due the old was evicted from the endpoints LRUCache
     // on DefaultCamelContext
     private static final ConcurrentMap<String, DirectVmConsumer> CONSUMERS = new ConcurrentHashMap<String, DirectVmConsumer>();
-    @Metadata(label = "producer")
-    private boolean block;
+    @Metadata(label = "producer", defaultValue = "true")
+    private boolean block = true;
     @Metadata(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
     @Metadata(label = "advanced")

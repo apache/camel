@@ -36,7 +36,7 @@ public class DirectVmNoPropertyPropagationTest extends ContextTestSupport {
                 // Starters.
                 from("direct-vm:start.noprops")
                     .setProperty("abc", constant("def"))
-                    .to("direct-vm:foo.noprops?propagateProperties=false");
+                    .to("direct-vm:foo.noprops?propagateProperties=false&block=false");
                 
                 from("direct-vm:start.props")
                     .setProperty("abc", constant("def"))
