@@ -269,7 +269,7 @@ public class LambdaProducer extends DefaultProducer {
             result = lambdaClient.createFunction(request);
 
         } catch (AmazonServiceException ase) {
-            LOG.trace("invokeFunction command returned the error code {}", ase.getErrorCode());
+            LOG.trace("createFunction command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
 
