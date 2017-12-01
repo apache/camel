@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
@@ -221,7 +222,7 @@ public final class Olingo2AppImpl implements Olingo2App {
 
         final UriInfoWithType uriInfo = parseUri(edm, resourcePath, queryParams);
 
-        execute(new HttpGet(createUri(resourcePath, queryParams)), getResourceContentType(uriInfo),
+        execute(new HttpGet(createUri(resourcePath, encodeQueryParams(queryParams))), getResourceContentType(uriInfo),
             endpointHttpHeaders, new AbstractFutureCallback<T>(responseHandler) {
 
                 @Override
@@ -242,7 +243,7 @@ public final class Olingo2AppImpl implements Olingo2App {
 
         final UriInfoWithType uriInfo = parseUri(edm, resourcePath, queryParams);
 
-        execute(new HttpGet(createUri(resourcePath, queryParams)), getResourceContentType(uriInfo),
+        execute(new HttpGet(createUri(resourcePath, encodeQueryParams(queryParams))), getResourceContentType(uriInfo),
             endpointHttpHeaders, new AbstractFutureCallback<InputStream>(responseHandler) {
 
                 @Override
@@ -253,6 +254,17 @@ public final class Olingo2AppImpl implements Olingo2App {
                 }
 
             });
+    }
+
+    private Map<String, String> encodeQueryParams(Map<String, String> queryParams) {
+        Map<String, String> encodedQueryParams = queryParams;
+        if (queryParams != null) {
+            encodedQueryParams = new HashMap<String, String>(queryParams.size());
+            for (Map.Entry<String, String> entry : queryParams.entrySet()) {
+                encodedQueryParams.put(entry.getKey(), URLEncoder.encode(entry.getValue()));
+            }
+        }
+        return encodedQueryParams;
     }
 
     private ContentType getResourceContentType(UriInfoWithType uriInfo) {
