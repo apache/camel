@@ -822,7 +822,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             } else {
                 body = exchange.getIn().getBody();
             }
-            if (body != null && body instanceof StreamCache) {
+            if (body instanceof StreamCache) {
                 // reset so the cache is ready to be reused after processing
                 ((StreamCache) body).reset();
             }

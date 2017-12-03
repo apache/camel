@@ -88,8 +88,7 @@ public class ContextCreationTimeoutTest extends Assert {
             ts.getCamelContextCreationTimeout();
             fail();
         } catch (IllegalArgumentException e) {
-            assertTrue(e.getCause() != null
-                    && e.getCause() instanceof NumberFormatException);
+            assertTrue(e.getCause() instanceof NumberFormatException);
         }
     }
     

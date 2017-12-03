@@ -142,7 +142,7 @@ public final class CamelJavaParserHelper {
                         }
                     }
                 }
-                if (exp != null && exp instanceof ClassInstanceCreation) {
+                if (exp instanceof ClassInstanceCreation) {
                     ClassInstanceCreation cic = (ClassInstanceCreation) exp;
                     boolean isRouteBuilder = false;
                     if (cic.getType() instanceof SimpleType) {
@@ -477,7 +477,7 @@ public final class CamelJavaParserHelper {
                             }
                         }
                     }
-                    if (parent != null && parent instanceof MethodInvocation) {
+                    if (parent instanceof MethodInvocation) {
                         MethodInvocation emi = (MethodInvocation) parent;
                         String parentName = emi.getName().getIdentifier();
                         predicate = isSimplePredicate(parentName);

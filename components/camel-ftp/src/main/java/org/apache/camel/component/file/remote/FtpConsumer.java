@@ -211,7 +211,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                     return true;
                 }
             }
-            if (cause != null && cause instanceof GenericFileOperationFailedException) {
+            if (cause instanceof GenericFileOperationFailedException) {
                 GenericFileOperationFailedException generic = ObjectHelper.getException(GenericFileOperationFailedException.class, cause);
                 //exchange is null and cause has the reason for failure to read directories
                 if (generic.getCode() == 550) {

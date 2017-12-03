@@ -223,7 +223,7 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
         boolean bridgeErrorHandler = false;
         if (delegate instanceof DefaultConsumer) {
             ExceptionHandler handler = ((DefaultConsumer) delegate).getExceptionHandler();
-            if (handler != null && handler instanceof BridgeExceptionHandlerToErrorHandler) {
+            if (handler instanceof BridgeExceptionHandlerToErrorHandler) {
                 bridgeErrorHandler = true;
             }
         }

@@ -76,7 +76,7 @@ public class EtcdWatchServiceDiscovery
         }
 
         Throwable throwable = promise.getException();
-        if (throwable != null && throwable instanceof EtcdException) {
+        if (throwable instanceof EtcdException) {
             EtcdException exception = (EtcdException) throwable;
             if (EtcdHelper.isOutdatedIndexException(exception)) {
                 LOGGER.debug("Outdated index, key={}, cause={}", servicePath, exception.etcdCause);

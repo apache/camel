@@ -143,7 +143,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
             }
         }
 
-        if (strategy != null && strategy instanceof CamelContextAware) {
+        if (strategy instanceof CamelContextAware) {
             ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
         }
 

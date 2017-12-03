@@ -62,14 +62,14 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
             Map<String, TransactedPolicy> mapPolicy = routeContext.lookupByType(TransactedPolicy.class);
             if (mapPolicy != null && mapPolicy.size() == 1) {
                 TransactedPolicy policy = mapPolicy.values().iterator().next();
-                if (policy != null && policy instanceof SpringTransactionPolicy) {
+                if (policy instanceof SpringTransactionPolicy) {
                     transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
                 }
             }
 
             if (transactionTemplate == null) {
                 TransactedPolicy policy = routeContext.lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
-                if (policy != null && policy instanceof SpringTransactionPolicy) {
+                if (policy instanceof SpringTransactionPolicy) {
                     transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
                 }
             }

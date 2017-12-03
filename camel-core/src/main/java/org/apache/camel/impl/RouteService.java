@@ -427,7 +427,7 @@ public class RouteService extends ChildServiceSupport {
             for (Service service : services) {
                 if (service instanceof Channel) {
                     Processor eh = ((Channel) service).getErrorHandler();
-                    if (eh != null && eh instanceof Service) {
+                    if (eh instanceof Service) {
                         extra.add((Service) eh);
                     }
                 }
@@ -447,7 +447,7 @@ public class RouteService extends ChildServiceSupport {
                 OnExceptionDefinition onExceptionDefinition = (OnExceptionDefinition) output;
                 if (onExceptionDefinition.isRouteScoped()) {
                     Processor errorHandler = onExceptionDefinition.getErrorHandler(route.getId());
-                    if (errorHandler != null && errorHandler instanceof Service) {
+                    if (errorHandler instanceof Service) {
                         services.add((Service) errorHandler);
                     }
                 }
@@ -455,7 +455,7 @@ public class RouteService extends ChildServiceSupport {
                 OnCompletionDefinition onCompletionDefinition = (OnCompletionDefinition) output;
                 if (onCompletionDefinition.isRouteScoped()) {
                     Processor onCompletionProcessor = onCompletionDefinition.getOnCompletion(route.getId());
-                    if (onCompletionProcessor != null && onCompletionProcessor instanceof Service) {
+                    if (onCompletionProcessor instanceof Service) {
                         services.add((Service) onCompletionProcessor);
                     }
                 }
