@@ -108,7 +108,8 @@ public class SqlConsumerOutputTypeStreamListTest extends CamelTestSupport {
                             .to("mock:result")
                         .end();
 
-                from("sql:select * from projects order by id?outputType=StreamList&outputClass=org.apache.camel.component.sql.ProjectModel&consumer.initialDelay=0&consumer.delay=50").routeId("route3").noAutoStartup()
+                from("sql:select * from projects order by id?outputType=StreamList&outputClass=org.apache.camel.component.sql.ProjectModel&consumer.initialDelay=0&consumer.delay=50")
+                        .routeId("route3").noAutoStartup()
                         .to("log:stream")
                         .split(body()).streaming()
                             .to("log:row")

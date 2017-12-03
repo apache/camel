@@ -310,7 +310,8 @@ public class LambdaProducer extends DefaultProducer {
                 functionCode.withZipFile(exchange.getIn().getBody(ByteBuffer.class));
             }
 
-            if (ObjectHelper.isEmpty(exchange.getIn().getBody()) && (ObjectHelper.isEmpty(exchange.getIn().getHeader(LambdaConstants.S3_BUCKET)) && ObjectHelper.isEmpty(exchange.getIn().getHeader(LambdaConstants.S3_KEY)))) {
+            if (ObjectHelper.isEmpty(exchange.getIn().getBody())
+                && (ObjectHelper.isEmpty(exchange.getIn().getHeader(LambdaConstants.S3_BUCKET)) && ObjectHelper.isEmpty(exchange.getIn().getHeader(LambdaConstants.S3_KEY)))) {
                 throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
             }
 
