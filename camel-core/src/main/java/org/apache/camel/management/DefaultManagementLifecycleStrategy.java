@@ -554,7 +554,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             answer = getManagementObjectStrategy().getManagedObjectForService(context, service);
         }
 
-        if (answer != null && answer instanceof ManagedService) {
+        if (answer instanceof ManagedService) {
             ManagedService ms = (ManagedService) answer;
             ms.setRoute(route);
             ms.init(getManagementStrategy());

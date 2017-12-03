@@ -153,7 +153,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                     String baseDir = ".";
                     JavaType out = Roaster.parse(file);
                     // we should only parse java classes (not interfaces and enums etc)
-                    if (out != null && out instanceof JavaClassSource) {
+                    if (out instanceof JavaClassSource) {
                         JavaClassSource clazz = (JavaClassSource) out;
                         List<CamelNodeDetails> result = RouteBuilderParser.parseRouteBuilderTree(clazz, baseDir, fqn, true);
                         routeTrees.addAll(result);

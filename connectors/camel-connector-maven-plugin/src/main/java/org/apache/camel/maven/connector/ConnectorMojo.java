@@ -621,9 +621,9 @@ public class ConnectorMojo extends AbstractJarMojo {
         Set<String> enums = null;
         // the enum can either be a List or String
         value = row.get("enum");
-        if (value != null && value instanceof List) {
+        if (value instanceof List) {
             enums = new LinkedHashSet<String>((List)value);
-        } else if (value != null && value instanceof String) {
+        } else if (value instanceof String) {
             String[] array = value.toString().split(",");
             enums = Arrays.stream(array).collect(Collectors.toSet());
         }

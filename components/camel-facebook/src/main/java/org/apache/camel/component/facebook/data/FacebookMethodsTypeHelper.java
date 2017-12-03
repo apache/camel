@@ -352,7 +352,7 @@ public final class FacebookMethodsTypeHelper {
         } catch (Throwable e) {
             // skip wrapper exception to simplify stack
             String msg;
-            if (e.getCause() != null && e.getCause() instanceof FacebookException) {
+            if (e.getCause() instanceof FacebookException) {
                 e = e.getCause();
                 msg = ((FacebookException)e).getErrorMessage();
             } else {

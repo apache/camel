@@ -956,7 +956,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         protected boolean isSingleton(Object bean, String beanName) {
             if (beanName != null) {
                 ComponentMetadata meta = blueprintContainer.getComponentMetadata(beanName);
-                if (meta != null && meta instanceof BeanMetadata) {
+                if (meta instanceof BeanMetadata) {
                     String scope = ((BeanMetadata) meta).getScope();
                     if (scope != null) {
                         return BeanMetadata.SCOPE_SINGLETON.equals(scope);

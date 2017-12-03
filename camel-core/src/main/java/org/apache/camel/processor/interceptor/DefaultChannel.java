@@ -218,7 +218,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         // setup instrumentation processor for management (jmx)
         // this is later used in postInitChannel as we need to setup the error handler later as well
         InterceptStrategy managed = routeContext.getManagedInterceptStrategy();
-        if (managed != null && managed instanceof InstrumentationInterceptStrategy) {
+        if (managed instanceof InstrumentationInterceptStrategy) {
             InstrumentationInterceptStrategy iis = (InstrumentationInterceptStrategy) managed;
             instrumentationProcessor = new InstrumentationProcessor(targetOutputDef.getShortName(), target);
             iis.prepareProcessor(targetOutputDef, target, instrumentationProcessor);

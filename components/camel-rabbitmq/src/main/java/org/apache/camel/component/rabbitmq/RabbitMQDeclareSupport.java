@@ -68,17 +68,17 @@ public class RabbitMQDeclareSupport {
     private void formatSpecialQueueArguments(Map<String, Object> queueArgs) {
         // some arguments must be in numeric values so we need to fix this
         Object queueLengthLimit = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY);
-        if (queueLengthLimit != null && queueLengthLimit instanceof String) {
+        if (queueLengthLimit instanceof String) {
             queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY, Long.parseLong((String) queueLengthLimit));
         }
 
         Object queueMessageTtl = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY);
-        if (queueMessageTtl != null && queueMessageTtl instanceof String) {
+        if (queueMessageTtl instanceof String) {
             queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY, Long.parseLong((String) queueMessageTtl));
         }
 
         Object queueExpiration = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY);
-        if (queueExpiration != null && queueExpiration instanceof String) {
+        if (queueExpiration instanceof String) {
             queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY, Long.parseLong((String) queueExpiration));
         }
     }

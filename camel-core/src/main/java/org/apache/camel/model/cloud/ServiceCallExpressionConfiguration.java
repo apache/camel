@@ -248,7 +248,7 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
 
                     parameters.replaceAll(
                         (k, v) -> {
-                            if (v != null && v instanceof String) {
+                            if (v instanceof String) {
                                 try {
                                     v = camelContext.resolvePropertyPlaceholders((String) v);
                                 } catch (Exception e) {

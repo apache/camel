@@ -1460,7 +1460,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      */
     public int getPendingRedeliveryCount() {
         int answer = redeliverySleepCounter.get();
-        if (executorService != null && executorService instanceof ThreadPoolExecutor) {
+        if (executorService instanceof ThreadPoolExecutor) {
             answer += ((ThreadPoolExecutor) executorService).getQueue().size();
         }
 

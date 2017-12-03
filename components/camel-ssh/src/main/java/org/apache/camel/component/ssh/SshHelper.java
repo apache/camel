@@ -51,7 +51,7 @@ public final class SshHelper {
 
         String userName = configuration.getUsername();
         Object userNameHeaderObj = headers.get(SshConstants.USERNAME_HEADER);
-        if (userNameHeaderObj != null && userNameHeaderObj instanceof String) {
+        if (userNameHeaderObj instanceof String) {
             userName = (String) headers.get(SshConstants.USERNAME_HEADER);
         }
 
@@ -91,7 +91,7 @@ public final class SshHelper {
                 String password = configuration.getPassword();
 
                 Object passwordHeaderObj = headers.get(SshConstants.PASSWORD_HEADER);
-                if (passwordHeaderObj != null && passwordHeaderObj instanceof String) {
+                if (passwordHeaderObj instanceof String) {
                     password = (String) headers.get(SshConstants.PASSWORD_HEADER);
                 }
 

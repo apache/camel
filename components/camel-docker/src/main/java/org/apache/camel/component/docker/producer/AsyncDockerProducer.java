@@ -243,9 +243,9 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         BuildImageCmd buildImageCmd;
 
-        if (body != null && body instanceof InputStream) {
+        if (body instanceof InputStream) {
             buildImageCmd = client.buildImageCmd((InputStream)body);
-        } else if (body != null && body instanceof File) {
+        } else if (body instanceof File) {
             buildImageCmd = client.buildImageCmd((File)body);
         } else {
             throw new DockerException("Unable to location source Image");
