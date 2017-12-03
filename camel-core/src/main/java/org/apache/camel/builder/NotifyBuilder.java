@@ -39,7 +39,6 @@ import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
-import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -64,7 +63,7 @@ public class NotifyBuilder {
     private final CamelContext context;
 
     // notifier to hook into Camel to listen for events
-    private final EventNotifier eventNotifier;
+    private final EventNotifierSupport eventNotifier;
 
     // the predicates build with this builder
     private final List<EventPredicateHolder> predicates = new ArrayList<EventPredicateHolder>();
@@ -1164,8 +1163,26 @@ public class NotifyBuilder {
      */
     public NotifyBuilder create() {
         doCreate(EventOperation.and);
+        if (eventNotifier.isStopped()) {
+            throw new IllegalStateException("A destroyed NotifyBuilder cannot be re-created.");
+        }
         created = true;
         return this;
+    }
+
+    /**
+     * De-registers this builder from its {@link CamelContext}.
+     * <p/>
+     * Once destroyed, this instance will not function again.
+     */
+    public void destroy() {
+        context.getManagementStrategy().removeEventNotifier(eventNotifier);
+        try {
+            ServiceHelper.stopService(eventNotifier);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+        created = false;
     }
 
     /**
