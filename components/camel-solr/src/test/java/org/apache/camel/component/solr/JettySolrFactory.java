@@ -29,6 +29,7 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.solr.client.solrj.embedded.JettyConfig;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
 import org.apache.solr.client.solrj.embedded.SSLConfig;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -106,8 +107,8 @@ public final class JettySolrFactory {
         SSLConfig sslConfig = buildSSLConfig(ssl, false);
 
         context = context == null ? "/solr" : context;
-        JettySolrRunner jetty = new JettySolrRunner(solrHome, context, 0, configFile, schemaFile,
-                                                    stopAtShutdown, extraServlets, sslConfig);
+        JettyConfig jettyConfig = new JettyConfig.Builder().setContext(context).setPort(0).stopAtShutdown(false).withServlets(extraServlets).withSSLConfig(sslConfig).build();              
+        JettySolrRunner jetty = new JettySolrRunner(solrHome, jettyConfig);
 
         jetty.start();
         
