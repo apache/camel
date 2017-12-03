@@ -192,7 +192,7 @@ public class NotifyBuilder {
                 // and just continue to route that on the consumer side, which causes the EventNotifier not to
                 // emit events when the consumer received the exchange, as its already done. For example by
                 // ProducerTemplate which creates the UoW before producing messages.
-                if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint() instanceof DirectEndpoint) {
+                if (exchange.getFromEndpoint() instanceof DirectEndpoint) {
                     return true;
                 }
                 return EndpointHelper.matchPattern(exchange.getFromRouteId(), "*");

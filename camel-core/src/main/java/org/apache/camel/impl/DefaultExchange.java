@@ -317,7 +317,7 @@ public final class DefaultExchange implements Exchange {
     public Message getOut() {
         // lazy create
         if (out == null) {
-            out = (in != null && in instanceof MessageSupport)
+            out = (in instanceof MessageSupport)
                 ? ((MessageSupport)in).newInstance() : new DefaultMessage(getContext());
             configureMessage(out);
         }

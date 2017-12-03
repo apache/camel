@@ -90,7 +90,7 @@ public class MasterConsumer extends DefaultConsumer {
 
     @Override
     protected void doResume() throws Exception {
-        if (delegatedConsumer != null && delegatedConsumer instanceof SuspendableService) {
+        if (delegatedConsumer instanceof SuspendableService) {
             ((SuspendableService)delegatedConsumer).resume();
         }
         super.doResume();
@@ -98,7 +98,7 @@ public class MasterConsumer extends DefaultConsumer {
 
     @Override
     protected void doSuspend() throws Exception {
-        if (delegatedConsumer != null && delegatedConsumer instanceof SuspendableService) {
+        if (delegatedConsumer instanceof SuspendableService) {
             ((SuspendableService)delegatedConsumer).suspend();
         }
         super.doSuspend();

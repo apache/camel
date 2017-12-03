@@ -76,7 +76,7 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
             try {
                 exclusive = operations.renameFile(file.getAbsoluteFilePath(), newFile.getAbsoluteFilePath());
             } catch (GenericFileOperationFailedException ex) {
-                if (ex.getCause() != null && ex.getCause() instanceof FileNotFoundException) {
+                if (ex.getCause() instanceof FileNotFoundException) {
                     exclusive = false;
                 } else {
                     throw ex;

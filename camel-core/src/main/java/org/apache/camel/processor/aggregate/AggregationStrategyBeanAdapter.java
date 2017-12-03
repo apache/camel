@@ -225,7 +225,7 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
         mi = bi.createMethodInfo();
 
         // in case the POJO is CamelContextAware
-        if (pojo != null && pojo instanceof CamelContextAware) {
+        if (pojo instanceof CamelContextAware) {
             ((CamelContextAware) pojo).setCamelContext(getCamelContext());
         }
 

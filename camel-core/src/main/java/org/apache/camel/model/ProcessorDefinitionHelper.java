@@ -696,7 +696,7 @@ public final class ProcessorDefinitionHelper {
                 if (Constants.PLACEHOLDER_QNAME.equals(key.getNamespaceURI())) {
                     String local = key.getLocalPart();
                     Object value = other.getOtherAttributes().get(key);
-                    if (value != null && value instanceof String) {
+                    if (value instanceof String) {
                         // enforce a properties component to be created if none existed
                         CamelContextHelper.lookupPropertiesComponent(camelContext, true);
 

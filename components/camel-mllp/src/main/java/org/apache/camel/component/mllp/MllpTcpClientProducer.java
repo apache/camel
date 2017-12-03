@@ -139,7 +139,7 @@ public class MllpTcpClientProducer extends DefaultProducer {
             return;
         } catch (MllpException mllpEx) {
             Throwable mllpExCause = mllpEx.getCause();
-            if (mllpExCause != null && mllpExCause instanceof IOException) {
+            if (mllpExCause instanceof IOException) {
                 MllpSocketUtil.reset(socket, log, mllpEx.getMessage());
             }
             exchange.setException(mllpEx);

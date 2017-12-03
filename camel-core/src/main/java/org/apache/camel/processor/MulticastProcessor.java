@@ -879,7 +879,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                           AsyncCallback callback, boolean doneSync, boolean forceExhaust) {
 
         // we are done so close the pairs iterator
-        if (pairs != null && pairs instanceof Closeable) {
+        if (pairs instanceof Closeable) {
             IOHelper.close((Closeable) pairs, "pairs", LOG);
         }
 

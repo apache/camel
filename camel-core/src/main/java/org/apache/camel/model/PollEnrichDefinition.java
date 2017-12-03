@@ -121,7 +121,7 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
             }
         }
 
-        if (strategy != null && strategy instanceof CamelContextAware) {
+        if (strategy instanceof CamelContextAware) {
             ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
         }
 

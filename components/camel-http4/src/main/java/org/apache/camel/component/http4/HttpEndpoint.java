@@ -209,7 +209,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
             // need to shutdown the ConnectionManager
             clientConnectionManager.shutdown();
         }
-        if (httpClient != null && httpClient instanceof Closeable) {
+        if (httpClient instanceof Closeable) {
             IOHelper.close((Closeable)httpClient);
         }
     }

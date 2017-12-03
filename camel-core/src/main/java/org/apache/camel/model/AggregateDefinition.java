@@ -293,7 +293,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     @Override
     public void configureChild(ProcessorDefinition<?> output) {
-        if (expression != null && expression instanceof ExpressionClause) {
+        if (expression instanceof ExpressionClause) {
             ExpressionClause<?> clause = (ExpressionClause<?>) expression;
             if (clause.getExpressionType() != null) {
                 // if using the Java DSL then the expression may have been set using the

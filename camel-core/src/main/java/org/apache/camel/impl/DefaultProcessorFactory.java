@@ -45,7 +45,7 @@ public class DefaultProcessorFactory implements ProcessorFactory {
         try {
             if (finder != null) {
                 Object object = finder.newInstance(name);
-                if (object != null && object instanceof ProcessorFactory) {
+                if (object instanceof ProcessorFactory) {
                     ProcessorFactory pc = (ProcessorFactory) object;
                     return pc.createChildProcessor(routeContext, definition, mandatory);
                 }
@@ -64,7 +64,7 @@ public class DefaultProcessorFactory implements ProcessorFactory {
         try {
             if (finder != null) {
                 Object object = finder.newInstance(name);
-                if (object != null && object instanceof ProcessorFactory) {
+                if (object instanceof ProcessorFactory) {
                     ProcessorFactory pc = (ProcessorFactory) object;
                     return pc.createProcessor(routeContext, definition);
                 }
