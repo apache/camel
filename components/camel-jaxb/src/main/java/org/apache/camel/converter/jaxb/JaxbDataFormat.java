@@ -136,6 +136,10 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
             if (charset == null) {
                 charset = encoding;
+                //Propagate the encoding of the exchange
+                if (charset != null) {
+                    exchange.setProperty(Exchange.CHARSET_NAME, charset);
+                }
             }
             if (charset != null) {
                 marshaller.setProperty(Marshaller.JAXB_ENCODING, charset);
