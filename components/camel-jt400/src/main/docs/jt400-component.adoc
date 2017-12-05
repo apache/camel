@@ -72,7 +72,7 @@ with the following path and query parameters:
 | *type* | *Required* Whether to work with data queues or remote program call |  | Jt400Type
 |===
 
-==== Query Parameters (29 parameters):
+==== Query Parameters (30 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -105,6 +105,7 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *procedureName* (procedureName) | Procedure name from a service program to call |  | String
 | *secured* (security) | Whether connections to AS/400 are secured with SSL. | false | boolean
 |===
 // endpoint options: END
