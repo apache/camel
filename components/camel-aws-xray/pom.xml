@@ -33,7 +33,6 @@
   <description>Distributed tracing using AWS XRay</description>
 
   <properties>
-    <aws-xray.version>1.2.0</aws-xray.version>
     <firstVersion>2.21.0</firstVersion>
     <label>monitoring,microservice</label>
     <title>XRay</title>
@@ -46,7 +45,7 @@
       <dependency>
         <groupId>com.amazonaws</groupId>
         <artifactId>aws-xray-recorder-sdk-bom</artifactId>
-        <version>${aws-xray.version}</version>
+        <version>${aws-xray-version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
