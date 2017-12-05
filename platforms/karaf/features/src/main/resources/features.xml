@@ -186,6 +186,16 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aws-java-sdk/${aws-java-sdk-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-aws/${project.version}</bundle>
   </feature>
+  <feature name='camel-aws-xray' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:com.amazonaws/aws-xray-recorder-sdk-core/${aws-xray-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.amazonaws/aws-xray-recorder-sdk-apache-http/${aws-xray-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.amazonaws/aws-xray-recorder-sdk-aws-sdk/${aws-xray-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.amazonaws/aws-xray-recorder-sdk-aws-sdk-instrumentor/${aws-xray-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.amazonaws/aws-xray-recorder-sdk-sql-postgres/${aws-xray-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.amazonaws/aws-xray-recorder-sdk-sql-mysql/${aws-xray-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-aws-xray/${project.version}</bundle>
+  </feature>
   <feature name='camel-azure' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-azure</feature>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
