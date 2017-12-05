@@ -18,18 +18,22 @@ package org.apache.camel.component.jt400;
 
 import java.beans.PropertyVetoException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ByteArray;
 import com.ibm.as400.access.AS400DataType;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.AS400Text;
+import com.ibm.as400.access.CommandCall;
 import com.ibm.as400.access.ProgramCall;
 import com.ibm.as400.access.ProgramParameter;
+import com.ibm.as400.access.ServiceProgramCall;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +56,14 @@ public class Jt400PgmProducer extends DefaultProducer {
         String commandStr = getISeriesEndpoint().getObjectPath();
         ProgramParameter[] parameterList = getParameterList(exchange);
 
-        ProgramCall pgmCall = new ProgramCall(iSeries);
+        ProgramCall pgmCall;
+        if (getISeriesEndpoint().getType() == Jt400Type.PGM) {
+            pgmCall = new ProgramCall(iSeries);
+        } else {
+            pgmCall = new ServiceProgramCall(iSeries);
+            ((ServiceProgramCall)pgmCall).setProcedureName(getISeriesEndpoint().getProcedureName());
+            ((ServiceProgramCall)pgmCall).setReturnValueFormat(ServiceProgramCall.NO_RETURN_VALUE);
+        }
         pgmCall.setProgram(commandStr);
         pgmCall.setParameterList(parameterList);
 
@@ -114,7 +125,11 @@ public class Jt400PgmProducer extends DefaultProducer {
 
             if (input && output) {
                 LOG.trace("Parameter {} is both input and output.", i);
-                parameterList[i] = new ProgramParameter(inputData, length);
+                if (getISeriesEndpoint().getType() == Jt400Type.PGM) {
+                    parameterList[i] = new ProgramParameter(inputData, length);
+                } else {
+                    parameterList[i] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, inputData, length);
+                }
             } else if (input) {
                 LOG.trace("Parameter {} is input.", i);
                 if (inputData != null) {

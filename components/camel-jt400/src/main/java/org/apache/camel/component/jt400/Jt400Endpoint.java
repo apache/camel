@@ -19,7 +19,6 @@ package org.apache.camel.component.jt400;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import javax.naming.OperationNotSupportedException;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
 import org.apache.camel.CamelException;
@@ -259,6 +258,14 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
 
     public void setReadTimeout(int readTimeout) {
         configuration.setReadTimeout(readTimeout);
+    }
+
+    public void setProcedureName(String procedureName) {
+        configuration.setProcedureName(procedureName);
+    }
+
+    public String getProcedureName() {
+        return configuration.getProcedureName();
     }
 
     @Override
