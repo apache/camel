@@ -598,8 +598,8 @@
     <rxjava-version>1.3.4</rxjava-version>
     <rxjava2-version>2.1.7</rxjava2-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
-    <saxon-bundle-version>9.8.0-5_1</saxon-bundle-version>
-    <saxon-version>9.8.0-5</saxon-version>
+    <saxon-bundle-version>9.8.0-6_1</saxon-bundle-version>
+    <saxon-version>9.8.0-6</saxon-version>
     <scala-version>2.11.7</scala-version>
     <scala-maven-plugin-version>3.2.2</scala-maven-plugin-version>
     <scalatest-version>2.2.5</scalatest-version>
