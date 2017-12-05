@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.quickfixj.examples.trading;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.time.LocalDateTime;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -53,7 +52,7 @@ public class TradeExecutorExample {
         new TradeExecutorExample().sendMessage();
     }
     
-    public void sendMessage() throws Exception {        
+    public void sendMessage() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
         context.addComponent("trade-executor", new TradeExecutorComponent());
         
