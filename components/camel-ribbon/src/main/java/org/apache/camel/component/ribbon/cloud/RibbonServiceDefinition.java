@@ -38,19 +38,19 @@ public class RibbonServiceDefinition extends Server implements ServiceDefinition
         this(name, host, port, null, DEFAULT_SERVICE_HEALTH);
     }
 
-    public RibbonServiceDefinition(String name, String host, int port, ServiceHealth healt) {
-        this(name, host, port, null, healt);
+    public RibbonServiceDefinition(String name, String host, int port, ServiceHealth health) {
+        this(name, host, port, null, health);
     }
 
     public RibbonServiceDefinition(String name, String host, int port,  Map<String, String> meta) {
         this(name, host, port, meta, DEFAULT_SERVICE_HEALTH);
     }
 
-    public RibbonServiceDefinition(String name, String host, int port, Map<String, String> meta, ServiceHealth healt) {
+    public RibbonServiceDefinition(String name, String host, int port, Map<String, String> meta, ServiceHealth health) {
         super(host, port);
         this.name = name;
         this.metaData = meta;
-        this.health = healt;
+        this.health = health;
     }
 
     public RibbonServiceDefinition(ServiceDefinition definition) {

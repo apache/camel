@@ -40,7 +40,7 @@ cassandra-0                                1/1       Running   0          2h
 cassandra-1                                1/1       Running   0          2h
 ```
 
-You can also verify the healt of your cluster by running
+You can also verify the health of your cluster by running
 
 ```
 $ kubectl exec <pod_name> -it nodetool status
