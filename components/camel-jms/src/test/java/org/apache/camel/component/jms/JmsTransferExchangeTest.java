@@ -62,6 +62,7 @@ public class JmsTransferExchangeTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", "cheese");
+        mock.expectedPropertyReceived("bar", 123);
 
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {

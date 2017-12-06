@@ -66,6 +66,8 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
                 map.put("double", new Double(1.23));
 
                 exchange.getIn().setHeaders(map);
+
+                exchange.setProperty("PropertyName", "PropertyValue");
             }
         });
 
@@ -85,6 +87,7 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
         assertEquals((Long) 123L, resultMessage.getHeader("long", Long.class));
         assertEquals((Double) 1.23, resultMessage.getHeader("double", Double.class));
         assertEquals("hello", resultMessage.getHeader("string", String.class));
+        assertEquals("PropertyValue", exchange.getProperty("PropertyName"));
     }
 
     @Override
