@@ -99,7 +99,6 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *undertowHttpBinding* (advanced) | To use a custom UndertowHttpBinding to control the mapping between Camel message and undertow. |  | UndertowHttpBinding
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
-| *http2Enabled* (consumer) | Specifies whether to enable HTTP2 for embedded undertow. By default http2Enabled is turned off. | false | boolean 
 |===
 // endpoint options: END
 
