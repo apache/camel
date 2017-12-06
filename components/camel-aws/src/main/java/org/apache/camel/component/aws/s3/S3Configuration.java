@@ -159,7 +159,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * Name of the bucket. The bucket will be created if it don't already
+     * Name of the bucket. The bucket will be created if it doesn't already
      * exists.
      */
     public void setBucketName(String bucketName) {
