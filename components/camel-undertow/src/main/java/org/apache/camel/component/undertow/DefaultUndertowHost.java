@@ -19,6 +19,7 @@ package org.apache.camel.component.undertow;
 import java.net.URI;
 
 import io.undertow.Undertow;
+import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
 
 import org.apache.camel.component.undertow.handlers.CamelRootHandler;
@@ -76,8 +77,12 @@ public class DefaultUndertowHost implements UndertowHost {
                 if (options.getDirectBuffers() != null) {
                     builder.setDirectBuffers(options.getDirectBuffers());
                 }
+                if (options.getHttp2Enabled() != null) {
+                    builder.setServerOption(UndertowOptions.ENABLE_HTTP2, options.getHttp2Enabled());
+                }
             }
 
+            
             undertow = builder.setHandler(rootHandler).build();
             LOG.info("Starting Undertow server on {}://{}:{}", key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort());
 

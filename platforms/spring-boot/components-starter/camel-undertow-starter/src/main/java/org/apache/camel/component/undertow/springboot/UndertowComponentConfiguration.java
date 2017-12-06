@@ -123,6 +123,10 @@ public class UndertowComponentConfiguration
          * Set if the Undertow host should use direct buffers.
          */
         private Boolean directBuffers;
+        /**
+         * Set if the Undertow host should use http2 protocol.
+         */
+        private Boolean http2Enabled;
 
         public Integer getWorkerThreads() {
             return workerThreads;
@@ -154,6 +158,14 @@ public class UndertowComponentConfiguration
 
         public void setDirectBuffers(Boolean directBuffers) {
             this.directBuffers = directBuffers;
+        }
+
+        public Boolean getHttp2Enabled() {
+            return http2Enabled;
+        }
+
+        public void setHttp2Enabled(Boolean http2Enabled) {
+            this.http2Enabled = http2Enabled;
         }
     }
 }
