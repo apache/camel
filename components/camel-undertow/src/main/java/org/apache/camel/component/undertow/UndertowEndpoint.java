@@ -87,8 +87,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private boolean optionsEnabled;
     @UriParam(label = "producer")
     private CookieHandler cookieHandler;
-    @UriParam(label = "consumer", defaultValue = "false", description = "Specifies whether to enable HTTP2 for embedded undertow. By default http2Enabled is turned off.")
-    private boolean http2Enabled;
 
     public UndertowEndpoint(String uri, UndertowComponent component) throws URISyntaxException {
         super(uri, component);
@@ -308,14 +306,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
      */
     public void setCookieHandler(CookieHandler cookieHandler) {
         this.cookieHandler = cookieHandler;
-    }
-    
-    public boolean isHttp2Enabled() {
-        return http2Enabled;
-    }
-
-    public void setHttp2Enabled(boolean http2Enabled) {
-        this.http2Enabled = http2Enabled;
     }
 
     @Override
