@@ -40,6 +40,11 @@ public final class UndertowHostOptions {
      * Set if the Undertow host should use direct buffers.
      */
     private Boolean directBuffers;
+    
+    /**
+     * Set if the Undertow host should use http2 protocol.
+     */
+    private Boolean http2Enabled;
 
     public UndertowHostOptions() {
     }
@@ -76,6 +81,14 @@ public final class UndertowHostOptions {
         this.directBuffers = directBuffers;
     }
 
+    public Boolean getHttp2Enabled() {
+        return http2Enabled;
+    }
+
+    public void setHttp2Enabled(Boolean http2Enabled) {
+        this.http2Enabled = http2Enabled;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("UndertowHostOptions{");
@@ -83,6 +96,7 @@ public final class UndertowHostOptions {
         sb.append(", ioThreads=").append(ioThreads);
         sb.append(", bufferSize=").append(bufferSize);
         sb.append(", directBuffers=").append(directBuffers);
+        sb.append(", http2Enabled=").append(http2Enabled);
         sb.append('}');
         return sb.toString();
     }
