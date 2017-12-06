@@ -304,7 +304,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), consumer.getEndpoint().getSslContext());
         UndertowHost host = undertowRegistry.get(key);
         if (host == null) {
-            host = createUndertowHost(key);
+            host = createUndertowHost(key, consumer.getEndpoint().isHttp2Enabled());
             undertowRegistry.put(key, host);
         }
         host.validateEndpointURI(uri);
@@ -318,8 +318,8 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         host.unregisterHandler(consumer.getHttpHandlerRegistrationInfo());
     }
 
-    protected UndertowHost createUndertowHost(UndertowHostKey key) {
-        return new DefaultUndertowHost(key, hostOptions);
+    protected UndertowHost createUndertowHost(UndertowHostKey key, boolean http2Enabled) {
+        return new DefaultUndertowHost(key, hostOptions, http2Enabled);
     }
 
     public UndertowHttpBinding getUndertowHttpBinding() {
