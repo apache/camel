@@ -513,7 +513,7 @@ public class RunMojo extends AbstractExecMojo {
                 // even log in future
                 Thread[] threadsArray = new Thread[1];
                 threadGroup.enumerate(threadsArray);
-                if (getLog().isDebugEnabled()){
+                if (getLog().isDebugEnabled()) {
                     getLog().debug("strange; " + activeCount + " thread(s) still active in the group "
                                    + threadGroup + " such as " + threadsArray[0]);
                 }
