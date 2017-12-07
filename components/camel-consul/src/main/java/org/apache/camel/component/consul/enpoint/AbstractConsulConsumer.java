@@ -43,7 +43,7 @@ abstract class AbstractConsulConsumer<C> extends DefaultConsumer {
         this.endpoint = endpoint;
         this.configuration = configuration;
         this.key = ObjectHelper.notNull(configuration.getKey(), ConsulConstants.CONSUL_KEY);
-        this.index = new AtomicReference<>(BigInteger.valueOf(configuration.getFirstIndex()));
+        this.index = new AtomicReference<>(configuration.getFirstIndex());
         this.clientSupplier = clientSupplier;
         this.watcher = null;
     }

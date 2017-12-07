@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.consul.springboot;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Generated;
@@ -243,7 +244,7 @@ public class ConsulComponentConfiguration
         /**
          * The first index for watch for, default 0
          */
-        private Long firstIndex;
+        private BigInteger firstIndex;
         /**
          * Recursively watch, default false
          */
@@ -405,11 +406,11 @@ public class ConsulComponentConfiguration
             this.blockSeconds = blockSeconds;
         }
 
-        public Long getFirstIndex() {
+        public BigInteger getFirstIndex() {
             return firstIndex;
         }
 
-        public void setFirstIndex(Long firstIndex) {
+        public void setFirstIndex(BigInteger firstIndex) {
             this.firstIndex = firstIndex;
         }
 
