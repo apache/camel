@@ -14,10 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.enpoint;
+package org.apache.camel.component.consul.endpoint;
 
-public interface ConsulPreparedQueryActions {
-    String CREATE = "CREATE";
-    String GET = "GET";
-    String EXECUTE = "EXECUTE";
+public interface ConsulKeyValueActions {
+    String PUT = "PUT";
+    String GET_VALUE = "GET_VALUE";
+    String GET_VALUES = "GET_VALUES";
+    String GET_KEYS = "GET_KEYS";
+    String GET_SESSIONS = "GET_SESSIONS";
+    String DELETE_KEY = "DELETE_KEY";
+    String DELETE_KEYS = "DELETE_KEYS";
+    String LOCK = "LOCK";
+    String UNLOCK = "UNLOCK";
 }

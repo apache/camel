@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.enpoint;
+package org.apache.camel.component.consul.endpoint;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.SessionClient;

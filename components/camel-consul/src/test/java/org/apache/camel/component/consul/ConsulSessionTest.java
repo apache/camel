@@ -23,7 +23,7 @@ import com.orbitz.consul.model.session.ImmutableSession;
 import com.orbitz.consul.model.session.SessionCreatedResponse;
 import com.orbitz.consul.model.session.SessionInfo;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.consul.enpoint.ConsulSessionActions;
+import org.apache.camel.component.consul.endpoint.ConsulSessionActions;
 import org.junit.Assert;
 import org.junit.Test;
 

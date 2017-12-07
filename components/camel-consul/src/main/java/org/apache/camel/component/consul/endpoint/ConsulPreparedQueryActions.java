@@ -14,21 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.enpoint;
+package org.apache.camel.component.consul.endpoint;
 
-import com.orbitz.consul.AgentClient;
-import com.orbitz.consul.Consul;
-import org.apache.camel.component.consul.ConsulConfiguration;
-import org.apache.camel.component.consul.ConsulEndpoint;
-
-public final class ConsulAgentProducer extends AbstractConsulProducer<AgentClient> {
-
-    public ConsulAgentProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
-        super(endpoint, configuration, Consul::agentClient);
-
-        bind(ConsulAgentActions.CHECKS, wrap(c -> c.getChecks()));
-        bind(ConsulAgentActions.SERVICES, wrap(c -> c.getServices()));
-        bind(ConsulAgentActions.MEMBERS, wrap(c -> c.getMembers()));
-        bind(ConsulAgentActions.AGENT, wrap(c -> c.getAgent()));
-    }
+public interface ConsulPreparedQueryActions {
+    String CREATE = "CREATE";
+    String GET = "GET";
+    String EXECUTE = "EXECUTE";
 }

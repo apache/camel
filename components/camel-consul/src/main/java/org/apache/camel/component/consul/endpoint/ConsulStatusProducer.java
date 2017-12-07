@@ -14,14 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.enpoint;
+package org.apache.camel.component.consul.endpoint;
 
-public interface ConsulCatalogActions {
-    String REGISTER = "REGISTER";
-    String DEREGISTER = "DEREGISTER";
-    String LIST_DATACENTERS = "LIST_DATACENTERS";
-    String LIST_NODES = "LIST_NODES";
-    String LIST_SERVICES = "LIST_SERVICES";
-    String GET_SERVICE = "GET_SERVICE";
-    String GET_NODE = "GET_NODE";
+import com.orbitz.consul.Consul;
+import com.orbitz.consul.StatusClient;
+import org.apache.camel.component.consul.ConsulConfiguration;
+import org.apache.camel.component.consul.ConsulEndpoint;
+
+public final class ConsulStatusProducer extends AbstractConsulProducer<StatusClient> {
+
+    public ConsulStatusProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
+        super(endpoint, configuration, Consul::statusClient);
+
+        bind(ConsulStatusActions.LEADER, wrap(c -> c.getLeader()));
+        bind(ConsulStatusActions.PEERS, wrap(c -> c.getPeers()));
+    }
 }

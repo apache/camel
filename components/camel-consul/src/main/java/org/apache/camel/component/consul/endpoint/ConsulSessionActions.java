@@ -14,9 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.enpoint;
+package org.apache.camel.component.consul.endpoint;
 
-public interface ConsulCoordinatesActions {
-    String DATACENTERS = "DATACENTERS";
-    String NODES = "NODES";
+public interface ConsulSessionActions {
+    String CREATE = "CREATE";
+    String DESTROY = "DESTROY";
+    String INFO = "INFO";
+    String LIST = "LIST";
+    String RENEW = "RENEW";
 }

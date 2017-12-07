@@ -14,16 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.enpoint;
+package org.apache.camel.component.consul.endpoint;
 
-public interface ConsulKeyValueActions {
-    String PUT = "PUT";
-    String GET_VALUE = "GET_VALUE";
-    String GET_VALUES = "GET_VALUES";
-    String GET_KEYS = "GET_KEYS";
-    String GET_SESSIONS = "GET_SESSIONS";
-    String DELETE_KEY = "DELETE_KEY";
-    String DELETE_KEYS = "DELETE_KEYS";
-    String LOCK = "LOCK";
-    String UNLOCK = "UNLOCK";
+import com.orbitz.consul.AgentClient;
+import com.orbitz.consul.Consul;
+import org.apache.camel.component.consul.ConsulConfiguration;
+import org.apache.camel.component.consul.ConsulEndpoint;
+
+public final class ConsulAgentProducer extends AbstractConsulProducer<AgentClient> {
+
+    public ConsulAgentProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
+        super(endpoint, configuration, Consul::agentClient);
+
+        bind(ConsulAgentActions.CHECKS, wrap(c -> c.getChecks()));
+        bind(ConsulAgentActions.SERVICES, wrap(c -> c.getServices()));
+        bind(ConsulAgentActions.MEMBERS, wrap(c -> c.getMembers()));
+        bind(ConsulAgentActions.AGENT, wrap(c -> c.getAgent()));
+    }
 }
