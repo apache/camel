@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.enpoint;
+package org.apache.camel.component.consul.endpoint;
 
-public interface ConsulStatusActions {
-    String LEADER = "LEADER";
-    String PEERS = "PEERS";
+public interface ConsulEventActions {
+    String FIRE = "FIRE";
+    String LIST = "LIST";
 }

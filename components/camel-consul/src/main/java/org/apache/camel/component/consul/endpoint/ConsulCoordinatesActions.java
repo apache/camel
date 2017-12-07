@@ -14,19 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.enpoint;
+package org.apache.camel.component.consul.endpoint;
 
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.StatusClient;
-import org.apache.camel.component.consul.ConsulConfiguration;
-import org.apache.camel.component.consul.ConsulEndpoint;
-
-public final class ConsulStatusProducer extends AbstractConsulProducer<StatusClient> {
-
-    public ConsulStatusProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
-        super(endpoint, configuration, Consul::statusClient);
-
-        bind(ConsulStatusActions.LEADER, wrap(c -> c.getLeader()));
-        bind(ConsulStatusActions.PEERS, wrap(c -> c.getPeers()));
-    }
+public interface ConsulCoordinatesActions {
+    String DATACENTERS = "DATACENTERS";
+    String NODES = "NODES";
 }

@@ -14,12 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.enpoint;
+package org.apache.camel.component.consul.endpoint;
 
-public interface ConsulSessionActions {
-    String CREATE = "CREATE";
-    String DESTROY = "DESTROY";
-    String INFO = "INFO";
-    String LIST = "LIST";
-    String RENEW = "RENEW";
+public interface ConsulStatusActions {
+    String LEADER = "LEADER";
+    String PEERS = "PEERS";
 }

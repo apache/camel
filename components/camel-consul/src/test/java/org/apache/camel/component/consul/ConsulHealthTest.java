@@ -26,7 +26,7 @@ import com.orbitz.consul.model.agent.ImmutableRegistration;
 import com.orbitz.consul.model.agent.Registration;
 import com.orbitz.consul.model.health.ServiceHealth;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.consul.enpoint.ConsulHealthActions;
+import org.apache.camel.component.consul.endpoint.ConsulHealthActions;
 import org.junit.Assert;
 import org.junit.Test;
 
