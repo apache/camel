@@ -400,6 +400,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             String key = h.getName();
             String value = h.getValue();
 
+
             // ignore these headers
             if ("Host".equalsIgnoreCase(key) || "Accept".equalsIgnoreCase(key) || "Accept-encoding".equalsIgnoreCase(key)
                 || "User-Agent".equalsIgnoreCase(key) || "Referer".equalsIgnoreCase(key) || "Connection".equalsIgnoreCase(key)
@@ -427,6 +428,11 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 Date d = exchange.getContext().getTypeConverter().tryConvertTo(Date.class, exchange, value);
                 if (d != null) {
                     response.setDate(d);
+                }
+            } else if ("Access-Control-Max-Age".equalsIgnoreCase(key)) {
+            	Integer accessControlMaxAge = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, exchange, value);
+                if (accessControlMaxAge != null) {
+                    response.setAccessControlMaxAge(accessControlMaxAge);
                 }
             } else {
                 // TODO: implement all the other restlet standard headers
