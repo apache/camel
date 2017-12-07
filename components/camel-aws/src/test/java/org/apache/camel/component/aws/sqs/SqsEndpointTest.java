@@ -17,31 +17,36 @@
 package org.apache.camel.component.aws.sqs;
 
 import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.model.CreateQueueRequest;
+import com.amazonaws.services.sqs.model.CreateQueueResult;
 import com.amazonaws.services.sqs.model.GetQueueUrlRequest;
 import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
+import com.amazonaws.services.sqs.model.QueueAttributeName;
 
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import static org.junit.Assert.assertEquals;
 
 public class SqsEndpointTest {
-    
+
     private SqsEndpoint endpoint;
     private AmazonSQSClient amazonSQSClient;
+    private SqsConfiguration config;
 
     @Before
     public void setUp() throws Exception {
         amazonSQSClient = Mockito.mock(AmazonSQSClient.class);
-        
-        SqsConfiguration config = new SqsConfiguration();
+
+        config = new SqsConfiguration();
         config.setQueueName("test-queue");
         config.setAmazonSQSClient(amazonSQSClient);
-        
+
         endpoint = new SqsEndpoint("aws-sqs://test-queue", new SqsComponent(new DefaultCamelContext()), config);
-        
+
     }
 
     @Test
@@ -68,5 +73,41 @@ public class SqsEndpointTest {
 
         Mockito.verify(amazonSQSClient).getQueueUrl(expectedGetQueueUrlRequest);
 
+    }
+
+    @Test
+    public void createQueueShouldCreateFifoQueueWithContentBasedDeduplication() {
+        config.setQueueName("test-queue.fifo");
+        config.setMessageDeduplicationIdStrategy("useContentBasedDeduplication");
+
+        CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue.fifo")
+                .addAttributesEntry(QueueAttributeName.FifoQueue.name(), "true")
+                .addAttributesEntry(QueueAttributeName.ContentBasedDeduplication.name(), "true");
+        Mockito.when(amazonSQSClient.createQueue(expectedCreateQueueRequest))
+                .thenReturn(new CreateQueueResult()
+                                .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue.fifo"));
+
+        endpoint.createQueue(amazonSQSClient);
+
+        Mockito.verify(amazonSQSClient).createQueue(expectedCreateQueueRequest);
+        assertEquals("https://sqs.us-east-1.amazonaws.com/111222333/test-queue.fifo", endpoint.getQueueUrl());
+    }
+
+    @Test
+    public void createQueueShouldCreateFifoQueueWithoutContentBasedDeduplication() {
+        config.setQueueName("test-queue.fifo");
+        config.setMessageDeduplicationIdStrategy("useExchangeId");
+
+        CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue.fifo")
+                .addAttributesEntry(QueueAttributeName.FifoQueue.name(), "true")
+                .addAttributesEntry(QueueAttributeName.ContentBasedDeduplication.name(), "false");
+        Mockito.when(amazonSQSClient.createQueue(expectedCreateQueueRequest))
+                .thenReturn(new CreateQueueResult()
+                                .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue.fifo"));
+
+        endpoint.createQueue(amazonSQSClient);
+
+        Mockito.verify(amazonSQSClient).createQueue(expectedCreateQueueRequest);
+        assertEquals("https://sqs.us-east-1.amazonaws.com/111222333/test-queue.fifo", endpoint.getQueueUrl());
     }
 }
