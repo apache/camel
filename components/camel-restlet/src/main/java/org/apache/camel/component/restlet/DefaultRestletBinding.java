@@ -430,7 +430,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                     response.setDate(d);
                 }
             } else if ("Access-Control-Max-Age".equalsIgnoreCase(key)) {
-            	Integer accessControlMaxAge = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, exchange, value);
+                Integer accessControlMaxAge = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, exchange, value);
                 if (accessControlMaxAge != null) {
                     response.setAccessControlMaxAge(accessControlMaxAge);
                 }
