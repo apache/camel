@@ -83,7 +83,7 @@ public class SqsEndpointTest {
         CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue.fifo")
                 .addAttributesEntry(QueueAttributeName.FifoQueue.name(), "true")
                 .addAttributesEntry(QueueAttributeName.ContentBasedDeduplication.name(), "true");
-        Mockito.when(amazonSQSClient.createQueue(expectedCreateQueueRequest))
+        Mockito.when(amazonSQSClient.createQueue(Mockito.any(CreateQueueRequest.class)))
                 .thenReturn(new CreateQueueResult()
                                 .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue.fifo"));
 
@@ -101,7 +101,7 @@ public class SqsEndpointTest {
         CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue.fifo")
                 .addAttributesEntry(QueueAttributeName.FifoQueue.name(), "true")
                 .addAttributesEntry(QueueAttributeName.ContentBasedDeduplication.name(), "false");
-        Mockito.when(amazonSQSClient.createQueue(expectedCreateQueueRequest))
+        Mockito.when(amazonSQSClient.createQueue(Mockito.any(CreateQueueRequest.class)))
                 .thenReturn(new CreateQueueResult()
                                 .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue.fifo"));
 
@@ -127,7 +127,7 @@ public class SqsEndpointTest {
                 .addAttributesEntry(QueueAttributeName.Policy.name(), "{\"Version\": \"2012-10-17\"}")
                 .addAttributesEntry(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), "5")
                 .addAttributesEntry(QueueAttributeName.RedrivePolicy.name(), "{ \"deadLetterTargetArn\" : String, \"maxReceiveCount\" : Integer }");
-        Mockito.when(amazonSQSClient.createQueue(expectedCreateQueueRequest))
+        Mockito.when(amazonSQSClient.createQueue(Mockito.any(CreateQueueRequest.class)))
                 .thenReturn(new CreateQueueResult()
                                 .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue"));
 
