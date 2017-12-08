@@ -392,7 +392,6 @@ public final class ObjectHelper {
      * @param value  the value, if its a String it will be tested for text length as well
      * @return true if <b>not</b> empty
      */
-    @SuppressWarnings("unchecked")
     public static boolean isNotEmpty(Object value) {
         if (value == null) {
             return false;
