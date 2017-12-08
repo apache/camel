@@ -397,7 +397,6 @@ public class GenericFileProducer<T> extends DefaultProducer {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         ServiceHelper.startService(locks);
         super.doStart();
