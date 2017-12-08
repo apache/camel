@@ -217,7 +217,6 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = this.createChildProcessor(routeContext, true);
 
