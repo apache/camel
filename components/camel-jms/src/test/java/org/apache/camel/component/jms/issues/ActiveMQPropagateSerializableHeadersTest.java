@@ -94,6 +94,9 @@ public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         // END SNIPPET: example
 
+        // prevent java.io.NotSerializableException: org.apache.camel.impl.DefaultMessageHistory
+        camelContext.setMessageHistory(false);
+
         return camelContext;
     }
 
