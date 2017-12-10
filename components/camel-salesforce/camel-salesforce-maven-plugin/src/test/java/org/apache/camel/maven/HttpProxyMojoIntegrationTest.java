@@ -18,108 +18,67 @@ package org.apache.camel.maven;
 
 import java.io.IOException;
 import java.util.HashMap;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.eclipse.jetty.proxy.ConnectHandler;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.util.B64Code;
-import org.eclipse.jetty.util.StringUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.AvailablePortFinder;
+import org.junit.After;
+import org.junit.Before;
+import org.littleshoot.proxy.HttpProxyServer;
+import org.littleshoot.proxy.ProxyAuthenticator;
+import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
-import static org.eclipse.jetty.http.HttpHeader.PROXY_AUTHENTICATE;
-import static org.eclipse.jetty.http.HttpHeader.PROXY_AUTHORIZATION;
-
-@Ignore("Bug in Jetty9 causes java.lang.IllegalArgumentException: Invalid protocol login.salesforce.com")
 public class HttpProxyMojoIntegrationTest extends CamelSalesforceMojoIntegrationTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpProxyMojoIntegrationTest.class);
-
-    private static final String HTTP_PROXY_HOST = "localhost";
-    private static final String HTTP_PROXY_USER_NAME = "camel-user";
     private static final String HTTP_PROXY_PASSWORD = "camel-user-password";
+
     private static final String HTTP_PROXY_REALM = "proxy-realm";
 
-    private static Server server;
-    private static int httpProxyPort;
+    private static final String HTTP_PROXY_USER_NAME = "camel-user";
 
-    @BeforeClass
-    public static void setupServer() throws Exception {
-        // start a local HTTP proxy using Jetty server
-        server = new Server();
+    private int httpProxyPort;
 
-/*
-        final SSLContextParameters contextParameters = new SSLContextParameters();
-        final SslContextFactory sslContextFactory = new SslContextFactory();
-        sslContextFactory.setSslContext(contextParameters.createSSLContext());
-        ServerConnector connector = new ServerConnector(server, sslContextFactory);
-*/
-        ServerConnector connector = new ServerConnector(server);
+    private HttpProxyServer proxy;
 
-        connector.setHost(HTTP_PROXY_HOST);
-        server.addConnector(connector);
+    @Before
+    public void startProxy() {
+        httpProxyPort = AvailablePortFinder.getNextAvailable();
 
-        final String authenticationString = "Basic "
-            + B64Code.encode(HTTP_PROXY_USER_NAME + ":" + HTTP_PROXY_PASSWORD, StringUtil.__ISO_8859_1);
-
-        ConnectHandler connectHandler = new ConnectHandler() {
-            @Override
-            protected boolean handleAuthentication(HttpServletRequest request, HttpServletResponse response, String address) {
-                // validate proxy-authentication header
-                final String header = request.getHeader(PROXY_AUTHORIZATION.toString());
-                if (!authenticationString.equals(header)) {
-                    LOG.warn("Missing header " + PROXY_AUTHORIZATION);
-                    // ask for authentication header
-                    response.setHeader(PROXY_AUTHENTICATE.toString(), String.format("Basic realm=\"%s\"", HTTP_PROXY_REALM));
-                    return false;
+        proxy = DefaultHttpProxyServer.bootstrap().withPort(httpProxyPort)
+            .withProxyAuthenticator(new ProxyAuthenticator() {
+                @Override
+                public String getRealm() {
+                    return HTTP_PROXY_REALM;
                 }
-                LOG.info("Request contains required header " + PROXY_AUTHORIZATION);
-                return true;
-            }
-        };
-        server.setHandler(connectHandler);
 
-        LOG.info("Starting proxy server...");
-        server.start();
+                @Override
+                public boolean authenticate(String userName, String password) {
+                    return HTTP_PROXY_USER_NAME.equals(userName) && HTTP_PROXY_PASSWORD.equals(password);
+                }
+            }).start();
+    }
 
-        httpProxyPort = connector.getLocalPort();
-        LOG.info("Started proxy server on port {}", httpProxyPort);
+    @After
+    public void stopProxy() {
+        proxy.stop();
     }
 
     @Override
-    protected CamelSalesforceMojo createMojo() throws IOException {
-        final CamelSalesforceMojo mojo = super.createMojo();
-
-        // SSL context parameters
-        mojo.sslContextParameters = new SSLContextParameters();
+    protected GenerateMojo createMojo() throws IOException {
+        final GenerateMojo mojo = super.createMojo();
 
         // HTTP proxy properties
-        mojo.httpProxyHost = HTTP_PROXY_HOST;
+        mojo.httpProxyHost = "localhost";
         mojo.httpProxyPort = httpProxyPort;
         mojo.httpProxyUsername = HTTP_PROXY_USER_NAME;
         mojo.httpProxyPassword = HTTP_PROXY_PASSWORD;
         mojo.httpProxyRealm = HTTP_PROXY_REALM;
-        mojo.httpProxyAuthUri = String.format("https://%s:%s", HTTP_PROXY_HOST, httpProxyPort);
+        mojo.isHttpProxySecure = false;
+        mojo.httpProxyAuthUri = String.format("http://localhost:%s", httpProxyPort);
 
         // HTTP client properties
-        mojo.httpClientProperties = new HashMap<String, Object>();
+        mojo.httpClientProperties = new HashMap<>();
         mojo.httpClientProperties.put("timeout", "60000");
         mojo.httpClientProperties.put("removeIdleDestinations", "true");
 
         return mojo;
-    }
-
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-        // stop the proxy server after component
-        LOG.info("Stopping proxy server...");
-        server.stop();
-        LOG.info("Stopped proxy server");
     }
 }
