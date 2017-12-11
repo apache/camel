@@ -82,12 +82,13 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
         assertEquals("hello", transferMessage.getHeader("string", String.class));
 
         Message resultMessage = result.getExchanges().get(0).getIn();
+        Exchange resultExchange = result.getExchanges().get(0);
         assertNotNull(resultMessage.getBody(SerializableResponseDto.class));
         assertEquals(Boolean.TRUE, resultMessage.getHeader("boolean", Boolean.class));
         assertEquals((Long) 123L, resultMessage.getHeader("long", Long.class));
         assertEquals((Double) 1.23, resultMessage.getHeader("double", Double.class));
         assertEquals("hello", resultMessage.getHeader("string", String.class));
-        assertEquals("PropertyValue", exchange.getProperty("PropertyName"));
+        assertEquals("PropertyValue", resultExchange.getProperty("PropertyName"));
     }
 
     @Override
