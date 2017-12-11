@@ -43,8 +43,8 @@ public class FileConsumeTemplateTest extends ContextTestSupport {
         String body = out.getIn().getBody(String.class);
         String body2 = out2.getIn().getBody(String.class);
 
-        assertEquals("Bye World", body);
-        assertEquals("Hello World", body2);
+        assertEquals("Hello World", body);
+        assertEquals("Bye World", body2);
     }
 
 }
