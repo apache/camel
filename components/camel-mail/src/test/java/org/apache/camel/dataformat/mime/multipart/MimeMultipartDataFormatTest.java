@@ -351,6 +351,41 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         assertEquals("This is not a MIME-Multipart", bodyStr);
     }
 
+    @Test
+    public void attachmentReadOnce() throws IOException {
+        String attContentType = "text/plain";
+        String attText = "Attachment Text";
+        InputStream attInputStream = new ByteArrayInputStream(attText.getBytes());
+        String attFileName = "Attachment File Name";
+        in.setBody("Body text");
+        in.setHeader(Exchange.CONTENT_TYPE, "text/plain;charset=iso8859-1;other-parameter=true");
+        in.setHeader(Exchange.CONTENT_ENCODING, "UTF8");
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Content-Description", "Sample Attachment Data");
+        headers.put("X-AdditionalData", "additional data");
+        CountingByteArrayDataSource attachmentDs = new CountingByteArrayDataSource(attInputStream, attContentType);
+        addAttachment(attachmentDs, attFileName, headers);
+        Exchange result = template.send("direct:roundtrip", exchange);
+        Message out = result.getOut();
+        assertEquals("Body text", out.getBody(String.class));
+        assertThat(out.getHeader(Exchange.CONTENT_TYPE, String.class), startsWith("text/plain"));
+        assertEquals("UTF8", out.getHeader(Exchange.CONTENT_ENCODING));
+        assertTrue(out.hasAttachments());
+        assertEquals(1, out.getAttachmentNames().size());
+        assertThat(out.getAttachmentNames(), hasItem(attFileName));
+        Attachment att = out.getAttachmentObject(attFileName);
+        DataHandler dh = att.getDataHandler();
+        assertNotNull(dh);
+        assertEquals(attContentType, dh.getContentType());
+        InputStream is = dh.getInputStream();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        IOHelper.copyAndCloseInput(is, os);
+        assertEquals(attText, new String(os.toByteArray()));
+        assertEquals("Sample Attachment Data", att.getHeader("content-description"));
+        assertEquals("additional data", att.getHeader("X-AdditionalData"));
+        assertEquals(1, attachmentDs.readCounts); // Fails - input is read twice
+    }
+
     private Attachment unmarshalAndCheckAttachmentName(String matcher) throws IOException, UnsupportedEncodingException {
         Exchange intermediate = template.send("direct:unmarshalonlyinlineheaders", exchange);
         assertNotNull(intermediate.getOut());
@@ -383,6 +418,34 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         }
         in.addAttachmentObject(attFileName, attachment);
     }
+
+    private void addAttachment(DataSource ds, String attFileName, Map<String, String> headers) throws IOException {
+        DefaultAttachment attachment = new DefaultAttachment(ds);
+        if (headers != null) {
+            for (String headerName : headers.keySet()) {
+                attachment.addHeader(headerName, headers.get(headerName));
+            }
+        }
+        in.addAttachmentObject(attFileName, attachment);
+    }
+
+    class CountingByteArrayDataSource extends ByteArrayDataSource {
+
+        int readCounts = 0;
+
+        CountingByteArrayDataSource(InputStream is, String attContentType) throws IOException {
+            super(is, attContentType);
+        }
+
+        @Override
+        public InputStream getInputStream() throws IOException {
+            //Thread.dumpStack();
+            readCounts++;
+            return super.getInputStream();
+        }
+
+    }
+
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
