@@ -1,10 +1,10 @@
-== JSonPath Language
+== JsonPath Language
 
 *Available as of Camel version 2.13*
 
-Camel supports https://code.google.com/p/json-path/[JSonPath] to allow
+Camel supports https://code.google.com/p/json-path/[JsonPath] to allow
 using link:expression.html[Expression] or link:predicate.html[Predicate]
-on json messages.
+on JSON messages.
 
 [source,java]
 -----------------------------------------------------
@@ -18,11 +18,11 @@ from("queue:books.new")
       .to("jms:queue:book.expensive")
 -----------------------------------------------------
 
-=== JSonPath Options
+=== JsonPath Options
 
 
 // language options: START
-The JSonPath language supports 7 options which are listed below.
+The JsonPath language supports 7 options which are listed below.
 
 
 
@@ -31,9 +31,9 @@ The JSonPath language supports 7 options which are listed below.
 | Name | Default | Java Type | Description
 | resultType |  | String | Sets the class name of the result type (type from output)
 | suppressExceptions | false | Boolean | Whether to suppress exceptions such as PathNotFoundException.
-| allowSimple | true | Boolean | Whether to allow in inlined simple exceptions in the json path expression
+| allowSimple | true | Boolean | Whether to allow in inlined simple exceptions in the JSON path expression
 | allowEasyPredicate | true | Boolean | Whether to allow using the easy predicate parser to pre-parse predicates.
-| writeAsString | false | Boolean | Whether to write the output of each row/element as a JSon String value instead of a Map/POJO value.
+| writeAsString | false | Boolean | Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.
 | headerName |  | String | Name of header to use as input instead of the message body
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |===
@@ -71,7 +71,7 @@ follows
 
 === Syntax
 
-See the https://code.google.com/p/json-path/[JSonPath] project page for
+See the https://code.google.com/p/json-path/[JsonPath] project page for
 further examples.
 
 === Easy Syntax
@@ -114,7 +114,7 @@ store.book.price < ${header.limit}
 
 === Supported message body types
 
-Camel JSonPath supports message body using the following types:
+Camel JsonPath supports message body using the following types:
 
 [width="100%",cols="3m,7",options="header"]
 |===
@@ -125,21 +125,21 @@ Camel JSonPath supports message body using the following types:
 | List | Message bodies as `java.util.List` types
 | POJO | *Optional* If Jackson is on the classpath, then camel-jsonpath
   is able to use Jackson to read the message body as POJO and convert to `java.util.Map`
-  which is supported by JSonPath. For example you can add `camel-jackson` as dependency to include Jackson.
+  which is supported by JsonPath. For example you can add `camel-jackson` as dependency to include Jackson.
 | InputStream | If none of the above types matches, then Camel will attempt to read the message body as an `java.io.InputStream`.
 |===
 
 If a message body is of unsupported type then an exception is thrown by default, however you
-can configure JSonPath to suppress exceptions (see below)
+can configure JsonPath to suppress exceptions (see below)
 
 
 === Suppress exceptions
 
 *Available as of Camel 2.16*
 
-By default jsonpath will throw an exception if the json payload does not
+By default jsonpath will throw an exception if the JSON payload does not
 have a valid path accordingly to the configured jsonpath expression. In
-some use-cases you may want to ignore this in case the json payload
+some use-cases you may want to ignore this in case the JSON payload
 contains optional data. Therefore you can set the option
 suppressExceptions to true to ignore this as shown:
 
@@ -178,7 +178,7 @@ This option is also available on the `@JsonPath` annotation.
 
 *Available as of Camel 2.18*
 
-Its now possible to inlined Simple language expressions in the JSonPath expression using the simple syntax ${xxx}.
+Its now possible to inlined Simple language expressions in the JsonPath expression using the simple syntax ${xxx}.
 An example is shown below:
 
 [source,java]
@@ -229,10 +229,10 @@ And in XML DSL:
 <jsonpath allowSimple="false">$.store.book[?(@.price < 10)]</jsonpath>
 ----
 
-=== JSonPath injection
+=== JsonPath injection
 
 You can use link:bean-integration.html[Bean Integration] to invoke a
-method on a bean and use various languages such as JSonPath to extract a
+method on a bean and use various languages such as JsonPath to extract a
 value from the message and bind it to a method parameter.
 
 For example
@@ -258,9 +258,9 @@ you enter the document in String format to the JSONPath component or you
 can specify the encoding in the header "*CamelJsonPathJsonEncoding*"
 (JsonpathConstants.HEADER_JSON_ENCODING).
 
-=== Split JSon data into sub rows as JSon
+=== Split JSON data into sub rows as JSON
 
-You can use jsonpath to split a JSon document, such as:
+You can use jsonpath to split a JSON document, such as:
 
 [source,java]
 ----
@@ -270,7 +270,7 @@ from("direct:start")
 ----
 
 Then each book is logged, however the message body is a `Map` instance. Sometimes
-you may want to output this as plain String JSon value instead, which can be done
+you may want to output this as plain String JSON value instead, which can be done
 from *Camel 2.20* onwards with the `writeAsString` option as shown:
 
 [source,java]
@@ -280,7 +280,7 @@ from("direct:start")
     .to("log:book");
 ----
 
-Then each book is logged as a String JSon value. For earlier versions of Camel you
+Then each book is logged as a String JSON value. For earlier versions of Camel you
 would need to use camel-jackson dataformat and marshal the message body to make it
 convert the message body from `Map` to a `String` type.
 
@@ -290,7 +290,7 @@ convert the message body from `Map` to a `String` type.
 By default jsonpath uses the message body as the input source. However you can also use a header as input
 by specifying the `headerName` option.
 
-For example to count the number of books from a json document that
+For example to count the number of books from a JSON document that
 was stored in a header named `books` you can do:
 
 [source,java]
@@ -319,8 +319,8 @@ The same example in XML DSL would be:
 
 === Dependencies
 
-To use JSonPath in your camel routes you need to add the a dependency on
-*camel-jsonpath* which implements the JSonPath language.
+To use JsonPath in your camel routes you need to add the a dependency on
+*camel-jsonpath* which implements the JsonPath language.
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
