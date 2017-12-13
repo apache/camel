@@ -44,7 +44,10 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
         GenericFileConsumer consumer = (GenericFileConsumer) super.createConsumer();
         // do not start scheduler as we poll manually
         consumer.setStartScheduler(false);
+        // when using polling consumer we poll only 1 file per poll so we can limit
         consumer.setMaxMessagesPerPoll(1);
+        // however do not limit eager as we may sort the files and thus need to do a full scan so we can sort afterwards
+        consumer.setEagerLimitMaxMessagesPerPoll(false);
         // we only want to poll once so disconnect by default
         return consumer;
     }
