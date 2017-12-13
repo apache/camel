@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.commands.internal.RegexUtil;
 
 /**
@@ -53,10 +54,34 @@ public abstract class AbstractRouteCommand extends AbstractCamelCommand {
         for (Map<String, String> row : camelRoutes) {
             String camelContextName = row.get("camelContextName");
             String routeId = row.get("routeId");
-            executeOnRoute(camelController, camelContextName, routeId, out, err);
+            if (camelController instanceof LocalCamelController) {
+                executeLocal((LocalCamelController) camelController, camelContextName, routeId, out, err);
+            } else {
+                executeOnRoute(camelController, camelContextName, routeId, out, err);
+            }
         }
 
         return null;
+    }
+
+    private void executeLocal(LocalCamelController camelController, String camelContextName, String routeId, PrintStream out, PrintStream err) throws Exception {
+        CamelContext camelContext = camelController.getLocalCamelContext(context);
+        if (camelContext == null) {
+            err.println("Camel context " + context + " not found.");
+            return;
+        }
+
+        // Setting thread context classloader to the bundle classloader to enable legacy code that relies on it
+        ClassLoader oldClassloader = Thread.currentThread().getContextClassLoader();
+        ClassLoader applicationContextClassLoader = camelContext.getApplicationContextClassLoader();
+        if (applicationContextClassLoader  != null) {
+            Thread.currentThread().setContextClassLoader(applicationContextClassLoader);
+        }
+        try {
+            executeOnRoute(camelController, camelContextName, routeId, out, err);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldClassloader);
+        }
     }
 
     public abstract void executeOnRoute(CamelController camelController, String contextName, String routeId, PrintStream out, PrintStream err) throws Exception;
