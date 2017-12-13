@@ -31,6 +31,8 @@ import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.undertow.UndertowConstants.EventType;
+import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -57,6 +59,9 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private UndertowComponent component;
     private SSLContext sslContext;
     private OptionMap optionMap;
+    private HttpHandlerRegistrationInfo registrationInfo;
+    private CamelWebSocketHandler webSocketHttpHandler;
+    private boolean isWebSocket;
 
     @UriPath @Metadata(required = "true")
     private URI httpURI;
@@ -87,6 +92,14 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private boolean optionsEnabled;
     @UriParam(label = "producer")
     private CookieHandler cookieHandler;
+    @UriParam(label = "producer,websocket")
+    private Boolean sendToAll;
+    @UriParam(label = "producer,websocket", defaultValue = "30000")
+    private Integer sendTimeout = 30000;
+    @UriParam(label = "consumer,websocket", defaultValue = "false")
+    private boolean useStreaming;
+    @UriParam(label = "consumer,websocket", defaultValue = "false")
+    private boolean fireWebSocketChannelEvents;
 
     public UndertowEndpoint(String uri, UndertowComponent component) throws URISyntaxException {
         super(uri, component);
@@ -308,9 +321,61 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         this.cookieHandler = cookieHandler;
     }
 
+    public Boolean getSendToAll() {
+        return sendToAll;
+    }
+
+    /**
+     * To send to all websocket subscribers. Can be used to configure on endpoint level, instead of having to use the
+     * {@code UndertowConstants.SEND_TO_ALL} header on the message.
+     */
+    public void setSendToAll(Boolean sendToAll) {
+        this.sendToAll = sendToAll;
+    }
+
+    public Integer getSendTimeout() {
+        return sendTimeout;
+    }
+
+    /**
+     * Timeout in milliseconds when sending to a websocket channel.
+     * The default timeout is 30000 (30 seconds).
+     */
+    public void setSendTimeout(Integer sendTimeout) {
+        this.sendTimeout = sendTimeout;
+    }
+
+    public boolean isUseStreaming() {
+        return useStreaming;
+    }
+
+    /**
+     * if {@code true}, text and binary messages coming through a WebSocket will be wrapped as java.io.Reader and
+     * java.io.InputStream respectively before they are passed to an {@link Exchange}; otherwise they will be passed as
+     * String and byte[] respectively.
+     */
+    public void setUseStreaming(boolean useStreaming) {
+        this.useStreaming = useStreaming;
+    }
+
+    public boolean isFireWebSocketChannelEvents() {
+        return fireWebSocketChannelEvents;
+    }
+
+    /**
+     * if {@code true}, the consumer will post notifications to the route when a new WebSocket peer connects,
+     * disconnects, etc. See {@code UndertowConstants.EVENT_TYPE} and {@link EventType}.
+     */
+    public void setFireWebSocketChannelEvents(boolean fireWebSocketChannelEvents) {
+        this.fireWebSocketChannelEvents = fireWebSocketChannelEvents;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        final String scheme = httpURI.getScheme();
+        this.isWebSocket = UndertowConstants.WS_PROTOCOL.equalsIgnoreCase(scheme) || UndertowConstants.WSS_PROTOCOL.equalsIgnoreCase(scheme);
 
         if (sslContextParameters != null) {
             sslContext = sslContextParameters.createSSLContext(getCamelContext());
@@ -365,6 +430,27 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
             builder.addAll(optionMap).set(Options.REUSE_ADDRESSES, reuseAddresses);
             optionMap = builder.getMap();
         }
+    }
+
+    /**
+     * @return {@code true} if {@link #getHttpURI()}'s scheme is {@code ws} or {@code wss}
+     */
+    public boolean isWebSocket() {
+        return isWebSocket;
+    }
+
+    public HttpHandlerRegistrationInfo getHttpHandlerRegistrationInfo() {
+        if (registrationInfo == null) {
+            registrationInfo = new HttpHandlerRegistrationInfo(getHttpURI(), getHttpMethodRestrict(), getMatchOnUriPrefix());
+        }
+        return registrationInfo;
+    }
+
+    public CamelWebSocketHandler getWebSocketHttpHandler() {
+        if (webSocketHttpHandler == null) {
+            webSocketHttpHandler = new CamelWebSocketHandler();
+        }
+        return webSocketHttpHandler;
     }
 
 }
