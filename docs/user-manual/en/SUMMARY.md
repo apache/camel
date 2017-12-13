@@ -504,7 +504,7 @@
 	* [Header](header-language.adoc)
 	* [HL7 Terser](terser-language.adoc)
 	* [JavaScript](javaScript-language.adoc)
-	* [JSonPath](jsonpath-language.adoc)
+	* [JsonPath](jsonpath-language.adoc)
 	* [JXPath](jxpath-language.adoc)
 	* [MVEL](mvel-language.adoc)
 	* [OGNL](ognl-language.adoc)
