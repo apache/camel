@@ -35,17 +35,17 @@ import org.apache.camel.util.LRUCacheFactory;
  * @version 
  */
 @ManagedResource(description = "Memory based idempotent repository")
-public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
-    private Map<String, Object> cache;
+public class MemoryIdempotentRepository extends MapIdempotentRepository {
+
     private int cacheSize;
 
     @SuppressWarnings("unchecked")
     public MemoryIdempotentRepository() {
-        this.cache = LRUCacheFactory.newLRUCache(1000);
+        super(LRUCacheFactory.newLRUCache(1000));
     }
 
-    public MemoryIdempotentRepository(Map<String, Object> set) {
-        this.cache = set;
+    public MemoryIdempotentRepository(Map<String, Object> cache) {
+        super(cache);
     }
 
     /**
@@ -63,7 +63,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
      */
     @SuppressWarnings("unchecked")
     public static IdempotentRepository<String> memoryIdempotentRepository(int cacheSize) {
-        return memoryIdempotentRepository(LRUCacheFactory.newLRUCache(cacheSize));
+        return new MemoryIdempotentRepository(LRUCacheFactory.newLRUCache(cacheSize));
     }
 
     /**
@@ -74,56 +74,11 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
      * memory leak.
      *
      * @param cache  the cache
+     * @deprecated Prefer {@link MapIdempotentRepository#mapIdempotentRepository(Map)}
      */
+    @Deprecated
     public static IdempotentRepository<String> memoryIdempotentRepository(Map<String, Object> cache) {
         return new MemoryIdempotentRepository(cache);
-    }
-
-    @ManagedOperation(description = "Adds the key to the store")
-    public boolean add(String key) {
-        synchronized (cache) {
-            if (cache.containsKey(key)) {
-                return false;
-            } else {
-                cache.put(key, key);
-                return true;
-            }
-        }
-    }
-
-    @ManagedOperation(description = "Does the store contain the given key")
-    public boolean contains(String key) {
-        synchronized (cache) {
-            return cache.containsKey(key);
-        }
-    }
-
-    @ManagedOperation(description = "Remove the key from the store")
-    public boolean remove(String key) {
-        synchronized (cache) {
-            return cache.remove(key) != null;
-        }
-    }
-
-    public boolean confirm(String key) {
-        // noop
-        return true;
-    }
-    
-    @ManagedOperation(description = "Clear the store")
-    public void clear() {
-        synchronized (cache) {
-            cache.clear();
-        }
-    }
-
-    public Map<String, Object> getCache() {
-        return cache;
-    }
-
-    @ManagedAttribute(description = "The current cache size")
-    public int getCacheSize() {
-        return cache.size();
     }
 
     public void setCacheSize(int cacheSize) {
@@ -142,4 +97,5 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     protected void doStop() throws Exception {
         cache.clear();
     }
+
 }
