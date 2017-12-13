@@ -29,11 +29,11 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * To use JSonPath in Camel expressions or predicates.
+ * To use JsonPath in Camel expressions or predicates.
  *
  * @version 
  */
-@Metadata(firstVersion = "2.13.0", label = "language,json", title = "JSonPath")
+@Metadata(firstVersion = "2.13.0", label = "language,json", title = "JsonPath")
 @XmlRootElement(name = "jsonpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonPathExpression extends ExpressionDefinition {
@@ -91,7 +91,7 @@ public class JsonPathExpression extends ExpressionDefinition {
     }
 
     /**
-     * Whether to allow in inlined simple exceptions in the json path expression
+     * Whether to allow in inlined simple exceptions in the JsonPath expression
      */
     public void setAllowSimple(Boolean allowSimple) {
         this.allowSimple = allowSimple;
@@ -120,7 +120,7 @@ public class JsonPathExpression extends ExpressionDefinition {
     }
 
     /**
-     * Whether to write the output of each row/element as a JSon String value instead of a Map/POJO value.
+     * Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.
      */
     public void setWriteAsString(Boolean writeAsString) {
         this.writeAsString = writeAsString;
