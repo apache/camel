@@ -141,6 +141,8 @@ public interface Exchange {
     String FILE_LOCK_RANDOM_ACCESS_FILE = "CamelFileLockRandomAccessFile";
     String FILTER_MATCHED       = "CamelFilterMatched";
     String FILTER_NON_XML_CHARS = "CamelFilterNonXmlChars";
+    String FILE_NAME_PATTERN    = "CamelFileNamePattern";
+    String FILE_PREDICATE       = "CamelFilePredicate";
 
     String GROUPED_EXCHANGE = "CamelGroupedExchange";
     

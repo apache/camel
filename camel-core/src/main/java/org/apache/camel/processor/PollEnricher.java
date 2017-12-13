@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.function.Predicate;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -26,6 +27,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileConsumer;
 import org.apache.camel.impl.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.impl.ConsumerCache;
 import org.apache.camel.impl.DefaultConsumer;
@@ -217,6 +220,18 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
         Consumer delegate = consumer;
         if (consumer instanceof EventDrivenPollingConsumer) {
             delegate = ((EventDrivenPollingConsumer) consumer).getDelegateConsumer();
+
+            if (delegate instanceof GenericFileConsumer) {
+                String fileNamePattern = exchange.getIn().getHeader(Exchange.FILE_NAME_PATTERN, String.class);
+                if (fileNamePattern != null) {
+                    ((GenericFileConsumer) delegate).setFileNamePattern(fileNamePattern);
+                }
+
+                Predicate<GenericFile> fileNamePredicate = (Predicate<GenericFile>) exchange.getIn().getHeader(Exchange.FILE_PREDICATE);
+                if (fileNamePredicate != null) {
+                    ((GenericFileConsumer) delegate).setFileNamePredicate(fileNamePredicate);
+                }
+            }
         }
 
         // is the consumer bridging the error handler?
