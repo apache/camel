@@ -23,6 +23,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.net.ssl.SSLContext;
+
+import io.undertow.server.HttpHandler;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Consumer;
@@ -299,23 +303,20 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         }
     }
 
-    public void registerConsumer(UndertowConsumer consumer) {
-        URI uri = consumer.getEndpoint().getHttpURI();
-        UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), consumer.getEndpoint().getSslContext());
-        UndertowHost host = undertowRegistry.get(key);
-        if (host == null) {
-            host = createUndertowHost(key);
-            undertowRegistry.put(key, host);
-        }
+    public HttpHandler registerEndpoint(HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler) {
+        final URI uri = registrationInfo.getUri();
+        final UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), sslContext);
+        final UndertowHost host = undertowRegistry.computeIfAbsent(key, k -> createUndertowHost(k));
+
         host.validateEndpointURI(uri);
-        host.registerHandler(consumer.getHttpHandlerRegistrationInfo(), consumer.getHttpHandler());
+        return host.registerHandler(registrationInfo, handler);
     }
 
-    public void unregisterConsumer(UndertowConsumer consumer) {
-        URI uri = consumer.getEndpoint().getHttpURI();
-        UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), consumer.getEndpoint().getSslContext());
-        UndertowHost host = undertowRegistry.get(key);
-        host.unregisterHandler(consumer.getHttpHandlerRegistrationInfo());
+    public void unregisterEndpoint(HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext) {
+        final URI uri = registrationInfo.getUri();
+        final UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), sslContext);
+        final UndertowHost host = undertowRegistry.get(key);
+        host.unregisterHandler(registrationInfo);
     }
 
     protected UndertowHost createUndertowHost(UndertowHostKey key) {
