@@ -36,7 +36,6 @@ public class SplitterParallelRuntimeExceptionInHasNextOrNext extends ContextTest
      */
     @Test
     public void testSplitErrorInHasNext() throws Exception {
-
         execute("direct:errorInHasNext");
     }
 
@@ -46,7 +45,6 @@ public class SplitterParallelRuntimeExceptionInHasNextOrNext extends ContextTest
      */
     @Test
     public void testSplitErrorInNext() throws Exception {
-
         execute("direct:errorInNext");
     }
 
@@ -79,11 +77,9 @@ public class SplitterParallelRuntimeExceptionInHasNextOrNext extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
                 from("direct:errorInHasNext").split().method(SplitterImpl.class, "errorInHasNext").streaming().parallelProcessing(true).to("mock:split1");
 
                 from("direct:errorInNext").split().method(SplitterImpl.class, "errorInNext").streaming().parallelProcessing(true).to("mock:split2");
-
             }
         };
     }
@@ -109,7 +105,6 @@ public class SplitterParallelRuntimeExceptionInHasNextOrNext extends ContextTest
         private boolean errorInHasNext;
 
         CustomIterator(Exchange exchange, InputStream request, boolean errorInHasNext) {
-
             this.request = request;
             this.errorInHasNext = errorInHasNext;
 

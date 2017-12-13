@@ -353,10 +353,14 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     
                     total.incrementAndGet();
                 }
-            } catch (RuntimeException e) {
+            } catch (Throwable e) {
                 // The methods it.hasNext and it.next can throw RuntimeExceptions when custom iterators are implemented.
                 // We have to catch the exception here otherwise the aggregator threads would pile up.
-                executionException.set(e);
+                if (e instanceof Exception) {
+                    executionException.set((Exception) e);
+                } else {
+                    executionException.set(ObjectHelper.wrapRuntimeCamelException(e));
+                }
             }
 
             // signal all tasks has been submitted
