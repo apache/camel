@@ -969,6 +969,7 @@
   <feature name='camel-hessian' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>wrap:mvn:com.caucho/hessian/${hessian-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hessian/${project.version}</bundle>
   </feature>
   <feature name='camel-hl7' version='${project.version}' resolver='(obr)' start-level='50'>
