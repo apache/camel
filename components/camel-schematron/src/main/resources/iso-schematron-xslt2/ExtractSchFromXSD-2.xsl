@@ -54,7 +54,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
-<xsl:transform version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+<xsl:transform version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
 xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns:xs="http://www.w3.org/2001/XMLSchema">
         <!-- Set the output to be XML with an XML declaration and use indentation -->
         <xsl:output method="xml" omit-xml-declaration="no" indent="yes" standalone="yes"/>
