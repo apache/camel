@@ -1055,7 +1055,6 @@
     <bundle>mvn:org.apache.camel/camel-ignite/${project.version}</bundle>
   </feature>
   <feature name='camel-infinispan' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>The camel-infinispan feature requires Java 8</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature>transaction</feature>
     <feature>aries-blueprint</feature>
@@ -1072,7 +1071,6 @@
     <bundle>mvn:org.apache.camel/camel-infinispan/${project.version}</bundle>
   </feature>
   <feature name='camel-influxdb' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>The camel-influxdb feature requires Java 8</details>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.influxdb-java/${influx-java-driver-bundle-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${influx-guava-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okhttp/${okclient-bundle-version}</bundle>
@@ -2273,7 +2271,6 @@
   </feature>
   <feature name='camel-vertx' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <details>camel-vertx feature requires Java 8</details>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${vertx-jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${vertx-jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${vertx-jackson2-version}</bundle>
