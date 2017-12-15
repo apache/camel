@@ -41,6 +41,9 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     @Metadata(label = "consumer,advanced")
     private KafkaManualCommitFactory kafkaManualCommitFactory = new DefaultKafkaManualCommitFactory();
 
+    public KafkaComponent() {
+    }
+
     public KafkaComponent(CamelContext context) {
         super(context);
     }
