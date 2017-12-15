@@ -108,8 +108,8 @@ to several children model classes.
 
 |separator |string |mandatory - can be ',' or ';' or 'anything'. This value is interpreted
 as a regular expression. If you want to use a sign which has a special
-meaning in regular expressions, e.g. the '|' sign, than you have to mask
-it, like '|'
+meaning in regular expressions, e.g. the '\|' sign, than you have to mask
+it, like '\|'
 
 |skipFirstLine |boolean |optional - default value = false - allow to skip the first line of the
 CSV file
@@ -136,6 +136,11 @@ declared one time.
 
 |quoting |boolean |*Camel 2.11:*optional - default value = false - Indicate if the values
 must be quoted when marshaling when CSV is generated.
+
+|endWithLineBreak |boolean |*Camel 2.21:* optional - default value = true - Indicate if the CSV generated file 
+should end with a line break.
+
+|
 |=======================================================================
 
 *case 1 : separator = ','*
