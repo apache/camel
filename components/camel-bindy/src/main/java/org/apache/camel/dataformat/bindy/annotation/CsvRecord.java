@@ -95,5 +95,10 @@ public @interface CsvRecord {
      * the unavaiable stream for CSV file.
      */
     boolean allowEmptyStream() default false;
+    
+    /**
+     * The endWithLineBreak parameter flags if the CSV file should end with a line break or not (optional)
+     */
+    boolean endWithLineBreak() default true;
 
 }

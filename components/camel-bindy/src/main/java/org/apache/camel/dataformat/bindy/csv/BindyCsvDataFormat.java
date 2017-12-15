@@ -94,16 +94,18 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 models.add(row);
             }
         }
-
-        for (Map<String, Object> model : models) {
-
-            String result = factory.unbind(getCamelContext(), model);
+        
+        Iterator<Map<String, Object>> modelsMap = models.iterator();
+        while (modelsMap.hasNext()) {
+            String result = factory.unbind(getCamelContext(), modelsMap.next());
 
             byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
             outputStream.write(bytes);
 
-            // Add a carriage return
-            outputStream.write(bytesCRLF);
+            if (factory.isEndWithLineBreak() || modelsMap.hasNext()) {
+                // Add a carriage return
+                outputStream.write(bytesCRLF);
+            }
         }
     }
 
