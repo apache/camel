@@ -72,14 +72,14 @@ public class BindyMarshalEndWithLineBreakTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:withoutlb") //
-                    .marshal().bindy(BindyType.Csv, MyCsvRecord2.class) //
-                    .to("log:after.unmarshal") //
-                    .to("mock:result"); //
+                from("direct:withoutlb")
+                    .marshal().bindy(BindyType.Csv, MyCsvRecord2.class)
+                    .to("log:after.unmarshal")
+                    .to("mock:result");
 
-                from("direct:withlb") //
-                    .marshal().bindy(BindyType.Csv, MyCsvRecord.class) //
-                    .to("log:after.marshal") //
+                from("direct:withlb")
+                    .marshal().bindy(BindyType.Csv, MyCsvRecord.class)
+                    .to("log:after.marshal")
                     .to("mock:result");
             }
         };
