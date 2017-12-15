@@ -48,13 +48,23 @@
       <artifactId>camel-core</artifactId>
     </dependency>
 
-    <!-- brave/zkpkin -->
+    <!-- brave/zipkin -->
     <dependency>
       <groupId>io.zipkin.brave</groupId>
       <artifactId>brave-core</artifactId>
       <version>${brave-zipkin-version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.zipkin.brave</groupId>
+      <artifactId>brave</artifactId>
+      <version>${brave-zipkin-version}</version>
+    </dependency>
     <!-- to send to zipkin server -->
+    <dependency>
+      <groupId>io.zipkin.reporter2</groupId>
+      <artifactId>zipkin-sender-urlconnection</artifactId>
+      <version>${zipkin-reporter-version}</version>
+    </dependency>
     <dependency>
       <groupId>io.zipkin.brave</groupId>
       <artifactId>brave-spancollector-scribe</artifactId>

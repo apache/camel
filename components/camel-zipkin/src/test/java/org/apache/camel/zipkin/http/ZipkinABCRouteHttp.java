@@ -14,23 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.zipkin.scribe;
+package org.apache.camel.zipkin.http;
 
-import com.github.kristofa.brave.scribe.ScribeSpanCollector;
-import org.apache.camel.zipkin.ZipkinMulticastRouteTest;
+import org.apache.camel.zipkin.ZipkinABCRouteTest;
 import org.apache.camel.zipkin.ZipkinTracer;
+import zipkin2.reporter.AsyncReporter;
+import zipkin2.reporter.urlconnection.URLConnectionSender;
 
 /**
- * Integration test requires running Zipkin/Scribe running
+ * Integration test requires running Zipkin running
  *
  * <p>The easiest way to run is locally:
  * <pre>{@code
  * curl -sSL https://zipkin.io/quickstart.sh | bash -s
- * SCRIBE_ENABLED=true java -jar zipkin.jar
+ * java -jar zipkin.jar
  * }</pre>
  */
-public class ZipkinMulticastRouteScribe extends ZipkinMulticastRouteTest {
+public class ZipkinABCRouteHttp extends ZipkinABCRouteTest {
     @Override protected void setSpanReporter(ZipkinTracer zipkin) {
-        zipkin.setSpanCollector(new ScribeSpanCollector("127.0.0.1", 9410));
+        zipkin.setSpanReporter(
+            AsyncReporter.create(URLConnectionSender.create("http://locahost:9411/api/v2/spans"))
+        );
     }
 }

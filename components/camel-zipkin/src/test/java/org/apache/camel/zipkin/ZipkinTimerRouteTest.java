@@ -17,11 +17,8 @@
 package org.apache.camel.zipkin;
 
 import java.util.concurrent.TimeUnit;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,7 +26,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import zipkin2.reporter.Reporter;
 
-public class ManagedZipkinSimpleRouteTest extends CamelTestSupport {
+public class ZipkinTimerRouteTest extends CamelTestSupport {
 
     private ZipkinTracer zipkin;
 
@@ -38,20 +35,13 @@ public class ManagedZipkinSimpleRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    protected MBeanServer getMBeanServer() {
-        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
         zipkin = new ZipkinTracer();
-        zipkin.setServiceName("dude");
+        // we have one route as service
+        zipkin.addClientServiceMapping("seda:timer", "timer");
+        zipkin.addServerServiceMapping("seda:timer", "timer");
         setSpanReporter(zipkin);
 
         // attaching ourself to CamelContext
@@ -62,24 +52,9 @@ public class ManagedZipkinSimpleRouteTest extends CamelTestSupport {
 
     @Test
     public void testZipkinRoute() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
+        NotifyBuilder notify = new NotifyBuilder(context).from("seda:timer").whenDone(1).create();
 
-        MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=services,name=ZipkinTracer");
-        assertNotNull(on);
-        assertTrue(mbeanServer.isRegistered(on));
-
-        Float rate = (Float) mbeanServer.getAttribute(on, "Rate");
-        assertEquals("Should be 1.0f", 1.0f, rate.floatValue(), 0.1f);
-
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
-
-        for (int i = 0; i < 5; i++) {
-            template.sendBody("seda:dude", "Hello World");
-        }
+        template.sendBody("direct:start", "Hello Timer");
 
         assertTrue(notify.matches(30, TimeUnit.SECONDS));
     }
@@ -89,9 +64,11 @@ public class ManagedZipkinSimpleRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:dude").routeId("dude")
+                from("direct:start").to(ExchangePattern.InOut, "seda:timer");
+
+                from("seda:timer").routeId("timer")
                         .log("routing at ${routeId}")
-                        .delay(simple("${random(10,20)}"));
+                        .delay(simple("${random(1000,2000)}"));
             }
         };
     }
