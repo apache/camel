@@ -29,11 +29,15 @@ endpoint uri's as service names.  +
 However, it's recommended to configure service mappings so you can use
 human-readable names instead of Camel endpoint uris in the names.
 
-Camel will auto-configure a ScribeSpanCollector if no spanCollector has been
-explicitly configured, or if the following SpanCollector hostname and port environment variables
-have been configured:
+Camel will auto-configure a span reporter one hasn't been explicitly configured,
+and if the hostname and port to a zipkin collector has been configured as environment variables
 
-* ZIPKIN_COLLECTOR_THRIFT_SERVICE_HOST - The hostname
+* ZIPKIN_COLLECTOR_HTTP_SERVICE_HOST - The http hostname
+* ZIPKIN_COLLECTOR_HTTP_SERVICE_PORT - The port number
+
+or
+
+* ZIPKIN_COLLECTOR_THRIFT_SERVICE_HOST - The Scribe (Thrift RPC) hostname
 * ZIPKIN_COLLECTOR_THRIFT_SERVICE_PORT - The port number
 
 This makes it easy to use camel-zipkin in container platforms where the
@@ -52,7 +56,7 @@ Options
 zipkin. The rate is expressed as a percentage (1.0f = 100%, 0.5f is 50%, 0.1f is
 10%).
 
-|spanCollector |  |*Mandatory:* The collector to use for sending zipkin span events to the
+|spanReporter |  |*Mandatory:* The reporter to use for sending zipkin span events to the
 zipkin server.
 
 |serviceName |  | To use a global service name that matches all Camel events
@@ -92,8 +96,10 @@ To enable camel-zipkin you need to configure first
 [source,java]
 --------------------------------------------------------------------------------------------------
 ZipkinTracer zipkin = new ZipkinTracer();
-// configure the scribe span collector with the hostname and port for the Zipkin Collector Server
-zipkin.setSpanCollector(new ScribeSpanCollector("192.168.90.100", 9410);
+// Configure a reporter, which controls how often spans are sent
+//   (the dependency is io.zipkin.reporter2:zipkin-sender-okhttp3)
+sender = OkHttpSender.create("http://127.0.0.1:9411/api/v2/spans");
+zipkin.setSpanReporter(AsyncReporter.create(sender));
 // and then add zipkin to the CamelContext
 zipkin.init(camelContext);
 --------------------------------------------------------------------------------------------------
@@ -106,16 +112,22 @@ zipkin tracer beans. Camel will automatically discover and use them.
 
 [source,xml]
 ---------------------------------------------------------------------------------------------------------
-  <!-- configure the scribe span collector with the hostname and port for the Zipkin Collector Server -->
-  <bean id="scribe" class="com.github.kristofa.brave.scribe.ScribeSpanCollector">
-    <constructor-arg index="0" value="192.168.90.100"/>
-    <constructor-arg index="1" value="9410"/>
+  <!-- configure how to reporter spans to a Zipkin collector
+          (the dependency is io.zipkin.reporter2:zipkin-reporter-spring-beans) -->
+  <bean id="http" class="zipkin2.reporter.beans.AsyncReporterFactoryBean">
+    <property name="sender">
+      <bean id="sender" class="zipkin2.reporter.beans.OkHttpSenderFactoryBean">
+        <property name="endpoint" value="http://localhost:9411/api/v2/spans"/>
+      </bean>
+    </property>
+    <!-- wait up to half a second for any in-flight spans on close -->
+    <property name="closeTimeout" value="500"/>
   </bean>
 
   <!-- setup zipkin tracer -->
   <bean id="zipkinTracer" class="org.apache.camel.zipkin.ZipkinTracer">
     <property name="serviceName" value="dude"/>
-    <property name="spanCollector" ref="scribe"/>
+    <property name="spanReporter" ref="http"/>
   </bean>
 ---------------------------------------------------------------------------------------------------------
 

@@ -24,7 +24,7 @@ Client is configured in the `src/main/java/sample/camel/ClientApplication.java` 
 
 ### Build
 
-First, start Zipkin as described below in the [Zipkin web console]("Zipkin web console") section
+First, start Zipkin as described below in the [Installing Zipkin Server]("Installing Zipkin Server") section
 
 Then compile this example:
 
@@ -55,18 +55,18 @@ $ cd client
 $ mvn compile camel:run
 ```
 
-### Zipkin web console
+### Zipkin UI
 
-You should be able to visualize the traces and timings from this example using the Zipkin Web Console.
+You should be able to visualize the traces and timings from this example using the Zipkin UI.
 The services are named `service1` and `service2`.
 
 In the screen shot below we are showing a trace of a client calling service1 and service2.
 
-![Zipkin Web Console Trace Details](images/zipkin-web-console-1.png "Detail of a trace")
+![Zipkin UI Trace Details](images/zipkin-web-console-1.png "Detail of a trace")
 
 You can then click on each span and get annotated data from the Camel exchange and about the requests as shown:
 
-![Zipkin Web Console Span Details](images/zipkin-web-console-2.png "Detail of the span")
+![Zipkin UI Span Details](images/zipkin-web-console-2.png "Detail of the span")
 
 
 ### Installing Zipkin Server 
@@ -74,13 +74,13 @@ You can then click on each span and get annotated data from the Camel exchange a
 The quickest way to get Zipkin started is to fetch the [latest released server](https://search.maven.org/remote_content?g=io.zipkin.java&a=zipkin-server&v=LATEST&c=exec) as a self-contained executable jar.
 
 ```bash
-wget -O zipkin.jar 'https://search.maven.org/remote_content?g=io.zipkin.java&a=zipkin-server&v=LATEST&c=exec'
+curl -sSL https://zipkin.io/quickstart.sh | bash -s
 ```
 
 .. and then run it
 
 ```bash
-java -DSCRIBE_ENABLED=true -jar zipkin.jar
+java -jar zipkin.jar
 ```
 
 Finally, browse to http://localhost:9411 to find traces!

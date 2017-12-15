@@ -37,6 +37,7 @@ public class ZipkinAutoConfiguration {
                                      ZipkinConfigurationProperties config) {
 
         ZipkinTracer zipkin = new ZipkinTracer();
+        zipkin.setEndpoint(config.getEndpoint());
         zipkin.setHostName(config.getHostName());
         zipkin.setPort(config.getPort());
         zipkin.setRate(config.getRate());
