@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchChangeRequest;
@@ -117,6 +116,15 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
 
         final ClientEntity unbFuncReturn = (ClientEntity)requestBodyAndHeaders("direct://callunboundfunction", null, headers);
         assertNotNull(unbFuncReturn);
+    }
+    
+    @Test
+    public void testReadWithFilter() {
+        // Read entity set with filter of the Airports object
+        final ClientEntitySet entities = (ClientEntitySet)requestBody("direct://readwithfilter", null);
+        
+        assertNotNull(entities);
+        assertEquals(1, entities.getEntities().size());
     }
 
     @Test
@@ -309,6 +317,8 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
                 from("direct://readcomplexprop").to("olingo4://read/Airports('KSFO')/Location");
 
                 from("direct://readentitybyid").to("olingo4://read/People('russellwhyte')");
+                
+                from("direct://readwithfilter").to("olingo4://read/Airports?$filter=Name eq 'San Francisco International Airport'");
 
                 from("direct://callunboundfunction").to("olingo4://read/GetNearestAirport(lat=33,lon=-118)");
 
