@@ -24,8 +24,9 @@ import org.apache.camel.impl.health.RoutesHealthCheckRepository;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.ObjectHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -34,15 +35,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 @Configuration
-@AutoConfigureAfter(CamelAutoConfiguration.class)
+@AutoConfigureBefore(CamelAutoConfiguration.class)
 @Conditional(HealthCheckRoutesAutoConfiguration.Condition.class)
 @EnableConfigurationProperties(HealthCheckRoutesConfiguration.class)
 public class HealthCheckRoutesAutoConfiguration {
+    @Autowired
+    private HealthCheckRoutesConfiguration configuration;
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     @ConditionalOnMissingBean(RoutesHealthCheckRepository.class)
-    public HealthCheckRepository routesHealthCheckRepository(HealthCheckRoutesConfiguration configuration) {
+    public HealthCheckRepository routesHealthCheckRepository() {
         final RoutesHealthCheckRepository repository = new RoutesHealthCheckRepository();
         final HealthCheckRoutesConfiguration.ThresholdsConfiguration thresholds = configuration.getThresholds();
 
