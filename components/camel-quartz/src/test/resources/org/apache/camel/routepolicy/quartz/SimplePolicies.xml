@@ -52,8 +52,12 @@
        	<property name="routeResumeDate" ref="now"/>
     	<property name="routeResumeRepeatCount" value="1"/>
     	<property name="routeResumeRepeatInterval" value="3000"/>    	
- 	</bean> 
- 	
+ 	</bean>
+
+  <bean id="direct" class="org.apache.camel.component.direct.DirectComponent">
+    <property name="block" value="false"/>
+  </bean>
+
     <routeContext id="testRouteContext" xmlns="http://camel.apache.org/schema/spring">
         <route id="testRoute">
             <from uri="direct:start"/>
