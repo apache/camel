@@ -24,24 +24,25 @@ import zipkin2.reporter.Reporter;
 
 final class ZipkinLegacyReporterAdapter implements SpanCollector, Reporter<zipkin2.Span> {
 
-  final SpanCollector delegate;
+    final SpanCollector delegate;
 
-  ZipkinLegacyReporterAdapter(SpanCollector delegate) {
-    this.delegate = delegate;
-  }
+    ZipkinLegacyReporterAdapter(SpanCollector delegate) {
+        this.delegate = delegate;
+    }
 
-  @Override public void report(zipkin2.Span span) {
-    collect(DefaultSpanCodec.fromZipkin(V2SpanConverter.toSpan(span)));
-  }
+    @Override
+    public void report(zipkin2.Span span) {
+        collect(DefaultSpanCodec.fromZipkin(V2SpanConverter.toSpan(span)));
+    }
 
-  @Override
-  public void collect(Span span) {
-    delegate.collect(span);
-  }
+    @Override
+    public void collect(Span span) {
+        delegate.collect(span);
+    }
 
-  @Deprecated
-  @Override
-  public void addDefaultAnnotation(String key, String value) {
-    delegate.addDefaultAnnotation(key, value);
-  }
+    @Deprecated
+    @Override
+    public void addDefaultAnnotation(String key, String value) {
+        delegate.addDefaultAnnotation(key, value);
+    }
 }
