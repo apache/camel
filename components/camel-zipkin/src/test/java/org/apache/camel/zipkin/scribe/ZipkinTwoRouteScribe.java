@@ -17,8 +17,8 @@
 package org.apache.camel.zipkin.scribe;
 
 import com.github.kristofa.brave.scribe.ScribeSpanCollector;
-import org.apache.camel.zipkin.ZipkinTwoRouteTest;
 import org.apache.camel.zipkin.ZipkinTracer;
+import org.apache.camel.zipkin.ZipkinTwoRouteTest;
 
 /**
  * Integration test requires running Zipkin/Scribe running
