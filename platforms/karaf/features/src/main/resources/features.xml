@@ -2412,7 +2412,9 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-zipfile/${project.version}</bundle>
   </feature>
+  <!-- TODO: camel-zipkin does not work in OSGi: CAMEL-12088 -->
   <feature name='camel-zipkin' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-zipkin does not work in OSGi, see more at CAMEL-12088</details>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:io.zipkin.brave/brave/${brave-zipkin-version}</bundle>
     <bundle dependency='true'>mvn:io.zipkin.brave/brave-core/${brave-zipkin-version}</bundle>
