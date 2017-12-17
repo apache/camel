@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Phaser;
@@ -313,7 +314,8 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
         final Map<String, List<String>> answer = new HashMap<>();
         for (final String headerName : headers.keySet()) {
-            if (headerName.startsWith("Sforce") || headerName.startsWith("x-sfdc")) {
+            final String headerNameLowercase = headerName.toLowerCase(Locale.US);
+            if (headerNameLowercase.startsWith("sforce") || headerNameLowercase.startsWith("x-sfdc")) {
                 final Object headerValue = inboundMessage.getHeader(headerName);
 
                 if (headerValue instanceof String) {
