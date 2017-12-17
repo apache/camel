@@ -17,35 +17,52 @@
 package org.apache.camel.zipkin;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import zipkin2.reporter.Reporter;
 
-public class ZipkinSpanCollectorInRegistryTest extends CamelTestSupport {
+public class ZipkinOneRouteTest extends CamelTestSupport {
 
     private ZipkinTracer zipkin;
+
+    protected void setSpanReporter(ZipkinTracer zipkin) {
+        zipkin.setSpanReporter(Reporter.NOOP);
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
         zipkin = new ZipkinTracer();
+        // we have one route as service
+        zipkin.addClientServiceMapping("seda:cat", "cat");
+        zipkin.addServerServiceMapping("seda:cat", "cat");
+        setSpanReporter(zipkin);
+
+        // attaching ourself to CamelContext
         zipkin.init(context);
 
         return context;
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("span", new ZipkinLoggingSpanCollector());
-        return registry;
-    }
-
     @Test
-    public void testZipkinConfiguration() throws Exception {
-        assertNotNull(zipkin.getSpanCollector());
-        assertTrue(zipkin.getSpanCollector() instanceof ZipkinLoggingSpanCollector);
+    public void testZipkinRoute() throws Exception {
+        template.requestBody("direct:start", "Hello Cat");
     }
 
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("seda:cat");
+
+                from("seda:cat").routeId("cat")
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(1000,2000)}"));
+            }
+        };
+    }
 }
