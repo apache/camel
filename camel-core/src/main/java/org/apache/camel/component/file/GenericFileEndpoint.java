@@ -1014,8 +1014,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      *   The option eagerDeleteTargetFile can be used to control what to do if an moving the file, and there exists already an existing file,
      *   otherwise causing the move operation to fail.
      *   The Move option will move any existing files, before writing the target file.</li>
-     *   <li>TryRename Camel is only applicable if tempFileName option is in use. This allows to try renaming the file from the temporary name to the actual name,
-     *   without doing any exists check.This check may be faster on some file systems and especially FTP servers.</li>
+     *   <li>TryRename is only applicable if tempFileName option is in use. This allows to try renaming the file from the temporary name to the actual name,
+     *   without doing any exists check. This check may be faster on some file systems and especially FTP servers.</li>
      * </ul>
      */
     public void setFileExist(GenericFileExist fileExist) {
