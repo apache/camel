@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.kinesis;
 import com.amazonaws.services.kinesis.AmazonKinesis;
 import com.amazonaws.services.kinesis.model.Record;
 import com.amazonaws.services.kinesis.model.ShardIteratorType;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -30,10 +31,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * The aws-kinesis component is for consuming and producing records from Amazon Kinesis Streams.
+ * The aws-kinesis component is for consuming and producing records from Amazon
+ * Kinesis Streams.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "aws-kinesis", title = "AWS Kinesis", syntax = "aws-kinesis:streamName",
-    consumerClass = KinesisConsumer.class, label = "cloud,messaging")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "aws-kinesis", title = "AWS Kinesis", syntax = "aws-kinesis:streamName", consumerClass = KinesisConsumer.class, label = "cloud,messaging")
 public class KinesisEndpoint extends ScheduledPollEndpoint {
 
     @UriPath(description = "Name of the stream")
@@ -50,6 +51,11 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
     private String shardId = "";
     @UriParam(label = "consumer", description = "The sequence number to start polling from. Required if iteratorType is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER")
     private String sequenceNumber = "";
+    @UriParam(label = "consumer", defaultValue = "ignore", description = "Define what will be the behavior in case of shard closed. Possible value are ignore, silent and fail."
+                                                                         + "In case of ignore a message will be logged and the consumer will restart from the beginning,"
+                                                                         + "in case of silent there will be no logging and the consumer will start from the beginning,"
+                                                                         + "in case of fail a ReachedClosedStateException will be raised")
+    private KinesisShardClosedStrategyEnum shardClosed;
 
     public KinesisEndpoint(String uri, String streamName, KinesisComponent component) {
         super(uri, component);
@@ -144,4 +150,11 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
         this.sequenceNumber = sequenceNumber;
     }
 
+    public KinesisShardClosedStrategyEnum getShardClosed() {
+        return shardClosed;
+    }
+
+    public void setShardClosed(KinesisShardClosedStrategyEnum shardClosed) {
+        this.shardClosed = shardClosed;
+    }
 }
