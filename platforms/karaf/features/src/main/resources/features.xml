@@ -98,7 +98,7 @@
   <feature name='camel-amqp' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-jms</feature>
     <bundle dependency='true'>mvn:org.apache.qpid/qpid-jms-client/${qpid-jms-client-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.qpid/proton-j/${qpid-proton-j-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.qpid/proton-j/${qpid-proton-j-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
