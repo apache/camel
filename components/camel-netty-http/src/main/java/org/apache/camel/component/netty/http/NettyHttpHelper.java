@@ -31,6 +31,7 @@ import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.jboss.netty.handler.codec.http.HttpMethod;
@@ -262,9 +263,22 @@ public final class NettyHttpHelper {
      * @return <tt>true</tt> if ok, <tt>false</tt> otherwise
      */
     public static boolean isStatusCodeOk(int statusCode, String okStatusCodeRange) {
-        int from = Integer.valueOf(ObjectHelper.before(okStatusCodeRange, "-"));
-        int to = Integer.valueOf(ObjectHelper.after(okStatusCodeRange, "-"));
-        return statusCode >= from && statusCode <= to;
+        String[] ranges = okStatusCodeRange.split(",");
+        for (String range : ranges) {
+            boolean ok;
+            if (range.contains("-")) {
+                int from = Integer.valueOf(StringHelper.before(range, "-"));
+                int to = Integer.valueOf(StringHelper.after(range, "-"));
+                ok =  statusCode >= from && statusCode <= to;
+            } else {
+                int exact = Integer.valueOf(range);
+                ok = exact == statusCode;
+            }
+            if (ok) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
