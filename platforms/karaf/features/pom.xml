@@ -187,7 +187,7 @@
                 <!-- camel-guice does not work in OSGi currently -->
                 <feature>camel|camel-(?!(blueprint|cdi|cxf|ignite|guice))*</feature>
               </features>
-			        <configuration>file://${project.build.directory}/classes/config.properties</configuration>
+            <configuration>file://${project.build.directory}/classes/config.properties</configuration>
             </configuration>
             <executions>
               <execution>
