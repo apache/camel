@@ -48,7 +48,7 @@ import static org.apache.camel.swagger.SwaggerHelper.buildUrl;
  * <p/>
  * This requires Camel version 2.15 or better at runtime (and JMX to be enabled).
  *
- * @deprecated do not use this servlet directly but use rest-dsl the regular way with rest-dsl configuration.
+ * @deprecated do not use this directly but use rest-dsl the regular way with rest-dsl configuration.
  */
 @Deprecated
 public class RestSwaggerServlet extends HttpServlet {
