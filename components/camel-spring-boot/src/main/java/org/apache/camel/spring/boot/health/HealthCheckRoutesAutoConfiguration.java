@@ -24,7 +24,6 @@ import org.apache.camel.impl.health.RoutesHealthCheckRepository;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.ObjectHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,13 +38,11 @@ import org.springframework.context.annotation.Scope;
 @Conditional(HealthCheckRoutesAutoConfiguration.Condition.class)
 @EnableConfigurationProperties(HealthCheckRoutesConfiguration.class)
 public class HealthCheckRoutesAutoConfiguration {
-    @Autowired
-    private HealthCheckRoutesConfiguration configuration;
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     @ConditionalOnMissingBean(RoutesHealthCheckRepository.class)
-    public HealthCheckRepository routesHealthCheckRepository() {
+    public HealthCheckRepository routesHealthCheckRepository(HealthCheckRoutesConfiguration configuration) {
         final RoutesHealthCheckRepository repository = new RoutesHealthCheckRepository();
         final HealthCheckRoutesConfiguration.ThresholdsConfiguration thresholds = configuration.getThresholds();
 
