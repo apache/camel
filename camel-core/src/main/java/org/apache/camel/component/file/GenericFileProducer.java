@@ -154,7 +154,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 }
 
                 // delete any pre existing temp file
-                if (operations.existsFile(tempTarget)) {
+                if (endpoint.getFileExist() != GenericFileExist.TryRename && operations.existsFile(tempTarget)) {
                     log.trace("Deleting existing temp file: {}", tempTarget);
                     if (!operations.deleteFile(tempTarget)) {
                         throw new GenericFileOperationFailedException("Cannot delete file: " + tempTarget);
