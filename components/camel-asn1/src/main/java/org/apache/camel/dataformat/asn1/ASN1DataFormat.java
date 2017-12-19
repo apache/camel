@@ -32,7 +32,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Primitive;
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
+import org.openmuc.jasn1.ber.ReverseByteArrayOutputStream;
 
 public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private boolean usingIterator;
@@ -87,8 +87,8 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
     private void encodeGenericTypeObject(Exchange exchange, Class<?> clazz, OutputStream stream)
         throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
         Class<?>[] paramOut = new Class<?>[1];
-        paramOut[0] = BerByteArrayOutputStream.class;
-        BerByteArrayOutputStream berOut = new BerByteArrayOutputStream(IOHelper.DEFAULT_BUFFER_SIZE / 256, true);
+        paramOut[0] = OutputStream.class;
+        ReverseByteArrayOutputStream berOut = new ReverseByteArrayOutputStream(IOHelper.DEFAULT_BUFFER_SIZE / 256, true);
         Method encodeMethod = exchange.getIn().getBody().getClass().getDeclaredMethod("encode", paramOut);
         encodeMethod.invoke(exchange.getIn().getBody(), berOut);
         stream.write(berOut.getArray());
