@@ -16,23 +16,19 @@
  */
 package org.apache.camel.zipkin;
 
+import com.github.kristofa.brave.Brave;
+import com.github.kristofa.brave.ClientSpanThreadBinder;
+import com.github.kristofa.brave.ServerSpan;
+import com.github.kristofa.brave.ServerSpanThreadBinder;
+import com.github.kristofa.brave.SpanCollector;
+import com.github.kristofa.brave.scribe.ScribeSpanCollector;
+import com.twitter.zipkin.gen.Span;
 import java.io.Closeable;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import brave.Tracing;
-import brave.sampler.Sampler;
-import com.github.kristofa.brave.Brave;
-import com.github.kristofa.brave.ClientSpanThreadBinder;
-import com.github.kristofa.brave.ServerSpan;
-import com.github.kristofa.brave.ServerSpanThreadBinder;
-import com.github.kristofa.brave.SpanCollector;
-import com.github.kristofa.brave.TracerAdapter;
-import com.github.kristofa.brave.scribe.ScribeSpanCollector;
-import com.twitter.zipkin.gen.Span;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
@@ -232,7 +228,6 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     /** @deprecated use {@link #setSpanReporter(Reporter)} */
     @Deprecated
     public void setSpanCollector(SpanCollector spanCollector) {
-        this.spanReporter = new ZipkinLegacyReporterAdapter(spanCollector);
         this.spanCollector = spanCollector;
     }
 
@@ -351,13 +346,12 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
 
         if (spanReporter == null) {
             if (spanCollector != null) { // possible via setter
-                spanReporter = new ZipkinLegacyReporterAdapter(spanCollector);
             } else if (endpoint != null) {
                 LOG.info("Configuring Zipkin URLConnectionSender using endpoint: {} ", endpoint);
                 spanReporter = AsyncReporter.create(URLConnectionSender.create(endpoint));
             } else if (hostName != null && port > 0) {
                 LOG.info("Configuring Zipkin ScribeSpanCollector using host: {} and port: {}", hostName, port);
-                spanReporter = new ZipkinLegacyReporterAdapter(new ScribeSpanCollector(hostName, port));
+                spanCollector = new ScribeSpanCollector(hostName, port);
             } else {
                 // is there a zipkin service setup as ENV variable to auto register a span reporter
                 String host = new ServiceHostPropertiesFunction().apply(ZIPKIN_COLLECTOR_HTTP_SERVICE);
@@ -373,13 +367,13 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
                     if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
                         LOG.info("Auto-configuring Zipkin ScribeSpanCollector using host: {} and port: {}", host, port);
                         int num = camelContext.getTypeConverter().mandatoryConvertTo(Integer.class, port);
-                        spanReporter = new ZipkinLegacyReporterAdapter(new ScribeSpanCollector(host, num));
+                        spanCollector = new ScribeSpanCollector(host, num);
                     }
                 }
             }
         }
 
-        if (spanReporter == null) {
+        if (spanReporter == null && spanCollector == null) {
             // Try to lookup the span reporter from the registry if only one instance is present
             Set<Reporter> reporters = camelContext.getRegistry().findByType(Reporter.class);
             if (reporters.size() == 1) {
@@ -387,7 +381,9 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             }
         }
 
-        ObjectHelper.notNull(spanReporter, "Reporter<zipkin2.Span>", this);
+        if (spanCollector == null) {
+            ObjectHelper.notNull(spanReporter, "Reporter<zipkin2.Span>", this);
+        }
 
         if (clientServiceMappings.isEmpty() && serverServiceMappings.isEmpty()) {
             LOG.warn("No service name(s) has been mapped in clientServiceMappings or serverServiceMappings. Camel will fallback and use endpoint uris as service names.");
@@ -526,14 +522,20 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private void createBraveForService(String pattern, String serviceName) {
         Brave brave = braves.get(pattern);
         if (brave == null && !braves.containsKey(serviceName)) {
-            Tracing.Builder builder = Tracing.newBuilder().localServiceName(serviceName);
-            builder = builder.sampler(Sampler.create(rate));
-            if (spanReporter != null) {
-                builder = builder.spanReporter(spanReporter);
-            }
-            brave = TracerAdapter.newBrave(builder.build().tracer());
+            brave = newBrave(serviceName);
             braves.put(serviceName, brave);
         }
+    }
+
+    private Brave newBrave(String serviceName) {
+        Brave.Builder builder = new Brave.Builder(serviceName)
+            .traceSampler(com.github.kristofa.brave.Sampler.create(rate));
+        if (spanReporter != null) {
+            builder = builder.spanReporter(spanReporter);
+        } else if (spanCollector != null) {
+            builder.spanCollector(spanCollector);
+        }
+        return builder.build();
     }
 
     private Brave getBrave(String serviceName) {
@@ -542,13 +544,8 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             brave = braves.get(serviceName);
 
             if (brave == null && useFallbackServiceNames) {
-                LOG.debug("Creating Tracing assigned to serviceName: {}", serviceName + " as fallback");
-                Tracing.Builder builder = Tracing.newBuilder().localServiceName(serviceName);
-                builder = builder.sampler(Sampler.create(rate));
-                if (spanReporter != null) {
-                    builder = builder.spanReporter(spanReporter);
-                }
-                brave = TracerAdapter.newBrave(builder.build().tracer());
+                LOG.debug("Creating Brave assigned to serviceName: {}", serviceName + " as fallback");
+                brave = newBrave(serviceName);
                 braves.put(serviceName, brave);
             }
         }
