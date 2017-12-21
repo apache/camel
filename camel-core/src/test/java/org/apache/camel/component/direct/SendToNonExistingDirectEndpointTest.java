@@ -31,6 +31,8 @@ public class SendToNonExistingDirectEndpointTest extends ContextTestSupport {
     }
 
     public void testDirect() throws Exception {
+        context.getComponent("direct", DirectComponent.class).setBlock(false);
+        
         try {
             template.sendBody("direct:foo", "Hello World");
             fail("Should have thrown exception");
