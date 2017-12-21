@@ -18,6 +18,7 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.direct.DirectComponent;
 
 /**
  *
@@ -57,6 +58,8 @@ public class RecipientListDirectNoConsumerIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.getComponent("direct", DirectComponent.class).setBlock(false);
+                
                 onException(Exception.class).handled(true).to("mock:error");
 
                 from("direct:start")
