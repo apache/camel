@@ -50,7 +50,7 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>${mongo-java-driver32-version}</version>
+            <version>${mongo-java-driver-version}</version>
         </dependency>
 
         <!-- test -->
