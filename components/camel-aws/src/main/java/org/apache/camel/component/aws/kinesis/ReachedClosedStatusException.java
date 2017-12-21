@@ -18,7 +18,9 @@ package org.apache.camel.component.aws.kinesis;
 
 public class ReachedClosedStatusException extends Exception {
 
-    private final String streamName;
+    private static final long serialVersionUID = -2701697822726751407L;
+	
+	private final String streamName;
     private final String shardId;
 
     public ReachedClosedStatusException(String streamName, String shardId) {
