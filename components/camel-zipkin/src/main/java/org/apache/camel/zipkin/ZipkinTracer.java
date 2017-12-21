@@ -16,6 +16,13 @@
  */
 package org.apache.camel.zipkin;
 
+import java.io.Closeable;
+import java.util.EventObject;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import com.github.kristofa.brave.Brave;
 import com.github.kristofa.brave.ClientSpanThreadBinder;
 import com.github.kristofa.brave.ServerSpan;
@@ -23,12 +30,6 @@ import com.github.kristofa.brave.ServerSpanThreadBinder;
 import com.github.kristofa.brave.SpanCollector;
 import com.github.kristofa.brave.scribe.ScribeSpanCollector;
 import com.twitter.zipkin.gen.Span;
-import java.io.Closeable;
-import java.util.EventObject;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
