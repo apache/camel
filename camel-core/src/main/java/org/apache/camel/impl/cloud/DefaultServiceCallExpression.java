@@ -63,6 +63,10 @@ public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {
             if (answer.contains(name) && port == null) {
                 answer = answer.replaceFirst(name, host);
             }
+            // include scheme if not provided
+            if (!answer.startsWith(scheme)) {
+                answer = scheme + ":" + answer;
+            }
         }
 
         LOGGER.debug("Camel endpoint uri: {} for calling service: {} on server {}:{}", answer, name, host, port);
