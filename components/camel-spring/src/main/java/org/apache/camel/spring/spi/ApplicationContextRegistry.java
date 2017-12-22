@@ -42,6 +42,9 @@ public class ApplicationContextRegistry implements Registry {
 
     @Override
     public <T> T lookupByNameAndType(String name, Class<T> type) {
+        if(!applicationContext.containsBean(name)) {
+            return null;
+        }
         Object answer;
         try {
             answer = applicationContext.getBean(name, type);
@@ -67,6 +70,10 @@ public class ApplicationContextRegistry implements Registry {
 
     @Override
     public Object lookupByName(String name) {
+        if(!applicationContext.containsBean(name)) {
+            return null;
+        }
+        
         try {
             return applicationContext.getBean(name);
         } catch (NoSuchBeanDefinitionException e) {
