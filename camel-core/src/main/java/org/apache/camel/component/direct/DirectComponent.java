@@ -35,7 +35,7 @@ public class DirectComponent extends UriEndpointComponent {
     // later in case the DirectEndpoint was re-created due the old was evicted from the endpoints LRUCache
     // on DefaultCamelContext
     private final Map<String, DirectConsumer> consumers = new HashMap<String, DirectConsumer>();
-    @Metadata(label = "producer", defaultValue = "true" )
+    @Metadata(label = "producer", defaultValue = "true")
     private boolean block = true;
     @Metadata(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
