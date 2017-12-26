@@ -127,12 +127,13 @@ We have the following Camel route
 [source,java]
 -----------------------------------------------------------------------------
 from("direct:start")
+    .setHeader(NetWeaverConstants.COMMAND, constant(command))
     .toF("sap-netweaver:%s?username=%s&password=%s", url, username, password)
     .to("log:response")
     .to("velocity:flight-info.vm")
 -----------------------------------------------------------------------------
 
-Where url, username, and password is defined as:
+Where url, username, password and command is defined as:
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------
