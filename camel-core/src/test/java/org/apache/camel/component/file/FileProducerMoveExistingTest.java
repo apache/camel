@@ -54,6 +54,19 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/file/renamed-hello.txt")));
     }
 
+    public void testExistingFileExistsTempFileName() throws Exception {
+        template.sendBodyAndHeader("file://target/file?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}",
+                "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/file?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}",
+                "Bye World", Exchange.FILE_NAME, "hello.txt");
+
+        assertFileExists("target/file/hello.txt");
+        assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, new File("target/file/hello.txt")));
+
+        assertFileExists("target/file/renamed-hello.txt");
+        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/file/renamed-hello.txt")));
+    }
+
     public void testExistingFileExistsMoveSubDir() throws Exception {
         template.sendBodyAndHeader("file://target/file?fileExist=Move&moveExisting=backup", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/file?fileExist=Move&moveExisting=backup", "Bye World", Exchange.FILE_NAME, "hello.txt");
