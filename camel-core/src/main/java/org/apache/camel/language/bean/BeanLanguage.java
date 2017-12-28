@@ -91,10 +91,19 @@ public class BeanLanguage implements Language, IsSingleton {
             beanName = ObjectHelper.before(expression, "?");
             method = ObjectHelper.after(expression, "?method=");
         } else {
-            int idx = expression.indexOf('.');
-            if (idx > 0) {
-                beanName = expression.substring(0, idx);
-                method = expression.substring(idx + 1);
+            //first check case :: because of my.own.Bean::method
+            int doubleColonIndex = expression.indexOf("::");
+            //need to check that not inside params
+            int beginOfParameterDeclaration = expression.indexOf("(");
+            if (doubleColonIndex > 0 && (expression.indexOf("(") < 0 || doubleColonIndex < beginOfParameterDeclaration)) {
+                beanName = expression.substring(0, doubleColonIndex);
+                method = expression.substring(doubleColonIndex + 2);
+            } else {
+                int idx = expression.indexOf('.');
+                if (idx > 0) {
+                    beanName = expression.substring(0, idx);
+                    method = expression.substring(idx + 1);
+                }
             }
         }
 
