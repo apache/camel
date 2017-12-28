@@ -127,7 +127,7 @@ public final class ResourceHelper {
      *     <il>classpath:nameOfFile - to refer to the classpath (default)</il>
      *     <il>http:uri - to load the resource using HTTP</il>
      *     <il>ref:nameOfBean - to lookup the resource in the {@link org.apache.camel.spi.Registry}</il>
-     *     <il>bean:nameOfBean.methodName - to lookup a bean in the {@link org.apache.camel.spi.Registry} and call the method</il>
+     *     <il>bean:nameOfBean.methodName or bean:nameOfBean::methodName - to lookup a bean in the {@link org.apache.camel.spi.Registry} and call the method</il>
      *     <il><customProtocol>:uri - to lookup the resource using a custom {@link java.net.URLStreamHandler} registered for the <customProtocol>,
      *     on how to register it @see java.net.URL#URL(java.lang.String, java.lang.String, int, java.lang.String)</il>
      * </ul>
@@ -147,10 +147,6 @@ public final class ResourceHelper {
             return new ByteArrayInputStream(value.getBytes());
         } else if (uri.startsWith("bean:")) {
             String bean = uri.substring(5);
-            if (bean.contains(".")) {
-                String method = StringHelper.after(bean, ".");
-                bean = StringHelper.before(bean, ".") + "?method=" + method;
-            }
             Exchange dummy = new DefaultExchange(camelContext);
             Object out = camelContext.resolveLanguage("bean").createExpression(bean).evaluate(dummy, Object.class);
             if (dummy.getException() != null) {
