@@ -33,6 +33,12 @@ public class RestletProducerTest extends RestletTestSupport {
     }
     
     @Test
+    public void testRestletProducerGetWithPathQueryParams() throws Exception {
+        String out = template.requestBodyAndHeader("direct:startWithPathQueryParams", null, "id", 123, String.class);
+        assertEquals("1235;Donald Duck", out);
+    }
+    
+    @Test
     public void testRestletProducerDelete() throws Exception {
         String out = template.requestBodyAndHeader("direct:delete", null, "id", 123, String.class);
         assertEquals("123;Donald Duck", out);
@@ -44,6 +50,8 @@ public class RestletProducerTest extends RestletTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to("restlet:http://localhost:" + portNum + "/users/{id}/basic").to("log:reply");
+                
+                from("direct:startWithPathQueryParams").to("restlet:http://localhost:" + portNum + "/users/{id}/basic?id=1235").to("log:reply");
                 
                 from("direct:delete").to("restlet:http://localhost:" + portNum + "/users/{id}/basic?restletMethod=DELETE");
 
