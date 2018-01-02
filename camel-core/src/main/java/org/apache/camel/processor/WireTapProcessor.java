@@ -227,6 +227,9 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
         // set MEP to InOnly as this wire tap is a fire and forget
         copy.setPattern(ExchangePattern.InOnly);
+        // remove STREAM_CACHE_UNIT_OF_WORK property because this wire tap will
+        // close its own created stream cache(s)
+        copy.removeProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK);
         return copy;
     }
 
