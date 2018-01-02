@@ -79,6 +79,7 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *httpClient* | The custom `CloseableHttpClient` reference from registry to be used during API HTTP requests. Could be configured using Http Client class `HttpClientBuilder`. | Default `CloseableHttpClinent` from HttpClient library | org.apache.http.impl.client.CloseableHttpClient
 |===
 // endpoint options: END
 
@@ -179,6 +180,24 @@ The status of the API response received when message sent to the user.
 
 |HipchatFromUserResponseStatus |HipchatConstants.TO_ROOM_RESPONSE_STATUS |_http://hc.apache.org/httpcomponents-core-4.2.x/httpcore/apidocs/org/apache/http/StatusLine.html[StatusLine]_ |The status of the API response received when message sent to the room.
 |=======================================================================
+
+#### Configuring Http Client
+
+The HipChat component allow your own `HttpClient` configuration. This can be done by defining a reference for `CloseableHttpClient` in the http://camel.apache.org/registry.html[registry] (e.g. Spring Context) and then, set the parameter during the Endpoint definition, for example: `hipchat:http://api.hipchat.com?httpClient=#myHttpClient`.
+
+[source,java]
+------------------------------------------
+CloseableHttpClient httpclient = HttpClients.custom()
+    .setConnectionManager(connManager)
+    .setDefaultCookieStore(cookieStore)
+    .setDefaultCredentialsProvider(credentialsProvider)
+    .setProxy(new HttpHost("myproxy", 8080))
+    .setDefaultRequestConfig(defaultRequestConfig)
+    .build();
+------------------------------------------
+
+To see more information about Http Client configuration, please check the https://hc.apache.org/httpcomponents-client-ga/examples.html[official documentation].
+ 
 
 #### Dependencies
 
