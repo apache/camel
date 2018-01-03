@@ -53,13 +53,14 @@ with the following path and query parameters:
 | *port* | The port for the hipchat server. Is by default 80. | 80 | Integer
 |===
 
-==== Query Parameters (21 parameters):
+==== Query Parameters (22 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *authToken* (common) | OAuth 2 auth token |  | String
 | *consumeUsers* (common) | Username(s) when consuming messages from the hiptchat server. Multiple user names can be separated by comma. |  | String
+| *httpClient* (common) | The CloseableHttpClient reference from registry to be used during API HTTP requests. | CloseableHttpClient default from HttpClient library | CloseableHttpClient
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -79,7 +80,6 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
-| *httpClient* | The custom `CloseableHttpClient` reference from registry to be used during API HTTP requests. Could be configured using Http Client class `HttpClientBuilder`. | Default `CloseableHttpClinent` from HttpClient library | org.apache.http.impl.client.CloseableHttpClient
 |===
 // endpoint options: END
 
