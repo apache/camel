@@ -45,7 +45,7 @@ public class QueryCommand extends AbstractDdbCommand {
                 .withScanIndexForward(determineScanIndexForward());
         
         // Check if we have set an Index Name
-        if(exchange.getIn().getHeader(DdbConstants.INDEX_NAME, String.class) != null) {
+        if (exchange.getIn().getHeader(DdbConstants.INDEX_NAME, String.class) != null) {
             query.withIndexName(exchange.getIn().getHeader(DdbConstants.INDEX_NAME, String.class));
         }
         
