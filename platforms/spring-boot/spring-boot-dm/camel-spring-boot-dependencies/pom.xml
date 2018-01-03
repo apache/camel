@@ -68,7 +68,7 @@
       <dependency>
         <groupId>com.alibaba</groupId>
         <artifactId>fastjson</artifactId>
-        <version>1.2.41</version>
+        <version>1.2.44</version>
       </dependency>
       <dependency>
         <groupId>com.atlassian.jira</groupId>
@@ -179,7 +179,7 @@
       <dependency>
         <groupId>net.sf.saxon</groupId>
         <artifactId>Saxon-HE</artifactId>
-        <version>9.8.0-6</version>
+        <version>9.8.0-7</version>
       </dependency>
       <dependency>
         <groupId>ognl</groupId>
