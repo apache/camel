@@ -105,6 +105,8 @@ returned.
 |`CamelAwsDdbConsistentRead` |`Boolean` |If set to true, then a consistent read is issued, otherwise eventually
 consistent is used.
 
+|`CamelAwsDdbIndexName` |`String` |If set will be used as Secondary Index for Query operation.
+
 |`CamelAwsDdbItem` |`Map<String, AttributeValue>` |A map of the attributes for the item, and must include the primary key
 values that define the item.
 
