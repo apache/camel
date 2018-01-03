@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.hipchat;
 
-import static org.apache.camel.util.UnsafeUriCharactersEncoder.encodeHttpURI;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -35,7 +35,7 @@ import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.apache.camel.util.UnsafeUriCharactersEncoder.encodeHttpURI;
 
 /**
  * The Hipchat producer to send message to a user and/or a room.
