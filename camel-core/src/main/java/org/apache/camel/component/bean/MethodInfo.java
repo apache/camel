@@ -134,6 +134,8 @@ public class MethodInfo {
             routingSlip = new RoutingSlip(camelContext);
             routingSlip.setDelimiter(routingSlipAnnotation.delimiter());
             routingSlip.setIgnoreInvalidEndpoints(routingSlipAnnotation.ignoreInvalidEndpoints());
+            routingSlip.setCacheSize(routingSlipAnnotation.cacheSize());
+
             // add created routingSlip as a service so we have its lifecycle managed
             try {
                 camelContext.addService(routingSlip);
@@ -149,6 +151,7 @@ public class MethodInfo {
             dynamicRouter = new DynamicRouter(camelContext);
             dynamicRouter.setDelimiter(dynamicRouterAnnotation.delimiter());
             dynamicRouter.setIgnoreInvalidEndpoints(dynamicRouterAnnotation.ignoreInvalidEndpoints());
+            dynamicRouter.setCacheSize(dynamicRouterAnnotation.cacheSize());
             // add created dynamicRouter as a service so we have its lifecycle managed
             try {
                 camelContext.addService(dynamicRouter);
