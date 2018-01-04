@@ -23,13 +23,19 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.processor.RoutingSlip;
+import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
+
+import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
 
 /**
  * Routes a message through a series of steps that are pre-determined (the slip)
@@ -91,6 +97,21 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
         if (getCacheSize() != null) {
             routingSlip.setCacheSize(getCacheSize());
         }
+
+        // use dynamic processor to send to the computed slip endpoint
+        SendDynamicProcessor dynamicProcessor = new SendDynamicProcessor(headerExpression(Exchange.SLIP_ENDPOINT));
+        dynamicProcessor.setCamelContext(routeContext.getCamelContext());
+        if (getCacheSize() != null) {
+            dynamicProcessor.setCacheSize(getCacheSize());
+        }
+
+        // and wrap this in an error handler
+        ErrorHandlerFactory builder = routeContext.getRoute().getErrorHandlerBuilder();
+        // create error handler (create error handler directly to keep it light weight,
+        // instead of using ProcessorDefinition.wrapInErrorHandler)
+        AsyncProcessor errorHandler = (AsyncProcessor) builder.createErrorHandler(routeContext, dynamicProcessor);
+        routingSlip.setErrorHandler(errorHandler);
+
         return routingSlip;
     }
 
