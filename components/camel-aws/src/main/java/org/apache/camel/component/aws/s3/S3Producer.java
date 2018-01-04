@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws.s3;
 
-import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -29,19 +27,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.WrappedFile;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.cloudfront.model.InvalidArgumentException;
@@ -65,6 +50,21 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.StorageClass;
 import com.amazonaws.services.s3.model.UploadPartRequest;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.WrappedFile;
+import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
 
 /**
  * A Producer which sends messages to the Amazon Web Service Simple Storage
@@ -455,7 +455,7 @@ public class S3Producer extends DefaultProducer {
         long milliSeconds = expiration.getTime();
         
         Long expirationMillis = exchange.getIn().getHeader(S3Constants.DOWNLOAD_LINK_EXPIRATION, Long.class);
-        if(expirationMillis != null) {
+        if (expirationMillis != null) {
             milliSeconds += expirationMillis;
         } else {
             milliSeconds += 1000 * 60 * 60; // Default: Add 1 hour.
