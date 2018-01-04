@@ -187,7 +187,7 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
 
     /**
      * Sets the maximum size used by the {@link org.apache.camel.impl.ProducerCache} which is used
-     * to cache and reuse producers when using this recipient list, when uris are reused.
+     * to cache and reuse producers when using this routing slip, when uris are reused.
      *
      * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
      * @return the builder
