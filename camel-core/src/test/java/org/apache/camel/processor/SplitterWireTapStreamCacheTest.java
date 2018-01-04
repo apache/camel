@@ -53,7 +53,7 @@ public class SplitterWireTapStreamCacheTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 StreamCachingStrategy streamCachingStrategy = new DefaultStreamCachingStrategy();
-                streamCachingStrategy.setSpoolThreshold(1l);
+                streamCachingStrategy.setSpoolThreshold(1L);
 
                 context.setStreamCachingStrategy(streamCachingStrategy);
                 context.setStreamCaching(true);
