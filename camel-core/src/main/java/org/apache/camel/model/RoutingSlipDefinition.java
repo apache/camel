@@ -98,18 +98,11 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
             routingSlip.setCacheSize(getCacheSize());
         }
 
-        // use dynamic processor to send to the computed slip endpoint
-        SendDynamicProcessor dynamicProcessor = new SendDynamicProcessor(headerExpression(Exchange.SLIP_ENDPOINT));
-        dynamicProcessor.setCamelContext(routeContext.getCamelContext());
-        if (getCacheSize() != null) {
-            dynamicProcessor.setCacheSize(getCacheSize());
-        }
-
         // and wrap this in an error handler
         ErrorHandlerFactory builder = routeContext.getRoute().getErrorHandlerBuilder();
         // create error handler (create error handler directly to keep it light weight,
         // instead of using ProcessorDefinition.wrapInErrorHandler)
-        AsyncProcessor errorHandler = (AsyncProcessor) builder.createErrorHandler(routeContext, dynamicProcessor);
+        AsyncProcessor errorHandler = (AsyncProcessor) builder.createErrorHandler(routeContext, routingSlip.newRoutingSlipProcessorForErrorHandler());
         routingSlip.setErrorHandler(errorHandler);
 
         return routingSlip;
