@@ -168,7 +168,7 @@ aggregate this number of messages.
 
 |`CamelAwsS3LastModified` |`java.util.Date` |*Camel 2.8.2:* The last modified timestamp of this object.
 
-|`CamelAwsS3Operation` |`String` |*Camel 2.18*: The operation to perform
+|`CamelAwsS3Operation` |`String` |*Camel 2.18*: The operation to perform. Permitted values are copyObject, listBuckets, deleteBucket, downloadLink
 
 |`CamelAwsS3StorageClass` |`String` |*Camel 2.8.4:* The storage class of this object.
 
@@ -195,6 +195,8 @@ the object using AWS-managed keys. For example use AES256.
 |`CamelAwsS3ETag` |`String` |The ETag value for the newly uploaded object.
 
 |`CamelAwsS3VersionId` |`String` |The *optional* version ID of the newly uploaded object.
+
+|`CamelAwsS3DownloadLinkExpiration` | `String` | The expiration (millis) of URL download link. The link will be stored into *CamelAwsS3DownloadLink* response header.
 
 |=======================================================================
 

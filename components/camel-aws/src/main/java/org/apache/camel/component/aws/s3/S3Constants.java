@@ -30,6 +30,8 @@ public interface S3Constants {
     String CONTENT_LENGTH                  = "CamelAwsS3ContentLength";
     String CONTENT_MD5                     = "CamelAwsS3ContentMD5";
     String CONTENT_TYPE                    = "CamelAwsS3ContentType";
+    String DOWNLOAD_LINK_EXPIRATION        = "CamelAwsS3DownloadLinkExpiration";
+    String DOWNLOAD_LINK                   = "CamelAwsS3DownloadLink";    
     String E_TAG                           = "CamelAwsS3ETag";
     String KEY                             = "CamelAwsS3Key";
     String DESTINATION_KEY                 = "CamelAwsS3DestinationKey";
