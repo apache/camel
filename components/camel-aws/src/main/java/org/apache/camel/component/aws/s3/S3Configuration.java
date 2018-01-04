@@ -63,7 +63,7 @@ public class S3Configuration implements Cloneable {
     private boolean includeBody = true;
     @UriParam
     private boolean pathStyleAccess;
-    @UriParam(label = "producer", enums = "copyObject,deleteBucket,listBuckets")
+    @UriParam(label = "producer", enums = "copyObject,deleteBucket,listBuckets,downloadLink")
     private S3Operations operation;
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean autocloseBody = true;
