@@ -295,16 +295,21 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
         if (isChannelOpen()) {
             // The connection is good, so nothing to do
             return;
-        } else if (!isChannelOpen() && this.consumer.getEndpoint().getAutomaticRecoveryEnabled()) {
+        } else if (channel != null && !channel.isOpen() && isAutomaticRecoveryEnabled()) {
             // Still need to wait for channel to re-open
             throw new IOException("Waiting for channel to re-open.");
-        } else if (!this.consumer.getEndpoint().getAutomaticRecoveryEnabled()) {
+        } else if (channel == null || !isAutomaticRecoveryEnabled()) {
             log.info("Attempting to open a new rabbitMQ channel");
             Connection conn = consumer.getConnection();
             channel = openChannel(conn);
             // Register the channel to the tag
             start();
         }
+    }
+
+    private boolean isAutomaticRecoveryEnabled() {
+        return this.consumer.getEndpoint().getAutomaticRecoveryEnabled() != null
+            && this.consumer.getEndpoint().getAutomaticRecoveryEnabled();
     }
 
     private boolean isChannelOpen() {
