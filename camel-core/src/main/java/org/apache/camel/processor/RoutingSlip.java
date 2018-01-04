@@ -69,6 +69,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
     protected String uriDelimiter;
     protected final CamelContext camelContext;
     protected AsyncProcessor errorHandler;
+    protected SendDynamicProcessor sendDynamicProcessor;
 
     /**
      * The iterator to be used for retrieving the next routing slip(s) to be used.
@@ -359,12 +360,16 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                 RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
                 AsyncProcessor target = createErrorHandler(routeContext, exchange, asyncProducer, endpoint);
 
-                // set property which endpoint we send to
+                // set property which endpoint we send to and the producer that can do it
                 exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
                 exchange.setProperty(Exchange.SLIP_ENDPOINT, endpoint.getEndpointUri());
+                exchange.setProperty(Exchange.SLIP_PRODUCER, asyncProducer);
 
                 boolean answer = target.process(exchange, new AsyncCallback() {
                     public void done(boolean doneSync) {
+                        // cleanup producer after usage
+                        exchange.removeProperty(Exchange.SLIP_PRODUCER);
+
                         // we only have to handle async completion of the routing slip
                         if (doneSync) {
                             callback.done(true);
@@ -424,7 +429,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
 
                             // copy results back to the original exchange
                             ExchangeHelper.copyResults(original, current);
-                       } catch (Throwable e) {
+                        } catch (Throwable e) {
                             exchange.setException(e);
                         }
 
@@ -491,5 +496,35 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
 
         result.getProperties().clear();
         result.getProperties().putAll(source.getProperties());
+    }
+
+    /**
+     * Creates the embedded processor to use when wrapping this routing slip in an error handler.
+     */
+    public AsyncProcessor newRoutingSlipProcessorForErrorHandler() {
+        return new RoutingSlipProcessor();
+    }
+
+    /**
+     * Embedded processor that routes to the routing slip that has been set via the
+     * exchange property {@link Exchange#SLIP_PRODUCER}.
+     */
+    private final class RoutingSlipProcessor implements AsyncProcessor {
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            AsyncProcessorHelper.process(this, exchange);
+        }
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            AsyncProcessor producer = exchange.getProperty(Exchange.SLIP_PRODUCER, AsyncProcessor.class);
+            return producer.process(exchange, callback);
+        }
+
+        @Override
+        public String toString() {
+            return "RoutingSlipProcessor";
+        }
     }
 }

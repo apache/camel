@@ -82,6 +82,7 @@ public class DynamicRouterEventNotifierTest extends ContextTestSupport {
         @Override
         public void notify(EventObject event) throws Exception {
             if (event instanceof ExchangeSendingEvent) {
+                log.info("Sending: {}", event);
                 sending++;
             } else {
                 sent++;
