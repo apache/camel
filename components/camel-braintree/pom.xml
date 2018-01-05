@@ -198,6 +198,13 @@
                     <substitution>
                       <method>^.+$</method>
                       <argName>^.+$</argName>
+                      <argType>com.braintreegateway.TransactionRefundRequest</argType>
+                      <replacement>refundRequest</replacement>
+                      <replaceWithType>false</replaceWithType>
+                    </substitution>
+                    <substitution>
+                      <method>^.+$</method>
+                      <argName>^.+$</argName>
                       <argType>com.braintreegateway.TransactionCloneRequest</argType>
                       <replacement>cloneRequest</replacement>
                       <replaceWithType>false</replaceWithType>
