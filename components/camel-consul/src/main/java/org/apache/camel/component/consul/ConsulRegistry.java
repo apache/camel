@@ -81,7 +81,7 @@ public class ConsulRegistry implements Registry {
         // Substitute $ character in key
         key = key.replaceAll("\\$", "/");
         kvClient = consul.keyValueClient();
-        Optional<String> result = kvClient.getValueAsString(key);
+        java.util.Optional<String> result = kvClient.getValueAsString(key);
         if (result.isPresent()) {
             byte[] postDecodedValue = ConsulRegistryUtils.decodeBase64(result.get());
             return ConsulRegistryUtils.deserialize(postDecodedValue);

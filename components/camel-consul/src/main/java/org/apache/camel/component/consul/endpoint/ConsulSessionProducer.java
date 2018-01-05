@@ -72,7 +72,7 @@ public final class ConsulSessionProducer extends AbstractConsulProducer<SessionC
                 getClient().getSessionInfo(
                     message.getMandatoryBody(String.class),
                     message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class)
-                ).orNull()
+                ).orElse(null)
             );
         } else {
             setBodyAndResult(
@@ -80,7 +80,7 @@ public final class ConsulSessionProducer extends AbstractConsulProducer<SessionC
                 getClient().getSessionInfo(
                     sessionId,
                     message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class)
-                ).orNull()
+                ).orElse(null)
             );
         }
     }

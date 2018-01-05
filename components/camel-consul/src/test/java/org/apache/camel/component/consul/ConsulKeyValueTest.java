@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.consul;
 
-import com.google.common.base.Optional;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulKeyValueActions;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -43,7 +42,7 @@ public class ConsulKeyValueTest extends ConsulTestSupport {
 
         mock.assertIsSatisfied();
 
-        Optional<String> keyVal = getConsul().keyValueClient().getValueAsString(key);
+        java.util.Optional<String> keyVal = getConsul().keyValueClient().getValueAsString(key);
 
         assertTrue(keyVal.isPresent());
         assertEquals(val, keyVal.get());

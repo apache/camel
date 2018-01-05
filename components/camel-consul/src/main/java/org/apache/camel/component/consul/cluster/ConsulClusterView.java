@@ -70,8 +70,8 @@ final class ConsulClusterView extends AbstractCamelClusterView {
 
         return Optional.ofNullable(
             keyValueClient.getSession(configuration.getRootPath())
-                .transform(ConsulClusterMember::new)
-                .orNull()
+                .map(ConsulClusterMember::new)
+                .orElse(null)
         );
     }
 
@@ -137,7 +137,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             String sid = sessionId.get();
 
             return (sid != null)
-                ? sessionClient.getSessionInfo(sid).transform(si -> keyValueClient.acquireLock(path, sid)).or(Boolean.FALSE)
+                ? sessionClient.getSessionInfo(sid).map(si -> keyValueClient.acquireLock(path, sid)).orElse(Boolean.FALSE)
                 : false;
         }
     }
@@ -250,7 +250,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             if (isStarting() || isStarted()) {
                 com.google.common.base.Optional<Value> value = consulResponse.getResponse();
                 if (value.isPresent()) {
-                    com.google.common.base.Optional<String> sid = value.get().getSession();
+                    Optional<String> sid = value.get().getSession();
                     if (!sid.isPresent()) {
                         // If the key is not held by any session, try acquire a
                         // lock (become leader)
@@ -294,8 +294,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
                 // Watch for changes
                 keyValueClient.getValue(
                     path,
-                    QueryOptions.blockSeconds(configuration.getSessionRefreshInterval(), index.get()).build(),
-                    this
+                    QueryOptions.blockSeconds(configuration.getSessionRefreshInterval(), index.get()).build()
                 );
 
                 if (sessionId.get() != null) {

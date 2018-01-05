@@ -18,6 +18,7 @@ package org.apache.camel.component.consul.endpoint;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.EventClient;
@@ -98,8 +99,8 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
             if (event.getTagFilter().isPresent()) {
                 message.setHeader(ConsulConstants.CONSUL_TAG_FILTER, event.getTagFilter().get());
             }
-
-            message.setBody(event.getPayload().orNull());
+            
+            message.setBody(Optional.ofNullable(event.getPayload()));
 
             try {
                 getProcessor().process(exchange);
