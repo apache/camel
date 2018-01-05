@@ -151,6 +151,22 @@
                   <apiName>merchantAccount</apiName>
                   <proxyClass>com.braintreegateway.MerchantAccountGateway</proxyClass>
                   <fromJavadoc/>
+                  <substitutions>
+                    <substitution>
+                      <method>^.+$</method>
+                      <argName>^.+$</argName>
+                      <argType>com.braintreegateway.MerchantAccountRequest</argType>
+                      <replacement>request</replacement>
+                      <replaceWithType>false</replaceWithType>
+                    </substitution>
+                    <substitution>
+                      <method>^.+$</method>
+                      <argName>^.+$</argName>
+                      <argType>com.braintreegateway.MerchantAccountCreateForCurrencyRequest</argType>
+                      <replacement>currencyRequest</replacement>
+                      <replaceWithType>false</replaceWithType>
+                    </substitution>
+                  </substitutions>
                 </api>
                 <api>
                   <apiName>paymentMethod</apiName>
@@ -158,6 +174,22 @@
                   <fromJavadoc>
                     <excludeMethods>.*parse.*</excludeMethods>
                   </fromJavadoc>
+                  <substitutions>
+                    <substitution>
+                      <method>^.+$</method>
+                      <argName>^.+$</argName>
+                      <argType>com.braintreegateway.PaymentMethodRequest</argType>
+                      <replacement>request</replacement>
+                      <replaceWithType>false</replaceWithType>
+                    </substitution>
+                    <substitution>
+                      <method>^.+$</method>
+                      <argName>^.+$</argName>
+                      <argType>com.braintreegateway.PaymentMethodDeleteRequest</argType>
+                      <replacement>deleteRequest</replacement>
+                      <replaceWithType>false</replaceWithType>
+                    </substitution>
+                  </substitutions>
                 </api>
                 <api>
                   <apiName>paymentMethodNonce</apiName>
