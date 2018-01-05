@@ -907,10 +907,10 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 // override is default
                 channel.put(is, targetName);
             }
-            watch.stop();
             if (LOG.isDebugEnabled()) {
+                long time = watch.taken();
                 LOG.debug("Took {} ({} millis) to store file: {} and FTP client returned: true",
-                        new Object[]{TimeUtils.printDuration(watch.taken()), watch.taken(), targetName});
+                        new Object[]{TimeUtils.printDuration(time), time, targetName});
             }
 
             // after storing file, we may set chmod on the file
