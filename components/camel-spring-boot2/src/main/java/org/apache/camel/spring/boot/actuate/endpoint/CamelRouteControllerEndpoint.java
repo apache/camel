@@ -19,7 +19,6 @@ package org.apache.camel.spring.boot.actuate.endpoint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.spi.RouteController;
-import org.springframework.boot.actuate.endpoint.DefaultEnablement;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
@@ -30,7 +29,7 @@ import java.util.stream.Collectors;
 /**
  * {@link Endpoint} to expose {@link RouteController} information.
  */
-@Endpoint(id = "camelroutecontroller", defaultEnablement = DefaultEnablement.ENABLED)
+@Endpoint(id = "camelroutecontroller", enableByDefault = true)
 public class CamelRouteControllerEndpoint {
 
     private CamelContext camelContext;
