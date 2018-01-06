@@ -28,11 +28,21 @@ public class FtpCopyStreamListener implements CopyStreamListener {
     private final CamelLogger logger;
     private final String fileName;
     private final boolean download;
+    private String lastLogActivity;
+    private long lastLogActivityTimestamp = -1;
 
     public FtpCopyStreamListener(CamelLogger logger, String fileName, boolean download) {
         this.logger = logger;
         this.fileName = fileName;
         this.download = download;
+    }
+
+    public String getLastLogActivity() {
+        return lastLogActivity;
+    }
+
+    public long getLastLogActivityTimestamp() {
+        return lastLogActivityTimestamp;
     }
 
     @Override
@@ -43,10 +53,14 @@ public class FtpCopyStreamListener implements CopyStreamListener {
     @Override
     public void bytesTransferred(long totalBytesTransferred, int bytesTransferred, long streamSize) {
         // stream size is always -1 from the FTP client
+
         if (download) {
-            logger.log("Downloading: " + fileName + " (chunk: " + bytesTransferred + ", total chunk: " + totalBytesTransferred + " bytes)");
+            lastLogActivity = "Downloading: " + fileName + " (chunk: " + bytesTransferred + ", total chunk: " + totalBytesTransferred + " bytes)";
         } else {
-            logger.log("Uploading: " + fileName + " (chunk: " + bytesTransferred + ", total chunk: " + totalBytesTransferred + " bytes)");
+            lastLogActivity = "Uploading: " + fileName + " (chunk: " + bytesTransferred + ", total chunk: " + totalBytesTransferred + " bytes)";
         }
+        lastLogActivityTimestamp = System.currentTimeMillis();
+
+        logger.log(lastLogActivity);
     }
 }
