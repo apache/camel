@@ -25,7 +25,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.spi.RouteError;
-import org.springframework.boot.actuate.endpoint.DefaultEnablement;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -40,7 +39,7 @@ import java.util.stream.Collectors;
 /**
  * {@link Endpoint} to expose {@link org.apache.camel.Route} information.
  */
-@Endpoint(id = "camelroutes", defaultEnablement = DefaultEnablement.ENABLED)
+@Endpoint(id = "camelroutes", enableByDefault = true)
 public class CamelRoutesEndpoint {
 
     private CamelContext camelContext;

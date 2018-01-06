@@ -43,7 +43,7 @@
     <camel.osgi.export.pkg/>
 
     <!-- spring boot 2 uses newer versions of these -->
-    <spring-version>5.0.0.RC3</spring-version>
+    <spring-version>${spring5-version}</spring-version>
     <jackson2-version>2.9.1</jackson2-version>
 
   </properties>
