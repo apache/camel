@@ -35,6 +35,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -56,7 +57,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final FTPClient client;
     protected final FTPClientConfig clientConfig;
-    protected RemoteFileEndpoint<FTPFile> endpoint;
+    protected final CamelLogger transferLogger = new CamelLogger(LoggerFactory.getLogger(FtpCopyStreamListener.class));
+    protected FtpEndpoint<FTPFile> endpoint;
 
     public FtpOperations(FTPClient client, FTPClientConfig clientConfig) {
         this.client = client;
@@ -64,7 +66,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public void setEndpoint(GenericFileEndpoint<FTPFile> endpoint) {
-        this.endpoint = (RemoteFileEndpoint<FTPFile>) endpoint;
+        this.endpoint = (FtpEndpoint<FTPFile>) endpoint;
     }
 
     public boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
@@ -356,8 +358,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 remoteName = FileUtil.stripPath(name);
             }
 
+            // setup donwload logger for the given file
+            transferLogger.setLevel(endpoint.getTransferLoggingLevel());
+            client.setCopyStreamListener(new FtpCopyStreamListener(transferLogger, remoteName, true));
+
             log.trace("Client retrieveFile: {}", remoteName);
-            
             if (endpoint.getConfiguration().isStreamDownload()) {
                 InputStream is = client.retrieveFileStream(remoteName); 
                 target.setBody(is);
@@ -454,6 +459,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 // remote name is now only the file name as we just changed directory
                 remoteName = FileUtil.stripPath(name);
             }
+
+            // setup donwload logger for the given file
+            transferLogger.setLevel(endpoint.getTransferLoggingLevel());
+            client.setCopyStreamListener(new FtpCopyStreamListener(transferLogger, remoteName, true));
 
             log.trace("Client retrieveFile: {}", remoteName);
             result = client.retrieveFile(remoteName, os);
@@ -580,6 +589,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
             final StopWatch watch = new StopWatch();
             boolean answer;
+            // setup upload logger for the given file
+            transferLogger.setLevel(endpoint.getTransferLoggingLevel());
+            client.setCopyStreamListener(new FtpCopyStreamListener(transferLogger, targetName, false));
             log.debug("About to store file: {} using stream: {}", targetName, is);
             if (endpoint.getFileExist() == GenericFileExist.Append) {
                 log.trace("Client appendFile: {}", targetName);
@@ -599,7 +611,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
 
             // after storing file, we may set chmod on the file
-            String chmod = ((FtpConfiguration) endpoint.getConfiguration()).getChmod();
+            String chmod = endpoint.getConfiguration().getChmod();
             if (ObjectHelper.isNotEmpty(chmod)) {
                 log.debug("Setting chmod: {} on file: {}", chmod, targetName);
                 String command = "chmod " + chmod + " " + targetName;
@@ -607,7 +619,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 boolean success = client.sendSiteCommand(command);
                 log.trace("Client sendSiteCommand successful: {}", success);
             }
-            
 
             return answer;
 
