@@ -25,6 +25,9 @@ import org.apache.commons.net.io.CopyStreamListener;
  */
 public class FtpCopyStreamListener implements CopyStreamListener {
 
+    // TODO: add support for connect / scanning dirs / complete events
+    // TODO: add API to operations to include more details than just the name, eg RemoteFile so we can get its size / timestamp etc
+
     private final CamelLogger logger;
     private final String fileName;
     private final boolean download;
