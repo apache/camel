@@ -300,7 +300,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         return config.isUseList();
     }
 
-    @ManagedAttribute(description = "Description of last FTP download activity")
+    @ManagedAttribute(description = "Summary of last FTP activity (download only)")
     public String getLastFtpActivity() {
         FTPClient client = getOperations().getFtpClient();
         FtpClientActivityListener listener = (FtpClientActivityListener) client.getCopyStreamListener();
@@ -321,8 +321,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         return null;
     }
 
-    @ManagedAttribute(description = "Description of last FTP activity (verbose)")
-    public String getLastActivityVerbose() {
+    @ManagedAttribute(description = "Summary of last FTP activity (all)")
+    public String getLastFtpActivityVerbose() {
         FTPClient client = getOperations().getFtpClient();
         FtpClientActivityListener listener = (FtpClientActivityListener) client.getCopyStreamListener();
         if (listener != null) {

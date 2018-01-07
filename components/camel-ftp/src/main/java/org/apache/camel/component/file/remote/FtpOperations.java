@@ -76,6 +76,15 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         listener = new DefaultFtpClientActivityListener(transferLogger, endpoint.isTransferLoggingVerbose(), endpoint.getConfiguration().remoteServerInformation());
         client.setCopyStreamListener(listener);
 
+        try {
+            return doConnect(configuration);
+        } catch (GenericFileOperationFailedException e) {
+            listener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
+            throw e;
+        }
+    }
+
+    protected boolean doConnect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
         log.trace("Connecting using FTPClient: {}", client);
 
         String host = configuration.getHost();
@@ -191,10 +200,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 // store replyString, because disconnect() will reset it
                 String replyString = client.getReplyString();
                 int replyCode = client.getReplyCode();
+                listener.onLoginFailed(replyCode, replyString);
                 // disconnect to prevent connection leaks
-                listener.onDisconnecting(host);
                 client.disconnect();
-                listener.onDisconnected(host);
                 throw new GenericFileOperationFailedException(replyCode, replyString);
             }
             listener.onLoginComplete(host);
@@ -228,6 +236,15 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public void disconnect() throws GenericFileOperationFailedException {
+        try {
+            doDisconnect();
+        } catch (GenericFileOperationFailedException e) {
+            listener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
+            throw e;
+        }
+    }
+
+    protected void doDisconnect() throws GenericFileOperationFailedException {
         // logout before disconnecting
         listener.onDisconnecting(endpoint.getConfiguration().remoteServerInformation());
         try {
@@ -332,13 +349,18 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         listener.onBeginDownloading(endpoint.getConfiguration().remoteServerInformation(), name);
 
         boolean answer;
-        log.trace("retrieveFile({})", name);
-        if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
-            // local work directory is configured so we should store file content as files in this local directory
-            answer = retrieveFileToFileInLocalWorkDirectory(name, exchange);
-        } else {
-            // store file content directory as stream on the body
-            answer = retrieveFileToStreamInBody(name, exchange);
+        try {
+            log.trace("retrieveFile({})", name);
+            if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
+                // local work directory is configured so we should store file content as files in this local directory
+                answer = retrieveFileToFileInLocalWorkDirectory(name, exchange);
+            } else {
+                // store file content directory as stream on the body
+                answer = retrieveFileToStreamInBody(name, exchange);
+            }
+        } catch (GenericFileOperationFailedException e) {
+            listener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
+            throw e;
         }
 
         if (answer) {
@@ -555,6 +577,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
             // store the file
             answer = doStoreFile(name, targetName, exchange);
+        } catch (GenericFileOperationFailedException e) {
+            listener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
+            throw e;
         } finally {
             // change back to current directory if we changed directory
             if (currentDir != null) {
@@ -845,6 +870,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
             return list;
         } catch (IOException e) {
+            listener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }
@@ -867,6 +893,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
             return list;
         } catch (IOException e) {
+            listener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }

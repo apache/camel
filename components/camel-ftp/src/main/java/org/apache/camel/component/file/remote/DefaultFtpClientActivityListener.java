@@ -65,6 +65,11 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
     }
 
     @Override
+    public void onGeneralError(String host, String errorMessage) {
+        doLogVerbose("General error when communicating with host: " + host + " error: " + errorMessage);
+    }
+
+    @Override
     public void onConnecting(String host) {
         doLogVerbose("Connecting to host: " + host);
     }
@@ -82,6 +87,11 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
     @Override
     public void onLoginComplete(String host) {
         doLogVerbose("Login on host: " + host + " complete");
+    }
+
+    @Override
+    public void onLoginFailed(int replyCode, String replyMessage) {
+        doLogVerbose("Login on host: " + host + " failed (code: " + replyCode + ", message: " + replyMessage + ")");
     }
 
     @Override
