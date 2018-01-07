@@ -33,6 +33,8 @@ public interface FtpClientActivityListener extends CopyStreamListener {
 
     void setRemoteFileName(String fileName);
 
+    void onGeneralError(String host, String errorMessage);
+
     void onConnecting(String host);
 
     void onConnected(String host);
@@ -40,6 +42,8 @@ public interface FtpClientActivityListener extends CopyStreamListener {
     void onLogin(String host);
 
     void onLoginComplete(String host);
+
+    void onLoginFailed(int replyCode, String replyMessage);
 
     void onDisconnecting(String host);
 
