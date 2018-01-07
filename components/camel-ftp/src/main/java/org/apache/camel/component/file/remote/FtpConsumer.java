@@ -300,14 +300,35 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         return config.isUseList();
     }
 
-    @ManagedAttribute(description = "Description of last download activity")
-    public String getLastTransferActivity() {
+    @ManagedAttribute(description = "Description of last FTP download activity")
+    public String getLastFtpActivity() {
         FTPClient client = getOperations().getFtpClient();
-        FtpCopyStreamListener listener = (FtpCopyStreamListener) client.getCopyStreamListener();
+        FtpClientActivityListener listener = (FtpClientActivityListener) client.getCopyStreamListener();
         if (listener != null) {
             String log = listener.getLastLogActivity();
             if (log != null) {
                 long since = listener.getLastLogActivityTimestamp();
+                if (since > 0) {
+                    StopWatch watch = new StopWatch(new Date(since));
+                    long delta = watch.taken();
+                    String human = TimeUtils.printDuration(delta);
+                    return log + " " + human + " ago";
+                } else {
+                    return log;
+                }
+            }
+        }
+        return null;
+    }
+
+    @ManagedAttribute(description = "Description of last FTP activity (verbose)")
+    public String getLastActivityVerbose() {
+        FTPClient client = getOperations().getFtpClient();
+        FtpClientActivityListener listener = (FtpClientActivityListener) client.getCopyStreamListener();
+        if (listener != null) {
+            String log = listener.getLastVerboseLogActivity();
+            if (log != null) {
+                long since = listener.getLastVerboseLogActivityTimestamp();
                 if (since > 0) {
                     StopWatch watch = new StopWatch(new Date(since));
                     long delta = watch.taken();

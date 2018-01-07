@@ -29,7 +29,6 @@ import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSepara
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.PlatformHelper;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
@@ -57,6 +56,8 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     protected FTPClient ftpClient;
     @UriParam(label = "common", defaultValue = "DEBUG")
     protected LoggingLevel transferLoggingLevel = LoggingLevel.DEBUG;
+    @UriParam(label = "common")
+    protected boolean transferLoggingVerbose;
 
     public FtpEndpoint() {
     }
@@ -266,6 +267,17 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
      */
     public void setTransferLoggingLevel(LoggingLevel transferLoggingLevel) {
         this.transferLoggingLevel = transferLoggingLevel;
+    }
+
+    public boolean isTransferLoggingVerbose() {
+        return transferLoggingVerbose;
+    }
+
+    /**
+     * Configures whether the perform verbose (fine grained) logging of the progress of upload and download operations.
+     */
+    public void setTransferLoggingVerbose(boolean transferLoggingVerbose) {
+        this.transferLoggingVerbose = transferLoggingVerbose;
     }
 
     @Override

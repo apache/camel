@@ -57,8 +57,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final FTPClient client;
     protected final FTPClientConfig clientConfig;
-    protected final CamelLogger transferLogger = new CamelLogger(LoggerFactory.getLogger(FtpCopyStreamListener.class));
+    protected final CamelLogger transferLogger = new CamelLogger(LoggerFactory.getLogger(FtpClientActivityListener.class));
     protected FtpEndpoint<FTPFile> endpoint;
+    protected volatile FtpClientActivityListener listener;
 
     public FtpOperations(FTPClient client, FTPClientConfig clientConfig) {
         this.client = client;
@@ -70,6 +71,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
+        // setup download listener/logger when we connect
+        transferLogger.setLevel(endpoint.getTransferLoggingLevel());
+        listener = new DefaultFtpClientActivityListener(transferLogger, endpoint.isTransferLoggingVerbose(), endpoint.getConfiguration().remoteServerInformation());
+        client.setCopyStreamListener(listener);
+
         log.trace("Connecting using FTPClient: {}", client);
 
         String host = configuration.getHost();
@@ -95,6 +101,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 if (log.isTraceEnabled() && attempt > 0) {
                     log.trace("Reconnect attempt #{} connecting to {}", attempt, configuration.remoteServerInformation());
                 }
+                listener.onConnecting(host);
                 client.connect(host, port);
                 // must check reply code if we are connected
                 int reply = client.getReplyCode();
@@ -136,6 +143,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
         }
 
+        // we are now connected
+        listener.onConnected(host);
+
         // must enter passive mode directly after connect
         if (configuration.isPassiveMode()) {
             log.trace("Using passive mode connections");
@@ -144,7 +154,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
         // must set soTimeout after connect
         if (endpoint instanceof FtpEndpoint) {
-            FtpEndpoint<?> ftpEndpoint = (FtpEndpoint<?>) endpoint;
+            FtpEndpoint<?> ftpEndpoint = endpoint;
             if (ftpEndpoint.getSoTimeout() > 0) {
                 log.trace("Using SoTimeout={}", ftpEndpoint.getSoTimeout());
                 try {
@@ -156,6 +166,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
 
         try {
+            listener.onLogin(host);
             boolean login;
             if (username != null) {
                 if (account != null) {
@@ -181,9 +192,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 String replyString = client.getReplyString();
                 int replyCode = client.getReplyCode();
                 // disconnect to prevent connection leaks
+                listener.onDisconnecting(host);
                 client.disconnect();
+                listener.onDisconnected(host);
                 throw new GenericFileOperationFailedException(replyCode, replyString);
             }
+            listener.onLoginComplete(host);
             client.setFileType(configuration.isBinary() ? FTP.BINARY_FILE_TYPE : FTP.ASCII_FILE_TYPE);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
@@ -215,6 +229,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public void disconnect() throws GenericFileOperationFailedException {
         // logout before disconnecting
+        listener.onDisconnecting(endpoint.getConfiguration().remoteServerInformation());
         try {
             log.trace("Client logout");
             client.logout();
@@ -228,6 +243,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
             }
         }
+        listener.onDisconnected(endpoint.getConfiguration().remoteServerInformation());
     }
 
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
@@ -311,14 +327,24 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+        // store the name of the file to download on the listener
+        listener.setRemoteFileName(name);
+        listener.onBeginDownloading(endpoint.getConfiguration().remoteServerInformation(), name);
+
+        boolean answer;
         log.trace("retrieveFile({})", name);
         if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
             // local work directory is configured so we should store file content as files in this local directory
-            return retrieveFileToFileInLocalWorkDirectory(name, exchange);
+            answer = retrieveFileToFileInLocalWorkDirectory(name, exchange);
         } else {
             // store file content directory as stream on the body
-            return retrieveFileToStreamInBody(name, exchange);
+            answer = retrieveFileToStreamInBody(name, exchange);
         }
+
+        if (answer) {
+            listener.onDownloadComplete(endpoint.getConfiguration().remoteServerInformation(), name);
+        }
+        return answer;
     }
     
     @Override
@@ -357,10 +383,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 // remote name is now only the file name as we just changed directory
                 remoteName = FileUtil.stripPath(name);
             }
-
-            // setup donwload logger for the given file
-            transferLogger.setLevel(endpoint.getTransferLoggingLevel());
-            client.setCopyStreamListener(new FtpCopyStreamListener(transferLogger, remoteName, true));
 
             log.trace("Client retrieveFile: {}", remoteName);
             if (endpoint.getConfiguration().isStreamDownload()) {
@@ -460,10 +482,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 remoteName = FileUtil.stripPath(name);
             }
 
-            // setup donwload logger for the given file
-            transferLogger.setLevel(endpoint.getTransferLoggingLevel());
-            client.setCopyStreamListener(new FtpCopyStreamListener(transferLogger, remoteName, true));
-
             log.trace("Client retrieveFile: {}", remoteName);
             result = client.retrieveFile(remoteName, os);
 
@@ -512,9 +530,13 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         // must normalize name first
         name = endpoint.getConfiguration().normalizePath(name);
 
+        // store the name of the file to upload on the listener
+        listener.setRemoteFileName(name);
+        listener.onBeginUploading(endpoint.getConfiguration().remoteServerInformation(), name);
+
         log.trace("storeFile({})", name);
 
-        boolean answer = false;
+        boolean answer;
         String currentDir = null;
         String path = FileUtil.onlyPath(name);
         String targetName = name;
@@ -538,6 +560,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             if (currentDir != null) {
                 changeCurrentDirectory(currentDir);
             }
+        }
+
+        if (answer) {
+            listener.onUploadComplete(endpoint.getConfiguration().remoteServerInformation(), name);
         }
 
         return answer;
@@ -589,9 +615,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
             final StopWatch watch = new StopWatch();
             boolean answer;
-            // setup upload logger for the given file
-            transferLogger.setLevel(endpoint.getTransferLoggingLevel());
-            client.setCopyStreamListener(new FtpCopyStreamListener(transferLogger, targetName, false));
             log.debug("About to store file: {} using stream: {}", targetName, is);
             if (endpoint.getFileExist() == GenericFileExist.Append) {
                 log.trace("Client appendFile: {}", targetName);
@@ -812,6 +835,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public List<FTPFile> listFiles() throws GenericFileOperationFailedException {
         log.trace("listFiles()");
+        listener.onScanningForFiles(endpoint.remoteServerInformation(), null);
         try {
             final List<FTPFile> list = new ArrayList<FTPFile>();
             FTPFile[] files = client.listFiles();
@@ -827,6 +851,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public List<FTPFile> listFiles(String path) throws GenericFileOperationFailedException {
         log.trace("listFiles({})", path);
+        listener.onScanningForFiles(endpoint.remoteServerInformation(), path);
+
         // use current directory if path not given
         if (ObjectHelper.isEmpty(path)) {
             path = ".";
