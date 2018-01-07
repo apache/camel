@@ -236,6 +236,19 @@ public interface ProducerTemplate extends Service {
      */
     void sendBodyAndHeaders(Object body, Map<String, Object> headers) throws CamelExecutionException;
 
+    /**
+     * Sends the body to the default endpoint with a specified properties and property values
+     * <br/><br/>
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is thrown from this method as a {@link org.apache.camel.CamelExecutionException} with
+     * the caused exception wrapped.
+     *
+     * @param body          the payload to send
+     * @param properties    the properties
+     * @throws CamelExecutionException if the processing of the exchange failed
+     */
+    void sendBodyAndProperties(Object body, Map<String, Object> properties) throws CamelExecutionException;
+
     // Allow sending to arbitrary endpoints
     // -----------------------------------------------------------------------
 
@@ -603,6 +616,72 @@ public interface ProducerTemplate extends Service {
      */
     Object sendBodyAndHeaders(Endpoint endpoint, ExchangePattern pattern, Object body,
                               Map<String, Object> headers) throws CamelExecutionException;
+
+    /**
+     * Sends the body to an endpoint with the specified properties and property values
+     * <br/><br/>
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is thrown from this method as a {@link org.apache.camel.CamelExecutionException} with
+     * the caused exception wrapped.
+     *
+     * @param endpointUri the endpoint URI to send to
+     * @param body the payload to send
+     * @param properties the properties
+     * @throws CamelExecutionException if the processing of the exchange failed
+     */
+    void sendBodyAndProperties(String endpointUri, Object body, Map<String, Object> properties)
+        throws CamelExecutionException;
+
+    /**
+     * Sends the body to an endpoint with the specified properties and property values
+     * <br/><br/>
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is thrown from this method as a {@link org.apache.camel.CamelExecutionException} with
+     * the caused exception wrapped.
+     *
+     * @param endpoint the endpoint URI to send to
+     * @param body the payload to send
+     * @param properties the properties
+     * @throws CamelExecutionException if the processing of the exchange failed
+     */
+    void sendBodyAndProperties(Endpoint endpoint, Object body, Map<String, Object> properties)
+        throws CamelExecutionException;
+
+    /**
+     * Sends the body to an endpoint with the specified properties and property values
+     * <br/><br/>
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is thrown from this method as a {@link org.apache.camel.CamelExecutionException} with
+     * the caused exception wrapped.
+     *
+     * @param endpointUri the endpoint URI to send to
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param body the payload to send
+     * @param properties the properties
+     * @return the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
+     * @throws CamelExecutionException if the processing of the exchange failed
+     */
+    Object sendBodyAndProperties(String endpointUri, ExchangePattern pattern, Object body,
+        Map<String, Object> properties) throws CamelExecutionException;
+
+    /**
+     * Sends the body to an endpoint with the specified properties and property values
+     * <br/><br/>
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is thrown from this method as a {@link org.apache.camel.CamelExecutionException} with
+     * the caused exception wrapped.
+     *
+     * @param endpoint the endpoint URI to send to
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param body the payload to send
+     * @param properties the properties
+     * @return the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
+     * @throws CamelExecutionException if the processing of the exchange failed
+     */
+    Object sendBodyAndProperties(Endpoint endpoint, ExchangePattern pattern, Object body,
+        Map<String, Object> properties) throws CamelExecutionException;
 
 
     // Methods using an InOut ExchangePattern
