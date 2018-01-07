@@ -274,6 +274,35 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         }
     }
 
+    public void sendBodyAndProperties(String endpointUri, final Object body,
+            final Map<String, Object> properties) throws CamelExecutionException {
+        sendBodyAndProperties(resolveMandatoryEndpoint(endpointUri), body, properties);
+    }
+
+    public void sendBodyAndProperties(Endpoint endpoint, final Object body,
+            final Map<String, Object> properties) throws CamelExecutionException {
+        Exchange result = send(endpoint, createBodyAndProperties(body, properties));
+        // must invoke extract result body in case of exception to be rethrown
+        extractResultBody(result);
+    }
+
+    public Object sendBodyAndProperties(String endpointUri, ExchangePattern pattern, Object body,
+            Map<String, Object> properties) throws CamelExecutionException {
+        return sendBodyAndProperties(resolveMandatoryEndpoint(endpointUri), pattern, body, properties);
+    }
+
+    public Object sendBodyAndProperties(Endpoint endpoint, ExchangePattern pattern, final Object body,
+            final Map<String, Object> properties) throws CamelExecutionException {
+        Exchange exchange = send(endpoint, pattern, createBodyAndProperties(body, properties));
+        Object result = extractResultBody(exchange, pattern);
+        if (pattern.isOutCapable()) {
+            return result;
+        } else {
+            // return null if not OUT capable
+            return null;
+        }
+    }
+
     // Methods using an InOut ExchangePattern
     // -----------------------------------------------------------------------
 
@@ -390,6 +419,10 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         sendBodyAndHeaders(getMandatoryDefaultEndpoint(), body, headers);
     }
 
+    public void sendBodyAndProperties(Object body, Map<String, Object> properties) {
+        sendBodyAndProperties(getMandatoryDefaultEndpoint(), body, properties);
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -451,6 +484,19 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                     }
                 }
                 in.setBody(body);
+            }
+        };
+    }
+
+    protected Processor createBodyAndProperties(final Object body, final Map<String, Object> properties) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                if (properties != null) {
+                    for (Map.Entry<String, Object> property : properties.entrySet()) {
+                        exchange.setProperty(property.getKey(), property.getValue());
+                    }
+                }
+                exchange.getIn().setBody(body);
             }
         };
     }
