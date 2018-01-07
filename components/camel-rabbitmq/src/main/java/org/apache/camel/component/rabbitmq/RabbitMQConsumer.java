@@ -161,7 +161,8 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
 
     @Override
     protected void doResume() throws Exception {
-        reconnect();
+        createConsumers();
+        startConsumers();
     }
 
     @Override
