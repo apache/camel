@@ -202,7 +202,20 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         // recover by re-creating operations which should most likely be able to recover
         if (!loggedIn) {
             log.debug("Trying to recover connection to: {} with a new FTP client.", getEndpoint());
-            setOperations(getEndpoint().createRemoteFileOperations());
+            // we want to preserve last FTP activity listener when we set a new operations
+            if (operations instanceof FtpOperations) {
+                FtpOperations ftpOperations = (FtpOperations) operations;
+                FtpClientActivityListener listener = ftpOperations.getClientActivityListener();
+                setOperations(getEndpoint().createRemoteFileOperations());
+                getOperations().setEndpoint(getEndpoint());
+                if (listener != null) {
+                    ftpOperations = (FtpOperations) getOperations();
+                    ftpOperations.setClientActivityListener(listener);
+                }
+            } else {
+                setOperations(getEndpoint().createRemoteFileOperations());
+                getOperations().setEndpoint(getEndpoint());
+            }
             connectIfNecessary();
         }
     }

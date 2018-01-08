@@ -97,7 +97,7 @@ with the following path and query parameters:
 | *directoryName* | The starting directory |  | String
 |===
 
-==== Query Parameters (104 parameters):
+==== Query Parameters (107 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -109,6 +109,9 @@ with the following path and query parameters:
 | *fileName* (common) | Use Expression such as File Language to dynamically set the filename. For consumers it's used as a filename filter. For producers it's used to evaluate the filename to write. If an expression is set it take precedence over the CamelFileName header. (Note: The header itself can also be an Expression). The expression options support both String and Expression types. If the expression is a String type it is always evaluated using the File Language. If the expression is an Expression type the specified Expression type is used - this allows you for instance to use OGNL expressions. For the consumer you can use it to filter filenames so you can for instance consume today's file using the File Language syntax: mydata-$date:now:yyyyMMdd.txt. The producers support the CamelOverruleFileName header which takes precedence over any existing CamelFileName header; the CamelOverruleFileName is a header that is used only once and makes it easier as this avoids to temporary store CamelFileName and have to restore it afterwards. |  | String
 | *passiveMode* (common) | Sets passive mode connections. Default is active mode connections. | false | boolean
 | *separator* (common) | Sets the path separator to be used. UNIX = Uses unix style path separator Windows = Uses windows style path separator Auto = (is default) Use existing path separator in file name | UNIX | PathSeparator
+| *transferLoggingInterval Seconds* (common) | Configures the interval in seconds to use when logging the progress of upload and download operations that are in-flight. This is used for logging progress when operations takes longer time. | 5 | int
+| *transferLoggingLevel* (common) | Configure the logging level to use when logging the progress of upload and download operations. | DEBUG | LoggingLevel
+| *transferLoggingVerbose* (common) | Configures whether the perform verbose (fine grained) logging of the progress of upload and download operations. | false | boolean
 | *fastExistsCheck* (common) | If set this option to be true camel-ftp will use the list file directly to check if the file exists. Since some FTP server may not support to list the file directly if the option is false camel-ftp will use the old way to list the directory and check if the file exists. This option also influences readLock=changed to control whether it performs a fast check to update file information or not. This can be used to speed up the process if the FTP server has a lot of files. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *delete* (consumer) | If true the file will be deleted after it is processed successfully. | false | boolean
