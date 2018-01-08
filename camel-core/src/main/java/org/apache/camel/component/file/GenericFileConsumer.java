@@ -406,7 +406,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                 boolean retrieved;
                 Exception cause = null;
                 try {
-                    retrieved = operations.retrieveFile(name, exchange);
+                    retrieved = operations.retrieveFile(name, exchange, target.getFileLength());
                 } catch (Exception e) {
                     retrieved = false;
                     cause = e;

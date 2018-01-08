@@ -38,6 +38,8 @@ public interface FtpClientActivityListener extends CopyStreamListener {
 
     void setRemoteFileName(String fileName);
 
+    void setRemoteFileSize(long size);
+
     void onGeneralError(String host, String errorMessage);
 
     void onConnecting(String host);
