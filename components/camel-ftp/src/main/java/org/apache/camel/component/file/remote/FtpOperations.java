@@ -353,6 +353,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
         // store the name of the file to download on the listener
+        clientActivityListener.setDownload(true);
         clientActivityListener.setRemoteFileName(name);
         clientActivityListener.onBeginDownloading(endpoint.getConfiguration().remoteServerInformation(), name);
 
@@ -561,6 +562,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         name = endpoint.getConfiguration().normalizePath(name);
 
         // store the name of the file to upload on the listener
+        clientActivityListener.setDownload(false);
         clientActivityListener.setRemoteFileName(name);
         clientActivityListener.onBeginUploading(endpoint.getConfiguration().remoteServerInformation(), name);
 
