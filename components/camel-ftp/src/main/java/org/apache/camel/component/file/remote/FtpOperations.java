@@ -351,10 +351,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
-    public boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         // store the name of the file to download on the listener
         clientActivityListener.setDownload(true);
         clientActivityListener.setRemoteFileName(name);
+        clientActivityListener.setRemoteFileSize(size);
         clientActivityListener.onBeginDownloading(endpoint.getConfiguration().remoteServerInformation(), name);
 
         boolean answer;
@@ -379,7 +380,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
     
     @Override
-    public void releaseRetreivedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
+    public void releaseRetrievedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
         InputStream is = exchange.getIn().getHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, InputStream.class);
         
         if (is != null) {
@@ -557,13 +558,14 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         return result;
     }
 
-    public boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public boolean storeFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         // must normalize name first
         name = endpoint.getConfiguration().normalizePath(name);
 
         // store the name of the file to upload on the listener
         clientActivityListener.setDownload(false);
         clientActivityListener.setRemoteFileName(name);
+        clientActivityListener.setRemoteFileSize(size);
         clientActivityListener.onBeginUploading(endpoint.getConfiguration().remoteServerInformation(), name);
 
         log.trace("storeFile({})", name);

@@ -302,7 +302,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             log.trace("About to write [{}] to [{}] from exchange [{}]", new Object[]{fileName, getEndpoint(), exchange});
         }
 
-        boolean success = operations.storeFile(fileName, exchange);
+        boolean success = operations.storeFile(fileName, exchange, -1);
         if (!success) {
             throw new GenericFileOperationFailedException("Error writing file [" + fileName + "]");
         }

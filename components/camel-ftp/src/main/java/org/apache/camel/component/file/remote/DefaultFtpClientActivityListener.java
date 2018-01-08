@@ -29,6 +29,7 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
     private boolean download = true;
 
     private String fileName;
+    private long fileSize;
     private String lastLogActivity;
     private String lastVerboseLogActivity;
     private long lastLogActivityTimestamp = -1;
@@ -49,6 +50,11 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
     @Override
     public void setRemoteFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    @Override
+    public void setRemoteFileSize(long fileSize) {
+        this.fileSize = fileSize;
     }
 
     @Override
@@ -124,6 +130,9 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
     public void onBeginDownloading(String host, String file) {
         download = true;
         String msg = "Downloading from host: " + host + " file: " + file + " starting";
+        if (fileSize > 0) {
+            msg += " (file-size: " + fileSize + " bytes)";
+        }
         doLog(msg);
     }
 
@@ -181,10 +190,12 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
 
     @Override
     public void bytesTransferred(long totalBytesTransferred, int bytesTransferred, long streamSize) {
+        // if stream size is -1 from FTP client then use pre-calculated file size
+        long size = streamSize > 0 ? streamSize : fileSize;
         if (download) {
-            onDownload(host, fileName, bytesTransferred, totalBytesTransferred, streamSize);
+            onDownload(host, fileName, bytesTransferred, totalBytesTransferred, size);
         } else {
-            onUpload(host, fileName, bytesTransferred, totalBytesTransferred, streamSize);
+            onUpload(host, fileName, bytesTransferred, totalBytesTransferred, size);
         }
     }
 
