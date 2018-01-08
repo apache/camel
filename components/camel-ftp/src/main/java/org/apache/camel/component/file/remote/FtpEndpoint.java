@@ -23,6 +23,7 @@ import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
+import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator;
@@ -56,6 +57,8 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     protected FTPClient ftpClient;
     @UriParam(label = "common", defaultValue = "DEBUG")
     protected LoggingLevel transferLoggingLevel = LoggingLevel.DEBUG;
+    @UriParam(label = "common", defaultValue = "5")
+    protected int transferLoggingIntervalSeconds = 5;
     @UriParam(label = "common")
     protected boolean transferLoggingVerbose;
 
@@ -257,7 +260,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         this.dataTimeout = dataTimeout;
     }
 
-
+    @ManagedAttribute
     public LoggingLevel getTransferLoggingLevel() {
         return transferLoggingLevel;
     }
@@ -265,10 +268,26 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     /**
      * Configure the logging level to use when logging the progress of upload and download operations.
      */
+    @ManagedAttribute(description = "Logging level to use when logging the progress of upload and download operations")
     public void setTransferLoggingLevel(LoggingLevel transferLoggingLevel) {
         this.transferLoggingLevel = transferLoggingLevel;
     }
 
+    @ManagedAttribute
+    public int getTransferLoggingIntervalSeconds() {
+        return transferLoggingIntervalSeconds;
+    }
+
+    /**
+     * Configures the interval in seconds to use when logging the progress of upload and download operations that are in-flight.
+     * This is used for logging progress when operations takes longer time.
+     */
+    @ManagedAttribute(description = "Interval in seconds to use when logging the progress of upload and download operations that are in-flight")
+    public void setTransferLoggingIntervalSeconds(int transferLoggingIntervalSeconds) {
+        this.transferLoggingIntervalSeconds = transferLoggingIntervalSeconds;
+    }
+
+    @ManagedAttribute
     public boolean isTransferLoggingVerbose() {
         return transferLoggingVerbose;
     }
@@ -276,6 +295,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     /**
      * Configures whether the perform verbose (fine grained) logging of the progress of upload and download operations.
      */
+    @ManagedAttribute(description = "Whether the perform verbose (fine grained) logging of the progress of upload and download operations")
     public void setTransferLoggingVerbose(boolean transferLoggingVerbose) {
         this.transferLoggingVerbose = transferLoggingVerbose;
     }

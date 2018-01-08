@@ -18,28 +18,38 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeUtils;
 import org.apache.commons.net.io.CopyStreamEvent;
 import org.apache.commons.net.io.CopyStreamListener;
 
 public class DefaultFtpClientActivityListener implements FtpClientActivityListener, CopyStreamListener {
 
+    // TODO: allow to reconfigure level, interval, verbose etc via JMX
+
     private final CamelLogger logger;
     private final String host;
     private final boolean verbose;
+    private final int intervalSeconds;
     private boolean download = true;
 
     private String fileName;
     private long fileSize;
+    private String fileSizeText;
     private String lastLogActivity;
     private String lastVerboseLogActivity;
     private long lastLogActivityTimestamp = -1;
     private long lastVerboseLogActivityTimestamp = -1;
     private long transferredBytes;
+    private final StopWatch watch = new StopWatch();
+    private final StopWatch interval = new StopWatch();
 
-    public DefaultFtpClientActivityListener(CamelLogger logger, boolean verbose, String host) {
+    public DefaultFtpClientActivityListener(CamelLogger logger, boolean verbose, int intervalSeconds, String host) {
         this.logger = logger;
-        this.host = host;
         this.verbose = verbose;
+        this.intervalSeconds = intervalSeconds;
+        this.host = host;
     }
 
     @Override
@@ -55,6 +65,7 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
     @Override
     public void setRemoteFileSize(long fileSize) {
         this.fileSize = fileSize;
+        this.fileSizeText = StringHelper.humanReadableBytes(fileSize);
     }
 
     @Override
@@ -129,9 +140,11 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
     @Override
     public void onBeginDownloading(String host, String file) {
         download = true;
-        String msg = "Downloading from host: " + host + " file: " + file + " starting";
+        watch.restart();
+        interval.restart();
+        String msg = "Downloading from host: " + host + " file: " + file + " starting "; // add extra space to align with completed
         if (fileSize > 0) {
-            msg += " (file-size: " + fileSize + " bytes)";
+            msg += " (size: " + fileSizeText + ")";
         }
         doLog(msg);
     }
@@ -142,24 +155,43 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
 
         String msg = "Downloading from host: " + host + " file: " + file + " chunk (" + chunkSize + "/" + totalChunkSize + " bytes)";
         if (fileSize > 0) {
-            msg += " (file-size: " + fileSize + " bytes)";
+            float percent = ((float) totalChunkSize / (float) fileSize) * 100L;
+            String num = String.format("%.1f", percent);
+            // avoid 100.0 as its only done when we get the onDownloadComplete
+            if (totalChunkSize < fileSize && "100.0".equals(num)) {
+                num = "99.9";
+            }
+            msg += " (progress: " + num + "%)";
         }
-        doLog(msg);
+        doLogVerbose(msg);
+        // however if the operation is slow then log once in a while
+        if (interval.taken() > intervalSeconds * 1000) {
+            doLog(msg);
+            interval.restart();
+        }
     }
 
     @Override
     public void onDownloadComplete(String host, String file) {
         String msg = "Downloading from host: " + host + " file: " + file + " completed";
         if (transferredBytes > 0) {
-            msg += " (" + transferredBytes + " bytes)";
+            msg += " (size: " + StringHelper.humanReadableBytes(transferredBytes) + ")";
         }
+        long taken = watch.taken();
+        String time = TimeUtils.printDuration(taken);
+        msg += " (took: " + time + ")";
         doLog(msg);
     }
 
     @Override
     public void onBeginUploading(String host, String file) {
         download = false;
+        watch.restart();
+        interval.restart();
         String msg = "Uploading to host: " + host + " file: " + file + " starting";
+        if (fileSize > 0) {
+            msg += " (size: " + fileSizeText + ")";
+        }
         doLog(msg);
     }
 
@@ -169,17 +201,32 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
 
         String msg = "Uploading to host: " + host + " file: " + file + " chunk (" + chunkSize + "/" + totalChunkSize + " bytes)";
         if (fileSize > 0) {
-            msg += " (file-size: " + fileSize + " bytes)";
+            float percent = ((float) totalChunkSize / (float) fileSize) * 100L;
+            String num = String.format("%.1f", percent);
+            // avoid 100.0 as its only done when we get the onUploadComplete
+            if (totalChunkSize < fileSize && "100.0".equals(num)) {
+                num = "99.9";
+            }
+            msg += " (progress: " + num + "%)";
         }
-        doLog(msg);
+        // each chunk is verbose
+        doLogVerbose(msg);
+        // however if the operation is slow then log once in a while
+        if (interval.taken() > intervalSeconds * 1000) {
+            doLog(msg);
+            interval.restart();
+        }
     }
 
     @Override
     public void onUploadComplete(String host, String file) {
         String msg = "Uploading to host: " + host + " file: " + file + " completed";
         if (transferredBytes > 0) {
-            msg += " (" + transferredBytes + " bytes)";
+            msg += " (size: " + StringHelper.humanReadableBytes(transferredBytes) + ")";
         }
+        long taken = watch.taken();
+        String time = TimeUtils.printDuration(taken);
+        msg += " (took: " + time + ")";
         doLog(msg);
     }
 
@@ -190,12 +237,11 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
 
     @Override
     public void bytesTransferred(long totalBytesTransferred, int bytesTransferred, long streamSize) {
-        // if stream size is -1 from FTP client then use pre-calculated file size
-        long size = streamSize > 0 ? streamSize : fileSize;
+        // stream size is always -1, so use pre-calculated fileSize instead
         if (download) {
-            onDownload(host, fileName, bytesTransferred, totalBytesTransferred, size);
+            onDownload(host, fileName, bytesTransferred, totalBytesTransferred, fileSize);
         } else {
-            onUpload(host, fileName, bytesTransferred, totalBytesTransferred, size);
+            onUpload(host, fileName, bytesTransferred, totalBytesTransferred, fileSize);
         }
     }
 

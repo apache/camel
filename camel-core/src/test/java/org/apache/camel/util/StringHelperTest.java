@@ -248,4 +248,16 @@ public class StringHelperTest extends TestCase {
         assertNull(StringHelper.trimToNull(" \t "));
         assertNull(StringHelper.trimToNull(""));
     }
+
+    public void testHumanReadableBytes() {
+        assertEquals("0 B",  StringHelper.humanReadableBytes(0));
+        assertEquals("32 B",  StringHelper.humanReadableBytes(32));
+        assertEquals("1.0 KB",  StringHelper.humanReadableBytes(1024));
+        assertEquals("1.7 KB",  StringHelper.humanReadableBytes(1730));
+        assertEquals("108.0 KB",  StringHelper.humanReadableBytes(110592));
+        assertEquals("6.8 MB",  StringHelper.humanReadableBytes(7077888));
+        assertEquals("432.0 MB",  StringHelper.humanReadableBytes(452984832));
+        assertEquals("27.0 GB",  StringHelper.humanReadableBytes(28991029248L));
+        assertEquals("1.7 TB",  StringHelper.humanReadableBytes(1855425871872L));
+    }
 }
