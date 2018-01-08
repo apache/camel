@@ -26,14 +26,14 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
     private final CamelLogger logger;
     private final String host;
     private final boolean verbose;
-    private boolean download;
+    private boolean download = true;
 
-    private volatile String fileName;
-    private volatile String lastLogActivity;
-    private volatile String lastVerboseLogActivity;
-    private volatile long lastLogActivityTimestamp = -1;
-    private volatile long lastVerboseLogActivityTimestamp = -1;
-    private volatile long transferredBytes;
+    private String fileName;
+    private String lastLogActivity;
+    private String lastVerboseLogActivity;
+    private long lastLogActivityTimestamp = -1;
+    private long lastVerboseLogActivityTimestamp = -1;
+    private long transferredBytes;
 
     public DefaultFtpClientActivityListener(CamelLogger logger, boolean verbose, String host) {
         this.logger = logger;
@@ -42,14 +42,21 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
     }
 
     @Override
+    public void setDownload(boolean download) {
+        this.download = download;
+    }
+
+    @Override
     public void setRemoteFileName(String fileName) {
         this.fileName = fileName;
     }
 
+    @Override
     public String getLastLogActivity() {
         return lastLogActivity;
     }
 
+    @Override
     public long getLastLogActivityTimestamp() {
         return lastLogActivityTimestamp;
     }

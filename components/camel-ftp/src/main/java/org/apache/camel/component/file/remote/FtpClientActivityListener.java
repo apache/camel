@@ -31,6 +31,11 @@ public interface FtpClientActivityListener extends CopyStreamListener {
 
     long getLastVerboseLogActivityTimestamp();
 
+    /**
+     * Whether in download or upload mode
+     */
+    void setDownload(boolean download);
+
     void setRemoteFileName(String fileName);
 
     void onGeneralError(String host, String errorMessage);
