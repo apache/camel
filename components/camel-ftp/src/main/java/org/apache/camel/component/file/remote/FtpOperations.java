@@ -70,7 +70,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         this.endpoint = (FtpEndpoint<FTPFile>) endpoint;
         // setup download listener/logger when we have the endpoint configured
         transferLogger.setLevel(this.endpoint.getTransferLoggingLevel());
-        this.clientActivityListener = new DefaultFtpClientActivityListener(transferLogger, this.endpoint.isTransferLoggingVerbose(), this.endpoint.getConfiguration().remoteServerInformation());
+        this.clientActivityListener = new DefaultFtpClientActivityListener(transferLogger, this.endpoint.isTransferLoggingVerbose(),
+            this.endpoint.getTransferLoggingIntervalSeconds(), this.endpoint.getConfiguration().remoteServerInformation());
     }
 
     public FtpClientActivityListener getClientActivityListener() {
