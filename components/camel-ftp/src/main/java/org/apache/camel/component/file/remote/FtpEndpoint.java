@@ -24,6 +24,7 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator;
@@ -41,6 +42,7 @@ import org.apache.commons.net.ftp.FTPFile;
 @UriEndpoint(firstVersion = "1.1.0", scheme = "ftp", extendsScheme = "file", title = "FTP",
         syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName",
         consumerClass = FtpConsumer.class, label = "file")
+@ManagedResource(description = "Managed FtpEndpoint")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
     protected int soTimeout;
     protected int dataTimeout;
@@ -260,7 +262,6 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         this.dataTimeout = dataTimeout;
     }
 
-    @ManagedAttribute
     public LoggingLevel getTransferLoggingLevel() {
         return transferLoggingLevel;
     }
@@ -268,9 +269,18 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     /**
      * Configure the logging level to use when logging the progress of upload and download operations.
      */
-    @ManagedAttribute(description = "Logging level to use when logging the progress of upload and download operations")
     public void setTransferLoggingLevel(LoggingLevel transferLoggingLevel) {
         this.transferLoggingLevel = transferLoggingLevel;
+    }
+
+    @ManagedAttribute(description = "Logging level to use when logging the progress of upload and download operations")
+    public void setTransferLoggingLevelName(String transferLoggingLevel) {
+        this.transferLoggingLevel = getCamelContext().getTypeConverter().convertTo(LoggingLevel.class, transferLoggingLevel);
+    }
+
+    @ManagedAttribute
+    public String getTransferLoggingLevelName() {
+        return transferLoggingLevel.name();
     }
 
     @ManagedAttribute

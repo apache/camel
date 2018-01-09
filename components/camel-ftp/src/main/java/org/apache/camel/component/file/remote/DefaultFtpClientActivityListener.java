@@ -23,15 +23,16 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.commons.net.io.CopyStreamEvent;
 import org.apache.commons.net.io.CopyStreamListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultFtpClientActivityListener implements FtpClientActivityListener, CopyStreamListener {
 
-    // TODO: allow to reconfigure level, interval, verbose etc via JMX
+    private static final Logger LOG = LoggerFactory.getLogger(FtpClientActivityListener.class);
 
     private final CamelLogger logger;
     private final String host;
-    private final boolean verbose;
-    private final int intervalSeconds;
+    private final FtpEndpoint endpoint;
     private boolean download = true;
 
     private String fileName;
@@ -45,10 +46,9 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
     private final StopWatch watch = new StopWatch();
     private final StopWatch interval = new StopWatch();
 
-    public DefaultFtpClientActivityListener(CamelLogger logger, boolean verbose, int intervalSeconds, String host) {
-        this.logger = logger;
-        this.verbose = verbose;
-        this.intervalSeconds = intervalSeconds;
+    public DefaultFtpClientActivityListener(FtpEndpoint endpoint, String host) {
+        this.logger = new CamelLogger(LOG);
+        this.endpoint = endpoint;
         this.host = host;
     }
 
@@ -162,10 +162,14 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
                 num = "99.9";
             }
             msg += " (progress: " + num + "%)";
+        } else {
+            // okay we do not know the total size, but then make what we have download so-far human readable
+            String size = StringHelper.humanReadableBytes(totalChunkSize);
+            msg += " (downloaded: " + size + ")";
         }
         doLogVerbose(msg);
         // however if the operation is slow then log once in a while
-        if (interval.taken() > intervalSeconds * 1000) {
+        if (interval.taken() > endpoint.getTransferLoggingIntervalSeconds() * 1000) {
             doLog(msg);
             interval.restart();
         }
@@ -208,11 +212,15 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
                 num = "99.9";
             }
             msg += " (progress: " + num + "%)";
+        } else {
+            // okay we do not know the total size, but then make what we have uploaded so-far human readable
+            String size = StringHelper.humanReadableBytes(totalChunkSize);
+            msg += " (uploaded: " + size + ")";
         }
         // each chunk is verbose
         doLogVerbose(msg);
         // however if the operation is slow then log once in a while
-        if (interval.taken() > intervalSeconds * 1000) {
+        if (interval.taken() > endpoint.getTransferLoggingIntervalSeconds() * 1000) {
             doLog(msg);
             interval.restart();
         }
@@ -251,14 +259,14 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
         // verbose implies regular log as well
         lastVerboseLogActivity = lastLogActivity;
         lastVerboseLogActivityTimestamp = lastLogActivityTimestamp;
-        logger.log(message);
+        logger.log(message, endpoint.getTransferLoggingLevel());
     }
 
     protected void doLogVerbose(String message) {
         lastVerboseLogActivity = message;
         lastVerboseLogActivityTimestamp = System.currentTimeMillis();
-        if (verbose) {
-            logger.log(message);
+        if (endpoint.isTransferLoggingVerbose()) {
+            logger.log(message, endpoint.getTransferLoggingLevel());
         }
     }
 }
