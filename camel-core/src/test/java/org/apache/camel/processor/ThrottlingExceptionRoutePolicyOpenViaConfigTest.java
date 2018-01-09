@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,7 +45,7 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
     protected void createPolicy() {
         int threshold = 2;
         long failureWindow = 30;
-        long halfOpenAfter = 1000;
+        long halfOpenAfter = 100;
         boolean keepOpen = false;
         policy = new ThrottlingExceptionRoutePolicy(threshold, failureWindow, halfOpenAfter, null, keepOpen);
     }
@@ -44,7 +60,7 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
             Thread.sleep(3);
         }
         result.expectedMessageCount(size);
-        result.setResultWaitTime(2000);
+        result.setResultWaitTime(1000);
         assertMockEndpointsSatisfied();
 
         // set keepOpen to true
@@ -55,7 +71,7 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
         template.sendBody(url, "MessageTrigger");
 
         // give time for circuit to open
-        Thread.sleep(1000);
+        Thread.sleep(500);
 
         // send next set of messages
         // should NOT go through b/c circuit is open
@@ -66,10 +82,10 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
 
         // gives time for policy half open check to run every second
         // and should not close b/c keepOpen is true
-        Thread.sleep(2000);
+        Thread.sleep(500);
 
         result.expectedMessageCount(size + 1);
-        result.setResultWaitTime(2000);
+        result.setResultWaitTime(1000);
         assertMockEndpointsSatisfied();
 
         // set keepOpen to false
@@ -78,7 +94,7 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
         // gives time for policy half open check to run every second
         // and it should close b/c keepOpen is false
         result.expectedMessageCount(size * 2 + 1);
-        result.setResultWaitTime(2000);
+        result.setResultWaitTime(1000);
         assertMockEndpointsSatisfied();
     }
 
@@ -87,11 +103,6 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                int threshold = 2;
-                long failureWindow = 30;
-                long halfOpenAfter = 1000;
-                policy = new ThrottlingExceptionRoutePolicy(threshold, failureWindow, halfOpenAfter, null);
-
                 from(url)
                     .routePolicy(policy)
                     .log("${body}")
