@@ -16,6 +16,14 @@
  */
 package org.apache.camel.impl;
 
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -25,14 +33,6 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.RoutePolicySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Modeled after the {@link CircuitBreakerLoadBalancer} and {@link ThrottlingInflightRoutePolicy}
@@ -74,17 +74,13 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     // stateful information
     private final AtomicInteger failures = new AtomicInteger();
     private final AtomicInteger state = new AtomicInteger(STATE_CLOSED);
-    private AtomicBoolean keepOpen = new AtomicBoolean(false);
+    private final AtomicBoolean keepOpen = new AtomicBoolean(false);
     private volatile Timer halfOpenTimer;
     private volatile long lastFailure;
     private volatile long openedAt;
 
     public ThrottlingExceptionRoutePolicy(int threshold, long failureWindow, long halfOpenAfter, List<Class<?>> handledExceptions) {
-        this.throttledExceptions = handledExceptions;
-        this.failureWindow = failureWindow;
-        this.halfOpenAfter = halfOpenAfter;
-        this.failureThreshold = threshold;
-        this.keepOpen.set(false);
+        this(threshold, failureWindow, halfOpenAfter, handledExceptions, false);
     }
 
     public ThrottlingExceptionRoutePolicy(int threshold, long failureWindow, long halfOpenAfter, List<Class<?>> handledExceptions, boolean keepOpen) {
@@ -333,7 +329,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     public void setKeepOpen(boolean keepOpen) {
-        log.debug("keep open:" + keepOpen);
+        log.debug("keep open: {}", keepOpen);
         this.keepOpen.set(keepOpen);
     }
 
