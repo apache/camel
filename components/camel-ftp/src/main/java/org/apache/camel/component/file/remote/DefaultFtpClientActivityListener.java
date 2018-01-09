@@ -150,6 +150,18 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
     }
 
     @Override
+    public void onResumeDownloading(String host, String file, long position) {
+        download = true;
+        watch.restart();
+        interval.restart();
+        String msg = "Resume downloading from host: " + host + " file: " + file + " at position: " + position + " (" + StringHelper.humanReadableBytes(position) + ")";
+        if (fileSize > 0) {
+            msg += " (size: " + fileSizeText + ")";
+        }
+        doLog(msg);
+    }
+
+    @Override
     public void onDownload(String host, String file, long chunkSize, long totalChunkSize, long fileSize) {
         transferredBytes = totalChunkSize;
 

@@ -60,6 +60,8 @@ public interface FtpClientActivityListener extends CopyStreamListener {
 
     void onBeginDownloading(String host, String file);
 
+    void onResumeDownloading(String host, String file, long position);
+
     void onDownload(String host, String file, long chunkSize, long totalChunkSize, long fileSize);
 
     void onDownloadComplete(String host, String file);
