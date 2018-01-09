@@ -17,27 +17,23 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.File;
+import java.io.FileOutputStream;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.util.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
+public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort()
-               + "/lwd/?password=admin&localWorkDirectory=target/lwd&noop=true";
+               + "/myserver/?password=admin&localWorkDirectory=target/lwd&resumeDownload=true";
     }
 
     @Override
@@ -45,34 +41,35 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
     public void setUp() throws Exception {
         deleteDirectory("target/lwd");
         deleteDirectory("target/out");
-        super.setUp();
-        prepareFtpServer();
-    }
 
-    private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want
-        // to unit test that we can pool
-        Endpoint endpoint = context.getEndpoint(getFtpUrl());
-        Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody("Hello World");
-        exchange.getIn().setHeader(Exchange.FILE_NAME, "hello.txt");
-        Producer producer = endpoint.createProducer();
-        producer.start();
-        producer.process(exchange);
-        producer.stop();
+        super.setUp();
+
+        // create file on FTP server to download
+        createDirectory(FTP_ROOT_DIR + "/myserver");
+        File temp = new File(FTP_ROOT_DIR + "/myserver", "hello.txt");
+        temp.createNewFile();
+        FileOutputStream fos = new FileOutputStream(temp);
+        fos.write("Hello\nWorld\nI was here".getBytes());
+        fos.close();
+
+        // create in-progress file with partial download
+        createDirectory("target/lwd");
+        temp = new File("target/lwd/hello.txt.inprogress");
+        temp.createNewFile();
+        fos = new FileOutputStream(temp);
+        fos.write("Hello\n".getBytes());
+        fos.close();
     }
 
     @Test
-    public void testLocalWorkDirectory() throws Exception {
+    public void testResumeDownload() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
-        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Hello\nWorld\nI was here");
 
+        // start route
         context.startRoute("myRoute");
-
-        assertMockEndpointsSatisfied();
 
         assertMockEndpointsSatisfied();
         assertTrue(notify.matchesMockWaitTime());
@@ -80,25 +77,22 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
         // and the out file should exists
         File out = new File("target/out/hello.txt");
         assertTrue("file should exists", out.exists());
-        assertEquals("Hello World", IOConverter.toString(out, null));
+        assertEquals("Hello\nWorld\nI was here", IOConverter.toString(out, null));
 
         // now the lwd file should be deleted
         File local = new File("target/lwd/hello.txt");
         assertFalse("Local work file should have been deleted", local.exists());
+
+        // and so the in progress
+        File temp = new File("target/lwd/hello.txt.inprogress");
+        assertFalse("Local work file should have been deleted", temp.exists());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from(getFtpUrl()).routeId("myRoute").noAutoStartup()
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            File body = exchange.getIn().getBody(File.class);
-                            assertNotNull(body);
-                            assertTrue("Local work file should exists", body.exists());
-                            assertEquals(FileUtil.normalizePath("target/lwd/hello.txt"), body.getPath());
-                        }
-                    }).to("mock:result", "file://target/out");
+                    .to("mock:result", "file://target/out");
             }
         };
     }

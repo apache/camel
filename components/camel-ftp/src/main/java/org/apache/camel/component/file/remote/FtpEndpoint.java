@@ -31,6 +31,7 @@ import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSepara
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PlatformHelper;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
@@ -63,6 +64,8 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     protected int transferLoggingIntervalSeconds = 5;
     @UriParam(label = "common")
     protected boolean transferLoggingVerbose;
+    @UriParam(label = "consumer")
+    protected boolean resumeDownload;
 
     public FtpEndpoint() {
     }
@@ -75,6 +78,14 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     @Override
     public String getScheme() {
         return "ftp";
+    }
+
+    @Override
+    public RemoteFileConsumer<FTPFile> createConsumer(Processor processor) throws Exception {
+        if (isResumeDownload() && ObjectHelper.isEmpty(getLocalWorkDirectory())) {
+            throw new IllegalArgumentException("The option localWorkDirectory must be configured when resumeDownload=true");
+        }
+        return super.createConsumer(processor);
     }
 
     @Override
@@ -308,6 +319,19 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     @ManagedAttribute(description = "Whether the perform verbose (fine grained) logging of the progress of upload and download operations")
     public void setTransferLoggingVerbose(boolean transferLoggingVerbose) {
         this.transferLoggingVerbose = transferLoggingVerbose;
+    }
+
+    public boolean isResumeDownload() {
+        return resumeDownload;
+    }
+
+    /**
+     * Configures whether resume download is enabled. This requires support from the FTP server (which almost all FTP server does).
+     * In addition the option <tt>localWorkDirectory</tt> must be configured so downloaded files are stored in a local directory,
+     * which is required for support resume downloads.
+     */
+    public void setResumeDownload(boolean resumeDownload) {
+        this.resumeDownload = resumeDownload;
     }
 
     @Override
