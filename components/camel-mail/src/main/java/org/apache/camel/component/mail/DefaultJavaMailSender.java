@@ -22,8 +22,8 @@ import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,7 +121,18 @@ public class DefaultJavaMailSender implements JavaMailSender {
                 mimeMessage.setHeader("Message-ID", messageId);
             }
             LOG.debug("Sending MimeMessage: {} using host: {}", mimeMessage, host);
-            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+
+            String[] recipients = mimeMessage.getHeader( "X-Recipient" );
+
+            if( recipients == null || recipients.length == 0 ) {
+                transport.sendMessage( mimeMessage, mimeMessage.getAllRecipients() );
+            } else {
+                InternetAddress ra[] = new InternetAddress[recipients.length];
+                for( int i = 0; i < recipients.length; i++ ) {
+                    ra[i] = new InternetAddress( recipients[i], true );
+                }
+                transport.sendMessage( mimeMessage, ra );
+            }
         } finally {
             try {
                 transport.close();
