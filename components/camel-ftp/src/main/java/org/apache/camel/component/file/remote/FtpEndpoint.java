@@ -326,9 +326,9 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     }
 
     /**
-     * Configures whether resume download is enabled. This requires support from the FTP server (which almost all FTP server does).
+     * Configures whether resume download is enabled. This must be supported by the FTP server (almost all FTP servers support it).
      * In addition the option <tt>localWorkDirectory</tt> must be configured so downloaded files are stored in a local directory,
-     * which is required for support resume downloads.
+     * which is required to support resuming of downloads.
      */
     public void setResumeDownload(boolean resumeDownload) {
         this.resumeDownload = resumeDownload;
