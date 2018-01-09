@@ -35,7 +35,6 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -57,7 +56,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final FTPClient client;
     protected final FTPClientConfig clientConfig;
-    protected final CamelLogger transferLogger = new CamelLogger(LoggerFactory.getLogger(FtpClientActivityListener.class));
     protected FtpEndpoint<FTPFile> endpoint;
     protected FtpClientActivityListener clientActivityListener;
 
@@ -69,9 +67,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     public void setEndpoint(GenericFileEndpoint<FTPFile> endpoint) {
         this.endpoint = (FtpEndpoint<FTPFile>) endpoint;
         // setup download listener/logger when we have the endpoint configured
-        transferLogger.setLevel(this.endpoint.getTransferLoggingLevel());
-        this.clientActivityListener = new DefaultFtpClientActivityListener(transferLogger, this.endpoint.isTransferLoggingVerbose(),
-            this.endpoint.getTransferLoggingIntervalSeconds(), this.endpoint.getConfiguration().remoteServerInformation());
+        this.clientActivityListener = new DefaultFtpClientActivityListener(this.endpoint, this.endpoint.getConfiguration().remoteServerInformation());
     }
 
     public FtpClientActivityListener getClientActivityListener() {
