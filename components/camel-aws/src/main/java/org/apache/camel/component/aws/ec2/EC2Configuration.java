@@ -104,7 +104,7 @@ public class EC2Configuration {
     } 
     
     /**
-     * To define a proxy host when instantiating the SQS client
+     * To define a proxy host when instantiating the EC2 client
      */
     public String getProxyHost() {
         return proxyHost;
@@ -115,7 +115,7 @@ public class EC2Configuration {
     }
 
     /**
-     * To define a proxy port when instantiating the SQS client
+     * To define a proxy port when instantiating the EC2 client
      */
     public Integer getProxyPort() {
         return proxyPort;
