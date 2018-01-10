@@ -65,117 +65,113 @@ public class AmazonMQClientMock implements AmazonMQ {
         super();
     }
 
-	@Override
-	public CreateBrokerResult createBroker(CreateBrokerRequest createBrokerRequest) {
+    @Override
+    public CreateBrokerResult createBroker(CreateBrokerRequest createBrokerRequest) {
         CreateBrokerResult result = new CreateBrokerResult();
         result.setBrokerArn("test");
         result.setBrokerId("1");
         return result;
-	}
+    }
 
-	@Override
-	public CreateConfigurationResult createConfiguration(CreateConfigurationRequest createConfigurationRequest) {
+    @Override
+    public CreateConfigurationResult createConfiguration(CreateConfigurationRequest createConfigurationRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public CreateUserResult createUser(CreateUserRequest createUserRequest) {
+    @Override
+    public CreateUserResult createUser(CreateUserRequest createUserRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DeleteBrokerResult deleteBroker(DeleteBrokerRequest deleteBrokerRequest) {
+    @Override
+    public DeleteBrokerResult deleteBroker(DeleteBrokerRequest deleteBrokerRequest) {
         DeleteBrokerResult result = new DeleteBrokerResult();
         result.setBrokerId("1");
         return result;
-	}
+    }
 
-	@Override
-	public DeleteUserResult deleteUser(DeleteUserRequest deleteUserRequest) {
+    @Override
+    public DeleteUserResult deleteUser(DeleteUserRequest deleteUserRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DescribeBrokerResult describeBroker(DescribeBrokerRequest describeBrokerRequest) {
+    @Override
+    public DescribeBrokerResult describeBroker(DescribeBrokerRequest describeBrokerRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DescribeConfigurationResult describeConfiguration(
-			DescribeConfigurationRequest describeConfigurationRequest) {
+    @Override
+    public DescribeConfigurationResult describeConfiguration(DescribeConfigurationRequest describeConfigurationRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DescribeConfigurationRevisionResult describeConfigurationRevision(
-			DescribeConfigurationRevisionRequest describeConfigurationRevisionRequest) {
+    @Override
+    public DescribeConfigurationRevisionResult describeConfigurationRevision(DescribeConfigurationRevisionRequest describeConfigurationRevisionRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public DescribeUserResult describeUser(DescribeUserRequest describeUserRequest) {
+    @Override
+    public DescribeUserResult describeUser(DescribeUserRequest describeUserRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListBrokersResult listBrokers(ListBrokersRequest listBrokersRequest) {
-		ListBrokersResult result = new ListBrokersResult();
-		BrokerSummary bs = new BrokerSummary();
-		bs.setBrokerArn("aws:test");
-		bs.setBrokerId("1");
-		bs.setBrokerName("mybroker");
-		bs.setBrokerState(BrokerState.RUNNING.toString());
-		List<BrokerSummary> list = new ArrayList<>();
-		list.add(bs);
-		result.setBrokerSummaries(list);
-		return result;
-	}
+    @Override
+    public ListBrokersResult listBrokers(ListBrokersRequest listBrokersRequest) {
+        ListBrokersResult result = new ListBrokersResult();
+        BrokerSummary bs = new BrokerSummary();
+        bs.setBrokerArn("aws:test");
+        bs.setBrokerId("1");
+        bs.setBrokerName("mybroker");
+        bs.setBrokerState(BrokerState.RUNNING.toString());
+        List<BrokerSummary> list = new ArrayList<>();
+        list.add(bs);
+        result.setBrokerSummaries(list);
+        return result;
+    }
 
-	@Override
-	public ListConfigurationRevisionsResult listConfigurationRevisions(
-			ListConfigurationRevisionsRequest listConfigurationRevisionsRequest) {
+    @Override
+    public ListConfigurationRevisionsResult listConfigurationRevisions(ListConfigurationRevisionsRequest listConfigurationRevisionsRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListConfigurationsResult listConfigurations(ListConfigurationsRequest listConfigurationsRequest) {
+    @Override
+    public ListConfigurationsResult listConfigurations(ListConfigurationsRequest listConfigurationsRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public ListUsersResult listUsers(ListUsersRequest listUsersRequest) {
+    @Override
+    public ListUsersResult listUsers(ListUsersRequest listUsersRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public RebootBrokerResult rebootBroker(RebootBrokerRequest rebootBrokerRequest) {
+    @Override
+    public RebootBrokerResult rebootBroker(RebootBrokerRequest rebootBrokerRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UpdateBrokerResult updateBroker(UpdateBrokerRequest updateBrokerRequest) {
+    @Override
+    public UpdateBrokerResult updateBroker(UpdateBrokerRequest updateBrokerRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UpdateConfigurationResult updateConfiguration(UpdateConfigurationRequest updateConfigurationRequest) {
+    @Override
+    public UpdateConfigurationResult updateConfiguration(UpdateConfigurationRequest updateConfigurationRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public UpdateUserResult updateUser(UpdateUserRequest updateUserRequest) {
+    @Override
+    public UpdateUserResult updateUser(UpdateUserRequest updateUserRequest) {
         throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public void shutdown() {
-        throw new UnsupportedOperationException();		
-	}
-
-	@Override
-	public ResponseMetadata getCachedResponseMetadata(AmazonWebServiceRequest request) {
+    @Override
+    public void shutdown() {
         throw new UnsupportedOperationException();
-	}
-    
+    }
+
+    @Override
+    public ResponseMetadata getCachedResponseMetadata(AmazonWebServiceRequest request) {
+        throw new UnsupportedOperationException();
+    }
 
 }

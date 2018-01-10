@@ -41,9 +41,9 @@ import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageFo
  * <a href="http://aws.amazon.com/mq/">AWS MQ</a>
  */
 public class MQProducer extends DefaultProducer {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(MQProducer.class);
-    
+
     private transient String mqProducerToString;
 
     public MQProducer(Endpoint endpoint) {
@@ -67,7 +67,7 @@ public class MQProducer extends DefaultProducer {
     }
 
     private MQOperations determineOperation(Exchange exchange) {
-    	MQOperations operation = exchange.getIn().getHeader(MQConstants.OPERATION, MQOperations.class);
+        MQOperations operation = exchange.getIn().getHeader(MQConstants.OPERATION, MQOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -81,16 +81,16 @@ public class MQProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (mqProducerToString == null) {
-        	mqProducerToString = "MQProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            mqProducerToString = "MQProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return mqProducerToString;
     }
 
     @Override
     public MQEndpoint getEndpoint() {
-        return (MQEndpoint) super.getEndpoint();
+        return (MQEndpoint)super.getEndpoint();
     }
-    
+
     private void listBrokers(AmazonMQ mqClient, Exchange exchange) {
         ListBrokersRequest request = new ListBrokersRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.MAX_RESULTS))) {
@@ -107,7 +107,7 @@ public class MQProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void createBroker(AmazonMQ mqClient, Exchange exchange) {
         String brokerName;
         String deploymentMode;
@@ -121,7 +121,7 @@ public class MQProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_DEPLOYMENT_MODE))) {
             deploymentMode = exchange.getIn().getHeader(MQConstants.BROKER_DEPLOYMENT_MODE, String.class);
             request.withDeploymentMode(deploymentMode);
-        } 
+        }
         CreateBrokerResult result;
         try {
             result = mqClient.createBroker(request);
@@ -132,7 +132,7 @@ public class MQProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void deleteBroker(AmazonMQ mqClient, Exchange exchange) {
         String brokerId;
         DeleteBrokerRequest request = new DeleteBrokerRequest();
