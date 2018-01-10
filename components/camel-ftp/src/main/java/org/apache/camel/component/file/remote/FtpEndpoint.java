@@ -85,6 +85,9 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         if (isResumeDownload() && ObjectHelper.isEmpty(getLocalWorkDirectory())) {
             throw new IllegalArgumentException("The option localWorkDirectory must be configured when resumeDownload=true");
         }
+        if (isResumeDownload() && !getConfiguration().isBinary()) {
+            throw new IllegalArgumentException("The option binary must be enabled when resumeDownload=true");
+        }
         return super.createConsumer(processor);
     }
 
@@ -327,8 +330,8 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
 
     /**
      * Configures whether resume download is enabled. This must be supported by the FTP server (almost all FTP servers support it).
-     * In addition the option <tt>localWorkDirectory</tt> must be configured so downloaded files are stored in a local directory,
-     * which is required to support resuming of downloads.
+     * In addition the options <tt>localWorkDirectory</tt> must be configured so downloaded files are stored in a local directory,
+     * and the option <tt>binary</tt> must be enabled, which is required to support resuming of downloads.
      */
     public void setResumeDownload(boolean resumeDownload) {
         this.resumeDownload = resumeDownload;

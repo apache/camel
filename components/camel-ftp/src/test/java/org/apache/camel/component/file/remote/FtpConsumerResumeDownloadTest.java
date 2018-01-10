@@ -33,7 +33,7 @@ public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort()
-               + "/myserver/?password=admin&localWorkDirectory=target/lwd&resumeDownload=true";
+               + "/myserver/?password=admin&localWorkDirectory=target/lwd&resumeDownload=true&binary=true";
     }
 
     @Override
