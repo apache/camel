@@ -77,6 +77,8 @@ Website: <http://camel.apache.org/>
 
 Github: <https://github.com/apache/camel>
 
+Issue tracker: <https://issues.apache.org/jira/projects/CAMEL>
+
 Mailing list: <http://camel.apache.org/mailing-lists.html>
 
 IRC chat: <http://camel.apache.org/irc-room.html>
