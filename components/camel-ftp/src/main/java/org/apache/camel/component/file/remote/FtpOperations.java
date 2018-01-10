@@ -527,11 +527,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 clientActivityListener.onResumeDownloading(endpoint.getConfiguration().remoteServerInformation(), name, existingSize);
                 log.trace("Client restartOffset: {}", existingSize);
                 log.debug("Resuming download of file: {} at position: {}", remoteName, existingSize);
-                // use binary for resume downloads as FTP servers would expect that
-                if (!endpoint.getConfiguration().isBinary()) {
-                    log.debug("Resume download requires file type binary mode");
-                    client.setFileType(FTP.BINARY_FILE_TYPE);
-                }
                 client.setRestartOffset(existingSize);
             }
             log.trace("Client retrieveFile: {}", remoteName);
