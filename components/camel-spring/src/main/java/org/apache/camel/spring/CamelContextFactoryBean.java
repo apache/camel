@@ -449,6 +449,13 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         SpringCamelContext ctx = newCamelContext();
         ctx.setName(getId());
 
+        return ctx;
+    }
+
+    /**
+     * Apply additional configuration to the context
+     */
+    protected void configure(SpringCamelContext ctx) {
         try {
             // allow any custom configuration, such as when running in camel-spring-boot
             if (applicationContext.containsBean("xmlCamelContextConfigurer")) {
@@ -461,8 +468,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             // error during configuration
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
-
-        return ctx;
     }
 
     protected SpringCamelContext newCamelContext() {
@@ -472,6 +477,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     public SpringCamelContext getContext(boolean create) {
         if (context == null && create) {
             context = createContext();
+            configure(context);
         }
         return context;
     }
