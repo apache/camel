@@ -26,7 +26,8 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class MQConfiguration {
 
-    @UriPath(description = "Logical name") @Metadata(required = "true")
+    @UriPath(description = "Logical name")
+    @Metadata(required = "true")
     private String label;
     @UriParam(label = "producer")
     private AmazonMQ amazonMqClient;
@@ -44,16 +45,16 @@ public class MQConfiguration {
     @UriParam
     private String region;
 
-	public AmazonMQ getAmazonMqClient() {
-		return amazonMqClient;
-	}
+    public AmazonMQ getAmazonMqClient() {
+        return amazonMqClient;
+    }
 
-	/**
+    /**
      * To use a existing configured AmazonMQClient as client
      */
-	public void setAmazonMqClient(AmazonMQ amazonMqClient) {
-		this.amazonMqClient = amazonMqClient;
-	}
+    public void setAmazonMqClient(AmazonMQ amazonMqClient) {
+        this.amazonMqClient = amazonMqClient;
+    }
 
     public String getAccessKey() {
         return accessKey;
@@ -65,7 +66,7 @@ public class MQConfiguration {
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
-    
+
     public String getSecretKey() {
         return secretKey;
     }
@@ -76,22 +77,20 @@ public class MQConfiguration {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-    
+
     public MQOperations getOperation() {
         return operation;
     }
 
     /**
-     * The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, 
-     * describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances,  
-     * createTags or deleteTags
+     * The operation to perform. It can be listBrokers,createBroker,deleteBroker
      */
     public void setOperation(MQOperations operation) {
         this.operation = operation;
-    } 
-    
+    }
+
     /**
-     * To define a proxy host when instantiating the SQS client
+     * To define a proxy host when instantiating the MQ client
      */
     public String getProxyHost() {
         return proxyHost;
@@ -102,7 +101,7 @@ public class MQConfiguration {
     }
 
     /**
-     * To define a proxy port when instantiating the SQS client
+     * To define a proxy port when instantiating the MQ client
      */
     public Integer getProxyPort() {
         return proxyPort;
@@ -111,9 +110,9 @@ public class MQConfiguration {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-    
+
     /**
-     * The region in which EC2 client needs to work
+     * The region in which MQ client needs to work
      */
     public String getRegion() {
         return region;

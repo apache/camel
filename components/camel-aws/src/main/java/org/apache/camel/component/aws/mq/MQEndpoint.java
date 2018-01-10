@@ -39,12 +39,12 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.21.0", scheme = "aws-mq", title = "AWS MQ", syntax = "aws-mq:label", producerOnly = true, label = "cloud,management")
 public class MQEndpoint extends ScheduledPollEndpoint {
-    
+
     private AmazonMQ mqClient;
 
     @UriParam
     private MQConfiguration configuration;
-    
+
     public MQEndpoint(String uri, Component component, MQConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
@@ -65,8 +65,8 @@ public class MQEndpoint extends ScheduledPollEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        
-        mqClient = configuration.getAmazonMqClient() != null ? configuration.getAmazonMqClient() : (AmazonMQClient) createMQClient();
+
+        mqClient = configuration.getAmazonMqClient() != null ? configuration.getAmazonMqClient() : (AmazonMQClient)createMQClient();
     }
 
     public MQConfiguration getConfiguration() {
@@ -78,7 +78,7 @@ public class MQEndpoint extends ScheduledPollEndpoint {
     }
 
     AmazonMQ createMQClient() {
-    	AmazonMQ client = null;
+        AmazonMQ client = null;
         ClientConfiguration clientConfiguration = null;
         AmazonMQClientBuilder clientBuilder = null;
         boolean isClientConfigFound = false;
