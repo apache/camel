@@ -32,37 +32,50 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
 
     @Override
     public HttpConsumer resolve(HttpServletRequest request, Map<String, HttpConsumer> consumers) {
+        return doResolve(request, request.getMethod(), consumers);
+    }
+
+    @Override
+    public boolean isHttpMethodAllowed(HttpServletRequest request, String method, Map<String, HttpConsumer> consumers) {
+        return doResolve(request, method, consumers) != null;
+    }
+
+    protected HttpConsumer doResolve(HttpServletRequest request, String method, Map<String, HttpConsumer> consumers) {
         String path = request.getPathInfo();
         if (path == null) {
             return null;
         }
         HttpConsumer answer = consumers.get(path);
 
-        if (answer == null) {
-            List<HttpConsumer> candidates = new ArrayList<>();
-            for (String key : consumers.keySet()) {
-                //We need to look up the consumer path here
-                String consumerPath = consumers.get(key).getPath();
-                HttpConsumer consumer = consumers.get(key);
-                boolean matchOnUriPrefix = consumer.getEndpoint().isMatchOnUriPrefix();
-                // Just make sure the we get the right consumer path first
-                if (RestConsumerContextPathMatcher.matchPath(path, consumerPath, matchOnUriPrefix)) {
-                    candidates.add(consumer);
-                }
-            }
-
+        List<HttpConsumer> candidates = resolveCandidates(request, method, consumers);
+        if (candidates.size() == 1) {
+            answer = candidates.get(0);
+        } else {
+            // extra filter by restrict
+            candidates = candidates.stream().filter(c -> matchRestMethod(method, c.getEndpoint().getHttpMethodRestrict())).collect(Collectors.toList());
             if (candidates.size() == 1) {
                 answer = candidates.get(0);
-            } else {
-                // extra filter by restrict
-                candidates = candidates.stream().filter(c -> matchRestMethod(request.getMethod(), c.getEndpoint().getHttpMethodRestrict())).collect(Collectors.toList());
-                if (candidates.size() == 1) {
-                    answer = candidates.get(0);
-                }
             }
         }
 
         return answer;
+    }
+
+    private List<HttpConsumer> resolveCandidates(HttpServletRequest request, String method, Map<String, HttpConsumer> consumers) {
+        String path = request.getPathInfo();
+
+        List<HttpConsumer> candidates = new ArrayList<>();
+        for (String key : consumers.keySet()) {
+            //We need to look up the consumer path here
+            String consumerPath = consumers.get(key).getPath();
+            HttpConsumer consumer = consumers.get(key);
+            boolean matchOnUriPrefix = consumer.getEndpoint().isMatchOnUriPrefix();
+            // Just make sure the we get the right consumer path first
+            if (RestConsumerContextPathMatcher.matchPath(path, consumerPath, matchOnUriPrefix)) {
+                candidates.add(consumer);
+            }
+        }
+        return candidates;
     }
 
     private static boolean matchRestMethod(String method, String restrict) {
