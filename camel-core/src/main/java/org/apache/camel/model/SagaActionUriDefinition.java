@@ -24,7 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Allows to declare saga actions e.g. to complete or compensate a saga
+ * Allows to declare saga actions to complete or compensate a saga
  *
  */
 @Metadata(label = "eip,routing")

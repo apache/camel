@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 287 in 197 JAR artifacts (19 deprecated)
+Number of Components: 288 in 197 JAR artifacts (19 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -79,6 +79,9 @@ Number of Components: 287 in 197 JAR artifacts (19 deprecated)
 
 | link:camel-aws/src/main/docs/aws-lambda-component.adoc[AWS Lambda] (camel-aws) +
 `aws-lambda:function` | 2.20 | The aws-lambda is used for managing and invoking functions from Amazon Lambda.
+
+| link:camel-aws/src/main/docs/aws-mq-component.adoc[AWS MQ] (camel-aws) +
+`aws-mq:label` | 2.21 | The aws-mq is used for managing Amazon MQ instances.
 
 | link:camel-aws/src/main/docs/aws-s3-component.adoc[AWS S3 Storage Service] (camel-aws) +
 `aws-s3:bucketNameOrArn` | 2.8 | The aws-s3 component is used for storing and retrieving objecct from Amazon S3 Storage Service.
@@ -687,7 +690,7 @@ Number of Components: 287 in 197 JAR artifacts (19 deprecated)
 `rss:feedUri` | 2.0 | The rss component is used for consuming RSS feeds.
 
 | link:../camel-core/src/main/docs/saga-component.adoc[Saga] (camel-core) +
-`saga:action` | 2.21 | The default saga endpoint.
+`saga:action` | 2.21 | The saga component provides access to advanced options for managing the flow in the Saga EIP.
 
 | link:camel-salesforce/camel-salesforce-component/src/main/docs/salesforce-component.adoc[Salesforce] (camel-salesforce) +
 `salesforce:operationName:topicName` | 2.12 | The salesforce component is used for integrating Camel with the massive Salesforce API.
@@ -1047,7 +1050,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 39 in 39 JAR artifacts (13 deprecated)
+Number of Miscellaneous Components: 41 in 41 JAR artifacts (14 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1101,9 +1104,13 @@ Number of Miscellaneous Components: 39 in 39 JAR artifacts (13 deprecated)
 
 | link:camel-spring-boot/src/main/docs/spring-boot.adoc[Spring Boot] (camel-spring-boot) | 2.15 | Using Camel with Spring Boot
 
+| link:camel-spring-boot2/src/main/docs/spring-boot2.adoc[Spring Boot2] (camel-spring-boot2) | 2.20 | Using Camel with Spring Boot 2 (work in progress)
+
 | link:camel-spring-cloud/src/main/docs/spring-cloud.adoc[Spring Cloud] (camel-spring-cloud) | 2.19 | Camel Cloud integration with Spring Cloud
 
 | link:camel-spring-cloud-netflix/src/main/docs/spring-cloud-netflix.adoc[Spring Cloud Netflix] (camel-spring-cloud-netflix) | 2.19 | Camel Cloud integration with Spring Cloud Netflix
+
+| link:camel-spring-dm/src/main/docs/spring-dm.adoc[Spring DM] (camel-spring-dm) | 2.18 | *deprecated* Camel SpringDM (OSGi) XML DSL
 
 | link:camel-spring-javaconfig/src/main/docs/spring-javaconfig.adoc[Spring Java Configuration] (camel-spring-javaconfig) | 2.0 | Using Camel with Spring Java Configuration
 

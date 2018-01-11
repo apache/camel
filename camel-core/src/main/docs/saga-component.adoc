@@ -16,8 +16,6 @@ Refer to the Saga EIP documentation for help on using sagas in common scenarios.
 saga:action
 ----
 
-Where *`action`* can be ...
-
 === Options
 
 // component options: START
