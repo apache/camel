@@ -26,7 +26,19 @@ The queue will be created if they don't already exists. +
 
 
 // component options: START
-The AWS Simple Queue Service component has no options.
+The AWS Simple Queue Service component supports 5 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The AWS SQS default configuration |  | SqsConfiguration
+| *accessKey* (common) | Amazon AWS Access Key |  | String
+| *secretKey* (common) | Amazon AWS Secret Key |  | String
+| *region* (common) | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL. |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
