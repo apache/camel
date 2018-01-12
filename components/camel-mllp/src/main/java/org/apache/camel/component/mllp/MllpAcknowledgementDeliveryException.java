@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 /**
  * Raised when a MLLP Consumer cannot deliver the MLLP Acknowledgement
  */
 public class MllpAcknowledgementDeliveryException extends MllpAcknowledgementException {
-
     static final String EXCEPTION_MESSAGE = "HL7 Acknowledgment Delivery Failed";
 
     public MllpAcknowledgementDeliveryException(byte[] hl7Message, byte[] hl7Acknowledgement) {

@@ -14,15 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 /**
- * Base class for HL7 Application Acknowledgement Exceptions
+ * Base Exception for with HL7 Application Acknowledgements
  */
 public abstract class MllpAcknowledgementException extends MllpException {
 
     public MllpAcknowledgementException(String message) {
         super(message);
+    }
+
+    public MllpAcknowledgementException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public MllpAcknowledgementException(String message, byte[] hl7Message) {

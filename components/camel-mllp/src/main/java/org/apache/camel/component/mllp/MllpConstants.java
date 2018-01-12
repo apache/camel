@@ -14,8 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
+/**
+ * Constants for the MLLP Protocol and the Camel MLLP component.
+ */
 public final class MllpConstants {
     public static final String MLLP_LOCAL_ADDRESS = "CamelMllpLocalAddress";
     public static final String MLLP_REMOTE_ADDRESS = "CamelMllpRemoteAddress";
@@ -63,5 +67,7 @@ public final class MllpConstants {
     // MSH-18
     public static final String MLLP_CHARSET = "CamelMllpCharset";
 
-    private MllpConstants() { }
+    private MllpConstants() {
+        //utility class, never constructed
+    }
 }

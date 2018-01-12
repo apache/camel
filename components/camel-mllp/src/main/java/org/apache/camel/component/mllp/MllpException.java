@@ -14,67 +14,93 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
+
+import org.apache.camel.component.mllp.internal.Hl7Util;
 
 /**
  * Base class for all MLLP Exceptions, and also used as a generic MLLP exception
  */
 public class MllpException extends Exception {
-    private final byte[] hl7Message;
-    private final byte[] hl7Acknowledgement;
+    final byte[] hl7MessageBytes;
+    final byte[] hl7AcknowledgementBytes;
 
+    // No-payload constructors
     public MllpException(String message) {
-        super(message);
-        this.hl7Message = null;
-        this.hl7Acknowledgement = null;
-    }
-
-    public MllpException(String message, byte[] hl7Message) {
-        super(message);
-        this.hl7Message = (hl7Message != null && hl7Message.length > 0) ? hl7Message : null;
-        this.hl7Acknowledgement = null;
-    }
-
-    public MllpException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
-        super(message);
-        this.hl7Message = (hl7Message != null && hl7Message.length > 0) ? hl7Message : null;
-        this.hl7Acknowledgement = (hl7Acknowledgement != null && hl7Acknowledgement.length > 0) ? hl7Acknowledgement : null;
+        this(message, (byte[]) null, (byte[]) null, (Throwable) null);
     }
 
     public MllpException(String message, Throwable cause) {
-        super(message, cause);
-        this.hl7Message = null;
-        this.hl7Acknowledgement = null;
+        this(message, (byte[]) null, (byte[]) null, cause);
     }
 
-    public MllpException(String message, byte[] hl7Message, Throwable cause) {
-        super(message, cause);
-        this.hl7Message = (hl7Message != null && hl7Message.length > 0) ? hl7Message : null;
-        this.hl7Acknowledgement = null;
+    // Message only payload constructors
+    public MllpException(String message, byte[] hl7MessageBytes) {
+        this(message, hl7MessageBytes, (byte[]) null, (Throwable) null);
     }
 
-    public MllpException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
-        super(message, cause);
-        this.hl7Message = (hl7Message != null && hl7Message.length > 0) ? hl7Message : null;
-        this.hl7Acknowledgement = (hl7Acknowledgement != null && hl7Acknowledgement.length > 0) ? hl7Acknowledgement : null;
+    public MllpException(String message, byte[] hl7MessageBytes, Throwable cause) {
+        this(message, hl7MessageBytes, (byte[]) null, cause);
     }
+
+    // Message payload and Acknowledgement payload constructors
+    public MllpException(String message, byte[] hl7MessageBytes, byte[] hl7AcknowledgementBytes) {
+        this(message, hl7MessageBytes, hl7AcknowledgementBytes, (Throwable) null);
+    }
+
+    public MllpException(String message, byte[] hl7MessageBytes, byte[] hl7AcknowledgementBytes, Throwable cause) {
+        super(message, cause);
+
+        if (hl7MessageBytes != null && hl7MessageBytes.length > 0) {
+            this.hl7MessageBytes = hl7MessageBytes;
+        } else {
+            this.hl7MessageBytes = null;
+        }
+
+        if (hl7AcknowledgementBytes != null && hl7AcknowledgementBytes.length > 0) {
+            this.hl7AcknowledgementBytes = hl7AcknowledgementBytes;
+        } else {
+            this.hl7AcknowledgementBytes = null;
+        }
+    }
+
+
+    /**
+     * Determine if there is an HL7 message payload associated with this exception.
+     *
+     * @return true if this exception contains an HL7 message payload; false otherwise
+     */
+    public boolean hasHl7MessageBytes() {
+        return hl7MessageBytes != null && hl7MessageBytes.length > 0;
+    }
+
 
     /**
      * Get the HL7 message payload associated with this exception, if any.
      *
-     * @return HL7 message payload
+     * @return the HL7 message payload; null if a message payload is not associated with this exception
      */
-    public byte[] getHl7Message() {
-        return hl7Message;
+    public byte[] getHl7MessageBytes() {
+        return hl7MessageBytes;
+    }
+
+    /**
+     * Determine if there is an HL7 message payload associated with this exception.
+     *
+     * @return true if this exception contains an HL7 message payload; false otherwise
+     */
+    public boolean hasHl7AcknowledgementBytes() {
+        return hl7AcknowledgementBytes != null && hl7AcknowledgementBytes.length > 0;
     }
 
     /**
      * Get the HL7 acknowledgement payload associated with this exception, if any.
      *
-     * @return HL7 acknowledgement payload
+     * @return the HL7 acknowledgement payload; null if an acknowledgement payload is not associated with this exception
      */
-    public byte[] getHl7Acknowledgement() {
-        return hl7Acknowledgement;
+    public byte[] getHl7AcknowledgementBytes() {
+        return hl7AcknowledgementBytes;
     }
 
     /**
@@ -84,23 +110,44 @@ public class MllpException extends Exception {
      */
     @Override
     public String getMessage() {
-        if (MllpComponent.isLogPhi()) {
-            return String.format("%s \n\t{hl7Message= %s} \n\t{hl7Acknowledgement= %s}",
-                    super.getMessage(), MllpComponent.covertBytesToPrintFriendlyString(hl7Message), MllpComponent.covertBytesToPrintFriendlyString(hl7Acknowledgement));
-        } else {
-            return super.getMessage();
-        }
-    }
+        String answer;
 
-    /**
-     * Return the MLLP Payload that is most likely the cause of the Exception
-     *
-     * If the HL7 Acknowledgement is present, return it.  Otherwise, return the HL7 Message.
-     *
-     * @return the MLLP Payload with the framing error
-     */
-    public byte[] getMllpPayload() {
-        return (hl7Acknowledgement != null  &&  hl7Acknowledgement.length > 0) ? hl7Acknowledgement : hl7Message;
+        if (hasHl7MessageBytes() || hasHl7AcknowledgementBytes()) {
+            String parentMessage = super.getMessage();
+
+            StringBuilder messageBuilder = new StringBuilder(parentMessage.length()
+                + (hasHl7MessageBytes() ? hl7MessageBytes.length : 0)
+                + (hasHl7AcknowledgementBytes() ? hl7AcknowledgementBytes.length : 0)
+            );
+
+            messageBuilder.append(parentMessage);
+
+            if (hasHl7MessageBytes()) {
+                messageBuilder.append("\n\t{hl7Message [")
+                    .append(hl7MessageBytes.length)
+                    .append("] = ");
+
+                Hl7Util.appendBytesAsPrintFriendlyString(messageBuilder, hl7MessageBytes, 0, hl7MessageBytes.length);
+
+                messageBuilder.append('}');
+            }
+
+            if (hasHl7AcknowledgementBytes()) {
+                messageBuilder.append("\n\t{hl7Acknowledgement [")
+                    .append(hl7AcknowledgementBytes.length)
+                    .append("] = ");
+
+                Hl7Util.appendBytesAsPrintFriendlyString(messageBuilder, hl7AcknowledgementBytes, 0, hl7AcknowledgementBytes.length);
+
+                messageBuilder.append('}');
+            }
+
+            answer = messageBuilder.toString();
+        } else {
+            answer = super.getMessage();
+        }
+
+        return answer;
     }
 
 }
