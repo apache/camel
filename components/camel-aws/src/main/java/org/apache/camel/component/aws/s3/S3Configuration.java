@@ -30,9 +30,9 @@ public class S3Configuration implements Cloneable {
     private String bucketName;
     @UriParam
     private AmazonS3 amazonS3Client;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam(label = "consumer")
     private String fileName;
