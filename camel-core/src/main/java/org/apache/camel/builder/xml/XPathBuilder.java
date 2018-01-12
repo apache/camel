@@ -1274,25 +1274,26 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
                     if (camelContext != null) {
                         Class<XPathFactory> clazz = camelContext.getClassResolver().resolveClass(SAXON_FACTORY_CLASS_NAME, XPathFactory.class);
                         if (clazz != null) {
+                            LOG.debug("Creating Saxon XPathFactory using class: {})", clazz);
                             xpathFactory = camelContext.getInjector().newInstance(clazz);
-                            LOG.debug("Created Saxon XPathFactory: {}", xpathFactory);
+                            LOG.info("Created Saxon XPathFactory: {}", xpathFactory);
                         }
                     }
                 } catch (Throwable e) {
                     LOG.warn("Attempted to create Saxon XPathFactory by creating a new instance of " + SAXON_FACTORY_CLASS_NAME
-                        + " failed. Will fallback and create XPathFactory via JDK API. This exception is ignored (stacktrace in DEBUG logging level).");
+                        + " failed. Will fallback and create XPathFactory using JDK API. This exception is ignored (stacktrace in DEBUG logging level).");
                     LOG.debug("Error creating Saxon XPathFactory. This exception is ignored.", e);
                 }
             }
 
             if (xpathFactory == null) {
-                LOG.debug("Creating XPathFactory via JDK API using objectModelUri", objectModelUri);
+                LOG.debug("Creating XPathFactory from objectModelUri: {}", objectModelUri);
                 xpathFactory = ObjectHelper.isEmpty(xpathFactoryClassName)
                     ? XPathFactory.newInstance(objectModelUri)
                     : XPathFactory.newInstance(objectModelUri, xpathFactoryClassName, null);
+                LOG.info("Created XPathFactory: {} from objectModelUri: {}", xpathFactory, objectModelUri);
             }
 
-            LOG.info("Using objectModelUri " + objectModelUri + " when created XPathFactory {}", xpathFactory);
             return xpathFactory;
         }
 
