@@ -28,11 +28,11 @@
       <from uri="direct:in"/>
       <choice>
         <when>
-          <xpath objectModel="http://saxon.sf.net/jaxp/xpath/om">$type = 'Camel'</xpath>
+          <xpath saxon="true">$type = 'Camel'</xpath>
           <to uri="mock:camel"/>
         </when>
         <when>
-          <xpath objectModel="http://saxon.sf.net/jaxp/xpath/om">//name = 'Kong'</xpath>
+          <xpath saxon="true">//name = 'Kong'</xpath>
           <to uri="mock:donkey"/>
         </when>
         <otherwise>
