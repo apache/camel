@@ -56,6 +56,7 @@
       javax.xml.transform.stax;resolution:=optional,
       net.sf.saxon.event;resolution:=optional,
       net.sf.saxon.serialize;resolution:=optional,
+      net.sf.saxon.xpath;resolution:=optional,
       *
     </camel.osgi.import>
     <camel.osgi.export.service>
