@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -23,7 +25,7 @@ import org.apache.camel.Predicate;
 /**
  * To adapt {@link org.apache.camel.Expression} as a {@link Predicate}
  */
-public final class ExpressionToPredicateAdapter implements Predicate {
+public final class ExpressionToPredicateAdapter implements Predicate, CamelContextAware {
     private final Expression expression;
 
     public ExpressionToPredicateAdapter(Expression expression) {
@@ -50,5 +52,20 @@ public final class ExpressionToPredicateAdapter implements Predicate {
     public static Predicate toPredicate(final Expression expression) {
         return new ExpressionToPredicateAdapter(expression);
     }
-    
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        if (expression instanceof CamelContextAware) {
+            ((CamelContextAware) expression).setCamelContext(camelContext);
+        }
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        if (expression instanceof CamelContextAware) {
+            return ((CamelContextAware) expression).getCamelContext();
+        } else {
+            return null;
+        }
+    }
 }

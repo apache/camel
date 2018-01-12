@@ -44,6 +44,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -83,7 +84,7 @@ import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmpty
  *
  * @see XPathConstants#NODESET
  */
-public class XPathBuilder extends ServiceSupport implements Expression, Predicate, NamespaceAware {
+public class XPathBuilder extends ServiceSupport implements CamelContextAware, Expression, Predicate, NamespaceAware {
     private static final Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);
     private static final String SAXON_OBJECT_MODEL_URI = "http://saxon.sf.net/jaxp/xpath/om";
     private static final String SAXON_FACTORY_CLASS_NAME = "net.sf.saxon.xpath.XPathFactoryImpl";
@@ -91,6 +92,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
 
     private static volatile XPathFactory defaultXPathFactory;
 
+    private CamelContext camelContext;
     private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<XPathExpression>();
     private final Queue<XPathExpression> poolLogNamespaces = new ConcurrentLinkedQueue<XPathExpression>();
     private final String text;
@@ -152,6 +154,16 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
     @Override
     public String toString() {
         return "XPath: " + text;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public boolean matches(Exchange exchange) {
@@ -782,7 +794,6 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
     public void enableSaxon() {
         this.setObjectModelUri(SAXON_OBJECT_MODEL_URI);
         this.setFactoryClassName(SAXON_FACTORY_CLASS_NAME);
-
     }
 
     public String getObjectModelUri() {
@@ -1256,13 +1267,30 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
     protected synchronized XPathFactory createXPathFactory() throws XPathFactoryConfigurationException {
         if (objectModelUri != null) {
             String xpathFactoryClassName = factoryClassName;
-            if (objectModelUri.equals(SAXON_OBJECT_MODEL_URI) && ObjectHelper.isEmpty(xpathFactoryClassName)) {
-                xpathFactoryClassName = SAXON_FACTORY_CLASS_NAME;
+            if (objectModelUri.equals(SAXON_OBJECT_MODEL_URI) && (xpathFactoryClassName == null || SAXON_FACTORY_CLASS_NAME.equals(xpathFactoryClassName))) {
+                // from Saxon 9.7 onwards you should favour to create the class directly
+                // https://www.saxonica.com/html/documentation/xpath-api/jaxp-xpath/factory.html
+                try {
+                    if (camelContext != null) {
+                        Class<XPathFactory> clazz = camelContext.getClassResolver().resolveClass(SAXON_FACTORY_CLASS_NAME, XPathFactory.class);
+                        if (clazz != null) {
+                            xpathFactory = camelContext.getInjector().newInstance(clazz);
+                            LOG.debug("Created Saxon XPathFactory: {}", xpathFactory);
+                        }
+                    }
+                } catch (Throwable e) {
+                    LOG.warn("Attempted to create Saxon XPathFactory by creating a new instance of " + SAXON_FACTORY_CLASS_NAME
+                        + " failed. Will fallback and create XPathFactory via JDK API. This exception is ignored (stacktrace in DEBUG logging level).");
+                    LOG.debug("Error creating Saxon XPathFactory. This exception is ignored.", e);
+                }
             }
 
-            xpathFactory = ObjectHelper.isEmpty(xpathFactoryClassName)
-                ? XPathFactory.newInstance(objectModelUri)
-                : XPathFactory.newInstance(objectModelUri, xpathFactoryClassName, null);
+            if (xpathFactory == null) {
+                LOG.debug("Creating XPathFactory via JDK API using objectModelUri", objectModelUri);
+                xpathFactory = ObjectHelper.isEmpty(xpathFactoryClassName)
+                    ? XPathFactory.newInstance(objectModelUri)
+                    : XPathFactory.newInstance(objectModelUri, xpathFactoryClassName, null);
+            }
 
             LOG.info("Using objectModelUri " + objectModelUri + " when created XPathFactory {}", xpathFactory);
             return xpathFactory;
