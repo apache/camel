@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.xml.namespace.QName;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -881,6 +882,15 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
             } else if (document instanceof DOMSource) {
                 DOMSource source = (DOMSource) document;
                 answer = (NodeList) xpathExpression.evaluate(source.getNode(), XPathConstants.NODESET);
+            } else if (document instanceof SAXSource) {
+                SAXSource source = (SAXSource) document;
+                // since its a SAXSource it me not return an NodeList
+                Object result = xpathExpression.evaluate(source.getInputSource(), XPathConstants.NODESET);
+                if (result instanceof NodeList) {
+                    answer = (NodeList) result;
+                } else {
+                    answer = null;
+                }
             } else {
                 answer = (NodeList) xpathExpression.evaluate(document, XPathConstants.NODESET);
             }
