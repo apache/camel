@@ -884,7 +884,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
                 answer = (NodeList) xpathExpression.evaluate(source.getNode(), XPathConstants.NODESET);
             } else if (document instanceof SAXSource) {
                 SAXSource source = (SAXSource) document;
-                // since its a SAXSource it me not return an NodeList
+                // since its a SAXSource it may not return an NodeList (for example if using Saxon)
                 Object result = xpathExpression.evaluate(source.getInputSource(), XPathConstants.NODESET);
                 if (result instanceof NodeList) {
                     answer = (NodeList) result;
