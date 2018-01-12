@@ -38,7 +38,7 @@ public class S3Configuration implements Cloneable {
     private String fileName;
     @UriParam(label = "consumer")
     private String prefix;
-    @UriParam(label = "producer")
+    @UriParam
     private String region;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
