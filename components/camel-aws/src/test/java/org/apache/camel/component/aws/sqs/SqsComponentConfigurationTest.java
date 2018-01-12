@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import com.amazonaws.regions.Regions;
+
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import com.amazonaws.regions.Regions;
 
 public class SqsComponentConfigurationTest extends CamelTestSupport {
     
@@ -240,7 +240,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
-    	SqsComponent component = new SqsComponent(context);
+        SqsComponent component = new SqsComponent(context);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
