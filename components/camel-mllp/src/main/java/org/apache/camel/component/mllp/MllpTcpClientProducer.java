@@ -246,7 +246,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                         log.debug("Populating message headers with the acknowledgement from the external system");
                         message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT, acknowledgementBytes);
                         if (acknowledgementBytes != null && acknowledgementBytes.length > 0) {
-                            message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, getEndpoint().createNewString(acknowledgementBytes, message.getHeader(MllpConstants.MLLP_CHARSET, String.class)));
+                            message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING,
+                                getEndpoint().createNewString(acknowledgementBytes, message.getHeader(MllpConstants.MLLP_CHARSET, String.class)));
                         } else {
                             message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, "");
                         }

@@ -88,6 +88,11 @@ public class MllpComponent extends UriEndpointComponent {
         return answer;
     }
 
+    /**
+     * Set the component to log PHI data.
+     *
+     * @param logPhi true enables PHI logging; false disables it.
+     */
     public static void setLogPhi(Boolean logPhi) {
         MllpComponent.logPhi = logPhi;
     }
@@ -116,6 +121,11 @@ public class MllpComponent extends UriEndpointComponent {
         return answer;
     }
 
+    /**
+     * Set the maximum number of bytes of PHI that will be logged in a log entry.
+     *
+     * @param logPhiMaxBytes the maximum number of bytes to log.
+     */
     public static void setLogPhiMaxBytes(Integer logPhiMaxBytes) {
         MllpComponent.logPhiMaxBytes = logPhiMaxBytes;
     }
@@ -130,6 +140,11 @@ public class MllpComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * Sets the default configuration to use when creating MLLP endpoints.
+     *
+     * @param configuration the default configuration.
+     */
     public void setConfiguration(MllpConfiguration configuration) {
         this.configuration = configuration;
     }
