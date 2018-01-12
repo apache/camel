@@ -145,7 +145,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         // Log usage of deprecated URI options
         if (getConfiguration().hasMaxReceiveTimeouts()) {
             if (getConfiguration().hasIdleTimeout()) {
-                log.info("Both maxReceivedTimeouts {} and idleTimeout {} URI options are specified - idleTimeout will be used", getConfiguration().getMaxReceiveTimeouts(), getConfiguration().getIdleTimeout());
+                log.info("Both maxReceivedTimeouts {} and idleTimeout {} URI options are specified - idleTimeout will be used",
+                    getConfiguration().getMaxReceiveTimeouts(), getConfiguration().getIdleTimeout());
             } else {
                 getConfiguration().setIdleTimeout(getConfiguration().getMaxReceiveTimeouts() * getConfiguration().getReceiveTimeout());
                 log.info("Deprecated URI option maxReceivedTimeouts {} specified - idleTimeout {} will be used", getConfiguration().getMaxReceiveTimeouts(), getConfiguration().getIdleTimeout());

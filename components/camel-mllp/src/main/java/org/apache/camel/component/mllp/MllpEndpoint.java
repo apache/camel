@@ -52,22 +52,22 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "MLLP Endpoint")
 @UriEndpoint(scheme = "mllp", title = "MLLP", syntax = "mllp:hostname:port", consumerClass = MllpTcpServerConsumer.class, label = "mllp")
 public class MllpEndpoint extends DefaultEndpoint {
-  // Use constants from MllpProtocolConstants
-  @Deprecated()
-  public static final char START_OF_BLOCK = MllpProtocolConstants.START_OF_BLOCK;
-  @Deprecated()
-  public static final char END_OF_BLOCK = MllpProtocolConstants.END_OF_BLOCK;
-  @Deprecated()
-  public static final char END_OF_DATA = MllpProtocolConstants.END_OF_DATA;
-  @Deprecated()
-  public static final int END_OF_STREAM = MllpProtocolConstants.END_OF_STREAM;
-  @Deprecated()
-  public static final char SEGMENT_DELIMITER = MllpProtocolConstants.SEGMENT_DELIMITER;
-  @Deprecated()
-  public static final char MESSAGE_TERMINATOR = MllpProtocolConstants.MESSAGE_TERMINATOR;
+    // Use constants from MllpProtocolConstants
+    @Deprecated()
+    public static final char START_OF_BLOCK = MllpProtocolConstants.START_OF_BLOCK;
+    @Deprecated()
+    public static final char END_OF_BLOCK = MllpProtocolConstants.END_OF_BLOCK;
+    @Deprecated()
+    public static final char END_OF_DATA = MllpProtocolConstants.END_OF_DATA;
+    @Deprecated()
+    public static final int END_OF_STREAM = MllpProtocolConstants.END_OF_STREAM;
+    @Deprecated()
+    public static final char SEGMENT_DELIMITER = MllpProtocolConstants.SEGMENT_DELIMITER;
+    @Deprecated()
+    public static final char MESSAGE_TERMINATOR = MllpProtocolConstants.MESSAGE_TERMINATOR;
 
-  @Deprecated // Use constants from MllpProtocolConstants
-  public static final Charset DEFAULT_CHARSET = MllpProtocolConstants.DEFAULT_CHARSET;
+    @Deprecated // Use constants from MllpProtocolConstants
+    public static final Charset DEFAULT_CHARSET = MllpProtocolConstants.DEFAULT_CHARSET;
 
     private static final Logger LOG = LoggerFactory.getLogger(MllpEndpoint.class);
 
