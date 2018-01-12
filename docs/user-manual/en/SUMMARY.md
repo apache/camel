@@ -149,6 +149,7 @@
 	* [AWS Kinesis](aws-kinesis-component.adoc)
 	* [AWS Kinesis Firehose](aws-kinesis-firehose-component.adoc)
 	* [AWS Lambda](aws-lambda-component.adoc)
+	* [AWS MQ](aws-mq-component.adoc)
 	* [AWS S3 Storage Service](aws-s3-component.adoc)
 	* [AWS Simple Email Service](aws-ses-component.adoc)
 	* [AWS Simple Notification System](aws-sns-component.adoc)
