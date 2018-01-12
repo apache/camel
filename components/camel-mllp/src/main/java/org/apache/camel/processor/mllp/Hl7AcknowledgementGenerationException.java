@@ -14,10 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.mllp;
 
+/*
+ * Exception thrown by the HL7AcknowledgmentGenerator in the event of a failure.
+ */
 public class Hl7AcknowledgementGenerationException extends Exception {
-
     private final byte[] hl7Message;
 
     public Hl7AcknowledgementGenerationException(String message) {
@@ -34,6 +37,7 @@ public class Hl7AcknowledgementGenerationException extends Exception {
         super(message, cause);
         this.hl7Message = hl7Message;
     }
+
 
     public byte[] getHl7Message() {
         return hl7Message;

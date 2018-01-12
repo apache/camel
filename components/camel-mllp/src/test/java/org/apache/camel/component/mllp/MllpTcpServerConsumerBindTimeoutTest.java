@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 import java.net.ServerSocket;
@@ -25,13 +26,17 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+
 import org.apache.camel.test.AvailablePortFinder;
+
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
+
 import org.apache.camel.test.junit4.CamelTestSupport;
+
+import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
+
 import org.junit.Rule;
 import org.junit.Test;
-
-import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 
 public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
     @Rule
@@ -41,6 +46,11 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
     MockEndpoint result;
 
     @Override
+    public boolean isUseAdviceWith() {
+        return true;
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
 
@@ -48,11 +58,6 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
         context.setName(this.getClass().getSimpleName());
 
         return context;
-    }
-
-    @Override
-    public boolean isUseAdviceWith() {
-        return true;
     }
 
     @Override
@@ -70,14 +75,14 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
                 String routeId = "mllp-test-receiver-route";
 
                 onCompletion()
-                        .toF("log:%s?level=INFO&showAll=true", routeId)
-                        .log(LoggingLevel.INFO, routeId, "Test route complete");
+                    .toF("log:%s?level=INFO&showAll=true", routeId)
+                    .log(LoggingLevel.INFO, routeId, "Test route complete");
 
                 fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
-                        mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
-                        .routeId(routeId)
-                        .log(LoggingLevel.INFO, routeId, "Test route received message")
-                        .to(result);
+                    mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
+                    .routeId(routeId)
+                    .log(LoggingLevel.INFO, routeId, "Test route received message")
+                    .to(result);
 
             }
         };
@@ -106,7 +111,7 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
 
         mllpClient.connect();
 
-        mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(), 10000);
+        mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(), 10000);
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }

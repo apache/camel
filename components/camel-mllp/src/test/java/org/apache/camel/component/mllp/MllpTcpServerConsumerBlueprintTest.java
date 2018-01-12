@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 import java.util.Dictionary;
@@ -25,30 +26,28 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultComponentResolver;
 import org.apache.camel.spi.ComponentResolver;
+
 import org.apache.camel.test.AvailablePortFinder;
+
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
+
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
+
+import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
+
 import org.apache.camel.util.KeyValueHolder;
+
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
-
 public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSupport {
+    static final String RECEIVED_URI = "mock://received";
+    static final String MLLP_HOST = "localhost";
 
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
-
-    final String receivedUri = "mock://received";
-    final String mllpHost = "localhost";
-
-    @EndpointInject(uri = receivedUri)
+    @EndpointInject(uri = RECEIVED_URI)
     MockEndpoint received;
-
-    @Override
-    protected String getBlueprintDescriptor() {
-        return "OSGI-INF/blueprint/mllp-tcp-server-consumer-test.xml";
-    }
 
     @Override
     protected void addServicesOnStartup(Map<String, KeyValueHolder<Object, Dictionary>> services) {
@@ -58,13 +57,18 @@ public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSuppor
     }
 
     @Override
+    protected String getBlueprintDescriptor() {
+        return "OSGI-INF/blueprint/mllp-tcp-server-consumer-test.xml";
+    }
+
+    @Override
     protected Properties useOverridePropertiesWithPropertiesComponent() {
-        mllpClient.setMllpHost(mllpHost);
+        mllpClient.setMllpHost(MLLP_HOST);
         mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
 
         Properties props = new Properties();
 
-        props.setProperty("receivedUri", receivedUri);
+        props.setProperty("RECEIVED_URI", RECEIVED_URI);
         props.setProperty("mllp.host", mllpClient.getMllpHost());
         props.setProperty("mllp.port", Integer.toString(mllpClient.getMllpPort()));
 
@@ -91,7 +95,7 @@ public class MllpTcpServerConsumerBlueprintTest extends CamelBlueprintTestSuppor
         mllpClient.connect();
 
         for (int i = 1; i <= sendMessageCount; ++i) {
-            mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(i));
+            mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(i));
         }
 
         mllpClient.close();
