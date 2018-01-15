@@ -21,10 +21,21 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 
 public class SWFComponent extends DefaultComponent {
 
+    @Metadata
+    private String accessKey;
+    @Metadata
+    private String secretKey;
+    @Metadata
+    private String region;
+    @Metadata(label = "advanced")    
+    private SWFConfiguration configuration;
+    
     public SWFComponent() {
         this(null);
     }
@@ -32,6 +43,7 @@ public class SWFComponent extends DefaultComponent {
     public SWFComponent(CamelContext context) {
         super(context);
 
+        this.configuration = new SWFConfiguration();
         registerExtension(new SwfComponentVerifierExtension());
     }
 
@@ -40,13 +52,67 @@ public class SWFComponent extends DefaultComponent {
         Map<String, Object> sWClientParameters = IntrospectionSupport.extractProperties(parameters, "sWClient.");
         Map<String, Object> startWorkflowOptionsParameters = IntrospectionSupport.extractProperties(parameters, "startWorkflowOptions.");
 
-        SWFConfiguration configuration = new SWFConfiguration();
+        SWFConfiguration configuration = this.configuration.copy();
         configuration.setType(remaining);
         setProperties(configuration, parameters);
         configuration.setClientConfigurationParameters(clientConfigurationParameters);
         configuration.setSWClientParameters(sWClientParameters);
         configuration.setStartWorkflowOptionsParameters(startWorkflowOptionsParameters);
+        
+        if (ObjectHelper.isEmpty(configuration.getAccessKey())) {
+            setAccessKey(accessKey);
+        }
+        if (ObjectHelper.isEmpty(configuration.getSecretKey())) {
+            setSecretKey(secretKey);
+        }
+        if (ObjectHelper.isEmpty(configuration.getRegion())) {
+            setRegion(region);
+        }
 
         return new SWFEndpoint(uri, this, configuration);
+    }
+    
+    public SWFConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * The AWS SWF default configuration
+     */    
+    public void setConfiguration(SWFConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public String getAccessKey() {
+        return configuration.getAccessKey();
+    }
+
+    /**
+     * Amazon AWS Access Key.
+     */
+    public void setAccessKey(String accessKey) {
+        configuration.setAccessKey(accessKey);
+    }
+
+    public String getSecretKey() {
+        return configuration.getSecretKey();
+    }
+
+    /**
+     * Amazon AWS Secret Key.
+     */
+    public void setSecretKey(String secretKey) {
+        configuration.setSecretKey(secretKey);
+    }
+
+    public String getRegion() {
+        return configuration.getRegion();
+    }
+
+    /**
+     * Amazon AWS Region.
+     */
+    public void setRegion(String region) {
+        configuration.setRegion(region);
     }
 }

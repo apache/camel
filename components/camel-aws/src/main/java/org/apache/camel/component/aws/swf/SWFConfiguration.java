@@ -25,13 +25,14 @@ import com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOption
 import com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions;
 import com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class SWFConfiguration {
+public class SWFConfiguration implements Cloneable {
 
     @UriPath(enums = "activity,workflow")
     @Metadata(required = "true")
@@ -389,5 +390,17 @@ public class SWFConfiguration {
 
     public void setTaskStartToCloseTimeout(String taskStartToCloseTimeout) {
         this.taskStartToCloseTimeout = taskStartToCloseTimeout;
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public SWFConfiguration copy() {
+        try {
+            return (SWFConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }
