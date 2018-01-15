@@ -39,9 +39,9 @@ public class SWFConfiguration implements Cloneable {
     private String type;
     @UriParam
     private AmazonSimpleWorkflowClient amazonSWClient;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam(label = "producer,workflow", defaultValue = "START", enums = "SIGNAL,CANCEL,TERMINATE,GET_STATE,START,DESCRIBE,GET_HISTORY")
     private String operation = "START";
