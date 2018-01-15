@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.ses;
 
+import com.amazonaws.regions.Regions;
+
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -131,6 +133,32 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         SesComponent component = new SesComponent(context);
         component.createEndpoint("aws-ses://from@example.com?accessKey=xxx");
+    }
+    
+    @Test
+    public void createEndpointWithComponentElements() throws Exception {
+        SesComponent component = new SesComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        SesEndpoint endpoint = (SesEndpoint)component.createEndpoint("aws-ses://from@example.com");
+        
+        assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
+        assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
+        assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
+    }
+    
+    @Test
+    public void createEndpointWithComponentAndEndpointElements() throws Exception {
+        SesComponent component = new SesComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        component.setRegion(Regions.US_WEST_1.toString());
+        SesEndpoint endpoint = (SesEndpoint)component.createEndpoint("aws-ses://from@example.com?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        
+        assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
     
     @Test
