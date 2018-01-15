@@ -31,9 +31,9 @@ public class SnsConfiguration implements Cloneable {
     private String topicName;
     @UriParam
     private AmazonSNS amazonSNSClient;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam
     private String amazonSNSEndpoint;
