@@ -136,7 +136,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
                     }
 
                     // mark we are polling which should also include the begin/poll/commit
-                    boolean begin = pollStrategy.begin(this, getEndpoint());
+                    boolean begin = pollStrategy.begin(getConsumer(), getEndpoint());
                     if (begin) {
                         retryCounter++;
                         polledMessages = getConsumer().poll();
@@ -150,7 +150,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
                             done = false;
                         }
 
-                        pollStrategy.commit(this, getEndpoint(), polledMessages);
+                        pollStrategy.commit(getConsumer(), getEndpoint(), polledMessages);
                     } else {
                         LOG.debug("Cannot begin polling as pollStrategy returned false: {}", pollStrategy);
                     }
@@ -159,7 +159,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
                 LOG.trace("Finished polling: {}", this.getEndpoint());
             } catch (Exception e) {
                 try {
-                    boolean retry = pollStrategy.rollback(this, getEndpoint(), retryCounter, e);
+                    boolean retry = pollStrategy.rollback(getConsumer(), getEndpoint(), retryCounter, e);
                     if (retry) {
                         // do not set cause as we retry
                         done = false;
