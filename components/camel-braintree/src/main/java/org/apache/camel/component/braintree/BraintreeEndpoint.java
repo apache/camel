@@ -44,13 +44,16 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
     private final BraintreeConfiguration configuration;
 
     private Object apiProxy;
-    private final BraintreeGateway gateway;
 
-    public BraintreeEndpoint(String uri, BraintreeComponent component,
-                         BraintreeApiName apiName, String methodName, BraintreeConfiguration configuration, BraintreeGateway gateway) {
+    public BraintreeEndpoint(
+            String uri,
+            BraintreeComponent component,
+            BraintreeApiName apiName,
+            String methodName,
+            BraintreeConfiguration configuration
+    ) {
         super(uri, component, apiName, methodName, BraintreeApiCollection.getCollection().getHelper(apiName), configuration);
         this.configuration = configuration;
-        this.gateway = gateway;
     }
 
     @Override
@@ -67,6 +70,11 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
     }
 
     @Override
+    public BraintreeComponent getComponent() {
+        return (BraintreeComponent) super.getComponent();
+    }
+
+    @Override
     protected ApiMethodPropertiesHelper<BraintreeConfiguration> getPropertiesHelper() {
         return BraintreePropertiesHelper.getHelper();
     }
@@ -78,6 +86,7 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
 
     @Override
     protected void afterConfigureProperties() {
+        BraintreeGateway gateway = getComponent().getGateway(this.configuration);
         try {
             Method method = gateway.getClass().getMethod(apiName.getName());
             if (method != null) {
