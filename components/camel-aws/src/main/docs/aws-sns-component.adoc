@@ -69,7 +69,6 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *amazonSNSClient* (producer) | To use the AmazonSNS as the client |  | AmazonSNS
 | *amazonSNSEndpoint* (producer) | The region with which the AWS-SNS client wants to work with. |  | String
 | *headerFilterStrategy* (producer) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
@@ -78,9 +77,10 @@ with the following path and query parameters:
 | *proxyHost* (producer) | To define a proxy host when instantiating the SNS client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the SNS client |  | Integer
 | *region* (producer) | The region in which SNS client needs to work |  | String
-| *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
 
