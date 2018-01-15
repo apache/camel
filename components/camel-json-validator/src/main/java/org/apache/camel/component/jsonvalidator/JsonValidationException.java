@@ -16,21 +16,41 @@
  */
 package org.apache.camel.component.jsonvalidator;
 
-import java.util.stream.Collectors;
+import java.util.Set;
 
+import com.networknt.schema.JsonSchema;
+import com.networknt.schema.ValidationMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
-import org.everit.json.schema.Schema;
 
 public class JsonValidationException extends ValidationException {
     
     private static final long serialVersionUID = 1L;
-    
-    public JsonValidationException(Exchange exchange, Schema schema, org.everit.json.schema.ValidationException e) {
-        super(e.getAllMessages().stream().collect(Collectors.joining(", ")), exchange, e);
+
+    private final JsonSchema schema;
+    private final Set<ValidationMessage> errors;
+
+    public JsonValidationException(Exchange exchange, JsonSchema schema, Set<ValidationMessage> errors) {
+        super(exchange, "JSon validation error with " + errors.size() + " errors");
+        this.schema = schema;
+        this.errors = errors;
     }
 
-    public JsonValidationException(Exchange exchange, Schema schema, Exception e) {
+    public JsonValidationException(Exchange exchange, JsonSchema schema, Exception e) {
         super(e.getMessage(), exchange, e);
+        this.schema = schema;
+        this.errors = null;
+    }
+
+    public JsonSchema getSchema() {
+        return schema;
+    }
+
+    public Set<ValidationMessage> getErrors() {
+        return errors;
+    }
+
+    public int getNumberOfErrors() {
+        return errors.size();
     }
 }

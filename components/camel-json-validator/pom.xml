@@ -26,7 +26,7 @@
 
   <artifactId>camel-json-validator</artifactId>
   <name>Camel :: JSON validator</name>
-  <description>Camel JSON Schema validation based on Everit JSON-schema library</description>
+  <description>Camel JSON Schema validation based on NetworkNT SON-schema library</description>
   <packaging>jar</packaging>
 
   <properties>
@@ -36,13 +36,6 @@
     </camel.osgi.export.service>
   </properties>
 
-  <!-- everit is distributed in jitpack and not Maven central -->
-  <repositories>
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
-  </repositories>
   <dependencies>
 
     <dependency>
@@ -50,9 +43,9 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.github.everit-org.json-schema</groupId>
-      <artifactId>org.everit.json.schema</artifactId>
-      <version>${everit-org-json-schema-version}</version>
+      <groupId>com.networknt</groupId>
+      <artifactId>json-schema-validator</artifactId>
+      <version>${networknt-json-schema-validator-version}</version>
     </dependency>
 
     <!-- for testing -->
@@ -83,4 +76,5 @@
     </dependency>
 
   </dependencies>
+
 </project>

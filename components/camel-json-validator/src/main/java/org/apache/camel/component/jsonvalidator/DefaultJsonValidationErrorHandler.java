@@ -16,23 +16,23 @@
  */
 package org.apache.camel.component.jsonvalidator;
 
+import java.util.Set;
+
+import com.networknt.schema.JsonSchema;
+import com.networknt.schema.ValidationMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 
 public class DefaultJsonValidationErrorHandler implements JsonValidatorErrorHandler {
 
     @Override
-    public void reset() {
-        // Do nothing since we do not keep state
+    public void handleErrors(Exchange exchange, JsonSchema schema, Set<ValidationMessage> errors) throws ValidationException {
+        throw new JsonValidationException(exchange, schema, errors);
     }
-    
+
     @Override
-    public void handleErrors(Exchange exchange, org.everit.json.schema.Schema schema, Exception e) throws ValidationException {
-        if (e instanceof org.everit.json.schema.ValidationException) {
-            throw new JsonValidationException(exchange, schema, (org.everit.json.schema.ValidationException)e);
-        } else {
-            throw new JsonValidationException(exchange, schema, e);
-        }
+    public void handleErrors(Exchange exchange, JsonSchema schema, Exception e) throws ValidationException {
+        throw new JsonValidationException(exchange, schema, e);
     }
 
 }
