@@ -207,8 +207,7 @@
     <elasticsearch5-cluster-runner-version>5.6.3.0</elasticsearch5-cluster-runner-version>
     <elsql-version>1.2</elsql-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
-    <!-- embedmongo 1.50.2 do not work -->
-    <embedmongo-version>1.50.1</embedmongo-version>
+    <embedmongo-version>2.0.0</embedmongo-version>
     <etcd4j-version>2.14.0</etcd4j-version>
     <everit-org-json-schema-version>1.6.1</everit-org-json-schema-version>
     <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
