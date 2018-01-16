@@ -142,7 +142,7 @@ public class ThriftThreadPoolServer extends TServer {
         });
     }
 
-    public void waitForShutdown() {
+    private void waitForShutdown() {
         int failureCount = 0;
         while (!stopped_) {
             try {
