@@ -17,32 +17,22 @@
 package org.apache.camel.component.thrift.server;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.CamelContext;
-import org.apache.thrift.server.TNonblockingServer;
+import org.apache.thrift.server.THsHaServer;
 import org.apache.thrift.transport.TNonblockingServerTransport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /*
  * Thrift HsHaServer implementation with executors controlled by the Camel Executor Service Manager
  */
-public class ThriftHsHaServer extends TNonblockingServer {
-    private static final Logger LOG = LoggerFactory.getLogger(ThriftHsHaServer.class);
+public class ThriftHsHaServer extends THsHaServer {
 
-    public static class Args extends AbstractNonblockingServerArgs<Args> {
-        private ExecutorService executorService;
+    public static class Args extends THsHaServer.Args {
         private ExecutorService startThreadPool;
         private CamelContext context;
 
         public Args(TNonblockingServerTransport transport) {
             super(transport);
-        }
-
-        public Args executorService(ExecutorService executorService) {
-            this.executorService = executorService;
-            return this;
         }
 
         public Args startThreadPool(ExecutorService startThreadPool) {
@@ -56,7 +46,6 @@ public class ThriftHsHaServer extends TNonblockingServer {
         }
     }
 
-    private final ExecutorService invoker;
     private final CamelContext context;
     private final ExecutorService startExecutor;
 
@@ -64,7 +53,6 @@ public class ThriftHsHaServer extends TNonblockingServer {
         super(args);
 
         this.context = args.context;
-        this.invoker = args.executorService;
         this.startExecutor = args.startThreadPool;
     }
 
@@ -97,22 +85,6 @@ public class ThriftHsHaServer extends TNonblockingServer {
     @Override
     protected void waitForShutdown() {
         joinSelector();
-        context.getExecutorServiceManager().shutdownGraceful(invoker);
-    }
-
-    @Override
-    protected boolean requestInvoke(FrameBuffer frameBuffer) {
-        try {
-            Runnable invocation = getRunnable(frameBuffer);
-            invoker.execute(invocation);
-            return true;
-        } catch (RejectedExecutionException rx) {
-            LOG.warn("ExecutorService rejected execution!", rx);
-            return false;
-        }
-    }
-
-    protected Runnable getRunnable(FrameBuffer frameBuffer) {
-        return new Invocation(frameBuffer);
+        context.getExecutorServiceManager().shutdownGraceful(getInvoker());
     }
 }

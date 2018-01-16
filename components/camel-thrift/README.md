@@ -9,8 +9,8 @@ For linux/osx you download the .tar distro, and untar it, and then
     sudo ./bootstrap.sh
     export CXXFLAGS='-Os -ffunction-sections -Wl,--gc-sections -fno-asynchronous-unwind-tables -Wl,--strip-all'
     sudo ./configure --without-c_glib --without-java --without-python --without-ruby --without-nodejs --disable-libs --disable-tests --disable-tutorial --disable-shared --enable-static
-    sudo ./make check
-    sudo ./make install
+    sudo make check
+    sudo make install
 
 If its succesful, you can type
 
