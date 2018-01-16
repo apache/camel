@@ -122,7 +122,7 @@ public class LambdaComponentConfiguration
          */
         private String region;
         /**
-         * The region with which the AWS-Lambda client wants to work with.
+         * The AWS-Lambda client to use.
          */
         private String awsLambdaEndpoint;
         /**
