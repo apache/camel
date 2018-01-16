@@ -22,12 +22,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.braintreegateway.*;
+import com.braintreegateway.BraintreeGateway;
+import com.braintreegateway.Result;
+import com.braintreegateway.Transaction;
+import com.braintreegateway.TransactionCloneRequest;
+import com.braintreegateway.TransactionRefundRequest;
+import com.braintreegateway.TransactionRequest;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.TransactionGatewayApiMethod;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;

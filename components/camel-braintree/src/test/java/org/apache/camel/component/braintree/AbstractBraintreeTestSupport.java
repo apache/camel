@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.braintreegateway.BraintreeGateway;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
@@ -91,21 +92,23 @@ public class AbstractBraintreeTestSupport extends CamelTestSupport {
         AuthenticationType configurationType = getAuthenticationType();
         LOG.info(String.format("Test using %s configuration profile", configurationType));
         switch (configurationType) {
-            case PUBLIC_PRIVATE_KEYS:
-                addOptionIfMissing(options, "environment", "CAMEL_BRAINTREE_ENVIRONMENT");
-                addOptionIfMissing(options, "merchantId", "CAMEL_BRAINTREE_MERCHANT_ID");
-                addOptionIfMissing(options, "publicKey", "CAMEL_BRAINTREE_PUBLIC_KEY");
-                addOptionIfMissing(options, "privateKey", "CAMEL_BRAINTREE_PRIVATE_KEY");
-                options.remove("accessToken");
-                options.remove("clientId");
-                break;
-            case ACCESS_TOKEN:
-                addOptionIfMissing(options, "accessToken", "CAMEL_BRAINTREE_ACCESS_TOKEN");
-                options.remove("environment");
-                options.remove("merchantId");
-                options.remove("publicKey");
-                options.remove("privateKey");
-                break;
+        case PUBLIC_PRIVATE_KEYS:
+            addOptionIfMissing(options, "environment", "CAMEL_BRAINTREE_ENVIRONMENT");
+            addOptionIfMissing(options, "merchantId", "CAMEL_BRAINTREE_MERCHANT_ID");
+            addOptionIfMissing(options, "publicKey", "CAMEL_BRAINTREE_PUBLIC_KEY");
+            addOptionIfMissing(options, "privateKey", "CAMEL_BRAINTREE_PRIVATE_KEY");
+            options.remove("accessToken");
+            options.remove("clientId");
+            break;
+        case ACCESS_TOKEN:
+            addOptionIfMissing(options, "accessToken", "CAMEL_BRAINTREE_ACCESS_TOKEN");
+            options.remove("environment");
+            options.remove("merchantId");
+            options.remove("publicKey");
+            options.remove("privateKey");
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported configuration type");
         }
 
         final BraintreeConfiguration configuration = new BraintreeConfiguration();
@@ -146,19 +149,17 @@ public class AbstractBraintreeTestSupport extends CamelTestSupport {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers)
-        throws CamelExecutionException {
-        return (T) template().requestBodyAndHeaders(endpointUri, body, headers);
+    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws CamelExecutionException {
+        return (T)template().requestBodyAndHeaders(endpointUri, body, headers);
     }
 
-    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type)
-        throws CamelExecutionException {
+    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type) throws CamelExecutionException {
         return template().requestBodyAndHeaders(endpointUri, body, headers, type);
     }
 
     @SuppressWarnings("unchecked")
     protected <T> T requestBody(String endpoint, Object body) throws CamelExecutionException {
-        return (T) template().requestBody(endpoint, body);
+        return (T)template().requestBody(endpoint, body);
     }
 
     protected <T> T requestBody(String endpoint, Object body, Class<T> type) throws CamelExecutionException {
