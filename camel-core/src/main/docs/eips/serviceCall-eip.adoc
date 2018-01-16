@@ -100,18 +100,18 @@ The Service Call EIP supports 14 options which are listed below:
 | Name | Description | Default | Type
 | *name* | *Required* Sets the name of the service to use |  | String
 | *uri* | The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression. |  | String
-| *component* | The component to use | http4 | String
+| *component* | The component to use. | http4 | String
 | *pattern* | Sets the optional ExchangePattern used to invoke this endpoint |  | ExchangePattern
 | *configurationRef* | Refers to a ServiceCall configuration to use |  | String
-| *serviceDiscoveryRef* | Sets a reference to a custom ServiceDiscovery to use |  | String
-| *serviceFilterRef* | Sets a reference to a custom ServiceFilter to use |  | String
-| *serviceChooserRef* | Sets a reference to a custom ServiceChooser to use |  | String
-| *loadBalancerRef* | Sets a reference to a custom ServiceLoadBalancer to use |  | String
-| *expressionRef* | Set a reference to a custom Expression to use |  | String
-| *serviceDiscovery Configuration* | *Required* Configures the ServiceDiscovery using the given configuration |  | ServiceCallService DiscoveryConfiguration
-| *serviceFilterConfiguration* | *Required* Configures the ServiceFilter using the given configuration |  | ServiceCallService FilterConfiguration
-| *loadBalancerConfiguration* | *Required* Configures the LoadBalancer using the given configuration |  | ServiceCallServiceLoad BalancerConfiguration
-| *expressionConfiguration* | *Required* Configures the Expression using the given configuration |  | ServiceCallExpression Configuration
+| *serviceDiscoveryRef* | Sets a reference to a custom ServiceDiscovery to use. |  | String
+| *serviceFilterRef* | Sets a reference to a custom ServiceFilter to use. |  | String
+| *serviceChooserRef* | Sets a reference to a custom ServiceChooser to use. |  | String
+| *loadBalancerRef* | Sets a reference to a custom ServiceLoadBalancer to use. |  | String
+| *expressionRef* | Set a reference to a custom Expression to use. |  | String
+| *serviceDiscovery Configuration* | *Required* Configures the ServiceDiscovery using the given configuration. |  | ServiceCallService DiscoveryConfiguration
+| *serviceFilterConfiguration* | *Required* Configures the ServiceFilter using the given configuration. |  | ServiceCallService FilterConfiguration
+| *loadBalancerConfiguration* | *Required* Configures the LoadBalancer using the given configuration. |  | ServiceCallServiceLoad BalancerConfiguration
+| *expressionConfiguration* | *Required* Configures the Expression using the given configuration. |  | ServiceCallExpression Configuration
 |===
 // eip options: END
 
