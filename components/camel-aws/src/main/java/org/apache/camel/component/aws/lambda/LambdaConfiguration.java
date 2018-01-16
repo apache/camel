@@ -108,7 +108,7 @@ public class LambdaConfiguration implements Cloneable {
     }
 
     /**
-     * The region with which the AWS-Lambda client wants to work with.
+     * The AWS-Lambda client to use.
      */
     public void setAwsLambdaEndpoint(String awsLambdaEndpoint) {
         this.awsLambdaEndpoint = awsLambdaEndpoint;
