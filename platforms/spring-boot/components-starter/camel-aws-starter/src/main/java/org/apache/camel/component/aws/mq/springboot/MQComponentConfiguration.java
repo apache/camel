@@ -17,6 +17,8 @@
 package org.apache.camel.component.aws.mq.springboot;
 
 import javax.annotation.Generated;
+import com.amazonaws.services.mq.AmazonMQ;
+import org.apache.camel.component.aws.mq.MQOperations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -32,11 +34,60 @@ public class MQComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * The AWS MQ default configuration
+     */
+    private MQConfigurationNestedConfiguration configuration;
+    /**
+     * Amazon AWS Access Key
+     */
+    private String accessKey;
+    /**
+     * Amazon AWS Secret Key
+     */
+    private String secretKey;
+    /**
+     * The region in which MQ client needs to work
+     */
+    private String region;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public MQConfigurationNestedConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(
+            MQConfigurationNestedConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
@@ -45,5 +96,85 @@ public class MQComponentConfiguration
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    public static class MQConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.aws.mq.MQConfiguration.class;
+        /**
+         * To use a existing configured AmazonMQClient as client
+         */
+        private AmazonMQ amazonMqClient;
+        /**
+         * Amazon AWS Access Key
+         */
+        private String accessKey;
+        /**
+         * Amazon AWS Secret Key
+         */
+        private String secretKey;
+        /**
+         * The operation to perform. It can be
+         * listBrokers,createBroker,deleteBroker
+         */
+        private MQOperations operation;
+        private String proxyHost;
+        private Integer proxyPort;
+        private String region;
+
+        public AmazonMQ getAmazonMqClient() {
+            return amazonMqClient;
+        }
+
+        public void setAmazonMqClient(AmazonMQ amazonMqClient) {
+            this.amazonMqClient = amazonMqClient;
+        }
+
+        public String getAccessKey() {
+            return accessKey;
+        }
+
+        public void setAccessKey(String accessKey) {
+            this.accessKey = accessKey;
+        }
+
+        public String getSecretKey() {
+            return secretKey;
+        }
+
+        public void setSecretKey(String secretKey) {
+            this.secretKey = secretKey;
+        }
+
+        public MQOperations getOperation() {
+            return operation;
+        }
+
+        public void setOperation(MQOperations operation) {
+            this.operation = operation;
+        }
+
+        public String getProxyHost() {
+            return proxyHost;
+        }
+
+        public void setProxyHost(String proxyHost) {
+            this.proxyHost = proxyHost;
+        }
+
+        public Integer getProxyPort() {
+            return proxyPort;
+        }
+
+        public void setProxyPort(Integer proxyPort) {
+            this.proxyPort = proxyPort;
+        }
+
+        public String getRegion() {
+            return region;
+        }
+
+        public void setRegion(String region) {
+            this.region = region;
+        }
     }
 }

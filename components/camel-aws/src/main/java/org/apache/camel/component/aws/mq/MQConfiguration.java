@@ -18,13 +18,14 @@ package org.apache.camel.component.aws.mq;
 
 import com.amazonaws.services.mq.AmazonMQ;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class MQConfiguration {
+public class MQConfiguration implements Cloneable {
 
     @UriPath(description = "Logical name")
     @Metadata(required = "true")
@@ -120,5 +121,17 @@ public class MQConfiguration {
 
     public void setRegion(String region) {
         this.region = region;
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public MQConfiguration copy() {
+        try {
+            return (MQConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }
