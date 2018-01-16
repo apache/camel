@@ -71,7 +71,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *awsLambdaEndpoint* (producer) | The region with which the AWS-Lambda client wants to work with. |  | String
+| *awsLambdaEndpoint* (producer) | The AWS-Lambda client to use. |  | String
 | *operation* (producer) | *Required* The operation to perform. It can be listFunctions getFunction createFunction deleteFunction or invokeFunction |  | LambdaOperations
 | *region* (producer) | Amazon AWS Region |  | String
 | *awsLambdaClient* (advanced) | To use a existing configured AwsLambdaClient as client |  | AWSLambda
