@@ -29,9 +29,9 @@ public class DdbConfiguration implements Cloneable {
 
     @UriPath @Metadata(required = "true")
     private String tableName;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam
     private AmazonDynamoDB amazonDDBClient;
