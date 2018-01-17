@@ -19,7 +19,9 @@ package org.apache.camel.component.aws.cw;
 
 import java.util.Date;
 
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
+
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -58,6 +60,32 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
         CwComponent component = new CwComponent(context);
         component.createEndpoint("aws-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&accessKey=xxx");
+    }
+    
+    @Test
+    public void createEndpointWithComponentElements() throws Exception {
+        CwComponent component = new CwComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        CwEndpoint endpoint = (CwEndpoint)component.createEndpoint("aws-cw://camel.apache.org/test");
+        
+        assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
+        assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
+        assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
+    }
+    
+    @Test
+    public void createEndpointWithComponentAndEndpointElements() throws Exception {
+        CwComponent component = new CwComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        component.setRegion(Regions.US_WEST_1.toString());
+        CwEndpoint endpoint = (CwEndpoint)component.createEndpoint("aws-cw://camel.apache.org/test?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        
+        assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
 
     @Override
