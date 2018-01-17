@@ -16,8 +16,8 @@
  */
 package org.apache.camel.opentracing;
 
-import io.opentracing.NoopTracer;
-import io.opentracing.NoopTracerFactory;
+import io.opentracing.noop.NoopTracer;
+import io.opentracing.noop.NoopTracerFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.JndiRegistry;
