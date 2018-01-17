@@ -18,13 +18,14 @@ package org.apache.camel.component.aws.ddb;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class DdbConfiguration {
+public class DdbConfiguration implements Cloneable {
 
     @UriPath @Metadata(required = "true")
     private String tableName;
@@ -207,5 +208,17 @@ public class DdbConfiguration {
 
     public void setRegion(String region) {
         this.region = region;
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public DdbConfiguration copy() {
+        try {
+            return (DdbConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }
