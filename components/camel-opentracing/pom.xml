@@ -82,6 +82,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>io.opentracing</groupId>
+      <artifactId>opentracing-util</artifactId>
+      <version>${opentracing-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>
       <scope>test</scope>
