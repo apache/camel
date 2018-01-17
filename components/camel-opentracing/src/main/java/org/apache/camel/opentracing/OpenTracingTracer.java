@@ -23,13 +23,14 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 
-import io.opentracing.NoopTracerFactory;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
 import io.opentracing.contrib.tracerresolver.TracerResolver;
+import io.opentracing.noop.NoopTracerFactory;
 import io.opentracing.propagation.Format;
 import io.opentracing.tag.Tags;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
