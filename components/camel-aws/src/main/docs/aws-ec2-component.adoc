@@ -25,7 +25,19 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS EC2 component has no options.
+The AWS EC2 component supports 5 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The AWS EC2 default configuration |  | EC2Configuration
+| *region* (producer) | The region in which EC2 client needs to work |  | String
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
