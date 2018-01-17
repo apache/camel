@@ -228,12 +228,12 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     }
 
     /**
-     * Executes doPollDirectory and on exception checks if it can be ignored by calling ignoreCannotRetrieveFile .
+     * Executes doPollDirectory and on exception checks if it can be ignored by calling ignoreCannotRetrieveFile.
      *
-     * @param absolutePath The path of the directory to poll
-     * @param dirName The name of the directory to poll
-     * @param fileList current list of files gathered
-     * @param depth the current depth of the directory
+     * @param absolutePath  the path of the directory to poll
+     * @param dirName       the name of the directory to poll
+     * @param fileList      current list of files gathered
+     * @param depth         the current depth of the directory
      * @return whether or not to continue polling, <tt>false</tt> means the maxMessagesPerPoll limit has been hit
      * @throws GenericFileOperationFailedException if the exception during doPollDirectory can not be ignored
      */
@@ -243,13 +243,13 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             //Try to poll the directory
             return doPollDirectory(absolutePath, dirName, fileList, depth);
         } catch (Exception e) {
-            log.debug("Caught exception " + e.getMessage());
+            log.debug("Caught exception {}", e.getMessage());
             if (ignoreCannotRetrieveFile(absolutePath, null, e)) {
-                log.trace("Ignoring file error " + e.getMessage() + " for " + absolutePath);
+                log.trace("Ignoring file error {} for {}", e.getMessage(), absolutePath);
                 //indicate no files in this directory to poll, continue with fileList
                 return true;
             } else {
-                log.trace("Not ignoring file error " + e.getMessage() + " for " + absolutePath);
+                log.trace("Not ignoring file error {} for {}", e.getMessage(), absolutePath);
                 if (e instanceof GenericFileOperationFailedException) {
                     throw (GenericFileOperationFailedException) e;
                 } else {
