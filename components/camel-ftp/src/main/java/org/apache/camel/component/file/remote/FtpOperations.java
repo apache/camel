@@ -249,6 +249,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    @Override
+    public void forceDisconnect() throws GenericFileOperationFailedException {
+        doDisconnect();
+    }
+
     protected void doDisconnect() throws GenericFileOperationFailedException {
         // logout before disconnecting
         clientActivityListener.onDisconnecting(endpoint.getConfiguration().remoteServerInformation());

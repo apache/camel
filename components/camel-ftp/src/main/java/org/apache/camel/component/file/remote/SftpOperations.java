@@ -420,9 +420,24 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
     }
 
+    public synchronized void forceDisconnect() throws GenericFileOperationFailedException {
+        try {
+            if (session != null) {
+                session.disconnect();
+            }
+            if (channel != null) {
+                channel.disconnect();
+            }
+        } finally {
+            // ensure these
+            session = null;
+            channel = null;
+        }
+    }
+
     private void reconnectIfNecessary() {
         if (!isConnected()) {
-            connect((RemoteFileConfiguration) endpoint.getConfiguration());
+            connect(endpoint.getConfiguration());
         }
     }
 

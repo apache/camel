@@ -193,10 +193,22 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
     @Override
     public void disconnect() throws GenericFileOperationFailedException {
-        if (isConnected()) {
-            session.disconnect();
+        try {
+            if (isConnected()) {
+                session.disconnect();
+            }
+        } finally {
+            session = null;
         }
-        session = null;
+    }
+
+    @Override
+    public void forceDisconnect() throws GenericFileOperationFailedException {
+        try {
+            session.disconnect();
+        } finally {
+            session = null;
+        }
     }
 
     @Override

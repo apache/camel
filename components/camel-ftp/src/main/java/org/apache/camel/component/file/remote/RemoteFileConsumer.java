@@ -166,6 +166,22 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         }
     }
 
+    protected void forceDisconnect() {
+        // eager indicate we are no longer logged in
+        loggedIn = false;
+
+        // disconnect
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug("Force disconnecting from: {}", remoteServer());
+            }
+            getOperations().forceDisconnect();
+        } catch (GenericFileOperationFailedException e) {
+            // ignore just log a warning
+            log.warn("Error occurred while disconnecting from " + remoteServer() + " due: " + e.getMessage() + ". This exception will be ignored.");
+        }
+    }
+
     protected void recoverableConnectIfNecessary() throws Exception {
         try {
             connectIfNecessary();
