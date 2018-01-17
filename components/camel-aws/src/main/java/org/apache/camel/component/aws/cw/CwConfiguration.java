@@ -35,9 +35,9 @@ public class CwConfiguration implements Cloneable {
     private AmazonCloudWatch amazonCwClient;
     @UriParam
     private String amazonCwEndpoint;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam
     private String name;
