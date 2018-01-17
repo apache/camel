@@ -45,9 +45,9 @@ import org.slf4j.LoggerFactory;
  * frequently used keys. When {@link #add(String)} or {@link #contains(String)} methods are being used
  * then in case of 1st-level cache miss, the underlying file is scanned which may cost additional performance.
  * So try to find the right balance of the size of the 1st-level cache, the default size is 1000.
- * The file store has a maximum capacity of 32mb by default. If the file store grows bigger, then
- * the {@link #getDropOldestFileStore()} number of entries from the file store is dropped to reduce
- * the file store and make room for newer entries.
+ * The file store has a maximum capacity of 32mb by default (you can turn this off and have unlimited size).
+ * If the file store grows bigger than the maximum capacity, then the {@link #getDropOldestFileStore()} (is default 1000)
+ * number of entries from the file store is dropped to reduce the file store and make room for newer entries.
  *
  * @version 
  */
@@ -140,8 +140,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
                 // its a new key so append to file store
                 appendToStore(key);
 
-                // check if we hit maximum capacity and report a warning about this
-                if (fileStore.length() > maxFileStoreSize) {
+                // check if we hit maximum capacity (if enabled) and report a warning about this
+                if (maxFileStoreSize > 0 && fileStore.length() > maxFileStoreSize) {
                     LOG.warn("Maximum capacity of file store: {} hit at {} bytes. Dropping {} oldest entries from the file store", fileStore, maxFileStoreSize, dropOldestFileStore);
                     trunkStore();
                 }
@@ -215,6 +215,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
     /**
      * Sets the maximum file size for the file store in bytes.
+     * You can set the value to 0 or negative to turn this off, and have unlimited file store size.
      * <p/>
      * The default is 32mb.
      */
