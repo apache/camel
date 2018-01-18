@@ -165,8 +165,8 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
         setupClientQueryAndHeaders(client, exchange);
 
         // ensure the CONTENT_TYPE header can be retrieved
-        if (null == inMessage.getHeader(Exchange.CONTENT_TYPE, String.class) &&
-                null != client.getHeaders().get(Exchange.CONTENT_TYPE)) {
+        if (ObjectHelper.isEmpty(inMessage.getHeader(Exchange.CONTENT_TYPE, String.class)) &&
+                ObjectHelper.isNotEmpty(client.getHeaders().get(Exchange.CONTENT_TYPE))) {
             inMessage.setHeader(Exchange.CONTENT_TYPE, client.getHeaders().get(Exchange.CONTENT_TYPE).get(0));
         }
 
