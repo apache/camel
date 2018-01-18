@@ -25,12 +25,12 @@ import org.apache.karaf.shell.api.action.Completion;
 
 public abstract class AbstractRouteCommand extends CamelControllerImpl implements Action {
 
-    @Argument(index = 0, name = "route", description = "The Camel route ID or a wildcard expression", required = true, multiValued = false)
-    @Completion(RouteCompleter.class)
-    String route;
-
-    @Argument(index = 1, name = "context", description = "The Camel context name.", required = false, multiValued = false)
+    @Argument(index = 0, name = "context", description = "The Camel context name.", required = true, multiValued = false)
     @Completion(CamelContextCompleter.class)
     String context;
+
+    @Argument(index = 1, name = "route", description = "The Camel route ID or a wildcard expression", required = true, multiValued = false)
+    @Completion(RouteCompleter.class)
+    String route;
 
 }
