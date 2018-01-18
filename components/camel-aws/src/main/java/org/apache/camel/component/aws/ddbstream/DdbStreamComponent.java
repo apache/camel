@@ -39,7 +39,16 @@ public class DdbStreamComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        DdbStreamEndpoint endpoint = new DdbStreamEndpoint(uri, remaining, this);
+        DdbStreamConfiguration configuration = new DdbStreamConfiguration();
+        configuration.setTableName(remaining);
+        setProperties(configuration, parameters);
+        
+        if (remaining == null || remaining.trim().length() == 0) {
+            throw new IllegalArgumentException("Table name must be specified.");
+        }
+        configuration.setTableName(remaining);
+        
+        DdbStreamEndpoint endpoint = new DdbStreamEndpoint(uri, configuration, this);
         return endpoint;
     }
 }
