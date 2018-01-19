@@ -24,6 +24,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreamsClientBuilder;
 import com.amazonaws.services.dynamodbv2.model.Record;
+import com.amazonaws.services.kinesis.AmazonKinesis;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -76,10 +77,8 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
         
-        if (configuration.getAmazonDynamoDbStreamsClient() == null) {
-            ddbStreamClient = createDdbStreamClient();
-            configuration.setAmazonDynamoDbStreamsClient(ddbStreamClient);
-        }
+        ddbStreamClient = configuration.getAmazonDynamoDbStreamsClient() != null ? configuration.getAmazonDynamoDbStreamsClient()
+            : createDdbStreamClient();
     }
 
     @Override
@@ -89,6 +88,10 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
 
     public DdbStreamConfiguration getConfiguration() {
         return configuration;
+    }
+    
+    public AmazonDynamoDBStreams getClient() {
+        return ddbStreamClient;
     }
 
     public String getSequenceNumber() {
