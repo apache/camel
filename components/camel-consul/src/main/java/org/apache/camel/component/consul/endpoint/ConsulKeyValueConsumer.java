@@ -85,7 +85,7 @@ public final class ConsulKeyValueConsumer extends AbstractConsulConsumer<KeyValu
                 message.setHeader(ConsulConstants.CONSUL_SESSION, value.getSession().get());
             }
 
-            message.setBody(configuration.isValueAsString() ? value.getValueAsString().orNull() : value.getValue().orNull());
+            message.setBody(configuration.isValueAsString() ? value.getValueAsString().orElse(null) : value.getValue().orElse(null));
 
             try {
                 getProcessor().process(exchange);
@@ -104,7 +104,7 @@ public final class ConsulKeyValueConsumer extends AbstractConsulConsumer<KeyValu
 
         @Override
         public void watch(KeyValueClient client) {
-            client.getValue(key, queryOptions(), this);
+            client.getValue(key, queryOptions());
         }
 
         @Override

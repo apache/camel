@@ -323,7 +323,7 @@ public final class ConsulRoutePolicy extends RoutePolicySupport implements Camel
             if (isRunAllowed()) {
                 Optional<Value> value = consulResponse.getResponse();
                 if (value.isPresent()) {
-                    Optional<String> sid = value.get().getSession();
+                    java.util.Optional<String> sid = value.get().getSession();
                     if (sid.isPresent() && ObjectHelper.isNotEmpty(sid.get())) {
                         // If the key is not held by any session, try acquire a
                         // lock (become leader)
@@ -353,8 +353,7 @@ public final class ConsulRoutePolicy extends RoutePolicySupport implements Camel
 
                 keyValueClient.getValue(
                     servicePath,
-                    QueryOptions.blockSeconds(ttl / 3, index.get()).build(),
-                    this
+                    QueryOptions.blockSeconds(ttl / 3, index.get()).build()
                 );
             }
         }
