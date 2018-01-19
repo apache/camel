@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 public class DnsActivation {
     private static final transient Logger logger = LoggerFactory.getLogger(DnsActivation.class);
 
-	private final static String[] DNS_TYPES_CNAME = {"CNAME"}; 
+	private final static String[] DNS_TYPES = {"CNAME", "A"}; 
 
 	private String hostname;
 	private List<String> resolvesTo = new ArrayList<String>();
@@ -70,7 +70,7 @@ public class DnsActivation {
 				String hostname = hostnames.remove(0);
 				InetAddress inetAddress = InetAddress.getByName(hostname);
 				InitialDirContext initialDirContext = new InitialDirContext();
-				Attributes attributes = initialDirContext.getAttributes("dns:/" + inetAddress.getHostName(), DNS_TYPES_CNAME);
+				Attributes attributes = initialDirContext.getAttributes("dns:/" + inetAddress.getHostName(), DNS_TYPES);
 				attributeEnumeration = attributes.getAll();
 				while(attributeEnumeration.hasMore()) {
 					Attribute attribute = (Attribute)attributeEnumeration.next();
@@ -113,9 +113,6 @@ public class DnsActivation {
 			while (inetAddressesEnumeration.hasMoreElements()) {
 				InetAddress inetAddress = inetAddressesEnumeration.nextElement();
 				String ip = inetAddress.getHostAddress();
-				if(ip.startsWith("127.")) {
-					continue;
-				}
 				logger.debug("Local ip: "+ip);
 				localIps.add(ip);
 			}
