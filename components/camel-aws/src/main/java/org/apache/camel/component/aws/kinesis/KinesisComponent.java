@@ -34,7 +34,11 @@ public class KinesisComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        KinesisEndpoint endpoint = new KinesisEndpoint(uri, remaining, this);
+        KinesisConfiguration configuration = new KinesisConfiguration();
+        configuration.setStreamName(remaining);
+        setProperties(configuration, parameters);
+        
+        KinesisEndpoint endpoint = new KinesisEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
         return endpoint;
     }

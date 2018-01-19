@@ -51,6 +51,8 @@ public class KinesisProducerTest {
     @Mock
     private KinesisEndpoint kinesisEndpoint;
     @Mock
+    private KinesisConfiguration kinesisConfiguration;
+    @Mock
     private Message outMessage;
     @Mock
     private Message inMessage;
@@ -63,7 +65,8 @@ public class KinesisProducerTest {
     @Before
     public void setup() throws Exception {
         when(kinesisEndpoint.getClient()).thenReturn(kinesisClient);
-        when(kinesisEndpoint.getStreamName()).thenReturn(STREAM_NAME);
+        when(kinesisEndpoint.getConfiguration()).thenReturn(kinesisConfiguration);
+        when(kinesisEndpoint.getConfiguration().getStreamName()).thenReturn(STREAM_NAME);
 
         when(exchange.getOut()).thenReturn(outMessage);
         when(exchange.getIn()).thenReturn(inMessage);
