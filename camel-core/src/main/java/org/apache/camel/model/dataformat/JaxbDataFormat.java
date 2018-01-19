@@ -346,6 +346,9 @@ public class JaxbDataFormat extends DataFormatDefinition {
         if (schema != null) {
             setProperty(camelContext, dataFormat, "schema", schema);
         }
+        if (schemaSeverityLevel != null) {
+            setProperty(camelContext, dataFormat, "schemaSeverityLevel", schemaSeverityLevel);
+        }
         if (xmlStreamWriterWrapper != null) {
             setProperty(camelContext, dataFormat, "xmlStreamWriterWrapper", xmlStreamWriterWrapper);
         }
