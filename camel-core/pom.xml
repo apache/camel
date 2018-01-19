@@ -56,6 +56,7 @@
       javax.xml.transform.stax;resolution:=optional,
       net.sf.saxon.event;resolution:=optional,
       net.sf.saxon.serialize;resolution:=optional,
+      net.sf.saxon.xpath;resolution:=optional,
       *
     </camel.osgi.import>
     <camel.osgi.export.service>
@@ -77,6 +78,7 @@
       org.apache.camel.spi.ComponentResolver;component=rest,
       org.apache.camel.spi.ComponentResolver;component=rest-api,
       org.apache.camel.spi.ComponentResolver;component=scheduler,
+      org.apache.camel.spi.ComponentResolver;component=saga,
       org.apache.camel.spi.ComponentResolver;component=seda,
       org.apache.camel.spi.ComponentResolver;component=stub,
       org.apache.camel.spi.ComponentResolver;component=test,

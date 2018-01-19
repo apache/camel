@@ -100,7 +100,7 @@ public final class RouteContextRefDefinitionHelper {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         Object clone = unmarshaller.unmarshal(bis);
 
-        if (clone != null && clone instanceof RouteDefinition) {
+        if (clone instanceof RouteDefinition) {
             RouteDefinition def2 = (RouteDefinition) clone;
 
             // need to clone the namespaces also as they are not JAXB marshalled (as they are transient)

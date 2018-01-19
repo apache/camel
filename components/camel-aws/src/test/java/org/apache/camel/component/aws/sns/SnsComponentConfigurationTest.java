@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.sns;
 
+import com.amazonaws.regions.Regions;
+
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -126,6 +128,32 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         SnsComponent component = new SnsComponent(context);
         component.createEndpoint("aws-sns://MyTopic?accessKey=xxx");
+    }
+    
+    @Test
+    public void createEndpointWithComponentElements() throws Exception {
+        SnsComponent component = new SnsComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        SnsEndpoint endpoint = (SnsEndpoint)component.createEndpoint("aws-sns://MyTopic");
+        
+        assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
+        assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
+        assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
+    }
+    
+    @Test
+    public void createEndpointWithComponentAndEndpointElements() throws Exception {
+        SnsComponent component = new SnsComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        component.setRegion(Regions.US_WEST_1.toString());
+        SnsEndpoint endpoint = (SnsEndpoint)component.createEndpoint("aws-sns://MyTopic?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        
+        assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
     
     @Test

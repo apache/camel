@@ -68,7 +68,7 @@
       <dependency>
         <groupId>com.alibaba</groupId>
         <artifactId>fastjson</artifactId>
-        <version>1.2.41</version>
+        <version>1.2.44</version>
       </dependency>
       <dependency>
         <groupId>com.atlassian.jira</groupId>
@@ -179,7 +179,7 @@
       <dependency>
         <groupId>net.sf.saxon</groupId>
         <artifactId>Saxon-HE</artifactId>
-        <version>9.8.0-6</version>
+        <version>9.8.0-7</version>
       </dependency>
       <dependency>
         <groupId>ognl</groupId>
@@ -1751,6 +1751,16 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-lra</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-lra-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-lucene</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3132,12 +3142,12 @@
       <dependency>
         <groupId>org.apache.ftpserver</groupId>
         <artifactId>ftplet-api</artifactId>
-        <version>1.0.6</version>
+        <version>1.1.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.ftpserver</groupId>
         <artifactId>ftpserver-core</artifactId>
-        <version>1.0.6</version>
+        <version>1.1.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
@@ -3177,7 +3187,7 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore-nio</artifactId>
-        <version>4.4.8</version>
+        <version>4.4.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.kafka</groupId>

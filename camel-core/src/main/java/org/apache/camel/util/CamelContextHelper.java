@@ -708,7 +708,7 @@ public final class CamelContextHelper {
         if (answer == null) {
             // lookup what is stored under properties, as it may not be the Camel properties component
             Object found = camelContext.getRegistry().lookupByName("properties");
-            if (found != null && found instanceof PropertiesComponent) {
+            if (found instanceof PropertiesComponent) {
                 answer = (PropertiesComponent) found;
                 camelContext.addComponent("properties", answer);
             }

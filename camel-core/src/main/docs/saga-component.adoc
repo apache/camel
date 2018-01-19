@@ -1,0 +1,50 @@
+== Saga Component
+
+*Available as of Camel version 2.21*
+
+The *saga* component provides a bridge to execute custom actions within a route using the Saga EIP.
+
+The component should be used for advanced tasks, such as deciding to complete or compensate a Saga
+with completionMode set to *MANUAL*.
+
+Refer to the Saga EIP documentation for help on using sagas in common scenarios.
+
+=== URI format
+
+[source]
+----
+saga:action
+----
+
+=== Options
+
+// component options: START
+The Saga component has no options.
+// component options: END
+
+
+// endpoint options: START
+The Saga endpoint is configured using URI syntax:
+
+----
+saga:action
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *action* | *Required* Action to execute (complete or compensate) |  | SagaEndpointAction
+|===
+
+==== Query Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END

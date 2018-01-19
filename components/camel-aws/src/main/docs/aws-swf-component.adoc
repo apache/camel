@@ -25,7 +25,19 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS Simple Workflow component has no options.
+The AWS Simple Workflow component supports 5 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The AWS SWF default configuration |  | SWFConfiguration
+| *accessKey* (common) | Amazon AWS Access Key. |  | String
+| *secretKey* (common) | Amazon AWS Secret Key. |  | String
+| *region* (common) | Amazon AWS Region. |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
@@ -53,13 +65,11 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *accessKey* (common) | Amazon AWS Access Key. |  | String
 | *amazonSWClient* (common) | To use the given AmazonSimpleWorkflowClient as client |  | AmazonSimpleWorkflow Client
 | *dataConverter* (common) | An instance of com.amazonaws.services.simpleworkflow.flow.DataConverter to use for serializing/deserializing the data. |  | DataConverter
 | *domainName* (common) | The workflow domain to use. |  | String
 | *eventName* (common) | The workflow or activity event name to use. |  | String
 | *region* (common) | Amazon AWS Region. |  | String
-| *secretKey* (common) | Amazon AWS Secret Key. |  | String
 | *version* (common) | The workflow or activity event version to use. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -83,6 +93,8 @@ with the following path and query parameters:
 | *terminationReason* (workflow) | The reason for terminating a workflow. |  | String
 | *workflowList* (workflow) | The list name to consume workflows from. |  | String
 | *workflowTypeRegistration Options* (workflow) | Workflow registration options |  | WorkflowType RegistrationOptions
+| *accessKey* (security) | Amazon AWS Access Key. |  | String
+| *secretKey* (security) | Amazon AWS Secret Key. |  | String
 |===
 // endpoint options: END
 

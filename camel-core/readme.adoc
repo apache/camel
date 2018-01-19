@@ -6,7 +6,7 @@ Components
 
 
 // components: START
-Number of Components: 25 in 1 JAR artifacts (1 deprecated)
+Number of Components: 26 in 1 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -62,6 +62,9 @@ Number of Components: 25 in 1 JAR artifacts (1 deprecated)
 
 | link:src/main/docs/rest-api-component.adoc[REST API] (camel-core) +
 `rest-api:path/contextIdPattern` | 2.16 | The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
+
+| link:src/main/docs/saga-component.adoc[Saga] (camel-core) +
+`saga:action` | 2.21 | The saga component provides access to advanced options for managing the flow in the Saga EIP.
 
 | link:src/main/docs/scheduler-component.adoc[Scheduler] (camel-core) +
 `scheduler:name` | 2.15 | The scheduler component is used for generating message exchanges when a scheduler fires.

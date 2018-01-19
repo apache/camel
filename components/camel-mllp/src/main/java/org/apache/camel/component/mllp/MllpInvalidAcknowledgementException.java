@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 /**
  * Raised when a MLLP Producer receives a HL7 Acknowledgement for which the HL7 Acknowledgement type cannot be determined.
  */
 public class MllpInvalidAcknowledgementException extends MllpAcknowledgementException {
-
     public MllpInvalidAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
         super(message, hl7Message, hl7Acknowledgement);
     }

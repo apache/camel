@@ -21,21 +21,22 @@ import java.util.List;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class SesConfiguration {
+public class SesConfiguration implements Cloneable {
 
     @UriPath @Metadata(required = "true")
     private String from;
     @UriParam
     private AmazonSimpleEmailService amazonSESClient;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam
     private String amazonSESEndpoint;
@@ -195,5 +196,17 @@ public class SesConfiguration {
 
     public void setRegion(String region) {
         this.region = region;
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public SesConfiguration copy() {
+        try {
+            return (SesConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

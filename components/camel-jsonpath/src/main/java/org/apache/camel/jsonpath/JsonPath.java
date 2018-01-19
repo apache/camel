@@ -26,7 +26,7 @@ import com.jayway.jsonpath.Option;
 import org.apache.camel.language.LanguageAnnotation;
 
 /**
- * An annotation used to inject a <a href="http://commons.apache.org/jsonpath/">JSon Path</a>
+ * An annotation used to inject a <a href="http://commons.apache.org/jsonpath/">JsonPath</a>
  * expression into a method parameter when using
  * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
  *
@@ -46,12 +46,12 @@ public @interface JsonPath {
     boolean suppressExceptions() default false;
 
     /**
-     * Whether to allow in inlined simple exceptions in the json path expression
+     * Whether to allow in inlined simple exceptions in the JsonPath expression
      */
     boolean allowSimple() default true;
 
     /**
-     * To configure the json path options to use
+     * To configure the JsonPath options to use
      */
     Option[] options() default {};
 }

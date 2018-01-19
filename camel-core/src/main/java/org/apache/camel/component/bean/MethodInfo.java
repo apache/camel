@@ -134,6 +134,8 @@ public class MethodInfo {
             routingSlip = new RoutingSlip(camelContext);
             routingSlip.setDelimiter(routingSlipAnnotation.delimiter());
             routingSlip.setIgnoreInvalidEndpoints(routingSlipAnnotation.ignoreInvalidEndpoints());
+            routingSlip.setCacheSize(routingSlipAnnotation.cacheSize());
+
             // add created routingSlip as a service so we have its lifecycle managed
             try {
                 camelContext.addService(routingSlip);
@@ -149,6 +151,7 @@ public class MethodInfo {
             dynamicRouter = new DynamicRouter(camelContext);
             dynamicRouter.setDelimiter(dynamicRouterAnnotation.delimiter());
             dynamicRouter.setIgnoreInvalidEndpoints(dynamicRouterAnnotation.ignoreInvalidEndpoints());
+            dynamicRouter.setCacheSize(dynamicRouterAnnotation.cacheSize());
             // add created dynamicRouter as a service so we have its lifecycle managed
             try {
                 camelContext.addService(dynamicRouter);
@@ -262,7 +265,7 @@ public class MethodInfo {
 
             public boolean proceed(AsyncCallback callback) {
                 Object body = exchange.getIn().getBody();
-                if (body != null && body instanceof StreamCache) {
+                if (body instanceof StreamCache) {
                     // ensure the stream cache is reset before calling the method
                     ((StreamCache) body).reset();
                 }
@@ -682,7 +685,7 @@ public class MethodInfo {
             Object[] answer = new Object[expressions.length];
             for (int i = 0; i < expressions.length; i++) {
 
-                if (body != null && body instanceof StreamCache) {
+                if (body instanceof StreamCache) {
                     // need to reset stream cache for each expression as you may access the message body in multiple parameters
                     ((StreamCache) body).reset();
                 }

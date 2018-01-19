@@ -48,13 +48,18 @@
       <artifactId>camel-core</artifactId>
     </dependency>
 
-    <!-- brave/zkpkin -->
+    <!-- brave/zipkin -->
     <dependency>
       <groupId>io.zipkin.brave</groupId>
       <artifactId>brave-core</artifactId>
       <version>${brave-zipkin-version}</version>
     </dependency>
     <!-- to send to zipkin server -->
+    <dependency>
+      <groupId>io.zipkin.reporter2</groupId>
+      <artifactId>zipkin-sender-urlconnection</artifactId>
+      <version>${zipkin-reporter-version}</version>
+    </dependency>
     <dependency>
       <groupId>io.zipkin.brave</groupId>
       <artifactId>brave-spancollector-scribe</artifactId>
@@ -95,6 +100,18 @@
             <ZIPKIN_COLLECTOR_SERVICE_THRIFT_HOST>192.168.99.100</ZIPKIN_COLLECTOR_SERVICE_THRIFT_HOST>
             <ZIPKIN_COLLECTOR_SERVICE_THRIFT_PORT>9410</ZIPKIN_COLLECTOR_SERVICE_THRIFT_PORT>
           </environmentVariables>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Export-Package>org.apache.camel.zipkin*</Export-Package>
+            <Import-Package>!com.github.kristofa.brave.internal,!zipkin2.internal,!zipkin.internal,*</Import-Package>
+          </instructions>
         </configuration>
       </plugin>
     </plugins>

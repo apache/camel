@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static com.mongodb.ServerAddress.defaultHost;
 import static de.flapdoodle.embed.mongo.distribution.Version.Main.PRODUCTION;
 import static de.flapdoodle.embed.process.runtime.Network.localhostIsIPv6;
 import static org.springframework.util.SocketUtils.findAvailableTcpPort;
@@ -60,6 +61,6 @@ public class EmbedMongoConfiguration {
 
     @Bean
     public MongoClient myDb() throws UnknownHostException {
-        return new MongoClient("0.0.0.0", PORT);
+        return new MongoClient(defaultHost(), PORT);
     }
 }

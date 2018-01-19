@@ -355,7 +355,7 @@ public final class ProcessorDefinitionHelper {
             return !outputs.isEmpty();
         }
         for (ProcessorDefinition output : outputs) {
-            if (output instanceof TransactedDefinition || output instanceof PolicyDefinition) {
+            if (output.isWrappingEntireOutput()) {
                 // special for those as they wrap entire output, so we should just check its output
                 return hasOutputs(output.getOutputs(), excludeAbstract);
             }
@@ -696,7 +696,7 @@ public final class ProcessorDefinitionHelper {
                 if (Constants.PLACEHOLDER_QNAME.equals(key.getNamespaceURI())) {
                     String local = key.getLocalPart();
                     Object value = other.getOtherAttributes().get(key);
-                    if (value != null && value instanceof String) {
+                    if (value instanceof String) {
                         // enforce a properties component to be created if none existed
                         CamelContextHelper.lookupPropertiesComponent(camelContext, true);
 

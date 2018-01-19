@@ -44,7 +44,10 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
         GenericFileConsumer consumer = (GenericFileConsumer) super.createConsumer();
         // do not start scheduler as we poll manually
         consumer.setStartScheduler(false);
+        // when using polling consumer we poll only 1 file per poll so we can limit
         consumer.setMaxMessagesPerPoll(1);
+        // however do not limit eager as we may sort the files and thus need to do a full scan so we can sort afterwards
+        consumer.setEagerLimitMaxMessagesPerPoll(false);
         // we only want to poll once so disconnect by default
         return consumer;
     }
@@ -133,7 +136,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
                     }
 
                     // mark we are polling which should also include the begin/poll/commit
-                    boolean begin = pollStrategy.begin(this, getEndpoint());
+                    boolean begin = pollStrategy.begin(getConsumer(), getEndpoint());
                     if (begin) {
                         retryCounter++;
                         polledMessages = getConsumer().poll();
@@ -147,7 +150,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
                             done = false;
                         }
 
-                        pollStrategy.commit(this, getEndpoint(), polledMessages);
+                        pollStrategy.commit(getConsumer(), getEndpoint(), polledMessages);
                     } else {
                         LOG.debug("Cannot begin polling as pollStrategy returned false: {}", pollStrategy);
                     }
@@ -156,7 +159,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
                 LOG.trace("Finished polling: {}", this.getEndpoint());
             } catch (Exception e) {
                 try {
-                    boolean retry = pollStrategy.rollback(this, getEndpoint(), retryCounter, e);
+                    boolean retry = pollStrategy.rollback(getConsumer(), getEndpoint(), retryCounter, e);
                     if (retry) {
                         // do not set cause as we retry
                         done = false;

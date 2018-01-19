@@ -14,164 +14,272 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.nio.charset.Charset;
+import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.component.mllp.impl.Hl7Util;
-import org.apache.camel.component.mllp.impl.MllpBufferedSocketWriter;
-import org.apache.camel.component.mllp.impl.MllpSocketReader;
-import org.apache.camel.component.mllp.impl.MllpSocketUtil;
-import org.apache.camel.component.mllp.impl.MllpSocketWriter;
+import org.apache.camel.component.mllp.internal.Hl7Util;
+import org.apache.camel.component.mllp.internal.MllpSocketBuffer;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.IOHelper;
-
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_ACKNOWLEDGEMENT;
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING;
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE;
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND;
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND;
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_LOCAL_ADDRESS;
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_REMOTE_ADDRESS;
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND;
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND;
-import static org.apache.camel.component.mllp.MllpEndpoint.SEGMENT_DELIMITER;
 
 /**
  * The MLLP producer.
  */
-@ManagedResource(description = "MllpTcpClient Producer")
-public class MllpTcpClientProducer extends DefaultProducer {
-    MllpEndpoint endpoint;
-
+@ManagedResource(description = "MLLP Producer")
+public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
     Socket socket;
 
-    MllpSocketReader mllpSocketReader;
-    MllpSocketWriter mllpSocketWriter;
+    final MllpSocketBuffer mllpBuffer;
+
+    ScheduledExecutorService idleTimeoutExecutor;
+    long lastProcessCallTicks = -1;
+
+    private String cachedLocalAddress;
+    private String cachedRemoteAddress;
+    private String cachedCombinedAddress;
 
     public MllpTcpClientProducer(MllpEndpoint endpoint) throws SocketException {
         super(endpoint);
-        log.trace("MllpTcpClientProducer(endpoint)");
+        log.trace("Constructing MllpTcpClientProducer for endpoint URI {}", endpoint.getEndpointUri());
 
-        this.endpoint = endpoint;
+        mllpBuffer = new MllpSocketBuffer(endpoint);
+    }
+
+    @ManagedAttribute(description = "Last activity time")
+    public Date getLastActivityTime() {
+        return new Date(lastProcessCallTicks);
+    }
+
+    @ManagedAttribute(description = "Connection")
+    public String getConnectionAddress() {
+        if (cachedCombinedAddress != null) {
+            return cachedCombinedAddress;
+        }
+
+        return MllpSocketBuffer.formatAddressString(null, null);
+    }
+
+    @ManagedOperation(description = "Close Connection")
+    public void closeConnection() {
+        log.info("Close Connection for address {} called via JMX", getConnectionAddress());
+
+        mllpBuffer.closeSocket(socket);
+    }
+
+    @ManagedOperation(description = "Reset Connection")
+    public void resetConnection() {
+        log.info("Reset Connection for address {} requested via JMX", getConnectionAddress());
+
+        mllpBuffer.resetSocket(socket);
     }
 
     @Override
     protected void doStart() throws Exception {
-        log.trace("doStart()");
+        if (getConfiguration().hasIdleTimeout()) {
+            // Get the URI without options
+            String fullEndpointKey = getEndpoint().getEndpointKey();
+            String endpointKey;
+            if (fullEndpointKey.contains("?")) {
+                endpointKey = fullEndpointKey.substring(0, fullEndpointKey.indexOf('?'));
+            } else {
+                endpointKey = fullEndpointKey;
+            }
+
+            idleTimeoutExecutor = Executors.newSingleThreadScheduledExecutor(new IdleTimeoutThreadFactory(endpointKey));
+        }
 
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        log.trace("doStop()");
+        if (idleTimeoutExecutor != null) {
+            idleTimeoutExecutor.shutdown();
+            idleTimeoutExecutor = null;
+        }
 
-        MllpSocketUtil.close(socket, log, "Stopping component");
+        mllpBuffer.resetSocket(socket);
 
         super.doStop();
     }
 
-    @ManagedOperation(description = "Close client socket")
-    public void closeMllpSocket() {
-        MllpSocketUtil.close(socket, log, "JMX triggered closing socket");
-    }
-
-    @ManagedOperation(description = "Reset client socket")
-    public void resetMllpSocket() {
-        MllpSocketUtil.reset(socket, log, "JMX triggered resetting socket");
-    }
-
     @Override
-    public void process(Exchange exchange) throws Exception {
-        log.trace("process(exchange)");
+    public synchronized void process(Exchange exchange) throws Exception {
+        log.trace("Processing Exchange {}", exchange.getExchangeId());
 
-        // Check BEFORE_SEND Properties
-        if (exchange.getProperty(MLLP_RESET_CONNECTION_BEFORE_SEND, boolean.class)) {
-            MllpSocketUtil.reset(socket, log, "Exchange property " + MLLP_RESET_CONNECTION_BEFORE_SEND + " = " + exchange.getProperty(MLLP_RESET_CONNECTION_BEFORE_SEND, boolean.class));
-            return;
-        } else if (exchange.getProperty(MLLP_CLOSE_CONNECTION_BEFORE_SEND, boolean.class)) {
-            MllpSocketUtil.close(socket, log, "Exchange property " + MLLP_CLOSE_CONNECTION_BEFORE_SEND + " = " + exchange.getProperty(MLLP_CLOSE_CONNECTION_BEFORE_SEND, boolean.class));
-            return;
-        }
+        Message message = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+
+        getEndpoint().checkBeforeSendProperties(exchange, socket, log);
 
         // Establish a connection if needed
         try {
             checkConnection();
+
+            if (cachedLocalAddress != null) {
+                message.setHeader(MllpConstants.MLLP_LOCAL_ADDRESS, cachedLocalAddress);
+            }
+
+            if (cachedRemoteAddress != null) {
+                message.setHeader(MllpConstants.MLLP_REMOTE_ADDRESS, cachedRemoteAddress);
+            }
+
+            // Send the message to the external system
+            byte[] hl7MessageBytes = null;
+            Object messageBody = message.getBody();
+            if (messageBody == null) {
+                exchange.setException(new MllpInvalidMessageException("message body is null", hl7MessageBytes));
+                return;
+            } else if (messageBody instanceof byte[]) {
+                hl7MessageBytes = (byte[]) messageBody;
+            } else if (messageBody instanceof String) {
+                String stringBody = (String) messageBody;
+                byte[] tmpHl7MessageBytes = stringBody.getBytes(MllpProtocolConstants.DEFAULT_CHARSET);
+                Charset tmpCharset = getEndpoint().determineCharset(tmpHl7MessageBytes, null);
+                exchange.setProperty(Exchange.CHARSET_NAME, tmpCharset.name());
+                if (tmpCharset != null && tmpCharset != MllpProtocolConstants.DEFAULT_CHARSET) {
+                    hl7MessageBytes = stringBody.getBytes(tmpCharset);
+                    exchange.setProperty(Exchange.CHARSET_NAME, tmpCharset.name());
+                } else {
+                    hl7MessageBytes = tmpHl7MessageBytes;
+                    exchange.setProperty(Exchange.CHARSET_NAME, MllpProtocolConstants.DEFAULT_CHARSET.name());
+                }
+            }
+
+            log.debug("Sending message to external system");
+            getEndpoint().updateLastConnectionEstablishedTicks();
+
+            try {
+                mllpBuffer.setEnvelopedMessage(hl7MessageBytes);
+                mllpBuffer.writeTo(socket);
+            } catch (MllpSocketException writeEx) {
+                // Connection may have been reset - try one more time
+                log.debug("Exception encountered reading acknowledgement - attempting reconnect", writeEx);
+                try {
+                    checkConnection();
+                    log.trace("Reconnected succeeded - resending payload");
+                    try {
+                        mllpBuffer.writeTo(socket);
+                    } catch (MllpSocketException retryWriteEx) {
+                        exchange.setException(retryWriteEx);
+                    }
+                } catch (IOException reconnectEx) {
+                    log.debug("Reconnected failed - sending exception to exchange", reconnectEx);
+                    exchange.setException(reconnectEx);
+                }
+
+            }
+
+            if (exchange.getException() == null) {
+                log.debug("Reading acknowledgement from external system");
+                try {
+                    mllpBuffer.reset();
+                    mllpBuffer.readFrom(socket);
+                } catch (MllpSocketException receiveAckEx) {
+                    // Connection may have been reset - try one more time
+                    log.debug("Exception encountered reading acknowledgement - attempting reconnect", receiveAckEx);
+                    try {
+                        checkConnection();
+                    } catch (IOException reconnectEx) {
+                        log.debug("Reconnected failed - sending original exception to exchange", reconnectEx);
+                        exchange.setException(new MllpAcknowledgementReceiveException("Exception encountered reading acknowledgement", hl7MessageBytes, receiveAckEx));
+                    }
+
+                    if (exchange.getException() == null) {
+                        log.trace("Reconnected succeeded - resending payload");
+                        try {
+                            mllpBuffer.setEnvelopedMessage(hl7MessageBytes);
+                            mllpBuffer.writeTo(socket);
+                        } catch (MllpSocketException writeRetryEx) {
+                            exchange.setException(new MllpWriteException("Failed to write HL7 message to socket", hl7MessageBytes, writeRetryEx));
+                        }
+
+                        if (exchange.getException() == null) {
+                            log.trace("Resend succeeded - reading acknowledgement");
+                            try {
+                                mllpBuffer.reset();
+                                mllpBuffer.readFrom(socket);
+                            } catch (MllpSocketException secondReceiveEx) {
+                                if (mllpBuffer.isEmpty()) {
+                                    Exception exchangeEx = new MllpAcknowledgementReceiveException("Exception encountered receiving Acknowledgement", hl7MessageBytes, secondReceiveEx);
+                                    exchange.setException(exchangeEx);
+                                } else {
+                                    byte[] partialAcknowledgment = mllpBuffer.toByteArray();
+                                    mllpBuffer.reset();
+                                    Exception exchangeEx = new MllpAcknowledgementReceiveException("Exception encountered receiving complete Acknowledgement",
+                                        hl7MessageBytes, partialAcknowledgment, secondReceiveEx);
+                                    exchange.setException(exchangeEx);
+                                }
+                            }
+                        }
+                    }
+                } catch (SocketTimeoutException timeoutEx) {
+                    if (mllpBuffer.isEmpty()) {
+                        exchange.setException(new MllpAcknowledgementTimeoutException("Timeout receiving HL7 Acknowledgement", hl7MessageBytes, timeoutEx));
+                    } else {
+                        exchange.setException(new MllpAcknowledgementTimeoutException("Timeout receiving complete HL7 Acknowledgement", hl7MessageBytes, mllpBuffer.toByteArray(), timeoutEx));
+                        mllpBuffer.reset();
+                    }
+                }
+
+                if (exchange.getException() == null) {
+                    if (mllpBuffer.hasCompleteEnvelope()) {
+                        byte[] acknowledgementBytes = mllpBuffer.toMllpPayload();
+
+                        log.debug("Populating message headers with the acknowledgement from the external system");
+                        message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT, acknowledgementBytes);
+                        if (acknowledgementBytes != null && acknowledgementBytes.length > 0) {
+                            message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING,
+                                getEndpoint().createNewString(acknowledgementBytes, message.getHeader(MllpConstants.MLLP_CHARSET, String.class)));
+                        } else {
+                            message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, "");
+                        }
+
+                        if (getConfiguration().isValidatePayload()) {
+                            String exceptionMessage = Hl7Util.generateInvalidPayloadExceptionMessage(acknowledgementBytes);
+                            if (exceptionMessage != null) {
+                                exchange.setException(new MllpInvalidAcknowledgementException(exceptionMessage, hl7MessageBytes, acknowledgementBytes));
+                            }
+                        }
+
+                        if (exchange.getException() == null) {
+                            log.debug("Processing the acknowledgement from the external system");
+                            try {
+                                message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, processAcknowledgment(hl7MessageBytes, acknowledgementBytes));
+                            } catch (MllpNegativeAcknowledgementException nackEx) {
+                                message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, nackEx.getAcknowledgmentType());
+                                exchange.setException(nackEx);
+                            }
+
+                            getEndpoint().checkAfterSendProperties(exchange, socket, log);
+                        }
+                    } else {
+                        exchange.setException(new MllpInvalidAcknowledgementException("Invalid acknowledgement received", hl7MessageBytes, mllpBuffer.toByteArray()));
+                    }
+                }
+            }
+
         } catch (IOException ioEx) {
             exchange.setException(ioEx);
-            return;
-        }
-
-        Message message;
-        if (exchange.hasOut()) {
-            message = exchange.getOut();
-        } else {
-            message = exchange.getIn();
-        }
-
-        message.setHeader(MLLP_LOCAL_ADDRESS, socket.getLocalAddress().toString());
-        message.setHeader(MLLP_REMOTE_ADDRESS, socket.getRemoteSocketAddress().toString());
-
-        // Send the message to the external system
-        byte[] hl7MessageBytes = message.getMandatoryBody(byte[].class);
-        byte[] acknowledgementBytes = null;
-
-        try {
-            log.debug("Sending message to external system");
-            mllpSocketWriter.writeEnvelopedPayload(hl7MessageBytes, null);
-            log.debug("Reading acknowledgement from external system");
-            acknowledgementBytes = mllpSocketReader.readEnvelopedPayload(hl7MessageBytes);
-        } catch (MllpWriteException writeEx) {
-            MllpSocketUtil.reset(socket, log, writeEx.getMessage());
-            exchange.setException(writeEx);
-            return;
-        } catch (MllpReceiveException ackReceiveEx) {
-            MllpSocketUtil.reset(socket, log, ackReceiveEx.getMessage());
-            exchange.setException(ackReceiveEx);
-            return;
-        } catch (MllpException mllpEx) {
-            Throwable mllpExCause = mllpEx.getCause();
-            if (mllpExCause != null && mllpExCause instanceof IOException) {
-                MllpSocketUtil.reset(socket, log, mllpEx.getMessage());
-            }
-            exchange.setException(mllpEx);
-            return;
-        }
-
-        log.debug("Populating message headers with the acknowledgement from the external system");
-        message.setHeader(MLLP_ACKNOWLEDGEMENT, acknowledgementBytes);
-        message.setHeader(MLLP_ACKNOWLEDGEMENT_STRING, new String(acknowledgementBytes, IOHelper.getCharsetName(exchange, true)));
-
-        if (endpoint.validatePayload) {
-            String exceptionMessage = Hl7Util.generateInvalidPayloadExceptionMessage(acknowledgementBytes);
-            if (exceptionMessage != null) {
-                exchange.setException(new MllpInvalidAcknowledgementException(exceptionMessage, hl7MessageBytes, acknowledgementBytes));
-                return;
-            }
-        }
-
-        log.debug("Processing the acknowledgement from the external system");
-        try {
-            String acknowledgementType = processAcknowledgment(hl7MessageBytes, acknowledgementBytes);
-            message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, acknowledgementType);
-        } catch (MllpException mllpEx) {
-            exchange.setException(mllpEx);
-            return;
-        }
-
-        // Check AFTER_SEND Properties
-        if (exchange.getProperty(MLLP_RESET_CONNECTION_AFTER_SEND, boolean.class)) {
-            MllpSocketUtil.reset(socket, log, "Exchange property " + MLLP_RESET_CONNECTION_AFTER_SEND + " = " + exchange.getProperty(MLLP_RESET_CONNECTION_AFTER_SEND, boolean.class));
-        } else if (exchange.getProperty(MLLP_CLOSE_CONNECTION_AFTER_SEND, boolean.class)) {
-            MllpSocketUtil.close(socket, log, "Exchange property " + MLLP_CLOSE_CONNECTION_AFTER_SEND + " = " + exchange.getProperty(MLLP_CLOSE_CONNECTION_AFTER_SEND, boolean.class));
+        } finally {
+            mllpBuffer.reset();
         }
     }
 
@@ -184,7 +292,7 @@ public class MllpTcpClientProducer extends DefaultProducer {
             // First, find the beginning of the MSA segment - should be the second segment
             int msaStartIndex = -1;
             for (int i = 0; i < hl7AcknowledgementBytes.length; ++i) {
-                if (SEGMENT_DELIMITER == hl7AcknowledgementBytes[i]) {
+                if (MllpProtocolConstants.SEGMENT_DELIMITER == hl7AcknowledgementBytes[i]) {
                     final byte bM = 77;
                     final byte bS = 83;
                     final byte bC = 67;
@@ -238,7 +346,7 @@ public class MllpTcpClientProducer extends DefaultProducer {
                 }
 
             }
-            if (-1 == msaStartIndex  &&  endpoint.validatePayload) {
+            if (-1 == msaStartIndex && getConfiguration().isValidatePayload()) {
                 // Didn't find an MSA
                 throw new MllpInvalidAcknowledgementException("MSA Not found in acknowledgement", hl7MessageBytes, hl7AcknowledgementBytes);
             }
@@ -248,62 +356,116 @@ public class MllpTcpClientProducer extends DefaultProducer {
     }
 
     /**
-     * Validate the TCP Connection, if closed opens up the socket with
-     * the value set via endpoint configuration
+     * Validate the TCP Connection
      *
-     * @throws IOException if the connection is not valid, otherwise the Exception is not
-     *                     encountered while checking the connection
+     * @return null if the connection is valid, otherwise the Exception encounted checking the connection
      */
-    private void checkConnection() throws IOException {
+    void checkConnection() throws IOException {
         if (null == socket || socket.isClosed() || !socket.isConnected()) {
             socket = new Socket();
 
-            socket.setKeepAlive(endpoint.keepAlive);
-            socket.setTcpNoDelay(endpoint.tcpNoDelay);
-            if (null != endpoint.receiveBufferSize) {
-                socket.setReceiveBufferSize(endpoint.receiveBufferSize);
-            } else {
-                endpoint.receiveBufferSize = socket.getReceiveBufferSize();
+            if (getConfiguration().hasKeepAlive()) {
+                socket.setKeepAlive(getConfiguration().getKeepAlive());
             }
-            if (null != endpoint.sendBufferSize) {
-                socket.setSendBufferSize(endpoint.sendBufferSize);
-            } else {
-                endpoint.sendBufferSize = socket.getSendBufferSize();
+            if (getConfiguration().hasTcpNoDelay()) {
+                socket.setTcpNoDelay(getConfiguration().getTcpNoDelay());
             }
-            socket.setReuseAddress(endpoint.reuseAddress);
+
+            if (getConfiguration().hasReceiveBufferSize()) {
+                socket.setReceiveBufferSize(getConfiguration().getReceiveBufferSize());
+            }
+            if (getConfiguration().hasSendBufferSize()) {
+                socket.setSendBufferSize(getConfiguration().getSendBufferSize());
+            }
+            if (getConfiguration().hasReuseAddress()) {
+                socket.setReuseAddress(getConfiguration().getReuseAddress());
+            }
+
             socket.setSoLinger(false, -1);
 
             InetSocketAddress socketAddress;
-            if (null == endpoint.getHostname()) {
-                socketAddress = new InetSocketAddress(endpoint.getPort());
+            if (null == getEndpoint().getHostname()) {
+                socketAddress = new InetSocketAddress(getEndpoint().getPort());
             } else {
-                socketAddress = new InetSocketAddress(endpoint.getHostname(), endpoint.getPort());
+                socketAddress = new InetSocketAddress(getEndpoint().getHostname(), getEndpoint().getPort());
             }
 
-            log.debug("Connecting to socket on {}", socketAddress);
-            socket.connect(socketAddress, endpoint.connectTimeout);
+            socket.connect(socketAddress, getConfiguration().getConnectTimeout());
+            SocketAddress localSocketAddress = socket.getLocalSocketAddress();
+            if (localSocketAddress != null) {
+                cachedLocalAddress = localSocketAddress.toString();
+            }
+            SocketAddress remoteSocketAddress = socket.getRemoteSocketAddress();
+            if (remoteSocketAddress != null) {
+                cachedRemoteAddress = remoteSocketAddress.toString();
+            }
+            cachedCombinedAddress = MllpSocketBuffer.formatAddressString(localSocketAddress, remoteSocketAddress);
 
-            log.debug("Creating MllpSocketReader and MllpSocketWriter");
-            mllpSocketReader = new MllpSocketReader(socket, endpoint.receiveTimeout, endpoint.readTimeout, true);
-            if (endpoint.bufferWrites) {
-                mllpSocketWriter = new MllpBufferedSocketWriter(socket, false);
-            } else {
-                mllpSocketWriter = new MllpSocketWriter(socket, false);
+            log.info("checkConnection() - established new connection {}", cachedCombinedAddress);
+            getEndpoint().updateLastConnectionEstablishedTicks();
+
+            if (getConfiguration().hasIdleTimeout()) {
+                idleTimeoutExecutor.schedule(this, getConfiguration().getIdleTimeout(), TimeUnit.MILLISECONDS);
+            }
+        } else {
+            log.debug("checkConnection() - Connection is still valid - no new connection required");
+        }
+    }
+
+    /**
+     * Check for idle connection
+     */
+    @Override
+    public synchronized void run() {
+        if (getConfiguration().hasIdleTimeout()) {
+            if (null != socket && !socket.isClosed() && socket.isConnected()) {
+                if (lastProcessCallTicks > 0) {
+                    long idleTime = System.currentTimeMillis() - lastProcessCallTicks;
+                    if (log.isDebugEnabled()) {
+                        log.debug("Checking {} for idle connection: {} - {}", getConnectionAddress(), idleTime, getConfiguration().getIdleTimeout());
+                    }
+                    if (idleTime >= getConfiguration().getIdleTimeout()) {
+                        log.info("MLLP Connection idle time of '{}' milliseconds met or exceeded the idle producer timeout of '{}' milliseconds - resetting conection",
+                            idleTime, getConfiguration().getIdleTimeout());
+                        mllpBuffer.resetSocket(socket);
+                    } else {
+                        long minDelay = 100;
+                        long delay = Long.min(Long.max(minDelay, getConfiguration().getIdleTimeout() - idleTime), getConfiguration().getIdleTimeout());
+                        if (log.isDebugEnabled()) {
+                            log.debug("Scheduling idle producer connection check of {} in {} milliseconds", getConnectionAddress(), delay);
+                        }
+                        idleTimeoutExecutor.schedule(this, delay, TimeUnit.MILLISECONDS);
+                    }
+                } else {
+                    log.debug("Scheduling idle producer connection check in {} milliseconds", getConfiguration().getIdleTimeout());
+                    idleTimeoutExecutor.schedule(this, getConfiguration().getIdleTimeout(), TimeUnit.MILLISECONDS);
+                }
             }
         }
-        return;
     }
 
-    @ManagedOperation(description = "Check client connection")
-    public boolean managedCheckConnection() {
-        boolean isValid = true;
-        try {
-            checkConnection();
-        } catch (IOException ioEx) {
-            isValid = false;
-            log.debug("JMX check connection: {}", ioEx);
+    static class IdleTimeoutThreadFactory implements ThreadFactory {
+        final String endpointKey;
+
+        IdleTimeoutThreadFactory(String endpointKey) {
+            this.endpointKey = endpointKey;
         }
-        return isValid;
+
+        public Thread newThread(Runnable r) {
+            Thread timeoutThread = Executors.defaultThreadFactory().newThread(r);
+
+            timeoutThread.setName(String.format("%s[%s]-idle-timeout-thread", MllpTcpClientProducer.class.getSimpleName(), endpointKey));
+
+            return timeoutThread;
+        }
     }
 
+    @Override
+    public MllpEndpoint getEndpoint() {
+        return (MllpEndpoint) super.getEndpoint();
+    }
+
+    public MllpConfiguration getConfiguration() {
+        return ((MllpEndpoint)this.getEndpoint()).getConfiguration();
+    }
 }

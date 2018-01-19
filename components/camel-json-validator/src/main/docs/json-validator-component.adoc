@@ -3,8 +3,8 @@
 *Available as of Camel version 2.20*
 
 The JSON Schema Validator component performs bean validation of the message body
-agains JSON Schemas using the Everit.org JSON Schema library
-(https://github.com/everit-org/json-schema). 
+against JSON Schemas v4 draft using the NetworkNT JSON Schema library
+(https://github.com/networknt/json-schema-validator).
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -84,7 +84,7 @@ Assumed we have the following JSON Schema
 {
   "$schema": "http://json-schema.org/draft-04/schema#", 
   "definitions": {}, 
-  "id": "http://example.com/example.json", 
+  "id": "my-schema",
   "properties": {
     "id": {
       "default": 1, 

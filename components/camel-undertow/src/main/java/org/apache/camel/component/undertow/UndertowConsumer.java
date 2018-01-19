@@ -28,9 +28,15 @@ import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import io.undertow.util.MimeMappings;
 import io.undertow.util.StatusCodes;
+import io.undertow.websockets.core.WebSocketChannel;
+
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.undertow.UndertowConstants.EventType;
+import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.impl.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +47,7 @@ import org.slf4j.LoggerFactory;
 public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowConsumer.class);
-
-    private HttpHandlerRegistrationInfo registrationInfo;
+    private CamelWebSocketHandler webSocketHandler;
 
     public UndertowConsumer(UndertowEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -56,32 +61,30 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        getEndpoint().getComponent().registerConsumer(this);
+        final UndertowEndpoint endpoint = getEndpoint();
+        if (endpoint.isWebSocket()) {
+            /*
+             * note that the new CamelWebSocketHandler() we pass to registerEndpoint() does not necessarily have to be
+             * the same instance that is returned from there
+             */
+            this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
+            this.webSocketHandler.setConsumer(this);
+        } else {
+            // allow for HTTP 1.1 continue
+            endpoint.getComponent().registerEndpoint(endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), Handlers.httpContinueRead(
+                    // wrap with EagerFormParsingHandler to enable undertow form parsers
+                    new EagerFormParsingHandler().setNext(UndertowConsumer.this)));
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        getEndpoint().getComponent().unregisterConsumer(this);
-    }
-
-    public HttpHandlerRegistrationInfo getHttpHandlerRegistrationInfo() {
-        if (registrationInfo == null) {
-            UndertowEndpoint endpoint = getEndpoint();
-
-            registrationInfo = new HttpHandlerRegistrationInfo();
-            registrationInfo.setUri(endpoint.getHttpURI());
-            registrationInfo.setMethodRestrict(endpoint.getHttpMethodRestrict());
-            registrationInfo.setMatchOnUriPrefix(endpoint.getMatchOnUriPrefix());
+        if (this.webSocketHandler != null) {
+            this.webSocketHandler.setConsumer(null);
         }
-        return registrationInfo;
-    }
-
-    public HttpHandler getHttpHandler() {
-        // allow for HTTP 1.1 continue
-        return Handlers.httpContinueRead(
-                // wrap with EagerFormParsingHandler to enable undertow form parsers
-                new EagerFormParsingHandler().setNext(this));
+        UndertowEndpoint endpoint = getEndpoint();
+        endpoint .getComponent().unregisterEndpoint(endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext());
     }
 
     @Override
@@ -139,6 +142,57 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
             httpExchange.getResponseSender().send(bodyAsByteBuffer);
         }
         httpExchange.getResponseSender().close();
+    }
+
+    /**
+     * Create an {@link Exchange} from the associated {@link UndertowEndpoint} and set the {@code in} {@link Message}'s
+     * body to the given {@code message} and {@link UndertowConstants#CONNECTION_KEY} header to the given
+     * {@code connectionKey}.
+     *
+     * @param connectionKey an identifier of {@link WebSocketChannel} through which the {@code message} was received
+     * @param message the message received via the {@link WebSocketChannel}
+     */
+    public void sendMessage(final String connectionKey, final Object message) {
+
+        final Exchange exchange = getEndpoint().createExchange();
+
+        // set header and body
+        exchange.getIn().setHeader(UndertowConstants.CONNECTION_KEY, connectionKey);
+        exchange.getIn().setBody(message);
+
+        // send exchange using the async routing engine
+        getAsyncProcessor().process(exchange, new AsyncCallback() {
+            public void done(boolean doneSync) {
+                if (exchange.getException() != null) {
+                    getExceptionHandler().handleException("Error processing exchange", exchange,
+                            exchange.getException());
+                }
+            }
+        });
+    }
+
+    /**
+     * Send a notification related a WebSocket peer.
+     *
+     * @param connectionKey of WebSocket peer
+     * @param eventType the type of the event
+     */
+    public void sendEventNotification(String connectionKey, EventType eventType) {
+        final Exchange exchange = getEndpoint().createExchange();
+
+        final Message in = exchange.getIn();
+        in.setHeader(UndertowConstants.CONNECTION_KEY, connectionKey);
+        in.setHeader(UndertowConstants.EVENT_TYPE, eventType.getCode());
+        in.setHeader(UndertowConstants.EVENT_TYPE_ENUM, eventType);
+
+        // send exchange using the async routing engine
+        getAsyncProcessor().process(exchange, new AsyncCallback() {
+            public void done(boolean doneSync) {
+                if (exchange.getException() != null) {
+                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                }
+            }
+        });
     }
 
     private Object getResponseBody(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException {

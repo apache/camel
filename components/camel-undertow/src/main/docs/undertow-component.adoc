@@ -8,6 +8,10 @@ That is, the Undertow component behaves as a simple Web server. +
  Undertow can also be used as a http client which mean you can also use
 it with Camel as a producer.
 
+Since Camel version 2.21, the *undertow* component also supports WebSocket
+connections and can thus serve as a drop-in replacement for Camel websocket
+component or atmosphere-websocket component.
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -26,6 +30,9 @@ for this component:
 [source,java]
 -------------------------------------------------------
 undertow:http://hostname[:port][/resourceUri][?options]
+undertow:https://hostname[:port][/resourceUri][?options]
+undertow:ws://hostname[:port][/resourceUri][?options]
+undertow:wss://hostname[:port][/resourceUri][?options]
 -------------------------------------------------------
 
 You can append query options to the URI in the following format,
@@ -76,7 +83,7 @@ with the following path and query parameters:
 | *httpURI* | *Required* The url of the HTTP endpoint to use. |  | URI
 |===
 
-==== Query Parameters (17 parameters):
+==== Query Parameters (21 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -97,6 +104,10 @@ with the following path and query parameters:
 | *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *undertowHttpBinding* (advanced) | To use a custom UndertowHttpBinding to control the mapping between Camel message and undertow. |  | UndertowHttpBinding
+| *fireWebSocketChannelEvents* (websocket) | if true the consumer will post notifications to the route when a new WebSocket peer connects disconnects etc. See UndertowConstants.EVENT_TYPE and EventType. | false | boolean
+| *sendTimeout* (websocket) | Timeout in milliseconds when sending to a websocket channel. The default timeout is 30000 (30 seconds). | 30000 | Integer
+| *sendToAll* (websocket) | To send to all websocket subscribers. Can be used to configure on endpoint level instead of having to use the UndertowConstants.SEND_TO_ALL header on the message. |  | Boolean
+| *useStreaming* (websocket) | if true text and binary messages coming through a WebSocket will be wrapped as java.io.Reader and java.io.InputStream respectively before they are passed to an Exchange; otherwise they will be passed as String and byte respectively. | false | boolean
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 |===
 // endpoint options: END
@@ -106,7 +117,7 @@ with the following path and query parameters:
 ### Message Headers
 
 Camel uses the same message headers as the link:http.html[HTTP]
-component. 
+component.
  From Camel 2.2, it also uses
 `Exchange.HTTP_CHUNKED,CamelHttpChunked` header to turn on or turn off
 the chuched encoding on the camel-undertow consumer.

@@ -24,10 +24,15 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import zipkin2.reporter.Reporter;
 
 public class ZipkinSimpleRouteTest extends CamelTestSupport {
 
     private ZipkinTracer zipkin;
+
+    protected void setSpanReporter(ZipkinTracer zipkin) {
+        zipkin.setSpanReporter(Reporter.NOOP);
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -35,7 +40,7 @@ public class ZipkinSimpleRouteTest extends CamelTestSupport {
 
         zipkin = new ZipkinTracer();
         zipkin.setServiceName("dude");
-        zipkin.setSpanCollector(new ZipkinLoggingSpanCollector());
+        setSpanReporter(zipkin);
 
         // attaching ourself to CamelContext
         zipkin.init(context);

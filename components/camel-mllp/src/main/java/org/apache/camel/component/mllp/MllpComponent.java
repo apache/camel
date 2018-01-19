@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 import java.util.Map;
@@ -21,16 +22,23 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
-
-import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_BLOCK;
-import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link MllpEndpoint}.
  */
 public class MllpComponent extends UriEndpointComponent {
-
     public static final String MLLP_LOG_PHI_PROPERTY = "org.apache.camel.component.mllp.logPHI";
+    public static final String MLLP_LOG_PHI_MAX_BYTES_PROPERTY = "org.apache.camel.component.mllp.logPHI.maxBytes";
+    public static final boolean DEFAULT_LOG_PHI = true;
+    public static final int DEFAULT_LOG_PHI_MAX_BYTES = 5120;
+
+    static Logger log = LoggerFactory.getLogger(MllpComponent.class);
+    static Boolean logPhi;
+    static Integer logPhiMaxBytes;
+
+    MllpConfiguration configuration;
 
     public MllpComponent() {
         super(MllpEndpoint.class);
@@ -40,66 +48,104 @@ public class MllpComponent extends UriEndpointComponent {
         super(context, MllpEndpoint.class);
     }
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        MllpEndpoint endpoint = new MllpEndpoint(uri, this);
+    @Override
+    protected Endpoint createEndpoint(String uriString, String remaining, Map<String, Object> parameters) throws Exception {
+        MllpEndpoint endpoint = new MllpEndpoint(uriString, this, hasConfiguration() ? configuration.copy() : new MllpConfiguration());
+
+        endpoint.setBridgeErrorHandler(true);
+
         setProperties(endpoint, parameters);
 
-        // mllp://hostname:port
-        String hostPort;
-        // look for options
-        int optionsStartIndex = uri.indexOf('?');
-        if (-1 == optionsStartIndex) {
-            // No options - just get the host/port stuff
-            hostPort = uri.substring(7);
-        } else {
-            hostPort = uri.substring(7, optionsStartIndex);
-        }
-
         // Make sure it has a host - may just be a port
-        int colonIndex = hostPort.indexOf(':');
+        int colonIndex = remaining.indexOf(':');
         if (-1 != colonIndex) {
-            endpoint.setHostname(hostPort.substring(0, colonIndex));
-            endpoint.setPort(Integer.parseInt(hostPort.substring(colonIndex + 1)));
+            endpoint.setHostname(remaining.substring(0, colonIndex));
+            endpoint.setPort(Integer.parseInt(remaining.substring(colonIndex + 1)));
         } else {
             // No host specified - leave the default host and set the port
-            endpoint.setPort(Integer.parseInt(hostPort.substring(colonIndex + 1)));
+            endpoint.setPort(Integer.parseInt(remaining));
         }
 
         return endpoint;
     }
 
+    public static boolean hasLogPhi() {
+        return logPhi != null;
+    }
+
     public static boolean isLogPhi() {
-        String logPhiProperty = System.getProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
-        return Boolean.valueOf(logPhiProperty);
-    }
-
-    public static String covertToPrintFriendlyString(String hl7Message) {
-        if (hl7Message == null) {
-            return "null";
-        } else if (hl7Message.isEmpty()) {
-            return "empty";
+        if (hasLogPhi()) {
+            return logPhi;
         }
 
-        return hl7Message.replaceAll("" + START_OF_BLOCK, "<VT>").replaceAll("" + END_OF_BLOCK, "<FS>").replaceAll("\r", "<CR>").replaceAll("\n", "<LF>");
-    }
+        boolean answer = DEFAULT_LOG_PHI;
+        String logPhiProperty = System.getProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY);
 
-    public static String covertBytesToPrintFriendlyString(byte[] hl7Bytes) {
-        if (hl7Bytes == null) {
-            return "null";
-        } else if (hl7Bytes.length == 0) {
-            return "";
+        if (logPhiProperty != null) {
+            answer = Boolean.valueOf(logPhiProperty);
         }
 
-        return covertBytesToPrintFriendlyString(hl7Bytes, 0, hl7Bytes.length);
+        return answer;
     }
 
-    public static String covertBytesToPrintFriendlyString(byte[] hl7Bytes, int startPosition, int length) {
-        if (null == hl7Bytes) {
-            return "null";
-        } else if (hl7Bytes.length == 0) {
-            return "";
+    /**
+     * Set the component to log PHI data.
+     *
+     * @param logPhi true enables PHI logging; false disables it.
+     */
+    public static void setLogPhi(Boolean logPhi) {
+        MllpComponent.logPhi = logPhi;
+    }
+
+    public static boolean hasLogPhiMaxBytes() {
+        return logPhiMaxBytes != null;
+    }
+
+    public static int getLogPhiMaxBytes() {
+        if (hasLogPhiMaxBytes()) {
+            return logPhiMaxBytes;
         }
-        return covertToPrintFriendlyString(new String(hl7Bytes, startPosition, length));
+
+        int answer = DEFAULT_LOG_PHI_MAX_BYTES;
+        String logPhiProperty = System.getProperty(MllpComponent.MLLP_LOG_PHI_MAX_BYTES_PROPERTY);
+
+        if (logPhiProperty != null && !logPhiProperty.isEmpty()) {
+            try {
+                answer = Integer.valueOf(logPhiProperty);
+            } catch (NumberFormatException numberFormatException) {
+                log.warn("Invalid Interger value '{}' for system property {} - using default value of {}", logPhiProperty, MllpComponent.MLLP_LOG_PHI_MAX_BYTES_PROPERTY, answer);
+                // use DEFAULT_LOG_PHI_MAX_BYTES for a invalid entry
+            }
+        }
+
+        return answer;
     }
 
+    /**
+     * Set the maximum number of bytes of PHI that will be logged in a log entry.
+     *
+     * @param logPhiMaxBytes the maximum number of bytes to log.
+     */
+    public static void setLogPhiMaxBytes(Integer logPhiMaxBytes) {
+        MllpComponent.logPhiMaxBytes = logPhiMaxBytes;
+    }
+
+
+
+    public boolean hasConfiguration() {
+        return configuration != null;
+    }
+
+    public MllpConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * Sets the default configuration to use when creating MLLP endpoints.
+     *
+     * @param configuration the default configuration.
+     */
+    public void setConfiguration(MllpConfiguration configuration) {
+        this.configuration = configuration;
+    }
 }

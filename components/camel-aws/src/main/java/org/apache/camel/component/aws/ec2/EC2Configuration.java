@@ -18,13 +18,14 @@ package org.apache.camel.component.aws.ec2;
 
 import com.amazonaws.services.ec2.AmazonEC2Client;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class EC2Configuration {
+public class EC2Configuration implements Cloneable {
 
     @UriPath(description = "Logical name") @Metadata(required = "true")
     private String label;
@@ -104,7 +105,7 @@ public class EC2Configuration {
     } 
     
     /**
-     * To define a proxy host when instantiating the SQS client
+     * To define a proxy host when instantiating the EC2 client
      */
     public String getProxyHost() {
         return proxyHost;
@@ -115,7 +116,7 @@ public class EC2Configuration {
     }
 
     /**
-     * To define a proxy port when instantiating the SQS client
+     * To define a proxy port when instantiating the EC2 client
      */
     public Integer getProxyPort() {
         return proxyPort;
@@ -134,5 +135,17 @@ public class EC2Configuration {
 
     public void setRegion(String region) {
         this.region = region;
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public EC2Configuration copy() {
+        try {
+            return (EC2Configuration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

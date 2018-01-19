@@ -249,6 +249,30 @@ and the `constraints-car.xml` file
 </constraint-mappings>
 ----------------------------------------------------------------------------------------------------
 
+Here is the XML syntax for the example route definition where **OrderedChecks** can be https://github.com/apache/camel/blob/master/components/camel-bean-validator/src/test/java/org/apache/camel/component/bean/validator/OrderedChecks.java 
+
+Note that the body should include an instance of a class to validate.
+
+[source,java]
+----------------------------------------------------------------------------------------------------
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+  
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:start"/>
+            <to uri="bean-validator://x?group=org.apache.camel.component.bean.validator.OrderedChecks"/>
+        </route>
+    </camelContext>
+</beans>
+----------------------------------------------------------------------------------------------------
+
+
+
 ### See Also
 
 * link:configuring-camel.html[Configuring Camel]

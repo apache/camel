@@ -17,11 +17,13 @@
 package org.apache.camel.component.aws.sqs;
 
 import com.amazonaws.services.sqs.AmazonSQS;
+
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 @UriParams
-public class SqsConfiguration {
+public class SqsConfiguration implements Cloneable {
 
     // common properties
     private String queueName;
@@ -418,6 +420,18 @@ public class SqsConfiguration {
             messageDeduplicationIdStrategy = new NullMessageDeduplicationIdStrategy();
         } else {
             throw new IllegalArgumentException("Unrecognised MessageDeduplicationIdStrategy: " + strategy);
+        }
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public SqsConfiguration copy() {
+        try {
+            return (SqsConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
         }
     }
 }

@@ -1,0 +1,131 @@
+== AWS MQ Component
+
+*Available as of Camel version 2.21*
+
+The EC2 component supports create, run, start, stop and terminate
+https://aws.amazon.com/it/mq/[AWS MQ] instances.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon MQ. More information are available at
+https://aws.amazon.com/it/mq/[Amazon MQ].
+
+### URI Format
+
+[source,java]
+-------------------------
+aws-mq://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+### URI Options
+
+
+// component options: START
+The AWS MQ component supports 5 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The AWS MQ default configuration |  | MQConfiguration
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *region* (producer) | The region in which MQ client needs to work |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS MQ endpoint is configured using URI syntax:
+
+----
+aws-mq:label
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *label* | *Required* Logical name |  | String
+|===
+
+==== Query Parameters (8 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *amazonMqClient* (producer) | To use a existing configured AmazonMQClient as client |  | AmazonMQ
+| *operation* (producer) | *Required* The operation to perform. It can be listBrokerscreateBrokerdeleteBroker |  | MQOperations
+| *proxyHost* (producer) | To define a proxy host when instantiating the MQ client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the MQ client |  | Integer
+| *region* (producer) | The region in which MQ client needs to work |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+
+
+Required EC2 component options
+
+You have to provide the amazonEc2Client in the
+link:registry.html[Registry] or your accessKey and secretKey to access
+the https://aws.amazon.com/it/ec2/[Amazon EC2] service.
+
+### Usage
+
+#### Message headers evaluated by the MQ producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsMQMaxResults` |`String` |The number of results that must be retrieved from listBrokers operation
+
+|`CamelAwsMQBrokerName` |`String` |The broker name
+
+|`CamelAwsMQOperation` |`String` |The operation we want to perform
+
+|`CamelAwsMQBrokerId` |`String` |The broker id
+
+|`CamelAwsMQBrokerDeploymentMode` |`String` |The deployment mode for the broker in the createBroker operation
+|=======================================================================
+
+Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel
+(2.16 or higher).
+
+### See Also
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+
+* link:aws.html[AWS Component]

@@ -25,7 +25,19 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS EC2 component has no options.
+The AWS EC2 component supports 5 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The AWS EC2 default configuration |  | EC2Configuration
+| *region* (producer) | The region in which EC2 client needs to work |  | String
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
@@ -57,8 +69,8 @@ with the following path and query parameters:
 | *amazonEc2Client* (producer) | To use a existing configured AmazonEC2Client as client |  | AmazonEC2Client
 | *amazonEc2Endpoint* (producer) | The region with which the AWS-EC2 client wants to work with. |  | String
 | *operation* (producer) | *Required* The operation to perform. It can be createAndRunInstances startInstances stopInstances terminateInstances describeInstances describeInstancesStatus rebootInstances monitorInstances unmonitorInstances createTags or deleteTags |  | EC2Operations
-| *proxyHost* (producer) | To define a proxy host when instantiating the SQS client |  | String
-| *proxyPort* (producer) | To define a proxy port when instantiating the SQS client |  | Integer
+| *proxyHost* (producer) | To define a proxy host when instantiating the EC2 client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the EC2 client |  | Integer
 | *region* (producer) | The region in which EC2 client needs to work |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean

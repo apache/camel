@@ -24,7 +24,6 @@ import java.util.concurrent.Future;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
@@ -189,14 +188,29 @@ public class KafkaProducerTest {
         assertRecordMetadataExists();
     }
 
-    @Test(expected = CamelException.class)
+    @Test
     public void processRequiresTopicInEndpointOrInHeader() throws Exception {
         endpoint.getConfiguration().setTopic(null);
         Mockito.when(exchange.getIn()).thenReturn(in);
-        in.setHeader(KafkaConstants.PARTITION_KEY, "4");
+        in.setHeader(KafkaConstants.PARTITION_KEY, 4);
+        in.setHeader(KafkaConstants.KEY, "someKey");
 
         producer.process(exchange);
 
+        verifySendMessage("sometopic", "someKey");
+        assertRecordMetadataExists();
+    }
+    
+    @Test
+    public void processRequiresTopicInConfiguration() throws Exception {
+        endpoint.getConfiguration().setTopic("configTopic");
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        in.setHeader(KafkaConstants.PARTITION_KEY, 4);
+        in.setHeader(KafkaConstants.KEY, "someKey");
+
+        producer.process(exchange);
+
+        verifySendMessage("configTopic", "someKey");
         assertRecordMetadataExists();
     }
 

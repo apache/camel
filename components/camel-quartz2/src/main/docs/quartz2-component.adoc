@@ -24,15 +24,14 @@ for this component:
 remain on old Quartz 1.x, please +
  use the old link:quartz.html[Quartz] component instead.
 
-### URI format
+=== URI format
 
-[source,java]
----------------------------------------------
+----
 quartz2://timerName?options
 quartz2://groupName/timerName?options
 quartz2://groupName/timerName?cron=expression
 quartz2://timerName?cron=expression
----------------------------------------------
+----
 
 The component uses either a `CronTrigger` or a `SimpleTrigger`. If no
 cron expression is provided, the component uses a simple trigger. If no
@@ -42,7 +41,7 @@ name.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+=== Options
 
 
 
@@ -121,9 +120,10 @@ For example, the following routing rule will fire two timer events to
 the `mock:results` endpoint:
 
 [source,java]
---------------------------------------------------------------------------------------------------------------------------
-from("quartz2://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute").to("mock:result");
---------------------------------------------------------------------------------------------------------------------------
+----
+from("quartz2://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute")
+    .to("mock:result");
+----
 
 When using `stateful=true`, the
 http://quartz-scheduler.org/api/2.0.0/org/quartz/JobDataMap.html[JobDataMap]
@@ -139,7 +139,7 @@ to the <camelContext> that this id is unique, as this is
 required by the `QuartzScheduler` in the OSGi container. If you do not
 set any `id` on <camelContext> then a unique id is auto assigned, and there is no problem.
 
-### Configuring quartz.properties file
+=== Configuring quartz.properties file
 
 By default Quartz will look for a `quartz.properties` file in the
 `org/quartz` directory of the classpath. If you are using WAR
@@ -150,24 +150,24 @@ However the Camel link:quartz2.html[Quartz2] component also allows you
 to configure properties:
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
+|===
 |Parameter |Default |Type |Description
 
 |`properties` |`null` |`Properties` |You can configure a `java.util.Properties` instance.
 
 |`propertiesFile` |`null` |`String` |File name of the properties to load from the classpath
-|=======================================================================
+|===
 
 To do this you can configure this in Spring XML as follows
 
 [source,xml]
--------------------------------------------------------------------------------
-<bean id="quartz" class="org.apache.camel.component.quartz2.QuartzComponent">
+----
+<bean id="quartz2" class="org.apache.camel.component.quartz2.QuartzComponent">
     <property name="propertiesFile" value="com/mycompany/myquartz.properties"/>
 </bean>
--------------------------------------------------------------------------------
+----
 
-### Enabling Quartz scheduler in JMX
+=== Enabling Quartz scheduler in JMX
 
 You need to configure the quartz scheduler properties to enable JMX. +
  That is typically setting the option
@@ -177,7 +177,7 @@ configuration file.
 From Camel 2.13 onwards Camel will automatic set this option to true,
 unless explicit disabled.
 
-### Starting the Quartz scheduler
+=== Starting the Quartz scheduler
 
 The link:quartz2.html[Quartz2] component offers an option to let the
 Quartz scheduler be started delayed, or not auto started at all.
@@ -185,13 +185,13 @@ Quartz scheduler be started delayed, or not auto started at all.
 This is an example:
 
 [source,xml]
-------------------------------------------------------------------------------
+----
 <bean id="quartz2" class="org.apache.camel.component.quartz2.QuartzComponent">
     <property name="startDelayedSeconds" value="5"/>
 </bean>
-------------------------------------------------------------------------------
+----
 
-### Clustering
+=== Clustering
 
 If you use Quartz in clustered mode, e.g. the `JobStore` is clustered.
 Then the link:quartz2.html[Quartz2] component will *not* pause/remove
@@ -201,7 +201,7 @@ to keep running on the other nodes in the cluster.
 *Note*: When running in clustered node no checking is done to ensure
 unique job name/group for endpoints.
 
-### Message Headers
+=== Message Headers
 
 Camel adds the getters from the Quartz Execution Context as header
 values. The following headers are added: +
@@ -213,7 +213,7 @@ values. The following headers are added: +
 The `fireTime` header contains the `java.util.Date` of when the exchange
 was fired.
 
-### Using Cron Triggers
+=== Using Cron Triggers
 
 Quartz supports
 http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger[Cron-like
@@ -225,40 +225,39 @@ For example, the following will fire a message every five minutes
 starting at 12pm (noon) to 6pm on weekdays:
 
 [source,java]
-------------------------------------------------------------------------------------------------
-from("quartz2://myGroup/myTimerName?cron=0+0/5+12-18+?+*+MON-FRI").to("activemq:Totally.Rocks");
-------------------------------------------------------------------------------------------------
+----
+from("quartz2://myGroup/myTimerName?cron=0+0/5+12-18+?+*+MON-FRI")
+    .to("activemq:Totally.Rocks");
+----
 
 which is equivalent to using the cron expression
 
-[source,java]
------------------------
+----
 0 0/5 12-18 ? * MON-FRI
------------------------
+----
 
 The following table shows the URI character encodings we use to preserve
 valid URI syntax:
 
 [width="100%",cols="50%,50%",options="header",]
-|=======================================================================
+|===
 |URI Character |Cron character
 
 |`+` | _Space_
-|=======================================================================
+|===
 
-### Specifying time zone
+=== Specifying time zone
 
 The Quartz Scheduler allows you to configure time zone per trigger. For
 example to use a timezone of your country, then you can do as follows:
 
-[source,java]
---------------------------------------------------------------------------------------------
+----
 quartz2://groupName/timerName?cron=0+0/5+12-18+?+*+MON-FRI&trigger.timeZone=Europe/Stockholm
---------------------------------------------------------------------------------------------
+----
 
 The timeZone value is the values accepted by `java.util.TimeZone`.
 
-### Using QuartzScheduledPollConsumerScheduler
+=== Using QuartzScheduledPollConsumerScheduler
 
 The link:quartz2.html[Quartz2] component provides a
 link:polling-consumer.html[Polling Consumer] scheduler which allows to
@@ -270,10 +269,10 @@ For example to use a cron based expression to poll for files every 2nd
 second, then a Camel route can be define simply as:
 
 [source,java]
----------------------------------------------------------------------
+----
     from("file:inbox?scheduler=quartz2&scheduler.cron=0/2+*+*+*+*+?")
        .to("bean:process");
----------------------------------------------------------------------
+----
 
 Notice we define the `scheduler=quartz2` to instruct Camel to use the
 link:quartz2.html[Quartz2] based scheduler. Then we use `scheduler.xxx`
@@ -283,7 +282,7 @@ scheduler requires the cron option to be set.
 The following options is supported:
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
+|===
 |Parameter |Default |Type |Description
 
 |`quartzScheduler` |`null` |`org.quartz.Scheduler` |To use a custom Quartz scheduler. If none configure then the shared
@@ -297,33 +296,24 @@ and used.
 |`triggerGroup` |`QuartzScheduledPollConsumerScheduler` |`String` |To specify the trigger group.
 
 |`timeZone` |`Default` |`TimeZone` |The time zone to use for the CRON trigger.
-|=======================================================================
+|===
 
 *Important:* Remember configuring these options from the endpoint
 link:uris.html[URIs] must be prefixed with `scheduler.`. 
 For example to configure the trigger id and group:
 
 [source,java]
------------------------------------------------------------------------------------------------------------------------------
+----
     from("file:inbox?scheduler=quartz2&scheduler.cron=0/2+*+*+*+*+?&scheduler.triggerId=myId&scheduler.triggerGroup=myGroup")
        .to("bean:process");
------------------------------------------------------------------------------------------------------------------------------
+----
 
 There is also a CRON scheduler in link:spring.html[Spring], so you can
 use the following as well:
 
 [source,java]
---------------------------------------------------------------------
+----
     from("file:inbox?scheduler=spring&scheduler.cron=0/2+*+*+*+*+?")
        .to("bean:process");
---------------------------------------------------------------------
+----
 
-### See Also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
-
-* link:quartz.html[Quartz]
-* link:timer.html[Timer]

@@ -22,11 +22,11 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
-public class KafkaComponent extends UriEndpointComponent implements SSLContextParametersAware {
+public class KafkaComponent extends DefaultComponent implements SSLContextParametersAware {
 
     private KafkaConfiguration configuration;
 
@@ -42,11 +42,10 @@ public class KafkaComponent extends UriEndpointComponent implements SSLContextPa
     private KafkaManualCommitFactory kafkaManualCommitFactory = new DefaultKafkaManualCommitFactory();
 
     public KafkaComponent() {
-        super(KafkaEndpoint.class);
     }
 
     public KafkaComponent(CamelContext context) {
-        super(context, KafkaEndpoint.class);
+        super(context);
     }
 
     @Override

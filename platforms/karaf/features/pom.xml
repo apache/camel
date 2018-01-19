@@ -185,10 +185,9 @@
                 <!-- camel-cxf uses blueprint but its feature name is different in karaf 3.x vs 4.x -->
                 <!-- camel-ignite requires to install apache ignite first -->
                 <!-- camel-guice does not work in OSGi currently -->
-                <!-- camel-leveldb uses some wrap magic to install which validator fails but it works -->
-                <feature>camel|camel-(?!(blueprint|cdi|cxf|ignite|guice|leveldb))*</feature>
+                <feature>camel|camel-(?!(blueprint|cdi|cxf|ignite|guice))*</feature>
               </features>
-			        <configuration>file://${project.build.directory}/classes/config.properties</configuration>
+            <configuration>file://${project.build.directory}/classes/config.properties</configuration>
             </configuration>
             <executions>
               <execution>
@@ -203,7 +202,7 @@
               <dependency>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-http-lightweight</artifactId>
-                <version>2.10</version>
+                <version>3.0.0</version>
               </dependency>
             </dependencies>
           </plugin>

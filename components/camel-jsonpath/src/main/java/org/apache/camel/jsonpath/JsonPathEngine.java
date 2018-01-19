@@ -28,10 +28,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.Configuration.Defaults;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.internal.DefaultsImpl;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -69,7 +67,7 @@ public class JsonPathEngine {
         this.writeAsString = writeAsString;
         this.headerName = headerName;
 
-        Defaults defaults = DefaultsImpl.INSTANCE;
+        Configuration defaults = Configuration.defaultConfiguration();
         if (options != null) {
             Configuration.ConfigurationBuilder builder = Configuration.builder().jsonProvider(defaults.jsonProvider()).options(options);
             if (suppressExceptions) {

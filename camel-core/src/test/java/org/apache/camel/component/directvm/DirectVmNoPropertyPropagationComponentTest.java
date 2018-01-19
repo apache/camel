@@ -31,6 +31,7 @@ public class DirectVmNoPropertyPropagationComponentTest extends ContextTestSuppo
         
         DirectVmComponent directvm = new DirectVmComponent();
         directvm.setPropagateProperties(false);
+        directvm.setBlock(false);
         context.addComponent("direct-vm", directvm);
         
         return context;

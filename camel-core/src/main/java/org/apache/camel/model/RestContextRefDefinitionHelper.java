@@ -103,7 +103,7 @@ public final class RestContextRefDefinitionHelper {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         Object clone = unmarshaller.unmarshal(bis);
 
-        if (clone != null && clone instanceof RestDefinition) {
+        if (clone instanceof RestDefinition) {
             RestDefinition def2 = (RestDefinition) clone;
 
             Iterator<VerbDefinition> verbit1 = def.getVerbs().iterator();

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.kinesis;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import com.amazonaws.services.kinesis.AmazonKinesis;
@@ -26,6 +27,7 @@ import com.amazonaws.services.kinesis.model.GetRecordsResult;
 import com.amazonaws.services.kinesis.model.GetShardIteratorRequest;
 import com.amazonaws.services.kinesis.model.GetShardIteratorResult;
 import com.amazonaws.services.kinesis.model.Record;
+import com.amazonaws.services.kinesis.model.SequenceNumberRange;
 import com.amazonaws.services.kinesis.model.Shard;
 import com.amazonaws.services.kinesis.model.ShardIteratorType;
 import com.amazonaws.services.kinesis.model.StreamDescription;
@@ -67,7 +69,14 @@ public class KinesisConsumerTest {
         KinesisEndpoint endpoint = new KinesisEndpoint(null, "streamName", component);
         endpoint.setAmazonKinesisClient(kinesisClient);
         endpoint.setIteratorType(ShardIteratorType.LATEST);
+        endpoint.setShardClosed(KinesisShardClosedStrategyEnum.silent);
         undertest = new KinesisConsumer(endpoint, processor);
+        
+        SequenceNumberRange range = new SequenceNumberRange().withEndingSequenceNumber(null);
+        Shard shard = new Shard().withShardId("shardId").withSequenceNumberRange(range);
+        ArrayList<Shard> shardList = new ArrayList<>();
+        shardList.add(shard);
+       
 
         when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
             .thenReturn(new GetRecordsResult()
@@ -76,7 +85,7 @@ public class KinesisConsumerTest {
         when(kinesisClient.describeStream(any(DescribeStreamRequest.class)))
             .thenReturn(new DescribeStreamResult()
                 .withStreamDescription(new StreamDescription()
-                    .withShards(new Shard().withShardId("shardId"))
+                    .withShards(shardList)
                 )
             );
         when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class)))
@@ -106,8 +115,6 @@ public class KinesisConsumerTest {
         undertest.getEndpoint().setShardId("shardIdPassedAsUrlParam");
 
         undertest.poll();
-
-        verify(kinesisClient, never()).describeStream(any(DescribeStreamRequest.class));
 
         final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 

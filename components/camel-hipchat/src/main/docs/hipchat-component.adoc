@@ -53,13 +53,14 @@ with the following path and query parameters:
 | *port* | The port for the hipchat server. Is by default 80. | 80 | Integer
 |===
 
-==== Query Parameters (21 parameters):
+==== Query Parameters (22 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *authToken* (common) | OAuth 2 auth token |  | String
 | *consumeUsers* (common) | Username(s) when consuming messages from the hiptchat server. Multiple user names can be separated by comma. |  | String
+| *httpClient* (common) | The CloseableHttpClient reference from registry to be used during API HTTP requests. | CloseableHttpClient default from HttpClient library | CloseableHttpClient
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -179,6 +180,24 @@ The status of the API response received when message sent to the user.
 
 |HipchatFromUserResponseStatus |HipchatConstants.TO_ROOM_RESPONSE_STATUS |_http://hc.apache.org/httpcomponents-core-4.2.x/httpcore/apidocs/org/apache/http/StatusLine.html[StatusLine]_ |The status of the API response received when message sent to the room.
 |=======================================================================
+
+#### Configuring Http Client
+
+The HipChat component allow your own `HttpClient` configuration. This can be done by defining a reference for `CloseableHttpClient` in the http://camel.apache.org/registry.html[registry] (e.g. Spring Context) and then, set the parameter during the Endpoint definition, for example: `hipchat:http://api.hipchat.com?httpClient=#myHttpClient`.
+
+[source,java]
+------------------------------------------
+CloseableHttpClient httpclient = HttpClients.custom()
+    .setConnectionManager(connManager)
+    .setDefaultCookieStore(cookieStore)
+    .setDefaultCredentialsProvider(credentialsProvider)
+    .setProxy(new HttpHost("myproxy", 8080))
+    .setDefaultRequestConfig(defaultRequestConfig)
+    .build();
+------------------------------------------
+
+To see more information about Http Client configuration, please check the https://hc.apache.org/httpcomponents-client-ga/examples.html[official documentation].
+ 
 
 #### Dependencies
 

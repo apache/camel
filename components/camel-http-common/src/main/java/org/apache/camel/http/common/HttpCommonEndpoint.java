@@ -115,7 +115,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             + " Setting this to false will avoid the HTTP Form Encoded body mapping.")
     boolean mapHttpMessageFormUrlEncodedBody = true;
     @UriParam(label = "producer,advanced", defaultValue = "200-299",
-            description = "The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.")
+            description = "The status codes which are considered a success response. The values are inclusive. Multiple ranges can be"
+                    + " defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included.")
     private String okStatusCodeRange = "200-299";
     @UriParam(label = "producer,advanced",
             description = "Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints."
@@ -487,7 +488,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
+     * The status codes which are considered a success response. The values are inclusive. Multiple ranges can be
+     * defined, separated by comma, e.g. <tt>200-204,209,301-304</tt>. Each range must be a single number or from-to with the
+     * dash included.
      * <p/>
      * The default range is <tt>200-299</tt>
      */

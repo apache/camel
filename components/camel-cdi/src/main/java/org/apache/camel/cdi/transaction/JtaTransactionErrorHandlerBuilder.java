@@ -99,14 +99,14 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
             Map<String, TransactedPolicy> mapPolicy = routeContext.lookupByType(TransactedPolicy.class);
             if (mapPolicy != null && mapPolicy.size() == 1) {
                 TransactedPolicy policy = mapPolicy.values().iterator().next();
-                if (policy != null && policy instanceof JtaTransactionPolicy) {
+                if (policy instanceof JtaTransactionPolicy) {
                     transactionPolicy = (JtaTransactionPolicy) policy;
                 }
             }
 
             if (transactionPolicy == null) {
                 TransactedPolicy policy = routeContext.lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
-                if (policy != null && policy instanceof JtaTransactionPolicy) {
+                if (policy instanceof JtaTransactionPolicy) {
                     transactionPolicy = (JtaTransactionPolicy) policy;
                 }
             }

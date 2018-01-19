@@ -58,7 +58,7 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
 
     public void abort(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         deleteLocalWorkFile(exchange);
-        operations.releaseRetreivedFileResources(exchange);
+        operations.releaseRetrievedFileResources(exchange);
 
         // must release lock last
         if (exclusiveReadLockStrategy != null) {
@@ -68,7 +68,7 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
 
     public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         deleteLocalWorkFile(exchange);
-        operations.releaseRetreivedFileResources(exchange);
+        operations.releaseRetrievedFileResources(exchange);
 
         // must release lock last
         if (exclusiveReadLockStrategy != null) {
@@ -78,7 +78,7 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
 
     public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         deleteLocalWorkFile(exchange);
-        operations.releaseRetreivedFileResources(exchange);
+        operations.releaseRetrievedFileResources(exchange);
 
         // must release lock last
         if (exclusiveReadLockStrategy != null) {

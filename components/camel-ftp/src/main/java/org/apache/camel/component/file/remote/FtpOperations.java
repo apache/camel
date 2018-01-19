@@ -56,7 +56,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final FTPClient client;
     protected final FTPClientConfig clientConfig;
-    protected RemoteFileEndpoint<FTPFile> endpoint;
+    protected FtpEndpoint<FTPFile> endpoint;
+    protected FtpClientActivityListener clientActivityListener;
 
     public FtpOperations(FTPClient client, FTPClientConfig clientConfig) {
         this.client = client;
@@ -64,10 +65,31 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public void setEndpoint(GenericFileEndpoint<FTPFile> endpoint) {
-        this.endpoint = (RemoteFileEndpoint<FTPFile>) endpoint;
+        this.endpoint = (FtpEndpoint<FTPFile>) endpoint;
+        // setup download listener/logger when we have the endpoint configured
+        this.clientActivityListener = new DefaultFtpClientActivityListener(this.endpoint, this.endpoint.getConfiguration().remoteServerInformation());
+    }
+
+    public FtpClientActivityListener getClientActivityListener() {
+        return clientActivityListener;
+    }
+
+    public void setClientActivityListener(FtpClientActivityListener clientActivityListener) {
+        this.clientActivityListener = clientActivityListener;
     }
 
     public boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
+        client.setCopyStreamListener(clientActivityListener);
+
+        try {
+            return doConnect(configuration);
+        } catch (GenericFileOperationFailedException e) {
+            clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
+            throw e;
+        }
+    }
+
+    protected boolean doConnect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
         log.trace("Connecting using FTPClient: {}", client);
 
         String host = configuration.getHost();
@@ -93,6 +115,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 if (log.isTraceEnabled() && attempt > 0) {
                     log.trace("Reconnect attempt #{} connecting to {}", attempt, configuration.remoteServerInformation());
                 }
+                clientActivityListener.onConnecting(host);
                 client.connect(host, port);
                 // must check reply code if we are connected
                 int reply = client.getReplyCode();
@@ -134,6 +157,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
         }
 
+        // we are now connected
+        clientActivityListener.onConnected(host);
+
         // must enter passive mode directly after connect
         if (configuration.isPassiveMode()) {
             log.trace("Using passive mode connections");
@@ -142,7 +168,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
         // must set soTimeout after connect
         if (endpoint instanceof FtpEndpoint) {
-            FtpEndpoint<?> ftpEndpoint = (FtpEndpoint<?>) endpoint;
+            FtpEndpoint<?> ftpEndpoint = endpoint;
             if (ftpEndpoint.getSoTimeout() > 0) {
                 log.trace("Using SoTimeout={}", ftpEndpoint.getSoTimeout());
                 try {
@@ -154,6 +180,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
 
         try {
+            clientActivityListener.onLogin(host);
             boolean login;
             if (username != null) {
                 if (account != null) {
@@ -178,10 +205,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 // store replyString, because disconnect() will reset it
                 String replyString = client.getReplyString();
                 int replyCode = client.getReplyCode();
+                clientActivityListener.onLoginFailed(replyCode, replyString);
                 // disconnect to prevent connection leaks
                 client.disconnect();
                 throw new GenericFileOperationFailedException(replyCode, replyString);
             }
+            clientActivityListener.onLoginComplete(host);
             client.setFileType(configuration.isBinary() ? FTP.BINARY_FILE_TYPE : FTP.ASCII_FILE_TYPE);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
@@ -212,7 +241,22 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public void disconnect() throws GenericFileOperationFailedException {
+        try {
+            doDisconnect();
+        } catch (GenericFileOperationFailedException e) {
+            clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public void forceDisconnect() throws GenericFileOperationFailedException {
+        doDisconnect();
+    }
+
+    protected void doDisconnect() throws GenericFileOperationFailedException {
         // logout before disconnecting
+        clientActivityListener.onDisconnecting(endpoint.getConfiguration().remoteServerInformation());
         try {
             log.trace("Client logout");
             client.logout();
@@ -226,6 +270,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
             }
         }
+        clientActivityListener.onDisconnected(endpoint.getConfiguration().remoteServerInformation());
     }
 
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
@@ -308,19 +353,36 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
-    public boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
-        log.trace("retrieveFile({})", name);
-        if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
-            // local work directory is configured so we should store file content as files in this local directory
-            return retrieveFileToFileInLocalWorkDirectory(name, exchange);
-        } else {
-            // store file content directory as stream on the body
-            return retrieveFileToStreamInBody(name, exchange);
+    public boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
+        // store the name of the file to download on the listener
+        clientActivityListener.setDownload(true);
+        clientActivityListener.setRemoteFileName(name);
+        clientActivityListener.setRemoteFileSize(size);
+        clientActivityListener.onBeginDownloading(endpoint.getConfiguration().remoteServerInformation(), name);
+
+        boolean answer;
+        try {
+            log.trace("retrieveFile({})", name);
+            if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
+                // local work directory is configured so we should store file content as files in this local directory
+                answer = retrieveFileToFileInLocalWorkDirectory(name, exchange, endpoint.isResumeDownload());
+            } else {
+                // store file content directory as stream on the body
+                answer = retrieveFileToStreamInBody(name, exchange);
+            }
+        } catch (GenericFileOperationFailedException e) {
+            clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
+            throw e;
         }
+
+        if (answer) {
+            clientActivityListener.onDownloadComplete(endpoint.getConfiguration().remoteServerInformation(), name);
+        }
+        return answer;
     }
     
     @Override
-    public void releaseRetreivedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
+    public void releaseRetrievedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
         InputStream is = exchange.getIn().getHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, InputStream.class);
         
         if (is != null) {
@@ -357,7 +419,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
 
             log.trace("Client retrieveFile: {}", remoteName);
-            
             if (endpoint.getConfiguration().isStreamDownload()) {
                 InputStream is = client.retrieveFileStream(remoteName); 
                 target.setBody(is);
@@ -390,10 +451,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean retrieveFileToFileInLocalWorkDirectory(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    private boolean retrieveFileToFileInLocalWorkDirectory(String name, Exchange exchange, boolean resumeDownload) throws GenericFileOperationFailedException {
         File temp;
         File local = new File(FileUtil.normalizePath(endpoint.getLocalWorkDirectory()));
         OutputStream os;
+        long existingSize = -1;
+
         try {
             // use relative filename in local work directory
             GenericFile<FTPFile> target = (GenericFile<FTPFile>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
@@ -406,25 +469,34 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             // create directory to local work file
             local.mkdirs();
 
-            // delete any existing files
-            if (temp.exists()) {
-                if (!FileUtil.deleteFile(temp)) {
-                    throw new GenericFileOperationFailedException("Cannot delete existing local work file: " + temp);
-                }
-            }
+            // delete any local file (as its the temp file that is in the in-progress download)
             if (local.exists()) {
                 if (!FileUtil.deleteFile(local)) {
                     throw new GenericFileOperationFailedException("Cannot delete existing local work file: " + local);
                 }
             }
 
-            // create new temp local work file
-            if (!temp.createNewFile()) {
-                throw new GenericFileOperationFailedException("Cannot create new local work file: " + temp);
+            // if a previous file exists then store its current size as its a partial download
+            boolean exists = temp.exists();
+            if (exists) {
+                existingSize = temp.length();
+            }
+
+            // if we do not resume download, then delete any existing temp file and create a new to use for in-progress download
+            if (!resumeDownload) {
+                // delete any existing files
+                if (exists && !FileUtil.deleteFile(temp)) {
+                    throw new GenericFileOperationFailedException("Cannot delete existing local work file: " + temp);
+                }
+                // create new temp local work file
+                if (!temp.createNewFile()) {
+                    throw new GenericFileOperationFailedException("Cannot create new local work file: " + temp);
+                }
             }
 
             // store content as a file in the local work directory in the temp handle
-            os = new FileOutputStream(temp);
+            boolean append = resumeDownload && existingSize > 0;
+            os = new FileOutputStream(temp, append);
 
             // set header with the path to the local work file            
             exchange.getIn().setHeader(Exchange.FILE_LOCAL_WORK_PATH, local.getPath());
@@ -455,6 +527,13 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 remoteName = FileUtil.stripPath(name);
             }
 
+            // the file exists so lets try to resume the download
+            if (resumeDownload && existingSize > 0) {
+                clientActivityListener.onResumeDownloading(endpoint.getConfiguration().remoteServerInformation(), name, existingSize);
+                log.trace("Client restartOffset: {}", existingSize);
+                log.debug("Resuming download of file: {} at position: {}", remoteName, existingSize);
+                client.setRestartOffset(existingSize);
+            }
             log.trace("Client retrieveFile: {}", remoteName);
             result = client.retrieveFile(remoteName, os);
 
@@ -468,13 +547,17 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
 
         } catch (IOException e) {
-            log.trace("Error occurred during retrieving file: {} to local directory. Deleting local work file: {}", name, temp);
-            // failed to retrieve the file so we need to close streams and delete in progress file
-            // must close stream before deleting file
-            IOHelper.close(os, "retrieve: " + name, log);
-            boolean deleted = FileUtil.deleteFile(temp);
-            if (!deleted) {
-                log.warn("Error occurred during retrieving file: " + name + " to local directory. Cannot delete local work file: " + temp);
+            log.trace("Error occurred during retrieving file: {} to local directory.", name);
+            // if we do not attempt to resume download, then attempt to delete the temporary file
+            if (!resumeDownload) {
+                log.trace("Deleting local work file: {}", name, temp);
+                // failed to retrieve the file so we need to close streams and delete in progress file
+                // must close stream before deleting file
+                IOHelper.close(os, "retrieve: " + name, log);
+                boolean deleted = FileUtil.deleteFile(temp);
+                if (!deleted) {
+                    log.warn("Error occurred during retrieving file: " + name + " to local directory. Cannot delete local work file: " + temp);
+                }
             }
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         } finally {
@@ -499,13 +582,19 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         return result;
     }
 
-    public boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public boolean storeFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         // must normalize name first
         name = endpoint.getConfiguration().normalizePath(name);
 
+        // store the name of the file to upload on the listener
+        clientActivityListener.setDownload(false);
+        clientActivityListener.setRemoteFileName(name);
+        clientActivityListener.setRemoteFileSize(size);
+        clientActivityListener.onBeginUploading(endpoint.getConfiguration().remoteServerInformation(), name);
+
         log.trace("storeFile({})", name);
 
-        boolean answer = false;
+        boolean answer;
         String currentDir = null;
         String path = FileUtil.onlyPath(name);
         String targetName = name;
@@ -524,11 +613,18 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
             // store the file
             answer = doStoreFile(name, targetName, exchange);
+        } catch (GenericFileOperationFailedException e) {
+            clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
+            throw e;
         } finally {
             // change back to current directory if we changed directory
             if (currentDir != null) {
                 changeCurrentDirectory(currentDir);
             }
+        }
+
+        if (answer) {
+            clientActivityListener.onUploadComplete(endpoint.getConfiguration().remoteServerInformation(), name);
         }
 
         return answer;
@@ -588,10 +684,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 log.trace("Client storeFile: {}", targetName);
                 answer = client.storeFile(targetName, is);
             }
-            watch.stop();
             if (log.isDebugEnabled()) {
+                long time = watch.taken();
                 log.debug("Took {} ({} millis) to store file: {} and FTP client returned: {}",
-                        new Object[]{TimeUtils.printDuration(watch.taken()), watch.taken(), targetName, answer});
+                        new Object[]{TimeUtils.printDuration(time), time, targetName, answer});
             }
             
             // store client reply information after the operation
@@ -599,7 +695,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
 
             // after storing file, we may set chmod on the file
-            String chmod = ((FtpConfiguration) endpoint.getConfiguration()).getChmod();
+            String chmod = endpoint.getConfiguration().getChmod();
             if (ObjectHelper.isNotEmpty(chmod)) {
                 log.debug("Setting chmod: {} on file: {}", chmod, targetName);
                 String command = "chmod " + chmod + " " + targetName;
@@ -607,7 +703,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 boolean success = client.sendSiteCommand(command);
                 log.trace("Client sendSiteCommand successful: {}", success);
             }
-            
 
             return answer;
 
@@ -801,6 +896,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public List<FTPFile> listFiles() throws GenericFileOperationFailedException {
         log.trace("listFiles()");
+        clientActivityListener.onScanningForFiles(endpoint.remoteServerInformation(), null);
         try {
             final List<FTPFile> list = new ArrayList<FTPFile>();
             FTPFile[] files = client.listFiles();
@@ -810,12 +906,15 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
             return list;
         } catch (IOException e) {
+            clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }
 
     public List<FTPFile> listFiles(String path) throws GenericFileOperationFailedException {
         log.trace("listFiles({})", path);
+        clientActivityListener.onScanningForFiles(endpoint.remoteServerInformation(), path);
+
         // use current directory if path not given
         if (ObjectHelper.isEmpty(path)) {
             path = ".";
@@ -830,6 +929,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
             return list;
         } catch (IOException e) {
+            clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }

@@ -14,13 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
@@ -32,90 +43,59 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
+ *
  * <p/>
- * MLLP payloads are not logged unless the logging level is set to DEBUG or TRACE to avoid introducing PHI
- * into the log files. Logging of PHI can be globally disabled by setting the org.apache.camel.mllp.logPHI system
- * property to false.
+ * NOTE: MLLP payloads are not logged unless the logging level is set to DEBUG or TRACE to avoid introducing PHI into the log files.  Logging of PHI can be globally disabled by setting the
+ * org.apache.camel.mllp.logPHI system property to false.
+ * <p/>
  */
-@ManagedResource(description = "Mllp Endpoint")
-@UriEndpoint(firstVersion = "2.17.0", scheme = "mllp", title = "MLLP", syntax = "mllp:hostname:port", consumerClass = MllpTcpServerConsumer.class, label = "hl7")
+@ManagedResource(description = "MLLP Endpoint")
+@UriEndpoint(scheme = "mllp", firstVersion = "2.17.0", title = "MLLP", syntax = "mllp:hostname:port", consumerClass = MllpTcpServerConsumer.class, label = "mllp")
 public class MllpEndpoint extends DefaultEndpoint {
-    public static final char START_OF_BLOCK = 0x0b;      // VT (vertical tab)        - decimal 11, octal 013
-    public static final char END_OF_BLOCK = 0x1c;        // FS (file separator)      - decimal 28, octal 034
-    public static final char END_OF_DATA = 0x0d;         // CR (carriage return)     - decimal 13, octal 015
-    public static final int END_OF_STREAM = -1;          //
-    public static final char SEGMENT_DELIMITER = 0x0d;   // CR (carriage return)     - decimal 13, octal 015
-    public static final char MESSAGE_TERMINATOR = 0x0a;  // LF (line feed, new line) - decimal 10, octal 012
+    // Use constants from MllpProtocolConstants
+    @Deprecated()
+    public static final char START_OF_BLOCK = MllpProtocolConstants.START_OF_BLOCK;
+    @Deprecated()
+    public static final char END_OF_BLOCK = MllpProtocolConstants.END_OF_BLOCK;
+    @Deprecated()
+    public static final char END_OF_DATA = MllpProtocolConstants.END_OF_DATA;
+    @Deprecated()
+    public static final int END_OF_STREAM = MllpProtocolConstants.END_OF_STREAM;
+    @Deprecated()
+    public static final char SEGMENT_DELIMITER = MllpProtocolConstants.SEGMENT_DELIMITER;
+    @Deprecated()
+    public static final char MESSAGE_TERMINATOR = MllpProtocolConstants.MESSAGE_TERMINATOR;
+
+    @Deprecated // Use constants from MllpProtocolConstants
+    public static final Charset DEFAULT_CHARSET = MllpProtocolConstants.DEFAULT_CHARSET;
 
     private static final Logger LOG = LoggerFactory.getLogger(MllpEndpoint.class);
 
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = "true")
     String hostname;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = "true")
     int port = -1;
 
-    @UriParam(label = "advanced", defaultValue = "5")
-    int backlog = 5;
-
-    @UriParam(label = "timeout", defaultValue = "30000")
-    int bindTimeout = 30000;
-
-    @UriParam(label = "timeout", defaultValue = "5000")
-    int bindRetryInterval = 5000;
-
-    @UriParam(label = "timeout", defaultValue = "60000")
-    int acceptTimeout = 60000;
-
-    @UriParam(label = "timeout", defaultValue = "30000")
-    int connectTimeout = 30000;
-
-    @UriParam(label = "timeout", defaultValue = "10000")
-    int receiveTimeout = 10000;
-
-    @UriParam(label = "timeout", defaultValue = "-1")
-    int maxReceiveTimeouts = -1;
-
-    @UriParam(label = "timeout", defaultValue = "500")
-    int readTimeout = 500;
-
-    @UriParam(defaultValue = "true")
-    boolean keepAlive = true;
-
-    @UriParam(defaultValue = "true")
-    boolean tcpNoDelay = true;
-
-    @UriParam
-    boolean reuseAddress;
-
     @UriParam(label = "advanced")
-    Integer receiveBufferSize;
+    MllpConfiguration configuration;
 
-    @UriParam(label = "advanced")
-    Integer sendBufferSize;
+    Long lastConnectionActivityTicks;
+    Long lastConnectionEstablishedTicks;
+    Long lastConnectionTerminatedTicks;
 
-    @UriParam(defaultValue = "true")
-    boolean autoAck = true;
-
-    @UriParam(defaultValue = "true")
-    boolean hl7Headers = true;
-
-    @UriParam(defaultValue = "true")
-    boolean bufferWrites = true;
-
-    @UriParam(defaultValue = "false")
-    boolean validatePayload;
-
-    @UriParam(label = "codec")
-    String charsetName;
-
-    public MllpEndpoint(String uri, MllpComponent component) {
+    public MllpEndpoint(String uri, MllpComponent component, MllpConfiguration configuration) {
         super(uri, component);
+        this.configuration = configuration.copy();
     }
 
     @Override
-    public ExchangePattern getExchangePattern() {
-        return ExchangePattern.InOut;
+    public Exchange createExchange(Exchange exchange) {
+        Exchange mllpExchange = super.createExchange(exchange);
+        setExchangeProperties(mllpExchange);
+        return mllpExchange;
     }
 
     @Override
@@ -126,15 +106,18 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Exchange createExchange(Exchange exchange) {
-        Exchange mllpExchange = super.createExchange(exchange);
-        setExchangeProperties(mllpExchange);
-        return mllpExchange;
+    public ExchangePattern getExchangePattern() {
+        return ExchangePattern.InOut;
+    }
+
+    @Override
+    public boolean isSynchronous() {
+        return true;
     }
 
     private void setExchangeProperties(Exchange mllpExchange) {
-        if (charsetName != null) {
-            mllpExchange.setProperty(Exchange.CHARSET_NAME, charsetName);
+        if (configuration.hasCharsetName()) {
+            mllpExchange.setProperty(Exchange.CHARSET_NAME, configuration.getCharsetName());
         }
     }
 
@@ -144,32 +127,49 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        LOG.trace("({}).createConsumer(processor)", this.getEndpointKey());
+        LOG.trace("({}).createConsumer(Processor)", this.getEndpointKey());
         Consumer consumer = new MllpTcpServerConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
-    }
-
-    @Override
-    public boolean isSynchronous() {
-        return true;
     }
 
     public boolean isSingleton() {
         return true;
     }
 
-    public String getCharsetName() {
-        return charsetName;
+    @ManagedAttribute(description = "Last activity time")
+    public Date getLastConnectionActivityTime() {
+        if (lastConnectionActivityTicks != null) {
+            return new Date(lastConnectionActivityTicks);
+        }
+
+        return null;
     }
 
-    /**
-     * Set the CamelCharsetName property on the exchange
-     *
-     * @param charsetName the charset
-     */
-    public void setCharsetName(String charsetName) {
-        this.charsetName = charsetName;
+    @ManagedAttribute(description = "Last connection established time")
+    public Date getLastConnectionEstablishedTime() {
+        if (lastConnectionEstablishedTicks != null) {
+            return new Date(lastConnectionEstablishedTicks);
+        }
+
+        return null;
+    }
+
+    @ManagedAttribute(description = "Last connection terminated time")
+    public Date getLastConnectionTerminatedTime() {
+        return lastConnectionTerminatedTicks != null ? new Date(lastConnectionTerminatedTicks) : null;
+    }
+
+    public void updateLastConnectionActivityTicks() {
+        lastConnectionActivityTicks = System.currentTimeMillis();
+    }
+
+    public void updateLastConnectionEstablishedTicks() {
+        lastConnectionEstablishedTicks = System.currentTimeMillis();
+    }
+
+    public void updateLastConnectionTerminatedTicks() {
+        lastConnectionTerminatedTicks = System.currentTimeMillis();
     }
 
     public String getHostname() {
@@ -200,235 +200,318 @@ public class MllpEndpoint extends DefaultEndpoint {
         this.port = port;
     }
 
-    public int getBacklog() {
-        return backlog;
+    public boolean hasConfiguration() {
+        return configuration != null;
     }
 
-    /**
-     * The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection
-     * is refused.
-     */
-    public void setBacklog(int backlog) {
-        this.backlog = backlog;
+    public MllpConfiguration getConfiguration() {
+        return configuration;
     }
 
-    public int getBindTimeout() {
-        return bindTimeout;
+    public void setConfiguration(MllpConfiguration configuration) {
+        if (hasConfiguration()) {
+            this.configuration.copy(configuration);
+        } else {
+            this.configuration = configuration.copy();
+        }
     }
 
-    /**
-     * TCP Server Only - The number of milliseconds to retry binding to a server port
-     */
+    public Charset determineCharset(byte[] hl7Bytes, String msh18) {
+        Charset answer = MllpProtocolConstants.DEFAULT_CHARSET;
+
+        if (configuration.hasCharsetName()) {
+            String charsetName = configuration.getCharsetName();
+            if (Charset.isSupported(charsetName)) {
+                answer = Charset.forName(charsetName);
+            } else {
+                LOG.warn("Unsupported Character Set {} configured for component - using default character set {}", charsetName, MllpProtocolConstants.DEFAULT_CHARSET);
+            }
+        } else if (msh18 != null && !msh18.isEmpty()) {
+            if (MllpProtocolConstants.MSH18_VALUES.containsKey(msh18)) {
+                answer = MllpProtocolConstants.MSH18_VALUES.get(msh18);
+            } else {
+                LOG.warn("Unsupported Character Set {} specified for MSH-18 - using default character set {}", msh18, MllpProtocolConstants.DEFAULT_CHARSET);
+            }
+        } else {
+            String foundMsh18 = findMsh18(hl7Bytes);
+            if (foundMsh18 != null && !foundMsh18.isEmpty()) {
+                if (MllpProtocolConstants.MSH18_VALUES.containsKey(foundMsh18)) {
+                    answer = MllpProtocolConstants.MSH18_VALUES.get(foundMsh18);
+                } else {
+                    LOG.warn("Unsupported Character Set {} found in MSH-18 - using default character set {}", foundMsh18, MllpProtocolConstants.DEFAULT_CHARSET);
+                }
+            } else {
+                LOG.debug("Character Set not specified and no Character Set found in MSH-18 - using default character set {}", MllpProtocolConstants.DEFAULT_CHARSET);
+            }
+        }
+
+        return answer;
+    }
+
+    public String createNewString(byte[] hl7Bytes, String msh18) {
+        if (hl7Bytes == null) {
+            return null;
+        } else if (hl7Bytes.length == 0) {
+            return "";
+        }
+
+        Charset charset = determineCharset(hl7Bytes, msh18);
+
+        LOG.debug("Creating new String using Charset {}", charset);
+
+        return new String(hl7Bytes, charset);
+    }
+
+    // TODO:  Move this to HL7Util
+    public String findMsh18(byte[] hl7Message) {
+        if (hl7Message == null || hl7Message.length == 0) {
+            return null;
+        }
+
+        final byte fieldSeparator = hl7Message[3];
+        int endOfMSH = -1;
+        List<Integer> fieldSeparatorIndexes = new ArrayList<>(10);  // We should have at least 10 fields
+
+        for (int i = 0; i < hl7Message.length; ++i) {
+            if (fieldSeparator == hl7Message[i]) {
+                fieldSeparatorIndexes.add(i);
+            } else if (MllpProtocolConstants.SEGMENT_DELIMITER == hl7Message[i]) {
+                // If the MSH Segment doesn't have a trailing field separator, add one so the field can be extracted into a string
+                if (fieldSeparator != hl7Message[i - 1]) {
+                    fieldSeparatorIndexes.add(i);
+                }
+                endOfMSH = i;
+                break;
+            }
+        }
+
+        if (fieldSeparatorIndexes.size() >= 18) {
+            int startingFieldSeparatorIndex = fieldSeparatorIndexes.get(17);
+            int length = 0;
+
+            if (fieldSeparatorIndexes.size() >= 19) {
+                length = fieldSeparatorIndexes.get(18) - startingFieldSeparatorIndex - 1;
+            } else {
+                length = endOfMSH - startingFieldSeparatorIndex - 1;
+            }
+
+            if (length < 0) {
+                return null;
+            } else if (length == 0) {
+                return "";
+            }
+
+            String msh18value = new String(hl7Message, startingFieldSeparatorIndex + 1,
+                length,
+                StandardCharsets.US_ASCII);
+
+            return msh18value;
+        }
+
+        return null;
+    }
+
+    // Pass-through configuration methods
+    public void setBacklog(Integer backlog) {
+        configuration.setBacklog(backlog);
+    }
+
     public void setBindTimeout(int bindTimeout) {
-        this.bindTimeout = bindTimeout;
+        configuration.setBindTimeout(bindTimeout);
     }
 
-    public int getBindRetryInterval() {
-        return bindRetryInterval;
-    }
-
-    /**
-     * TCP Server Only - The number of milliseconds to wait between bind attempts
-     */
     public void setBindRetryInterval(int bindRetryInterval) {
-        this.bindRetryInterval = bindRetryInterval;
+        configuration.setBindRetryInterval(bindRetryInterval);
     }
 
-    public int getAcceptTimeout() {
-        return acceptTimeout;
-    }
-
-    /**
-     * Timeout (in milliseconds) while waiting for a TCP connection
-     * <p/>
-     * TCP Server Only
-     *
-     * @param acceptTimeout timeout in milliseconds
-     */
     public void setAcceptTimeout(int acceptTimeout) {
-        this.acceptTimeout = acceptTimeout;
+        configuration.setAcceptTimeout(acceptTimeout);
     }
 
-    public int getConnectTimeout() {
-        return connectTimeout;
-    }
-
-    /**
-     * Timeout (in milliseconds) for establishing for a TCP connection
-     * <p/>
-     * TCP Client only
-     *
-     * @param connectTimeout timeout in milliseconds
-     */
     public void setConnectTimeout(int connectTimeout) {
-        this.connectTimeout = connectTimeout;
+        configuration.setConnectTimeout(connectTimeout);
     }
 
-    public int getReceiveTimeout() {
-        return receiveTimeout;
-    }
-
-    /**
-     * The SO_TIMEOUT value (in milliseconds) used when waiting for the start of an MLLP frame
-     *
-     * @param receiveTimeout timeout in milliseconds
-     */
     public void setReceiveTimeout(int receiveTimeout) {
-        this.receiveTimeout = receiveTimeout;
+        configuration.setReceiveTimeout(receiveTimeout);
     }
 
-    public int getMaxReceiveTimeouts() {
-        return maxReceiveTimeouts;
+    public void setIdleTimeout(Integer idleTimeout) {
+        configuration.setIdleTimeout(idleTimeout);
     }
 
-    /**
-     * The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset.
-     *
-     * @param maxReceiveTimeouts maximum number of receiveTimeouts
-     */
-    public void setMaxReceiveTimeouts(int maxReceiveTimeouts) {
-        this.maxReceiveTimeouts = maxReceiveTimeouts;
-    }
-
-    public int getReadTimeout() {
-        return readTimeout;
-    }
-
-    /**
-     * The SO_TIMEOUT value (in milliseconds) used after the start of an MLLP frame has been received
-     *
-     * @param readTimeout timeout in milliseconds
-     */
     public void setReadTimeout(int readTimeout) {
-        this.readTimeout = readTimeout;
+        configuration.setReadTimeout(readTimeout);
     }
 
-    public boolean isKeepAlive() {
-        return keepAlive;
+    public void setKeepAlive(Boolean keepAlive) {
+        configuration.setKeepAlive(keepAlive);
     }
 
-    /**
-     * Enable/disable the SO_KEEPALIVE socket option.
-     *
-     * @param keepAlive enable SO_KEEPALIVE when true; otherwise disable SO_KEEPALIVE
-     */
-    public void setKeepAlive(boolean keepAlive) {
-        this.keepAlive = keepAlive;
+    public void setTcpNoDelay(Boolean tcpNoDelay) {
+        configuration.setTcpNoDelay(tcpNoDelay);
     }
 
-    public boolean isTcpNoDelay() {
-        return tcpNoDelay;
+    public void setReuseAddress(Boolean reuseAddress) {
+        configuration.setReuseAddress(reuseAddress);
     }
 
-    /**
-     * Enable/disable the TCP_NODELAY socket option.
-     *
-     * @param tcpNoDelay enable TCP_NODELAY when true; otherwise disable TCP_NODELAY
-     */
-    public void setTcpNoDelay(boolean tcpNoDelay) {
-        this.tcpNoDelay = tcpNoDelay;
-    }
-
-    public boolean isReuseAddress() {
-        return reuseAddress;
-    }
-
-    /**
-     * Enable/disable the SO_REUSEADDR socket option.
-     *
-     * @param reuseAddress enable SO_REUSEADDR when true; otherwise disable SO_REUSEADDR
-     */
-    public void setReuseAddress(boolean reuseAddress) {
-        this.reuseAddress = reuseAddress;
-    }
-
-    public int getReceiveBufferSize() {
-        return receiveBufferSize;
-    }
-
-    /**
-     * Sets the SO_RCVBUF option to the specified value (in bytes)
-     *
-     * @param receiveBufferSize the SO_RCVBUF option value.  If null, the system default is used
-     */
     public void setReceiveBufferSize(Integer receiveBufferSize) {
-        this.receiveBufferSize = receiveBufferSize;
+        configuration.setReceiveBufferSize(receiveBufferSize);
     }
 
-    public int getSendBufferSize() {
-        return sendBufferSize;
-    }
-
-    /**
-     * Sets the SO_SNDBUF option to the specified value (in bytes)
-     *
-     * @param sendBufferSize the SO_SNDBUF option value.  If null, the system default is used
-     */
     public void setSendBufferSize(Integer sendBufferSize) {
-        this.sendBufferSize = sendBufferSize;
+        configuration.setSendBufferSize(sendBufferSize);
     }
 
-    public boolean isAutoAck() {
-        return autoAck;
+    public void setAutoAck(Boolean autoAck) {
+        configuration.setAutoAck(autoAck);
     }
 
-    /**
-     * Enable/Disable the automatic generation of a MLLP Acknowledgement
-     *
-     * MLLP Consumers only
-     *
-     * @param autoAck enabled if true, otherwise disabled
-     */
-    public void setAutoAck(boolean autoAck) {
-        this.autoAck = autoAck;
-    }
-
-    public boolean isHl7Headers() {
-        return hl7Headers;
+    public void setHl7Headers(Boolean hl7Headers) {
+        configuration.setHl7Headers(hl7Headers);
     }
 
     /**
-     * Enable/Disable the automatic generation of message headers from the HL7 Message
+     * @deprecated this parameter will be ignored.
      *
-     * MLLP Consumers only
-     *
-     * @param hl7Headers enabled if true, otherwise disabled
+     * @param bufferWrites
      */
-    public void setHl7Headers(boolean hl7Headers) {
-        this.hl7Headers = hl7Headers;
+    public void setBufferWrites(Boolean bufferWrites) {
+        configuration.setBufferWrites(bufferWrites);
     }
 
-    public boolean isValidatePayload() {
-        return validatePayload;
+    public void setRequireEndOfData(Boolean requireEndOfData) {
+        configuration.setRequireEndOfData(requireEndOfData);
     }
 
-    /**
-     * Enable/Disable the validation of HL7 Payloads
-     *
-     * If enabled, HL7 Payloads received from external systems will be validated (see Hl7Util.generateInvalidPayloadExceptionMessage for details on the validation).
-     * If and invalid payload is detected, a MllpInvalidMessageException (for consumers) or a MllpInvalidAcknowledgementException will be thrown.
-     *
-     * @param validatePayload enabled if true, otherwise disabled
-     */
-    public void setValidatePayload(boolean validatePayload) {
-        this.validatePayload = validatePayload;
+    public void setStringPayload(Boolean stringPayload) {
+        configuration.setStringPayload(stringPayload);
     }
 
-    public boolean isBufferWrites() {
-        return bufferWrites;
+    public void setValidatePayload(Boolean validatePayload) {
+        configuration.setValidatePayload(validatePayload);
     }
 
-    /**
-     * Enable/Disable the validation of HL7 Payloads
-     *
-     * If enabled, MLLP Payloads are buffered and written to the external system in a single write(byte[]) operation.
-     * If disabled, the MLLP payload will not be buffered, and three write operations will be used.  The first operation
-     * will write the MLLP start-of-block character {0x0b (ASCII VT)}, the second operation will write the HL7 payload, and the
-     * third operation will writh the MLLP end-of-block character and the MLLP end-of-data character {[0x1c, 0x0d] (ASCII [FS, CR])}.
-     *
-     * @param bufferWrites enabled if true, otherwise disabled
-     */
-    public void setBufferWrites(boolean bufferWrites) {
-        this.bufferWrites = bufferWrites;
+    public void setCharsetName(String charsetName) {
+        configuration.setCharsetName(charsetName);
+    }
+
+    // Utility methods for producers and consumers
+
+    public boolean checkBeforeSendProperties(Exchange exchange, Socket socket, Logger log) {
+        boolean answer = true;
+
+        if (exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND, boolean.class)) {
+            log.warn("Exchange property " + MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND + " = "
+                + exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND) + " - resetting connection");
+            doConnectionClose(socket, true, log);
+            answer = false;
+        } else if (exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND, boolean.class)) {
+            log.warn("Exchange property " + MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND + " = "
+                + exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND) + " - closing connection");
+            doConnectionClose(socket, false, log);
+            answer = false;
+        }
+
+        return answer;
+    }
+
+    public boolean checkAfterSendProperties(Exchange exchange, Socket socket, Logger log) {
+        boolean answer = true;
+
+        if (exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND, boolean.class)) {
+            log.warn("Exchange property " + MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND + " = "
+                + exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND) + " - resetting connection");
+            doConnectionClose(socket, true, log);
+            answer = false;
+        } else if (exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND, boolean.class)) {
+            log.warn("Exchange property " + MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND + " = "
+                + exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND) + " - closing connection");
+            doConnectionClose(socket, false, log);
+            answer = false;
+        }
+
+        return answer;
+    }
+
+    public void doConnectionClose(Socket socket, boolean reset, Logger log) {
+        String ignoringCallLogFormat = "Ignoring {} Connection request because - {}: localAddress={} remoteAddress={}";
+
+        if (socket == null) {
+            if (log != null) {
+                log.debug(ignoringCallLogFormat, reset ? "Reset" : "Close", "Socket is null", "null", "null");
+            }
+        } else {
+            SocketAddress localSocketAddress = socket.getLocalSocketAddress();
+            SocketAddress remoteSocketAddress = socket.getRemoteSocketAddress();
+            if (!socket.isConnected()) {
+                if (log != null) {
+                    log.debug(ignoringCallLogFormat, reset ? "Reset" : "Close", "Socket is not connected", localSocketAddress, remoteSocketAddress);
+                }
+            } else if (socket.isClosed()) {
+                if (log != null) {
+                    log.debug(ignoringCallLogFormat, reset ? "Reset" : "Close", "Socket is already closed", localSocketAddress, remoteSocketAddress);
+                }
+            } else {
+                final String ignoringExceptionStringFormat = "Ignoring %s encountered calling %s on Socket: localAddress=%s remoteAddress=%s";
+                if (!socket.isInputShutdown()) {
+                    if (log != null) {
+                        log.trace("Shutting down input on Socket: localAddress={} remoteAddress={}", localSocketAddress, remoteSocketAddress);
+                    }
+                    try {
+                        socket.shutdownInput();
+                    } catch (Exception ioEx) {
+                        if (log != null && log.isDebugEnabled()) {
+                            String logMessage = String.format(ignoringExceptionStringFormat, ioEx.getClass().getSimpleName(), "shutdownInput()", localSocketAddress, remoteSocketAddress);
+                            log.debug(logMessage, ioEx);
+                        }
+                    }
+                }
+
+                if (!socket.isOutputShutdown()) {
+                    if (log != null) {
+                        log.trace("Shutting down output on Socket: localAddress={} remoteAddress={}", localSocketAddress, remoteSocketAddress);
+                    }
+                    try {
+                        socket.shutdownOutput();
+                    } catch (IOException ioEx) {
+                        if (log != null && log.isDebugEnabled()) {
+                            String logMessage = String.format(ignoringExceptionStringFormat, ioEx.getClass().getSimpleName(), "shutdownOutput()", localSocketAddress, remoteSocketAddress);
+                            log.debug(logMessage, ioEx);
+                        }
+                    }
+                }
+
+                if (reset) {
+                    final boolean on = true;
+                    final int linger = 0;
+                    if (log != null) {
+                        log.trace("Setting SO_LINGER to {} on Socket: localAddress={} remoteAddress={}", localSocketAddress, remoteSocketAddress);
+                    }
+                    try {
+                        socket.setSoLinger(on, linger);
+                    } catch (IOException ioEx) {
+                        if (log.isDebugEnabled()) {
+                            String methodString = String.format("setSoLinger(%b, %d)", on, linger);
+                            String logMessage = String.format(ignoringExceptionStringFormat, ioEx.getClass().getSimpleName(), methodString, localSocketAddress, remoteSocketAddress);
+                            log.debug(logMessage, ioEx);
+                        }
+                    }
+                }
+
+                try {
+                    if (log != null) {
+                        log.trace("Resetting Socket: localAddress={} remoteAddress={}", localSocketAddress, remoteSocketAddress);
+                    }
+                    socket.close();
+                } catch (IOException ioEx) {
+                    if (log.isDebugEnabled()) {
+                        String warningMessage = String.format(ignoringExceptionStringFormat, ioEx.getClass().getSimpleName(), "close()", localSocketAddress, remoteSocketAddress);
+                        log.debug(warningMessage, ioEx);
+                    }
+                }
+            }
+        }
     }
 }

@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.s3;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.EncryptionMaterials;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
@@ -29,15 +30,15 @@ public class S3Configuration implements Cloneable {
     private String bucketName;
     @UriParam
     private AmazonS3 amazonS3Client;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam(label = "consumer")
     private String fileName;
     @UriParam(label = "consumer")
     private String prefix;
-    @UriParam(label = "producer")
+    @UriParam
     private String region;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
@@ -63,7 +64,7 @@ public class S3Configuration implements Cloneable {
     private boolean includeBody = true;
     @UriParam
     private boolean pathStyleAccess;
-    @UriParam(label = "producer", enums = "copyObject,deleteBucket,listBuckets")
+    @UriParam(label = "producer", enums = "copyObject,deleteBucket,listBuckets,downloadLink")
     private S3Operations operation;
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean autocloseBody = true;
@@ -357,5 +358,17 @@ public class S3Configuration implements Cloneable {
 
     boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public S3Configuration copy() {
+        try {
+            return (S3Configuration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

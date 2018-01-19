@@ -58,6 +58,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     protected static final String DEFAULT_STRATEGYFACTORY_CLASS = "org.apache.camel.component.file.strategy.GenericFileProcessStrategyFactory";
     protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
+    protected static final int DEFAULT_IN_PROGRESS_CACHE_SIZE = 50000;
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -98,7 +99,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     @UriParam(label = "consumer,advanced")
     protected GenericFileProcessStrategy<T> processStrategy;
     @UriParam(label = "consumer,advanced")
-    protected IdempotentRepository<String> inProgressRepository = new MemoryIdempotentRepository();
+    protected IdempotentRepository<String> inProgressRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IN_PROGRESS_CACHE_SIZE);
     @UriParam(label = "consumer,advanced")
     protected String localWorkDirectory;
     @UriParam(label = "consumer,advanced")
@@ -158,7 +159,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected Comparator<Exchange> sortBy;
     @UriParam(label = "consumer,sort")
     protected boolean shuffle;
-    @UriParam(label = "consumer,lock", enums = "none,markerFile,fileLock,rename,changed,idempotent,idempotent-changed,idempotent-rename")
+    @UriParam(label = "consumer,lock", defaultValue = "none", enums = "none,markerFile,fileLock,rename,changed,idempotent,idempotent-changed,idempotent-rename")
     protected String readLock = "none";
     @UriParam(label = "consumer,lock", defaultValue = "1000")
     protected long readLockCheckInterval = 1000;
@@ -1014,8 +1015,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      *   The option eagerDeleteTargetFile can be used to control what to do if an moving the file, and there exists already an existing file,
      *   otherwise causing the move operation to fail.
      *   The Move option will move any existing files, before writing the target file.</li>
-     *   <li>TryRename Camel is only applicable if tempFileName option is in use. This allows to try renaming the file from the temporary name to the actual name,
-     *   without doing any exists check.This check may be faster on some file systems and especially FTP servers.</li>
+     *   <li>TryRename is only applicable if tempFileName option is in use. This allows to try renaming the file from the temporary name to the actual name,
+     *   without doing any exists check. This check may be faster on some file systems and especially FTP servers.</li>
      * </ul>
      */
     public void setFileExist(GenericFileExist fileExist) {

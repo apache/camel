@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import com.amazonaws.regions.Regions;
+
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -219,5 +221,34 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
           
         SqsComponent component = new SqsComponent(context);
         component.createEndpoint("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient");
+    }
+    
+    @Test
+    public void createEndpointWithComponentElements() throws Exception {
+        AmazonSQSClientMock mock = new AmazonSQSClientMock();
+         
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonSQSClient", mock);
+        SqsComponent component = new SqsComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        SqsEndpoint endpoint = (SqsEndpoint)component.createEndpoint("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient");
+        
+        assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
+        assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
+        assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
+    }
+    
+    @Test
+    public void createEndpointWithComponentAndEndpointElements() throws Exception {
+        SqsComponent component = new SqsComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        component.setRegion(Regions.US_WEST_1.toString());
+        SqsEndpoint endpoint = (SqsEndpoint)component.createEndpoint("aws-sqs://MyQueue?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        
+        assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
 }

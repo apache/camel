@@ -25,7 +25,19 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS Simple Email Service component has no options.
+The AWS Simple Email Service component supports 5 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The AWS SES default configuration |  | SesConfiguration
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *region* (producer) | The region in which SES client needs to work |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
@@ -53,7 +65,6 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *amazonSESClient* (producer) | To use the AmazonSimpleEmailService as the client |  | AmazonSimpleEmail Service
 | *amazonSESEndpoint* (producer) | The region with which the AWS-SES client wants to work with. |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the SES client |  | String
@@ -61,10 +72,11 @@ with the following path and query parameters:
 | *region* (producer) | The region in which SES client needs to work |  | String
 | *replyToAddresses* (producer) | List of reply-to email address(es) for the message override it using 'CamelAwsSesReplyToAddresses' header. |  | List
 | *returnPath* (producer) | The email address to which bounce notifications are to be forwarded override it using 'CamelAwsSesReturnPath' header. |  | String
-| *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSesSubject' is not present. |  | String
 | *to* (producer) | List of destination email address. Can be overriden with 'CamelAwsSesTo' header. |  | List
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
 

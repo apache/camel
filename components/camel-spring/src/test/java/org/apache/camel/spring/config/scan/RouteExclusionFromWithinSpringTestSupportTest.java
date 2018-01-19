@@ -36,7 +36,7 @@ public class RouteExclusionFromWithinSpringTestSupportTest extends SpringTestSup
         MockEndpoint mock = getMockEndpoint("mock:definitelyShouldNeverReceiveExchange");
         mock.expectedMessageCount(0);
 
-        sendBody("direct:shouldNeverRecieveExchange", "dropped like a hot rock");
+        sendBody("seda:shouldNeverRecieveExchange", "dropped like a hot rock");
         mock.await(500, TimeUnit.MILLISECONDS);
         mock.assertIsSatisfied();
     }

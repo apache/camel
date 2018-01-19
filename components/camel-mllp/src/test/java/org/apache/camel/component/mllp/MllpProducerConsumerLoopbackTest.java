@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 import java.util.concurrent.TimeUnit;
@@ -25,16 +26,20 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+
+import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.apache.camel.test.mllp.PassthroughProcessor;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 import static org.junit.Assume.assumeTrue;
+
 
 public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
     int mllpPort = AvailablePortFinder.getNextAvailable();
@@ -46,6 +51,11 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
     @EndpointInject(uri = "mock://acknowledged")
     MockEndpoint acknowledged;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        assumeTrue("Skipping test running in CI server - Fails sometimes on CI server with address already in use", System.getenv("BUILD_ID") == null);
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
@@ -56,11 +66,6 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
         return context;
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        assumeTrue("Skipping test running in CI server - Fails sometimes on CI server with address already in use", System.getenv("BUILD_ID") == null);
-    }
-
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
         RouteBuilder[] builders = new RouteBuilder[2];
@@ -69,11 +74,11 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
             String routeId = "mllp-receiver";
 
             public void configure() {
-                fromF("mllp://%s:%d?autoAck=true&readTimeout=1000", mllpHost, mllpPort)
-                        .convertBodyTo(String.class)
-                        .to(acknowledged)
-                        .process(new PassthroughProcessor("after send to result"))
-                        .log(LoggingLevel.INFO, routeId, "Receiving: ${body}");
+                fromF("mllp://%s:%d?autoAck=true&readTimeout=5000", mllpHost, mllpPort).id(routeId)
+                    .convertBodyTo(String.class)
+                    .to(acknowledged)
+                    .process(new PassthroughProcessor("after send to result"))
+                    .log(LoggingLevel.DEBUG, routeId, "Receiving: ${body}");
             }
         };
 
@@ -82,9 +87,9 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
 
             public void configure() {
                 from(source.getDefaultEndpoint()).routeId(routeId)
-                        .log(LoggingLevel.INFO, routeId, "Sending: ${body}")
-                        .toF("mllp://%s:%d?readTimeout=5000", mllpHost, mllpPort)
-                        .setBody(header(MllpConstants.MLLP_ACKNOWLEDGEMENT));
+                    .log(LoggingLevel.DEBUG, routeId, "Sending: ${body}")
+                    .toF("mllp://%s:%d?readTimeout=5000", mllpHost, mllpPort)
+                    .setBody(header(MllpConstants.MLLP_ACKNOWLEDGEMENT));
             }
         };
 
@@ -93,7 +98,7 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
 
     @Test
     public void testLoopbackWithOneMessage() throws Exception {
-        String testMessage = generateMessage();
+        String testMessage = Hl7TestMessageGenerator.generateMessage();
         acknowledged.expectedBodiesReceived(testMessage);
 
         String acknowledgement = source.requestBody((Object) testMessage, String.class);
@@ -108,11 +113,11 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
         acknowledged.expectedMessageCount(messageCount);
 
         for (int i = 1; i <= messageCount; ++i) {
-            String testMessage = generateMessage(i);
+            log.debug("Processing message {}", i);
+            String testMessage = Hl7TestMessageGenerator.generateMessage(i);
             acknowledged.message(i - 1).body().isEqualTo(testMessage);
             String acknowledgement = source.requestBody((Object) testMessage, String.class);
             Assert.assertThat("Should be acknowledgment for message " + i, acknowledgement, CoreMatchers.containsString(String.format("MSA|AA|%05d", i)));
-
         }
 
         assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);

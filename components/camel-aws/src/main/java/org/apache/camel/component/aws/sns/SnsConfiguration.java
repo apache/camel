@@ -17,6 +17,8 @@
 package org.apache.camel.component.aws.sns;
 
 import com.amazonaws.services.sns.AmazonSNS;
+
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -29,9 +31,9 @@ public class SnsConfiguration implements Cloneable {
     private String topicName;
     @UriParam
     private AmazonSNS amazonSNSClient;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam
     private String amazonSNSEndpoint;
@@ -180,5 +182,17 @@ public class SnsConfiguration implements Cloneable {
 
     public void setRegion(String region) {
         this.region = region;
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public SnsConfiguration copy() {
+        try {
+            return (SnsConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

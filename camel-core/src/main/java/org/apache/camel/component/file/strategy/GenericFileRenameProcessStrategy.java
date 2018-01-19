@@ -63,7 +63,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
     @Override
     public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         try {
-            operations.releaseRetreivedFileResources(exchange);
+            operations.releaseRetrievedFileResources(exchange);
 
             if (failureRenamer != null) {
                 // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name

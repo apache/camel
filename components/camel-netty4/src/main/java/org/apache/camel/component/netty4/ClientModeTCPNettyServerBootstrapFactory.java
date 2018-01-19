@@ -33,7 +33,6 @@ import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Suspendable;
 import org.apache.camel.support.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link NettyServerBootstrapFactory} which is used by a single consumer (not shared).
  */
-public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory, Suspendable {
+public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
 
     protected static final Logger LOG = LoggerFactory.getLogger(ClientModeTCPNettyServerBootstrapFactory.class);
     
@@ -95,22 +94,6 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
     @Override
     protected void doStop() throws Exception {
         stopServerBootstrap();
-    }
-
-    @Override
-    protected void doResume() throws Exception {
-        LOG.debug("ClientModeServerBootstrap connect to {}:{}", configuration.getHost(), configuration.getPort());
-        ChannelFuture connectFuture = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-        channel = openChannel(connectFuture);
-    }
-
-    @Override
-    protected void doSuspend() throws Exception {
-        if (channel != null) {
-            LOG.debug("ClientModeServerBootstrap unbinding from {}:{}", configuration.getHost(), configuration.getPort());
-            channel.close().sync();
-            channel = null;
-        }
     }
 
     protected void startServerBootstrap() throws Exception {

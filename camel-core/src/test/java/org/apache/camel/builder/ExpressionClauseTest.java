@@ -83,7 +83,7 @@ public class ExpressionClauseTest extends ContextTestSupport {
     public final class Extractor {
         public String extractName(DataHandler body) {
             DataSource ds = (body != null) ? body.getDataSource() : null;
-            if (ds != null && ds instanceof FileDataSource) {
+            if (ds instanceof FileDataSource) {
                 return ((FileDataSource)ds).getName();
             }
             return null;

@@ -420,9 +420,24 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
     }
 
+    public synchronized void forceDisconnect() throws GenericFileOperationFailedException {
+        try {
+            if (session != null) {
+                session.disconnect();
+            }
+            if (channel != null) {
+                channel.disconnect();
+            }
+        } finally {
+            // ensure these
+            session = null;
+            channel = null;
+        }
+    }
+
     private void reconnectIfNecessary() {
         if (!isConnected()) {
-            connect((RemoteFileConfiguration) endpoint.getConfiguration());
+            connect(endpoint.getConfiguration());
         }
     }
 
@@ -646,7 +661,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
     }
 
-    public synchronized boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public synchronized boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         LOG.trace("retrieveFile({})", name);
         if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
             // local work directory is configured so we should store file content as files in this local directory
@@ -657,7 +672,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
     }
 
-    public synchronized void releaseRetreivedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
+    public synchronized void releaseRetrievedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
         InputStream is = exchange.getIn().getHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, InputStream.class);
 
         if (is != null) {
@@ -818,7 +833,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         return true;
     }
 
-    public synchronized boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public synchronized boolean storeFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         // must normalize name first
         name = endpoint.getConfiguration().normalizePath(name);
 
@@ -907,10 +922,10 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 // override is default
                 channel.put(is, targetName);
             }
-            watch.stop();
             if (LOG.isDebugEnabled()) {
+                long time = watch.taken();
                 LOG.debug("Took {} ({} millis) to store file: {} and FTP client returned: true",
-                        new Object[]{TimeUtils.printDuration(watch.taken()), watch.taken(), targetName});
+                        new Object[]{TimeUtils.printDuration(time), time, targetName});
             }
 
             // after storing file, we may set chmod on the file

@@ -77,6 +77,7 @@
     <module>camel-atomix</module>
     <module>camel-avro</module>
     <module>camel-aws</module>
+    <module>camel-aws-xray</module>
     <module>camel-azure</module>
     <module>camel-base64</module>
     <module>camel-beanio</module>
@@ -197,6 +198,7 @@
     <module>camel-ldif</module>
     <module>camel-leveldb</module>
     <module>camel-linkedin</module>
+    <module>camel-lra</module>
     <module>camel-lucene</module>
     <module>camel-lumberjack</module>
     <module>camel-lzf</module>
@@ -315,7 +317,6 @@
     <module>camel-zipkin</module>
     <module>camel-zookeeper</module>
     <module>camel-zookeeper-master</module>
-    <module>camel-aws-xray</module>
   </modules>
 
 

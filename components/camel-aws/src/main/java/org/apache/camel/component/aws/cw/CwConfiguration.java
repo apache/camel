@@ -20,6 +20,7 @@ import java.util.Date;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -34,9 +35,9 @@ public class CwConfiguration implements Cloneable {
     private AmazonCloudWatch amazonCwClient;
     @UriParam
     private String amazonCwEndpoint;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam
     private String name;
@@ -187,4 +188,15 @@ public class CwConfiguration implements Cloneable {
         this.region = region;
     }
 
+    // *************************************************
+    //
+    // *************************************************
+
+    public CwConfiguration copy() {
+        try {
+            return (CwConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
 }

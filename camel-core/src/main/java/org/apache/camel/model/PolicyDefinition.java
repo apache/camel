@@ -94,6 +94,11 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
         return false;
     }
 
+    @Override
+    public boolean isWrappingEntireOutput() {
+        return true;
+    }
+
     public String getRef() {
         return ref;
     }

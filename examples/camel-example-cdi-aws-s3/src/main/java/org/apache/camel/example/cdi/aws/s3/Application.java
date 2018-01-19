@@ -21,8 +21,13 @@ import java.io.File;
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
@@ -46,10 +51,11 @@ public class Application {
         
         @Produces
         @Named("amazonS3Client")
-        AmazonS3Client amazonS3Client() {
-            BasicAWSCredentials basicAwsCredentials = new BasicAWSCredentials("XXXXXXXX", "XXXXXXXXX");
-            AmazonS3Client client = new AmazonS3Client(basicAwsCredentials);
-            return client;
+        AmazonS3 amazonS3Client() {
+            AWSCredentials credentials = new BasicAWSCredentials("XXXXX", "XXXXX");
+            AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
+            AmazonS3ClientBuilder clientBuilder = AmazonS3ClientBuilder.standard().withRegion(Regions.US_WEST_1).withCredentials(credentialsProvider);
+            return clientBuilder.build();
         }
     }
 }
