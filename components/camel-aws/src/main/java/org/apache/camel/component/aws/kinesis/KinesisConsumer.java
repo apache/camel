@@ -53,7 +53,7 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected int poll() throws Exception {
-        GetRecordsRequest req = new GetRecordsRequest().withShardIterator(getShardItertor()).withLimit(getEndpoint().getMaxResultsPerRequest());
+        GetRecordsRequest req = new GetRecordsRequest().withShardIterator(getShardItertor()).withLimit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
         GetRecordsResult result = getClient().getRecords(req);
 
         Queue<Exchange> exchanges = createExchanges(result.getRecords());
@@ -66,15 +66,15 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
 
         currentShardIterator = result.getNextShardIterator();
         if (isShardClosed) {
-            switch (getEndpoint().getShardClosed()) {
+            switch (getEndpoint().getConfiguration().getShardClosed()) {
             case ignore:
                 LOG.warn("The shard {} is in closed state");
                 break;
             case silent:
                 break;
             case fail:
-                LOG.info("Shard Iterator reaches CLOSE status:", getEndpoint().getStreamName(), getEndpoint().getShardId());
-                throw new ReachedClosedStatusException(getEndpoint().getStreamName(), getEndpoint().getShardId());
+                LOG.info("Shard Iterator reaches CLOSE status:", getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
+                throw new ReachedClosedStatusException(getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
             default:
                 throw new IllegalArgumentException("Unsupported shard closed strategy");
             }
@@ -117,14 +117,14 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
             String shardId;
 
             // If ShardId supplied use it, else choose first one
-            if (!getEndpoint().getShardId().isEmpty()) {
-                shardId = getEndpoint().getShardId();
-                DescribeStreamRequest req1 = new DescribeStreamRequest().withStreamName(getEndpoint().getStreamName());
+            if (!getEndpoint().getConfiguration().getShardId().isEmpty()) {
+                shardId = getEndpoint().getConfiguration().getShardId();
+                DescribeStreamRequest req1 = new DescribeStreamRequest().withStreamName(getEndpoint().getConfiguration().getStreamName());
                 DescribeStreamResult res1 = getClient().describeStream(req1);
                 Iterator it = res1.getStreamDescription().getShards().iterator();
                 while (it.hasNext()) {
                     Shard shard = (Shard)it.next();
-                    if (shard.getShardId().equalsIgnoreCase(getEndpoint().getShardId())) {
+                    if (shard.getShardId().equalsIgnoreCase(getEndpoint().getConfiguration().getShardId())) {
                         if (shard.getSequenceNumberRange().getEndingSequenceNumber() == null) {
                             isShardClosed = false;
                         } else {
@@ -134,7 +134,7 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
                 }
 
             } else {
-                DescribeStreamRequest req1 = new DescribeStreamRequest().withStreamName(getEndpoint().getStreamName());
+                DescribeStreamRequest req1 = new DescribeStreamRequest().withStreamName(getEndpoint().getConfiguration().getStreamName());
                 DescribeStreamResult res1 = getClient().describeStream(req1);
                 shardId = res1.getStreamDescription().getShards().get(0).getShardId();
                 if (res1.getStreamDescription().getShards().get(0).getSequenceNumberRange().getEndingSequenceNumber() == null) {
@@ -145,11 +145,11 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
             }
             LOG.debug("ShardId is: {}", shardId);
 
-            GetShardIteratorRequest req = new GetShardIteratorRequest().withStreamName(getEndpoint().getStreamName()).withShardId(shardId)
-                .withShardIteratorType(getEndpoint().getIteratorType());
+            GetShardIteratorRequest req = new GetShardIteratorRequest().withStreamName(getEndpoint().getConfiguration().getStreamName()).withShardId(shardId)
+                .withShardIteratorType(getEndpoint().getConfiguration().getIteratorType());
 
             if (hasSequenceNumber()) {
-                req.withStartingSequenceNumber(getEndpoint().getSequenceNumber());
+                req.withStartingSequenceNumber(getEndpoint().getConfiguration().getSequenceNumber());
             }
 
             GetShardIteratorResult result = getClient().getShardIterator(req);
@@ -168,7 +168,7 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private boolean hasSequenceNumber() {
-        return !getEndpoint().getSequenceNumber().isEmpty()
-               && (getEndpoint().getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER) || getEndpoint().getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER));
+        return !getEndpoint().getConfiguration().getSequenceNumber().isEmpty()
+               && (getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER) || getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER));
     }
 }
