@@ -145,6 +145,27 @@ Dig is a Unix command-line utility to run DNS queries.
 
 The query must be provided in the header with key `"dns.query"`.
 
+
+### Dns Activation Policy
+
+DnsActivationPolicy can be used to dynamically start and stop routes based on dns state.
+
+If you have instances of the same component running in different regions you can configure a route in each region to activate only if dns is pointing to its region.
+
+i.e. You may have an instance in NYC and an instance in SFO. You would configure a service CNAME service.example.com to point to nyc-service.example.com to bring NYC instance up and SFO instance down. When you change the CNAME service.example.com to point to sfo-service.example.com -- nyc instance would stop its routes and sfo will bring its routes up. This allows you to switch regions without restarting actual components.
+
+[source,xml]
+----------------------------------------------------------------------------------------------------------------
+	<bean id="dnsActivationPolicy" class="org.apache.camel.component.dns.policy.DnsActivationPolicy">
+		<property name="hostname" value="service.example.com" />
+		<property name="resolvesTo" value="nyc-service.example.com" />
+		<property name="ttl" value="60000" />
+	</bean>
+
+	<route id="routeId" autoStartup="false" routePolicyRef="dnsActivationPolicy">
+	</route>
+----------------------------------------------------------------------------------------------------------------
+
 ### See Also
 
 * link:configuring-camel.html[Configuring Camel]
