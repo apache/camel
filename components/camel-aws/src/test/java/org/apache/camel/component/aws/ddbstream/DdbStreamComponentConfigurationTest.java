@@ -14,31 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.kinesis;
+package org.apache.camel.component.aws.ddbstream;
 
-import java.util.Map;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-
-public class KinesisComponent extends DefaultComponent {
-
-    public KinesisComponent() {
-        this(null);
-    }
-
-    public KinesisComponent(CamelContext context) {
-        super(context);
-    }
-
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        KinesisConfiguration configuration = new KinesisConfiguration();
-        configuration.setStreamName(remaining);
-        setProperties(configuration, parameters);
+public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
+    
+    @Test
+    public void createEndpointWithAccessAndSecretKey() throws Exception {
+        DdbStreamComponent component = new DdbStreamComponent(context);
+        DdbStreamEndpoint endpoint = (DdbStreamEndpoint)component.createEndpoint("aws-ddb://myTable?accessKey=xxxxx&secretKey=yyyyy");
         
-        KinesisEndpoint endpoint = new KinesisEndpoint(uri, configuration, this);
-        return endpoint;
+        assertEquals("myTable", endpoint.getConfiguration().getTableName());
+        assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());    
     }
+    
 }

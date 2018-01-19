@@ -55,12 +55,12 @@ public class KinesisEndpointTest {
                 + "&sequenceNumber=123"
         );
 
-        assertThat(endpoint.getClient(), is(amazonKinesisClient));
-        assertThat(endpoint.getStreamName(), is("some_stream_name"));
-        assertThat(endpoint.getIteratorType(), is(ShardIteratorType.LATEST));
-        assertThat(endpoint.getMaxResultsPerRequest(), is(101));
-        assertThat(endpoint.getSequenceNumber(), is("123"));
-        assertThat(endpoint.getShardId(), is("abc"));
+        assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
+        assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
+        assertThat(endpoint.getConfiguration().getIteratorType(), is(ShardIteratorType.LATEST));
+        assertThat(endpoint.getConfiguration().getMaxResultsPerRequest(), is(101));
+        assertThat(endpoint.getConfiguration().getSequenceNumber(), is("123"));
+        assertThat(endpoint.getConfiguration().getShardId(), is("abc"));
     }
 
     @Test
@@ -69,10 +69,10 @@ public class KinesisEndpointTest {
                 + "?amazonKinesisClient=#kinesisClient"
         );
 
-        assertThat(endpoint.getClient(), is(amazonKinesisClient));
-        assertThat(endpoint.getStreamName(), is("some_stream_name"));
-        assertThat(endpoint.getIteratorType(), is(ShardIteratorType.TRIM_HORIZON));
-        assertThat(endpoint.getMaxResultsPerRequest(), is(1));
+        assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
+        assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
+        assertThat(endpoint.getConfiguration().getIteratorType(), is(ShardIteratorType.TRIM_HORIZON));
+        assertThat(endpoint.getConfiguration().getMaxResultsPerRequest(), is(1));
     }
 
     @Test
@@ -84,11 +84,11 @@ public class KinesisEndpointTest {
                 + "&sequenceNumber=123"
         );
 
-        assertThat(endpoint.getClient(), is(amazonKinesisClient));
-        assertThat(endpoint.getStreamName(), is("some_stream_name"));
-        assertThat(endpoint.getIteratorType(), is(ShardIteratorType.AFTER_SEQUENCE_NUMBER));
-        assertThat(endpoint.getShardId(), is("abc"));
-        assertThat(endpoint.getSequenceNumber(), is("123"));
+        assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
+        assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
+        assertThat(endpoint.getConfiguration().getIteratorType(), is(ShardIteratorType.AFTER_SEQUENCE_NUMBER));
+        assertThat(endpoint.getConfiguration().getShardId(), is("abc"));
+        assertThat(endpoint.getConfiguration().getSequenceNumber(), is("123"));
     }
 
     @Test
@@ -100,10 +100,10 @@ public class KinesisEndpointTest {
                 + "&sequenceNumber=123"
         );
 
-        assertThat(endpoint.getClient(), is(amazonKinesisClient));
-        assertThat(endpoint.getStreamName(), is("some_stream_name"));
-        assertThat(endpoint.getIteratorType(), is(ShardIteratorType.AT_SEQUENCE_NUMBER));
-        assertThat(endpoint.getShardId(), is("abc"));
-        assertThat(endpoint.getSequenceNumber(), is("123"));
+        assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
+        assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
+        assertThat(endpoint.getConfiguration().getIteratorType(), is(ShardIteratorType.AT_SEQUENCE_NUMBER));
+        assertThat(endpoint.getConfiguration().getShardId(), is("abc"));
+        assertThat(endpoint.getConfiguration().getSequenceNumber(), is("123"));
     }
 }

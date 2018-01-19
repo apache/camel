@@ -55,6 +55,7 @@ public class ShardIteratorHandlerTest {
     @Before
     public void setup() throws Exception {
         endpoint.getConfiguration().setAmazonDynamoDbStreamsClient(amazonDynamoDBStreams);
+        endpoint.start();
         undertest = new ShardIteratorHandler(endpoint);
 
         when(amazonDynamoDBStreams.listStreams(any(ListStreamsRequest.class))).thenReturn(

@@ -61,11 +61,15 @@ public class KinesisConsumerClosedShardWithFailTest {
 
     @Before
     public void setup() throws Exception {
-        KinesisEndpoint endpoint = new KinesisEndpoint(null, "streamName", component);
-        endpoint.setAmazonKinesisClient(kinesisClient);
-        endpoint.setIteratorType(ShardIteratorType.LATEST);
-        endpoint.setShardClosed(KinesisShardClosedStrategyEnum.fail);
+        KinesisConfiguration configuration = new KinesisConfiguration();
+        configuration.setAmazonKinesisClient(kinesisClient);
+        configuration.setIteratorType(ShardIteratorType.LATEST);
+        configuration.setShardClosed(KinesisShardClosedStrategyEnum.fail);
+        configuration.setStreamName("streamName");
+        KinesisEndpoint endpoint = new KinesisEndpoint(null, configuration, component);
+        endpoint.start();
         undertest = new KinesisConsumer(endpoint, processor);
+        
 
         SequenceNumberRange range = new SequenceNumberRange().withEndingSequenceNumber("20");
         Shard shard = new Shard().withShardId("shardId").withSequenceNumberRange(range);

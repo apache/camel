@@ -34,8 +34,10 @@ public class KinesisFirehoseComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        KinesisFirehoseEndpoint endpoint = new KinesisFirehoseEndpoint(uri, remaining, this);
-        setProperties(endpoint, parameters);
+        KinesisFirehoseConfiguration configuration = new KinesisFirehoseConfiguration();
+        configuration.setStreamName(remaining);
+        setProperties(configuration, parameters);
+        KinesisFirehoseEndpoint endpoint = new KinesisFirehoseEndpoint(uri, configuration, this);
         return endpoint;
     }
 }
