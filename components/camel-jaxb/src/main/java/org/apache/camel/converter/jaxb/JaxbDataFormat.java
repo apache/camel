@@ -40,7 +40,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Source;
@@ -54,7 +53,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
@@ -85,6 +83,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     private JAXBIntrospector introspector;
     private String contextPath;
     private String schema;
+    private int schemaSeverityLevel; // 0 = warning, 1 = error, 2 = fatal
     private String schemaLocation;
     private String noNamespaceSchemaLocation;
 
@@ -124,7 +123,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         return "jaxb";
     }
 
-    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException, SAXException {
+    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {
         try {
             // must create a new instance of marshaller as its not thread safe
             Marshaller marshaller = createMarshaller();
@@ -169,7 +168,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
                     marshaller.setProperty(property.getKey(), property.getValue());
                 }
             }
-            marshal(exchange, graph, stream, marshaller);
+            doMarshal(exchange, graph, stream, marshaller);
 
             if (contentTypeHeader) {
                 if (exchange.hasOut()) {
@@ -183,8 +182,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         }
     }
 
-    void marshal(Exchange exchange, Object graph, OutputStream stream, Marshaller marshaller)
-        throws XMLStreamException, JAXBException, NoTypeConversionAvailableException, IOException, InvalidPayloadException {
+    void doMarshal(Exchange exchange, Object graph, OutputStream stream, Marshaller marshaller) throws Exception {
 
         Object element = graph;
         QName partNamespaceOnDataFormat = getPartNamespace();
@@ -264,7 +262,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         return needFiltering(exchange) || (xmlStreamWriterWrapper != null);
     }
 
-    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, SAXException {
+    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
         try {
             Object answer;
 
@@ -274,7 +272,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             } else {
                 xmlReader = typeConverter.convertTo(XMLStreamReader.class, stream);
             }
-            String partClassFromHeader = (String)exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS);
+            String partClassFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class);
             if (partialClass != null || partClassFromHeader != null) {
                 // partial unmarshalling
                 if (partClassFromHeader != null) {
@@ -358,6 +356,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     public void setSchema(String schema) {
         this.schema = schema;
+    }
+
+    public int getSchemaSeverityLevel() {
+        return schemaSeverityLevel;
+    }
+
+    public void setSchemaSeverityLevel(int schemaSeverityLevel) {
+        this.schemaSeverityLevel = schemaSeverityLevel;
     }
 
     public boolean isPrettyPrint() {
@@ -472,7 +478,6 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         this.jaxbProviderProperties = jaxbProviderProperties;
     }
 
-
     public boolean isContentTypeHeader() {
         return contentTypeHeader;
     }
@@ -537,16 +542,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         }
     }
 
-    protected Unmarshaller createUnmarshaller() throws JAXBException, SAXException, FileNotFoundException,
-        MalformedURLException {
+    protected Unmarshaller createUnmarshaller() throws JAXBException {
         Unmarshaller unmarshaller = getContext().createUnmarshaller();
         if (schema != null) {
             unmarshaller.setSchema(cachedSchema);
             unmarshaller.setEventHandler(new ValidationEventHandler() {
                 public boolean handleEvent(ValidationEvent event) {
-                    // stop unmarshalling if the event is an ERROR or FATAL
-                    // ERROR
-                    return event.getSeverity() == ValidationEvent.WARNING;
+                    // continue if the severity is lower than the configured level
+                    return event.getSeverity() < getSchemaSeverityLevel();
                 }
             });
         }
@@ -554,15 +557,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         return unmarshaller;
     }
 
-    protected Marshaller createMarshaller() throws JAXBException, SAXException, FileNotFoundException,
-        MalformedURLException {
+    protected Marshaller createMarshaller() throws JAXBException {
         Marshaller marshaller = getContext().createMarshaller();
         if (schema != null) {
             marshaller.setSchema(cachedSchema);
             marshaller.setEventHandler(new ValidationEventHandler() {
                 public boolean handleEvent(ValidationEvent event) {
-                    // stop marshalling if the event is an ERROR or FATAL ERROR
-                    return event.getSeverity() == ValidationEvent.WARNING;
+                    // continue if the severity is lower than the configured level
+                    return event.getSeverity() < getSchemaSeverityLevel();
                 }
             });
         }
