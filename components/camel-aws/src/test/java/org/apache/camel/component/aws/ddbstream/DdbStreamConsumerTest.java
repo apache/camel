@@ -73,7 +73,7 @@ public class DdbStreamConsumerTest {
     @Before
     public void setup() throws Exception {
         endpoint.getConfiguration().setAmazonDynamoDbStreamsClient(amazonDynamoDBStreams);
-
+        endpoint.start();
         undertest = new DdbStreamConsumer(endpoint, processor, shardIteratorHandler);
 
         final Map<String, String> shardIterators = new HashMap<>();
