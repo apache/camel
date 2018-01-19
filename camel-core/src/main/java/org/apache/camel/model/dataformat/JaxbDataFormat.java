@@ -43,6 +43,8 @@ public class JaxbDataFormat extends DataFormatDefinition {
     private String contextPath;
     @XmlAttribute
     private String schema;
+    @XmlAttribute @Metadata(enums = "0,1,2", defaultValue = "0")
+    private Integer schemaSeverityLevel;
     @XmlAttribute
     private Boolean prettyPrint;
     @XmlAttribute
@@ -104,6 +106,20 @@ public class JaxbDataFormat extends DataFormatDefinition {
      */
     public void setSchema(String schema) {
         this.schema = schema;
+    }
+
+    public Integer getSchemaSeverityLevel() {
+        return schemaSeverityLevel;
+    }
+
+    /**
+     * Sets the schema severity level to use when validating against a schema.
+     * This level determines the minimum severity error that triggers JAXB to stop continue parsing.
+     * The default value of 0 (WARNING) means that any error (WARNING, ERROR or FATAL ERROR) will trigger
+     * JAXB to stop. There are the following three levels: 0=WARNING, 1=ERROR, 2=FATAL ERROR.
+     */
+    public void setSchemaSeverityLevel(Integer schemaSeverityLevel) {
+        this.schemaSeverityLevel = schemaSeverityLevel;
     }
 
     public Boolean getPrettyPrint() {
