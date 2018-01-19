@@ -29,8 +29,13 @@ public class KinesisConfiguration {
     @UriPath(description = "Name of the stream")
     @Metadata(required = "true")
     private String streamName;
+    @UriParam(label = "security", secret = true, description = "Amazon AWS Access Key")
+    private String accessKey;
+    @UriParam(label = "security", secret = true, description = "Amazon AWS Secret Key")
+    private String secretKey;
+    @UriParam(description = "The region in which Kinesis client needs to work")
+    private String region;
     @UriParam(description = "Amazon Kinesis client to use for all requests for this endpoint")
-    @Metadata(required = "true")
     private AmazonKinesis amazonKinesisClient;
     @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll", defaultValue = "1")
     private int maxResultsPerRequest = 1;
@@ -45,8 +50,11 @@ public class KinesisConfiguration {
                                                                          + "in case of silent there will be no logging and the consumer will start from the beginning,"
                                                                          + "in case of fail a ReachedClosedStateException will be raised")
     private KinesisShardClosedStrategyEnum shardClosed;
-    
-    // required for injection.
+    @UriParam(description = "To define a proxy host when instantiating the DDBStreams client")
+    private String proxyHost;
+    @UriParam(description = "To define a proxy port when instantiating the DDBStreams client")
+    private Integer proxyPort;
+
     public AmazonKinesis getAmazonKinesisClient() {
         return amazonKinesisClient;
     }
@@ -102,5 +110,44 @@ public class KinesisConfiguration {
     public void setShardClosed(KinesisShardClosedStrategyEnum shardClosed) {
         this.shardClosed = shardClosed;
     }
+    
+    public String getAccessKey() {
+        return accessKey;
+    }
 
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }   
 }

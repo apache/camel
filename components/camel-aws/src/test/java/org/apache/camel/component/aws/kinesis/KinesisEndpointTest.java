@@ -55,7 +55,7 @@ public class KinesisEndpointTest {
                 + "&sequenceNumber=123"
         );
 
-        assertThat(endpoint.getClient(), is(amazonKinesisClient));
+        assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
         assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
         assertThat(endpoint.getConfiguration().getIteratorType(), is(ShardIteratorType.LATEST));
         assertThat(endpoint.getConfiguration().getMaxResultsPerRequest(), is(101));
@@ -69,7 +69,7 @@ public class KinesisEndpointTest {
                 + "?amazonKinesisClient=#kinesisClient"
         );
 
-        assertThat(endpoint.getClient(), is(amazonKinesisClient));
+        assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
         assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
         assertThat(endpoint.getConfiguration().getIteratorType(), is(ShardIteratorType.TRIM_HORIZON));
         assertThat(endpoint.getConfiguration().getMaxResultsPerRequest(), is(1));
@@ -84,7 +84,7 @@ public class KinesisEndpointTest {
                 + "&sequenceNumber=123"
         );
 
-        assertThat(endpoint.getClient(), is(amazonKinesisClient));
+        assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
         assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
         assertThat(endpoint.getConfiguration().getIteratorType(), is(ShardIteratorType.AFTER_SEQUENCE_NUMBER));
         assertThat(endpoint.getConfiguration().getShardId(), is("abc"));
@@ -100,7 +100,7 @@ public class KinesisEndpointTest {
                 + "&sequenceNumber=123"
         );
 
-        assertThat(endpoint.getClient(), is(amazonKinesisClient));
+        assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
         assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
         assertThat(endpoint.getConfiguration().getIteratorType(), is(ShardIteratorType.AT_SEQUENCE_NUMBER));
         assertThat(endpoint.getConfiguration().getShardId(), is("abc"));
