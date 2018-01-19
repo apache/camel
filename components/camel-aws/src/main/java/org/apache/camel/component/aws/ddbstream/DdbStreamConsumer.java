@@ -97,7 +97,7 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private AmazonDynamoDBStreams getClient() {
-        return getEndpoint().getConfiguration().getClient();
+        return getEndpoint().getConfiguration().getAmazonDynamoDbStreamsClient();
     }
 
     @Override

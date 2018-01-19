@@ -136,6 +136,6 @@ class ShardIteratorHandler {
     }
    
     private AmazonDynamoDBStreams getClient() {
-        return getEndpoint().getConfiguration().getClient();
+        return getEndpoint().getConfiguration().getAmazonDynamoDbStreamsClient();
     }
 }
