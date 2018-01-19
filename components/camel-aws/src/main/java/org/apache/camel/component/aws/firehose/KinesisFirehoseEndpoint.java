@@ -34,16 +34,12 @@ import org.apache.camel.spi.UriPath;
     producerOnly = true, label = "cloud,messaging")
 public class KinesisFirehoseEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Name of the stream")
-    @Metadata(required = "true")
-    private String streamName;
-    @UriParam(description = "Amazon Kinesis Firehose client to use for all requests for this endpoint")
-    @Metadata(required = "true")
-    private AmazonKinesisFirehose amazonKinesisFirehoseClient;
+    @UriParam
+    private KinesisFirehoseConfiguration configuration;
 
-    public KinesisFirehoseEndpoint(String uri, String streamName, KinesisFirehoseComponent component) {
+    public KinesisFirehoseEndpoint(String uri, KinesisFirehoseConfiguration configuration, KinesisFirehoseComponent component) {
         super(uri, component);
-        this.streamName = streamName;
+        this.configuration = configuration;
     }
 
     @Override
@@ -61,15 +57,11 @@ public class KinesisFirehoseEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    public void setAmazonKinesisFirehoseClient(AmazonKinesisFirehose client) {
-        this.amazonKinesisFirehoseClient = client;
-    }
-
     public AmazonKinesisFirehose getClient() {
-        return amazonKinesisFirehoseClient;
+        return configuration.getAmazonKinesisFirehoseClient();
     }
 
-    public String getStreamName() {
-        return streamName;
+    public KinesisFirehoseConfiguration getConfiguration() {
+        return configuration;
     }
 }

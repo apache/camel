@@ -25,10 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 
 /**
  * The aws-kinesis component is for consuming and producing records from Amazon
@@ -39,7 +37,7 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
     private KinesisConfiguration configuration;
-    
+
     public KinesisEndpoint(String uri, KinesisConfiguration configuration, KinesisComponent component) {
         super(uri, component);
         this.configuration = configuration;
@@ -47,7 +45,8 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        if ((configuration.getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER) || configuration.getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER)) && configuration.getSequenceNumber().isEmpty()) {
+        if ((configuration.getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER) || configuration.getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER))
+            && configuration.getSequenceNumber().isEmpty()) {
             throw new IllegalArgumentException("Sequence Number must be specified with iterator Types AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER");
         }
         super.doStart();
@@ -83,7 +82,7 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
     public AmazonKinesis getClient() {
         return configuration.getAmazonKinesisClient();
     }
-    
+
     public KinesisConfiguration getConfiguration() {
         return configuration;
     }

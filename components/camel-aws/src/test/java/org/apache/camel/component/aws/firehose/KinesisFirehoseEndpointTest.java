@@ -51,6 +51,6 @@ public class KinesisFirehoseEndpointTest {
         );
 
         assertThat(endpoint.getClient(), is(amazonKinesisFirehoseClient));
-        assertThat(endpoint.getStreamName(), is("some_stream_name"));
+        assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
     }
 }
