@@ -16,7 +16,15 @@
  */
 package org.apache.camel.component.aws.ddbstream;
 
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreamsClientBuilder;
 import com.amazonaws.services.dynamodbv2.model.Record;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -24,7 +32,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The aws-ddbstream component is used for working with Amazon DynamoDB Streams.
@@ -36,6 +44,8 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
     DdbStreamConfiguration configuration;
+    
+    private AmazonDynamoDBStreams ddbStreamClient;
 
     public DdbStreamEndpoint(String uri, DdbStreamConfiguration configuration, DdbStreamComponent component) {
         super(uri, component);
@@ -61,6 +71,16 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
 
         return ex;
     }
+    
+    @Override
+    public void doStart() throws Exception {
+        super.doStart();
+        
+        if (configuration.getAmazonDynamoDbStreamsClient() == null) {
+            ddbStreamClient = createDdbStreamClient();
+            configuration.setAmazonDynamoDbStreamsClient(ddbStreamClient);
+        }
+    }
 
     @Override
     public boolean isSingleton() {
@@ -85,6 +105,39 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
         default:
             return "";
         }
+    }
+    
+    AmazonDynamoDBStreams createDdbStreamClient() {
+        AmazonDynamoDBStreams client = null;
+        ClientConfiguration clientConfiguration = null;
+        AmazonDynamoDBStreamsClientBuilder clientBuilder = null;
+        boolean isClientConfigFound = false;
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            isClientConfigFound = true;
+        }
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
+            if (isClientConfigFound) {
+                clientBuilder = AmazonDynamoDBStreamsClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+            } else {
+                clientBuilder = AmazonDynamoDBStreamsClientBuilder.standard().withCredentials(credentialsProvider);
+            }
+        } else {
+            if (isClientConfigFound) {
+                clientBuilder = AmazonDynamoDBStreamsClientBuilder.standard();
+            } else {
+                clientBuilder = AmazonDynamoDBStreamsClientBuilder.standard().withClientConfiguration(clientConfiguration);
+            }
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            clientBuilder = clientBuilder.withRegion(configuration.getRegion());
+        }
+        client = clientBuilder.build();
+        return client;
     }
 
     @Override
