@@ -72,6 +72,7 @@ public class KinesisConsumerTest {
         configuration.setShardClosed(KinesisShardClosedStrategyEnum.silent);
         configuration.setStreamName("streamName");
         KinesisEndpoint endpoint = new KinesisEndpoint(null, configuration, component);
+        endpoint.start();
         undertest = new KinesisConsumer(endpoint, processor);
         
         SequenceNumberRange range = new SequenceNumberRange().withEndingSequenceNumber(null);

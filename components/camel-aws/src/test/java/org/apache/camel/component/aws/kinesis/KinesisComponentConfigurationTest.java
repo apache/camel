@@ -16,29 +16,19 @@
  */
 package org.apache.camel.component.aws.kinesis;
 
-import java.util.Map;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-
-public class KinesisComponent extends DefaultComponent {
-
-    public KinesisComponent() {
-        this(null);
-    }
-
-    public KinesisComponent(CamelContext context) {
-        super(context);
-    }
-
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        KinesisConfiguration configuration = new KinesisConfiguration();
-        configuration.setStreamName(remaining);
-        setProperties(configuration, parameters);
+public class KinesisComponentConfigurationTest extends CamelTestSupport {
+    
+    @Test
+    public void createEndpointWithAccessAndSecretKey() throws Exception {
+        KinesisComponent component = new KinesisComponent(context);
+        KinesisEndpoint endpoint = (KinesisEndpoint)component.createEndpoint("aws-kinesis://some_stream_name?accessKey=xxxxx&secretKey=yyyyy");
         
-        KinesisEndpoint endpoint = new KinesisEndpoint(uri, configuration, this);
-        return endpoint;
+        assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
+        assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());    
     }
+    
 }
