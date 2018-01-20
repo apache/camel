@@ -17,15 +17,13 @@
 package org.apache.camel.component.mongodb3;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.DistinctIterable;
 import com.mongodb.client.FindIterable;
@@ -43,7 +41,6 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
-//import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
@@ -512,27 +509,42 @@ public class MongoDbProducer extends DefaultProducer {
         return exchange -> {
             try {
                 MongoCollection<Document> dbCol = calculateCollection(exchange);
-
-                // Impossible with java driver to get the batch size and number
-                // to skip
-                List<Document> dbIterator = new ArrayList<>();
-                AggregateIterable<Document> aggregationResult;
-
                 @SuppressWarnings("unchecked")
                 List<Bson> query = exchange.getIn().getMandatoryBody((Class<List<Bson>>)Class.class.cast(List.class));
-
+                
                 // Allow body to be a pipeline
                 // @see http://docs.mongodb.org/manual/core/aggregation/
+                List<Bson> queryList;
                 if (query != null) {
-                    List<Bson> queryList = query.stream().map(o -> (Bson)o).collect(Collectors.toList());
-                    aggregationResult = dbCol.aggregate(queryList);
+                    queryList = query.stream().map(o -> (Bson)o).collect(Collectors.toList());
                 } else {
-                    List<Bson> queryList = new ArrayList<>();
-                    queryList.add(Bson.class.cast(exchange.getIn().getMandatoryBody(Bson.class)));
-                    aggregationResult = dbCol.aggregate(queryList);
+                    queryList = Arrays.asList(Bson.class.cast(exchange.getIn().getMandatoryBody(Bson.class)));
                 }
-                aggregationResult.iterator().forEachRemaining(dbIterator::add);
-                return dbIterator;
+                
+                // The number to skip must be in body query
+                AggregateIterable<Document> aggregationResult = dbCol.aggregate(queryList);
+                
+                // get the batch size
+                Integer batchSize = exchange.getIn().getHeader(MongoDbConstants.BATCH_SIZE, Integer.class);
+                
+                if (batchSize != null) {
+                    aggregationResult.batchSize(batchSize);
+                }
+                
+                Iterable<Document> result;                
+                if (!MongoDbOutputType.MongoIterable.equals(endpoint.getOutputType())) {
+                    try {
+                        result = new ArrayList<>();
+                        aggregationResult.iterator().forEachRemaining(((List<Document>) result)::add);
+                        exchange.getOut().setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ((List<Document>) result).size());
+                    } finally {
+                        aggregationResult.iterator().close();
+                    }
+                } else {
+                    result = aggregationResult;
+                }
+                
+                return result;
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Invalid payload for aggregate", e);
             }

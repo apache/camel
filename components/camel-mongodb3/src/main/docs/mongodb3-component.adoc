@@ -88,7 +88,7 @@ with the following path and query parameters:
 | *createCollection* (common) | Create collection during initialisation if it doesn't exist. Default is true. | true | boolean
 | *database* (common) | Sets the name of the MongoDB database to target |  | String
 | *operation* (common) | Sets the operation this endpoint will execute against MongoDB. For possible values see MongoDbOperation. |  | MongoDbOperation
-| *outputType* (common) | Convert the output of the producer to the selected type : DocumentList Document or MongoIterable. DocumentList or Document applies to findAll. MongoIterable applies to all other operations. |  | MongoDbOutputType
+| *outputType* (common) | Convert the output of the producer to the selected type : DocumentList Document or MongoIterable. DocumentList or MongoIterable applies to findAll and aggregate. Document applies to all other operations. |  | MongoDbOutputType
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
@@ -267,6 +267,17 @@ send a request to close the cursor server-side. The batch size can be
 changed even after a cursor is iterated, in which case the setting will
 apply on the next batch retrieval. |int/Integer
 |=======================================================================
+
+Example with option outputType=MongoIterable and batch size :
+
+[source,java]
+-----------------------------------------------------------------------------
+from("direct:findAll")
+    .setHeader(MongoDbConstants.BATCH_SIZE).constant(10)
+    .setHeader(MongoDbConstants.CRITERIA, Filters.eq("name", "Raul Kripalani"))
+    .to("mongodb3:myDb?database=flights&collection=tickets&operation=findAll&outputType=MongoIterable")
+    .to("mock:resultFindAll");
+-----------------------------------------------------------------------------
 
 The `findAll` operation will also return the following OUT headers to
 enable you to iterate through result pages if you are using paging:
@@ -573,6 +584,37 @@ from("direct:aggregate")
     .to("mongodb3:myDb?database=science&collection=notableScientists&operation=aggregate")
     .to("mock:resultAggregate");
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Efficient retrieval is supported via outputType=MongoIterable and the following header :
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|=======================================================================
+|Header key |Quick constant |Description (extracted from MongoDB API doc) |Expected type
+
+|`CamelMongoDbBatchSize` |`MongoDbConstants.BATCH_SIZE` | Sets the number of documents to return per batch. |int/Integer
+|=======================================================================
+
+You can also "stream" the documents returned from the server into your route by including outputType=DBCursor (Camel 2.21+) as an endpoint option
+which may prove simpler than setting the above headers. This hands your Exchange the DBCursor from the Mongo driver, just as if you were executing
+the aggregate() within the Mongo shell, allowing your route to iterate over the results. By default and without this option, this component will load
+the documents from the driver's cursor into a List and return this to your route - which may result in a large number of in-memory objects. Remember,
+with a DBCursor do not ask for the number of documents matched - see the MongoDB documentation site for details.
+
+Example with option outputType=MongoIterable and batch size:
+
+[source,java]
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// route: from("direct:aggregate").to("mongodb3:myDb?database=science&collection=notableScientists&operation=aggregate&outputType=MongoIterable");
+List<Bson> aggregate = Arrays.asList(match(or(eq("scientist", "Darwin"), eq("scientist", 
+        group("$scientist", sum("count", 1)));
+from("direct:aggregate")
+    .setHeader(MongoDbConstants.BATCH_SIZE).constant(10)
+    .setBody().constant(aggregate)
+    .to("mongodb3:myDb?database=science&collection=notableScientists&operation=aggregate&outputType=MongoIterable")
+    .to("mock:resultAggregate");
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 #### getDbStats
 
