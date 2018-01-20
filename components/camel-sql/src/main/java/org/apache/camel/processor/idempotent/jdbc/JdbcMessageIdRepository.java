@@ -152,4 +152,12 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<Str
     public void setDeleteString(String deleteString) {
         this.deleteString = deleteString;
     }
+
+    public String getClearString() {
+        return clearString;
+    }
+
+    public void setClearString(String clearString) {
+        this.clearString = clearString;
+    }
 }
