@@ -370,13 +370,13 @@ public class MongoDbProducer extends DefaultProducer {
             Document sortBy = exchange.getIn().getHeader(SORT_BY, Document.class);
             FindIterable<Document> ret;
             if (query == null && fieldFilter == null) {
-                ret = dbCol.find(new Document());
+                ret = dbCol.find();
             } else if (fieldFilter == null) {
                 ret = dbCol.find(query);
             } else if (query != null) {
                 ret = dbCol.find(query).projection(fieldFilter);
             } else {
-                ret = dbCol.find(new Document()).projection(fieldFilter);
+                ret = dbCol.find().projection(fieldFilter);
             }
 
             if (sortBy != null) {
