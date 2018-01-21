@@ -188,6 +188,7 @@
 	* [EHCache](cache-component.adoc)
 	* [Ehcache](ehcache-component.adoc)
 	* [EJB](ejb-component.adoc)
+	* [Elastichsearch5 Rest](elasticsearch5-rest-component.adoc)
 	* [Elasticsearch](elasticsearch-component.adoc)
 	* [Elasticsearch5](elasticsearch5-component.adoc)
 	* [ElSQL](elsql-component.adoc)
@@ -379,6 +380,7 @@
 	* [XML Security](xmlsecurity-component.adoc)
 	* [XMPP](xmpp-component.adoc)
 	* [XQuery](xquery-component.adoc)
+	* [Yahoo Query Language](yql-component.adoc)
 	* [Yammer](yammer-component.adoc)
 	* [Zendesk](zendesk-component.adoc)
 	* [ZooKeeper](zookeeper-component.adoc)
@@ -403,6 +405,7 @@
 	* [Jasypt](jasypt.adoc)
 	* [Kura](kura.adoc)
 	* [LevelDB](leveldb.adoc)
+	* [Lra](lra.adoc)
 	* [OpenTracing](opentracing.adoc)
 	* [Reactor](reactor.adoc)
 	* [Ribbon](ribbon.adoc)
@@ -426,6 +429,7 @@
 	* [Test Spring](test-spring.adoc)
 	* [TestNG](testng.adoc)
 	* [URLRewrite](urlrewrite.adoc)
+	* [XRay](aws-xray.adoc)
 	* [Zipkin](zipkin.adoc)
 <!-- others: END -->
 

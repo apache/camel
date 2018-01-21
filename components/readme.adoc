@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 284 in 195 JAR artifacts (17 deprecated)
+Number of Components: 286 in 197 JAR artifacts (17 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -39,22 +39,22 @@ Number of Components: 284 in 195 JAR artifacts (17 deprecated)
 `atom:feedUri` | 1.2 | The atom component is used for consuming Atom RSS feeds.
 
 | link:camel-atomix/src/main/docs/atomix-map-component.adoc[Atomix Map] (camel-atomix) +
-`atomix-map:mapName` | 2.20 | The atomix-map component is used to access Atomix's distributed map.
+`atomix-map:resourceName` | 2.20 | The atomix-map component is used to access Atomix's distributed map.
 
 | link:camel-atomix/src/main/docs/atomix-messaging-component.adoc[Atomix Messaging] (camel-atomix) +
-`atomix-messaging:group` | 2.20 | The atomix-messaging component is used to access Atomix's group messaging.
+`atomix-messaging:resourceName` | 2.20 | The atomix-messaging component is used to access Atomix's group messaging.
 
 | link:camel-atomix/src/main/docs/atomix-multimap-component.adoc[Atomix MultiMap] (camel-atomix) +
-`atomix-multimap:multiMapName` | 2.20 | The atomix-multimap component is used to access Atomix's distributed multi map.
+`atomix-multimap:resourceName` | 2.20 | The atomix-multimap component is used to access Atomix's distributed multi map.
 
 | link:camel-atomix/src/main/docs/atomix-queue-component.adoc[Atomix Queue] (camel-atomix) +
-`atomix-queue:queueName` | 2.20 | The atomix-queue component is used to access Atomix's distributed queue.
+`atomix-queue:resourceName` | 2.20 | The atomix-queue component is used to access Atomix's distributed queue.
 
 | link:camel-atomix/src/main/docs/atomix-set-component.adoc[Atomix Set] (camel-atomix) +
-`atomix-set:setName` | 2.20 | The atomix-set component is used to access Atomix's distributed set.
+`atomix-set:resourceName` | 2.20 | The atomix-set component is used to access Atomix's distributed set.
 
 | link:camel-atomix/src/main/docs/atomix-value-component.adoc[Atomix Value] (camel-atomix) +
-`atomix-value:valueName` | 2.20 | The atomix-value component is used to access Atomix's distributed value.
+`atomix-value:resourceName` | 2.20 | The atomix-value component is used to access Atomix's distributed value.
 
 | link:camel-avro/src/main/docs/avro-component.adoc[Avro] (camel-avro) +
 `avro:transport:host:port/messageName` | 2.10 | Working with Apache Avro for data serialization.
@@ -227,6 +227,9 @@ Number of Components: 284 in 195 JAR artifacts (17 deprecated)
 | link:camel-ejb/src/main/docs/ejb-component.adoc[EJB] (camel-ejb) +
 `ejb:beanName` | 2.4 | The ejb component is for invoking EJB Java beans from Camel.
 
+| link:camel-elasticsearch5-rest/src/main/docs/elasticsearch5-rest-component.adoc[Elastichsearch5 Rest] (camel-elasticsearch5-rest) +
+`elasticsearch5-rest:clusterName` | 2.21 | The elasticsearch component is used for interfacing with ElasticSearch server using 5.x REST API.
+
 | link:camel-elasticsearch/src/main/docs/elasticsearch-component.adoc[Elasticsearch] (camel-elasticsearch) +
 `elasticsearch:clusterName` | 2.11 | The elasticsearch component is used for interfacing with ElasticSearch server.
 
@@ -357,10 +360,10 @@ Number of Components: 284 in 195 JAR artifacts (17 deprecated)
 `ibatis:statement` | 1.2 | *deprecated* Performs a query poll insert update or delete in a relational database using Apache iBATIS.
 
 | link:camel-iec60870/src/main/docs/iec60870-client-component.adoc[IEC 60870 Client] (camel-iec60870) +
-`iec60870-client:endpointUri` | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
+`iec60870-client:uriPath` | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
 
 | link:camel-iec60870/src/main/docs/iec60870-server-component.adoc[IEC 60870 Server] (camel-iec60870) +
-`iec60870-server:endpointUri` | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
+`iec60870-server:uriPath` | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
 
 | link:camel-ignite/src/main/docs/ignite-cache-component.adoc[Ignite Cache] (camel-ignite) +
 `ignite-cache:cacheName` | 2.17 | The Ignite Cache endpoint is one of camel-ignite endpoints which allows you to interact with an Ignite Cache.
@@ -848,6 +851,9 @@ Number of Components: 284 in 195 JAR artifacts (17 deprecated)
 | link:../camel-core/src/main/docs/xslt-component.adoc[XSLT] (camel-core) +
 `xslt:resourceUri` | 1.3 | Transforms the message using a XSLT template.
 
+| link:camel-yql/src/main/docs/yql-component.adoc[Yahoo Query Language] (camel-yql) +
+`yql:query` | 2.21 | The YQL (Yahoo! Query Language) platform enables you to query filter and combine data across the web.
+
 | link:camel-yammer/src/main/docs/yammer-component.adoc[Yammer] (camel-yammer) +
 `yammer:function` | 2.12 | The yammer component allows you to interact with the Yammer enterprise social network.
 
@@ -1038,7 +1044,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 37 in 37 JAR artifacts (13 deprecated)
+Number of Miscellaneous Components: 39 in 39 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1069,6 +1075,8 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (13 deprecated)
 | link:camel-kura/src/main/docs/kura.adoc[Kura] (camel-kura) | 2.15 | Using Camel with Eclipse Kura (OSGi)
 
 | link:camel-leveldb/src/main/docs/leveldb.adoc[LevelDB] (camel-leveldb) | 2.10 | Using LevelDB as persistent EIP store
+
+| link:camel-lra/src/main/docs/lra.adoc[Lra] (camel-lra) | 2.21 | Camel saga binding for Long-Running-Action framework
 
 | link:camel-opentracing/src/main/docs/opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
@@ -1115,6 +1123,8 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (13 deprecated)
 | link:camel-testng/src/main/docs/testng.adoc[TestNG] (camel-testng) | 2.8 | *deprecated* Camel unit testing with TestNG
 
 | link:camel-urlrewrite/src/main/docs/urlrewrite.adoc[URLRewrite] (camel-urlrewrite) | 2.11 | *deprecated* URL rewrite support for HTTP components
+
+| link:camel-aws-xray/src/main/docs/aws-xray.adoc[XRay] (camel-aws-xray) | 2.21 | Distributed tracing using AWS XRay
 
 | link:camel-zipkin/src/main/docs/zipkin.adoc[Zipkin] (camel-zipkin) | 2.18 | Distributed message tracing using Zipkin
 |===
