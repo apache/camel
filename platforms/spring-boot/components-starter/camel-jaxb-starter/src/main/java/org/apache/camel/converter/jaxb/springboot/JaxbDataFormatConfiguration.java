@@ -45,9 +45,9 @@ public class JaxbDataFormatConfiguration
     /**
      * Sets the schema severity level to use when validating against a schema.
      * This level determines the minimum severity error that triggers JAXB to
-     * stop continue parsing. The default value of 0 (WARNING) means that any
-     * error (WARNING ERROR or FATAL ERROR) will trigger JAXB to stop. There are
-     * the following three levels: 0=WARNING 1=ERROR 2=FATAL ERROR.
+     * stop continue parsing. The default value of 0 (warning) means that any
+     * error (warning error or fatal error) will trigger JAXB to stop. There are
+     * the following three levels: 0=warning 1=error 2=fatal error.
      */
     private Integer schemaSeverityLevel = 0;
     /**
