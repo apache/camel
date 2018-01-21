@@ -43,8 +43,8 @@ public class ServiceCallConfigurationTest {
     @Test
     public void testDynamicUri() throws Exception {
         StaticServiceDiscovery sd = new StaticServiceDiscovery();
-        sd.addServer("scall","127.0.0.1", 8080);
-        sd.addServer("scall","127.0.0.1", 8081);
+        sd.addServer("scall", "127.0.0.1", 8080);
+        sd.addServer("scall", "127.0.0.1", 8081);
 
         ServiceCallConfigurationDefinition conf = new ServiceCallConfigurationDefinition();
         conf.setServiceDiscovery(sd);
