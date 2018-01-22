@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.ddbstream;
 
+import com.amazonaws.regions.Regions;
+
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -29,6 +31,32 @@ public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
         assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());    
+    }
+    
+    @Test
+    public void createEndpointWithComponentElements() throws Exception {
+        DdbStreamComponent component = new DdbStreamComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        DdbStreamEndpoint endpoint = (DdbStreamEndpoint)component.createEndpoint("aws-ddb://myTable");
+        
+        assertEquals("myTable", endpoint.getConfiguration().getTableName());
+        assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
+        assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
+    }
+    
+    @Test
+    public void createEndpointWithComponentAndEndpointElements() throws Exception {
+        DdbStreamComponent component = new DdbStreamComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        component.setRegion(Regions.US_WEST_1.toString());
+        DdbStreamEndpoint endpoint = (DdbStreamEndpoint)component.createEndpoint("aws-ddb://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        
+        assertEquals("myTable", endpoint.getConfiguration().getTableName());
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
     
 }
