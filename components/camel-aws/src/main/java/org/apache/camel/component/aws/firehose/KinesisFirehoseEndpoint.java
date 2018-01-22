@@ -20,12 +20,9 @@ import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.aws.kinesis.KinesisConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 
 /**
  * The aws-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
