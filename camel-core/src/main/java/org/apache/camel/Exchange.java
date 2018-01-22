@@ -363,6 +363,28 @@ public interface Exchange {
     Message getIn();
 
     /**
+     * Returns the current message
+     *
+     * @return the current message
+     */
+    Message getMessage();
+
+    /**
+     * Returns the current message as the given type
+     *
+     * @param type the given type
+     * @return the message as the given type or <tt>null</tt> if not possible to covert to given type
+     */
+    <T> T getMessage(Class<T> type);
+
+    /**
+     * Replace the current message instance.
+     *
+     * @param message the new message
+     */
+    void setMessage(Message message);
+
+    /**
      * Returns the inbound request message as the given type
      *
      * @param type the given type

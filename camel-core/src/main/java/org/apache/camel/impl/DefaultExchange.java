@@ -350,6 +350,23 @@ public final class DefaultExchange implements Exchange {
         configureMessage(out);
     }
 
+    public Message getMessage() {
+        return hasOut() ? getOut() : getIn();
+    }
+
+    public <T> T getMessage(Class<T> type) {
+        return hasOut() ? getOut(type) : getIn(type);
+    }
+
+    public void setMessage(Message message) {
+        if (hasOut()) {
+            setOut(message);
+        } else {
+            setIn(message);
+        }
+    }
+
+
     public Exception getException() {
         return exception;
     }
