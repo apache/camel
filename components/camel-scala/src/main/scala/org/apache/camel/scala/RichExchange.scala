@@ -136,4 +136,10 @@ class RichExchange(val exchange : Exchange) extends Exchange {
   def handoverCompletions = exchange.handoverCompletions
 
   def getCreated = exchange.getCreated
+
+  override def getMessage: Message = { if (hasOut) getOut else getIn }
+
+  override def getMessage[T](`type`: Class[T]): T = { if (hasOut) getOut(`type`) else getIn(`type`) }
+
+  override def setMessage(message: Message): Unit = { if (hasOut) setOut(message) else setIn(message) }
 }
