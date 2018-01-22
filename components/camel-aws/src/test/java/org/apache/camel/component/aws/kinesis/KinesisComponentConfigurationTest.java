@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.kinesis;
 
+import com.amazonaws.regions.Regions;
+
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -29,6 +31,32 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());    
+    }
+    
+    @Test
+    public void createEndpointWithComponentElements() throws Exception {
+        KinesisComponent component = new KinesisComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        KinesisEndpoint endpoint = (KinesisEndpoint)component.createEndpoint("aws-kinesis://some_stream_name");
+        
+        assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
+        assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
+        assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
+    }
+    
+    @Test
+    public void createEndpointWithComponentAndEndpointElements() throws Exception {
+        KinesisComponent component = new KinesisComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        component.setRegion(Regions.US_WEST_1.toString());
+        KinesisEndpoint endpoint = (KinesisEndpoint)component.createEndpoint("aws-kinesis://some_stream_name?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        
+        assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
     
 }

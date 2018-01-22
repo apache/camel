@@ -19,12 +19,14 @@ package org.apache.camel.component.aws.kinesis;
 import com.amazonaws.services.kinesis.AmazonKinesis;
 import com.amazonaws.services.kinesis.model.ShardIteratorType;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+
 @UriParams
-public class KinesisConfiguration {
+public class KinesisConfiguration implements Cloneable {
     
     @UriPath(description = "Name of the stream")
     @Metadata(required = "true")
@@ -150,4 +152,16 @@ public class KinesisConfiguration {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }   
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public KinesisConfiguration copy() {
+        try {
+            return (KinesisConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
 }
