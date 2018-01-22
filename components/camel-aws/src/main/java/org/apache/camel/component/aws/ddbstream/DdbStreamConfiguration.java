@@ -19,13 +19,14 @@ package org.apache.camel.component.aws.ddbstream;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams;
 import com.amazonaws.services.dynamodbv2.model.ShardIteratorType;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class DdbStreamConfiguration {
+public class DdbStreamConfiguration implements Cloneable {
     
     @UriPath(label = "consumer", description = "Name of the dynamodb table")
     @Metadata(required = "true")
@@ -139,5 +140,17 @@ public class DdbStreamConfiguration {
 
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
-    }   
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public DdbStreamConfiguration copy() {
+        try {
+            return (DdbStreamConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
 }
