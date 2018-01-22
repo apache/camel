@@ -62,6 +62,7 @@ public class KinesisComponent extends DefaultComponent {
         }
         
         KinesisEndpoint endpoint = new KinesisEndpoint(uri, configuration, this);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
     

@@ -68,6 +68,7 @@ public class DdbStreamComponent extends DefaultComponent {
         }
         
         DdbStreamEndpoint endpoint = new DdbStreamEndpoint(uri, configuration, this);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
     
