@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -346,12 +347,20 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 CONNECTORS.put(connectorKey, connectorRef);
 
             } else {
-
+                // check if there are any new handlers, and if so then we need to re-start the server
                 if (endpoint.getHandlers() != null && !endpoint.getHandlers().isEmpty()) {
-                    // As the server is started, we need to stop the server for a while to add the new handler
-                    connectorRef.server.stop();
-                    addJettyHandlers(connectorRef.server, endpoint.getHandlers());
-                    connectorRef.server.start();
+                    List<Handler> existingHandlers = new ArrayList<>();
+                    if (connectorRef.server.getHandlers() != null && connectorRef.server.getHandlers().length > 0) {
+                        existingHandlers = Arrays.asList(connectorRef.server.getHandlers());
+                    }
+                    List<Handler> newHandlers = new ArrayList<>(endpoint.getHandlers());
+                    boolean changed = !existingHandlers.containsAll(newHandlers) && !newHandlers.containsAll(existingHandlers);
+                    if (changed) {
+                        LOG.debug("Restarting Jetty server due to adding new Jetty Handlers: {}", newHandlers);
+                        connectorRef.server.stop();
+                        addJettyHandlers(connectorRef.server, endpoint.getHandlers());
+                        connectorRef.server.start();
+                    }
                 }
                 // ref track the connector
                 connectorRef.increment();
