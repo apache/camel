@@ -1,0 +1,77 @@
+== Wordpress Component
+
+Camel component for https://developer.wordpress.org/rest-api/reference/[Wordpress API].
+
+=== Usage
+
+Currently only the **Posts** and **Users** operations are supported.
+
+==== Configure your route
+
+The `WordpressConfiguration` class can be used to set initial properties configuration to the component instead of passing it as query parameter. The following listing shows how to set the component to be used in your routes.
+
+[source,java]
+--------------------------------------------------
+public void configure() {
+    final WordpressConfiguration configuration = new WordpressConfiguration();
+    final WordpressComponent component = new WordpressComponent();
+    configuration.setApiVersion("2");
+    configuration.setUrl("http://yoursite.com/wp-json/");
+    component.setConfiguration(configuration);
+    getContext().addComponent("wordpress", component);
+    
+    from("wordpress:post?id=1")
+      .to("mock:result");
+}
+--------------------------------------------------
+==== Path Parameters
+
+|===
+| Name | Description | Default | Type
+| *type* | *Required* The endpoint type. Currently only the 'post' and 'user' type is supported. |  | String
+| *typeDetail* | *Optional* Some endpoint types requires more information to perform an operation, e.g. to delete a post you should use the syntax `wordpress:post:delete` |  | String
+|===
+
+==== Query Parameters
+|===
+| Name | Description | Default | Type
+| *user* | *Optional* authorized user to perform writing operations | | String
+| *password* | *Optional* password from authorized user | | String
+| *apiVersion* | *Optional* the Wordpress API version  | 2 | String
+| *url* | *Required* the Wordpress API base url, e.g. http://myblog.com/wp-json/ | | String
+| *id* | *Optional* used to identify a particular Wordpress entity when performing single operations like deleting a specific post | | Integer
+|===
+
+Most of parameters needed when performing a read operation mirrors from the official https://developer.wordpress.org/rest-api/reference/[API]. When performing searches operations, the `criteria.` suffix is needed. Take the following `Consumer` as example:
+
+---------------------------------------------------------
+wordpress:post?criteria.perPage=10&criteria.orderBy=author&criteria.categories=camel,dozer,json
+---------------------------------------------------------
+
+
+==== Consumer Example
+
+Consumer polls from the API from time to time domain objects from Wordpress. Following, an example using the `Post` operation:
+
+- `wordpress:post` retrieves posts (defaults to 10 posts)    
+- `wordpress:post?id=1` search for a specific post
+
+==== Producer Example
+
+Producer performs write operations on Wordpress like adding a new user or update a post. To be able to write, you must have an authorized user credentials (see Authentication). 
+
+- `wordpress:post` creates a new post from the `org.wordpress4j.model.Post` class in the message body.  
+- `wordpress:post?id=1` updates a post based on data `org.wordpress4j.model.Post` from the message body.  
+- `wordpress:post:delete?id=1` deletes a specific post
+
+=== Authentication
+
+Producers that perform write operations (e.g. create a new post) https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/[must have an authenticated user] to do so. The standard authentication mechanism used by Wordpress is cookie. Unfortunately this method is not supported outside Wordpress environment because it's rely on https://codex.wordpress.org/WordPress_Nonces[nonce] internal function.
+
+There's some alternatives to use the Wordpress API without nonces, but requires specific plugin installations.
+
+At this time, `camel-wordpress` only supports Basic Authentication (more to come). To configure it, you must install the https://github.com/WP-API/Basic-Auth[Basic-Auth Wordpress plugin] and pass the credentials to the endpoint:
+
+`from("direct:deletePost").to("wordpress:post:delete?id=9&user=ben&password=password123").to("mock:resultDelete");`
+
+**It's not recommend to use Basic Authentication in production without TLS!!**
