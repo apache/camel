@@ -318,6 +318,7 @@
     <module>camel-vertx-starter</module>
     <module>camel-weather-starter</module>
     <module>camel-websocket-starter</module>
+    <module>camel-wordpress-starter</module>
     <module>camel-xchange-starter</module>
     <module>camel-xmlbeans-starter</module>
     <module>camel-xmljson-starter</module>
