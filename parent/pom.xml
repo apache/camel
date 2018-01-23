@@ -2172,6 +2172,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-xchange</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-xmljson</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3530,13 +3535,13 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.knowm.xchange</groupId>
-        <artifactId>xchange-core</artifactId>
-        <version>${xchange-version}</version>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-xmlbeans-starter</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-xmlbeans-starter</artifactId>
+        <artifactId>camel-xchange-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3696,6 +3701,12 @@
         <groupId>com.alibaba</groupId>
         <artifactId>fastjson</artifactId>
         <version>${fastjson-version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.knowm.xchange</groupId>
+        <artifactId>xchange-core</artifactId>
+        <version>${xchange-version}</version>
       </dependency>
 
       <!-- abdera dependencies-->
