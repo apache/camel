@@ -288,6 +288,7 @@
         <include>org.apache.camel:camel-vertx</include>
         <include>org.apache.camel:camel-weather</include>
         <include>org.apache.camel:camel-websocket</include>
+        <include>org.apache.camel:camel-wordpress</include>
         <include>org.apache.camel:camel-xmlbeans</include>
         <include>org.apache.camel:camel-xchange</include>
         <include>org.apache.camel:camel-xmljson</include>
@@ -584,6 +585,7 @@
         <include>org.apache.camel:camel-vertx-starter</include>
         <include>org.apache.camel:camel-weather-starter</include>
         <include>org.apache.camel:camel-websocket-starter</include>
+        <include>org.apache.camel:camel-wordpress-starter</include>
         <include>org.apache.camel:camel-xmlbeans-starter</include>
         <include>org.apache.camel:camel-xchange-starter</include>
         <include>org.apache.camel:camel-xmljson-starter</include>
