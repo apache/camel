@@ -68,7 +68,9 @@ public class SWFComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
-
+        if (configuration.getAmazonSWClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+            throw new IllegalArgumentException("AmazonSWClient or accessKey and secretKey must be specified.");
+        }
         return new SWFEndpoint(uri, this, configuration);
     }
     
