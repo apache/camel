@@ -18,7 +18,7 @@ public class WordpressComponent extends DefaultComponent {
 
     private static final String OP_SEPARATOR = ":";
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Wordpress component configuration")
     private WordpressComponentConfiguration configuration;
 
     public WordpressComponent() {

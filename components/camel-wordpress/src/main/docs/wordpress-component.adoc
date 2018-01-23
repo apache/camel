@@ -1,5 +1,7 @@
 == Wordpress Component
 
+*Available as of Camel version 2.20.1*
+
 Camel component for https://developer.wordpress.org/rest-api/reference/[Wordpress API].
 
 === Usage

@@ -15,7 +15,7 @@ public class WordpressComponentConfiguration {
     @UriParam(description = "The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/")
     @Metadata(required = "true")
     private String url;
-    @UriParam(defaultValue = WordpressConstants.API_VERSION)
+    @UriParam(description = "The Wordpress REST API version", defaultValue = WordpressConstants.API_VERSION)
     private String apiVersion = WordpressConstants.API_VERSION;
     @UriParam(description = "The user used to authenticate with Basic Auth")
     private String user;
@@ -50,19 +50,19 @@ public class WordpressComponentConfiguration {
     public void setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
     }
-    
+
     public String getPassword() {
         return password;
     }
-    
+
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     public String getUser() {
         return user;
     }
-    
+
     public void setUser(String user) {
         this.user = user;
     }
