@@ -3,7 +3,6 @@ package org.wordpress4j.service.impl;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
-
 import org.wordpress4j.model.Comment;
 import org.wordpress4j.model.CommentSearchCriteria;
 import org.wordpress4j.model.Context;

@@ -1,10 +1,9 @@
 package org.wordpress4j.model;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-import org.wordpress4j.model.PublishableStatus;
 
 public class PublishableStatusTest {
 

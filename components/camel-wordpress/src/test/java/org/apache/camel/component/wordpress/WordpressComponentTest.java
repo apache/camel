@@ -9,8 +9,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.wordpress.WordpressComponent;
-import org.apache.camel.component.wordpress.WordpressEndpoint;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -20,7 +18,7 @@ import org.wordpress4j.model.PostSearchCriteria;
 
 public class WordpressComponentTest {
     
-    private final static Logger LOGGER = LoggerFactory.getLogger(WordpressComponentTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WordpressComponentTest.class);
 
     @Test
     public void testParseUriPropertiesCriteria() throws Exception {

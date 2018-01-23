@@ -10,14 +10,14 @@ import org.wordpress4j.WordpressServiceProvider;
 
 public abstract class AbstractWordpressProducer<T> extends DefaultProducer {
 
-    private WordpressEndpointConfiguration configuration;
-
     protected static final Logger LOG = LoggerFactory.getLogger(WordpressPostProducer.class);
+
+    private WordpressEndpointConfiguration configuration;
 
     public AbstractWordpressProducer(WordpressEndpoint endpoint) {
         super(endpoint);
         this.configuration = endpoint.getConfig();
-        if(!WordpressServiceProvider.getInstance().hasAuthentication()) {
+        if (!WordpressServiceProvider.getInstance().hasAuthentication()) {
             LOG.warn("Wordpress Producer hasn't authentication. This may lead to errors during route execution. Wordpress writing operations need authentication.");
         }
     }
@@ -25,12 +25,12 @@ public abstract class AbstractWordpressProducer<T> extends DefaultProducer {
     public WordpressEndpointConfiguration getConfiguration() {
         return configuration;
     }
-    
+
     @Override
     public WordpressEndpoint getEndpoint() {
         return (WordpressEndpoint)super.getEndpoint();
     }
-    
+
     @Override
     public final void process(Exchange exchange) throws Exception {
         if (this.getConfiguration().getId() == null) {
@@ -41,13 +41,13 @@ public abstract class AbstractWordpressProducer<T> extends DefaultProducer {
             } else {
                 exchange.getOut().setBody(this.processDelete(exchange));
             }
-        }        
+        }
     }
-    
+
     protected abstract T processInsert(Exchange exchange);
-    
+
     protected abstract T processUpdate(Exchange exchange);
-    
+
     protected abstract T processDelete(Exchange exchange);
-    
+
 }

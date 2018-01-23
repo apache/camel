@@ -17,7 +17,7 @@ public class WordpressEndpointConfiguration extends WordpressComponentConfigurat
 
     @UriParam(description = "The criteria to use with complex searches.", prefix = "criteria.", multiValue = true)
     private Map<String, Object> criteriaProperties;
-    
+
     @UriParam(description = "Whether to bypass trash and force deletion.", defaultValue = "false", javaType = "java.lang.Boolean")
     private Boolean force = false;
 
@@ -36,11 +36,11 @@ public class WordpressEndpointConfiguration extends WordpressComponentConfigurat
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     public Boolean isForce() {
         return force;
     }
-    
+
     public void setForce(Boolean force) {
         this.force = force;
     }
@@ -59,7 +59,7 @@ public class WordpressEndpointConfiguration extends WordpressComponentConfigurat
     }
 
     public Map<String, Object> getCriteriaProperties() {
-        if(criteriaProperties != null) {
+        if (criteriaProperties != null) {
             return Collections.unmodifiableMap(criteriaProperties);
         }
         return null;

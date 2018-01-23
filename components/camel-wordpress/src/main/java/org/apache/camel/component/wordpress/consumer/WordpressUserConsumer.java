@@ -11,7 +11,7 @@ import org.wordpress4j.model.UserSearchCriteria;
 import org.wordpress4j.service.WordpressServiceUsers;
 
 public class WordpressUserConsumer extends AbstractWordpressConsumer {
-    
+
     private WordpressServiceUsers serviceUsers;
 
     public WordpressUserConsumer(WordpressEndpoint endpoint, Processor processor) {
@@ -26,28 +26,27 @@ public class WordpressUserConsumer extends AbstractWordpressConsumer {
 
     @Override
     protected int poll() throws Exception {
-        if(getConfiguration().getId() == null) {
+        if (getConfiguration().getId() == null) {
             return this.pollForList();
         } else {
             return this.pollForSingle();
         }
     }
-    
+
     private int pollForSingle() {
         final User user = this.serviceUsers.retrieve(getConfiguration().getId());
-        if(user == null) {
+        if (user == null) {
             return 0;
         }
         this.process(user);
         return 1;
     }
-    
+
     private int pollForList() {
         final List<User> users = this.serviceUsers.list((UserSearchCriteria)getConfiguration().getSearchCriteria());
         users.stream().forEach(p -> this.process(p));
         LOG.trace("returned users is {}", users);
         return users.size();
     }
-    
 
 }

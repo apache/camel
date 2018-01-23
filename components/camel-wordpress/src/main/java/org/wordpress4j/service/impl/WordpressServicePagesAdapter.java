@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
-
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +24,11 @@ import org.wordpress4j.service.spi.PostsSPI;
  */
 public class WordpressServicePagesAdapter extends AbstractWordpressCrudServiceAdapter<PagesSPI, Page, PageSearchCriteria> implements WordpressServicePages {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WordpressServicePagesAdapter.class);
+    
     public WordpressServicePagesAdapter(String wordpressUrl, String apiVersion) {
         super(wordpressUrl, apiVersion);
     }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(WordpressServicePagesAdapter.class);
 
     @Override
     protected Class<PagesSPI> getSpiType() {

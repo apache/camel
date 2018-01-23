@@ -4,7 +4,6 @@ import static org.hamcrest.CoreMatchers.is;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.wordpress.WordpressComponent;
 import org.apache.camel.component.wordpress.config.WordpressComponentConfiguration;
 import org.junit.Test;
 import org.wordpress4j.WordpressConstants;

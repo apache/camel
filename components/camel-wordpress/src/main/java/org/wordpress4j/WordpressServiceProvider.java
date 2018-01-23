@@ -14,10 +14,10 @@ import org.wordpress4j.service.WordpressServiceUsers;
 import org.wordpress4j.service.impl.WordpressServicePostsAdapter;
 import org.wordpress4j.service.impl.WordpressServiceUsersAdapter;
 
-public class WordpressServiceProvider {
+public final class WordpressServiceProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WordpressServiceProvider.class);
-    
+
     private HashMap<Class<? extends WordpressService>, WordpressService> services;
     private WordpressAPIConfiguration configuration;
 
@@ -53,7 +53,7 @@ public class WordpressServiceProvider {
 
         servicePosts.setWordpressAuthentication(config.getAuthentication());
         serviceUsers.setWordpressAuthentication(config.getAuthentication());
-        
+
         this.services = new HashMap<>();
         this.services.put(WordpressServicePosts.class, servicePosts);
         this.services.put(WordpressServiceUsers.class, serviceUsers);
@@ -69,9 +69,9 @@ public class WordpressServiceProvider {
         }
         return service;
     }
-    
+
     public boolean hasAuthentication() {
-        if(this.configuration != null) {
+        if (this.configuration != null) {
             return this.configuration.getAuthentication() != null;
         }
         return false;

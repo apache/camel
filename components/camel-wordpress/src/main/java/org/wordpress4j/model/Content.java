@@ -19,7 +19,7 @@ public class Content implements Serializable {
     private String raw;
 
     @JsonProperty("protected")
-    private Boolean protected_;
+    private Boolean protect;
 
     public Content() {
 
@@ -37,12 +37,12 @@ public class Content implements Serializable {
         this.rendered = rendered;
     }
 
-    public Boolean getProtected_() {
-        return protected_;
+    public Boolean getProtect() {
+        return protect;
     }
 
-    public void setProtected_(Boolean protected_) {
-        this.protected_ = protected_;
+    public void setProtect(Boolean protect) {
+        this.protect = protect;
     }
     
     public String getRaw() {

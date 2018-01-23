@@ -23,15 +23,14 @@ public class WordpressPostProducer extends AbstractWordpressProducer<Post> {
     }
 
     protected Post processUpdate(Exchange exchange) {
-        LOG.debug("Trying to update the post {} with id {}", exchange.getIn().getBody(),
-                this.getConfiguration().getId());
+        LOG.debug("Trying to update the post {} with id {}", exchange.getIn().getBody(), this.getConfiguration().getId());
         return servicePosts.update(this.getConfiguration().getId(), exchange.getIn().getBody(Post.class));
     }
 
     protected Post processDelete(Exchange exchange) {
         LOG.debug("Trying to delete a post with id {}", this.getConfiguration().getId());
-        
-        if(this.getConfiguration().isForce()) {
+
+        if (this.getConfiguration().isForce()) {
             return servicePosts.forceDelete(this.getConfiguration().getId()).getPrevious();
         } else {
             return servicePosts.delete(this.getConfiguration().getId());

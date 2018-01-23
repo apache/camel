@@ -4,6 +4,7 @@ import static com.google.common.base.MoreObjects.toStringHelper;
 import static java.util.Objects.hash;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.wordpress4j.auth.WordpressAuthentication;
 
@@ -20,7 +21,7 @@ public final class WordpressAPIConfiguration implements Serializable {
     public WordpressAPIConfiguration() {
 
     }
-    
+
     public WordpressAPIConfiguration(final String apiUrl, final String apiVersion) {
         this.apiUrl = apiUrl;
         this.apiVersion = apiVersion;
@@ -54,10 +55,21 @@ public final class WordpressAPIConfiguration implements Serializable {
     public String toString() {
         return toStringHelper(this).addValue(this.apiUrl).add("Version", this.apiVersion).addValue(this.authentication).toString();
     }
-    
+
     @Override
     public int hashCode() {
         return hash(this.apiUrl, this.apiVersion, this.authentication);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!WordpressAPIConfiguration.class.isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+        return Objects.equals(this, obj);
     }
 
 }
