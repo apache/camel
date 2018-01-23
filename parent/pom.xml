@@ -97,7 +97,8 @@
     <bouncycastle-version>1.57</bouncycastle-version>
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <box-java-sdk-version>2.10.0</box-java-sdk-version>
-    <braintree-gateway-version>2.74.0</braintree-gateway-version>
+    <!-- cannot upgrade, see https://issues.apache.org/jira/browse/CAMEL-12180 -->
+    <braintree-gateway-version>2.72.0</braintree-gateway-version>
     <brave-zipkin-version>4.13.3</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>

@@ -55,6 +55,12 @@
       <groupId>com.braintreepayments.gateway</groupId>
       <artifactId>braintree-java</artifactId>
       <version>${braintree-gateway-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.json</groupId>
+          <artifactId>json</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Component API javadoc in provided scope to read API signatures -->
@@ -65,6 +71,12 @@
       <classifier>javadoc</classifier>
       <scope>provided</scope>
       <optional>true</optional>
+      <exclusions>
+        <exclusion>
+          <groupId>org.json</groupId>
+          <artifactId>json</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- logging -->
