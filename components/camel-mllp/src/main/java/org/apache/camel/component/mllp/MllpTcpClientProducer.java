@@ -237,6 +237,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                         exchange.setException(new MllpAcknowledgementTimeoutException("Timeout receiving complete HL7 Acknowledgement", hl7MessageBytes, mllpBuffer.toByteArray(), timeoutEx));
                         mllpBuffer.reset();
                     }
+                    mllpBuffer.resetSocket(socket);
                 }
 
                 if (exchange.getException() == null) {
