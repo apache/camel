@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.dns.policy;
 
 import java.net.InetAddress;
@@ -39,19 +38,17 @@ import org.slf4j.LoggerFactory;
 /* 
  * Check if a hostname resolves to a specified cname or an ip
  */
-
 public class DnsActivation {
     private static final transient String[] DNS_TYPES = {"CNAME", "A"}; 
     private static final transient Logger LOG = LoggerFactory.getLogger(DnsActivation.class);
 
-
     private String hostname;
-    private List<String> resolvesTo = new ArrayList<String>();
+    private final List<String> resolvesTo = new ArrayList<String>();
 
-    public DnsActivation() throws Exception {
+    public DnsActivation() {
     }
 
-    public DnsActivation(String hostname, List<String> resolvesTo) throws Exception {
+    public DnsActivation(String hostname, List<String> resolvesTo) {
         this.hostname = hostname;
         this.resolvesTo.addAll(resolvesTo);
     }
@@ -79,10 +76,10 @@ public class DnsActivation {
         }
 
         LOG.debug("Resolving " + hostname);
-        ArrayList<String> hostnames = new ArrayList<String>();
+        List<String> hostnames = new ArrayList<String>();
         hostnames.add(hostname);
 
-        ArrayList<String> resolved = new ArrayList<String>();
+        List<String> resolved = new ArrayList<String>();
         while (!hostnames.isEmpty()) {
             NamingEnumeration attributeEnumeration = null;
             try {
