@@ -33,7 +33,7 @@ public class TickerConsumerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("xchange:binance?method=ticker&currencyPair=BTC/USDT")
-                .to("mock:result");
+                        .to("mock:result");
             }
         };
     }
