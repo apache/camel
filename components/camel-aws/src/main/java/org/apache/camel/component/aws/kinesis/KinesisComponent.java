@@ -60,7 +60,9 @@ public class KinesisComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
-        
+        if (configuration.getAmazonKinesisClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+            throw new IllegalArgumentException("amazonKinesisClient or accessKey and secretKey must be specified");
+        }        
         KinesisEndpoint endpoint = new KinesisEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
         return endpoint;
