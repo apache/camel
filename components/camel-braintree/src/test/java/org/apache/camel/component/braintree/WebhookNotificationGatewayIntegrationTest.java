@@ -171,6 +171,7 @@ public class WebhookNotificationGatewayIntegrationTest extends AbstractBraintree
         assertEquals("2016-01-14", sdf.format(result.getAccountUpdaterDailyReport().getReportDate().getTime()));
     }
 
+    /* see https://issues.apache.org/jira/browse/CAMEL-12180
     @Test
     public void testParseIdealPayment() throws Exception {
         runParseIdealPaymentTest(WebhookNotification.Kind.IDEAL_PAYMENT_COMPLETE);
@@ -194,7 +195,7 @@ public class WebhookNotificationGatewayIntegrationTest extends AbstractBraintree
         assertNotNull("parse result", result);
         assertEquals(kind, result.getKind());
         assertEquals("abc123z", result.getGrantedPaymentInstrumentUpdate().getToken());
-    }
+    }*/
 
     private WebhookNotification sendSampleNotification(WebhookNotification.Kind kind, String id) {
         final BraintreeGateway gateway = getGateway();
