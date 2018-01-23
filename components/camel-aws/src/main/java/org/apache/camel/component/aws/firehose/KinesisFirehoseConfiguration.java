@@ -18,13 +18,14 @@ package org.apache.camel.component.aws.firehose;
 
 import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class KinesisFirehoseConfiguration {
+public class KinesisFirehoseConfiguration implements Cloneable {
 
     @UriPath(description = "Name of the stream")
     @Metadata(required = "true")
@@ -96,5 +97,17 @@ public class KinesisFirehoseConfiguration {
 
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public KinesisFirehoseConfiguration copy() {
+        try {
+            return (KinesisFirehoseConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }
