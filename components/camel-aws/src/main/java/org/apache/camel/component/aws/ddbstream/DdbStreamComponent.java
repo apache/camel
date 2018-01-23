@@ -66,7 +66,9 @@ public class DdbStreamComponent extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
-        
+        if (configuration.getAmazonDynamoDbStreamsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+            throw new IllegalArgumentException("amazonDDBStreamsClient or accessKey and secretKey must be specified");
+        }
         DdbStreamEndpoint endpoint = new DdbStreamEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
         return endpoint;
