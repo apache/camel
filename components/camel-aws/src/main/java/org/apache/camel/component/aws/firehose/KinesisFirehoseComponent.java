@@ -60,7 +60,7 @@ public class KinesisFirehoseComponent extends DefaultComponent {
             setRegion(region);
         }
         if (configuration.getAmazonKinesisFirehoseClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("AmazonKinesisClient or accessKey and secretKey must be specified");
+            throw new IllegalArgumentException("AmazonKinesisFirehoseClient or accessKey and secretKey must be specified");
         }
         KinesisFirehoseEndpoint endpoint = new KinesisFirehoseEndpoint(uri, configuration, this);
         return endpoint;
