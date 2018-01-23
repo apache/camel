@@ -14,26 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.dns.policy;
 
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@Ignore("Manual test as cannot run reliable on all platforms")
 public class DnsActivationTest {
+
     @Test
     public void testDnsActivation() throws Exception {
-
         DnsActivation dnsActivationActive = new DnsActivation("localhost", Arrays.asList("127.0.0.1"));
         assertTrue(dnsActivationActive.isActive());
 
         DnsActivation dnsActivationInactive = new DnsActivation("localhost", Arrays.asList("127.0.0.2"));
         assertFalse(dnsActivationInactive.isActive());
-
     }
 }

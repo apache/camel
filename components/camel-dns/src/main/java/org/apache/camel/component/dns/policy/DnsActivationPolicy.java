@@ -14,34 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.dns.policy;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
-
-import org.apache.camel.impl.LoggingExceptionHandler;
-
 import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.RoutePolicy;
-
+import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.RoutePolicySupport;
-
-import org.apache.camel.util.ServiceHelper;
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,14 +35,13 @@ public class DnsActivationPolicy extends RoutePolicySupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(DnsActivationPolicy.class);
 
     private ExceptionHandler exceptionHandler;
-    
     private DnsActivation dnsActivation;
     private long ttl;
 
     private Map<String, Route> routes = new ConcurrentHashMap<String, Route>();
     private Timer timer;
 
-    public DnsActivationPolicy() throws Exception {
+    public DnsActivationPolicy() {
         dnsActivation = new DnsActivation();
     }
 
@@ -109,7 +94,6 @@ public class DnsActivationPolicy extends RoutePolicySupport {
         LOG.debug("doStart");
         timer = new Timer();
         timer.schedule(new DnsActivationTask(), 0, ttl);
-        // noop
     }
 
     @Override
@@ -119,8 +103,6 @@ public class DnsActivationPolicy extends RoutePolicySupport {
             timer.cancel();
             timer = null;
         }
-
-        // noop
     }
 
     public ExceptionHandler getExceptionHandler() {
