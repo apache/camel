@@ -29,7 +29,7 @@ public enum WordpressOperationType {
 
     private final Class<? extends SearchCriteria> criteriaType;
 
-    private WordpressOperationType(Class<? extends SearchCriteria> criteriaType) {
+    WordpressOperationType(Class<? extends SearchCriteria> criteriaType) {
         this.criteriaType = criteriaType;
     }
 

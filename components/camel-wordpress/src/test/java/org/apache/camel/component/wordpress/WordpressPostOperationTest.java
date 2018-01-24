@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.wordpress;
 
-import static org.hamcrest.CoreMatchers.is;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.wordpress.config.WordpressComponentConfiguration;
@@ -26,6 +24,7 @@ import org.wordpress4j.WordpressConstants;
 import org.wordpress4j.model.Content;
 import org.wordpress4j.model.Post;
 import org.wordpress4j.model.PublishableStatus;
+import static org.hamcrest.CoreMatchers.is;
 
 public class WordpressPostOperationTest extends WordpressComponentTestSupport {
 

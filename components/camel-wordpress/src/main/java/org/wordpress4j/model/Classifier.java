@@ -20,8 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Base class for objects that "classifies" something, like a {@link Tag} or a
- * {@link Category}. :)
+ * Base class for objects that "classifies" something, like a {@link Tag} or a {@link Category}. :)
  */
 public abstract class Classifier {
 

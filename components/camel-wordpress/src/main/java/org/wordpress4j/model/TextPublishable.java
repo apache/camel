@@ -16,17 +16,14 @@
  */
 package org.wordpress4j.model;
 
-import static com.google.common.base.MoreObjects.toStringHelper;
-
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import static com.google.common.base.MoreObjects.toStringHelper;
 
 /**
- * Describes a object that may be published on the Wordpress engine, eg. a Post,
- * a Page etc.
+ * Describes a object that may be published on the Wordpress engine, eg. a Post, a Page etc.
  */
 @JacksonXmlRootElement(localName = "textPublishable")
 @JsonIgnoreProperties(ignoreUnknown = true)

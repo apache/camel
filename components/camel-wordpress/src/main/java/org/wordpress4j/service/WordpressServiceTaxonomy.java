@@ -17,7 +17,6 @@
 package org.wordpress4j.service;
 
 import java.util.Map;
-
 import org.wordpress4j.model.Context;
 import org.wordpress4j.model.Taxonomy;
 

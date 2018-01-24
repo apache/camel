@@ -19,7 +19,6 @@ package org.apache.camel.component.wordpress;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;

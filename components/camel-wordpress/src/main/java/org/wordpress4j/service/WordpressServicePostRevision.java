@@ -17,7 +17,6 @@
 package org.wordpress4j.service;
 
 import java.util.List;
-
 import org.wordpress4j.model.Context;
 import org.wordpress4j.model.PostRevision;
 

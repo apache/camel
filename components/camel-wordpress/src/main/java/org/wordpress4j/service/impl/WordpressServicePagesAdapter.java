@@ -16,11 +16,7 @@
  */
 package org.wordpress4j.service.impl;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.List;
-
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +27,11 @@ import org.wordpress4j.service.WordpressServicePages;
 import org.wordpress4j.service.WordpressServicePosts;
 import org.wordpress4j.service.spi.PagesSPI;
 import org.wordpress4j.service.spi.PostsSPI;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * The {@link WordpressServicePosts} implementation. Aggregates the
- * {@link PostsSPI} interface using {@link JAXRSClientFactory} to make the API
- * calls.
+ * The {@link WordpressServicePosts} implementation. Aggregates the {@link PostsSPI} interface using {@link JAXRSClientFactory} to make the API calls.
  * 
  * @since 0.0.1
  */
@@ -57,9 +53,8 @@ public class WordpressServicePagesAdapter extends AbstractWordpressCrudServiceAd
     public List<Page> list(PageSearchCriteria c) {
         LOGGER.debug("Calling list pages: searchCriteria {}", c);
         checkNotNull(c, "Please provide a search criteria");
-        return getSpi().list(this.getApiVersion(), c.getContext(), c.getPage(), c.getPerPage(), c.getSearch(), c.getAfter(), c.getAuthor(), c.getAuthorExclude(), c.getBefore(),
-                             c.getExclude(), c.getInclude(), c.getMenuOrder(), c.getOffset(), c.getOrder(), c.getOrderBy(), c.getParent(), c.getParentExclude(), c.getSlug(),
-                             c.getStatus(), c.getFilter());
+        return getSpi().list(this.getApiVersion(), c.getContext(), c.getPage(), c.getPerPage(), c.getSearch(), c.getAfter(), c.getAuthor(), c.getAuthorExclude(), c.getBefore(), c.getExclude(),
+                             c.getInclude(), c.getMenuOrder(), c.getOffset(), c.getOrder(), c.getOrderBy(), c.getParent(), c.getParentExclude(), c.getSlug(), c.getStatus(), c.getFilter());
     }
     // @formatter:on
 

@@ -16,12 +16,7 @@
  */
 package org.wordpress4j;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.emptyToNull;
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 import java.util.HashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wordpress4j.service.WordpressService;
@@ -29,6 +24,9 @@ import org.wordpress4j.service.WordpressServicePosts;
 import org.wordpress4j.service.WordpressServiceUsers;
 import org.wordpress4j.service.impl.WordpressServicePostsAdapter;
 import org.wordpress4j.service.impl.WordpressServiceUsersAdapter;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.emptyToNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class WordpressServiceProvider {
 

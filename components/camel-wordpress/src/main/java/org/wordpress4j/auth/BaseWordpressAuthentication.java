@@ -23,11 +23,11 @@ abstract class BaseWordpressAuthentication implements WordpressAuthentication {
     protected String username;
     protected String password;
 
-    public BaseWordpressAuthentication() {
+    BaseWordpressAuthentication() {
 
     }
 
-    public BaseWordpressAuthentication(final String username, final String password) {
+    BaseWordpressAuthentication(final String username, final String password) {
         this.password = password;
         this.username = username;
     }

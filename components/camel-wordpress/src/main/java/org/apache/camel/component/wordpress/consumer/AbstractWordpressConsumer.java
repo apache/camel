@@ -17,7 +17,6 @@
 package org.apache.camel.component.wordpress.consumer;
 
 import java.util.concurrent.ScheduledExecutorService;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.wordpress.WordpressEndpoint;
@@ -58,8 +57,7 @@ public abstract class AbstractWordpressConsumer extends ScheduledPollConsumer {
     }
 
     /**
-     * Should be implemented to configure the endpoint calls. Called during
-     * consumer initialization
+     * Should be implemented to configure the endpoint calls. Called during consumer initialization
      * 
      * @param configuration the endpoint configuration
      */

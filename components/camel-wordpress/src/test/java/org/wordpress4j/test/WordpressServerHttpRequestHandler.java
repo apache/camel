@@ -19,7 +19,6 @@ package org.wordpress4j.test;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
-
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;

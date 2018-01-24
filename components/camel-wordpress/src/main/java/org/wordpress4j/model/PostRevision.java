@@ -16,11 +16,9 @@
  */
 package org.wordpress4j.model;
 
-import static com.google.common.base.MoreObjects.toStringHelper;
-
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import static com.google.common.base.MoreObjects.toStringHelper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PostRevision extends Publishable implements Serializable {

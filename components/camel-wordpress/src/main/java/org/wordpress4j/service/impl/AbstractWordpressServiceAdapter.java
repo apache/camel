@@ -16,13 +16,9 @@
  */
 package org.wordpress4j.service.impl;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.emptyToNull;
-
 import java.util.Collections;
-
 import javax.ws.rs.core.MediaType;
-
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
@@ -31,8 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wordpress4j.auth.WordpressAuthentication;
 import org.wordpress4j.service.WordpressService;
-
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.emptyToNull;
 
 abstract class AbstractWordpressServiceAdapter<A> implements WordpressService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractWordpressServiceAdapter.class);
@@ -56,8 +52,7 @@ abstract class AbstractWordpressServiceAdapter<A> implements WordpressService {
         WebClient.getConfig(spi).getHttpConduit().getClient().setAutoRedirect(true);
 
         /*
-         * TODO: aggregate a configuration object to customize the JAXRS
-         * behavior, eg.: adding handlers or interceptors
+         * TODO: aggregate a configuration object to customize the JAXRS behavior, eg.: adding handlers or interceptors
          */
         WebClient.getConfig(spi).getInInterceptors().add(new LoggingInInterceptor());
         WebClient.getConfig(spi).getOutInterceptors().add(new LoggingOutInterceptor());

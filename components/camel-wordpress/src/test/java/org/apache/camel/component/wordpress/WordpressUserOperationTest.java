@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.wordpress;
 
-import static org.hamcrest.CoreMatchers.is;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.wordpress.config.WordpressComponentConfiguration;
 import org.junit.Test;
 import org.wordpress4j.model.User;
+import static org.hamcrest.CoreMatchers.is;
 
 public class WordpressUserOperationTest extends WordpressComponentTestSupport {
 

@@ -18,7 +18,6 @@ package org.apache.camel.component.wordpress.config;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;

@@ -17,7 +17,6 @@
 package org.apache.camel.component.wordpress;
 
 import java.io.IOException;
-
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

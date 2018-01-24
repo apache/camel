@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.BindException;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.AfterClass;

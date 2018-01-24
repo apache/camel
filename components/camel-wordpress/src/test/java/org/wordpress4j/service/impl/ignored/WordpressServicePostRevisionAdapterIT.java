@@ -16,16 +16,7 @@
  */
 package org.wordpress4j.service.impl.ignored;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.emptyCollectionOf;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.Assert.assertThat;
-
 import java.util.List;
-
 import org.apache.camel.component.wordpress.WordpressTestConstants;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -38,6 +29,13 @@ import org.wordpress4j.auth.WordpressBasicAuthentication;
 import org.wordpress4j.model.PostRevision;
 import org.wordpress4j.service.WordpressServicePostRevision;
 import org.wordpress4j.test.WordpressMockServerTestSupport;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.emptyCollectionOf;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.Assert.assertThat;
 
 /*
  * TODO fix authentication problem (when implementing global authentication) 

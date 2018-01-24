@@ -16,21 +16,19 @@
  */
 package org.wordpress4j.service.impl.ignored;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.emptyCollectionOf;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.Assert.assertThat;
-
 import java.util.List;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.wordpress4j.model.User;
 import org.wordpress4j.model.UserSearchCriteria;
 import org.wordpress4j.service.WordpressServiceUsers;
 import org.wordpress4j.test.WordpressMockServerTestSupport;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.emptyCollectionOf;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.Assert.assertThat;
 
 public class WordpressServiceUsersAdapterTest extends WordpressMockServerTestSupport {
 

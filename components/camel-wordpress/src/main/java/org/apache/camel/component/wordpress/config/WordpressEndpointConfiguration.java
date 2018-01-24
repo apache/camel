@@ -19,7 +19,6 @@ package org.apache.camel.component.wordpress.config;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.IntrospectionSupport;

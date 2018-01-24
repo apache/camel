@@ -16,13 +16,12 @@
  */
 package org.wordpress4j.service.impl;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import org.wordpress4j.model.Context;
 import org.wordpress4j.model.DeletedModel;
 import org.wordpress4j.model.SearchCriteria;
 import org.wordpress4j.service.WordpressCrudService;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Base service adapter implementation with CRUD commons operations.

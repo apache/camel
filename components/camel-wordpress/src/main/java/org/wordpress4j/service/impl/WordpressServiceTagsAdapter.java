@@ -16,15 +16,13 @@
  */
 package org.wordpress4j.service.impl;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.List;
-
 import org.wordpress4j.model.Context;
 import org.wordpress4j.model.Tag;
 import org.wordpress4j.model.TagSearchCriteria;
 import org.wordpress4j.service.WordpressServiceTags;
 import org.wordpress4j.service.spi.TagsSPI;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class WordpressServiceTagsAdapter extends AbstractWordpressCrudServiceAdapter<TagsSPI, Tag, TagSearchCriteria> implements WordpressServiceTags {
 
@@ -41,9 +39,8 @@ public class WordpressServiceTagsAdapter extends AbstractWordpressCrudServiceAda
     @Override
     public List<Tag> list(TagSearchCriteria criteria) {
         checkNotNull(criteria, "The search criteria must be defined");
-        return this.getSpi().list(this.getApiVersion(), criteria.getContext(), criteria.getPage(), criteria.getPerPage(), criteria.getSearch(), criteria.getExclude(),
-                                  criteria.getInclude(), criteria.getOffset(), criteria.getOrder(), criteria.getOrderBy(), criteria.isHideEmpty(), criteria.getPostId(),
-                                  criteria.getSlug());
+        return this.getSpi().list(this.getApiVersion(), criteria.getContext(), criteria.getPage(), criteria.getPerPage(), criteria.getSearch(), criteria.getExclude(), criteria.getInclude(),
+                                  criteria.getOffset(), criteria.getOrder(), criteria.getOrderBy(), criteria.isHideEmpty(), criteria.getPostId(), criteria.getSlug());
     }
     // @formatter:on
 

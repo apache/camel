@@ -16,10 +16,9 @@
  */
 package org.wordpress4j.model;
 
-import static com.google.common.base.MoreObjects.toStringHelper;
-
 import java.io.Serializable;
 import java.util.List;
+import static com.google.common.base.MoreObjects.toStringHelper;
 
 public class SearchCriteria implements Serializable {
 

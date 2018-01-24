@@ -16,14 +16,6 @@
  */
 package org.apache.camel.component.wordpress;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.emptyCollectionOf;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-
 import org.apache.camel.CamelContext;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -31,6 +23,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wordpress4j.model.PostOrderBy;
 import org.wordpress4j.model.PostSearchCriteria;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.emptyCollectionOf;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 public class WordpressComponentTest {
 

@@ -33,11 +33,9 @@ public enum PublishableStatus {
     /***
      * @param arg
      * @return
-     * @see <a href=
-     *      "https://stackoverflow.com/questions/33357594/java-enum-case-insensitive-jersey-query-param-binding">Java:
-     *      Enum case insensitive Jersey Query Param Binding</a>
+     * @see <a href= "https://stackoverflow.com/questions/33357594/java-enum-case-insensitive-jersey-query-param-binding">Java: Enum case insensitive Jersey Query Param Binding</a>
      */
-    public static final PublishableStatus fromString(String arg) {
+    public static PublishableStatus fromString(String arg) {
         arg = "".concat(arg).toLowerCase();
         if (!arg.isEmpty() && arg.startsWith("private")) {
             return private_;

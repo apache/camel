@@ -16,15 +16,13 @@
  */
 package org.wordpress4j.service.impl;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.emptyToNull;
-
 import java.util.Map;
-
 import org.wordpress4j.model.Context;
 import org.wordpress4j.model.Taxonomy;
 import org.wordpress4j.service.WordpressServiceTaxonomy;
 import org.wordpress4j.service.spi.TaxonomySPI;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.emptyToNull;
 
 public class WordpressServiceTaxonomyAdapter extends AbstractWordpressServiceAdapter<TaxonomySPI> implements WordpressServiceTaxonomy {
 

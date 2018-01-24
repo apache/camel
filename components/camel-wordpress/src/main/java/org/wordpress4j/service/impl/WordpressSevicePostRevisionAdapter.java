@@ -16,14 +16,12 @@
  */
 package org.wordpress4j.service.impl;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.List;
-
 import org.wordpress4j.model.Context;
 import org.wordpress4j.model.PostRevision;
 import org.wordpress4j.service.WordpressServicePostRevision;
 import org.wordpress4j.service.spi.PostRevisionsSPI;
+import static com.google.common.base.Preconditions.checkArgument;
 
 public class WordpressSevicePostRevisionAdapter extends AbstractWordpressServiceAdapter<PostRevisionsSPI> implements WordpressServicePostRevision {
 

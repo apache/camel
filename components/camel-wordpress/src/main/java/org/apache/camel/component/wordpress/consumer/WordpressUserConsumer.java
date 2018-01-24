@@ -18,7 +18,6 @@ package org.apache.camel.component.wordpress.consumer;
 
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
-
 import org.apache.camel.Processor;
 import org.apache.camel.component.wordpress.WordpressEndpoint;
 import org.wordpress4j.WordpressServiceProvider;

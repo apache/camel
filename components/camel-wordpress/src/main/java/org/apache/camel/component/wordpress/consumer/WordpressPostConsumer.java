@@ -18,7 +18,6 @@ package org.apache.camel.component.wordpress.consumer;
 
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
-
 import org.apache.camel.Processor;
 import org.apache.camel.component.wordpress.WordpressEndpoint;
 import org.wordpress4j.WordpressServiceProvider;
@@ -27,8 +26,7 @@ import org.wordpress4j.model.PostSearchCriteria;
 import org.wordpress4j.service.WordpressServicePosts;
 
 /**
- * Consumer for Posts. Adapter for {@link WordpressServicePosts} read only
- * methods (list and retrieve).
+ * Consumer for Posts. Adapter for {@link WordpressServicePosts} read only methods (list and retrieve).
  */
 public class WordpressPostConsumer extends AbstractWordpressConsumer {
 

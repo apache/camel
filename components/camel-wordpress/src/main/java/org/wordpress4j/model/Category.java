@@ -17,7 +17,6 @@
 package org.wordpress4j.model;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**

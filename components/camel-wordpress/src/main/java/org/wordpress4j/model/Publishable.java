@@ -18,14 +18,12 @@ package org.wordpress4j.model;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 /**
- * Describes a object that has base properties for a {@link TextPublishable}
- * object.
+ * Describes a object that has base properties for a {@link TextPublishable} object.
  */
 @JacksonXmlRootElement(localName = "publishable")
 @JsonIgnoreProperties(ignoreUnknown = true)
