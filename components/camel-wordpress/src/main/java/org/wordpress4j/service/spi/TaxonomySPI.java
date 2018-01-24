@@ -31,18 +31,14 @@ import org.wordpress4j.model.Taxonomy;
 @Path("/wp")
 public interface TaxonomySPI {
 
-    //@formatter:off
+    // @formatter:off
     @GET
     @Path("/v{apiVersion}/taxonomies")
     @Produces(MediaType.APPLICATION_JSON)
-    Map<String, Taxonomy> list(@PathParam("apiVersion") String apiVersion,
-                               @QueryParam("context") Context context,
-                               @QueryParam("type") String postType);
-    
+    Map<String, Taxonomy> list(@PathParam("apiVersion") String apiVersion, @QueryParam("context") Context context, @QueryParam("type") String postType);
+
     @GET
     @Path("/v{apiVersion}/taxonomies/{taxonomy}")
     @Produces(MediaType.APPLICATION_JSON)
-    Taxonomy retrieve(@PathParam("apiVersion") String apiVersion,
-                               @QueryParam("context") Context context,
-                               @PathParam("taxonomy") String taxonomy);    
+    Taxonomy retrieve(@PathParam("apiVersion") String apiVersion, @QueryParam("context") Context context, @PathParam("taxonomy") String taxonomy);
 }

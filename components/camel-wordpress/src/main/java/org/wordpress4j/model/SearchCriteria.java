@@ -24,7 +24,7 @@ import java.util.List;
 public class SearchCriteria implements Serializable {
 
     private static final long serialVersionUID = 1002576245120313648L;
-    
+
     private Integer page;
     private Integer perPage;
     private String search;
@@ -86,12 +86,8 @@ public class SearchCriteria implements Serializable {
 
     @Override
     public String toString() {
-        //@formatter:off
-        return toStringHelper(this)
-            .add("Query", this.search)
-            .add("Page", page)
-            .add("Per Page", perPage)
-            .addValue(this.order).toString();
+        // @formatter:off
+        return toStringHelper(this).add("Query", this.search).add("Page", page).add("Per Page", perPage).addValue(this.order).toString();
     }
 
 }

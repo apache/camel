@@ -33,7 +33,7 @@ import org.wordpress4j.model.PostOrderBy;
 import org.wordpress4j.model.PostSearchCriteria;
 
 public class WordpressComponentTest {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(WordpressComponentTest.class);
 
     @Test

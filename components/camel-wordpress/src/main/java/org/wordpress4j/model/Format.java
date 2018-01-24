@@ -21,6 +21,6 @@ package org.wordpress4j.model;
  */
 public enum Format {
 
-       standard;
-    
+    standard;
+
 }

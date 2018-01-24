@@ -34,7 +34,7 @@ abstract class BaseWordpressAuthentication implements WordpressAuthentication {
 
     @Override
     public final void setPassword(String pwd) {
-        this.password =  pwd;
+        this.password = pwd;
     }
 
     @Override
@@ -45,12 +45,12 @@ abstract class BaseWordpressAuthentication implements WordpressAuthentication {
     public final String getPassword() {
         return password;
     }
-    
+
     @Override
     public final String getUsername() {
         return username;
     }
-    
+
     protected final boolean isCredentialsSet() {
         return !Strings.isNullOrEmpty(username) && !Strings.isNullOrEmpty(password);
     }

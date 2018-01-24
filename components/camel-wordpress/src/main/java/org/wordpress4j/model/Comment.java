@@ -209,16 +209,10 @@ public class Comment implements Serializable {
 
     @Override
     public String toString() {
-        //@formatter:off
-        return toStringHelper(this)
-            .add("ID", this.id)
-            .addValue(this.authorName)
-            .addValue(this.authorEmail)
-            .addValue(this.date)
-            .addValue(this.status)
-            .add("PostID", this.parent)
+        // @formatter:off
+        return toStringHelper(this).add("ID", this.id).addValue(this.authorName).addValue(this.authorEmail).addValue(this.date).addValue(this.status).add("PostID", this.parent)
             .toString();
-        //@formatter:on
+        // @formatter:on
     }
 
 }

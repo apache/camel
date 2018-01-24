@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
+
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ import org.wordpress4j.service.spi.PostsSPI;
 public class WordpressServicePagesAdapter extends AbstractWordpressCrudServiceAdapter<PagesSPI, Page, PageSearchCriteria> implements WordpressServicePages {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WordpressServicePagesAdapter.class);
-    
+
     public WordpressServicePagesAdapter(String wordpressUrl, String apiVersion) {
         super(wordpressUrl, apiVersion);
     }
@@ -51,33 +52,16 @@ public class WordpressServicePagesAdapter extends AbstractWordpressCrudServiceAd
         return PagesSPI.class;
     }
 
-    //@formatter:off
+    // @formatter:off
     @Override
     public List<Page> list(PageSearchCriteria c) {
         LOGGER.debug("Calling list pages: searchCriteria {}", c);
         checkNotNull(c, "Please provide a search criteria");
-        return getSpi().list(this.getApiVersion(), 
-                        c.getContext(), 
-                        c.getPage(), 
-                        c.getPerPage(), 
-                        c.getSearch(), 
-                        c.getAfter(), 
-                        c.getAuthor(), 
-                        c.getAuthorExclude(), 
-                        c.getBefore(), 
-                        c.getExclude(), 
-                        c.getInclude(), 
-                        c.getMenuOrder(), 
-                        c.getOffset(), 
-                        c.getOrder(), 
-                        c.getOrderBy(),
-                        c.getParent(), 
-                        c.getParentExclude(), 
-                        c.getSlug(), 
-                        c.getStatus(), 
-                        c.getFilter());
+        return getSpi().list(this.getApiVersion(), c.getContext(), c.getPage(), c.getPerPage(), c.getSearch(), c.getAfter(), c.getAuthor(), c.getAuthorExclude(), c.getBefore(),
+                             c.getExclude(), c.getInclude(), c.getMenuOrder(), c.getOffset(), c.getOrder(), c.getOrderBy(), c.getParent(), c.getParentExclude(), c.getSlug(),
+                             c.getStatus(), c.getFilter());
     }
-    //@formatter:on
+    // @formatter:on
 
     @Override
     public Page retrieve(Integer pageId, Context context, String password) {

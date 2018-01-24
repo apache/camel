@@ -47,7 +47,7 @@ public class WordpressServiceUsersAdapterTest extends WordpressMockServerTestSup
         assertThat(user, not(nullValue()));
         assertThat(user.getId(), is(greaterThan(0)));
     }
-    
+
     @Test
     public void testCreateUser() {
         final User entity = new User();
@@ -60,7 +60,7 @@ public class WordpressServiceUsersAdapterTest extends WordpressMockServerTestSup
         assertThat(user, not(nullValue()));
         assertThat(user.getId(), is(3));
     }
-    
+
     @Test
     public void testListUsers() {
         final UserSearchCriteria criteria = new UserSearchCriteria();

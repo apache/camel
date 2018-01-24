@@ -36,12 +36,12 @@ public class WordpressServiceTaxonomyAdapter extends AbstractWordpressServiceAda
     protected Class<TaxonomySPI> getSpiType() {
         return TaxonomySPI.class;
     }
-    
+
     @Override
     public Map<String, Taxonomy> list(Context context, String postType) {
         return getSpi().list(this.getApiVersion(), context, postType);
     }
-    
+
     @Override
     public Taxonomy retrieve(Context context, String taxonomy) {
         checkNotNull(emptyToNull(taxonomy), "Please define a taxonomy");

@@ -33,11 +33,11 @@ public interface WordpressCrudService<T, S extends SearchCriteria> extends Wordp
     T retrieve(Integer entityID, Context context);
 
     T retrieve(Integer entityID);
-    
+
     T create(T entity);
 
     T delete(Integer entityID);
-    
+
     DeletedModel<T> forceDelete(Integer entityID);
 
     List<T> list(S searchCriteria);

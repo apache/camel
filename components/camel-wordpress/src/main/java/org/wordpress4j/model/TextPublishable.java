@@ -160,16 +160,11 @@ public abstract class TextPublishable extends Publishable {
     public void setTemplate(String template) {
         this.template = template;
     }
-    
-    //@formatter:off
+
+    // @formatter:off
     @Override
     public String toString() {
-        return toStringHelper(this)
-            .add("ID", this.getId())
-            .add("Status", this.getStatus())
-            .addValue(this.guid)
-            .addValue(this.getTitle()).toString();
+        return toStringHelper(this).add("ID", this.getId()).add("Status", this.getStatus()).addValue(this.guid).addValue(this.getTitle()).toString();
     }
-    //@formatter:on
+    // @formatter:on
 }
-

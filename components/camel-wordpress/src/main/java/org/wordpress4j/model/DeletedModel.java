@@ -23,7 +23,7 @@ public class DeletedModel<T> {
 
     private Boolean deleted;
     private T previous;
-    
+
     public DeletedModel() {
 
     }

@@ -126,8 +126,7 @@ public class WordpressEndpoint extends DefaultEndpoint {
             EndpointHelper.setProperties(getCamelContext(), config, options);
 
             if (config.getSearchCriteria() == null) {
-                final SearchCriteria searchCriteria = WordpressOperationType.valueOf(operation).getCriteriaType()
-                        .newInstance();
+                final SearchCriteria searchCriteria = WordpressOperationType.valueOf(operation).getCriteriaType().newInstance();
                 Map<String, Object> criteriaOptions = IntrospectionSupport.extractProperties(options, "criteria.");
                 // any property that has a "," should be a List
                 criteriaOptions = criteriaOptions.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
@@ -148,12 +147,10 @@ public class WordpressEndpoint extends DefaultEndpoint {
     }
 
     private void initServiceProvider() {
-        final WordpressAPIConfiguration apiConfiguration = new WordpressAPIConfiguration(config.getUrl(),
-                config.getApiVersion());
+        final WordpressAPIConfiguration apiConfiguration = new WordpressAPIConfiguration(config.getUrl(), config.getApiVersion());
         // basic auth
         if (ObjectHelper.isNotEmpty(config.getUser())) {
-            apiConfiguration.setAuthentication(
-                    new WordpressBasicAuthentication(config.getUser(), config.getPassword()));
+            apiConfiguration.setAuthentication(new WordpressBasicAuthentication(config.getUser(), config.getPassword()));
         }
 
         WordpressServiceProvider.getInstance().init(apiConfiguration);

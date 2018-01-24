@@ -24,19 +24,11 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
  */
 @JacksonXmlRootElement(localName = "publishableStatus")
 public enum PublishableStatus {
-    //@formatter:off
-    publish, 
-    future, 
-    draft, 
-    pending, 
-    @JsonProperty("private")
-    private_,
-    trash,
-    @JsonProperty("auto-draft")
-    auto_draft,
-    inherit,
-    any;
-    //@formatter:on
+    // @formatter:off
+    publish, future, draft, pending, @JsonProperty("private")
+    private_, trash, @JsonProperty("auto-draft")
+    auto_draft, inherit, any;
+    // @formatter:on
 
     /***
      * @param arg

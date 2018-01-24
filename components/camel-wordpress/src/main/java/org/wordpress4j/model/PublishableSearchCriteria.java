@@ -22,7 +22,7 @@ import java.util.List;
 public abstract class PublishableSearchCriteria extends SearchCriteria {
 
     private static final long serialVersionUID = 9178680514805178843L;
-    
+
     private Date after;
     private Date before;
     private List<Integer> author;

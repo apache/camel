@@ -27,7 +27,7 @@ public class UserSearchCriteria extends SearchCriteria {
     private UserOrderBy orderBy;
     private List<String> roles;
     private List<String> slug;
-    
+
     public UserSearchCriteria() {
 
     }
@@ -71,5 +71,5 @@ public class UserSearchCriteria extends SearchCriteria {
     public void setSlug(List<String> slug) {
         this.slug = slug;
     }
-    
+
 }

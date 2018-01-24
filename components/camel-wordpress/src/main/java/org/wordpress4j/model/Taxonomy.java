@@ -39,7 +39,7 @@ public class Taxonomy implements Serializable {
     private List<Map<String, String>> capabilities;
     private List<String> labels;
     private List<String> types;
-    
+
     public Taxonomy() {
         this.capabilities = new ArrayList<>();
         this.labels = new ArrayList<>();

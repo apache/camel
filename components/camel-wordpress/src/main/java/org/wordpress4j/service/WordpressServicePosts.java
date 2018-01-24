@@ -21,7 +21,7 @@ import org.wordpress4j.model.Post;
 import org.wordpress4j.model.PostSearchCriteria;
 
 public interface WordpressServicePosts extends WordpressCrudService<Post, PostSearchCriteria> {
-    
+
     /**
      * Default endpoint.
      * 

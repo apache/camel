@@ -40,7 +40,7 @@ public class Content implements Serializable {
     public Content() {
 
     }
-    
+
     public Content(String rendered) {
         this.rendered = rendered;
     }
@@ -60,11 +60,11 @@ public class Content implements Serializable {
     public void setProtect(Boolean protect) {
         this.protect = protect;
     }
-    
+
     public String getRaw() {
         return raw;
     }
-    
+
     public void setRaw(String raw) {
         this.raw = raw;
     }

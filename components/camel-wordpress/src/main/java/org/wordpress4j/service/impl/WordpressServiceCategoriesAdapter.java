@@ -26,7 +26,7 @@ import org.wordpress4j.model.Context;
 import org.wordpress4j.service.WordpressServiceCategories;
 import org.wordpress4j.service.spi.CategoriesSPI;
 
-public class WordpressServiceCategoriesAdapter extends AbstractWordpressCrudServiceAdapter<CategoriesSPI, Category, CategorySearchCriteria> implements WordpressServiceCategories  {
+public class WordpressServiceCategoriesAdapter extends AbstractWordpressCrudServiceAdapter<CategoriesSPI, Category, CategorySearchCriteria> implements WordpressServiceCategories {
 
     public WordpressServiceCategoriesAdapter(String wordpressUrl, String apiVersion) {
         super(wordpressUrl, apiVersion);
@@ -37,25 +37,15 @@ public class WordpressServiceCategoriesAdapter extends AbstractWordpressCrudServ
         return CategoriesSPI.class;
     }
 
-    //@formatter:off
+    // @formatter:off
     @Override
     public List<Category> list(CategorySearchCriteria criteria) {
         checkNotNull(criteria, "The search criteria must be defined");
-        return getSpi().list(this.getApiVersion(), 
-                             criteria.getContext(), 
-                             criteria.getPage(), 
-                             criteria.getPerPage(), 
-                             criteria.getSearch(), 
-                             criteria.getExclude(), 
-                             criteria.getInclude(),
-                             criteria.getOrder(), 
-                             criteria.getOrderBy(), 
-                             criteria.isHideEmpty(), 
-                             criteria.getParent(), 
-                             criteria.getPostId(), 
+        return getSpi().list(this.getApiVersion(), criteria.getContext(), criteria.getPage(), criteria.getPerPage(), criteria.getSearch(), criteria.getExclude(),
+                             criteria.getInclude(), criteria.getOrder(), criteria.getOrderBy(), criteria.isHideEmpty(), criteria.getParent(), criteria.getPostId(),
                              criteria.getSlug());
     }
-    //@formatter:on
+    // @formatter:on
 
     @Override
     protected Category doCreate(Category object) {

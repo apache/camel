@@ -23,9 +23,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Page extends TextPublishable {
 
     private static final long serialVersionUID = -3517585398919756299L;
-    
+
     private Integer parent;
-    
+
     @JsonProperty("menu_order")
     private Integer menuOrder;
 
@@ -48,5 +48,5 @@ public class Page extends TextPublishable {
     public void setMenuOrder(Integer menuOrder) {
         this.menuOrder = menuOrder;
     }
-    
+
 }

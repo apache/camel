@@ -19,6 +19,7 @@ package org.wordpress4j.service.impl;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
+
 import org.wordpress4j.model.Context;
 import org.wordpress4j.model.Tag;
 import org.wordpress4j.model.TagSearchCriteria;
@@ -36,25 +37,15 @@ public class WordpressServiceTagsAdapter extends AbstractWordpressCrudServiceAda
         return TagsSPI.class;
     }
 
-    //@formatter:off
+    // @formatter:off
     @Override
     public List<Tag> list(TagSearchCriteria criteria) {
         checkNotNull(criteria, "The search criteria must be defined");
-        return this.getSpi().list(this.getApiVersion(), 
-                             criteria.getContext(), 
-                             criteria.getPage(), 
-                             criteria.getPerPage(), 
-                             criteria.getSearch(), 
-                             criteria.getExclude(), 
-                             criteria.getInclude(),
-                             criteria.getOffset(),
-                             criteria.getOrder(), 
-                             criteria.getOrderBy(), 
-                             criteria.isHideEmpty(), 
-                             criteria.getPostId(), 
-                             criteria.getSlug());
+        return this.getSpi().list(this.getApiVersion(), criteria.getContext(), criteria.getPage(), criteria.getPerPage(), criteria.getSearch(), criteria.getExclude(),
+                                  criteria.getInclude(), criteria.getOffset(), criteria.getOrder(), criteria.getOrderBy(), criteria.isHideEmpty(), criteria.getPostId(),
+                                  criteria.getSlug());
     }
-    //@formatter:on
+    // @formatter:on
 
     @Override
     protected Tag doCreate(Tag object) {

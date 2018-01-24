@@ -22,7 +22,7 @@ import java.util.List;
 public class CommentSearchCriteria extends SearchCriteria {
 
     private static final long serialVersionUID = -5004314052580565038L;
-    
+
     private Date after;
     private Date before;
     private List<Integer> author;

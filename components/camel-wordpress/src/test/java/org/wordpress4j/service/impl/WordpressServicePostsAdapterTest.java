@@ -49,7 +49,7 @@ public class WordpressServicePostsAdapterTest extends WordpressMockServerTestSup
         assertThat(post, not(nullValue()));
         assertThat(post.getId(), is(greaterThan(0)));
     }
-    
+
     @Test
     public void testCreatePost() {
         final Post entity = new Post();
@@ -61,7 +61,7 @@ public class WordpressServicePostsAdapterTest extends WordpressMockServerTestSup
         assertThat(post, not(nullValue()));
         assertThat(post.getId(), is(9));
     }
-    
+
     @Test
     public void testListPosts() {
         final PostSearchCriteria criteria = new PostSearchCriteria();

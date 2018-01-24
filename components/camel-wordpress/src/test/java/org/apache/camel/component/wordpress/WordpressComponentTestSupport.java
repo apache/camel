@@ -38,7 +38,7 @@ public class WordpressComponentTestSupport extends CamelTestSupport {
     public static void afterClass() {
         WordpressMockServerTestSupport.tearDownMockServer();
     }
-    
+
     protected String getServerBaseUrl() {
         return WordpressMockServerTestSupport.getServerBaseUrl();
     }

@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractWordpressConsumer extends ScheduledPollConsumer {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractWordpressConsumer.class);
-    
+
     private WordpressEndpointConfiguration configuration;
 
     public AbstractWordpressConsumer(WordpressEndpoint endpoint, Processor processor) {
@@ -52,25 +52,27 @@ public abstract class AbstractWordpressConsumer extends ScheduledPollConsumer {
     public boolean isGreedy() {
         return false;
     }
-    
+
     private void initConsumer() {
         this.configureService(configuration);
     }
 
     /**
-     * Should be implemented to configure the endpoint calls. Called during consumer initialization
+     * Should be implemented to configure the endpoint calls. Called during
+     * consumer initialization
      * 
      * @param configuration the endpoint configuration
      */
     protected void configureService(WordpressEndpointConfiguration configuration) {
-        
+
     }
-    
+
     @Override
     protected abstract int poll() throws Exception;
 
     /**
      * Message processor
+     * 
      * @param result
      */
     protected final void process(final Object result) {

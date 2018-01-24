@@ -34,18 +34,8 @@ public class WordpressServiceUsersAdapter extends AbstractWordpressCrudServiceAd
     @Override
     public List<User> list(UserSearchCriteria s) {
         // @formatter:off
-        return getSpi().list(getApiVersion(), 
-                             s.getContext(), 
-                             s.getPage(), 
-                             s.getPerPage(), 
-                             s.getSearch(),
-                             s.getExclude(), 
-                             s.getInclude(), 
-                             s.getOffset(), 
-                             s.getOrder(),
-                             s.getOrderBy(), 
-                             s.getSlug(), 
-                             s.getRoles());
+        return getSpi().list(getApiVersion(), s.getContext(), s.getPage(), s.getPerPage(), s.getSearch(), s.getExclude(), s.getInclude(), s.getOffset(), s.getOrder(),
+                             s.getOrderBy(), s.getSlug(), s.getRoles());
         // @formatter:on
     }
 
