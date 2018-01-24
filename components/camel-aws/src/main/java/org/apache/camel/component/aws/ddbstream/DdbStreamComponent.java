@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.ddbstream;
 import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.aws.ddb.DdbComponentVerifierExtension;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
@@ -43,7 +42,7 @@ public class DdbStreamComponent extends DefaultComponent {
         super(context);
         
         this.configuration = new DdbStreamConfiguration();
-        registerExtension(new DdbComponentVerifierExtension());
+        registerExtension(new DdbStreamComponentVerifierExtension());
     }
 
     @Override
