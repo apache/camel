@@ -43,6 +43,7 @@ public class KinesisComponent extends DefaultComponent {
         super(context);
         
         this.configuration = new KinesisConfiguration();
+        registerExtension(new KinesisComponentVerifierExtension());
     }
 
     @Override
