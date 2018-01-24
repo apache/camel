@@ -43,6 +43,7 @@ public class KinesisFirehoseComponent extends DefaultComponent {
         super(context);
         
         this.configuration = new KinesisFirehoseConfiguration();
+        registerExtension(new KinesisFirehoseComponentVerifierExtension());
     }
 
     @Override
