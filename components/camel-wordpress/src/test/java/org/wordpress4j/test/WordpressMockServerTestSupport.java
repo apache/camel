@@ -31,11 +31,11 @@ import org.wordpress4j.WordpressServiceProvider;
 
 public abstract class WordpressMockServerTestSupport {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WordpressMockServerTestSupport.class);
-    private static final int PORT = 9009;
-
     protected static HttpServer localServer;
     protected static WordpressServiceProvider serviceProvider;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WordpressMockServerTestSupport.class);
+    private static final int PORT = 9009;
 
     public WordpressMockServerTestSupport() {
 
