@@ -18,9 +18,9 @@ package org.apache.camel.component.wordpress.producer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.wordpress.WordpressEndpoint;
-import org.wordpress4j.WordpressServiceProvider;
-import org.wordpress4j.model.User;
-import org.wordpress4j.service.WordpressServiceUsers;
+import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
+import org.apache.camel.component.wordpress.api.model.User;
+import org.apache.camel.component.wordpress.api.service.WordpressServiceUsers;
 
 public class WordpressUserProducer extends AbstractWordpressProducer<User> {
 

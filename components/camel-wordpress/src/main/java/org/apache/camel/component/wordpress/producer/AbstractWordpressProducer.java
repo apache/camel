@@ -17,18 +17,18 @@
 package org.apache.camel.component.wordpress.producer;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.wordpress.WordpressComponentConfiguration;
 import org.apache.camel.component.wordpress.WordpressEndpoint;
-import org.apache.camel.component.wordpress.config.WordpressEndpointConfiguration;
+import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wordpress4j.WordpressServiceProvider;
 
 public abstract class AbstractWordpressProducer<T> extends DefaultProducer {
 
     protected static final Logger LOG = LoggerFactory.getLogger(WordpressPostProducer.class);
 
-    private WordpressEndpointConfiguration configuration;
+    private WordpressComponentConfiguration configuration;
 
     public AbstractWordpressProducer(WordpressEndpoint endpoint) {
         super(endpoint);
@@ -38,7 +38,7 @@ public abstract class AbstractWordpressProducer<T> extends DefaultProducer {
         }
     }
 
-    public WordpressEndpointConfiguration getConfiguration() {
+    public WordpressComponentConfiguration getConfiguration() {
         return configuration;
     }
 

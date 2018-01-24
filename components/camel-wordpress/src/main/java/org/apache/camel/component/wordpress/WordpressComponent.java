@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.wordpress.config.WordpressComponentConfiguration;
-import org.apache.camel.component.wordpress.config.WordpressEndpointConfiguration;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
@@ -58,7 +56,7 @@ public class WordpressComponent extends DefaultComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        final WordpressEndpointConfiguration endpointConfiguration = this.copyComponentProperties();
+        final WordpressComponentConfiguration endpointConfiguration = this.copyComponentProperties();
 
         WordpressEndpoint endpoint = new WordpressEndpoint(uri, this, endpointConfiguration);
         setProperties(endpoint, parameters);
@@ -77,12 +75,12 @@ public class WordpressComponent extends DefaultComponent {
         }
     }
 
-    private WordpressEndpointConfiguration copyComponentProperties() throws Exception {
+    private WordpressComponentConfiguration copyComponentProperties() throws Exception {
         Map<String, Object> componentProperties = new HashMap<String, Object>();
         IntrospectionSupport.getProperties(configuration, componentProperties, null, false);
 
         // create endpoint configuration with component properties
-        WordpressEndpointConfiguration config = new WordpressEndpointConfiguration();
+        WordpressComponentConfiguration config = new WordpressComponentConfiguration();
         IntrospectionSupport.setProperties(config, componentProperties);
         return config;
     }

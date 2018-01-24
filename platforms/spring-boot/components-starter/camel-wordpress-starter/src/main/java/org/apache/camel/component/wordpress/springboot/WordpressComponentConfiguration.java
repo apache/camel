@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.wordpress.springboot;
 
+import java.util.Map;
 import javax.annotation.Generated;
+import org.apache.camel.component.wordpress.api.model.SearchCriteria;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Represents a Wordpress endpoint.
@@ -61,11 +64,16 @@ public class WordpressComponentConfiguration
     }
 
     public static class WordpressComponentConfigurationNestedConfiguration {
-        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.wordpress.config.WordpressComponentConfiguration.class;
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.wordpress.WordpressComponentConfiguration.class;
         private String url;
         private String apiVersion = "2";
         private String password;
         private String user;
+        private Integer id;
+        private Boolean force = false;
+        @NestedConfigurationProperty
+        private SearchCriteria searchCriteria;
+        private Map criteriaProperties;
 
         public String getUrl() {
             return url;
@@ -97,6 +105,38 @@ public class WordpressComponentConfiguration
 
         public void setUser(String user) {
             this.user = user;
+        }
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public Boolean getForce() {
+            return force;
+        }
+
+        public void setForce(Boolean force) {
+            this.force = force;
+        }
+
+        public SearchCriteria getSearchCriteria() {
+            return searchCriteria;
+        }
+
+        public void setSearchCriteria(SearchCriteria searchCriteria) {
+            this.searchCriteria = searchCriteria;
+        }
+
+        public Map getCriteriaProperties() {
+            return criteriaProperties;
+        }
+
+        public void setCriteriaProperties(Map criteriaProperties) {
+            this.criteriaProperties = criteriaProperties;
         }
     }
 }

@@ -18,9 +18,9 @@ package org.apache.camel.component.wordpress.producer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.wordpress.WordpressEndpoint;
-import org.wordpress4j.WordpressServiceProvider;
-import org.wordpress4j.model.Post;
-import org.wordpress4j.service.WordpressServicePosts;
+import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
+import org.apache.camel.component.wordpress.api.model.Post;
+import org.apache.camel.component.wordpress.api.service.WordpressServicePosts;
 
 /**
  * The Wordpress Post producer.

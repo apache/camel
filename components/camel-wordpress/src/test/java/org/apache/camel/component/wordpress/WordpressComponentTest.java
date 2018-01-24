@@ -17,12 +17,12 @@
 package org.apache.camel.component.wordpress;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.wordpress.api.model.PostOrderBy;
+import org.apache.camel.component.wordpress.api.model.PostSearchCriteria;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wordpress4j.model.PostOrderBy;
-import org.wordpress4j.model.PostSearchCriteria;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;

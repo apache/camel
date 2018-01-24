@@ -22,7 +22,10 @@ import java.util.stream.Collectors;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.wordpress.config.WordpressEndpointConfiguration;
+import org.apache.camel.component.wordpress.api.WordpressAPIConfiguration;
+import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
+import org.apache.camel.component.wordpress.api.auth.WordpressBasicAuthentication;
+import org.apache.camel.component.wordpress.api.model.SearchCriteria;
 import org.apache.camel.component.wordpress.consumer.WordpressPostConsumer;
 import org.apache.camel.component.wordpress.consumer.WordpressUserConsumer;
 import org.apache.camel.component.wordpress.producer.WordpressPostProducer;
@@ -36,10 +39,6 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.wordpress4j.WordpressAPIConfiguration;
-import org.wordpress4j.WordpressServiceProvider;
-import org.wordpress4j.auth.WordpressBasicAuthentication;
-import org.wordpress4j.model.SearchCriteria;
 
 /**
  * Represents a Wordpress endpoint.
@@ -57,14 +56,14 @@ public class WordpressEndpoint extends DefaultEndpoint {
     private String operationDetail;
 
     @UriParam
-    private WordpressEndpointConfiguration config;
+    private WordpressComponentConfiguration config;
 
-    public WordpressEndpoint(String uri, WordpressComponent component, WordpressEndpointConfiguration configuration) {
+    public WordpressEndpoint(String uri, WordpressComponent component, WordpressComponentConfiguration configuration) {
         super(uri, component);
         this.config = configuration;
     }
 
-    public WordpressEndpointConfiguration getConfig() {
+    public WordpressComponentConfiguration getConfig() {
         return config;
     }
 
@@ -119,7 +118,7 @@ public class WordpressEndpoint extends DefaultEndpoint {
         // set configuration properties first
         try {
             if (config == null) {
-                config = new WordpressEndpointConfiguration();
+                config = new WordpressComponentConfiguration();
             }
             EndpointHelper.setReferenceProperties(getCamelContext(), config, options);
             EndpointHelper.setProperties(getCamelContext(), config, options);

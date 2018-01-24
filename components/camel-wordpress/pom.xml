@@ -19,7 +19,7 @@
 	<properties>
 		<hamcrest-version>1.3</hamcrest-version>
 		<camel.osgi.export.pkg>
-			org.apache.camel.component.wordpress.*,org.wordpress4j.*
+			org.apache.camel.component.wordpress.*,
 		</camel.osgi.export.pkg>
 		<camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=wordpress</camel.osgi.export.service>
 	</properties>

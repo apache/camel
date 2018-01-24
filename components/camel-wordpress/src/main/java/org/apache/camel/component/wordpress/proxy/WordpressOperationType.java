@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.wordpress.proxy;
 
-import org.wordpress4j.model.PostSearchCriteria;
-import org.wordpress4j.model.SearchCriteria;
-import org.wordpress4j.model.UserSearchCriteria;
+import org.apache.camel.component.wordpress.api.model.PostSearchCriteria;
+import org.apache.camel.component.wordpress.api.model.SearchCriteria;
+import org.apache.camel.component.wordpress.api.model.UserSearchCriteria;
 
 /**
  * List of supported operations.

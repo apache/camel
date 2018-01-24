@@ -17,10 +17,10 @@
 package org.apache.camel.component.wordpress;
 
 import java.io.IOException;
+import org.apache.camel.component.wordpress.api.test.WordpressMockServerTestSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.wordpress4j.test.WordpressMockServerTestSupport;
 
 public class WordpressComponentTestSupport extends CamelTestSupport {
 

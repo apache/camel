@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.Processor;
 import org.apache.camel.component.wordpress.WordpressEndpoint;
-import org.wordpress4j.WordpressServiceProvider;
-import org.wordpress4j.model.User;
-import org.wordpress4j.model.UserSearchCriteria;
-import org.wordpress4j.service.WordpressServiceUsers;
+import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
+import org.apache.camel.component.wordpress.api.model.User;
+import org.apache.camel.component.wordpress.api.model.UserSearchCriteria;
+import org.apache.camel.component.wordpress.api.service.WordpressServiceUsers;
 
 public class WordpressUserConsumer extends AbstractWordpressConsumer {
 

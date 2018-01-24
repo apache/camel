@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.Processor;
 import org.apache.camel.component.wordpress.WordpressEndpoint;
-import org.wordpress4j.WordpressServiceProvider;
-import org.wordpress4j.model.Post;
-import org.wordpress4j.model.PostSearchCriteria;
-import org.wordpress4j.service.WordpressServicePosts;
+import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
+import org.apache.camel.component.wordpress.api.model.Post;
+import org.apache.camel.component.wordpress.api.model.PostSearchCriteria;
+import org.apache.camel.component.wordpress.api.service.WordpressServicePosts;
 
 /**
  * Consumer for Posts. Adapter for {@link WordpressServicePosts} read only methods (list and retrieve).
