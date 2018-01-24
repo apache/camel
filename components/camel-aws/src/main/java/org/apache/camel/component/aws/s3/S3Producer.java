@@ -48,6 +48,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PartETag;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.s3.model.SSEAwsKeyManagementParams;
 import com.amazonaws.services.s3.model.StorageClass;
 import com.amazonaws.services.s3.model.UploadPartRequest;
 
@@ -151,6 +152,16 @@ public class S3Producer extends DefaultProducer {
             // PutObjectRequest#setAccessControlList for more details
             initRequest.setAccessControlList(acl);
         }
+        
+        if (getConfiguration().isUseAwsKMS()) {
+            SSEAwsKeyManagementParams keyManagementParams;
+            if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
+                keyManagementParams = new SSEAwsKeyManagementParams(getConfiguration().getAwsKMSKeyId());
+            } else {
+                keyManagementParams = new SSEAwsKeyManagementParams();
+            }
+            initRequest.setSSEAwsKeyManagementParams(keyManagementParams);
+        }
 
         LOG.trace("Initiating multipart upload [{}] from exchange [{}]...", initRequest, exchange);
 
@@ -237,6 +248,17 @@ public class S3Producer extends DefaultProducer {
             // PutObjectRequest#setAccessControlList for more details
             putObjectRequest.setAccessControlList(acl);
         }
+        
+        if (getConfiguration().isUseAwsKMS()) {
+            SSEAwsKeyManagementParams keyManagementParams;
+            if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
+                keyManagementParams = new SSEAwsKeyManagementParams(getConfiguration().getAwsKMSKeyId());
+            } else {
+                keyManagementParams = new SSEAwsKeyManagementParams();
+            }
+            putObjectRequest.setSSEAwsKeyManagementParams(keyManagementParams);
+        }
+        
         LOG.trace("Put object [{}] from exchange [{}]...", putObjectRequest, exchange);
 
         PutObjectResult putObjectResult = getEndpoint().getS3Client().putObject(putObjectRequest);
@@ -291,6 +313,17 @@ public class S3Producer extends DefaultProducer {
         } else {
             copyObjectRequest = new CopyObjectRequest(bucketName, sourceKey, versionId, bucketNameDestination, destinationKey);
         }
+
+        if (getConfiguration().isUseAwsKMS()) {
+            SSEAwsKeyManagementParams keyManagementParams;
+            if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
+                keyManagementParams = new SSEAwsKeyManagementParams(getConfiguration().getAwsKMSKeyId());
+            } else {
+                keyManagementParams = new SSEAwsKeyManagementParams();
+            }
+            copyObjectRequest.setSSEAwsKeyManagementParams(keyManagementParams);
+        }
+        
         CopyObjectResult copyObjectResult = s3Client.copyObject(copyObjectRequest);
 
         Message message = getMessageForResponse(exchange);

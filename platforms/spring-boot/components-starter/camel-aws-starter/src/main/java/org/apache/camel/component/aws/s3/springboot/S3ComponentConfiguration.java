@@ -227,6 +227,14 @@ public class S3ComponentConfiguration
          * Define if encryption must be used or not
          */
         private Boolean useEncryption = false;
+        /**
+         * Define if KMS must be used or not
+         */
+        private Boolean useAwsKMS = false;
+        /**
+         * Define the id of KMS key to use in case KMS is enabled
+         */
+        private String awsKMSKeyId;
 
         public Long getPartSize() {
             return partSize;
@@ -411,6 +419,22 @@ public class S3ComponentConfiguration
 
         public void setUseEncryption(Boolean useEncryption) {
             this.useEncryption = useEncryption;
+        }
+
+        public Boolean getUseAwsKMS() {
+            return useAwsKMS;
+        }
+
+        public void setUseAwsKMS(Boolean useAwsKMS) {
+            this.useAwsKMS = useAwsKMS;
+        }
+
+        public String getAwsKMSKeyId() {
+            return awsKMSKeyId;
+        }
+
+        public void setAwsKMSKeyId(String awsKMSKeyId) {
+            this.awsKMSKeyId = awsKMSKeyId;
         }
     }
 }
