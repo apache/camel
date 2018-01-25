@@ -64,7 +64,6 @@ public class SwfComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("type", "activity");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
-
         Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
     }
 
