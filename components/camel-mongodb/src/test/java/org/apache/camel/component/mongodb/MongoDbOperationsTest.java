@@ -243,24 +243,6 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
     }
     
     @Test
-    public void testAggregate() throws Exception {
-        // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.count());
-        pumpDataIntoTestCollection();
-
-        // Repeat ten times, obtain 10 batches of 100 results each time
-        Object result = template
-            .requestBody("direct:aggregate",
-                         "[{ $match : {$or : [{\"scientist\" : \"Darwin\"},{\"scientist\" : \"Einstein\"}]}},{ $group: { _id: \"$scientist\", count: { $sum: 1 }} } ]");
-        assertTrue("Result is not of type List", result instanceof List);
-
-        @SuppressWarnings("unchecked")
-        List<BasicDBObject> resultList = (List<BasicDBObject>)result;
-        assertListSize("Result does not contain 2 elements", resultList, 2);
-        // TODO Add more asserts
-    }
-    
-    @Test
     public void testDbStats() throws Exception {
         assertEquals(0, testCollection.count());
         Object result = template.requestBody("direct:getDbStats", "irrelevantBody");
@@ -330,7 +312,6 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
                     setBody().header(MongoDbConstants.OID);
                 from("direct:update").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=update&writeConcern=SAFE");
                 from("direct:remove").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=remove&writeConcern=SAFE");
-                from("direct:aggregate").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate&writeConcern=SAFE");
                 from("direct:getDbStats").to("mongodb:myDb?database={{mongodb.testDb}}&operation=getDbStats");
                 from("direct:getColStats").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getColStats");
                 from("direct:command").to("mongodb:myDb?database={{mongodb.testDb}}&operation=command");
