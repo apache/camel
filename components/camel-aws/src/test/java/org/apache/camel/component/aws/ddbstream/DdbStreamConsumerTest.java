@@ -67,13 +67,13 @@ public class DdbStreamConsumerTest {
 
     private final CamelContext context = new DefaultCamelContext();
     private final DdbStreamComponent component = new DdbStreamComponent(context);
-    private final DdbStreamEndpoint endpoint = new DdbStreamEndpoint(null, "table_name", component);
+    private final DdbStreamEndpoint endpoint = new DdbStreamEndpoint(null, new DdbStreamConfiguration(), component);
     private GetRecordsAnswer recordsAnswer;
 
     @Before
     public void setup() throws Exception {
-        endpoint.setAmazonDynamoDbStreamsClient(amazonDynamoDBStreams);
-
+        endpoint.getConfiguration().setAmazonDynamoDbStreamsClient(amazonDynamoDBStreams);
+        endpoint.start();
         undertest = new DdbStreamConsumer(endpoint, processor, shardIteratorHandler);
 
         final Map<String, String> shardIterators = new HashMap<>();
@@ -107,7 +107,7 @@ public class DdbStreamConsumerTest {
 
     @Test
     public void itResumesFromAfterTheLastSeenSequenceNumberWhenAShardIteratorHasExpired() throws Exception {
-        endpoint.setIteratorType(ShardIteratorType.LATEST);
+        endpoint.getConfiguration().setIteratorType(ShardIteratorType.LATEST);
         when(shardIteratorHandler.getShardIterator(ArgumentMatchers.isNull())).thenReturn("shard_iterator_b_000", "shard_iterator_b_001");
         when(shardIteratorHandler.getShardIterator(ArgumentMatchers.anyString())).thenReturn("shard_iterator_b_001");
         when(amazonDynamoDBStreams.getRecords(any(GetRecordsRequest.class)))
@@ -129,8 +129,8 @@ public class DdbStreamConsumerTest {
 
     @Test
     public void atSeqNumber35GivesFirstRecordWithSeq35() throws Exception {
-        endpoint.setIteratorType(ShardIteratorType.AT_SEQUENCE_NUMBER);
-        endpoint.setSequenceNumberProvider(new StaticSequenceNumberProvider("35"));
+        endpoint.getConfiguration().setIteratorType(ShardIteratorType.AT_SEQUENCE_NUMBER);
+        endpoint.getConfiguration().setSequenceNumberProvider(new StaticSequenceNumberProvider("35"));
         when(shardIteratorHandler.getShardIterator(ArgumentMatchers.isNull())).thenReturn("shard_iterator_d_001", "shard_iterator_d_002");
 
         for (int i = 0; i < 10; ++i) { // poll lots.
@@ -146,8 +146,8 @@ public class DdbStreamConsumerTest {
 
     @Test
     public void afterSeqNumber35GivesFirstRecordWithSeq40() throws Exception {
-        endpoint.setIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER);
-        endpoint.setSequenceNumberProvider(new StaticSequenceNumberProvider("35"));
+        endpoint.getConfiguration().setIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER);
+        endpoint.getConfiguration().setSequenceNumberProvider(new StaticSequenceNumberProvider("35"));
         when(shardIteratorHandler.getShardIterator(ArgumentMatchers.isNull())).thenReturn("shard_iterator_d_001", "shard_iterator_d_002");
 
         for (int i = 0; i < 10; ++i) { // poll lots.

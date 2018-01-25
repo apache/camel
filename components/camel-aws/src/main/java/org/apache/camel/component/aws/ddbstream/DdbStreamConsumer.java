@@ -56,13 +56,13 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
         try {
             GetRecordsRequest req = new GetRecordsRequest()
                         .withShardIterator(shardIteratorHandler.getShardIterator(null))
-                        .withLimit(getEndpoint().getMaxResultsPerRequest());
+                        .withLimit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
             result = getClient().getRecords(req);
         } catch (ExpiredIteratorException e) {
             LOG.warn("Expired Shard Iterator, attempting to resume from " + lastSeenSequenceNumber, e);
             GetRecordsRequest req = new GetRecordsRequest()
                         .withShardIterator(shardIteratorHandler.getShardIterator(lastSeenSequenceNumber))
-                        .withLimit(getEndpoint().getMaxResultsPerRequest());
+                        .withLimit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
             result = getClient().getRecords(req);
         }
         List<Record> records = result.getRecords();
@@ -113,14 +113,14 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
             providedSeqNum = new BigInteger(lastSeenSequenceNumber);
             condition = BigIntComparisons.Conditions.LT;
         }
-        switch(getEndpoint().getIteratorType()) {
+        switch(getEndpoint().getConfiguration().getIteratorType()) {
         case AFTER_SEQUENCE_NUMBER:
             condition = BigIntComparisons.Conditions.LT;
-            providedSeqNum = new BigInteger(getEndpoint().getSequenceNumberProvider().getSequenceNumber());
+            providedSeqNum = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
             break;
         case AT_SEQUENCE_NUMBER:
             condition = BigIntComparisons.Conditions.LTEQ;
-            providedSeqNum = new BigInteger(getEndpoint().getSequenceNumberProvider().getSequenceNumber());
+            providedSeqNum = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
             break;
         default:
         }

@@ -22,16 +22,16 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-dns</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
-### URI format
+=== URI format
 
 The URI scheme for a DNS component is as follows
 
@@ -42,7 +42,7 @@ dns://operation[?options]
 
 This component only supports producers.
 
-### Options
+=== Options
 
 
 // component options: START
@@ -78,9 +78,9 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-### Headers
+=== Headers
 [width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
+|===
 
 |Header |Type |Operations |Description
 
@@ -98,56 +98,71 @@ Optional.
 
 |dns.server |String |dig |The server in particular for the query. If none is given, the default
 one specified by the OS will be used. Optional.
-|=======================================================================
+|===
 
-### Examples
+=== Examples
 
-#### IP lookup
+==== IP lookup
 
 [source,xml]
---------------------------------------
+----
         <route id="IPCheck">
             <from uri="direct:start"/>
             <to uri="dns:ip"/>
         </route>
---------------------------------------
+----
 
 This looks up a domain's IP. For example, www.example.com resolves to
 192.0.32.10. +
  The IP address to lookup must be provided in the header with key
 `"dns.domain"`.
 
-#### DNS lookup
+==== DNS lookup
 
 [source,xml]
---------------------------------------
+----
         <route id="IPCheck">
             <from uri="direct:start"/>
             <to uri="dns:lookup"/>
         </route>
---------------------------------------
+----
 
 This returns a set of DNS records associated with a domain. +
  The name to lookup must be provided in the header with key
 `"dns.name"`.
 
-#### DNS Dig
+==== DNS Dig
 
 Dig is a Unix command-line utility to run DNS queries.
 
 [source,xml]
---------------------------------------
+----
         <route id="IPCheck">
             <from uri="direct:start"/>
             <to uri="dns:dig"/>
         </route>
---------------------------------------
+----
 
 The query must be provided in the header with key `"dns.query"`.
 
-### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+=== Dns Activation Policy
+
+DnsActivationPolicy can be used to dynamically start and stop routes based on dns state.
+
+If you have instances of the same component running in different regions you can configure a route in each region to activate only if dns is pointing to its region.
+
+i.e. You may have an instance in NYC and an instance in SFO. You would configure a service CNAME service.example.com to point to nyc-service.example.com to bring NYC instance up and SFO instance down. When you change the CNAME service.example.com to point to sfo-service.example.com -- nyc instance would stop its routes and sfo will bring its routes up. This allows you to switch regions without restarting actual components.
+
+[source,xml]
+----
+	<bean id="dnsActivationPolicy" class="org.apache.camel.component.dns.policy.DnsActivationPolicy">
+		<property name="hostname" value="service.example.com" />
+		<property name="resolvesTo" value="nyc-service.example.com" />
+		<property name="ttl" value="60000" />
+	</bean>
+
+	<route id="routeId" autoStartup="false" routePolicyRef="dnsActivationPolicy">
+	</route>
+----
+

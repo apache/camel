@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.firehose.springboot;
 
 import javax.annotation.Generated;
+import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -33,11 +34,60 @@ public class KinesisFirehoseComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * The AWS Kinesis Firehose default configuration
+     */
+    private KinesisFirehoseConfigurationNestedConfiguration configuration;
+    /**
+     * Amazon AWS Access Key
+     */
+    private String accessKey;
+    /**
+     * Amazon AWS Secret Key
+     */
+    private String secretKey;
+    /**
+     * Amazon AWS Region
+     */
+    private String region;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public KinesisFirehoseConfigurationNestedConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(
+            KinesisFirehoseConfigurationNestedConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
@@ -46,5 +96,73 @@ public class KinesisFirehoseComponentConfiguration
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    public static class KinesisFirehoseConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.aws.firehose.KinesisFirehoseConfiguration.class;
+        private AmazonKinesisFirehose amazonKinesisFirehoseClient;
+        private String streamName;
+        private String accessKey;
+        private String secretKey;
+        private String region;
+        private String proxyHost;
+        private Integer proxyPort;
+
+        public AmazonKinesisFirehose getAmazonKinesisFirehoseClient() {
+            return amazonKinesisFirehoseClient;
+        }
+
+        public void setAmazonKinesisFirehoseClient(
+                AmazonKinesisFirehose amazonKinesisFirehoseClient) {
+            this.amazonKinesisFirehoseClient = amazonKinesisFirehoseClient;
+        }
+
+        public String getStreamName() {
+            return streamName;
+        }
+
+        public void setStreamName(String streamName) {
+            this.streamName = streamName;
+        }
+
+        public String getAccessKey() {
+            return accessKey;
+        }
+
+        public void setAccessKey(String accessKey) {
+            this.accessKey = accessKey;
+        }
+
+        public String getSecretKey() {
+            return secretKey;
+        }
+
+        public void setSecretKey(String secretKey) {
+            this.secretKey = secretKey;
+        }
+
+        public String getRegion() {
+            return region;
+        }
+
+        public void setRegion(String region) {
+            this.region = region;
+        }
+
+        public String getProxyHost() {
+            return proxyHost;
+        }
+
+        public void setProxyHost(String proxyHost) {
+            this.proxyHost = proxyHost;
+        }
+
+        public Integer getProxyPort() {
+            return proxyPort;
+        }
+
+        public void setProxyPort(Integer proxyPort) {
+            this.proxyPort = proxyPort;
+        }
     }
 }

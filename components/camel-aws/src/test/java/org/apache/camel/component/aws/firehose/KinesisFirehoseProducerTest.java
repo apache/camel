@@ -48,6 +48,8 @@ public class KinesisFirehoseProducerTest {
     @Mock
     private KinesisFirehoseEndpoint kinesisFirehoseEndpoint;
     @Mock
+    private KinesisFirehoseConfiguration kinesisFirehoseConfiguration;
+    @Mock
     private Message inMessage;
     @Mock
     private Message outMessage;
@@ -61,7 +63,8 @@ public class KinesisFirehoseProducerTest {
     @Before
     public void setup() throws Exception {
         when(kinesisFirehoseEndpoint.getClient()).thenReturn(kinesisFirehoseClient);
-        when(kinesisFirehoseEndpoint.getStreamName()).thenReturn(STREAM_NAME);
+        when(kinesisFirehoseEndpoint.getConfiguration()).thenReturn(kinesisFirehoseConfiguration);
+        when(kinesisFirehoseEndpoint.getConfiguration().getStreamName()).thenReturn(STREAM_NAME);
         when(exchange.getOut()).thenReturn(outMessage);
         when(exchange.getIn()).thenReturn(inMessage);
         when(exchange.getPattern()).thenReturn(ExchangePattern.InOut);

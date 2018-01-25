@@ -61,18 +61,18 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<Str
             public Boolean doInTransaction(TransactionStatus status) {
                 try {
                     // we will receive an exception if the table doesn't exists or we cannot access it
-                    jdbcTemplate.execute(tableExistsString);
+                    jdbcTemplate.execute(getTableExistsString());
                     log.debug("Expected table for JdbcMessageIdRepository exist");
                 } catch (DataAccessException e) {
                     if (createTableIfNotExists) {
                         try {
                             log.debug("creating table for JdbcMessageIdRepository because it doesn't exist...");
-                            jdbcTemplate.execute(createString);
-                            log.info("table created with query '{}'", createString);
+                            jdbcTemplate.execute(getCreateString());
+                            log.info("table created with query '{}'", getCreateString());
                         } catch (DataAccessException dae) {
                             // we will fail if we cannot create it
                             log.error("Can't create table for JdbcMessageIdRepository with query '{}' because of: {}. This may be a permissions problem. Please create this table and try again.",
-                                    createString, e.getMessage());
+                                    getCreateString(), e.getMessage());
                             throw dae;
                         }
                     } else {
@@ -87,22 +87,22 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<Str
 
     @Override
     protected int queryForInt(String key) {
-        return jdbcTemplate.queryForObject(queryString, Integer.class, processorName, key);
+        return jdbcTemplate.queryForObject(getQueryString(), Integer.class, processorName, key);
     }
 
     @Override
     protected int insert(String key) {
-        return jdbcTemplate.update(insertString, processorName, key, new Timestamp(System.currentTimeMillis()));
+        return jdbcTemplate.update(getInsertString(), processorName, key, new Timestamp(System.currentTimeMillis()));
     }
 
     @Override
     protected int delete(String key) {
-        return jdbcTemplate.update(deleteString, processorName, key);
+        return jdbcTemplate.update(getDeleteString(), processorName, key);
     }
     
     @Override
     protected int delete() {
-        return jdbcTemplate.update(clearString, processorName);
+        return jdbcTemplate.update(getClearString(), processorName);
     }
 
     public boolean isCreateTableIfNotExists() {
@@ -151,5 +151,13 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<Str
 
     public void setDeleteString(String deleteString) {
         this.deleteString = deleteString;
+    }
+
+    public String getClearString() {
+        return clearString;
+    }
+
+    public void setClearString(String clearString) {
+        this.clearString = clearString;
     }
 }

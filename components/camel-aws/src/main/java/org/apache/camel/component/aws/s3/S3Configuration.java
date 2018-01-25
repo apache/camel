@@ -74,6 +74,10 @@ public class S3Configuration implements Cloneable {
     private boolean useEncryption;
     @UriParam(defaultValue = "false")
     private boolean useIAMCredentials;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean useAwsKMS;
+    @UriParam(label = "producer")
+    private String awsKMSKeyId;
 
     public long getPartSize() {
         return partSize;
@@ -369,7 +373,30 @@ public class S3Configuration implements Cloneable {
         this.useEncryption = useEncryption;
     }
 
-    public boolean hasProxyConfiguration() {
+
+    public boolean isUseAwsKMS() {
+        return useAwsKMS;
+    }
+
+    /**
+     * Define if KMS must be used or not
+     */
+    public void setUseAwsKMS(boolean useAwsKMS) {
+        this.useAwsKMS = useAwsKMS;
+    }
+
+    public String getAwsKMSKeyId() {
+        return awsKMSKeyId;
+    }
+
+    /**
+     * Define the id of KMS key to use in case KMS is enabled
+     */
+    public void setAwsKMSKeyId(String awsKMSKeyId) {
+        this.awsKMSKeyId = awsKMSKeyId;
+    }
+
+    boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
     }
     

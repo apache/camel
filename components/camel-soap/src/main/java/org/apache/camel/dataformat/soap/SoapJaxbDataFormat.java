@@ -132,9 +132,8 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * 
      * To determine the name of the top level xml elements the elementNameStrategy
      * is used.
-     * @throws IOException,SAXException 
      */
-    public void marshal(Exchange exchange, Object inputObject, OutputStream stream) throws IOException, SAXException {
+    public void marshal(Exchange exchange, Object inputObject, OutputStream stream) throws IOException {
         checkElementNameStrategy(exchange);
 
         String soapAction = getSoapActionFromExchange(exchange);
@@ -261,9 +260,8 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     
     /**
      * Unmarshal a given SOAP xml stream and return the content of the SOAP body
-     * @throws IOException,SAXException
      */
-    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, SAXException {
+    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
         checkElementNameStrategy(exchange);
         
         String soapAction = getSoapActionFromExchange(exchange);

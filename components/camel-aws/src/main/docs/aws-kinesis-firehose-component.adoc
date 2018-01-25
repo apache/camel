@@ -25,7 +25,19 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS Kinesis Firehose component has no options.
+The AWS Kinesis Firehose component supports 5 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The AWS Kinesis Firehose default configuration |  | KinesisFirehose Configuration
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *region* (producer) | Amazon AWS Region |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
@@ -51,13 +63,18 @@ with the following path and query parameters:
 | *streamName* | *Required* Name of the stream |  | String
 |===
 
-==== Query Parameters (2 parameters):
+==== Query Parameters (7 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *amazonKinesisFirehoseClient* (producer) | *Required* Amazon Kinesis Firehose client to use for all requests for this endpoint |  | AmazonKinesisFirehose
+| *amazonKinesisFirehoseClient* (producer) | Amazon Kinesis Firehose client to use for all requests for this endpoint |  | AmazonKinesisFirehose
+| *proxyHost* (producer) | To define a proxy host when instantiating the DDBStreams client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the DDBStreams client |  | Integer
+| *region* (producer) | The region in which Kinesis client needs to work |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
 
