@@ -67,6 +67,11 @@ public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProc
                 Constructor<?> constructor = type.getDeclaredConstructor(String.class);
                 cause = (Exception) constructor.newInstance(text);
                 exchange.setException(cause);
+            } else if (cause == null && type != null) {
+                // create a new exception of that type using its default constructor
+                Constructor<?> constructor = type.getDeclaredConstructor();
+                cause = (Exception) constructor.newInstance();
+                exchange.setException(cause);
             } else {
                 exchange.setException(cause);
             }
