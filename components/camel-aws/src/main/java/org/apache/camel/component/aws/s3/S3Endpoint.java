@@ -26,6 +26,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.AmazonS3EncryptionClientBuilder;
+import com.amazonaws.services.s3.S3ClientOptions;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -262,12 +263,14 @@ public class S3Endpoint extends ScheduledPollEndpoint {
                     clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
                 }
                 clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
+                clientBuilder = clientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingDisabled());
                 client = clientBuilder.build();
             } else {
                 if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                     encClientBuilder = encClientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
                 }
                 encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
+                encClientBuilder = encClientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingDisabled());
                 client = encClientBuilder.build();
             }
         } else {
@@ -284,16 +287,17 @@ public class S3Endpoint extends ScheduledPollEndpoint {
                     clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
                 }
                 clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
+                clientBuilder = clientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingDisabled());
                 client = clientBuilder.build();
             } else {
                 if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                     encClientBuilder = encClientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
                 }
                 encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
+                encClientBuilder = encClientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingDisabled());
                 client = encClientBuilder.build();
             }
         }
-
         return client;
     }
 

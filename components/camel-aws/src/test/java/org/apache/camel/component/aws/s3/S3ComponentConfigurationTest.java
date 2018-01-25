@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.S3ClientOptions;
 
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
@@ -169,6 +170,18 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
+    }
+    
+    @Test
+    public void createEndpointWithChunkedEncoding() throws Exception {
+        
+        S3Component component = new S3Component(context);
+        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?chunkedEncodingDisabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1");
+
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertTrue(endpoint.getConfiguration().isChunkedEncodingDisabled());
     }
     
     @Test
