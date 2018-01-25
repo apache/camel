@@ -64,7 +64,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *apiVersion* (common) | The Wordpress REST API version | 2 | String
-| *criteriaProperties* (common) | The criteria to use with complex searches. |  | Map
+| *criteria* (common) | The criteria to use with complex searches. |  | Map
 | *force* (common) | Whether to bypass trash and force deletion. | false | Boolean
 | *id* (common) | The entity id |  | Integer
 | *password* (common) | Password from authorized user |  | String
