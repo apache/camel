@@ -93,6 +93,21 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         assertEquals(resultGet.getBrokerId(), "1");
     }
     
+    @Test
+    public void mqRebootBrokerTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        template.request("direct:rebootBroker", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(MQConstants.OPERATION, MQOperations.rebootBroker);
+                exchange.getIn().setHeader(MQConstants.BROKER_ID, "1");
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+    }
+    
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();

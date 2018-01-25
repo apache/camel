@@ -93,6 +93,21 @@ public class MQProducerTest extends CamelTestSupport {
         assertEquals(resultGet.getBrokerId(), "1");
     }
     
+    @Test
+    public void mqRebootBrokerTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        template.request("direct:rebootBroker", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(MQConstants.OPERATION, MQOperations.rebootBroker);
+                exchange.getIn().setHeader(MQConstants.BROKER_ID, "1");
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+    }
+    
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
@@ -117,6 +132,9 @@ public class MQProducerTest extends CamelTestSupport {
                     .to("mock:result");
                 from("direct:deleteBroker")
                     .to("aws-mq://test?amazonMqClient=#amazonMqClient&operation=deleteBroker")
+                    .to("mock:result");
+                from("direct:rebootBroker")
+                    .to("aws-mq://test?amazonMqClient=#amazonMqClient&operation=rebootBroker")
                     .to("mock:result");
             }
         };

@@ -146,7 +146,8 @@ public class AmazonMQClientMock implements AmazonMQ {
 
     @Override
     public RebootBrokerResult rebootBroker(RebootBrokerRequest rebootBrokerRequest) {
-        throw new UnsupportedOperationException();
+        RebootBrokerResult result = new RebootBrokerResult();
+        return result;
     }
 
     @Override
