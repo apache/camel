@@ -20,5 +20,6 @@ public enum MQOperations {
 
     listBrokers,
     createBroker,
-    deleteBroker
+    deleteBroker,
+    rebootBroker
 }
