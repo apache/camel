@@ -17,21 +17,11 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.AmazonS3EncryptionClientBuilder;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.StaticEncryptionMaterialsProvider;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -40,6 +30,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.aws.s3.client.AWSS3ClientManagerFactory;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -102,7 +93,8 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        s3Client = configuration.getAmazonS3Client() != null ? configuration.getAmazonS3Client() : createS3Client();
+        s3Client = configuration.getAmazonS3Client() != null ? configuration.getAmazonS3Client()
+                : AWSS3ClientManagerFactory.getAWSS3Client(configuration, getMaxConnections()).getS3Client();
 
         if (ObjectHelper.isNotEmpty(configuration.getAmazonS3Endpoint())) {
             s3Client.setEndpoint(configuration.getAmazonS3Endpoint());
@@ -221,80 +213,6 @@ public class S3Endpoint extends ScheduledPollEndpoint {
 
     public AmazonS3 getS3Client() {
         return s3Client;
-    }
-
-    /**
-     * Provide the possibility to override this method for an mock
-     * implementation
-     */
-    AmazonS3 createS3Client() {
-
-        AmazonS3 client = null;
-        AmazonS3ClientBuilder clientBuilder = null;
-        AmazonS3EncryptionClientBuilder encClientBuilder = null;
-        ClientConfiguration clientConfiguration = null;
-        boolean isClientConfigFound = false;
-        if (configuration.hasProxyConfiguration()) {
-            clientConfiguration = new ClientConfiguration();
-            clientConfiguration.setProxyHost(configuration.getProxyHost());
-            clientConfiguration.setProxyPort(configuration.getProxyPort());
-            clientConfiguration.setMaxConnections(getMaxConnections());
-            isClientConfigFound = true;
-        } else {
-            clientConfiguration = new ClientConfiguration();
-            clientConfiguration.setMaxConnections(getMaxConnections());
-            isClientConfigFound = true;
-        }
-        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-            AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
-            if (isClientConfigFound && !configuration.isUseEncryption()) {
-                clientBuilder = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
-            } else if (isClientConfigFound && configuration.isUseEncryption()) {
-                StaticEncryptionMaterialsProvider encryptionMaterialsProvider = new StaticEncryptionMaterialsProvider(configuration.getEncryptionMaterials());
-                encClientBuilder = AmazonS3EncryptionClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider)
-                    .withEncryptionMaterials(encryptionMaterialsProvider);
-            } else {
-                clientBuilder = AmazonS3ClientBuilder.standard().withCredentials(credentialsProvider);
-            }
-            if (!configuration.isUseEncryption()) {
-                if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-                    clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
-                }
-                clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
-                client = clientBuilder.build();
-            } else {
-                if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-                    encClientBuilder = encClientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
-                }
-                encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
-                client = encClientBuilder.build();
-            }
-        } else {
-            if (isClientConfigFound && !configuration.isUseEncryption()) {
-                clientBuilder = AmazonS3ClientBuilder.standard();
-            } else if (isClientConfigFound && configuration.isUseEncryption()) {
-                StaticEncryptionMaterialsProvider encryptionMaterialsProvider = new StaticEncryptionMaterialsProvider(configuration.getEncryptionMaterials());
-                encClientBuilder = AmazonS3EncryptionClientBuilder.standard().withClientConfiguration(clientConfiguration).withEncryptionMaterials(encryptionMaterialsProvider);
-            } else {
-                clientBuilder = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration);
-            }
-            if (!configuration.isUseEncryption()) {
-                if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-                    clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
-                }
-                clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
-                client = clientBuilder.build();
-            } else {
-                if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-                    encClientBuilder = encClientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
-                }
-                encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
-                client = encClientBuilder.build();
-            }
-        }
-
-        return client;
     }
 
     public int getMaxMessagesPerPoll() {
