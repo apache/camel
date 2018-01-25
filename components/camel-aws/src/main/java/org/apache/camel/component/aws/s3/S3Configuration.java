@@ -72,6 +72,8 @@ public class S3Configuration implements Cloneable {
     private EncryptionMaterials encryptionMaterials;
     @UriParam(label = "common", defaultValue = "false")
     private boolean useEncryption;
+    @UriParam(defaultValue = "false")
+    private boolean useIAMCredentials;
 
     public long getPartSize() {
         return partSize;
@@ -350,13 +352,24 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
+     * Set whether the S3 client should expect to load credentials on an EC2 instance or to
+     * expect static credentials to be passed in.
+     */
+    public void setUseIAMCredentials(Boolean useIAMCredentials) {
+        this.useIAMCredentials = useIAMCredentials;
+    }
+    public Boolean isUseIAMCredentials() {
+        return useIAMCredentials;
+    }
+
+    /**
      * Define if encryption must be used or not
      */
     public void setUseEncryption(boolean useEncryption) {
         this.useEncryption = useEncryption;
     }
 
-    boolean hasProxyConfiguration() {
+    public boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
     }
     
