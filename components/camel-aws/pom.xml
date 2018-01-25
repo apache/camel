@@ -41,6 +41,7 @@
           org.apache.camel.spi.ComponentResolver;component=aws-kinesis,
           org.apache.camel.spi.ComponentResolver;component=aws-kinesis-firehose,
           org.apache.camel.spi.ComponentResolver;component=aws-lambda,
+          org.apache.camel.spi.ComponentResolver;component=aws-mq,
           org.apache.camel.spi.ComponentResolver;component=aws-s3,
           org.apache.camel.spi.ComponentResolver;component=aws-sdb,
           org.apache.camel.spi.ComponentResolver;component=aws-ses,
