@@ -235,6 +235,10 @@ public class S3ComponentConfiguration
          * Define the id of KMS key to use in case KMS is enabled
          */
         private String awsKMSKeyId;
+        /**
+         * Define if disabled Chunked Encoding is true or false
+         */
+        private Boolean chunkedEncodingDisabled = false;
 
         public Long getPartSize() {
             return partSize;
@@ -435,6 +439,14 @@ public class S3ComponentConfiguration
 
         public void setAwsKMSKeyId(String awsKMSKeyId) {
             this.awsKMSKeyId = awsKMSKeyId;
+        }
+
+        public Boolean getChunkedEncodingDisabled() {
+            return chunkedEncodingDisabled;
+        }
+
+        public void setChunkedEncodingDisabled(Boolean chunkedEncodingDisabled) {
+            this.chunkedEncodingDisabled = chunkedEncodingDisabled;
         }
     }
 }

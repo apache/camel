@@ -19,8 +19,6 @@ package org.apache.camel.component.aws.s3;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.amazonaws.regions.Regions;
-
 import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.test.junit4.CamelTestSupport;
