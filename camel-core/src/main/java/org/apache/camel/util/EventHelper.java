@@ -596,7 +596,7 @@ public final class EventHelper {
         }
 
         for (EventNotifier notifier : notifiers) {
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeSentEvents()) {
+            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeSendingEvents()) {
                 continue;
             }
 
