@@ -19,12 +19,14 @@ package org.apache.camel.builder;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
@@ -67,7 +69,42 @@ public class ValueBuilder implements Expression, Predicate {
     }
 
     public ExpressionClause<Predicate> matches() {
-        return new ExpressionClause<Predicate>(onNewPredicate(ExpressionToPredicateAdapter.toPredicate(expression))); 
+        // chicken-and-egg situation as we need to return an ExpressionClause
+        // which needs a right-hand side that is being built via the fluent
+        // builder that is returned, and therefore we need to use a ref
+        // to the expression (right hand side) that will be used below
+        // in the onNewPredicate where the actual matching is executed
+        final AtomicReference<Expression> ref = new AtomicReference<>();
+
+        final ExpressionClause<Predicate> answer = new ExpressionClause<>(
+            onNewPredicate(new Predicate() {
+                @Override
+                public boolean matches(Exchange exchange) {
+                    Expression left = expression;
+                    Expression right = ref.get();
+                    return PredicateBuilder.isEqualTo(left, right).matches(exchange);
+                }
+
+                @Override
+                public String toString() {
+                    return expression + " == " + ref.get();
+                }
+            }));
+
+        final Expression right = new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                if (answer.getExpressionValue() != null) {
+                    return answer.getExpressionValue().evaluate(exchange, Object.class);
+                } else {
+                    return answer.getExpressionType().evaluate(exchange);
+                }
+            }
+        };
+        // okay now we can set the reference to the right-hand-side
+        ref.set(right);
+
+        return answer;
     }
 
     public Predicate isNotEqualTo(Object value) {
