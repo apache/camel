@@ -378,6 +378,7 @@
 	* [Velocity](velocity-component.adoc)
 	* [Vert.x](vertx-component.adoc)
 	* [Weather](weather-component.adoc)
+	* [Wordpress](wordpress-component.adoc)
 	* [XChange](xchange-component.adoc)
 	* [XML RPC](xmlrpc-component.adoc)
 	* [XML Security](xmlsecurity-component.adoc)
