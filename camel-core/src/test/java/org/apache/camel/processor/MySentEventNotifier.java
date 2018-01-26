@@ -38,8 +38,7 @@ public class MySentEventNotifier extends EventNotifierSupport {
     }
 
     public boolean isEnabled(EventObject event) {
-        // we only want the sent events
-        return event instanceof ExchangeSentEvent;
+        return true;
     }
 
     protected void doStart() throws Exception {
