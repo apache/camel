@@ -98,10 +98,10 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private String tailTrackCollection;
     @UriParam(label = "tail")
     private String tailTrackField;
-    private MongoDbTailTrackingConfig tailTrackingConfig;
-
-    @UriParam
+    @UriParam(label = "common")
     private MongoDbOutputType outputType;
+
+    private MongoDbTailTrackingConfig tailTrackingConfig;
 
     @UriParam(label = "tail", defaultValue = "LITERAL")
     private MongoDBTailTrackingEnum tailTrackingStrategy;
@@ -645,9 +645,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Convert the output of the producer to the selected type : "DBObjectList", "DBObject" or "DBCursor".
-     * DBObjectList or DBObject applies to findAll.
-     * DBCursor applies to all other operations.
+     * Convert the output of the producer to the selected type : DBObjectList DBObject or DBCursor. 
+     * DBObjectList or DBCursor applies to findAll and aggregate. DBObject applies to all other operations. 
      * @param outputType
      */
     public void setOutputType(MongoDbOutputType outputType) {

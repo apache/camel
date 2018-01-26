@@ -103,10 +103,10 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private String tailTrackCollection;
     @UriParam(label = "tail")
     private String tailTrackField;
-    private MongoDbTailTrackingConfig tailTrackingConfig;
-
-    @UriParam
+    @UriParam(label = "common")
     private MongoDbOutputType outputType;
+    
+    private MongoDbTailTrackingConfig tailTrackingConfig;
 
     private MongoDatabase mongoDatabase;
     private MongoCollection<Document> mongoCollection;
@@ -623,10 +623,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Convert the output of the producer to the selected type : "DocumentList",
-     * "Document" or "MongoIterable". DocumentList or Document applies to
-     * findAll. MongoIterable applies to all other operations.
-     * 
+     * Convert the output of the producer to the selected type : DocumentList Document or MongoIterable. 
+     * DocumentList or MongoIterable applies to findAll and aggregate. Document applies to all other operations.
      * @param outputType
      */
     public void setOutputType(MongoDbOutputType outputType) {
