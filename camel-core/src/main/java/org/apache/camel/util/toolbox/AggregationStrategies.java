@@ -76,6 +76,13 @@ public final class AggregationStrategies {
     }
 
     /**
+     * Creates a {@link BatchAggregationStrategy} aggregation strategy.
+     */
+    public static AggregationStrategy batch() {
+        return new BatchAggregationStrategy();
+    }
+
+    /**
      * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregation strategy.
      */
     public static AggregationStrategy bean(Object bean) {
