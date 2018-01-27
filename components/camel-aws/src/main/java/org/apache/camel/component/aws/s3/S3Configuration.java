@@ -69,15 +69,15 @@ public class S3Configuration implements Cloneable {
     private S3Operations operation;
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean autocloseBody = true;
-    @UriParam(label = "common")
+    @UriParam(label = "common,advanced")
     private EncryptionMaterials encryptionMaterials;
-    @UriParam(label = "common", defaultValue = "false")
+    @UriParam(label = "common,advanced", defaultValue = "false")
     private boolean useEncryption;
     @UriParam(label = "common, advanced", defaultValue = "false")
     private boolean chunkedEncodingDisabled;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean useAwsKMS;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced")
     private String awsKMSKeyId;
 
     public long getPartSize() {
