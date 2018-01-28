@@ -68,7 +68,7 @@ public class PdfConfiguration {
     private int marginRight = 40;
     @UriParam(defaultValue = "14")
     private float fontSize = 14;
-    @UriParam(defaultValue = "PAGE_SIZE_A4", enums = "PAGE_SIZE_A0,PAGE_SIZE_A1,PAGE_SIZE_A2,PAGE_SIZE_A3,PAGE_SIZE_A4,PAGE_SIZE_A5,PAGE_SIZE_A6,PAGE_SIZE_LETTER")
+    @UriParam(defaultValue = "A4", enums = "LETTER,LEGAL,A0,A1,A2,A3,A4,A5,A6")
     private PDRectangle pageSize = PDRectangle.A4;
     @UriParam(defaultValue = "Helvetica")
     private PDFont font = PDType1Font.HELVETICA;
