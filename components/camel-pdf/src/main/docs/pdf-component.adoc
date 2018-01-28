@@ -67,7 +67,7 @@ with the following path and query parameters:
 | *marginLeft* (producer) | Margin left in pixels | 20 | int
 | *marginRight* (producer) | Margin right in pixels | 40 | int
 | *marginTop* (producer) | Margin top in pixels | 20 | int
-| *pageSize* (producer) | Page size | PAGE_SIZE_A4 | PDRectangle
+| *pageSize* (producer) | Page size | A4 | PDRectangle
 | *textProcessingFactory* (producer) | Text processing to use. autoFormatting: Text is getting sliced by words then max amount of words that fits in the line will be written into pdf document. With this strategy all words that doesn't fit in the line will be moved to the new line. lineTermination: Builds set of classes for line-termination writing strategy. Text getting sliced by line termination symbol and then it will be written regardless it fits in the line or not. | lineTermination | TextProcessingFactory
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
