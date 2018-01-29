@@ -251,6 +251,10 @@ public class S3ComponentConfiguration
          * Define if Payload Signing enabled is true or false
          */
         private Boolean payloadSigningEnabled = false;
+        /**
+         * Define if Force Global Bucket Access enabled is true or false
+         */
+        private Boolean forceGlobalBucketAccessEnabled = false;
 
         public Long getPartSize() {
             return partSize;
@@ -483,6 +487,15 @@ public class S3ComponentConfiguration
 
         public void setPayloadSigningEnabled(Boolean payloadSigningEnabled) {
             this.payloadSigningEnabled = payloadSigningEnabled;
+        }
+
+        public Boolean getForceGlobalBucketAccessEnabled() {
+            return forceGlobalBucketAccessEnabled;
+        }
+
+        public void setForceGlobalBucketAccessEnabled(
+                Boolean forceGlobalBucketAccessEnabled) {
+            this.forceGlobalBucketAccessEnabled = forceGlobalBucketAccessEnabled;
         }
     }
 }

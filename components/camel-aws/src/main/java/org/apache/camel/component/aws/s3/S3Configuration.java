@@ -80,6 +80,8 @@ public class S3Configuration implements Cloneable {
     private boolean dualstackEnabled;
     @UriParam(label = "common, advanced", defaultValue = "false")
     private boolean payloadSigningEnabled;
+    @UriParam(label = "common, advanced", defaultValue = "false")
+    private boolean forceGlobalBucketAccessEnabled;
     @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean useAwsKMS;
     @UriParam(label = "producer,advanced")
@@ -432,6 +434,17 @@ public class S3Configuration implements Cloneable {
      */
     public void setPayloadSigningEnabled(boolean payloadSigningEnabled) {
         this.payloadSigningEnabled = payloadSigningEnabled;
+    }
+
+    public boolean isForceGlobalBucketAccessEnabled() {
+        return forceGlobalBucketAccessEnabled;
+    }
+
+    /**
+     * Define if Force Global Bucket Access enabled is true or false
+     */
+    public void setForceGlobalBucketAccessEnabled(boolean forceGlobalBucketAccessEnabled) {
+        this.forceGlobalBucketAccessEnabled = forceGlobalBucketAccessEnabled;
     }
 
     boolean hasProxyConfiguration() {
