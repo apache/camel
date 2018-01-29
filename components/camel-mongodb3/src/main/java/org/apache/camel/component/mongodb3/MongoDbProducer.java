@@ -492,7 +492,7 @@ public class MongoDbProducer extends DefaultProducer {
         return exchange -> {
             try {
                 MongoCollection<Document> dbCol = calculateCollection(exchange);
-                Document removeObj = exchange.getIn().getMandatoryBody(Document.class);
+                Bson removeObj = exchange.getIn().getMandatoryBody(Bson.class);
 
                 DeleteResult result = dbCol.deleteMany(removeObj);
                 if (result.wasAcknowledged()) {
