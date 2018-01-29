@@ -61,7 +61,7 @@ public class TcpSocketConsumerRunnable implements Runnable {
     private final String remoteAddress;
     private final String combinedAddress;
 
-    public TcpSocketConsumerRunnable(MllpTcpServerConsumer consumer, Socket clientSocket) {
+    public TcpSocketConsumerRunnable(MllpTcpServerConsumer consumer, Socket clientSocket, MllpSocketBuffer mllpBuffer) {
         this.consumer = consumer;
         // this.setName(createThreadName(clientSocket));
         this.clientSocket = clientSocket;
@@ -105,7 +105,11 @@ public class TcpSocketConsumerRunnable implements Runnable {
             throw new IllegalStateException("Failed to initialize " + this.getClass().getSimpleName(), initializationException);
         }
 
-        mllpBuffer = new MllpSocketBuffer(consumer.getEndpoint());
+        if (mllpBuffer == null) {
+            this.mllpBuffer = new MllpSocketBuffer(consumer.getEndpoint());
+        } else {
+            this.mllpBuffer = mllpBuffer;
+        }
     }
 
     /**
@@ -448,6 +452,7 @@ public class TcpSocketConsumerRunnable implements Runnable {
                 throw runtimeEx;
             } catch (Exception ex) {
                 log.error("Unexpected exception processing exchange", ex);
+                exchange.setException(ex);
             }
         } catch (Exception uowEx) {
             // TODO:  Handle this correctly
@@ -483,8 +488,15 @@ public class TcpSocketConsumerRunnable implements Runnable {
 
         log.debug("Starting {} for {}", this.getClass().getSimpleName(), combinedAddress);
         try {
+            byte[] hl7MessageBytes = null;
+            if (mllpBuffer.hasCompleteEnvelope()) {
+                // If we got a complete message on the validation read, process it
+                hl7MessageBytes = mllpBuffer.toMllpPayload();
+                mllpBuffer.reset();
+                processMessage(hl7MessageBytes);
+            }
+
             while (running && null != clientSocket && clientSocket.isConnected() && !clientSocket.isClosed()) {
-                byte[] hl7MessageBytes = null;
                 log.debug("Checking for data ....");
                 try {
                     mllpBuffer.readFrom(clientSocket);
@@ -519,31 +531,16 @@ public class TcpSocketConsumerRunnable implements Runnable {
                                 consumer.getEndpoint().doConnectionClose(clientSocket, true, log);
                             }
                         }
-                        log.info("No data received - ignoring timeout");
+                        log.debug("No data received - ignoring timeout");
                     } else {
                         mllpBuffer.resetSocket(clientSocket);
-                        if (consumer.getEndpoint().isBridgeErrorHandler()) {
-                            Exchange exchange = consumer.getEndpoint().createExchange(ExchangePattern.InOut);
-                            exchange.setException(new MllpInvalidMessageException("Timeout receiving complete payload", mllpBuffer.toByteArray()));
-                            log.warn("Exception encountered reading payload - sending exception to route", exchange.getException());
-                            try {
-                                consumer.getProcessor().process(exchange);
-                            } catch (Exception e) {
-                                log.error("Exception encountered processing exchange with exception encounter reading payload", e);
-                            }
-                        } else {
-                            log.error("Timeout receiving complete payload", new MllpInvalidMessageException("Timeout receiving complete payload", mllpBuffer.toByteArray(), timeoutEx));
-                        }
+                        new MllpInvalidMessageException("Timeout receiving complete message payload", mllpBuffer.toByteArrayAndReset(), timeoutEx);
+                        consumer.handleException(new MllpInvalidMessageException("Timeout receiving complete message payload", mllpBuffer.toByteArrayAndReset(), timeoutEx));
                     }
                 } catch (MllpSocketException mllpSocketEx) {
+                    mllpBuffer.resetSocket(clientSocket);
                     if (!mllpBuffer.isEmpty()) {
-                        Exchange exchange = consumer.getEndpoint().createExchange(ExchangePattern.InOut);
-                        exchange.setException(new MllpReceiveException("Exception encountered reading payload", mllpBuffer.toByteArrayAndReset(), mllpSocketEx));
-                        try {
-                            consumer.getProcessor().process(exchange);
-                        } catch (Exception ignoredEx) {
-                            log.error("Ingnoring exception encountered processing exchange with exception encounter reading payload", ignoredEx);
-                        }
+                        consumer.handleException(new MllpReceiveException("Exception encountered reading payload", mllpBuffer.toByteArrayAndReset(), mllpSocketEx));
                     } else {
                         log.warn("Ignoring exception encountered checking for data", mllpSocketEx);
                     }
@@ -558,6 +555,8 @@ public class TcpSocketConsumerRunnable implements Runnable {
             Thread.currentThread().setName(originalThreadName);
             MDC.remove(MDCUnitOfWork.MDC_ROUTE_ID);
             MDC.remove(MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID);
+
+            mllpBuffer.resetSocket(clientSocket);
         }
     }
 

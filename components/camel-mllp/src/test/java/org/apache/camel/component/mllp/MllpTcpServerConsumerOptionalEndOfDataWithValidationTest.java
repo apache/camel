@@ -17,6 +17,11 @@
 
 package org.apache.camel.component.mllp;
 
+import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.builder.NotifyBuilder;
+import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
+
 public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest extends TcpServerConsumerEndOfDataAndValidationTestSupport {
 
     @Override
@@ -62,7 +67,13 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest extends Tc
     public void testMessageContainingEmbeddedEndOfBlock() throws Exception {
         expectedInvalidCount = 1;
 
-        runMessageContainingEmbeddedEndOfBlock();
+        setExpectedCounts();
+
+        NotifyBuilder done = new NotifyBuilder(context()).whenDone(1).create();
+
+        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage().replaceFirst("EVN", "EVN" + MllpProtocolConstants.END_OF_BLOCK));
+
+        assertTrue("Exchange should have completed", done.matches(5, TimeUnit.SECONDS));
     }
 
     @Override

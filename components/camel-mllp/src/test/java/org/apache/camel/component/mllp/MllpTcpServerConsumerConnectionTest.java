@@ -40,7 +40,8 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.instanceOf;
 
 public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
-    static final int RECEIVE_TIMEOUT = 500;
+    static final int RECEIVE_TIMEOUT = 1000;
+    static final int READ_TIMEOUT = 500;
 
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
@@ -68,7 +69,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
             String routeId = "mllp-receiver";
 
             public void configure() {
-                fromF("mllp://%s:%d?autoAck=false", mllpClient.getMllpHost(), mllpClient.getMllpPort())
+                fromF("mllp://%s:%d?receiveTimeout=%d&readTimeout=%d&autoAck=false", mllpClient.getMllpHost(), mllpClient.getMllpPort(), RECEIVE_TIMEOUT, READ_TIMEOUT)
                     .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
                     .to(result);
             }

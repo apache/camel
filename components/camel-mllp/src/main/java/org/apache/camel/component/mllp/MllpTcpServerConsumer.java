@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -36,29 +37,27 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.mllp.internal.MllpSocketBuffer;
-import org.apache.camel.component.mllp.internal.TcpServerAcceptRunnable;
+import org.apache.camel.component.mllp.internal.TcpServerConsumerValidationRunnable;
+import org.apache.camel.component.mllp.internal.TcpServerAcceptThread;
 import org.apache.camel.component.mllp.internal.TcpSocketConsumerRunnable;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerator;
 
 /**
  * The MLLP consumer.
  */
 @ManagedResource(description = "MLLP Producer")
 public class MllpTcpServerConsumer extends DefaultConsumer {
-    final ExecutorService acceptExecutor;
+    final ExecutorService validationExecutor;
     final ExecutorService consumerExecutor;
-    TcpServerAcceptRunnable acceptRunnable;
+    TcpServerAcceptThread acceptThread;
     Map<TcpSocketConsumerRunnable, Long> consumerRunnables = new ConcurrentHashMap<>();
 
 
     public MllpTcpServerConsumer(MllpEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         log.trace("MllpTcpServerConsumer(endpoint, processor)");
-        // this.endpoint = endpoint;
-        // this.configuration = endpoint.getConfiguration();
 
-        acceptExecutor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new SynchronousQueue<>());
+        validationExecutor = Executors.newCachedThreadPool();
         consumerExecutor = new ThreadPoolExecutor(1, getConfiguration().getMaxConcurrentConsumers(), getConfiguration().getAcceptTimeout(), TimeUnit.MILLISECONDS, new SynchronousQueue<>());
     }
 
@@ -111,9 +110,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             consumerClientSocketThread.stop();
         }
 
-        acceptRunnable.stop();
+        acceptThread.interrupt();
 
-        acceptRunnable = null;
+        acceptThread = null;
 
         super.doStop();
     }
@@ -171,8 +170,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             }
         } while (!serverSocket.isBound());
 
-        acceptRunnable = new TcpServerAcceptRunnable(this, serverSocket);
-        acceptExecutor.submit(acceptRunnable);
+        // acceptRunnable = new TcpServerConsumerValidationRunnable(this, serverSocket);
+        // validationExecutor.submit(acceptRunnable);
+        acceptThread = new TcpServerAcceptThread(this, serverSocket);
+        acceptThread.start();
 
         super.doStart();
     }
@@ -181,7 +182,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     protected void doShutdown() throws Exception {
         super.doShutdown();
         consumerExecutor.shutdownNow();
-        acceptExecutor.shutdownNow();
+        if (acceptThread != null) {
+            acceptThread.interrupt();
+        }
+        validationExecutor.shutdownNow();
     }
 
     public MllpConfiguration getConfiguration() {
@@ -192,8 +196,21 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         return consumerRunnables;
     }
 
-    public void startConsumer(Socket clientSocket) {
-        TcpSocketConsumerRunnable client = new TcpSocketConsumerRunnable(this, clientSocket);
+    public void validateConsumer(Socket clientSocket) {
+        MllpSocketBuffer mllpBuffer = new MllpSocketBuffer(getEndpoint());
+        TcpServerConsumerValidationRunnable client = new TcpServerConsumerValidationRunnable(this, clientSocket, mllpBuffer);
+
+        try {
+            log.info("Validating consumer for Socket {}", clientSocket);
+            validationExecutor.submit(client);
+        } catch (RejectedExecutionException rejectedExecutionEx) {
+            log.warn("Cannot validate consumer - max validations already active");
+            mllpBuffer.resetSocket(clientSocket);
+        }
+    }
+
+    public void startConsumer(Socket clientSocket, MllpSocketBuffer mllpBuffer) {
+        TcpSocketConsumerRunnable client = new TcpSocketConsumerRunnable(this, clientSocket, mllpBuffer);
 
         consumerRunnables.put(client, System.currentTimeMillis());
         try {
@@ -205,5 +222,15 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         }
     }
 
+
+    @Override
+    public void handleException(Throwable t) {
+        super.handleException(t);
+    }
+
+    @Override
+    public void handleException(String message, Throwable t) {
+        super.handleException(message, t);
+    }
 }
 

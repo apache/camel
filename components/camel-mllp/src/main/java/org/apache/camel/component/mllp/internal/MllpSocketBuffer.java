@@ -170,8 +170,11 @@ public class MllpSocketBuffer {
         endOfBlockIndex = -1;
     }
 
-
     public synchronized void readFrom(Socket socket) throws MllpSocketException, SocketTimeoutException {
+        readFrom(socket, endpoint.getConfiguration().getReceiveTimeout(), endpoint.getConfiguration().getReadTimeout());
+    }
+
+    public synchronized void readFrom(Socket socket, int receiveTimeout, int readTimeout) throws MllpSocketException, SocketTimeoutException {
         log.trace("Entering readFrom ...");
         if (socket != null && socket.isConnected() && !socket.isClosed()) {
             ensureCapacity(MIN_BUFFER_SIZE);
@@ -179,11 +182,11 @@ public class MllpSocketBuffer {
             try {
                 InputStream socketInputStream = socket.getInputStream();
 
-                socket.setSoTimeout(endpoint.getConfiguration().getReceiveTimeout());
+                socket.setSoTimeout(receiveTimeout);
 
                 readSocketInputStream(socketInputStream, socket);
                 if (!hasCompleteEnvelope()) {
-                    socket.setSoTimeout(endpoint.getConfiguration().getReadTimeout());
+                    socket.setSoTimeout(readTimeout);
 
                     while (!hasCompleteEnvelope()) {
                         ensureCapacity(Math.max(MIN_BUFFER_SIZE, socketInputStream.available()));
@@ -249,7 +252,7 @@ public class MllpSocketBuffer {
         log.trace("Exiting writeTo ...");
     }
 
-    public synchronized byte toByteArray()[] {
+    public synchronized byte[] toByteArray() {
         if (availableByteCount > 0) {
             return Arrays.copyOf(buffer, availableByteCount);
         }
@@ -257,7 +260,7 @@ public class MllpSocketBuffer {
         return null;
     }
 
-    public synchronized byte toByteArrayAndReset()[] {
+    public synchronized byte[] toByteArrayAndReset() {
         byte[] answer = toByteArray();
 
         reset();
@@ -291,6 +294,22 @@ public class MllpSocketBuffer {
         }
 
         return "";
+    }
+
+    public synchronized String toStringAndReset() {
+        String answer = toString();
+
+        reset();
+
+        return answer;
+    }
+
+    public synchronized String toStringAndReset(String charsetName) {
+        String answer = toString(charsetName);
+
+        reset();
+
+        return answer;
     }
 
     /**
@@ -534,8 +553,10 @@ public class MllpSocketBuffer {
     }
 
     void updateIndexes(int b, int indexOffset) {
-        if (startOfBlockIndex < 0 && b == MllpProtocolConstants.START_OF_BLOCK) {
-            startOfBlockIndex = availableByteCount + indexOffset;
+        if (startOfBlockIndex < 0) {
+            if (b == MllpProtocolConstants.START_OF_BLOCK) {
+                startOfBlockIndex = availableByteCount + indexOffset;
+            }
         } else if (endOfBlockIndex < 0 && b == MllpProtocolConstants.END_OF_BLOCK) {
             endOfBlockIndex = availableByteCount + indexOffset;
         }

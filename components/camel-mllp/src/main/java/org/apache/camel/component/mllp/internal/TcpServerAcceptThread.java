@@ -31,16 +31,16 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 /**
- * Runnable to handle the ServerSocket.accept requests
+ * Thread to handle the ServerSocket.accept requests, and submit the sockets to the accept executor for validation.
  */
-public class TcpServerAcceptRunnable implements Runnable {
+public class TcpServerAcceptThread extends Thread {
     Logger log = LoggerFactory.getLogger(this.getClass());
 
     MllpTcpServerConsumer consumer;
     ServerSocket serverSocket;
     boolean running;
 
-    public TcpServerAcceptRunnable(MllpTcpServerConsumer consumer, ServerSocket serverSocket) {
+    public TcpServerAcceptThread(MllpTcpServerConsumer consumer, ServerSocket serverSocket) {
         this.consumer = consumer;
         this.serverSocket = serverSocket;
     }
@@ -97,7 +97,6 @@ public class TcpServerAcceptRunnable implements Runnable {
                 Socket socket = null;
                 try {
                     socket = serverSocket.accept();
-                    consumer.getEndpoint().updateLastConnectionEstablishedTicks();
                 } catch (SocketTimeoutException timeoutEx) {
                     // Didn't get a new connection - keep waiting for one
                     log.debug("Timeout waiting for client connection - keep listening");
@@ -126,7 +125,7 @@ public class TcpServerAcceptRunnable implements Runnable {
 
                 if (MllpSocketBuffer.isConnectionValid(socket)) {
                     // Try and avoid starting client threads for things like security scans and load balancer probes
-                    consumer.startConsumer(socket);
+                    consumer.validateConsumer(socket);
                 }
             }
         } finally {
@@ -144,7 +143,18 @@ public class TcpServerAcceptRunnable implements Runnable {
         }
     }
 
-    public void stop() {
-        running = false;
+    @Override
+    public void interrupt() {
+        this.running = false;
+        super.interrupt();
+        if (null != serverSocket) {
+            if (serverSocket.isBound()) {
+                try {
+                    serverSocket.close();
+                } catch (IOException ioEx) {
+                    log.warn("Exception encountered closing ServerSocket in interrupt() method - ignoring", ioEx);
+                }
+            }
+        }
     }
 }
