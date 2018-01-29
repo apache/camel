@@ -73,7 +73,7 @@ public class S3Configuration implements Cloneable {
     @UriParam(label = "common,advanced", defaultValue = "false")
     private boolean useEncryption;
     @UriParam(label = "common, advanced", defaultValue = "false")
-    private boolean chunkedEncodingDisabled;
+    private boolean chunkedEncodingEnabled;
     @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean useAwsKMS;
     @UriParam(label = "producer,advanced")
@@ -384,17 +384,17 @@ public class S3Configuration implements Cloneable {
         this.awsKMSKeyId = awsKMSKeyId;
     }
 
-    public boolean isChunkedEncodingDisabled() {
-        return chunkedEncodingDisabled;
+    public boolean isChunkedEncodingEnabled() {
+        return chunkedEncodingEnabled;
     }
 
     /**
      * Define if disabled Chunked Encoding is true or false
      */
-    public void setChunkedEncodingDisabled(boolean chunkedEncodingDisabled) {
-        this.chunkedEncodingDisabled = chunkedEncodingDisabled;
+    public void setChunkedEncodingEnabled(boolean chunkedEncodingEnabled) {
+        this.chunkedEncodingEnabled = chunkedEncodingEnabled;
     }
-
+    
     boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
     }
