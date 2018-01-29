@@ -264,6 +264,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
                 clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
                 clientBuilder = clientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingDisabled());
                 clientBuilder = clientBuilder.withAccelerateModeEnabled(configuration.isAccelerateModeEnabled());
+                clientBuilder = clientBuilder.withDualstackEnabled(configuration.isDualstackEnabled());
                 client = clientBuilder.build();
             } else {
                 if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
@@ -272,6 +273,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
                 encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
                 encClientBuilder = encClientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingDisabled());
                 encClientBuilder = encClientBuilder.withAccelerateModeEnabled(configuration.isAccelerateModeEnabled());
+                encClientBuilder = encClientBuilder.withDualstackEnabled(configuration.isDualstackEnabled());
                 client = encClientBuilder.build();
             }
         } else {
@@ -290,6 +292,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
                 clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
                 clientBuilder = clientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingDisabled());
                 clientBuilder = clientBuilder.withAccelerateModeEnabled(configuration.isAccelerateModeEnabled());
+                clientBuilder = clientBuilder.withDualstackEnabled(configuration.isDualstackEnabled());
                 client = clientBuilder.build();
                 
             } else {
@@ -299,6 +302,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
                 encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
                 encClientBuilder = encClientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingDisabled());
                 encClientBuilder = encClientBuilder.withAccelerateModeEnabled(configuration.isAccelerateModeEnabled());
+                encClientBuilder = encClientBuilder.withDualstackEnabled(configuration.isDualstackEnabled());
                 client = encClientBuilder.build();
             }
         }

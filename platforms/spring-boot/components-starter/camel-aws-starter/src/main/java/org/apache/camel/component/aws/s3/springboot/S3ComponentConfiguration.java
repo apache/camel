@@ -243,6 +243,7 @@ public class S3ComponentConfiguration
          * Define if Accelerate Mode enabled is true or false
          */
         private Boolean accelerateModeEnabled = false;
+        private Boolean dualstackEnabled = false;
 
         public Long getPartSize() {
             return partSize;
@@ -459,6 +460,14 @@ public class S3ComponentConfiguration
 
         public void setAccelerateModeEnabled(Boolean accelerateModeEnabled) {
             this.accelerateModeEnabled = accelerateModeEnabled;
+        }
+
+        public Boolean getDualstackEnabled() {
+            return dualstackEnabled;
+        }
+
+        public void setDualstackEnabled(Boolean dualstackEnabled) {
+            this.dualstackEnabled = dualstackEnabled;
         }
     }
 }
