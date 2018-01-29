@@ -266,6 +266,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
                 clientBuilder = clientBuilder.withAccelerateModeEnabled(configuration.isAccelerateModeEnabled());
                 clientBuilder = clientBuilder.withDualstackEnabled(configuration.isDualstackEnabled());
                 clientBuilder = clientBuilder.withPayloadSigningEnabled(configuration.isPayloadSigningEnabled());
+                clientBuilder = clientBuilder.withForceGlobalBucketAccessEnabled(configuration.isForceGlobalBucketAccessEnabled());
                 client = clientBuilder.build();
             } else {
                 if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
@@ -276,6 +277,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
                 encClientBuilder = encClientBuilder.withAccelerateModeEnabled(configuration.isAccelerateModeEnabled());
                 encClientBuilder = encClientBuilder.withDualstackEnabled(configuration.isDualstackEnabled());
                 encClientBuilder = encClientBuilder.withPayloadSigningEnabled(configuration.isPayloadSigningEnabled());
+                encClientBuilder = encClientBuilder.withForceGlobalBucketAccessEnabled(configuration.isForceGlobalBucketAccessEnabled());
                 client = encClientBuilder.build();
             }
         } else {
@@ -296,6 +298,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
                 clientBuilder = clientBuilder.withAccelerateModeEnabled(configuration.isAccelerateModeEnabled());
                 clientBuilder = clientBuilder.withDualstackEnabled(configuration.isDualstackEnabled());
                 clientBuilder = clientBuilder.withPayloadSigningEnabled(configuration.isPayloadSigningEnabled());
+                clientBuilder = clientBuilder.withForceGlobalBucketAccessEnabled(configuration.isForceGlobalBucketAccessEnabled());
                 client = clientBuilder.build();
                 
             } else {
@@ -307,6 +310,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
                 encClientBuilder = encClientBuilder.withAccelerateModeEnabled(configuration.isAccelerateModeEnabled());
                 encClientBuilder = encClientBuilder.withDualstackEnabled(configuration.isDualstackEnabled());
                 encClientBuilder = encClientBuilder.withPayloadSigningEnabled(configuration.isPayloadSigningEnabled());
+                encClientBuilder = encClientBuilder.withForceGlobalBucketAccessEnabled(configuration.isForceGlobalBucketAccessEnabled());
                 client = encClientBuilder.build();
             }
         }
