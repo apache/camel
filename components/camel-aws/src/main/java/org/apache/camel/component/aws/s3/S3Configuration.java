@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.S3ClientOptions;
 import com.amazonaws.services.s3.model.EncryptionMaterials;
 
 import org.apache.camel.RuntimeCamelException;
@@ -74,6 +75,8 @@ public class S3Configuration implements Cloneable {
     private boolean useEncryption;
     @UriParam(label = "common, advanced", defaultValue = "false")
     private boolean chunkedEncodingDisabled;
+    @UriParam(label = "common, advanced", defaultValue = "false")
+    private boolean accelerateModeEnabled;
     @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean useAwsKMS;
     @UriParam(label = "producer,advanced")
@@ -393,6 +396,17 @@ public class S3Configuration implements Cloneable {
      */
     public void setChunkedEncodingDisabled(boolean chunkedEncodingDisabled) {
         this.chunkedEncodingDisabled = chunkedEncodingDisabled;
+    }
+
+    public boolean isAccelerateModeEnabled() {
+        return accelerateModeEnabled;
+    }
+
+    /**
+     * Define if Accelerate Mode enabled is true or false
+     */
+    public void setAccelerateModeEnabled(boolean accelerateModeEnabled) {
+        this.accelerateModeEnabled = accelerateModeEnabled;
     }
 
     boolean hasProxyConfiguration() {
