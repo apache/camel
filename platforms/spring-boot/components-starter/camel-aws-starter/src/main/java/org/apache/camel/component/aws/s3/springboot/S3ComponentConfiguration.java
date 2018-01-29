@@ -238,7 +238,7 @@ public class S3ComponentConfiguration
         /**
          * Define if disabled Chunked Encoding is true or false
          */
-        private Boolean chunkedEncodingDisabled = false;
+        private Boolean chunkedEncodingEnabled = false;
 
         public Long getPartSize() {
             return partSize;
@@ -441,12 +441,12 @@ public class S3ComponentConfiguration
             this.awsKMSKeyId = awsKMSKeyId;
         }
 
-        public Boolean getChunkedEncodingDisabled() {
-            return chunkedEncodingDisabled;
+        public Boolean getChunkedEncodingEnabled() {
+            return chunkedEncodingEnabled;
         }
 
-        public void setChunkedEncodingDisabled(Boolean chunkedEncodingDisabled) {
-            this.chunkedEncodingDisabled = chunkedEncodingDisabled;
+        public void setChunkedEncodingEnabled(Boolean chunkedEncodingEnabled) {
+            this.chunkedEncodingEnabled = chunkedEncodingEnabled;
         }
     }
 }

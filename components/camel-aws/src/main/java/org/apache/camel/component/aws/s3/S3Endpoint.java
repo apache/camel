@@ -262,14 +262,14 @@ public class S3Endpoint extends ScheduledPollEndpoint {
                     clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
                 }
                 clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
-                clientBuilder = clientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingDisabled());
+                clientBuilder = clientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingEnabled());
                 client = clientBuilder.build();
             } else {
                 if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                     encClientBuilder = encClientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
                 }
                 encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
-                encClientBuilder = encClientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingDisabled());
+                encClientBuilder = encClientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingEnabled());
                 client = encClientBuilder.build();
             }
         } else {
@@ -286,14 +286,14 @@ public class S3Endpoint extends ScheduledPollEndpoint {
                     clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
                 }
                 clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
-                clientBuilder = clientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingDisabled());
+                clientBuilder = clientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingEnabled());
                 client = clientBuilder.build();
             } else {
                 if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                     encClientBuilder = encClientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
                 }
                 encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
-                encClientBuilder = encClientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingDisabled());
+                encClientBuilder = encClientBuilder.withChunkedEncodingDisabled(configuration.isChunkedEncodingEnabled());
                 client = encClientBuilder.build();
             }
         }
