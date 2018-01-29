@@ -78,6 +78,8 @@ public class S3Configuration implements Cloneable {
     private boolean accelerateModeEnabled;
     @UriParam(label = "common, advanced", defaultValue = "false")
     private boolean dualstackEnabled;
+    @UriParam(label = "common, advanced", defaultValue = "false")
+    private boolean payloadSigningEnabled;
     @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean useAwsKMS;
     @UriParam(label = "producer,advanced")
@@ -410,15 +412,26 @@ public class S3Configuration implements Cloneable {
         this.accelerateModeEnabled = accelerateModeEnabled;
     }
 
-    /**
-     * Define if Dualstack enabled is true or false
-     */
     public boolean isDualstackEnabled() {
         return dualstackEnabled;
     }
-
+    
+    /**
+     * Define if Dualstack enabled is true or false
+     */
     public void setDualstackEnabled(boolean dualstackEnabled) {
         this.dualstackEnabled = dualstackEnabled;
+    }
+
+    public boolean isPayloadSigningEnabled() {
+        return payloadSigningEnabled;
+    }
+
+    /**
+     * Define if Payload Signing enabled is true or false
+     */
+    public void setPayloadSigningEnabled(boolean payloadSigningEnabled) {
+        this.payloadSigningEnabled = payloadSigningEnabled;
     }
 
     boolean hasProxyConfiguration() {
