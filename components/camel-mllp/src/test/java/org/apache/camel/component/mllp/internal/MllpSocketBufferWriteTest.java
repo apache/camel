@@ -57,7 +57,7 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
         assertEquals(1, instance.size());
         assertEquals(-1, instance.startOfBlockIndex);
-        assertEquals(0, instance.endOfBlockIndex);
+        assertEquals(-1, instance.endOfBlockIndex);
     }
 
     /**
@@ -142,7 +142,7 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
         assertEquals(6, instance.size());
         assertEquals(-1, instance.startOfBlockIndex);
-        assertEquals(4, instance.endOfBlockIndex);
+        assertEquals(-1, instance.endOfBlockIndex);
     }
 
     /**

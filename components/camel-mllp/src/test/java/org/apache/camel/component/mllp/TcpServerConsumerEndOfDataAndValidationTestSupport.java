@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.mllp;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
+import java.net.SocketException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -30,7 +33,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
-import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceTimeoutException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.junit.Rule;
@@ -38,7 +40,8 @@ import org.junit.Test;
 
 public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends CamelTestSupport {
     static final int CONNECT_TIMEOUT = 500;
-    static final int RESPONSE_TIMEOUT = 5000;
+    static final int RECEIVE_TIMEOUT = 1000;
+    static final int READ_TIMEOUT = 500;
 
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
@@ -46,10 +49,14 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
     @EndpointInject(uri = "mock://complete")
     MockEndpoint complete;
 
+    @EndpointInject(uri = "mock://failed")
+    MockEndpoint failed;
+
     @EndpointInject(uri = "mock://invalid-ex")
     MockEndpoint invalid;
 
     int expectedCompleteCount;
+    int expectedFailedCount;
     int expectedInvalidCount;
 
     @Override
@@ -76,8 +83,11 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
                 onException(MllpInvalidMessageException.class)
                     .to(invalid);
 
-                fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d&validatePayload=%b&requireEndOfData=%b",
-                    mllpClient.getMllpHost(), mllpClient.getMllpPort(), CONNECT_TIMEOUT, RESPONSE_TIMEOUT, validatePayload(), requireEndOfData())
+                onCompletion().onFailureOnly()
+                    .to(failed);
+
+                fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d&readTimeout=%d&validatePayload=%b&requireEndOfData=%b",
+                    mllpClient.getMllpHost(), mllpClient.getMllpPort(), CONNECT_TIMEOUT, RECEIVE_TIMEOUT, READ_TIMEOUT, validatePayload(), requireEndOfData())
                     .routeId(routeId)
                     .log(LoggingLevel.INFO, routeId, "Test route received message")
                     .to(complete);
@@ -91,6 +101,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
 
     protected void setExpectedCounts() {
         complete.expectedMessageCount(expectedCompleteCount);
+        failed.expectedMessageCount(expectedFailedCount);
         invalid.expectedMessageCount(expectedInvalidCount);
     }
 
@@ -160,7 +171,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
         log.info("Sending TEST_MESSAGE_2");
         String acknowledgement2 = mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(2));
 
-        assertTrue("First two normal exchanges did not complete", notify1.matches(RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS));
+        assertTrue("First two normal exchanges did not complete", notify1.matches(RECEIVE_TIMEOUT, TimeUnit.MILLISECONDS));
 
         log.info("Sending TEST_MESSAGE_3");
         mllpClient.setSendEndOfBlock(false);
@@ -183,7 +194,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
         log.info("Sending TEST_MESSAGE_5");
         String acknowledgement5 = mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(5));
 
-        assertTrue("Remaining exchanges did not complete", notify2.matches(RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS));
+        assertTrue("Remaining exchanges did not complete", notify2.matches(RECEIVE_TIMEOUT, TimeUnit.MILLISECONDS));
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
 
@@ -207,27 +218,47 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
         // Send one message to establish the connection and start the ConsumerClientSocketThread
         mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage());
 
-        assertTrue("One exchange should have completed", oneDone.matches(RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS));
+        assertTrue("One exchange should have completed", oneDone.matches(RECEIVE_TIMEOUT, TimeUnit.MILLISECONDS));
 
         mllpClient.setSendEndOfBlock(false);
         mllpClient.setSendEndOfData(false);
 
-        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage());
+        mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage());
 
-        assertTrue("Two exchanges should have completed", twoDone.matches(RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS));
+        assertTrue("Two exchanges should have completed", twoDone.matches(RECEIVE_TIMEOUT, TimeUnit.MILLISECONDS));
     }
 
 
     @Test
     public void testInitialMessageReadTimeout() throws Exception {
-        expectedInvalidCount = 1;
+        expectedCompleteCount = 1;
 
         setExpectedCounts();
 
         mllpClient.setSendEndOfBlock(false);
         mllpClient.setSendEndOfData(false);
 
-        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage());
+        log.info("Sending first message");
+        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage(10001));
+
+        Thread.sleep(RECEIVE_TIMEOUT * 5);
+
+        mllpClient.setSendEndOfBlock(true);
+        mllpClient.setSendEndOfData(true);
+
+        try {
+            log.info("Attempting to send second message");
+            String acknowledgement = mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(10002));
+            assertEquals("If the send doesn't throw an exception, the acknowledgement should be empty", "", acknowledgement);
+        } catch (MllpJUnitResourceException expected) {
+            assertThat("If the send throws an exception, the cause should be a SocketException", expected.getCause(), instanceOf(SocketException.class));
+        }
+
+        mllpClient.disconnect();
+        mllpClient.connect();
+
+        log.info("Sending third message");
+        String acknowledgement = mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(10003));
     }
 
     @Test
@@ -305,16 +336,6 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
 
     @Test
     public abstract void testMessageContainingEmbeddedEndOfBlock() throws Exception;
-
-    protected void runMessageContainingEmbeddedEndOfBlock() throws Exception {
-        setExpectedCounts();
-
-        NotifyBuilder done = new NotifyBuilder(context()).whenDone(1).create();
-
-        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage().replaceFirst("EVN", "EVN" + MllpProtocolConstants.END_OF_BLOCK));
-
-        assertTrue("Exchange should have completed", done.matches(15, TimeUnit.SECONDS));
-    }
 
     @Test
     public abstract void testInvalidMessageContainingEmbeddedEndOfBlock() throws Exception;

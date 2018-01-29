@@ -35,6 +35,9 @@ import org.junit.Rule;
 import org.junit.Test;
 
 public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends CamelTestSupport {
+    static final int RECEIVE_TIMEOUT = 1000;
+    static final int READ_TIMEOUT = 500;
+
     static final String TEST_MESSAGE =
         "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20161206193919|RISTECH|ADT^A08|00001|D|2.3^^|||||||" + '\r'
             + "EVN|A08|20150107161440||REG_UPDATE_SEND_VISIT_MESSAGES_ON_PATIENT_CHANGES|RISTECH^RADIOLOGY^TECHNOLOGIST^^^^^^UCLA^^^^^RRMC||" + '\r'
@@ -158,7 +161,8 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
                 from(source.getDefaultEndpoint()).routeId(routeId)
                     .log(LoggingLevel.INFO, routeId, "Sending Message")
-                    .toF("mllp://%s:%d?validatePayload=%b&requireEndOfData=%b", mllpServer.getListenHost(), mllpServer.getListenPort(), validatePayload(), requireEndOfData())
+                    .toF("mllp://%s:%d?receiveTimeout=%d&readTimeout=%d&validatePayload=%b&requireEndOfData=%b", mllpServer.getListenHost(), mllpServer.getListenPort(),
+                        RECEIVE_TIMEOUT, READ_TIMEOUT, validatePayload(), requireEndOfData())
                     .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")
                     .to(aa);
             }

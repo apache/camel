@@ -37,11 +37,15 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest extends
 
     @Override
     public void testInvalidMessage() throws Exception {
+        expectedFailedCount = 1;
+
         runNthInvalidMessage();
     }
 
     @Override
     public void testNthInvalidMessage() throws Exception {
+        expectedFailedCount = 1;
+
         runNthInvalidMessage();
     }
 
@@ -61,9 +65,13 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest extends
 
     @Override
     public void testMessageContainingEmbeddedEndOfBlock() throws Exception {
-        expectedInvalidCount = 1;
+        setExpectedCounts();
 
-        runMessageContainingEmbeddedEndOfBlock();
+        NotifyBuilder done = new NotifyBuilder(context()).whenDone(1).create();
+
+        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage().replaceFirst("EVN", "EVN" + MllpProtocolConstants.END_OF_BLOCK));
+
+        assertFalse("Exchange should not have completed", done.matches(5, TimeUnit.SECONDS));
     }
 
     @Override

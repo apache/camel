@@ -42,7 +42,10 @@ import org.junit.Rule;
 import org.junit.Test;
 
 public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSupport {
-    static final int IDLE_TIMEOUT = 10000;
+    static final int CONNECT_TIMEOUT = 500;
+    static final int RECEIVE_TIMEOUT = 1000;
+    static final int READ_TIMEOUT = 500;
+    static final int IDLE_TIMEOUT = RECEIVE_TIMEOUT * 3;
 
     @Rule
     public MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
@@ -90,7 +93,8 @@ public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSup
 
                 from(source.getDefaultEndpoint()).routeId(routeId)
                     .log(LoggingLevel.INFO, routeId, "Sending Message")
-                    .toF("mllp://%s:%d?idleTimeout=%s", mllpServer.getListenHost(), mllpServer.getListenPort(), IDLE_TIMEOUT)
+                    .toF("mllp://%s:%d?connectTimeout=%d&receiveTimeout=%d&readTimeout=%d&idleTimeout=%s", mllpServer.getListenHost(), mllpServer.getListenPort(),
+                        CONNECT_TIMEOUT, RECEIVE_TIMEOUT, READ_TIMEOUT, IDLE_TIMEOUT)
                     .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")
                     .to(complete);
             }

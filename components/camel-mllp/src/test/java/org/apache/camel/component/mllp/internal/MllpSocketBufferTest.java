@@ -403,7 +403,7 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
         assertFalse("Unexpected initial value", instance.hasEndOfBlock());
 
         instance.write(MllpProtocolConstants.END_OF_BLOCK);
-        assertTrue(instance.hasEndOfBlock());
+        assertFalse("START_OF_BLOCK before an END_OF_BLOCK", instance.hasEndOfBlock());
 
         instance.reset();
         assertFalse(instance.hasEndOfBlock());
@@ -457,7 +457,7 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
         assertFalse(instance.hasEndOfData());
 
         instance.write(MllpProtocolConstants.END_OF_DATA);
-        assertTrue(instance.hasEndOfData());
+        assertFalse("Need a START_OF_BLOCK before the END_OF_DATA",  instance.hasEndOfData());
 
         instance.reset();
         assertFalse(instance.hasEndOfData());
