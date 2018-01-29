@@ -24,6 +24,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 import com.mongodb.MongoClient;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 
@@ -271,7 +272,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertEquals(0, testCollection.count());
         for (int i = 1; i <= 100; i++) {
             String body = null;
-            try (Formatter f = new Formatter();) {
+            try (Formatter f = new Formatter()) {
                 if (i % 2 == 0) {
                     body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i).toString();
                 } else {
@@ -284,7 +285,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertEquals(100L, testCollection.count());
 
         // Testing the update logic
-        Document extraField = new Document("extraField", true);
+        Bson extraField = Filters.eq("extraField", true);
         assertEquals("Number of records with 'extraField' flag on must equal 50", 50L, testCollection.count(extraField));
 
         Exchange resultExchange = template.request("direct:remove", new Processor() {
