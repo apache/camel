@@ -54,7 +54,8 @@ public class LRAClient {
         this.sagaService = sagaService;
 
         this.client = ClientBuilder.newBuilder()
-                .executorService(sagaService.getExecutorService())
+                // CAMEL-12204: disabled for compatibility with JAX-RS 2.0
+                //.executorService(sagaService.getExecutorService())
                 .build();
 
         this.target = client.target(
