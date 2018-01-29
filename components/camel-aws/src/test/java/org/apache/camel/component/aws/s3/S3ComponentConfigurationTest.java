@@ -176,12 +176,12 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithChunkedEncoding() throws Exception {
         
         S3Component component = new S3Component(context);
-        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?chunkedEncodingEnabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1");
+        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?chunkedEncodingDisabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
-        assertTrue(endpoint.getConfiguration().isChunkedEncodingEnabled());
+        assertTrue(endpoint.getConfiguration().isChunkedEncodingDisabled());
     }
     
     @Test
