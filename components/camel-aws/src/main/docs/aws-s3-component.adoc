@@ -77,7 +77,7 @@ with the following path and query parameters:
 | *bucketNameOrArn* | *Required* Bucket name or ARN |  | String
 |===
 
-==== Query Parameters (48 parameters):
+==== Query Parameters (49 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -115,6 +115,7 @@ with the following path and query parameters:
 | *accelerateModeEnabled* ( advanced) | Define if Accelerate Mode enabled is true or false | false | boolean
 | *chunkedEncodingDisabled* ( advanced) | Define if disabled Chunked Encoding is true or false | false | boolean
 | *dualstackEnabled* ( advanced) | Define if Dualstack enabled is true or false | false | boolean
+| *payloadSigningEnabled* ( advanced) | Define if Payload Signing enabled is true or false | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int

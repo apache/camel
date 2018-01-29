@@ -243,7 +243,14 @@ public class S3ComponentConfiguration
          * Define if Accelerate Mode enabled is true or false
          */
         private Boolean accelerateModeEnabled = false;
+        /**
+         * Define if Dualstack enabled is true or false
+         */
         private Boolean dualstackEnabled = false;
+        /**
+         * Define if Payload Signing enabled is true or false
+         */
+        private Boolean payloadSigningEnabled = false;
 
         public Long getPartSize() {
             return partSize;
@@ -468,6 +475,14 @@ public class S3ComponentConfiguration
 
         public void setDualstackEnabled(Boolean dualstackEnabled) {
             this.dualstackEnabled = dualstackEnabled;
+        }
+
+        public Boolean getPayloadSigningEnabled() {
+            return payloadSigningEnabled;
+        }
+
+        public void setPayloadSigningEnabled(Boolean payloadSigningEnabled) {
+            this.payloadSigningEnabled = payloadSigningEnabled;
         }
     }
 }
