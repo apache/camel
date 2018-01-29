@@ -239,6 +239,10 @@ public class S3ComponentConfiguration
          * Define if disabled Chunked Encoding is true or false
          */
         private Boolean chunkedEncodingDisabled = false;
+        /**
+         * Define if Accelerate Mode enabled is true or false
+         */
+        private Boolean accelerateModeEnabled = false;
 
         public Long getPartSize() {
             return partSize;
@@ -447,6 +451,14 @@ public class S3ComponentConfiguration
 
         public void setChunkedEncodingDisabled(Boolean chunkedEncodingDisabled) {
             this.chunkedEncodingDisabled = chunkedEncodingDisabled;
+        }
+
+        public Boolean getAccelerateModeEnabled() {
+            return accelerateModeEnabled;
+        }
+
+        public void setAccelerateModeEnabled(Boolean accelerateModeEnabled) {
+            this.accelerateModeEnabled = accelerateModeEnabled;
         }
     }
 }
