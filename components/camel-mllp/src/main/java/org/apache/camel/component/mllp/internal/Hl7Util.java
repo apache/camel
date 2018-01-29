@@ -17,7 +17,9 @@
 
 package org.apache.camel.component.mllp.internal;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.camel.component.mllp.MllpComponent;
@@ -82,10 +84,9 @@ public final class Hl7Util {
 
         int validationLength = Math.min(length, hl7Bytes.length);
 
-        if (hl7Bytes[validationLength - 2] != MllpProtocolConstants.SEGMENT_DELIMITER || hl7Bytes[validationLength - 1] != MllpProtocolConstants.MESSAGE_TERMINATOR) {
-            String format = "The HL7 payload terminating bytes [%#x, %#x] are incorrect - expected [%#x, %#x]  {ASCII [<CR>, <LF>]}";
-            return String.format(format, hl7Bytes[validationLength - 2], hl7Bytes[validationLength - 1],
-                (byte) MllpProtocolConstants.SEGMENT_DELIMITER, (byte) MllpProtocolConstants.MESSAGE_TERMINATOR);
+        if (hl7Bytes[validationLength - 1] != MllpProtocolConstants.SEGMENT_DELIMITER  && hl7Bytes[validationLength - 1] != MllpProtocolConstants.MESSAGE_TERMINATOR) {
+            String format = "The HL7 payload terminating byte [%#x] is incorrect - expected [%#x]  {ASCII [<CR>]}";
+            return String.format(format, hl7Bytes[validationLength - 2], (byte) MllpProtocolConstants.SEGMENT_DELIMITER);
         }
 
         for (int i = 0; i < validationLength; ++i) {
@@ -102,34 +103,78 @@ public final class Hl7Util {
         return null;
     }
 
+    /**
+     * Find the field separator indices in the Segment.
+     *
+     * NOTE:  The last element of the list will be the index of the end of the segment.
+     *
+     * @param hl7MessageBytes the HL7 binary message
+     * @param startingIndex index of the beginning of the HL7 Segment
+     *
+     * @return List of the field separator indices, which may be empty.
+     */
+    public static List<Integer> findFieldSeparatorIndicesInSegment(byte[] hl7MessageBytes, int startingIndex) {
+        List<Integer> fieldSeparatorIndices = new LinkedList<>();
+
+        if (hl7MessageBytes != null && hl7MessageBytes.length > startingIndex && hl7MessageBytes.length > 3) {
+            final byte fieldSeparator = hl7MessageBytes[3];
+
+            for (int i = startingIndex; i < hl7MessageBytes.length; ++i) {
+                if (fieldSeparator == hl7MessageBytes[i]) {
+                    fieldSeparatorIndices.add(i);
+                } else if (MllpProtocolConstants.SEGMENT_DELIMITER == hl7MessageBytes[i]) {
+                    fieldSeparatorIndices.add(i);
+                    break;
+                }
+            }
+        }
+
+        return fieldSeparatorIndices;
+    }
+
+    /**
+     * Find the String value of MSH-19 (Character set).
+     *
+     * @param hl7Message the HL7 binary data to search
+     *
+     * @return the String value of MSH-19, or an empty String if not found.
+     */
+    public static String findMsh18(byte[] hl7Message) {
+        String answer = "";
+
+        if (hl7Message != null && hl7Message.length > 0) {
+
+            List<Integer> fieldSeparatorIndexes = findFieldSeparatorIndicesInSegment(hl7Message, 0);
+
+            if (fieldSeparatorIndexes.size() > 18) {
+                int startOfMsh19 = fieldSeparatorIndexes.get(17) + 1;
+                int length = fieldSeparatorIndexes.get(18) - fieldSeparatorIndexes.get(17) - 1;
+
+                if (length > 0) {
+                    answer = new String(hl7Message, startOfMsh19, length, StandardCharsets.US_ASCII);
+                }
+            }
+        }
+
+        return answer;
+    }
+
+
     public static void generateAcknowledgementPayload(MllpSocketBuffer mllpSocketBuffer, byte[] hl7MessageBytes, String acknowledgementCode) throws Hl7AcknowledgementGenerationException {
         if (hl7MessageBytes == null) {
             throw new Hl7AcknowledgementGenerationException("Null HL7 message received for parsing operation");
         }
 
-        final byte fieldSeparator = hl7MessageBytes[3];
-        final byte componentSeparator = hl7MessageBytes[4];
+        List<Integer> fieldSeparatorIndexes = findFieldSeparatorIndicesInSegment(hl7MessageBytes, 0);
 
-        List<Integer> fieldSeparatorIndexes = new ArrayList<>(10);  // We need at least 10 fields to create the acknowledgment
-
-        // Find the end of the MSH and indexes of the fields in the MSH
-        int endOfMSH = -1;
-        for (int i = 0; i < hl7MessageBytes.length; ++i) {
-            if (fieldSeparator == hl7MessageBytes[i]) {
-                fieldSeparatorIndexes.add(i);
-            } else if (MllpProtocolConstants.SEGMENT_DELIMITER == hl7MessageBytes[i]) {
-                endOfMSH = i;
-                break;
-            }
+        if (fieldSeparatorIndexes.isEmpty()) {
+            throw new Hl7AcknowledgementGenerationException("Failed to find the end of the MSH Segment while attempting to generate response", hl7MessageBytes);
         }
 
-        if (-1 == endOfMSH) {
-            throw new Hl7AcknowledgementGenerationException("Failed to find the end of the  MSH Segment while attempting to generate response", hl7MessageBytes);
-        }
+        if (fieldSeparatorIndexes.size() < 8) {
+            String exceptionMessage = String.format("Insufficient number of fields in MSH-2 in MSH to generate a response - 10 are required but %d were found", fieldSeparatorIndexes.size() - 1);
 
-        if (8 > fieldSeparatorIndexes.size()) {
-            throw new Hl7AcknowledgementGenerationException("Insufficient number of fields in after MSH-2 in MSH to generate a response - 8 are required but "
-                + fieldSeparatorIndexes.size() + " " + "were found", hl7MessageBytes);
+            throw new Hl7AcknowledgementGenerationException(exceptionMessage, hl7MessageBytes);
         }
 
         // Start building the MLLP Envelope
@@ -137,36 +182,44 @@ public final class Hl7Util {
 
         // Build the MSH Segment
         mllpSocketBuffer.write(hl7MessageBytes, 0, fieldSeparatorIndexes.get(1)); // through MSH-2 (without trailing field separator)
-        mllpSocketBuffer.write(hl7MessageBytes, fieldSeparatorIndexes.get(3), fieldSeparatorIndexes.get(4) - fieldSeparatorIndexes.get(3)); // MSH-5
-        mllpSocketBuffer.write(hl7MessageBytes, fieldSeparatorIndexes.get(4), fieldSeparatorIndexes.get(5) - fieldSeparatorIndexes.get(4)); // MSH-6
-        mllpSocketBuffer.write(hl7MessageBytes, fieldSeparatorIndexes.get(1), fieldSeparatorIndexes.get(2) - fieldSeparatorIndexes.get(1)); // MSH-3
-        mllpSocketBuffer.write(hl7MessageBytes, fieldSeparatorIndexes.get(2), fieldSeparatorIndexes.get(3) - fieldSeparatorIndexes.get(2)); // MSH-4
-        mllpSocketBuffer.write(hl7MessageBytes, fieldSeparatorIndexes.get(5), fieldSeparatorIndexes.get(7) - fieldSeparatorIndexes.get(5)); // MSH-7 and MSH-8
+        writeFieldToBuffer(3, mllpSocketBuffer, hl7MessageBytes, fieldSeparatorIndexes); // MSH-5
+        writeFieldToBuffer(4, mllpSocketBuffer, hl7MessageBytes, fieldSeparatorIndexes); // MSH-6
+        writeFieldToBuffer(1, mllpSocketBuffer, hl7MessageBytes, fieldSeparatorIndexes); // MSH-3
+        writeFieldToBuffer(2, mllpSocketBuffer, hl7MessageBytes, fieldSeparatorIndexes); // MSH-4
+        writeFieldToBuffer(5, mllpSocketBuffer, hl7MessageBytes, fieldSeparatorIndexes); // MSH-7
+        writeFieldToBuffer(6, mllpSocketBuffer, hl7MessageBytes, fieldSeparatorIndexes); // MSH-8
+
+        final byte fieldSeparator = hl7MessageBytes[3];
+
         // Need to generate the correct MSH-9
         mllpSocketBuffer.write(fieldSeparator);
-        mllpSocketBuffer.write("ACK".getBytes(), 0, 3); // MSH-9.1
+        mllpSocketBuffer.write("ACK".getBytes()); // MSH-9.1
         int msh92start = -1;
         for (int j = fieldSeparatorIndexes.get(7) + 1; j < fieldSeparatorIndexes.get(8); ++j) {
+            final byte componentSeparator = hl7MessageBytes[4];
             if (componentSeparator == hl7MessageBytes[j]) {
                 msh92start = j;
                 break;
             }
         }
 
+        // MSH-9.2
         if (-1 == msh92start) {
             LOG.warn("Didn't find component separator for MSH-9.2 - sending ACK in MSH-9");
         } else {
-            mllpSocketBuffer.write(hl7MessageBytes, msh92start, fieldSeparatorIndexes.get(8) - msh92start); // MSH-9.2
+            mllpSocketBuffer.write(hl7MessageBytes, msh92start, fieldSeparatorIndexes.get(8) - msh92start);
         }
 
-        mllpSocketBuffer.write(hl7MessageBytes, fieldSeparatorIndexes.get(8), endOfMSH - fieldSeparatorIndexes.get(8)); // MSH-10 through the end of the MSH
+        // MSH-10 through the end of the MSH
+        mllpSocketBuffer.write(hl7MessageBytes, fieldSeparatorIndexes.get(8), fieldSeparatorIndexes.get(fieldSeparatorIndexes.size() - 1) - fieldSeparatorIndexes.get(8));
+
         mllpSocketBuffer.write(MllpProtocolConstants.SEGMENT_DELIMITER);
 
         // Build the MSA Segment
         mllpSocketBuffer.write("MSA".getBytes(), 0, 3);
         mllpSocketBuffer.write(fieldSeparator);
         mllpSocketBuffer.write(acknowledgementCode.getBytes(), 0, 2);
-        mllpSocketBuffer.write(hl7MessageBytes, fieldSeparatorIndexes.get(8), fieldSeparatorIndexes.get(9) - fieldSeparatorIndexes.get(8)); // MSH-10 end
+        writeFieldToBuffer(8, mllpSocketBuffer, hl7MessageBytes, fieldSeparatorIndexes); // MSH-10
         mllpSocketBuffer.write(MllpProtocolConstants.SEGMENT_DELIMITER);
 
         // Close the MLLP Envelope
@@ -332,5 +385,18 @@ public final class Hl7Util {
         default:
             return String.valueOf(c);
         }
+    }
+
+    /**
+     * Copy a field from the HL7 Message Bytes to the supplied MllpSocketBuffer.
+     *
+     * NOTE:  Internal function - no error checking
+     *
+     * @param mllpSocketBuffer the destination for the field
+     * @param hl7MessageBytes the HL7 message bytes
+     * @param fieldSeparatorIndexes the list of the indices of the field separators
+     */
+    private static void writeFieldToBuffer(int fieldNumber, MllpSocketBuffer mllpSocketBuffer, byte[] hl7MessageBytes, List<Integer> fieldSeparatorIndexes) {
+        mllpSocketBuffer.write(hl7MessageBytes, fieldSeparatorIndexes.get(fieldNumber), fieldSeparatorIndexes.get(fieldNumber + 1) - fieldSeparatorIndexes.get(fieldNumber));
     }
 }
