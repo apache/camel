@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.S3ClientOptions;
 import com.amazonaws.services.s3.model.EncryptionMaterials;
 
 import org.apache.camel.RuntimeCamelException;
