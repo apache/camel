@@ -37,8 +37,6 @@ import org.apache.camel.dataformat.bindy.annotation.OneToMany;
 import org.apache.camel.dataformat.bindy.annotation.Section;
 import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
-import org.apache.camel.impl.DefaultClassResolver;
-import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
@@ -67,6 +65,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     private String separator;
     private boolean skipFirstLine;
+    private boolean skipField;
     private boolean generateHeaderColumnNames;
     private boolean messageOrdered;
     private String quote;
@@ -75,20 +74,12 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private boolean allowEmptyStream;
     private boolean quotingEscaped;
     private boolean endWithLineBreak;
-    
-    private boolean isSkipField;
 
     public BindyCsvFactory(Class<?> type) throws Exception {
-        this(type, false);
-    }
-
-    public BindyCsvFactory(Class<?> type, boolean isSkipField) throws Exception {
         super(type);
 
         // initialize specific parameters of the csv model
         initCsvModel();
-        
-        this.isSkipField = isSkipField;
     }
 
     /**
@@ -611,6 +602,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     skipFirstLine = record.skipFirstLine();
                     LOG.debug("Skip First Line parameter of the CSV: {}" + skipFirstLine);
 
+                    // Get skipFirstLine parameter
+                    skipField = record.skipField();
+                    LOG.debug("Skip Field parameter of the CSV: {}" + skipField);
+
                     // Get generateHeaderColumnNames parameter
                     generateHeaderColumnNames = record.generateHeaderColumns();
                     LOG.debug("Generate header column names parameter of the CSV: {}", generateHeaderColumnNames);
@@ -710,6 +705,15 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     }
 
     /**
+     *  Indicate if can skip fields
+     * 
+     * @return boolean
+     */
+    public boolean isSkipField() {
+        return this.skipField;
+    }
+
+    /**
      * If last record is to span the rest of the line
      */
     public boolean getAutospanLine() {
@@ -740,13 +744,5 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     public boolean isEndWithLineBreak() {
         return endWithLineBreak;
     }
-
-    /**
-     * Indicate if DataField can be ignored
-     * 
-     * @return boolean
-     */
-    public boolean isSkipField() {
-        return this.isSkipField;
-    }
+    
 }
