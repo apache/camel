@@ -23,6 +23,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.mq.AmazonMQ;
 import com.amazonaws.services.mq.AmazonMQClientBuilder;
 import com.amazonaws.services.mq.model.ListBrokersRequest;
@@ -71,7 +72,7 @@ public class MQComponentVerifierExtension extends DefaultComponentVerifierExtens
             MQConfiguration configuration = setProperties(new MQConfiguration(), parameters);
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
-            AmazonMQ client = AmazonMQClientBuilder.standard().withCredentials(credentialsProvider).withRegion(configuration.getRegion()).build();
+            AmazonMQ client = AmazonMQClientBuilder.standard().withCredentials(credentialsProvider).withRegion(Regions.valueOf(configuration.getRegion())).build();
             client.listBrokers(new ListBrokersRequest());
         } catch (SdkClientException e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
