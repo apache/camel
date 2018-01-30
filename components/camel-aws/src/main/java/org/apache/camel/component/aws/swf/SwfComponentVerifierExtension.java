@@ -23,6 +23,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow;
 import com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClientBuilder;
 import com.amazonaws.services.simpleworkflow.model.ListDomainsRequest;
@@ -71,7 +72,7 @@ public class SwfComponentVerifierExtension extends DefaultComponentVerifierExten
             SWFConfiguration configuration = setProperties(new SWFConfiguration(), parameters);
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
-            AmazonSimpleWorkflow client = AmazonSimpleWorkflowClientBuilder.standard().withCredentials(credentialsProvider).withRegion(configuration.getRegion()).build();
+            AmazonSimpleWorkflow client = AmazonSimpleWorkflowClientBuilder.standard().withCredentials(credentialsProvider).withRegion(Regions.valueOf(configuration.getRegion())).build();
             ListDomainsRequest listDomainsRequest = new ListDomainsRequest();
             client.listDomains(listDomainsRequest);
         } catch (SdkClientException e) {
