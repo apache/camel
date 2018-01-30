@@ -47,21 +47,11 @@ import org.slf4j.LoggerFactory;
 public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     private static final Logger LOG = LoggerFactory.getLogger(BindyCsvDataFormat.class);
 
-    /**
-     * If isSkipField = true, a CSV file doesn't need to declare all the fields, otherwise, all the fields are mandatory.
-     */
-    private boolean isSkipField;
-
     public BindyCsvDataFormat() {
     }
 
     public BindyCsvDataFormat(Class<?> type) {
-       this(type, false);
-    }
-    
-    public BindyCsvDataFormat(Class<?> type, boolean isSkipField) {
         super(type);
-        this.isSkipField = isSkipField;
     }
 
     @Override
@@ -320,12 +310,8 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
     @Override
     protected BindyAbstractFactory createModelFactory(FormatFactory formatFactory) throws Exception {
-        BindyCsvFactory bindyCsvFactory = new BindyCsvFactory(getClassType(), isSkipField());
+        BindyCsvFactory bindyCsvFactory = new BindyCsvFactory(getClassType());
         bindyCsvFactory.setFormatFactory(formatFactory);
         return bindyCsvFactory;
-    }
-
-    private boolean isSkipField() {
-        return this.isSkipField;
     }
 }
