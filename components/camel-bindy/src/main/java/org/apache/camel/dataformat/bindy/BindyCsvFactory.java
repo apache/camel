@@ -75,12 +75,20 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private boolean allowEmptyStream;
     private boolean quotingEscaped;
     private boolean endWithLineBreak;
+    
+    private boolean isSkipField;
 
     public BindyCsvFactory(Class<?> type) throws Exception {
+        this(type, false);
+    }
+
+    public BindyCsvFactory(Class<?> type, boolean isSkipField) throws Exception {
         super(type);
 
         // initialize specific parameters of the csv model
         initCsvModel();
+        
+        this.isSkipField = isSkipField;
     }
 
     /**
@@ -174,91 +182,16 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
             // Get DataField from model
             DataField dataField = dataFields.get(pos);
-            ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field: " + data + ", line: " + line);
-
-            if (dataField.trim()) {
-                data = data.trim();
-            }
-
-            if (dataField.required()) {
-                // Increment counter of mandatory fields
-                ++counterMandatoryFields;
-
-                // Check if content of the field is empty
-                // This is not possible for mandatory fields
-                if (data.equals("")) {
-                    throw new IllegalArgumentException("The mandatory field defined at the position " + pos + " is empty for the line: " + line);
-                }
-            }
-
-            // Get Field to be setted
-            Field field = annotatedFields.get(pos);
-            field.setAccessible(true);
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Pos: {}, Data: {}, Field type: {}", new Object[]{pos, data, field.getType()});
-            }
-
-            // Create format object to format the field
-            FormattingOptions formattingOptions = ConverterUtils.convert(dataField,
-                    field.getType(),
-                    field.getAnnotation(BindyConverter.class),
-                    getLocale());
-            Format<?> format = formatFactory.getFormat(formattingOptions);
-
-            // field object to be set
-            Object modelField = model.get(field.getDeclaringClass().getName());
-
-            // format the data received
-            Object value = null;
-
-            if (!data.equals("")) {
-                try {
-                    if (quoting && quote != null && (data.contains("\\" + quote) || data.contains(quote)) && quotingEscaped) {
-                        value = format.parse(data.replaceAll("\\\\" + quote,  "\\" + quote));
-                    } else {
-                        value = format.parse(data);
-                    }
-                } catch (FormatException ie) {
-                    throw new IllegalArgumentException(ie.getMessage() + ", position: " + pos + ", line: " + line, ie);
-                } catch (Exception e) {
-                    throw new IllegalArgumentException("Parsing error detected for field defined at the position: " + pos + ", line: " + line, e);
+            
+            // If a DataField can be skipped, it needs to check whether it is in dataFields keyset
+            if (isSkipField()) {
+                if (dataFields.keySet().contains(pos))  {
+                    counterMandatoryFields = setDataFieldValue(camelContext, model, line, pos, counterMandatoryFields, data, dataField);
                 }
             } else {
-                if (!dataField.defaultValue().isEmpty()) {
-                    value = format.parse(dataField.defaultValue());
-                } else {
-                    value = getDefaultValueForPrimitive(field.getType());
-                }
+                counterMandatoryFields = setDataFieldValue(camelContext, model, line, pos, counterMandatoryFields, data, dataField);
             }
             
-            if (value != null && !dataField.method().isEmpty()) {
-                Class<?> clazz;
-                if (dataField.method().contains(".")) {
-                    clazz = camelContext.getClassResolver().resolveMandatoryClass(dataField.method().substring(0, dataField.method().lastIndexOf(".")));
-                } else {
-                    clazz = field.getType();
-                }
-                
-                String methodName = dataField.method().substring(dataField.method().lastIndexOf(".") + 1,
-                                                                   dataField.method().length());
-                
-                Method m = ReflectionHelper.findMethod(clazz, methodName, field.getType());
-                if (m != null) {
-                    // this method must be static and return type
-                    // must be the same as the datafield and 
-                    // must receive only the datafield value 
-                    // as the method argument
-                    value = ObjectHelper.invokeMethod(m, null, value);
-                } else {
-                    // fallback to method without parameter, that is on the value itself
-                    m = ReflectionHelper.findMethod(clazz, methodName);
-                    value = ObjectHelper.invokeMethod(m, value);
-                }
-            }
-
-            field.set(modelField, value);
-
             ++pos;
 
         }
@@ -273,6 +206,94 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             setDefaultValuesForFields(model);
         }
 
+    }
+
+    private int setDataFieldValue(CamelContext camelContext, Map<String, Object> model, int line, int pos, int counterMandatoryFields, String data, DataField dataField) throws Exception {
+        ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field: " + data + ", line: " + line);
+
+        if (dataField.trim()) {
+            data = data.trim();
+        }
+
+        if (dataField.required()) {
+            // Increment counter of mandatory fields
+            ++counterMandatoryFields;
+
+            // Check if content of the field is empty
+            // This is not possible for mandatory fields
+            if (data.equals("")) {
+                throw new IllegalArgumentException("The mandatory field defined at the position " + pos + " is empty for the line: " + line);
+            }
+        }
+
+        // Get Field to be setted
+        Field field = annotatedFields.get(pos);
+        field.setAccessible(true);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Pos: {}, Data: {}, Field type: {}", new Object[]{pos, data, field.getType()});
+        }
+
+        // Create format object to format the field
+        FormattingOptions formattingOptions = ConverterUtils.convert(dataField,
+                field.getType(),
+                field.getAnnotation(BindyConverter.class),
+                getLocale());
+        Format<?> format = formatFactory.getFormat(formattingOptions);
+
+        // field object to be set
+        Object modelField = model.get(field.getDeclaringClass().getName());
+
+        // format the data received
+        Object value = null;
+
+        if (!data.equals("")) {
+            try {
+                if (quoting && quote != null && (data.contains("\\" + quote) || data.contains(quote)) && quotingEscaped) {
+                    value = format.parse(data.replaceAll("\\\\" + quote, "\\" + quote));
+                } else {
+                    value = format.parse(data);
+                }
+            } catch (FormatException ie) {
+                throw new IllegalArgumentException(ie.getMessage() + ", position: " + pos + ", line: " + line, ie);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Parsing error detected for field defined at the position: " + pos + ", line: " + line, e);
+            }
+        } else {
+            if (!dataField.defaultValue().isEmpty()) {
+                value = format.parse(dataField.defaultValue());
+            } else {
+                value = getDefaultValueForPrimitive(field.getType());
+            }
+        }
+
+        if (value != null && !dataField.method().isEmpty()) {
+            Class<?> clazz;
+            if (dataField.method().contains(".")) {
+                clazz = camelContext.getClassResolver().resolveMandatoryClass(dataField.method().substring(0, dataField.method().lastIndexOf(".")));
+            } else {
+                clazz = field.getType();
+            }
+
+            String methodName = dataField.method().substring(dataField.method().lastIndexOf(".") + 1,
+                    dataField.method().length());
+
+            Method m = ReflectionHelper.findMethod(clazz, methodName, field.getType());
+            if (m != null) {
+                // this method must be static and return type
+                // must be the same as the datafield and 
+                // must receive only the datafield value 
+                // as the method argument
+                value = ObjectHelper.invokeMethod(m, null, value);
+            } else {
+                // fallback to method without parameter, that is on the value itself
+                m = ReflectionHelper.findMethod(clazz, methodName);
+                value = ObjectHelper.invokeMethod(m, value);
+            }
+        }
+
+        field.set(modelField, value);
+        return counterMandatoryFields;
     }
 
     @Override
@@ -718,5 +739,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     
     public boolean isEndWithLineBreak() {
         return endWithLineBreak;
+    }
+
+    /**
+     * Indicate if DataField can be ignored
+     * 
+     * @return boolean
+     */
+    public boolean isSkipField() {
+        return this.isSkipField;
     }
 }
