@@ -23,6 +23,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 
@@ -70,7 +71,7 @@ public class LambdaComponentVerifierExtension extends DefaultComponentVerifierEx
             LambdaConfiguration configuration = setProperties(new LambdaConfiguration(), parameters);
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
-            AWSLambda client = AWSLambdaClientBuilder.standard().withCredentials(credentialsProvider).withRegion(configuration.getRegion()).build();
+            AWSLambda client = AWSLambdaClientBuilder.standard().withCredentials(credentialsProvider).withRegion(Regions.valueOf(configuration.getRegion())).build();
             client.listFunctions();
         } catch (SdkClientException e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
