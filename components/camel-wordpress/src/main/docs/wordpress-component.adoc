@@ -1,31 +1,12 @@
 == Wordpress Component
 
-*Available as of Camel version 2.20.1*
+*Available as of Camel version 2.21*
 
 Camel component for https://developer.wordpress.org/rest-api/reference/[Wordpress API].
 
-=== Usage
-
 Currently only the **Posts** and **Users** operations are supported.
 
-==== Configure your route
-
-The `WordpressConfiguration` class can be used to set initial properties configuration to the component instead of passing it as query parameter. The following listing shows how to set the component to be used in your routes.
-
-[source,java]
---------------------------------------------------
-public void configure() {
-    final WordpressConfiguration configuration = new WordpressConfiguration();
-    final WordpressComponent component = new WordpressComponent();
-    configuration.setApiVersion("2");
-    configuration.setUrl("http://yoursite.com/wp-json/");
-    component.setConfiguration(configuration);
-    getContext().addComponent("wordpress", component);
-    
-    from("wordpress:post?id=1")
-      .to("mock:result");
-}
---------------------------------------------------
+=== Options
 
 // component options: START
 The Wordpress component supports 2 options which are listed below.
@@ -80,10 +61,28 @@ with the following path and query parameters:
 
 Most of parameters needed when performing a read operation mirrors from the official https://developer.wordpress.org/rest-api/reference/[API]. When performing searches operations, the `criteria.` suffix is needed. Take the following `Consumer` as example:
 
----------------------------------------------------------
+----
 wordpress:post?criteria.perPage=10&criteria.orderBy=author&criteria.categories=camel,dozer,json
----------------------------------------------------------
+----
 
+==== Configuring Wordpress component
+
+The `WordpressConfiguration` class can be used to set initial properties configuration to the component instead of passing it as query parameter. The following listing shows how to set the component to be used in your routes.
+
+[source,java]
+----
+public void configure() {
+    final WordpressConfiguration configuration = new WordpressConfiguration();
+    final WordpressComponent component = new WordpressComponent();
+    configuration.setApiVersion("2");
+    configuration.setUrl("http://yoursite.com/wp-json/");
+    component.setConfiguration(configuration);
+    getContext().addComponent("wordpress", component);
+
+    from("wordpress:post?id=1")
+      .to("mock:result");
+}
+----
 
 ==== Consumer Example
 
