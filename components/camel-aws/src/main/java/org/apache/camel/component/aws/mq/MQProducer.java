@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.mq;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.mq.AmazonMQ;
+import com.amazonaws.services.mq.model.ConfigurationId;
 import com.amazonaws.services.mq.model.CreateBrokerRequest;
 import com.amazonaws.services.mq.model.CreateBrokerResult;
 import com.amazonaws.services.mq.model.DeleteBrokerRequest;
@@ -26,6 +27,8 @@ import com.amazonaws.services.mq.model.ListBrokersRequest;
 import com.amazonaws.services.mq.model.ListBrokersResult;
 import com.amazonaws.services.mq.model.RebootBrokerRequest;
 import com.amazonaws.services.mq.model.RebootBrokerResult;
+import com.amazonaws.services.mq.model.UpdateBrokerRequest;
+import com.amazonaws.services.mq.model.UpdateBrokerResult;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -65,6 +68,9 @@ public class MQProducer extends DefaultProducer {
             break;
         case rebootBroker:
             rebootBroker(getEndpoint().getAmazonMqClient(), exchange);
+            break;
+        case updateBroker:
+            updateBroker(getEndpoint().getAmazonMqClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -172,6 +178,33 @@ public class MQProducer extends DefaultProducer {
             result = mqClient.rebootBroker(request);
         } catch (AmazonServiceException ase) {
             LOG.trace("Delete Broker command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void updateBroker(AmazonMQ mqClient, Exchange exchange) {
+        String brokerId;
+        ConfigurationId configurationId;
+        UpdateBrokerRequest request = new UpdateBrokerRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_ID))) {
+            brokerId = exchange.getIn().getHeader(MQConstants.BROKER_ID, String.class);
+            request.withBrokerId(brokerId);
+        } else {
+            throw new IllegalArgumentException("Broker Name must be specified");
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.CONFIGURATION_ID))) {
+            configurationId = exchange.getIn().getHeader(MQConstants.CONFIGURATION_ID, ConfigurationId.class);
+            request.withConfiguration(configurationId);
+        } else {
+            throw new IllegalArgumentException("Broker Name must be specified");
+        }
+        UpdateBrokerResult result;
+        try {
+            result = mqClient.updateBroker(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Update Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

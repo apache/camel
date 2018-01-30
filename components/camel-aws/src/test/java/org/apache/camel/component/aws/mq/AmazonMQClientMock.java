@@ -24,6 +24,7 @@ import com.amazonaws.ResponseMetadata;
 import com.amazonaws.services.mq.AmazonMQ;
 import com.amazonaws.services.mq.model.BrokerState;
 import com.amazonaws.services.mq.model.BrokerSummary;
+import com.amazonaws.services.mq.model.ConfigurationId;
 import com.amazonaws.services.mq.model.CreateBrokerRequest;
 import com.amazonaws.services.mq.model.CreateBrokerResult;
 import com.amazonaws.services.mq.model.CreateConfigurationRequest;
@@ -152,7 +153,13 @@ public class AmazonMQClientMock implements AmazonMQ {
 
     @Override
     public UpdateBrokerResult updateBroker(UpdateBrokerRequest updateBrokerRequest) {
-        throw new UnsupportedOperationException();
+        UpdateBrokerResult result = new UpdateBrokerResult();
+        ConfigurationId cId = new ConfigurationId();
+        cId.setId("1");
+        cId.setRevision(12);
+        result.setBrokerId("1");
+        result.setConfiguration(cId);
+        return result;
     }
 
     @Override

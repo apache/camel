@@ -25,5 +25,6 @@ public interface MQConstants {
     String MAX_RESULTS              = "CamelAwsMQMaxResults";
     String BROKER_NAME              = "CamelAwsMQBrokerName";
     String BROKER_ID                = "CamelAwsMQBrokerID";
+    String CONFIGURATION_ID         = "CamelAwsMQConfigurationID";
     String BROKER_DEPLOYMENT_MODE   = "CamelAwsMQBrokerDeploymentMode";
 }
