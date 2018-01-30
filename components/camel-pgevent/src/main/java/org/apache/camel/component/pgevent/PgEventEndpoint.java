@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.pgevent;
 
-import java.io.InvalidClassException;
 import java.sql.DriverManager;
 import javax.sql.DataSource;
 
 import com.impossibl.postgres.api.jdbc.PGConnection;
-import com.impossibl.postgres.jdbc.PGDataSource;
 import com.impossibl.postgres.jdbc.PGDriver;
 
 import org.apache.camel.Consumer;
@@ -140,22 +138,14 @@ public class PgEventEndpoint extends DefaultEndpoint {
         return new PgEventProducer(this);
     }
 
-    private void validateInputs() throws InvalidClassException, IllegalArgumentException {
+    private void validateInputs() throws IllegalArgumentException {
         if (getChannel() == null || getChannel().length() == 0) {
             throw new IllegalArgumentException("A required parameter was not set when creating this Endpoint (channel)");
         }
-        if (datasource != null) {
-            LOG.debug("******Datasource detected*****");
-            if (!PGDataSource.class.isInstance(datasource)) {
-                throw new InvalidClassException("The datasource passed to the "
-                        + "pgevent component is NOT a PGDataSource class from the"
-                        + "pgjdbc-ng library. See: https://github.com/impossibl/pgjdbc-ng");
-            }
-        } else {
-            if (user == null) {
-                throw new IllegalArgumentException("A required parameter was "
-                        + "not set when creating this Endpoint (pgUser or pgDataSource)");
-            }
+
+        if (datasource == null && user == null) {
+            throw new IllegalArgumentException("A required parameter was "
+                    + "not set when creating this Endpoint (pgUser or pgDataSource)");
         }
     }
 
