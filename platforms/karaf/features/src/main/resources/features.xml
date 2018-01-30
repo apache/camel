@@ -1264,7 +1264,7 @@
   </feature>
   <feature name='camel-json-validator' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>wrap:com.networknt/json-schema-validator/${networknt-json-schema-validator-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.networknt/json-schema-validator/${networknt-json-schema-validator-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
