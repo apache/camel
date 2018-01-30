@@ -843,7 +843,7 @@ Number of Components: 290 in 199 JAR artifacts (19 deprecated)
 `weather:name` | 2.12 | Polls the weather information from Open Weather Map.
 
 | link:camel-wordpress/src/main/docs/wordpress-component.adoc[Wordpress] (camel-wordpress) +
-`wordpress:operation` | 2.20.1 | Represents a Wordpress endpoint.
+`wordpress:operation` | 2.21 | Integrates Camel with Wordpress.
 
 | link:camel-xchange/src/main/docs/xchange-component.adoc[XChange] (camel-xchange) +
 `xchange:name` | 2.21 | Camel XChange support

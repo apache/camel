@@ -41,9 +41,9 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents a Wordpress endpoint.
+ * Integrates Camel with Wordpress.
  */
-@UriEndpoint(firstVersion = "2.20.1", scheme = "wordpress", title = "Wordpress", syntax = "wordpress:operation", label = "Wordpress")
+@UriEndpoint(firstVersion = "2.21.0", scheme = "wordpress", title = "Wordpress", syntax = "wordpress:operation", label = "cms")
 public class WordpressEndpoint extends DefaultEndpoint {
 
     public static final String ENDPOINT_SERVICE_POST = "post, user";
