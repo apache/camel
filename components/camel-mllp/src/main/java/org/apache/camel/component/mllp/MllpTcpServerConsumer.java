@@ -18,7 +18,6 @@
 package org.apache.camel.component.mllp;
 
 import java.net.BindException;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
@@ -37,8 +36,9 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.mllp.internal.MllpSocketBuffer;
-import org.apache.camel.component.mllp.internal.TcpServerConsumerValidationRunnable;
 import org.apache.camel.component.mllp.internal.TcpServerAcceptThread;
+import org.apache.camel.component.mllp.internal.TcpServerBindThread;
+import org.apache.camel.component.mllp.internal.TcpServerConsumerValidationRunnable;
 import org.apache.camel.component.mllp.internal.TcpSocketConsumerRunnable;
 import org.apache.camel.impl.DefaultConsumer;
 
@@ -49,7 +49,10 @@ import org.apache.camel.impl.DefaultConsumer;
 public class MllpTcpServerConsumer extends DefaultConsumer {
     final ExecutorService validationExecutor;
     final ExecutorService consumerExecutor;
+
+    TcpServerBindThread bindThread;
     TcpServerAcceptThread acceptThread;
+
     Map<TcpSocketConsumerRunnable, Long> consumerRunnables = new ConcurrentHashMap<>();
 
 
@@ -110,72 +113,48 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             consumerClientSocketThread.stop();
         }
 
-        acceptThread.interrupt();
+        if (acceptThread != null) {
+            acceptThread.interrupt();
+            acceptThread = null;
+        }
 
-        acceptThread = null;
+        if (bindThread != null) {
+            bindThread.interrupt();
+            bindThread = null;
+        }
 
         super.doStop();
     }
 
     @Override
     protected void doStart() throws Exception {
-        log.debug("doStart() - starting acceptor");
+        if (bindThread == null || !bindThread.isAlive()) {
+            bindThread = new TcpServerBindThread(this);
 
-        ServerSocket serverSocket = new ServerSocket();
-        if (getConfiguration().hasReceiveBufferSize()) {
-            serverSocket.setReceiveBufferSize(getConfiguration().getReceiveBufferSize());
-        }
-
-        if (getConfiguration().hasReuseAddress()) {
-            serverSocket.setReuseAddress(getConfiguration().getReuseAddress());
-        }
-
-        // Accept Timeout
-        serverSocket.setSoTimeout(getConfiguration().getAcceptTimeout());
-
-        InetSocketAddress socketAddress;
-        if (null == getEndpoint().getHostname()) {
-            socketAddress = new InetSocketAddress(getEndpoint().getPort());
-        } else {
-            socketAddress = new InetSocketAddress(getEndpoint().getHostname(), getEndpoint().getPort());
-        }
-        long startTicks = System.currentTimeMillis();
-
-        // Log usage of deprecated URI options
-        if (getConfiguration().hasMaxReceiveTimeouts()) {
-            if (getConfiguration().hasIdleTimeout()) {
-                log.info("Both maxReceivedTimeouts {} and idleTimeout {} URI options are specified - idleTimeout will be used",
-                    getConfiguration().getMaxReceiveTimeouts(), getConfiguration().getIdleTimeout());
+            if (getConfiguration().isLenientBind()) {
+                log.debug("doStart() - starting bind thread");
+                bindThread.start();
             } else {
-                getConfiguration().setIdleTimeout(getConfiguration().getMaxReceiveTimeouts() * getConfiguration().getReceiveTimeout());
-                log.info("Deprecated URI option maxReceivedTimeouts {} specified - idleTimeout {} will be used", getConfiguration().getMaxReceiveTimeouts(), getConfiguration().getIdleTimeout());
+                log.debug("doStart() - attempting to bind to port {}", getEndpoint().getPort());
+                bindThread.run();
+
+                if (this.acceptThread == null) {
+                    throw new BindException("Failed to bind to port " + getEndpoint().getPort());
+                }
             }
         }
-
-        do {
-            try {
-                if (getConfiguration().hasBacklog()) {
-                    serverSocket.bind(socketAddress, getConfiguration().getBacklog());
-                } else {
-                    serverSocket.bind(socketAddress);
-                }
-            } catch (BindException bindException) {
-                if (System.currentTimeMillis() > startTicks + getConfiguration().getBindTimeout()) {
-                    log.error("Failed to bind to address {} within timeout {}", socketAddress, getConfiguration().getBindTimeout());
-                    throw bindException;
-                } else {
-                    log.warn("Failed to bind to address {} - retrying in {} milliseconds", socketAddress, getConfiguration().getBindRetryInterval());
-                    Thread.sleep(getConfiguration().getBindRetryInterval());
-                }
-            }
-        } while (!serverSocket.isBound());
-
-        // acceptRunnable = new TcpServerConsumerValidationRunnable(this, serverSocket);
-        // validationExecutor.submit(acceptRunnable);
-        acceptThread = new TcpServerAcceptThread(this, serverSocket);
-        acceptThread.start();
 
         super.doStart();
+    }
+
+    @Override
+    public void handleException(Throwable t) {
+        super.handleException(t);
+    }
+
+    @Override
+    public void handleException(String message, Throwable t) {
+        super.handleException(message, t);
     }
 
     @Override
@@ -209,6 +188,11 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         }
     }
 
+    public void startAcceptThread(ServerSocket serverSocket) {
+        acceptThread = new TcpServerAcceptThread(this, serverSocket);
+        acceptThread.start();
+    }
+
     public void startConsumer(Socket clientSocket, MllpSocketBuffer mllpBuffer) {
         TcpSocketConsumerRunnable client = new TcpSocketConsumerRunnable(this, clientSocket, mllpBuffer);
 
@@ -222,15 +206,4 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         }
     }
 
-
-    @Override
-    public void handleException(Throwable t) {
-        super.handleException(t);
-    }
-
-    @Override
-    public void handleException(String message, Throwable t) {
-        super.handleException(message, t);
-    }
 }
-

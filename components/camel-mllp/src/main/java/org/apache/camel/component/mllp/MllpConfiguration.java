@@ -40,6 +40,9 @@ public class MllpConfiguration implements Cloneable {
     @UriParam(label = "advanced,consumer,tcp,timeout", defaultValue = "5000")
     int bindRetryInterval = 5000;
 
+    @UriParam(label = "advanced,consumer,tcp", defaultValue = "false")
+    boolean lenientBind;
+
     @UriParam(label = "advanced,consumer,tcp,timeout", defaultValue = "60000")
     int acceptTimeout = 60000;
 
@@ -68,8 +71,8 @@ public class MllpConfiguration implements Cloneable {
     @UriParam(label = "advanced,producer,tcp", defaultValue = "true")
     Boolean tcpNoDelay = true;
 
-    @UriParam(label = "advanced,consumer,tcp", defaultValue = "true")
-    Boolean reuseAddress = true;
+    @UriParam(label = "advanced,consumer,tcp", defaultValue = "false")
+    Boolean reuseAddress = false;
 
     @UriParam(label = "advanced,tcp", defaultValue = "8192")
     Integer receiveBufferSize = 8192;
@@ -204,6 +207,22 @@ public class MllpConfiguration implements Cloneable {
 
     public int getAcceptTimeout() {
         return acceptTimeout;
+    }
+
+    public boolean isLenientBind() {
+        return lenientBind;
+    }
+
+    /**
+     * TCP Server Only - Allow the endpoint to start before the TCP ServerSocket is bound.
+     *
+     * In some environments, it may be desirable to allow the endpoint to start before the TCP ServerSocket
+     * is bound.
+     *
+     * @param lenientBind if true, the ServerSocket will be bound asynchronously; otherwise the ServerSocket will be bound synchronously.
+     */
+    public void setLenientBind(boolean lenientBind) {
+        this.lenientBind = lenientBind;
     }
 
     /**

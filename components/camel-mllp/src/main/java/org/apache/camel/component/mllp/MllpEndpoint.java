@@ -278,6 +278,10 @@ public class MllpEndpoint extends DefaultEndpoint {
         configuration.setBindRetryInterval(bindRetryInterval);
     }
 
+    public void setLenientBind(boolean lenientBind) {
+        configuration.setLenientBind(lenientBind);
+    }
+
     public void setAcceptTimeout(int acceptTimeout) {
         configuration.setAcceptTimeout(acceptTimeout);
     }
