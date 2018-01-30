@@ -122,6 +122,16 @@ public class MllpComponentConfiguration
          */
         private Integer acceptTimeout = 60000;
         /**
+         * TCP Server Only - Allow the endpoint to start before the TCP
+         * ServerSocket is bound. In some environments, it may be desirable to
+         * allow the endpoint to start before the TCP ServerSocket is bound.
+         * 
+         * @param lenientBind
+         *            if true, the ServerSocket will be bound asynchronously;
+         *            otherwise the ServerSocket will be bound synchronously.
+         */
+        private Boolean lenientBind = false;
+        /**
          * Timeout (in milliseconds) for establishing for a TCP connection
          * <p/>
          * TCP Client only
@@ -313,6 +323,14 @@ public class MllpComponentConfiguration
 
         public void setAcceptTimeout(Integer acceptTimeout) {
             this.acceptTimeout = acceptTimeout;
+        }
+
+        public Boolean getLenientBind() {
+            return lenientBind;
+        }
+
+        public void setLenientBind(Boolean lenientBind) {
+            this.lenientBind = lenientBind;
         }
 
         public Integer getConnectTimeout() {

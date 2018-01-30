@@ -79,7 +79,7 @@ with the following path and query parameters:
 | *port* | *Required* Port number for the TCP connection |  | int
 |===
 
-==== Query Parameters (26 parameters):
+==== Query Parameters (27 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -95,18 +95,19 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backlog* (tcp) | The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full the connection is refused. | 5 | Integer
+| *lenientBind* (tcp) | TCP Server Only - Allow the endpoint to start before the TCP ServerSocket is bound. In some environments it may be desirable to allow the endpoint to start before the TCP ServerSocket is bound. | false | boolean
 | *maxConcurrentConsumers* (tcp) | The maximum number of concurrent MLLP Consumer connections that will be allowed. If a new connection is received and the maximum is number are already established the new connection will be reset immediately. | 5 | int
-| *reuseAddress* (tcp) | Enable/disable the SO_REUSEADDR socket option. | true | Boolean
+| *receiveBufferSize* (tcp) | Sets the SO_RCVBUF option to the specified value (in bytes) | 8192 | Integer
+| *reuseAddress* (tcp) | Enable/disable the SO_REUSEADDR socket option. | false | Boolean
 | *acceptTimeout* (timeout) | Timeout (in milliseconds) while waiting for a TCP connection TCP Server Only | 60000 | int
 | *bindRetryInterval* (timeout) | TCP Server Only - The number of milliseconds to wait between bind attempts | 5000 | int
 | *bindTimeout* (timeout) | TCP Server Only - The number of milliseconds to retry binding to a server port | 30000 | int
-| *keepAlive* (tcp) | Enable/disable the SO_KEEPALIVE socket option. | true | Boolean
+| *tcpNoDelay* (tcp) | Enable/disable the TCP_NODELAY socket option. | true | Boolean
 | *connectTimeout* (timeout) | Timeout (in milliseconds) for establishing for a TCP connection TCP Client only | 30000 | int
-| *receiveBufferSize* (tcp) | Sets the SO_RCVBUF option to the specified value (in bytes) | 8192 | Integer
-| *sendBufferSize* (tcp) | Sets the SO_SNDBUF option to the specified value (in bytes) | 8192 | Integer
 | *idleTimeout* (timeout) | The approximate idle time allowed before the Client TCP Connection will be reset. A null value or a value less than or equal to zero will disable the idle timeout. |  | Integer
 | *maxReceiveTimeouts* (timeout) | *Deprecated* The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset. |  | Integer
-| *tcpNoDelay* (tcp) | Enable/disable the TCP_NODELAY socket option. | true | Boolean
+| *keepAlive* (tcp) | Enable/disable the SO_KEEPALIVE socket option. | true | Boolean
+| *sendBufferSize* (tcp) | Sets the SO_SNDBUF option to the specified value (in bytes) | 8192 | Integer
 | *readTimeout* (timeout) | The SO_TIMEOUT value (in milliseconds) used after the start of an MLLP frame has been received | 500 | int
 | *receiveTimeout* (timeout) | The SO_TIMEOUT value (in milliseconds) used when waiting for the start of an MLLP frame | 15000 | int
 | *charsetName* (codec) | Set the CamelCharsetName property on the exchange |  | String
