@@ -18,20 +18,21 @@ package org.apache.camel.component.pgevent;
 
 import java.io.InvalidClassException;
 import java.sql.DriverManager;
-import java.util.Properties;
 import javax.sql.DataSource;
 
 import com.impossibl.postgres.api.jdbc.PGConnection;
 import com.impossibl.postgres.jdbc.PGDataSource;
+import com.impossibl.postgres.jdbc.PGDriver;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,13 +85,12 @@ public class PgEventEndpoint extends DefaultEndpoint {
 
     public final PGConnection initJdbc() throws Exception {
         PGConnection conn;
-        Properties props = new Properties();
-        props.putAll(URISupport.parseQuery(uri));
         if (this.getDatasource() != null) {
             conn = (PGConnection) this.getDatasource().getConnection();
         } else {
             // ensure we can load the class
-            getCamelContext().getClassResolver().resolveMandatoryClass("com.impossibl.postgres.jdbc.PGDriver");
+            ClassResolver classResolver = getCamelContext().getClassResolver();
+            classResolver.resolveMandatoryClass(PGDriver.class.getName(), PgEventComponent.class.getClassLoader());
             conn = (PGConnection) DriverManager.getConnection("jdbc:pgsql://" + this.getHost() + ":" + this.getPort() + "/" + this.getDatabase(), this.getUser(), this.getPass());
         }
         return conn;
