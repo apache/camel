@@ -53,11 +53,10 @@ public class TcpServerBindThread extends Thread {
 
 
     /**
-     * Do the initial read on the Socket and try to determine if it has HL7 data, junk, or nothing.
+     * Bind the TCP ServerSocket within the specified timeout.
      */
     @Override
     public void run() {
-
         MDC.put(MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID, consumer.getEndpoint().getCamelContext().getName());
 
         Route route = consumer.getRoute();

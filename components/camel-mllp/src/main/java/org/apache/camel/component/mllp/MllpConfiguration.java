@@ -19,6 +19,8 @@ package org.apache.camel.component.mllp;
 
 import java.util.Objects;
 
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.slf4j.Logger;
@@ -31,6 +33,17 @@ import org.slf4j.LoggerFactory;
 public class MllpConfiguration implements Cloneable {
     static final Logger LOG = LoggerFactory.getLogger(MllpConfiguration.class);
 
+    // URI Parameters overridden from DefaultEndpoint
+    @UriParam(label = "consumer", defaultValue = "true")
+    boolean bridgeErrorHandler = true;
+
+    @UriParam(label = "consumer,advanced", defaultValue = "InOut")
+    ExchangePattern exchangePattern = ExchangePattern.InOut;
+
+    @UriParam(label = "advanced", defaultValue = "true")
+    boolean synchronous = true;
+
+    // camel-mllp specific URI parameters
     @UriParam(label = "advanced,consumer,tcp", defaultValue = "5")
     Integer backlog = 5;
 
@@ -115,6 +128,10 @@ public class MllpConfiguration implements Cloneable {
         } else if (target == null) {
             LOG.warn("Values were not copied by MllpConfiguration.copy(MllpConfiguration source, MllpConfiguration target) - target argument is null");
         } else {
+            target.bridgeErrorHandler = source.bridgeErrorHandler;
+            target.exchangePattern = source.exchangePattern;
+            target.synchronous = source.synchronous;
+
             target.backlog = source.backlog;
             target.bindTimeout = source.bindTimeout;
             target.bindRetryInterval = source.bindRetryInterval;
@@ -148,6 +165,47 @@ public class MllpConfiguration implements Cloneable {
 
     public void copy(MllpConfiguration source) {
         MllpConfiguration.copy(source, this);
+    }
+
+    public boolean isBridgeErrorHandler() {
+        return bridgeErrorHandler;
+    }
+
+    /**
+     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while
+     * the consumer is trying to receive incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler.
+     *
+     * If disabled, the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions by logging them at WARN or ERROR level and ignored.
+     *
+     * @param bridgeErrorHandler
+     */
+    public void setBridgeErrorHandler(boolean bridgeErrorHandler) {
+        this.bridgeErrorHandler = bridgeErrorHandler;
+    }
+
+    public ExchangePattern getExchangePattern() {
+        return exchangePattern;
+    }
+
+    /**
+     * Sets the exchange pattern when the consumer creates an exchange.
+     *
+     * @param exchangePattern
+     */
+    public void setExchangePattern(ExchangePattern exchangePattern) {
+        this.exchangePattern = exchangePattern;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    /**
+     * Sets whether synchronous processing should be strictly used (this component only supports synchronous operations).
+     *
+     * @param synchronous
+     */
+    public void setSynchronous(boolean synchronous) {
     }
 
     public boolean hasCharsetName() {
@@ -391,7 +449,7 @@ public class MllpConfiguration implements Cloneable {
      *
      * @param reuseAddress enable SO_REUSEADDR when true; disable SO_REUSEADDR when false; use system default when null
      */
-    public void setReuseAddress(boolean reuseAddress) {
+    public void setReuseAddress(Boolean reuseAddress) {
         this.reuseAddress = reuseAddress;
     }
 
@@ -468,7 +526,7 @@ public class MllpConfiguration implements Cloneable {
     }
 
     /**
-     * Enable disable strict compliance to the MLLP standard.
+     * Enable/Disable strict compliance to the MLLP standard.
      *
      * The MLLP standard specifies [START_OF_BLOCK]hl7 payload[END_OF_BLOCK][END_OF_DATA], however, some systems do not send
      * the final END_OF_DATA byte.  This setting controls whether or not the final END_OF_DATA byte is required or optional.
@@ -520,7 +578,7 @@ public class MllpConfiguration implements Cloneable {
     }
 
     /**
-     * Enable/Disable the validation of HL7 Payloads
+     * Enable/Disable the buffering of HL7 payloads before writing to the socket.
      *
      * @deprecated the parameter will be ignored
      *
@@ -532,7 +590,10 @@ public class MllpConfiguration implements Cloneable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(backlog,
+        return Objects.hash(bridgeErrorHandler,
+            exchangePattern,
+            synchronous,
+            backlog,
             bindTimeout,
             bindRetryInterval,
             acceptTimeout,
@@ -568,7 +629,10 @@ public class MllpConfiguration implements Cloneable {
 
         MllpConfiguration rhs = (MllpConfiguration) o;
 
-        return bindTimeout == rhs.bindTimeout
+        return bridgeErrorHandler == rhs.bridgeErrorHandler
+            && exchangePattern == rhs.exchangePattern
+            && synchronous == rhs.synchronous
+            && bindTimeout == rhs.bindTimeout
             && bindRetryInterval == rhs.bindRetryInterval
             && acceptTimeout == rhs.acceptTimeout
             && connectTimeout == rhs.connectTimeout
@@ -595,7 +659,10 @@ public class MllpConfiguration implements Cloneable {
     @Override
     public String toString() {
         return "MllpConfiguration{"
-            + "backlog=" + backlog
+            + "bridgeErrorHandler=" + bridgeErrorHandler
+            + ", exchangePattern=" + exchangePattern
+            + ", synchronous=" + synchronous
+            + ", backlog=" + backlog
             + ", bindTimeout=" + bindTimeout
             + ", bindRetryInterval=" + bindRetryInterval
             + ", acceptTimeout=" + acceptTimeout

@@ -90,6 +90,10 @@ public class MllpEndpoint extends DefaultEndpoint {
     public MllpEndpoint(String uri, MllpComponent component, MllpConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration.copy();
+
+        super.setBridgeErrorHandler(configuration.isBridgeErrorHandler());
+        super.setExchangePattern(configuration.getExchangePattern());
+        super.setSynchronous(configuration.isSynchronous());
     }
 
     @Override
@@ -107,13 +111,21 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public ExchangePattern getExchangePattern() {
-        return ExchangePattern.InOut;
+    public void setExchangePattern(ExchangePattern exchangePattern) {
+        configuration.setExchangePattern(exchangePattern);
+        super.setExchangePattern(configuration.getExchangePattern());
     }
 
     @Override
-    public boolean isSynchronous() {
-        return true;
+    public void setSynchronous(boolean synchronous) {
+        configuration.setSynchronous(synchronous);
+        super.setSynchronous(configuration.isSynchronous());
+    }
+
+    @Override
+    public void setBridgeErrorHandler(boolean bridgeErrorHandler) {
+        configuration.setBridgeErrorHandler(bridgeErrorHandler);
+        super.setBridgeErrorHandler(configuration.isBridgeErrorHandler());
     }
 
     private void setExchangeProperties(Exchange mllpExchange) {
