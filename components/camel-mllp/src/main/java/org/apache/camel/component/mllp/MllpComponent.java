@@ -21,38 +21,40 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link MllpEndpoint}.
  */
-public class MllpComponent extends UriEndpointComponent {
+public class MllpComponent extends DefaultComponent {
     public static final String MLLP_LOG_PHI_PROPERTY = "org.apache.camel.component.mllp.logPHI";
     public static final String MLLP_LOG_PHI_MAX_BYTES_PROPERTY = "org.apache.camel.component.mllp.logPHI.maxBytes";
     public static final boolean DEFAULT_LOG_PHI = true;
     public static final int DEFAULT_LOG_PHI_MAX_BYTES = 5120;
 
     static Logger log = LoggerFactory.getLogger(MllpComponent.class);
+
+    @Metadata(label = "advanced", defaultValue = "true")
     static Boolean logPhi;
+    @Metadata(label = "advanced", defaultValue = "5120")
     static Integer logPhiMaxBytes;
 
     MllpConfiguration configuration;
 
     public MllpComponent() {
-        super(MllpEndpoint.class);
     }
 
     public MllpComponent(CamelContext context) {
-        super(context, MllpEndpoint.class);
+        super(context);
     }
 
     @Override
     protected Endpoint createEndpoint(String uriString, String remaining, Map<String, Object> parameters) throws Exception {
         MllpEndpoint endpoint = new MllpEndpoint(uriString, this, hasConfiguration() ? configuration.copy() : new MllpConfiguration());
-
-        endpoint.setBridgeErrorHandler(true);
 
         setProperties(endpoint, parameters);
 
