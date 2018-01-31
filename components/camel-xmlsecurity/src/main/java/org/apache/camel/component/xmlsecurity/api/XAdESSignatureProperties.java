@@ -740,7 +740,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         Element dataObjectFormat = createElement("DataObjectFormat", doc, input);
         signedDataObjectProperties.appendChild(dataObjectFormat);
         String contentReferenceId = "_" + UUID.randomUUID().toString();
-        setAttribute(dataObjectFormat, "ObjectReference", contentReferenceId);
+        setAttribute(dataObjectFormat, "ObjectReference", "#" + contentReferenceId);
 
         if (getDataObjectFormatDescription() != null && !getDataObjectFormatDescription().isEmpty()) {
             Element description = createElement("Description", doc, input);
