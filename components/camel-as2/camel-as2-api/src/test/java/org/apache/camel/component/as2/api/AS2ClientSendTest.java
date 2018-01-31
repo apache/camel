@@ -25,6 +25,7 @@ import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.entity.ContentType;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
@@ -220,6 +221,7 @@ public class AS2ClientSendTest {
         httpContext.setAttribute(AS2ClientManager.AS2_FROM, AS2_NAME);
         httpContext.setAttribute(AS2ClientManager.AS2_TO, AS2_NAME);
         httpContext.setAttribute(AS2ClientManager.AS2_MESSAGE_STRUCTURE, AS2MessageStructure.PLAIN);
+        httpContext.setAttribute(AS2ClientManager.EDI_MESSAGE_CONTENT_TYPE, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2CharSet.US_ASCII));
         
         clientManager.send(EDI_MESSAGE, httpContext);
     }
