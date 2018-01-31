@@ -223,6 +223,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         //DataObjectFormat
         checkXpath(doc, pathToDataObjectProperties + "etsi:DataObjectFormat/etsi:Description/text()", prefix2Namespace, "invoice");
         checkXpath(doc, pathToDataObjectProperties + "etsi:DataObjectFormat/etsi:MimeType/text()", prefix2Namespace, "text/xml");
+        checkXpath(doc, pathToDataObjectProperties + "etsi:DataObjectFormat/@ObjectReference", prefix2Namespace, "#", true);
         checkXpath(doc, pathToDataObjectProperties + "etsi:DataObjectFormat/etsi:ObjectIdentifier/etsi:Identifier/text()",
                 prefix2Namespace, "1.2.840.113549.1.9.16.6.2");
         checkXpath(doc, pathToDataObjectProperties + "etsi:DataObjectFormat/etsi:ObjectIdentifier/etsi:Identifier/@Qualifier",
@@ -834,11 +835,18 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
 
     static void checkXpath(Document doc, String xpathString, final Map<String, String> prefix2Namespace, String expectedResult)
         throws XPathExpressionException {
+        checkXpath(doc, xpathString, prefix2Namespace, expectedResult, false);
+    }
+        
+   static void checkXpath(Document doc, String xpathString, final Map<String, String> prefix2Namespace, String expectedResult, boolean startsWith)
+            throws XPathExpressionException {
 
         XPathExpression expr = getXpath(xpathString, prefix2Namespace);
         String result = (String) expr.evaluate(doc, XPathConstants.STRING);
         assertNotNull("The xpath " + xpathString + " returned a null value", result);
-        if (NOT_EMPTY.equals(expectedResult)) {
+        if (startsWith) {
+            assertTrue(result.startsWith(expectedResult));
+        } else if (NOT_EMPTY.equals(expectedResult)) {
             assertTrue("Not empty result for xpath " + xpathString + " expected", !result.isEmpty());
         } else {
             assertEquals(expectedResult, result);
