@@ -711,17 +711,28 @@ public final class StringHelper {
     /**
      * Outputs the bytes in human readable format in units of KB,MB,GB etc.
      *
+     * @param locale the locale used to format into a human readable representation
      * @param bytes number of bytes
      * @return human readable output
      */
-    public static String humanReadableBytes(long bytes) {
+    public static String humanReadableBytes(Locale locale, long bytes) {
         int unit = 1024;
         if (bytes < unit) {
             return bytes + " B";
         }
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = "KMGTPE".charAt(exp - 1) + "";
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+        return String.format(locale, "%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+
+    /**
+     * Outputs the bytes in human readable format in units of KB,MB,GB etc.
+     *
+     * @param bytes number of bytes
+     * @return human readable output
+     */
+    public static String humanReadableBytes(long bytes) {
+        return humanReadableBytes(Locale.getDefault(), bytes);
     }
 
 }
