@@ -115,13 +115,13 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         try {
             bundleContext.removeServiceListener(this);
         } catch (Exception e) {
-            LOG.warn("Error removing ServiceListener " + this + ". This exception is ignored.", e);
+            LOG.warn("Error removing ServiceListener: " + this + ". This exception is ignored.", e);
         }
         if (registration != null) {
             try {
                 registration.unregister();
             } catch (Exception e) {
-                LOG.warn("Error unregistering service registration " + registration + ". This exception is ignored.", e);
+                LOG.warn("Error unregistering service registration: " + registration + ". This exception is ignored.", e);
             }
             registration = null;
         }
@@ -167,33 +167,31 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
                 break;
             }
 
-            LOG.debug("Received BlueprintEvent[ replay={} type={} bundle={}] %s", event.isReplay(), eventTypeString, event.getBundle().getSymbolicName(), event.toString());
+            LOG.debug("Received BlueprintEvent[replay={} type={} bundle={}] %s", event.isReplay(), eventTypeString, event.getBundle().getSymbolicName(), event.toString());
         }
 
         if (!event.isReplay() && this.getBundleContext().getBundle().getBundleId() == event.getBundle().getBundleId()) {
             if (event.getType() == BlueprintEvent.CREATED) {
                 try {
-                    LOG.info("Attempting to start Camel Context {}", this.getName());
+                    LOG.info("Attempting to start CamelContext: {}", this.getName());
                     this.maybeStart();
                 } catch (Exception startEx) {
-                    LOG.error("Error occurred during starting Camel Context  " + this.getName(), startEx);
+                    LOG.error("Error occurred during starting CamelContext: " + this.getName(), startEx);
                 }
             } else if (event.getType() == BlueprintEvent.DESTROYING) {
                 try {
-                    LOG.info("Stopping Camel Context {}", this.getName());
+                    LOG.info("Stopping CamelContext: {}", this.getName());
                     this.stop();
                 } catch (Exception stopEx) {
-                    LOG.error("Error occurred during stopping Camel Context " + this.getName(), stopEx);
+                    LOG.error("Error occurred during stopping CamelContext: " + this.getName(), stopEx);
                 }
-
             }
         }
-
     }
 
     @Override
     public void serviceChanged(ServiceEvent event) {
-        if (LOG.isDebugEnabled()) {
+        if (LOG.isTraceEnabled()) {
             String eventTypeString;
 
             switch (event.getType()) {
@@ -214,7 +212,8 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
                 break;
             }
 
-            LOG.debug("Service {} changed to {}", event.toString(), eventTypeString);
+            // use trace logging as this is very noisy
+            LOG.trace("Service: {} changed to: {}", event.toString(), eventTypeString);
         }
     }
 
