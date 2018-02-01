@@ -93,6 +93,7 @@
         <include>org.apache.camel:camel-exec</include>
         <include>org.apache.camel:camel-facebook</include>
         <include>org.apache.camel:camel-fastjson</include>
+        <include>org.apache.camel:camel-fhir</include>
         <include>org.apache.camel:camel-flatpack</include>
         <include>org.apache.camel:camel-flink</include>
         <include>org.apache.camel:camel-fop</include>
