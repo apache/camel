@@ -32,7 +32,7 @@ import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.SynchronousSink;
-import reactor.util.concurrent.QueueSupplier;
+import reactor.util.concurrent.Queues;
 
 final class ReactorCamelProcessor implements Closeable {
     private final String name;
@@ -86,7 +86,7 @@ final class ReactorCamelProcessor implements Closeable {
                 flux = flux.handle(this::onItemEmitted).onBackpressureLatest();
             } else {
                 // Default strategy is BUFFER
-                flux = flux.onBackpressureBuffer(QueueSupplier.SMALL_BUFFER_SIZE, this::onBackPressure).handle(this::onItemEmitted);
+                flux = flux.onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, this::onBackPressure).handle(this::onItemEmitted);
             }
 
             flux.subscribe(this.publisher);
