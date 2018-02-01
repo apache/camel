@@ -636,7 +636,7 @@
     <spring-data-commons-version>1.13.6.RELEASE</spring-data-commons-version>
     <spring-data-keyvalue-version>1.2.6.RELEASE</spring-data-keyvalue-version>
     <spring-data-redis-version>1.8.6.RELEASE</spring-data-redis-version>
-    <spring-integration-version>4.3.12.RELEASE</spring-integration-version>
+    <spring-integration-version>4.3.14.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-ldap-version>2.3.2.RELEASE</spring-ldap-version>
     <spring-ldap-bundle-version>2.3.2.RELEASE_1</spring-ldap-bundle-version>
