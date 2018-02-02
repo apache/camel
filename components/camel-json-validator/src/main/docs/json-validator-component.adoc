@@ -67,7 +67,7 @@ with the following path and query parameters:
 | *failOnNullHeader* (producer) | Whether to fail if no header exists when validating against a header. | true | boolean
 | *headerName* (producer) | To validate against a header instead of the message body. |  | String
 | *errorHandler* (advanced) | To use a custom ValidatorErrorHandler. The default error handler captures the errors and throws an exception. |  | JsonValidatorError Handler
-| *schemaLoader* (advanced) | To use a custom schema loader allowing for adding custom format validation. See Everit JSON Schema documentation. The default implementation will create a schema loader builder with draft v6 support. |  | JsonSchemaLoader
+| *schemaLoader* (advanced) | To use a custom schema loader allowing for adding custom format validation. The default implementation will create a schema loader with draft v4 support. |  | JsonSchemaLoader
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
