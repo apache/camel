@@ -1,3 +1,4 @@
+[[flatpack-component]]
 == Flatpack Component
 
 *Available as of Camel version 1.4*

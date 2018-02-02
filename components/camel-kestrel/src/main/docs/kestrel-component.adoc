@@ -1,3 +1,4 @@
+[[kestrel-component]]
 == Kestrel Component (deprecated)
 
 *Available as of Camel version 2.6*

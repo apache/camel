@@ -1,3 +1,4 @@
+[[constant-language]]
 == Constant Language
 
 *Available as of Camel version 1.5*

@@ -1,3 +1,4 @@
+[[http-component]]
 == HTTP Component (deprecated)
 
 *Available as of Camel version 1.0*

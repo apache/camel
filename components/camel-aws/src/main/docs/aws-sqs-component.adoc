@@ -1,3 +1,4 @@
+[[aws-sqs-component]]
 == AWS Simple Queue Service Component
 
 *Available as of Camel version 2.6*

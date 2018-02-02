@@ -1,3 +1,4 @@
+[[kafka-component]]
 == Kafka Component
 
 *Available as of Camel version 2.13*
@@ -413,4 +414,3 @@ This will force a synchronous commit which will block until the commit is acknow
 
 If you want to use a custom implementation of `KafkaManualCommit` then you can configure a custom `KafkaManualCommitFactory`
 on the `KafkaComponent` that creates instances of your custom implementation.
-

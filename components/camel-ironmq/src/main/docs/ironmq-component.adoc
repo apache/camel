@@ -1,3 +1,4 @@
+[[ironmq-component]]
 == IronMQ Component
 
 *Available as of Camel version 2.17*

@@ -1,3 +1,4 @@
+[[flink-component]]
 == Apache Flink Component
 
 *Available as of Camel version 2.18*

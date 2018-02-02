@@ -1,3 +1,4 @@
+[[ldif-component]]
 == LDIF Component
 
 *Available as of Camel version 2.20*
@@ -166,4 +167,3 @@ if (results.size() > 0) {
   }
 }
 ----
-

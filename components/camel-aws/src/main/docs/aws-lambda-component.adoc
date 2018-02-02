@@ -1,3 +1,4 @@
+[[aws-lambda-component]]
 == AWS Lambda Component
 
 *Available as of Camel version 2.20*

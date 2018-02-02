@@ -1,3 +1,4 @@
+[[box-component]]
 == Box Component
 
 *Available as of Camel version 2.14*

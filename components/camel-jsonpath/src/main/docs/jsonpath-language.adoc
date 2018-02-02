@@ -1,3 +1,4 @@
+[[jsonpath-language]]
 == JsonPath Language
 
 *Available as of Camel version 2.13*

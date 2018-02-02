@@ -1,3 +1,4 @@
+[[olingo2-component]]
 == Olingo2 Component
 
 *Available as of Camel version 2.14*

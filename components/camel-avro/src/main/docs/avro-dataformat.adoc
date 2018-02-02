@@ -1,3 +1,4 @@
+[[avro-dataformat]]
 == Avro DataFormat
 
 *Available as of Camel version 2.14*

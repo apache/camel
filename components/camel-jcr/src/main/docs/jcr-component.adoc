@@ -1,3 +1,4 @@
+[[jcr-component]]
 == JCR Component
 
 *Available as of Camel version 1.3*

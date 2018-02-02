@@ -1,3 +1,4 @@
+[[pubnub-component]]
 == PubNub Component
 
 *Available as of Camel version 2.19*

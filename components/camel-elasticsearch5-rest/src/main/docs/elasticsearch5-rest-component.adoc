@@ -1,3 +1,4 @@
+[[elasticsearch5-rest-component]]
 == Elastichsearch5 Rest Component
 
 *Available as of Camel version 2.21*

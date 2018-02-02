@@ -1,3 +1,4 @@
+[[simple-language]]
 == Simple Language
 
 *Available as of Camel version 1.1*

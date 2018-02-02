@@ -1,3 +1,4 @@
+[[validator-component]]
 == Validator Component
 
 *Available as of Camel version 1.1*
@@ -118,4 +119,3 @@ validator endpoint is cleared and reread with the next process call with
 the JMX operation `clearCachedSchema. `You can also use this method to
 programmatically clear the cache. This method is available on the
 `ValidatorEndpoint `class`.`
-

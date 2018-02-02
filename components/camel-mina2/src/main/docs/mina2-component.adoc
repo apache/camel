@@ -1,3 +1,4 @@
+[[mina2-component]]
 == Mina2 Component
 
 *Available as of Camel version 2.10*

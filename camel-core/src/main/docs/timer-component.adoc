@@ -1,3 +1,4 @@
+[[timer-component]]
 == Timer Component
 
 *Available as of Camel version 1.0*

@@ -1,3 +1,4 @@
+[[ignite-set-component]]
 == Ignite Sets Component
 
 *Available as of Camel version 2.17*

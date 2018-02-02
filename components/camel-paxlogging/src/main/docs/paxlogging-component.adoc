@@ -1,3 +1,4 @@
+[[paxlogging-component]]
 == OSGi PAX Logging Component
 
 *Available as of Camel version 2.6*

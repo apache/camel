@@ -1,3 +1,4 @@
+[[sql-component]]
 == SQL Component
 
 *Available as of Camel version 1.4*

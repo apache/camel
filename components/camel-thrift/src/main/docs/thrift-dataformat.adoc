@@ -1,3 +1,4 @@
+[[thrift-dataformat]]
 == Thrift DataFormat
 
 *Available as of Camel version 2.20*

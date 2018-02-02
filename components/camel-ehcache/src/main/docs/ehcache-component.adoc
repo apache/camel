@@ -1,3 +1,4 @@
+[[ehcache-component]]
 == Ehcache Component
 
 *Available as of Camel version 2.18*

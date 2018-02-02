@@ -1,3 +1,4 @@
+[[xmlBeans-dataformat]]
 == XML Beans DataFormat (deprecated)
 
 *Available as of Camel version 1.2*

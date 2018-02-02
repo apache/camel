@@ -1,3 +1,4 @@
+[[aws-sdb-component]]
 == AWS SimpleDB Component
 
 *Available as of Camel version 2.9*

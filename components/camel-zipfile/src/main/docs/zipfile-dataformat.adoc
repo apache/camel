@@ -1,3 +1,4 @@
+[[zipfile-dataformat]]
 == Zip File DataFormat
 
 *Available as of Camel version 2.11*

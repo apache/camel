@@ -1,3 +1,4 @@
+[[jms-component]]
 == JMS Component
 ifdef::env-github[]
 *Available as of Camel version 1.0.0*

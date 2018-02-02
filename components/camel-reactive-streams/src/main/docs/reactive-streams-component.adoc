@@ -1,3 +1,4 @@
+[[reactive-streams-component]]
 == Reactive Streams Component
 
 *Available as of Camel version 2.19*

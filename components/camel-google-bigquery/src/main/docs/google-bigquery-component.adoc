@@ -1,3 +1,4 @@
+[[google-bigquery-component]]
 == Google BigQuery Component
 
 *Available as of Camel version 2.20*

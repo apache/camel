@@ -1,3 +1,4 @@
+[[jpa-component]]
 == JPA Component
 
 *Available as of Camel version 1.0*

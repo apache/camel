@@ -1,3 +1,4 @@
+[[docker-component]]
 == Docker Component
 
 *Available as of Camel version 2.15*

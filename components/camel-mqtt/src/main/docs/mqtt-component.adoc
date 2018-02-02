@@ -1,3 +1,4 @@
+[[mqtt-component]]
 == MQTT Component
 
 *Available as of Camel version 2.10*

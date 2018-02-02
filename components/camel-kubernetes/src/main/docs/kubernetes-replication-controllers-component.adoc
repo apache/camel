@@ -1,3 +1,4 @@
+[[kubernetes-replication-controllers-component]]
 == Kubernetes Replication Controller Component
 
 *Available as of Camel version 2.17*

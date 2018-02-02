@@ -1,3 +1,4 @@
+[[netty-http-component]]
 == Netty HTTP Component (deprecated)
 
 *Available as of Camel version 2.12*

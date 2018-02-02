@@ -1,3 +1,4 @@
+[[krati-component]]
 == Krati Component (deprecated)
 
 *Available as of Camel version 2.9*

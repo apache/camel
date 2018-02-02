@@ -1,3 +1,4 @@
+[[sjms-component]]
 == Simple JMS Component
 
 *Available as of Camel version 2.11*

@@ -1,3 +1,4 @@
+[[dropbox-component]]
 == Dropbox Component
 
 *Available as of Camel version 2.14*

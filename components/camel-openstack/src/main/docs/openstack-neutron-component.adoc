@@ -1,3 +1,4 @@
+[[openstack-neutron-component]]
 == OpenStack Neutron Component
 
 *Available as of Camel version 2.19*

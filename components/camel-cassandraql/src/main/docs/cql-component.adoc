@@ -1,3 +1,4 @@
+[[cql-component]]
 == Cassandra CQL Component
 
 *Available as of Camel version 2.15*

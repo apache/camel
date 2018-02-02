@@ -1,3 +1,4 @@
+[[netty-component]]
 == Netty Component (deprecated)
 
 *Available as of Camel version 2.3*

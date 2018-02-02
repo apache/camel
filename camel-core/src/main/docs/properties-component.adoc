@@ -1,3 +1,4 @@
+[[properties-component]]
 == Properties Component
 
 *Available as of Camel version 2.3*

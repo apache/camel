@@ -1,3 +1,4 @@
+[[spring-ws-component]]
 == Spring WebService Component
 
 *Available as of Camel version 2.6*

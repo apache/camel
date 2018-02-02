@@ -1,3 +1,4 @@
+[[aws-ddbstream-component]]
 == AWS DynamoDB Streams Component
 
 *Available as of Camel version 2.17*

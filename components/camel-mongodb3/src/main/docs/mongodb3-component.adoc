@@ -1,3 +1,4 @@
+[[mongodb3-component]]
 == MongoDB Component
 
 *Available as of Camel version 2.19*

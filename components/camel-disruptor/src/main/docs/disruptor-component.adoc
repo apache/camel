@@ -1,3 +1,4 @@
+[[disruptor-component]]
 == Disruptor Component
 
 *Available as of Camel version 2.12*

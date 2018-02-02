@@ -1,3 +1,4 @@
+[[lpr-component]]
 == Printer Component
 
 *Available as of Camel version 2.1*

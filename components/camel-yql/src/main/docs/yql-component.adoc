@@ -1,3 +1,4 @@
+[[yql-component]]
 == Yahoo Query Language Component
 
 *Available as of Camel version 2.21*

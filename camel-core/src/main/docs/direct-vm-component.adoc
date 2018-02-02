@@ -1,3 +1,4 @@
+[[direct-vm-component]]
 == Direct VM Component
 
 *Available as of Camel version 2.10*

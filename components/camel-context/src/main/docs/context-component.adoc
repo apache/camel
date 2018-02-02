@@ -1,3 +1,4 @@
+[[context-component]]
 == Camel Context Component (deprecated)
 
 *Available as of Camel version 2.7*

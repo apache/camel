@@ -1,3 +1,4 @@
+[[couchdb-component]]
 == CouchDB Component
 
 *Available as of Camel version 2.11*

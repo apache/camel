@@ -1,3 +1,4 @@
+[[sftp-component]]
 == SFTP Component
 
 *Available as of Camel version 1.1*

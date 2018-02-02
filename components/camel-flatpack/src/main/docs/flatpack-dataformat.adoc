@@ -1,3 +1,4 @@
+[[flatpack-dataformat]]
 == Flatpack DataFormat
 
 *Available as of Camel version 2.1*

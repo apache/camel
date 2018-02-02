@@ -1,3 +1,4 @@
+[[hazelcast-instance-component]]
 == Hazelcast Instance Component
 
 *Available as of Camel version 2.7*

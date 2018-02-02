@@ -1,3 +1,4 @@
+[[browse-component]]
 == Browse Component
 
 *Available as of Camel version 1.3*

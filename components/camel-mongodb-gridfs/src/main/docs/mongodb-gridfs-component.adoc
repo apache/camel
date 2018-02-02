@@ -1,3 +1,4 @@
+[[mongodb-gridfs-component]]
 == MongoDB GridFS Component
 
 *Available as of Camel version 2.18*

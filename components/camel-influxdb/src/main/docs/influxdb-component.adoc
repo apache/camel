@@ -1,3 +1,4 @@
+[[influxdb-component]]
 == InfluxDB Component
 
 *Available as of Camel version 2.18*

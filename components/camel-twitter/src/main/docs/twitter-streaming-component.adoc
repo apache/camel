@@ -1,3 +1,4 @@
+[[twitter-streaming-component]]
 == Twitter Streaming Component
 
 *Available as of Camel version 2.10*

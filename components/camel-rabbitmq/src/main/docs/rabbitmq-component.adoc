@@ -1,3 +1,4 @@
+[[rabbitmq-component]]
 == RabbitMQ Component
 
 *Available as of Camel version 2.12*

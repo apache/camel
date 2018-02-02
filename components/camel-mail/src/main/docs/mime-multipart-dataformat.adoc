@@ -1,3 +1,4 @@
+[[mime-multipart-dataformat]]
 == MIME Multipart DataFormat
 
 *Available as of Camel version 2.17*

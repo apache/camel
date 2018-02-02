@@ -1,3 +1,4 @@
+[[soapjaxb-dataformat]]
 == SOAP DataFormat
 
 *Available as of Camel version 2.3*

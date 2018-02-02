@@ -1,3 +1,4 @@
+[[aws-kinesis-firehose-component]]
 == AWS Kinesis Firehose Component
 
 *Available as of Camel version 2.19*

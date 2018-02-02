@@ -1,3 +1,4 @@
+[[aws-kinesis-component]]
 == AWS Kinesis Component
 
 *Available as of Camel version 2.17*

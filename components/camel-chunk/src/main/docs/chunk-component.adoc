@@ -1,3 +1,4 @@
+[[chunk-component]]
 == Chunk Component
 
 *Available as of Camel version 2.15*

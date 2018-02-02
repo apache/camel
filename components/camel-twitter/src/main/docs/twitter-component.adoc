@@ -1,3 +1,4 @@
+[[twitter-component]]
 == Twitter Component (deprecated)
 
 *Available as of Camel version 2.10*

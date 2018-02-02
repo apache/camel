@@ -1,3 +1,4 @@
+[[seda-component]]
 == SEDA Component
 
 *Available as of Camel version 1.1*

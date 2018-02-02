@@ -1,3 +1,4 @@
+[[string-dataformat]]
 == String Encoding DataFormat
 
 *Available as of Camel version 2.12*

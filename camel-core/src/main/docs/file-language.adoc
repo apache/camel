@@ -1,3 +1,4 @@
+[[file-language]]
 == File Language
 
 *Available as of Camel version 1.1*

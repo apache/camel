@@ -1,3 +1,4 @@
+[[smpp-component]]
 == SMPP Component
 
 *Available as of Camel version 2.2*

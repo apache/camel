@@ -1,3 +1,4 @@
+[[ibatis-component]]
 == iBatis Component (deprecated)
 
 *Available as of Camel version 1.2*

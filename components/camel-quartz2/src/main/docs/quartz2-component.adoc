@@ -1,3 +1,4 @@
+[[quartz2-component]]
 == Quartz2 Component
 
 *Available as of Camel version 2.12*
@@ -316,4 +317,3 @@ use the following as well:
     from("file:inbox?scheduler=spring&scheduler.cron=0/2+*+*+*+*+?")
        .to("bean:process");
 ----
-
