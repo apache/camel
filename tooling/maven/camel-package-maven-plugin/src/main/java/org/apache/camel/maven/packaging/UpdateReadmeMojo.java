@@ -149,7 +149,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
                     boolean exists = file.exists();
                     boolean updated;
-                    updated = updateTitles(file, docTitle);
+                    updated = updateLink(file, componentName + "-component");
+                    updated |= updateTitles(file, docTitle);
                     updated |= updateAvailableFrom(file, model.getFirstVersion());
 
                     // resolvePropertyPlaceholders is an option which only make sense to use if the component has other options
@@ -209,7 +210,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
                     boolean exists = file.exists();
                     boolean updated;
-                    updated = updateTitles(file, docTitle);
+                    updated = updateLink(file, dataFormatName + "-dataformat");
+                    updated |= updateTitles(file, docTitle);
                     updated |= updateAvailableFrom(file, model.getFirstVersion());
 
                     String options = templateDataFormatOptions(model);
@@ -264,7 +266,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
                     boolean exists = file.exists();
                     boolean updated;
-                    updated = updateTitles(file, docTitle);
+                    updated = updateLink(file, languageName + "-language");
+                    updated |= updateTitles(file, docTitle);
                     updated |= updateAvailableFrom(file, model.getFirstVersion());
 
                     String options = templateLanguageOptions(model);
@@ -328,7 +331,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
                     boolean exists = file.exists();
                     boolean updated;
-                    updated = updateTitles(file, docTitle);
+                    updated = updateLink(file, eipName + "-eip");
+                    updated |= updateTitles(file, docTitle);
 
                     String options = templateEipOptions(model);
                     updated |= updateEipOptions(file, options);
@@ -383,7 +387,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
         return title;
     }
 
-    private boolean updateTitles(File file, String title) throws MojoExecutionException {
+    private boolean updateLink(File file, String link) throws MojoExecutionException {
         if (!file.exists()) {
             return false;
         }
@@ -399,6 +403,48 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 String line = lines[i];
 
                 if (i == 0) {
+                    // first line is the link
+                    String newLine = "[[" + link + "]]";
+                    newLines.add(newLine);
+                    updated = !line.equals(newLine);
+                    if (updated) {
+                        // its some old text so keep it
+                        newLines.add(line);
+                    }
+                } else {
+                    newLines.add(line);
+                }
+            }
+
+            if (updated) {
+                // build the new updated text
+                String newText = newLines.stream().collect(Collectors.joining("\n"));
+                writeText(file, newText);
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+
+        return updated;
+    }
+
+    private boolean updateTitles(File file, String title) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        boolean updated = false;
+
+        try {
+            List<String> newLines = new ArrayList<>();
+
+            String text = loadText(new FileInputStream(file));
+            String[] lines = text.split("\n");
+            // line 0 is the link
+            for (int i = 1; i < lines.length; i++) {
+                String line = lines[i];
+
+                if (i == 1) {
                     // first line is the title to make the text less noisy we use level 2
                     String newLine = "== " + title;
                     newLines.add(newLine);
@@ -471,25 +517,25 @@ public class UpdateReadmeMojo extends AbstractMojo {
             newLines.addAll(Arrays.asList(lines));
 
             // check the first four lines
-            boolean title = lines[0].startsWith("##") || lines[0].startsWith("==");
-            boolean empty = lines[1].trim().isEmpty();
-            boolean availableFrom = lines[2].trim().contains("Available as of") || lines[2].trim().contains("Available in");
-            boolean empty2 = lines[3].trim().isEmpty();
+            boolean title = lines[1].startsWith("##") || lines[1].startsWith("==");
+            boolean empty = lines[2].trim().isEmpty();
+            boolean availableFrom = lines[3].trim().contains("Available as of") || lines[3].trim().contains("Available in");
+            boolean empty2 = lines[4].trim().isEmpty();
 
             if (title && empty && availableFrom) {
                 String newLine = "*Available as of Camel version " + firstVersion + "*";
-                if (!newLine.equals(lines[2])) {
-                    newLines.set(2, newLine);
+                if (!newLine.equals(lines[3])) {
+                    newLines.set(3, newLine);
                     updated = true;
                 }
                 if (!empty2) {
-                    newLines.add(3, "");
+                    newLines.add(4, "");
                     updated = true;
                 }
             } else if (!availableFrom) {
                 String newLine = "*Available as of Camel version " + firstVersion + "*";
-                newLines.add(2, newLine);
-                newLines.add(3, "");
+                newLines.add(3, newLine);
+                newLines.add(4, "");
                 updated = true;
             }
 
