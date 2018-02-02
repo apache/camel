@@ -75,8 +75,8 @@ public class MllpConfiguration implements Cloneable {
     @UriParam(label = "advanced,tcp,timeout", defaultValue = "null")
     Integer idleTimeout;
 
-    @UriParam(label = "advanced,tcp,timeout", defaultValue = "500")
-    int readTimeout = 500;
+    @UriParam(label = "advanced,tcp,timeout", defaultValue = "5000")
+    int readTimeout = 5000;
 
     @UriParam(label = "advanced,producer,tcp", defaultValue = "true")
     Boolean keepAlive = true;

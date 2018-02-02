@@ -109,7 +109,7 @@ with the following path and query parameters:
 | *receiveBufferSize* (tcp) | Sets the SO_RCVBUF option to the specified value (in bytes) | 8192 | Integer
 | *sendBufferSize* (tcp) | Sets the SO_SNDBUF option to the specified value (in bytes) | 8192 | Integer
 | *tcpNoDelay* (tcp) | Enable/disable the TCP_NODELAY socket option. | true | Boolean
-| *readTimeout* (timeout) | The SO_TIMEOUT value (in milliseconds) used after the start of an MLLP frame has been received | 500 | int
+| *readTimeout* (timeout) | The SO_TIMEOUT value (in milliseconds) used after the start of an MLLP frame has been received | 5000 | int
 | *receiveTimeout* (timeout) | The SO_TIMEOUT value (in milliseconds) used when waiting for the start of an MLLP frame | 15000 | int
 | *charsetName* (codec) | Set the CamelCharsetName property on the exchange |  | String
 |===
