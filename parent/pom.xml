@@ -3705,6 +3705,11 @@
         <artifactId>jackson-module-jsonSchema</artifactId>
         <version>${jackson2-version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.jr</groupId>
+        <artifactId>jackson-jr-objects</artifactId>
+        <version>${jackson2-version}</version>
+      </dependency>
 
       <dependency>
         <groupId>com.alibaba</groupId>
