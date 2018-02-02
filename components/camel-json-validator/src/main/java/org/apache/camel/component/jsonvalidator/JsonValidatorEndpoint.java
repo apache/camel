@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Validates the payload of a message using Everit JSON schema validator.
+ * Validates the payload of a message using NetworkNT JSON Schema library.
  */
 @ManagedResource(description = "Managed JsonValidatorEndpoint")
 @UriEndpoint(scheme = "json-validator", firstVersion = "2.20.0", title = "JSON Schema Validator", syntax = "json-validator:resourceUri",
@@ -167,8 +167,7 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     }
     
     /**
-     * To use a custom schema loader allowing for adding custom format validation. See Everit JSON Schema documentation.
-     * The default implementation will create a schema loader builder with draft v6 support.
+     * To use a custom schema loader allowing for adding custom format validation. The default implementation will create a schema loader with draft v4 support.
      */
     public void setSchemaLoader(JsonSchemaLoader schemaLoader) {
         this.schemaLoader = schemaLoader;
