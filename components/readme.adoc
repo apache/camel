@@ -447,7 +447,7 @@ Number of Components: 290 in 199 JAR artifacts (19 deprecated)
 `jpa:entityType` | 1.0 | The jpa component enables you to store and retrieve Java objects from databases using JPA.
 
 | link:camel-json-validator/src/main/docs/json-validator-component.adoc[JSON Schema Validator] (camel-json-validator) +
-`json-validator:resourceUri` | 2.20 | Validates the payload of a message using Everit JSON schema validator.
+`json-validator:resourceUri` | 2.20 | Validates the payload of a message using NetworkNT JSON Schema library.
 
 | link:camel-jt400/src/main/docs/jt400-component.adoc[JT400] (camel-jt400) +
 `jt400:userID:password/systemName/objectPath.type` | 1.5 | The jt400 component allows you to exchanges messages with an AS/400 system using data queues or program call.
