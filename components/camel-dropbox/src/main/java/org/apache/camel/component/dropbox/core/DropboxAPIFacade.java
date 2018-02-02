@@ -96,7 +96,7 @@ public final class DropboxAPIFacade {
         try {
             entry = client.files().upload(dropboxPath);
         } catch (DbxException e) {
-            throw new DropboxException(dropboxPath + " does not exist or can't obtain metadata");
+            throw new DropboxException(dropboxPath + " does not exist or cannot obtain metadata", e);
         }
 
         if (localPath != null) {
@@ -150,7 +150,7 @@ public final class DropboxAPIFacade {
             // list all files in a dir
             Collection<File> listFiles = FileUtils.listFiles(fileLocalPath, null, true);
             if (listFiles.isEmpty()) {
-                throw new DropboxException(localPath + " doesn't contain any files");
+                throw new DropboxException(localPath + " does not contain any files");
             }
 
             HashMap<String, DropboxResultCode> resultMap = new HashMap<>(listFiles.size());
@@ -271,7 +271,7 @@ public final class DropboxAPIFacade {
                 searchMatches = listing.getMatches();
                 return new DropboxSearchResult(searchMatches);
             } catch (DbxException e) {
-                throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
+                throw new DropboxException(remotePath + " does not exist or cannot obtain metadata", e);
             }
         } else {
             LOG.debug("Search by query: {}", query);
@@ -280,7 +280,7 @@ public final class DropboxAPIFacade {
                 searchMatches = listing.getMatches();
                 return new DropboxSearchResult(searchMatches);
             } catch (DbxException e) {
-                throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
+                throw new DropboxException(remotePath + " does not exist or cannot obtain metadata", e);
             }
         }
     }
@@ -297,7 +297,7 @@ public final class DropboxAPIFacade {
         try {
             client.files().deleteV2(remotePath);
         } catch (DbxException e) {
-            throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
+            throw new DropboxException(remotePath + " does not exist or cannot obtain metadata", e);
         }
         return new DropboxDelResult(remotePath);
     }
@@ -315,7 +315,7 @@ public final class DropboxAPIFacade {
             client.files().moveV2(remotePath, newRemotePath);
             return new DropboxMoveResult(remotePath, newRemotePath);
         } catch (DbxException e) {
-            throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
+            throw new DropboxException(remotePath + " does not exist or cannot obtain metadata", e);
         }
     }
 
@@ -369,9 +369,9 @@ public final class DropboxAPIFacade {
                 return null;
             }
         } catch (DbxException e) {
-            throw new DropboxException(path + " does not exist or can't obtain metadata");
+            throw new DropboxException(path + " does not exist or cannot obtain metadata", e);
         } catch (IOException e) {
-            throw new DropboxException(path + " can't obtain a stream");
+            throw new DropboxException(path + " cannot obtain a stream", e);
         }
     }
 }

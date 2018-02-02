@@ -27,4 +27,8 @@ public class DropboxException extends Exception {
     public DropboxException(String message) {
         super(message);
     }
+
+    public DropboxException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
