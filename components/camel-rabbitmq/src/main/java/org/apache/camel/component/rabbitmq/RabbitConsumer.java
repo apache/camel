@@ -67,6 +67,10 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
             }
             //Channel might be open because while we were waiting for the lock, stop() has been succesfully called.
             if (!channel.isOpen()) {
+                // we could not open the channel so release the lock
+                if (!consumer.getEndpoint().isAutoAck()) {
+                    lock.release();
+                }
                 return;
             }
 
