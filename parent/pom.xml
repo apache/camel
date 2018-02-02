@@ -283,7 +283,7 @@
     <hadoop2-version>2.7.4</hadoop2-version>
     <hadoop2-protobuf-version>2.5.0</hadoop2-protobuf-version>
     <hamcrest-version>2.0.0.0</hamcrest-version>
-    <hapi-version>2.2</hapi-version>
+    <hapi-version>2.3</hapi-version>
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.22</hawtdispatch-version>
