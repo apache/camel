@@ -17,14 +17,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-dropbox</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 === URI format
 
@@ -39,7 +39,7 @@ perform on Dropbox remote folder.
 === Operations
 
 [width="100%",cols="40%,60%",options="header",]
-|=======================================================================
+|===
 |Operation |Description
 
 |`del` |deletes files or directories on Dropbox
@@ -51,7 +51,7 @@ perform on Dropbox remote folder.
 |`put` |upload files on Dropbox
 
 |`search` |search files on Dropbox based on string queries
-|=======================================================================
+|===
 
 *Operations* require additional options to work, some are mandatory for
 the specific operation.
@@ -360,9 +360,10 @@ Below are listed the options for this operation:
 
 |`remotePath` |`true` |Folder on Dropbox where to search in.
 
-|`query` |`false` |A space-separated list of sub-strings to search for. A file matches only
+|`query` |`true` |A space-separated list of sub-strings to search for. A file matches only
 if it contains all the sub-strings. If this option is not set, all files
-will be matched.
+will be matched. The query is required to be provided in either the endpoint configuration
+or as a header `CamelDropboxQuery` on the Camel message.
 |===
 
 ==== Samples
@@ -373,6 +374,7 @@ from("dropbox://search?accessToken=XXX&clientIdentifier=XXX&remotePath=/XXX&quer
   .to("mock:result");
 
 from("direct:start")
+  .setHeader("CamelDropboxQuery", constant("XXX"))
   .to("dropbox://search?accessToken=XXX&clientIdentifier=XXX&remotePath=/XXX")
   .to("mock:result");
 ----
