@@ -1,3 +1,4 @@
+[[kubernetes-builds-component]]
 == Kubernetes Builds Component
 
 *Available as of Camel version 2.17*

@@ -1,3 +1,4 @@
+[[zookeeper-master-component]]
 == ZooKeeper Master Component
 
 *Available as of Camel version 2.19*

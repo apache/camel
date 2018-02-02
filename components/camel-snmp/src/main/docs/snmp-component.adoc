@@ -1,3 +1,4 @@
+[[snmp-component]]
 == SNMP Component
 
 *Available as of Camel version 2.1*

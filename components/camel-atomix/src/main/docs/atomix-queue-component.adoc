@@ -1,3 +1,4 @@
+[[atomix-queue-component]]
 == Atomix Queue Component
 
 *Available as of Camel version 2.20*

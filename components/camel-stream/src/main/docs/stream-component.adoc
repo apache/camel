@@ -1,3 +1,4 @@
+[[stream-component]]
 == Stream Component
 
 *Available as of Camel version 1.3*

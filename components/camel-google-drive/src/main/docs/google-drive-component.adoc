@@ -1,3 +1,4 @@
+[[google-drive-component]]
 == Google Drive Component
 
 *Available as of Camel version 2.14*

@@ -1,3 +1,4 @@
+[[cache-component]]
 == EHCache Component (deprecated)
 
 *Available as of Camel version 2.1*

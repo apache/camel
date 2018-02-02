@@ -1,3 +1,4 @@
+[[hessian-dataformat]]
 == Hessian DataFormat (deprecated)
 
 *Available as of Camel version 2.17*

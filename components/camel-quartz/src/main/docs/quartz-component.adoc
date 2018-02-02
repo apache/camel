@@ -1,3 +1,4 @@
+[[quartz-component]]
 == Quartz Component (deprecated)
 
 *Available as of Camel version 1.0*

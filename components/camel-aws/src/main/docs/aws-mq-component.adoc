@@ -1,3 +1,4 @@
+[[aws-mq-component]]
 == AWS MQ Component
 
 *Available as of Camel version 2.21*

@@ -1,3 +1,4 @@
+[[language-component]]
 == Language Component
 
 *Available as of Camel version 2.5*
@@ -128,4 +129,3 @@ updated script is used:
 From *Camel 2.11* onwards you can refer to the resource similar to the
 other link:language.html[Language]s in Camel by prefixing with
 `"resource:"` as shown below:
-

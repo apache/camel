@@ -1,3 +1,4 @@
+[[json-johnzon-dataformat]]
 == JSon Johnzon DataFormat
 
 *Available as of Camel version 2.18*

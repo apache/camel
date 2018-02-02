@@ -1,3 +1,4 @@
+[[boon-dataformat]]
 == Boon DataFormat
 
 *Available as of Camel version 2.16*

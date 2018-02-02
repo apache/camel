@@ -1,3 +1,4 @@
+[[json-fastjson-dataformat]]
 == JSon Fastjson DataFormat
 
 *Available as of Camel version 2.20*

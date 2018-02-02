@@ -1,3 +1,4 @@
+[[xmlsecurity-component]]
 == XML Security Component
 
 *Available as of Camel version 2.12*

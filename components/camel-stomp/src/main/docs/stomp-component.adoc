@@ -1,3 +1,4 @@
+[[stomp-component]]
 == Stomp Component
 
 *Available as of Camel version 2.12*

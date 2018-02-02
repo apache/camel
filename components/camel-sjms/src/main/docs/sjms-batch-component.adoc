@@ -1,3 +1,4 @@
+[[sjms-batch-component]]
 == Simple JMS Batch Component
 
 *Available as of Camel version 2.16*

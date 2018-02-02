@@ -1,3 +1,4 @@
+[[pgevent-component]]
 == PostgresSQL Event Component
 
 *Available as of Camel version 2.15*

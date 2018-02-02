@@ -1,3 +1,4 @@
+[[elasticsearch5-component]]
 == Elasticsearch5 Component (deprecated)
 
 *Available as of Camel version 2.19*

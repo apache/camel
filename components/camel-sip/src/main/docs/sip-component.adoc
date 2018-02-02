@@ -1,3 +1,4 @@
+[[sip-component]]
 == SIP Component
 
 *Available as of Camel version 2.5*

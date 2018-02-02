@@ -1,3 +1,4 @@
+[[lzf-dataformat]]
 == LZF Deflate Compression DataFormat
 
 *Available as of Camel version 2.17*

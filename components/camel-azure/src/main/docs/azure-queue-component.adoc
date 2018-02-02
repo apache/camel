@@ -1,3 +1,4 @@
+[[azure-queue-component]]
 == Azure Storage Queue Service Component
 
 *Available as of Camel version 2.19*

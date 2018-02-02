@@ -1,3 +1,4 @@
+[[atomix-map-component]]
 == Atomix Map Component
 
 *Available as of Camel version 2.20*

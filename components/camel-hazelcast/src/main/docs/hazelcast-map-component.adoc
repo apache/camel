@@ -1,3 +1,4 @@
+[[hazelcast-map-component]]
 == Hazelcast Map Component
 
 *Available as of Camel version 2.7*

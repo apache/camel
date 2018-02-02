@@ -1,3 +1,4 @@
+[[xstream-dataformat]]
 == XStream DataFormat
 
 *Available as of Camel version 1.3*

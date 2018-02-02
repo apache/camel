@@ -1,3 +1,4 @@
+[[pdf-component]]
 == PDF Component
 
 *Available as of Camel version 2.16*

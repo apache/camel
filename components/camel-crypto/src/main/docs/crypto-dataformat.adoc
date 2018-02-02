@@ -1,3 +1,4 @@
+[[crypto-dataformat]]
 == Crypto (Java Cryptographic Extension) DataFormat
 
 *Available as of Camel version 2.3*

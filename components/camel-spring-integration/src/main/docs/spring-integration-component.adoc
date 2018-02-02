@@ -1,3 +1,4 @@
+[[spring-integration-component]]
 == Spring Integration Component
 
 *Available as of Camel version 1.4*

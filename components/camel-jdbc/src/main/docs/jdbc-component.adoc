@@ -1,3 +1,4 @@
+[[jdbc-component]]
 == JDBC Component
 
 *Available as of Camel version 1.2*

@@ -1,3 +1,4 @@
+[[chronicle-engine-component]]
 == Chronicle Engine Component
 
 *Available as of Camel version 2.18*

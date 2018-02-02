@@ -1,3 +1,4 @@
+[[xtokenize-language]]
 == XML Tokenize Language
 
 *Available as of Camel version 2.14*

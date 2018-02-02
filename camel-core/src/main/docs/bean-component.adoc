@@ -1,3 +1,4 @@
+[[bean-component]]
 == Bean Component
 
 *Available as of Camel version 1.0*

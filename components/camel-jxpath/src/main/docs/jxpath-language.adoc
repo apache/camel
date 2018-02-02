@@ -1,3 +1,4 @@
+[[jxpath-language]]
 == JXPath Language (deprecated)
 
 *Available as of Camel version 1.3*

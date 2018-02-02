@@ -1,3 +1,4 @@
+[[twitter-directmessage-component]]
 == Twitter Direct Message Component
 
 *Available as of Camel version 2.10*

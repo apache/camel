@@ -1,3 +1,4 @@
+[[exec-component]]
 == Exec Component
 
 *Available as of Camel version 2.3*

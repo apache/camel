@@ -1,3 +1,4 @@
+[[groovy-language]]
 == Groovy Language
 
 *Available as of Camel version 1.3*

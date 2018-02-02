@@ -1,3 +1,4 @@
+[[eventadmin-component]]
 == OSGi EventAdmin Component
 
 *Available as of Camel version 2.6*

@@ -1,3 +1,4 @@
+[[jibx-dataformat]]
 == JiBX DataFormat
 
 *Available as of Camel version 2.6*

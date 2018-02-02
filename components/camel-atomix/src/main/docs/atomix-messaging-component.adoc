@@ -1,3 +1,4 @@
+[[atomix-messaging-component]]
 == Atomix Messaging Component
 
 *Available as of Camel version 2.20*

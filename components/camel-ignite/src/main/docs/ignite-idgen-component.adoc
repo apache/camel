@@ -1,3 +1,4 @@
+[[ignite-idgen-component]]
 == Ignite ID Generator Component
 
 *Available as of Camel version 2.17*

@@ -1,3 +1,4 @@
+[[spring-event-component]]
 == Spring Event Component
 
 *Available as of Camel version 1.4*

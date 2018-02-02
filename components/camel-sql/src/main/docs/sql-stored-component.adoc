@@ -1,3 +1,4 @@
+[[sql-stored-component]]
 == SQL Stored Procedure Component
 
 *Available as of Camel version 2.17*

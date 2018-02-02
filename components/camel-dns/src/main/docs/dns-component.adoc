@@ -1,3 +1,4 @@
+[[dns-component]]
 == DNS Component
 
 *Available as of Camel version 2.7*
@@ -165,4 +166,3 @@ i.e. You may have an instance in NYC and an instance in SFO. You would configure
 	<route id="routeId" autoStartup="false" routePolicyRef="dnsActivationPolicy">
 	</route>
 ----
-

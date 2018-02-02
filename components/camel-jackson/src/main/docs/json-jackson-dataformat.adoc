@@ -1,3 +1,4 @@
+[[json-jackson-dataformat]]
 == JSon Jackson DataFormat
 
 *Available as of Camel version 2.0*

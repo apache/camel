@@ -1,3 +1,4 @@
+[[vertx-component]]
 == Vert.x Component
 
 *Available as of Camel version 2.12*

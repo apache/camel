@@ -1,3 +1,4 @@
+[[beanio-dataformat]]
 == BeanIO DataFormat
 
 *Available as of Camel version 2.10*

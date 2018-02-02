@@ -1,3 +1,4 @@
+[[atomix-multimap-component]]
 == Atomix MultiMap Component
 
 *Available as of Camel version 2.20*

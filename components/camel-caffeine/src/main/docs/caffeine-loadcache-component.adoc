@@ -1,3 +1,4 @@
+[[caffeine-loadcache-component]]
 == Caffeine LoadCache Component
 
 *Available as of Camel version 2.20*

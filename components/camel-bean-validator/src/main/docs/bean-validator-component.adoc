@@ -1,3 +1,4 @@
+[[bean-validator-component]]
 == Bean Validator Component
 
 *Available as of Camel version 2.3*

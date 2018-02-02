@@ -1,3 +1,4 @@
+[[digitalocean-component]]
 == DigitalOcean Component
 
 *Available as of Camel version 2.19*

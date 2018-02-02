@@ -1,3 +1,4 @@
+[[ignite-events-component]]
 == Ignite Events Component
 
 *Available as of Camel version 2.17*

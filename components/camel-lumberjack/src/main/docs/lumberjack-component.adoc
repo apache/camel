@@ -1,3 +1,4 @@
+[[lumberjack-component]]
 == Lumberjack Component
 
 *Available as of Camel version 2.18*

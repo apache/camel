@@ -1,3 +1,4 @@
+[[dataformat-component]]
 == Data Format Component
 
 *Available as of Camel version 2.12*
@@ -79,4 +80,3 @@ And in XML DSL you do:
   </route>
 </camelContext>
 ----
-

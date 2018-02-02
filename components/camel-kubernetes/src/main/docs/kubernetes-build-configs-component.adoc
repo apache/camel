@@ -1,3 +1,4 @@
+[[kubernetes-build-configs-component]]
 == Kubernetes Build Config Component
 
 *Available as of Camel version 2.17*

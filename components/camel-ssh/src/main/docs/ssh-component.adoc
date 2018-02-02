@@ -1,3 +1,4 @@
+[[ssh-component]]
 == SSH Component
 
 *Available as of Camel version 2.10*

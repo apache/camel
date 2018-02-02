@@ -1,3 +1,4 @@
+[[tidyMarkup-dataformat]]
 == TidyMarkup DataFormat
 
 *Available as of Camel version 2.0*

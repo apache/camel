@@ -1,3 +1,4 @@
+[[twitter-search-component]]
 == Twitter Search Component
 
 *Available as of Camel version 2.10*

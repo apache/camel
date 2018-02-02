@@ -1,3 +1,4 @@
+[[tika-component]]
 == Tika Component
 
 *Available as of Camel version 2.19*

@@ -1,3 +1,4 @@
+[[csv-dataformat]]
 == CSV DataFormat
 
 *Available as of Camel version 1.3*

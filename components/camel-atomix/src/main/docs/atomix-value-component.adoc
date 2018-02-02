@@ -1,3 +1,4 @@
+[[atomix-value-component]]
 == Atomix Value Component
 
 *Available as of Camel version 2.20*

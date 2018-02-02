@@ -1,3 +1,4 @@
+[[jmx-component]]
 == JMX Component
 ifdef::env-github[]
 *Available as of Camel version 2.6.0*

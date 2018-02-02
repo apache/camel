@@ -1,3 +1,4 @@
+[[infinispan-component]]
 == Infinispan Component
 
 *Available as of Camel version 2.13*

@@ -1,3 +1,4 @@
+[[jt400-component]]
 == JT400 Component
 
 *Available as of Camel version 1.5*

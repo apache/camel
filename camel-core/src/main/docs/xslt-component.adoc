@@ -1,3 +1,4 @@
+[[xslt-component]]
 == XSLT Component
 
 *Available as of Camel version 1.3*

@@ -1,3 +1,4 @@
+[[ejb-component]]
 == EJB Component
 
 *Available as of Camel version 2.4*

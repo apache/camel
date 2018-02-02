@@ -1,3 +1,4 @@
+[[stub-component]]
 == Stub Component
 
 *Available as of Camel version 2.10*
@@ -94,4 +95,3 @@ Here are a few samples of stubbing endpoint uris
 stub:smtp://somehost.foo.com?user=whatnot&something=else
 stub:http://somehost.bar.com/something
 ----
-

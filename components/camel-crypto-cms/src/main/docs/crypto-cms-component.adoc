@@ -1,3 +1,4 @@
+[[crypto-cms-component]]
 == Crypto CMS Component
 
 *Available as of Camel version 2.20*

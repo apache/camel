@@ -1,3 +1,4 @@
+[[ref-component]]
 == Ref Component
 
 *Available as of Camel version 1.2*
@@ -97,4 +98,3 @@ You could, of course, have used the `ref` attribute instead:
 ----
 
 Which is the more common way to write it.
-

@@ -1,3 +1,4 @@
+[[wordpress-component]]
 == Wordpress Component
 
 *Available as of Camel version 2.21*
