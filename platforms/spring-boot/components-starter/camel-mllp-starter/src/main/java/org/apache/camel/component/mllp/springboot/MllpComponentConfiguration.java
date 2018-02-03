@@ -215,7 +215,7 @@ public class MllpComponentConfiguration
          * @param readTimeout
          *            timeout in milliseconds
          */
-        private Integer readTimeout = 500;
+        private Integer readTimeout = 5000;
         /**
          * Enable/disable the SO_KEEPALIVE socket option.
          * 
