@@ -11,6 +11,13 @@ for this component:
 
 [source,xml]
 ----
+<!-- will be available as of 2.21 --> 
+<repository>
+    <id>camel-snapshots</id>
+    <name>Apache Snapshot Repository</name>
+    <url>https://repository.apache.org/content/repositories/snapshots/</url>
+</repository>
+
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-elasticsearch5-rest</artifactId>
