@@ -1,3 +1,4 @@
+[[filter-eip]]
 == Filter EIP
 
 The http://www.enterpriseintegrationpatterns.com/Filter.html[Message

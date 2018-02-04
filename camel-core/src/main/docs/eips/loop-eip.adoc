@@ -1,3 +1,4 @@
+[[loop-eip]]
 == Loop EIP
 
 The Loop allows for processing a message a number of times, possibly in a different way for each iteration. Useful mostly during testing.
@@ -170,4 +171,3 @@ And the same example in XML:
 ----
 
 Notice in XML that the while loop is turned on using the *doWhile* attribute.
-

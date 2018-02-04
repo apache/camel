@@ -1,3 +1,4 @@
+[[hystrixConfiguration-eip]]
 == Hystrix Configuration EIP
 
 

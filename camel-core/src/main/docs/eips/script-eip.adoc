@@ -1,3 +1,4 @@
+[[script-eip]]
 == Script EIP
 *Available as of Camel 2.16*
 
@@ -73,4 +74,3 @@ For example to load a groovy script from the classpath you need to prefix the va
 
 You can also refer to the script from the file system with `file:` instead of `classpath:`
 such as `file:/var/myscript.groovy`
-

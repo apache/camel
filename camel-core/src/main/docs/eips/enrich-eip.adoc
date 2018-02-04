@@ -1,3 +1,4 @@
+[[enrich-eip]]
 == Enrich EIP
 
 Camel supports the Content Enricher from the EIP patterns using a Message Translator, an arbitrary Processor in the routing logic, or using the enrich DSL element to enrich the message.
@@ -366,4 +367,3 @@ And in XML DSL
   <to uri="direct:result"/>
 </route>
 ----
-

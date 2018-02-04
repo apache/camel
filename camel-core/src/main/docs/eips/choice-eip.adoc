@@ -1,3 +1,4 @@
+[[choice-eip]]
 == Choice EIP
 
 The
@@ -71,4 +72,3 @@ And the same example using XML:
     </route>
 </camelContext>
 ----
-

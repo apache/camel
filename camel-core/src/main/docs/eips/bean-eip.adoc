@@ -1,3 +1,4 @@
+[[bean-eip]]
 == Bean EIP
 
 The *bean:* EIP binds beans to Camel message exchanges.
@@ -88,4 +89,3 @@ mechanisms in Camel.
 * link:class.html[Class] component
 * link:bean-binding.html[Bean Binding]
 * link:bean-integration.html[Bean Integration]
-
