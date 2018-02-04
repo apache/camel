@@ -1,3 +1,4 @@
+[[sample-eip]]
 == Sample EIP
 *Available as of Camel 2.1*
 
@@ -83,4 +84,3 @@ And since it uses a default of 1 second you can omit this configuration in case 
     </sample>
 </route>
 ----
-

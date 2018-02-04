@@ -1,3 +1,4 @@
+[[log-eip]]
 == Log EIP
 
 How can I log the processing of a link:message.html[Message]?
@@ -201,4 +202,3 @@ And in XML:
 `org.apache.camel.processor.DefaultMaskingFormatter` is used for the masking by default.
 If you want to use a custom masking formatter, put it into registry with the name `CamelCustomLogMask`.
 Note that the masking formatter must implement `org.apache.camel.spi.MaskingFormatter`.
-

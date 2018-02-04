@@ -1,3 +1,4 @@
+[[random-eip]]
 == Random EIP
 
 

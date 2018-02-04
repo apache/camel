@@ -1,3 +1,4 @@
+[[validate-eip]]
 == Validate EIP
 *Available as of Camel 2.3* +
 

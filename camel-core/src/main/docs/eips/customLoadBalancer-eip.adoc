@@ -1,3 +1,4 @@
+[[customLoadBalancer-eip]]
 == Custom Load Balancer EIP
 
 You can use a custom load balancer (eg your own implementation) also.

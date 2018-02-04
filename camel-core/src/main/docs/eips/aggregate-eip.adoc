@@ -1,3 +1,4 @@
+[[aggregate-eip]]
 == Aggregate EIP
 
 The
@@ -657,5 +658,3 @@ public static final class MyUserAppender {
 Notice that the return type is a List which we want to contain the user
 names. The 1st parameter is the list of names, and then notice the 2nd
 parameter is the incoming `com.foo.User` type.
-
-

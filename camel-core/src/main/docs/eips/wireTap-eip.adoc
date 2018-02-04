@@ -1,3 +1,4 @@
+[[wireTap-eip]]
 == Wire Tap EIP
 
 http://www.enterpriseintegrationpatterns.com/WireTap.html[Wire Tap]

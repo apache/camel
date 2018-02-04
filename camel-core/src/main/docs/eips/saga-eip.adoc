@@ -1,3 +1,4 @@
+[[saga-eip]]
 == Saga EIP
 
 *Available as of Camel 2.21*
