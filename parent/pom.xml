@@ -205,6 +205,10 @@
     <elasticsearch-sniffer-version>5.6.3</elasticsearch-sniffer-version>
     <elasticsearch-cluster-runner-version>2.4.0.0</elasticsearch-cluster-runner-version>
     <elasticsearch5-cluster-runner-version>5.6.3.0</elasticsearch5-cluster-runner-version>
+    <elasticsearch-rest-sniffer-version>6.1.1</elasticsearch-rest-sniffer-version>
+    <elasticsearch-rest-cluster-runner-version>6.1.1.0</elasticsearch-rest-cluster-runner-version>
+    <elasticsearch-rest-version>6.1.1</elasticsearch-rest-version>
+    <elasticsearch-rest-bundle-version>6.1.1_1</elasticsearch-rest-bundle-version>
     <elsql-version>1.2</elsql-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
     <embedmongo-version>2.0.1</embedmongo-version>
@@ -1132,6 +1136,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-elasticsearch5</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-elasticsearch-rest</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2606,6 +2615,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-elasticsearch5-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-elasticsearch-rest-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

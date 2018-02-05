@@ -86,6 +86,7 @@
         <include>org.apache.camel:camel-ejb</include>
         <include>org.apache.camel:camel-elasticsearch</include>
         <include>org.apache.camel:camel-elasticsearch5</include>
+        <include>org.apache.camel:camel-elasticsearch-rest</include>
         <include>org.apache.camel:camel-elsql</include>
         <include>org.apache.camel:camel-etcd</include>
         <include>org.apache.camel:camel-eventadmin</include>
@@ -398,6 +399,7 @@
         <include>org.apache.camel:camel-ehcache-starter</include>
         <include>org.apache.camel:camel-elasticsearch-starter</include>
         <include>org.apache.camel:camel-elasticsearch5-starter</include>
+        <include>org.apache.camel:camel-elasticsearch-rest-starter</include>
         <include>org.apache.camel:camel-elsql-starter</include>
         <include>org.apache.camel:camel-etcd-starter</include>
         <include>org.apache.camel:camel-exec-starter</include>
