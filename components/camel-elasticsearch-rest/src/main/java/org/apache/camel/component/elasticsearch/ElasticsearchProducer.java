@@ -202,7 +202,6 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (operation == ElasticsearchOperation.Search) {
             SearchRequest searchRequest = ElasticsearchActionRequestConverter.toSearchRequest(message.getBody(), exchange);
             message.setBody(restHighLevelClient.search(searchRequest).getHits());
-            System.err.println(restHighLevelClient.search(searchRequest).toString());
         } else if (operation == ElasticsearchOperation.Ping) {
             message.setBody(restHighLevelClient.ping());
         } else {
