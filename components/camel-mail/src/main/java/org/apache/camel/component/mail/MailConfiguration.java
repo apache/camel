@@ -510,7 +510,7 @@ public class MailConfiguration implements Cloneable {
      * Sets the To email address. Separate multiple email addresses with comma.
      */
     public void setTo(String address) {
-        this.to = to;
+        this.to = address;
         recipients.put(Message.RecipientType.TO, address);
     }
 
