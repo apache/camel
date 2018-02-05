@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.elasticsearch.ElasticsearchComponent;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.HttpHost;
@@ -123,7 +122,6 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
     }
     
     RestClient getClient() {
-    	return client;
+        return client;
     }
-
 }

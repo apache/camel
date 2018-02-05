@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.elasticsearch.ElasticsearchConstants;
-import org.apache.camel.component.elasticsearch.ElasticsearchOperation;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -94,7 +92,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         query.put("query", match);
         SearchHits response = template.requestBody("direct:search", match, SearchHits.class);
         assertNotNull("response should not be null", response);
-        assertEquals("response hits should be == 1", 1, response.totalHits);
+        assertEquals("response hits should be == 0", 0, response.totalHits);
     }
         
     @Test
