@@ -129,8 +129,8 @@
     <module>camel-dropbox-starter</module>
     <module>camel-eclipse-starter</module>
     <module>camel-ehcache-starter</module>
+    <module>camel-elasticsearch-rest-starter</module>
     <module>camel-elasticsearch-starter</module>
-    <module>camel-elasticsearch5-rest-starter</module>
     <module>camel-elasticsearch5-starter</module>
     <module>camel-elsql-starter</module>
     <module>camel-etcd-starter</module>

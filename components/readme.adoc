@@ -230,8 +230,8 @@ Number of Components: 290 in 199 JAR artifacts (19 deprecated)
 | link:camel-ejb/src/main/docs/ejb-component.adoc[EJB] (camel-ejb) +
 `ejb:beanName` | 2.4 | The ejb component is for invoking EJB Java beans from Camel.
 
-| link:camel-elasticsearch5-rest/src/main/docs/elasticsearch5-rest-component.adoc[Elastichsearch5 Rest] (camel-elasticsearch5-rest) +
-`elasticsearch5-rest:clusterName` | 2.21 | The elasticsearch component is used for interfacing with ElasticSearch server using 5.x REST API.
+| link:camel-elasticsearch-rest/src/main/docs/elasticsearch-rest-component.adoc[Elastichsearch Rest] (camel-elasticsearch-rest) +
+`elasticsearch-rest:clusterName` | 2.21 | The elasticsearch component is used for interfacing with ElasticSearch server using REST API.
 
 | link:camel-elasticsearch/src/main/docs/elasticsearch-component.adoc[Elasticsearch] (camel-elasticsearch) +
 `elasticsearch:clusterName` | 2.11 | *deprecated* The elasticsearch component is used for interfacing with ElasticSearch server.
