@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.elasticsearch.ElasticsearchConstants;
-import org.apache.camel.component.elasticsearch.ElasticsearchOperation;
 import org.junit.Test;
 
 public class ElasticsearchIndexTest extends ElasticsearchBaseTest {

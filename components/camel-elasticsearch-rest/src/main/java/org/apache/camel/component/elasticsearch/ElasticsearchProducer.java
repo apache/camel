@@ -299,9 +299,9 @@ public class ElasticsearchProducer extends DefaultProducer {
         return client;
     }
     
-    private class HighLevelClient extends RestHighLevelClient {
+    private final class HighLevelClient extends RestHighLevelClient {
         private HighLevelClient(RestClient restClient) {
-            super(restClient, (client) -> {}, Collections.emptyList());
+            super(restClient, (client) -> { }, Collections.emptyList());
         }
     }
 }

@@ -73,7 +73,7 @@ public class ElasticsearchClusterBaseTest extends CamelTestSupport {
     @AfterClass
     public static void teardownOnce() throws Exception {
         if (restClient != null) {
-        	restClient.close();
+            restClient.close();
         }
         if (runner != null) {
             // close runner
