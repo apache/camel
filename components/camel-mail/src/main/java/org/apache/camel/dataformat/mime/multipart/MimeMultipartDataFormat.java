@@ -218,7 +218,7 @@ public class MimeMultipartDataFormat implements DataFormat {
                     return stream;
                 }
             } catch (ParseException e) {
-                LOG.warn("Invalid Content-Type " + contentType + " ignored");
+                LOG.warn("Invalid Content-Type {} ignored", contentType);
                 return stream;
             }
             camelMessage = exchange.getOut();

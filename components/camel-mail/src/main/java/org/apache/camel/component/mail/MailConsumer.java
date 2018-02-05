@@ -490,7 +490,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         if (cause != null) {
             LOG.warn("Exchange failed, so rolling back message status: " + exchange, cause);
         } else {
-            LOG.warn("Exchange failed, so rolling back message status: " + exchange);
+            LOG.warn("Exchange failed, so rolling back message status: {}", exchange);
         }
     }
 

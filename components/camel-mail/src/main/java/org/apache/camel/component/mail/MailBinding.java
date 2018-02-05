@@ -186,7 +186,7 @@ public class MailBinding {
                 } else if (!configuration.isIgnoreUnsupportedCharset()) {
                     return charset;
                 } else if (configuration.isIgnoreUnsupportedCharset()) {
-                    LOG.warn("Charset: " + charset + " is not supported and cannot be used as charset in Content-Type header.");
+                    LOG.warn("Charset: {} is not supported and cannot be used as charset in Content-Type header.", charset);
                     return null;
                 }
             }
@@ -255,13 +255,13 @@ public class MailBinding {
             // try to fix message in case it has an unsupported encoding in the Content-Type header
             UnsupportedEncodingException uee = ObjectHelper.getException(UnsupportedEncodingException.class, e);
             if (uee != null) {
-                LOG.debug("Unsupported encoding detected: " + uee.getMessage());
+                LOG.debug("Unsupported encoding detected: {}", uee.getMessage());
                 try {
                     String contentType = message.getContentType();
                     String type = ObjectHelper.before(contentType, "charset=");
                     if (type != null) {
                         // try again with fixed content type
-                        LOG.debug("Trying to extract mail message again with fixed Content-Type: " + type);
+                        LOG.debug("Trying to extract mail message again with fixed Content-Type: {}", type);
                         // Since message is read-only, we need to use a copy
                         MimeMessage messageCopy = new MimeMessage((MimeMessage) message);
                         messageCopy.setHeader("Content-Type", type);
@@ -296,7 +296,7 @@ public class MailBinding {
         if (content instanceof Multipart) {
             extractAttachmentsFromMultipart((Multipart) content, map);
         } else if (content != null) {
-            LOG.trace("No attachments to extract as content is not Multipart: " + content.getClass().getName());
+            LOG.trace("No attachments to extract as content is not Multipart: {}", content.getClass().getName());
         }
 
         LOG.trace("Extracting attachments +++ done +++");
@@ -307,10 +307,10 @@ public class MailBinding {
 
         for (int i = 0; i < mp.getCount(); i++) {
             Part part = mp.getBodyPart(i);
-            LOG.trace("Part #" + i + ": " + part);
+            LOG.trace("Part #{}: {}", i , part);
 
             if (part.isMimeType("multipart/*")) {
-                LOG.trace("Part #" + i + ": is mimetype: multipart/*");
+                LOG.trace("Part #{}: is mimetype: multipart/*", i);
                 extractAttachmentsFromMultipart((Multipart) part.getContent(), map);
             } else {
                 String disposition = part.getDisposition();
@@ -503,15 +503,15 @@ public class MailBinding {
                         messageBodyPart.setFileName(attachmentFilename);
                     }
 
-                    LOG.trace("Attachment #" + i + ": ContentType: " + messageBodyPart.getContentType());
+                    LOG.trace("Attachment #{}: ContentType: {}", i, messageBodyPart.getContentType());
 
                     if (contentTypeResolver != null) {
                         String contentType = contentTypeResolver.resolveContentType(attachmentFilename);
-                        LOG.trace("Attachment #" + i + ": Using content type resolver: " + contentTypeResolver + " resolved content type as: " + contentType);
+                        LOG.trace("Attachment #{}: Using content type resolver: {} resolved content type as: {}", i, contentTypeResolver, contentType);
                         if (contentType != null) {
                             String value = contentType + "; name=" + attachmentFilename;
                             messageBodyPart.setHeader("Content-Type", value);
-                            LOG.trace("Attachment #" + i + ": ContentType: " + messageBodyPart.getContentType());
+                            LOG.trace("Attachment #{}: ContentType: {}", i, messageBodyPart.getContentType());
                         }
                     }
 
@@ -525,7 +525,7 @@ public class MailBinding {
                     LOG.trace("shouldAddAttachment: false");
                 }
             } else {
-                LOG.warn("Cannot add attachment: " + attachmentFilename + " as DataHandler is null");
+                LOG.warn("Cannot add attachment: {} as DataHandler is null", attachmentFilename);
             }
             i++;
         }
