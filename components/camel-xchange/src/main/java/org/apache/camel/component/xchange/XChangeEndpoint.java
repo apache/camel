@@ -16,15 +16,25 @@
  */
 package org.apache.camel.component.xchange;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.component.xchange.XChangeConfiguration.XChangeService;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.dto.meta.CurrencyMetaData;
+import org.knowm.xchange.dto.meta.CurrencyPairMetaData;
+import org.knowm.xchange.dto.meta.ExchangeMetaData;
+import org.knowm.xchange.utils.Assert;
 
-@UriEndpoint(firstVersion = "2.21.0", scheme = "xchange", title = "XChange", syntax = "xchange:name", consumerClass = XChangeConsumer.class, label = "api")
-public class XChangeEndpoint extends DefaultPollingEndpoint {
+@UriEndpoint(firstVersion = "2.21.0", scheme = "xchange", title = "XChange", syntax = "xchange:name", producerOnly = true, label = "blockchain")
+public class XChangeEndpoint extends DefaultEndpoint {
 
     @UriParam
     private XChangeConfiguration configuration;
@@ -38,18 +48,23 @@ public class XChangeEndpoint extends DefaultPollingEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        XChangeConsumer answer = new XChangeConsumer(this, processor);
-
-        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a feed, so we override
-        // with a new default value. End user can override this value by providing a consumer.delay parameter
-        answer.setDelay(XChangeConsumer.DEFAULT_CONSUMER_DELAY);
-        configureConsumer(answer);
-        return answer;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException();
+        
+        Producer producer = null;
+        
+        XChangeService service = getConfiguration().getService();
+        if (XChangeService.metadata == service) {
+            producer = new XChangeMetaDataProducer(this);
+        } else if (XChangeService.marketdata == service) {
+            producer = new XChangeMarketDataProducer(this);
+        }
+        
+        Assert.notNull(producer, "Unsupported service: " + service);
+        return producer;
     }
 
     @Override
@@ -63,5 +78,27 @@ public class XChangeEndpoint extends DefaultPollingEndpoint {
 
     public XChange getXChange() {
         return exchange;
+    }
+    
+    public List<Currency> getCurrencies() {
+        ExchangeMetaData metaData = exchange.getExchangeMetaData();
+        return metaData.getCurrencies().keySet().stream().sorted().collect(Collectors.toList());
+    }
+    
+    public CurrencyMetaData getCurrencyMetaData(Currency curr) {
+        Assert.notNull(curr, "Null currency");
+        ExchangeMetaData metaData = exchange.getExchangeMetaData();
+        return metaData.getCurrencies().get(curr);
+    }
+    
+    public List<CurrencyPair> getCurrencyPairs() {
+        ExchangeMetaData metaData = exchange.getExchangeMetaData();
+        return metaData.getCurrencyPairs().keySet().stream().sorted().collect(Collectors.toList());
+    }
+    
+    public CurrencyPairMetaData getCurrencyPairMetaData(CurrencyPair pair) {
+        Assert.notNull(pair, "Null currency");
+        ExchangeMetaData metaData = exchange.getExchangeMetaData();
+        return metaData.getCurrencyPairs().get(pair);
     }
 }

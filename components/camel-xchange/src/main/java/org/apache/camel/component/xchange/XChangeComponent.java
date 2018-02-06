@@ -20,19 +20,28 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
-import org.knowm.xchange.binance.BinanceExchange;
+import org.knowm.xchange.utils.Assert;
 
 public class XChangeComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        XChangeConfiguration configuration = new XChangeConfiguration(this);
 
-        // and then override from parameters
+        // Init the configuration
+        XChangeConfiguration configuration = new XChangeConfiguration(this);
         setProperties(configuration, parameters);
 
-        XChange exchange = new XChange(ExchangeFactory.INSTANCE.createExchange(BinanceExchange.class));
+        // Set the the required name of the exchange
+        configuration.setName(remaining);
+
+        // Get the XChange implementation
+        Class<? extends Exchange> exchangeClass = configuration.getXChangeClass();
+        Assert.notNull(exchangeClass, "XChange not supported: " + configuration.getName());
+        
+        // Create the XChange and associated Endpoint
+        XChange exchange = new XChange(ExchangeFactory.INSTANCE.createExchange(exchangeClass));
         XChangeEndpoint endpoint = new XChangeEndpoint(uri, this, configuration, exchange);
         
         return endpoint;

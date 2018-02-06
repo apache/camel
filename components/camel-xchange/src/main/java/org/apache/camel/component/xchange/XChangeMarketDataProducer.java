@@ -16,26 +16,21 @@
  */
 package org.apache.camel.component.xchange;
 
+import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod;
+import org.apache.camel.impl.DefaultProducer;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.service.marketdata.MarketDataService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class XChangeConsumer extends ScheduledPollConsumer {
+public class XChangeMarketDataProducer extends DefaultProducer {
     
-    public static final long DEFAULT_CONSUMER_DELAY = 60 * 60 * 1000L;
-    
-    private static final Logger LOG = LoggerFactory.getLogger(XChangeConsumer.class);
-
     private final MarketDataService marketService;
     
-    public XChangeConsumer(XChangeEndpoint endpoint, Processor processor) {
-        super(endpoint, processor);
-        
+    public XChangeMarketDataProducer(XChangeEndpoint endpoint) {
+        super(endpoint);
         marketService = endpoint.getXChange().getMarketDataService();
     }
 
@@ -45,17 +40,16 @@ public class XChangeConsumer extends ScheduledPollConsumer {
     }
 
     @Override
-    protected int poll() throws Exception {
-        CurrencyPair pair = getEndpoint().getConfiguration().getCurrencyPair();
-        LOG.info("Going to execute ticker query for {}", pair);
-        
-        Ticker ticker = marketService.getTicker(pair);
-        
-        Exchange exchange = getEndpoint().createExchange();
-        exchange.getIn().setBody(ticker);
-        getProcessor().process(exchange);
-        
-        return 1;
-    }
+    public void process(Exchange exchange) throws Exception {
 
+        XChangeEndpoint endpoint = getEndpoint();
+        XChangeMethod method = endpoint.getConfiguration().getMethod();
+        
+        if (XChangeMethod.ticker == method) {
+            CurrencyPair pair = exchange.getIn().getHeader(HEADER_CURRENCY_PAIR, CurrencyPair.class);
+            pair = pair != null ? pair : exchange.getMessage().getBody(CurrencyPair.class);
+            Ticker ticker = marketService.getTicker(pair);
+            exchange.getMessage().setBody(ticker);
+        }
+    }
 }

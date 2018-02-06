@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.weather;
+package org.apache.camel.component.xchange.market;
 
-import java.util.concurrent.TimeUnit;
+import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Assert;
 import org.junit.Test;
+import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Ticker;
 
 public class TickerConsumerTest extends CamelTestSupport {
@@ -32,8 +32,8 @@ public class TickerConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("xchange:binance?method=ticker&currencyPair=BTC/USDT")
-                        .to("mock:result");
+                from("direct:ticker")
+                .to("xchange:binance?service=marketdata&method=ticker");
             }
         };
     }
@@ -41,15 +41,11 @@ public class TickerConsumerTest extends CamelTestSupport {
     @Test
     public void testTicker() throws Exception {
         
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-
-        // give the route a bit time to start and fetch the ticker info
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
-
-        Exchange exchange = mock.getExchanges().get(0);
-        Ticker ticker = exchange.getIn().getBody(Ticker.class);
-        assertNotNull(ticker);
+        Ticker ticker = template.requestBody("direct:ticker", CurrencyPair.EOS_ETH, Ticker.class);
+        Assert.assertNotNull("Ticker not null", ticker);
+        
+        ticker = template.requestBodyAndHeader("direct:ticker", null, HEADER_CURRENCY_PAIR, CurrencyPair.EOS_ETH, Ticker.class);
+        Assert.assertNotNull("Ticker not null", ticker);
     }
 }
 
