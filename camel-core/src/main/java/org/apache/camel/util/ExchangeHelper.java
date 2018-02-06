@@ -384,8 +384,8 @@ public final class ExchangeHelper {
      * Copies the <code>source</code> exchange to <code>target</code> exchange
      * preserving the {@link ExchangePattern} of <code>target</code>.
      *
-     * @param source source exchange.
      * @param result target exchange.
+     * @param source source exchange.
      */
     public static void copyResultsPreservePattern(Exchange result, Exchange source) {
 

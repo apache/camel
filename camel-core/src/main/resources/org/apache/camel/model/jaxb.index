@@ -19,6 +19,8 @@ AOPDefinition
 BeanDefinition
 CatchDefinition
 ChoiceDefinition
+ClaimCheckDefinition
+ClaimCheckOperation
 ConvertBodyDefinition
 ContextScanDefinition
 DataFormatDefinition

@@ -97,14 +97,15 @@ public interface Exchange {
     // used across other Apache products such as AMQ, SMX etc.
     String BREADCRUMB_ID              = "breadcrumbId";
 
-    String CHARSET_NAME          = "CamelCharsetName";
-    String CIRCUIT_BREAKER_STATE = "CamelCircuitBreakerState";
-    String CREATED_TIMESTAMP     = "CamelCreatedTimestamp";
-    String CONTENT_ENCODING      = "Content-Encoding";
-    String CONTENT_LENGTH        = "Content-Length";
-    String CONTENT_TYPE          = "Content-Type";
-    String COOKIE_HANDLER        = "CamelCookieHandler";
-    String CORRELATION_ID        = "CamelCorrelationId";
+    String CHARSET_NAME           = "CamelCharsetName";
+    String CIRCUIT_BREAKER_STATE  = "CamelCircuitBreakerState";
+    String CREATED_TIMESTAMP      = "CamelCreatedTimestamp";
+    String CLAIM_CHECK_REPOSITORY = "CamelClaimCheckRepository";
+    String CONTENT_ENCODING       = "Content-Encoding";
+    String CONTENT_LENGTH         = "Content-Length";
+    String CONTENT_TYPE           = "Content-Type";
+    String COOKIE_HANDLER         = "CamelCookieHandler";
+    String CORRELATION_ID         = "CamelCorrelationId";
 
     String DATASET_INDEX             = "CamelDataSetIndex";
     String DEFAULT_CHARSET_PROPERTY  = "org.apache.camel.default.charset";

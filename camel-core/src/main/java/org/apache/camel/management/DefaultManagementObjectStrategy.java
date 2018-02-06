@@ -40,6 +40,7 @@ import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedCamelHealth;
 import org.apache.camel.management.mbean.ManagedChoice;
 import org.apache.camel.management.mbean.ManagedCircuitBreakerLoadBalancer;
+import org.apache.camel.management.mbean.ManagedClaimCheck;
 import org.apache.camel.management.mbean.ManagedClusterService;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
@@ -109,6 +110,7 @@ import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
+import org.apache.camel.processor.ClaimCheckProcessor;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.Delayer;
 import org.apache.camel.processor.DynamicRouter;
@@ -321,6 +323,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedConvertBody(context, (ConvertBodyProcessor) target, definition);
             } else if (target instanceof ChoiceProcessor) {
                 answer = new ManagedChoice(context, (ChoiceProcessor) target, definition);
+            } else if (target instanceof ClaimCheckProcessor) {
+                answer = new ManagedClaimCheck(context, (ClaimCheckProcessor) target, definition);
             } else if (target instanceof Delayer) {
                 answer = new ManagedDelayer(context, (Delayer) target, definition);
             } else if (target instanceof Throttler) {
