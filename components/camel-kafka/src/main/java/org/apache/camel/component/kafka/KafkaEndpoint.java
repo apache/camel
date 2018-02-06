@@ -173,6 +173,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         message.setHeader(KafkaConstants.TOPIC, record.topic());
         message.setHeader(KafkaConstants.OFFSET, record.offset());
         message.setHeader(KafkaConstants.HEADERS, record.headers());
+        message.setHeader(KafkaConstants.TIMESTAMP, record.timestamp());
         if (record.key() != null) {
             message.setHeader(KafkaConstants.KEY, record.key());
         }
