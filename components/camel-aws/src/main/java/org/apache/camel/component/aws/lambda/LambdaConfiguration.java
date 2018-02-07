@@ -33,8 +33,6 @@ public class LambdaConfiguration implements Cloneable {
     @UriParam
     @Metadata(required = "true")
     private LambdaOperations operation;
-    @UriParam
-    private String awsLambdaEndpoint;
     @UriParam(label = "security", secret = true)
     private String accessKey;
     @UriParam(label = "security", secret = true)
@@ -101,17 +99,6 @@ public class LambdaConfiguration implements Cloneable {
      */
     public void setRegion(String region) {
         this.region = region;
-    }
-
-    public String getAwsLambdaEndpoint() {
-        return awsLambdaEndpoint;
-    }
-
-    /**
-     * The AWS-Lambda client to use.
-     */
-    public void setAwsLambdaEndpoint(String awsLambdaEndpoint) {
-        this.awsLambdaEndpoint = awsLambdaEndpoint;
     }
 
     public LambdaOperations getOperation() {
