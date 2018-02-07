@@ -64,13 +64,12 @@ with the following path and query parameters:
 | *namespace* | *Required* The metric namespace |  | String
 |===
 
-==== Query Parameters (12 parameters):
+==== Query Parameters (11 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *amazonCwClient* (producer) | To use the AmazonCloudWatch as the client |  | AmazonCloudWatch
-| *amazonCwEndpoint* (producer) | The endpoint with which the AWS-CW client wants to work with. |  | String
 | *name* (producer) | The metric name |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the CW client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the CW client |  | Integer

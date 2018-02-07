@@ -118,9 +118,8 @@ public class CwEndpoint extends DefaultEndpoint {
                 clientBuilder = AmazonCloudWatchClientBuilder.standard().withClientConfiguration(clientConfiguration);
             }
         }
-        if (ObjectHelper.isNotEmpty(configuration.getAmazonCwEndpoint()) && ObjectHelper.isNotEmpty(configuration.getRegion())) {
-            EndpointConfiguration endpointConfiguration = new EndpointConfiguration(configuration.getAmazonCwEndpoint(), configuration.getRegion());
-            clientBuilder = clientBuilder.withEndpointConfiguration(endpointConfiguration);
+        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
         }
         client = clientBuilder.build();
         return client;

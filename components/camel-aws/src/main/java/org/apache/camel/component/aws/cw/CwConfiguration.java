@@ -33,8 +33,6 @@ public class CwConfiguration implements Cloneable {
     private String namespace;
     @UriParam
     private AmazonCloudWatch amazonCwClient;
-    @UriParam
-    private String amazonCwEndpoint;
     @UriParam(label = "security", secret = true)
     private String accessKey;
     @UriParam(label = "security", secret = true)
@@ -53,18 +51,6 @@ public class CwConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
-    
-
-    /**
-     * The endpoint with which the AWS-CW client wants to work with.
-     */
-    public void setAmazonCwEndpoint(String amazonCwEndpoint) {
-        this.amazonCwEndpoint = amazonCwEndpoint;
-    }
-
-    public String getAmazonCwEndpoint() {
-        return amazonCwEndpoint;
-    }
 
     public String getAccessKey() {
         return accessKey;
