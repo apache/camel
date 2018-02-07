@@ -22,12 +22,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.sql.stored.template.ast.InputParameter;
+import org.apache.camel.component.sql.stored.template.ast.InOutParameter;
+import org.apache.camel.component.sql.stored.template.ast.InParameter;
 import org.apache.camel.component.sql.stored.template.ast.OutParameter;
 import org.apache.camel.component.sql.stored.template.ast.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlInOutParameter;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.StoredProcedure;
@@ -38,7 +40,8 @@ public class TemplateStoredProcedure extends StoredProcedure {
 
     private final Template template;
 
-    private List<InputParameter> inputParameterList = new ArrayList<>();
+    private List<InParameter> inParameterList = new ArrayList<>();
+    private List<InOutParameter> inOutParameterList = new ArrayList<>();
 
     public TemplateStoredProcedure(JdbcTemplate jdbcTemplate, Template template, boolean function) {
         this.template = template;
@@ -48,8 +51,8 @@ public class TemplateStoredProcedure extends StoredProcedure {
         setSql(template.getProcedureName());
 
         for (Object parameter : template.getParameterList()) {
-            if (parameter instanceof InputParameter) {
-                InputParameter inputParameter = (InputParameter) parameter;
+            if (parameter instanceof InParameter) {
+                InParameter inputParameter = (InParameter) parameter;
                 SqlParameter sqlParameter;
                 if (inputParameter.getScale() != null) {
                     sqlParameter = new SqlParameter(inputParameter.getName(), inputParameter.getSqlType(), inputParameter.getScale());
@@ -60,8 +63,20 @@ public class TemplateStoredProcedure extends StoredProcedure {
                 }
 
                 declareParameter(sqlParameter);
-                inputParameterList.add(inputParameter);
+                inParameterList.add(inputParameter);
+            } else if (parameter instanceof InOutParameter) {
+                InOutParameter inOutParameter = (InOutParameter) parameter;
+                SqlInOutParameter sqlInOutParameter;
+                if (inOutParameter.getScale() != null) {
+                    sqlInOutParameter = new SqlInOutParameter(inOutParameter.getOutValueMapKey(), inOutParameter.getSqlType(), inOutParameter.getScale());
+                } else if (inOutParameter.getTypeName() != null) {
+                    sqlInOutParameter = new SqlInOutParameter(inOutParameter.getOutValueMapKey(), inOutParameter.getSqlType(), inOutParameter.getTypeName());
+                } else {
+                    sqlInOutParameter = new SqlInOutParameter(inOutParameter.getOutValueMapKey(), inOutParameter.getSqlType());
+                }
 
+                declareParameter(sqlInOutParameter);
+                inOutParameterList.add(inOutParameter);
             } else if (parameter instanceof OutParameter) {
                 OutParameter outParameter = (OutParameter) parameter;
                 SqlOutParameter sqlOutParameter;
@@ -84,8 +99,11 @@ public class TemplateStoredProcedure extends StoredProcedure {
     public Map execute(Exchange exchange, Object rowData) {
         Map<String, Object> params = new HashMap<>();
 
-        for (InputParameter inputParameter : inputParameterList) {
-            params.put(inputParameter.getName(), inputParameter.getValueExtractor().eval(exchange, rowData));
+        for (InParameter inParameter : inParameterList) {
+            params.put(inParameter.getName(), inParameter.getValueExtractor().eval(exchange, rowData));
+        }
+        for (InOutParameter inOutParameter : inOutParameterList) {
+            params.put(inOutParameter.getOutValueMapKey(), inOutParameter.getValueExtractor().eval(exchange, rowData));
         }
 
         LOG.debug("Invoking stored procedure: {}", template.getProcedureName());
