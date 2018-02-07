@@ -35,8 +35,6 @@ public class SdbConfiguration {
     @UriParam
     private String secretKey;
     @UriParam
-    private String amazonSdbEndpoint;
-    @UriParam
     private Integer maxNumberOfDomains;
     @UriParam
     private boolean consistentRead;
@@ -48,17 +46,6 @@ public class SdbConfiguration {
     private Integer proxyPort;
     @UriParam
     private String region;
-
-    /**
-     * The region with which the AWS-SDB client wants to work with.
-     */
-    public void setAmazonSdbEndpoint(String amazonSdbEndpoint) {
-        this.amazonSdbEndpoint = amazonSdbEndpoint;
-    }
-
-    public String getAmazonSdbEndpoint() {
-        return amazonSdbEndpoint;
-    }
 
     public String getAccessKey() {
         return accessKey;
