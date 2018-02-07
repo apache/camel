@@ -61,13 +61,12 @@ with the following path and query parameters:
 | *tableName* | *Required* The name of the table currently worked with. |  | String
 |===
 
-==== Query Parameters (14 parameters):
+==== Query Parameters (13 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *amazonDDBClient* (producer) | To use the AmazonDynamoDB as the client |  | AmazonDynamoDB
-| *amazonDdbEndpoint* (producer) | The endpoint with which the AWS-DDB client wants to work with. |  | String
 | *consistentRead* (producer) | Determines whether or not strong consistency should be enforced when data is read. | false | boolean
 | *keyAttributeName* (producer) | Attribute name when creating table |  | String
 | *keyAttributeType* (producer) | Attribute type when creating table |  | String
