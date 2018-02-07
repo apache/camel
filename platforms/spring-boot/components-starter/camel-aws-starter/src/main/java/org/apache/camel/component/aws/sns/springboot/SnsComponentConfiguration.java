@@ -101,10 +101,6 @@ public class SnsComponentConfiguration
     public static class SnsConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.aws.sns.SnsConfiguration.class;
         /**
-         * The region with which the AWS-SNS client wants to work with.
-         */
-        private String amazonSNSEndpoint;
-        /**
          * The subject which is used if the message header 'CamelAwsSnsSubject'
          * is not present.
          */
@@ -140,14 +136,6 @@ public class SnsComponentConfiguration
         private String proxyHost;
         private Integer proxyPort;
         private String region;
-
-        public String getAmazonSNSEndpoint() {
-            return amazonSNSEndpoint;
-        }
-
-        public void setAmazonSNSEndpoint(String amazonSNSEndpoint) {
-            this.amazonSNSEndpoint = amazonSNSEndpoint;
-        }
 
         public String getSubject() {
             return subject;
