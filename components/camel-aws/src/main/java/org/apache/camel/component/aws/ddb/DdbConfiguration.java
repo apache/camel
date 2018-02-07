@@ -36,8 +36,6 @@ public class DdbConfiguration implements Cloneable {
     @UriParam
     private AmazonDynamoDB amazonDDBClient;
     @UriParam
-    private String amazonDdbEndpoint;
-    @UriParam
     private boolean consistentRead;
     @UriParam(defaultValue = "PutItem")
     private DdbOperations operation = DdbOperations.PutItem;
@@ -55,17 +53,6 @@ public class DdbConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
-
-    /**
-     * The endpoint with which the AWS-DDB client wants to work with.
-     */
-    public void setAmazonDdbEndpoint(String amazonDdbEndpoint) {
-        this.amazonDdbEndpoint = amazonDdbEndpoint;
-    }
-
-    public String getAmazonDdbEndpoint() {
-        return amazonDdbEndpoint;
-    }
 
     public String getAccessKey() {
         return accessKey;

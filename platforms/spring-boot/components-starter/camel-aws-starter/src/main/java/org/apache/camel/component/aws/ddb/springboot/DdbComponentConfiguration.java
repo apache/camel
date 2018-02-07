@@ -103,10 +103,6 @@ public class DdbComponentConfiguration
     public static class DdbConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.aws.ddb.DdbConfiguration.class;
         /**
-         * The endpoint with which the AWS-DDB client wants to work with.
-         */
-        private String amazonDdbEndpoint;
-        /**
          * Amazon AWS Access Key
          */
         private String accessKey;
@@ -152,14 +148,6 @@ public class DdbComponentConfiguration
         private String proxyHost;
         private Integer proxyPort;
         private String region;
-
-        public String getAmazonDdbEndpoint() {
-            return amazonDdbEndpoint;
-        }
-
-        public void setAmazonDdbEndpoint(String amazonDdbEndpoint) {
-            this.amazonDdbEndpoint = amazonDdbEndpoint;
-        }
 
         public String getAccessKey() {
             return accessKey;
