@@ -23,15 +23,11 @@ import org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod;
 import org.apache.camel.impl.DefaultProducer;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Ticker;
-import org.knowm.xchange.service.marketdata.MarketDataService;
 
 public class XChangeMarketDataProducer extends DefaultProducer {
     
-    private final MarketDataService marketService;
-    
     public XChangeMarketDataProducer(XChangeEndpoint endpoint) {
         super(endpoint);
-        marketService = endpoint.getXChange().getMarketDataService();
     }
 
     @Override
@@ -48,7 +44,8 @@ public class XChangeMarketDataProducer extends DefaultProducer {
         if (XChangeMethod.ticker == method) {
             CurrencyPair pair = exchange.getIn().getHeader(HEADER_CURRENCY_PAIR, CurrencyPair.class);
             pair = pair != null ? pair : exchange.getMessage().getBody(CurrencyPair.class);
-            Ticker ticker = marketService.getTicker(pair);
+            pair = pair != null ? pair : endpoint.getConfiguration().getCurrencyPair();
+            Ticker ticker = endpoint.getTicker(pair);
             exchange.getMessage().setBody(ticker);
         }
     }
