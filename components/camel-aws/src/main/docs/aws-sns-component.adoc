@@ -65,13 +65,12 @@ with the following path and query parameters:
 | *topicNameOrArn* | *Required* Topic name or ARN |  | String
 |===
 
-==== Query Parameters (12 parameters):
+==== Query Parameters (11 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *amazonSNSClient* (producer) | To use the AmazonSNS as the client |  | AmazonSNS
-| *amazonSNSEndpoint* (producer) | The region with which the AWS-SNS client wants to work with. |  | String
 | *headerFilterStrategy* (producer) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
 | *messageStructure* (producer) | The message structure to use such as json |  | String
 | *policy* (producer) | The policy for this queue |  | String

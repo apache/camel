@@ -36,8 +36,6 @@ public class SnsConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam
-    private String amazonSNSEndpoint;
-    @UriParam
     private String proxyHost;
     @UriParam
     private Integer proxyPort;
@@ -51,17 +49,6 @@ public class SnsConfiguration implements Cloneable {
     private String messageStructure;
     @UriParam
     private String region;
-    
-    /**
-     * The region with which the AWS-SNS client wants to work with.
-     */
-    public void setAmazonSNSEndpoint(String awsSNSEndpoint) {
-        this.amazonSNSEndpoint = awsSNSEndpoint;
-    }
-    
-    public String getAmazonSNSEndpoint() {
-        return amazonSNSEndpoint;
-    }
     
     public String getSubject() {
         return subject;
