@@ -1835,6 +1835,12 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-rmi/${project.version}</bundle>
   </feature>
+  <feature name="camel-ribbon" version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:com.netflix.ribbon/ribbon-core/${ribbon-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.netflix.ribbon/ribbon-loadbalancer/${ribbon-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-ribbon/${project.version}</bundle>
+  </feature>
   <feature name='camel-routebox' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-routebox/${project.version}</bundle>
