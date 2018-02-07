@@ -101,10 +101,6 @@ public class CwComponentConfiguration
     public static class CwConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.aws.cw.CwConfiguration.class;
         /**
-         * The endpoint with which the AWS-CW client wants to work with.
-         */
-        private String amazonCwEndpoint;
-        /**
          * Amazon AWS Access Key
          */
         private String accessKey;
@@ -139,14 +135,6 @@ public class CwComponentConfiguration
         private String proxyHost;
         private Integer proxyPort;
         private String region;
-
-        public String getAmazonCwEndpoint() {
-            return amazonCwEndpoint;
-        }
-
-        public void setAmazonCwEndpoint(String amazonCwEndpoint) {
-            this.amazonCwEndpoint = amazonCwEndpoint;
-        }
 
         public String getAccessKey() {
             return accessKey;
