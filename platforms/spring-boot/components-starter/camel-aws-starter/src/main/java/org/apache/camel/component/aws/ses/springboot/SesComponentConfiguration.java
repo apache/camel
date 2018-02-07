@@ -136,10 +136,6 @@ public class SesComponentConfiguration
          * 'CamelAwsSesReplyToAddresses' header.
          */
         private List replyToAddresses;
-        /**
-         * The region with which the AWS-SES client wants to work with.
-         */
-        private String amazonSESEndpoint;
         private String proxyHost;
         private Integer proxyPort;
         private String region;
@@ -206,14 +202,6 @@ public class SesComponentConfiguration
 
         public void setReplyToAddresses(List replyToAddresses) {
             this.replyToAddresses = replyToAddresses;
-        }
-
-        public String getAmazonSESEndpoint() {
-            return amazonSESEndpoint;
-        }
-
-        public void setAmazonSESEndpoint(String amazonSESEndpoint) {
-            this.amazonSESEndpoint = amazonSESEndpoint;
         }
 
         public String getProxyHost() {

@@ -61,13 +61,12 @@ with the following path and query parameters:
 | *from* | *Required* The sender's email address. |  | String
 |===
 
-==== Query Parameters (12 parameters):
+==== Query Parameters (11 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *amazonSESClient* (producer) | To use the AmazonSimpleEmailService as the client |  | AmazonSimpleEmail Service
-| *amazonSESEndpoint* (producer) | The region with which the AWS-SES client wants to work with. |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the SES client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the SES client |  | Integer
 | *region* (producer) | The region in which SES client needs to work |  | String

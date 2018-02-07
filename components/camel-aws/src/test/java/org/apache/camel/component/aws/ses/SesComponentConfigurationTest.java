@@ -38,7 +38,6 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
-        assertNull(endpoint.getConfiguration().getAmazonSESEndpoint());
         assertNotNull(endpoint.getConfiguration().getAmazonSESClient());
         assertNull(endpoint.getConfiguration().getTo());
         assertNull(endpoint.getConfiguration().getSubject());
@@ -54,7 +53,6 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
-        assertNull(endpoint.getConfiguration().getAmazonSESEndpoint());
         assertNull(endpoint.getConfiguration().getAmazonSESClient());
         assertNull(endpoint.getConfiguration().getTo());
         assertNull(endpoint.getConfiguration().getSubject());
@@ -76,7 +74,6 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
         assertNull(endpoint.getConfiguration().getAccessKey());
         assertNull(endpoint.getConfiguration().getSecretKey());
-        assertNull(endpoint.getConfiguration().getAmazonSESEndpoint());
         assertSame(mock, endpoint.getConfiguration().getAmazonSESClient());
         assertNull(endpoint.getConfiguration().getTo());
         assertNull(endpoint.getConfiguration().getSubject());
@@ -93,13 +90,12 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         
         SesComponent component = new SesComponent(context);
         SesEndpoint endpoint = (SesEndpoint) component.createEndpoint("aws-ses://from@example.com?amazonSESClient=#amazonSESClient&accessKey=xxx"
-            + "&secretKey=yyy&to=to1@example.com,to2@example.com&amazonSESEndpoint=us-east-1&subject=Subject"
+            + "&secretKey=yyy&to=to1@example.com,to2@example.com&subject=Subject"
             + "&returnPath=bounce@example.com&replyToAddresses=replyTo1@example.com,replyTo2@example.com");
         
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
-        assertEquals("us-east-1", endpoint.getConfiguration().getAmazonSESEndpoint());
         assertNotNull(endpoint.getConfiguration().getAmazonSESClient());
         assertEquals(2, endpoint.getConfiguration().getTo().size());
         assertTrue(endpoint.getConfiguration().getTo().contains("to1@example.com"));

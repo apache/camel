@@ -22,6 +22,7 @@ import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
@@ -63,10 +64,6 @@ public class SesEndpoint extends DefaultEndpoint {
         sesClient = configuration.getAmazonSESClient() != null
             ? configuration.getAmazonSESClient()
             : createSESClient();
-            
-        if (ObjectHelper.isNotEmpty(configuration.getAmazonSESEndpoint())) {
-            sesClient.setEndpoint(configuration.getAmazonSESEndpoint());
-        }
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -115,9 +112,8 @@ public class SesEndpoint extends DefaultEndpoint {
                 clientBuilder = AmazonSimpleEmailServiceClientBuilder.standard().withClientConfiguration(clientConfiguration);
             }
         }
-        if (ObjectHelper.isNotEmpty(configuration.getAmazonSESEndpoint()) && ObjectHelper.isNotEmpty(configuration.getRegion())) {
-            EndpointConfiguration endpointConfiguration = new EndpointConfiguration(configuration.getAmazonSESEndpoint(), configuration.getRegion());
-            clientBuilder = clientBuilder.withEndpointConfiguration(endpointConfiguration);
+        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
         }
         client = clientBuilder.build();
         return client;
