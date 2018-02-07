@@ -33,8 +33,18 @@ import org.knowm.xchange.currency.CurrencyPair;
 @UriParams
 public class XChangeConfiguration {
 
-    public enum XChangeService { marketdata, metadata }
-    public enum XChangeMethod { currencies, currencyMetaData, currencyPairs, currencyPairMetaData, ticker }
+    // Available service
+    public enum XChangeService { marketdata, metadata, account }
+    
+    // Available methods
+    public enum XChangeMethod {
+        // Account service methods
+        balances, fundingHistory, wallets, 
+        // Metadata service methods
+        currencies, currencyMetaData, currencyPairs, currencyPairMetaData,
+        // Marketdata service methods
+        ticker 
+        }
     
     public static final String HEADER_CURRENCY = "Currency";
     public static final String HEADER_CURRENCY_PAIR = "CurrencyPair";

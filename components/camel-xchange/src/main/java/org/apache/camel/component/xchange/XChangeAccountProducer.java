@@ -16,18 +16,13 @@
  */
 package org.apache.camel.component.xchange;
 
-import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY;
-import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod;
 import org.apache.camel.impl.DefaultProducer;
-import org.knowm.xchange.currency.Currency;
-import org.knowm.xchange.currency.CurrencyPair;
 
-public class XChangeMetaDataProducer extends DefaultProducer {
+public class XChangeAccountProducer extends DefaultProducer {
     
-    public XChangeMetaDataProducer(XChangeEndpoint endpoint) {
+    public XChangeAccountProducer(XChangeEndpoint endpoint) {
         super(endpoint);
     }
 
@@ -42,30 +37,19 @@ public class XChangeMetaDataProducer extends DefaultProducer {
         XChangeEndpoint endpoint = getEndpoint();
         XChangeMethod method = endpoint.getConfiguration().getMethod();
         
-        if (XChangeMethod.currencies == method) {
-            Object body = endpoint.getCurrencies();
+        if (XChangeMethod.balances == method) {
+            Object body = endpoint.getBalances();
             exchange.getMessage().setBody(body);
         } 
         
-        else if (XChangeMethod.currencyPairs == method) {
-            Object body = endpoint.getCurrencyPairs();
+        else if (XChangeMethod.fundingHistory == method) {
+            Object body = endpoint.getFundingHistory();
             exchange.getMessage().setBody(body);
         } 
         
-        else if (XChangeMethod.currencyMetaData == method) {
-            Currency curr = exchange.getMessage().getHeader(HEADER_CURRENCY, Currency.class);
-            curr = curr != null ? curr : exchange.getMessage().getBody(Currency.class);
-            curr = curr != null ? curr : endpoint.getConfiguration().getCurrency();
-            Object body = endpoint.getCurrencyMetaData(curr);
+        else if (XChangeMethod.wallets == method) {
+            Object body = endpoint.getWallets();
             exchange.getMessage().setBody(body);
         } 
-        
-        else if (XChangeMethod.currencyPairMetaData == method) {
-            CurrencyPair pair = exchange.getIn().getHeader(HEADER_CURRENCY_PAIR, CurrencyPair.class);
-            pair = pair != null ? pair : exchange.getMessage().getBody(CurrencyPair.class);
-            pair = pair != null ? pair : endpoint.getConfiguration().getCurrencyPair();
-            Object body = endpoint.getCurrencyPairMetaData(pair);
-            exchange.getMessage().setBody(body);
-        }
     }
 }

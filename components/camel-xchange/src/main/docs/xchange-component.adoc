@@ -6,8 +6,7 @@
 The *xchange:* component uses the https://knowm.org/open-source/xchange/[XChange] Java library to provide access to 60+ Bitcoin and Altcoin exchanges.
 It comes with a consistent interface for trading and accessing market data. 
 
-Camel can poll for updates of current market data. It can also be used to query historical data based
-on the parameters defined on the endpoint.
+Camel can get crypto currency market data, query historical data, place market orders and much more.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -34,8 +33,6 @@ xchange://exchange?options
 // component options: START
 The XChange component has no options.
 // component options: END
-
-
 
 // endpoint options: START
 The XChange endpoint is configured using URI syntax:
@@ -67,9 +64,25 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-### Exchange data format
+### Authentication
 
-[TODO]
+This component communicates with supported crypto currency exchanges via REST API. Some API requests use simple unauthenticated GET request. 
+For most of the interesting stuff however, you'd need an account with the exchange and have API access keys enabled.
+
+These API access keys need to be guarded tightly, especially so when they also allow for the withdraw functionality. 
+In which case, anyone who can get hold of your API keys can easily transfer funds from your account to some other address i.e. steal your money.   
+
+Your API access keys can be strored in an exchange specific properties file in your SSH directory.
+For Binance for example this would be: `~/.ssh/binance-secret.keys`
+
+----
+##
+# This file MUST NEVER be commited to source control. 
+# It is therefore added to .gitignore. 
+#
+apiKey = GuRW0*********
+secretKey = nKLki************
+----
 
 ### Message Headers
 
@@ -81,5 +94,5 @@ In this sample we find the current Bitcoin market price in USDT:
 
 [source,java]
 ---------------------------------------------------------------------------------------------
-from("xchange:binance?method=ticker&currencyPair=BTC/USDT").to("jms:queue:btc");
+from("direct:ticker").to("xchange:binance?service=market&method=ticker&currencyPair=BTC/USDT")
 ---------------------------------------------------------------------------------------------
