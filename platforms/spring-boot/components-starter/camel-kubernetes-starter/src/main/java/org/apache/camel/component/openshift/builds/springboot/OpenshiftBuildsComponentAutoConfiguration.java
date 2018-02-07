@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes.builds.springboot;
+package org.apache.camel.component.openshift.builds.springboot;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.kubernetes.builds.KubernetesBuildsComponent;
+import org.apache.camel.component.openshift.builds.OpenshiftBuildsComponent;
 import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
@@ -51,35 +51,35 @@ import org.springframework.context.annotation.Lazy;
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
 @Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
-        KubernetesBuildsComponentAutoConfiguration.GroupConditions.class})
+        OpenshiftBuildsComponentAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @EnableConfigurationProperties({ComponentConfigurationProperties.class,
-        KubernetesBuildsComponentConfiguration.class})
-public class KubernetesBuildsComponentAutoConfiguration {
+        OpenshiftBuildsComponentConfiguration.class})
+public class OpenshiftBuildsComponentAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(KubernetesBuildsComponentAutoConfiguration.class);
+            .getLogger(OpenshiftBuildsComponentAutoConfiguration.class);
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
     private CamelContext camelContext;
     @Autowired
-    private KubernetesBuildsComponentConfiguration configuration;
+    private OpenshiftBuildsComponentConfiguration configuration;
     @Autowired(required = false)
-    private List<ComponentCustomizer<KubernetesBuildsComponent>> customizers;
+    private List<ComponentCustomizer<OpenshiftBuildsComponent>> customizers;
 
     static class GroupConditions extends GroupCondition {
         public GroupConditions() {
-            super("camel.component", "camel.component.kubernetes-builds");
+            super("camel.component", "camel.component.openshift-builds");
         }
     }
 
     @Lazy
-    @Bean(name = "kubernetes-builds-component")
-    @ConditionalOnMissingBean(KubernetesBuildsComponent.class)
-    public KubernetesBuildsComponent configureKubernetesBuildsComponent()
+    @Bean(name = "openshift-builds-component")
+    @ConditionalOnMissingBean(OpenshiftBuildsComponent.class)
+    public OpenshiftBuildsComponent configureOpenshiftBuildsComponent()
             throws Exception {
-        KubernetesBuildsComponent component = new KubernetesBuildsComponent();
+        OpenshiftBuildsComponent component = new OpenshiftBuildsComponent();
         component.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,
@@ -106,17 +106,17 @@ public class KubernetesBuildsComponentAutoConfiguration {
         CamelPropertiesHelper.setCamelProperties(camelContext, component,
                 parameters, false);
         if (ObjectHelper.isNotEmpty(customizers)) {
-            for (ComponentCustomizer<KubernetesBuildsComponent> customizer : customizers) {
+            for (ComponentCustomizer<OpenshiftBuildsComponent> customizer : customizers) {
                 boolean useCustomizer = (customizer instanceof HasId)
                         ? HierarchicalPropertiesEvaluator.evaluate(
                                 applicationContext.getEnvironment(),
                                 "camel.component.customizer",
-                                "camel.component.kubernetes-builds.customizer",
+                                "camel.component.openshift-builds.customizer",
                                 ((HasId) customizer).getId())
                         : HierarchicalPropertiesEvaluator.evaluate(
                                 applicationContext.getEnvironment(),
                                 "camel.component.customizer",
-                                "camel.component.kubernetes-builds.customizer");
+                                "camel.component.openshift-builds.customizer");
                 if (useCustomizer) {
                     LOGGER.debug("Configure component {}, with customizer {}",
                             component, customizer);

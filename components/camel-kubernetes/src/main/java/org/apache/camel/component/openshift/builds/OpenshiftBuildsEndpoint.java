@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes.builds;
+package org.apache.camel.component.openshift.builds;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -26,20 +26,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes Builds component provides a producer to execute kubernetes build operations.
+ * The Openshift Builds component provides a producer to execute openshift build operations.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-builds", title = "Kubernetes Builds", syntax = "kubernetes-builds:masterUrl", producerOnly = true, label = "container,cloud,paas")
-public class KubernetesBuildsEndpoint extends AbstractKubernetesEndpoint {
+@UriEndpoint(firstVersion = "2.17.0", scheme = "openshift-builds", title = "Openshift Builds", syntax = "openshift-builds:masterUrl", producerOnly = true, label = "container,cloud,paas")
+public class OpenshiftBuildsEndpoint extends AbstractKubernetesEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesBuildsEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OpenshiftBuildsEndpoint.class);
 
-    public KubernetesBuildsEndpoint(String uri, KubernetesBuildsComponent component, KubernetesConfiguration config) {
+    public OpenshiftBuildsEndpoint(String uri, OpenshiftBuildsComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new KubernetesBuildsProducer(this);
+        return new OpenshiftBuildsProducer(this);
     }
 
     @Override

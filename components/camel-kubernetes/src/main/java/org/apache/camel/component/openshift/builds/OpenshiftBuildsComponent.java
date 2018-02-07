@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes.builds;
+package org.apache.camel.component.openshift.builds;
 
 import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 
-public class KubernetesBuildsComponent extends AbstractKubernetesComponent {
+public class OpenshiftBuildsComponent extends AbstractKubernetesComponent {
 
     protected AbstractKubernetesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {
-        KubernetesBuildsEndpoint endpoint = new KubernetesBuildsEndpoint(uri, this, config);
+        OpenshiftBuildsEndpoint endpoint = new OpenshiftBuildsEndpoint(uri, this, config);
         return endpoint;
     }
 }
