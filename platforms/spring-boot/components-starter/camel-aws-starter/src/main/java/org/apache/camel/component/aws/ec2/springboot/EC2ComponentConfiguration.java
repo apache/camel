@@ -115,10 +115,6 @@ public class EC2ComponentConfiguration
          */
         private String secretKey;
         /**
-         * The region with which the AWS-EC2 client wants to work with.
-         */
-        private String amazonEc2Endpoint;
-        /**
          * The operation to perform. It can be createAndRunInstances,
          * startInstances, stopInstances, terminateInstances, describeInstances,
          * describeInstancesStatus, rebootInstances, monitorInstances,
@@ -151,14 +147,6 @@ public class EC2ComponentConfiguration
 
         public void setSecretKey(String secretKey) {
             this.secretKey = secretKey;
-        }
-
-        public String getAmazonEc2Endpoint() {
-            return amazonEc2Endpoint;
-        }
-
-        public void setAmazonEc2Endpoint(String amazonEc2Endpoint) {
-            this.amazonEc2Endpoint = amazonEc2Endpoint;
         }
 
         public EC2Operations getOperation() {
