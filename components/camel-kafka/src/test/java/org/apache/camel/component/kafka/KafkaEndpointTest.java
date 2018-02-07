@@ -16,36 +16,59 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.net.URISyntaxException;
-
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class KafkaEndpointTest {
 
-    @Test
-    public void testCreatingKafkaExchangeSetsHeaders() throws URISyntaxException {
-        KafkaEndpoint endpoint = new KafkaEndpoint("kafka:mytopic?brokers=localhost", new KafkaComponent(new DefaultCamelContext()));
+    private KafkaEndpoint endpoint;
 
-        ConsumerRecord<String, String> record = new ConsumerRecord<String, String>("topic", 4, 56, "somekey", "");
-        Exchange exchange = endpoint.createKafkaExchange(record);
-        assertEquals("somekey", exchange.getIn().getHeader(KafkaConstants.KEY));
-        assertEquals("topic", exchange.getIn().getHeader(KafkaConstants.TOPIC));
-        assertEquals(4, exchange.getIn().getHeader(KafkaConstants.PARTITION));
-        assertEquals(56L, exchange.getIn().getHeader(KafkaConstants.OFFSET));
+    @Mock
+    private ConsumerRecord<String, String> mockRecord;
+
+    @Mock
+    private KafkaComponent mockKafkaComponent;
+
+    @Before
+    public void setup() {
+        endpoint = new KafkaEndpoint("kafka:mytopic?brokers=localhost", new KafkaComponent(new DefaultCamelContext()));
     }
 
     @Test
-    public void assertSingleton() throws URISyntaxException {
-        KafkaEndpoint endpoint = new KafkaEndpoint("kafka:mytopic?brokers=localhost", new KafkaComponent(new DefaultCamelContext()));
-        endpoint.getConfiguration().setBrokers("localhost");
+    public void createKafkaExchangeShouldSetHeaders() {
+
+        when(mockRecord.key()).thenReturn("somekey");
+        when(mockRecord.topic()).thenReturn("topic");
+        when(mockRecord.partition()).thenReturn(4);
+        when(mockRecord.offset()).thenReturn(56L);
+        when(mockRecord.timestamp()).thenReturn(1518026587392L);
+
+        Exchange exchange = endpoint.createKafkaExchange(mockRecord);
+        Message inMessage = exchange.getIn();
+        assertNotNull(inMessage);
+        assertEquals("somekey", inMessage.getHeader(KafkaConstants.KEY));
+        assertEquals("topic", inMessage.getHeader(KafkaConstants.TOPIC));
+        assertEquals(4, inMessage.getHeader(KafkaConstants.PARTITION));
+        assertEquals(56L, inMessage.getHeader(KafkaConstants.OFFSET));
+        assertEquals(1518026587392L, inMessage.getHeader(KafkaConstants.TIMESTAMP));
+    }
+
+    @Test
+    public void isSingletonShoudlReturnTrue() {
         assertTrue(endpoint.isSingleton());
     }
 
 }
-
