@@ -102,13 +102,6 @@ public class SqsComponentConfiguration
     public static class SqsConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.aws.sqs.SqsConfiguration.class;
         /**
-         * The region with which the AWS-SQS client wants to work with. Only
-         * works if Camel creates the AWS-SQS client, i.e., if you explicitly
-         * set amazonSQSClient, then this setting will have no effect. You would
-         * have to set it on the client you create directly
-         */
-        private String amazonSQSEndpoint;
-        /**
          * The hostname of the Amazon AWS cloud.
          */
         private String amazonAWSHost = "amazonaws.com";
@@ -217,14 +210,6 @@ public class SqsComponentConfiguration
         private Integer concurrentConsumers = 1;
         private String proxyHost;
         private Integer proxyPort;
-
-        public String getAmazonSQSEndpoint() {
-            return amazonSQSEndpoint;
-        }
-
-        public void setAmazonSQSEndpoint(String amazonSQSEndpoint) {
-            this.amazonSQSEndpoint = amazonSQSEndpoint;
-        }
 
         public String getAmazonAWSHost() {
             return amazonAWSHost;

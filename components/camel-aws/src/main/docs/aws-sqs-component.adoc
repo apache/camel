@@ -66,14 +66,13 @@ with the following path and query parameters:
 | *queueNameOrArn* | *Required* Queue name or ARN |  | String
 |===
 
-==== Query Parameters (47 parameters):
+==== Query Parameters (46 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *amazonAWSHost* (common) | The hostname of the Amazon AWS cloud. | amazonaws.com | String
 | *amazonSQSClient* (common) | To use the AmazonSQS as client |  | AmazonSQS
-| *amazonSQSEndpoint* (common) | The region with which the AWS-SQS client wants to work with. Only works if Camel creates the AWS-SQS client i.e. if you explicitly set amazonSQSClient then this setting will have no effect. You would have to set it on the client you create directly |  | String
 | *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
 | *queueOwnerAWSAccountId* (common) | Specify the queue owner aws account id when you need to connect the queue with different account owner. |  | String
 | *region* (common) | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL. |  | String
