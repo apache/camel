@@ -115,10 +115,6 @@ public class S3ComponentConfiguration
          */
         private Boolean multiPartUpload = false;
         /**
-         * The region with which the AWS-S3 client wants to work with.
-         */
-        private String amazonS3Endpoint;
-        /**
          * Amazon AWS Access Key
          */
         private String accessKey;
@@ -270,14 +266,6 @@ public class S3ComponentConfiguration
 
         public void setMultiPartUpload(Boolean multiPartUpload) {
             this.multiPartUpload = multiPartUpload;
-        }
-
-        public String getAmazonS3Endpoint() {
-            return amazonS3Endpoint;
-        }
-
-        public void setAmazonS3Endpoint(String amazonS3Endpoint) {
-            this.amazonS3Endpoint = amazonS3Endpoint;
         }
 
         public String getAccessKey() {
