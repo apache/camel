@@ -38,6 +38,9 @@
     <firstVersion>2.18.0</firstVersion>
     <label>microservice</label>
 
+    <camel.osgi.import.before.defaults>
+      com.netflix.client
+    </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.ribbon.*</camel.osgi.export.pkg>
   </properties>
 
