@@ -78,13 +78,12 @@ with the following path and query parameters:
 | *bucketNameOrArn* | *Required* Bucket name or ARN |  | String
 |===
 
-==== Query Parameters (50 parameters):
+==== Query Parameters (49 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *amazonS3Client* (common) | Reference to a com.amazonaws.services.sqs.AmazonS3 in the link:registry.htmlRegistry. |  | AmazonS3
-| *amazonS3Endpoint* (common) | The region with which the AWS-S3 client wants to work with. |  | String
 | *pathStyleAccess* (common) | Whether or not the S3 client should use path style access | false | boolean
 | *policy* (common) | The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3setBucketPolicy() method. |  | String
 | *proxyHost* (common) | To define a proxy host when instantiating the SQS client |  | String

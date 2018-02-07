@@ -104,10 +104,6 @@ public class S3Endpoint extends ScheduledPollEndpoint {
 
         s3Client = configuration.getAmazonS3Client() != null ? configuration.getAmazonS3Client() : createS3Client();
 
-        if (ObjectHelper.isNotEmpty(configuration.getAmazonS3Endpoint())) {
-            s3Client.setEndpoint(configuration.getAmazonS3Endpoint());
-        }
-
         String fileName = getConfiguration().getFileName();
 
         if (fileName != null) {
