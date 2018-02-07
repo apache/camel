@@ -227,7 +227,7 @@
     <felix-fileinstall-version>3.5.2</felix-fileinstall-version>
     <felix-framework-version>3.2.2</felix-framework-version>
     <felix-scr-annotations-version>1.12.0</felix-scr-annotations-version>
-    <felix-scr-version>2.0.12</felix-scr-version>
+    <felix-scr-version>2.0.14</felix-scr-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
     <google-findbugs-jsr305-version>3.0.2</google-findbugs-jsr305-version>
     <google-findbugs-annotations2-version>2.0.3</google-findbugs-annotations2-version>
