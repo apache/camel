@@ -67,12 +67,11 @@ with the following path and query parameters:
 | *function* | *Required* Name of the Lambda function. |  | String
 |===
 
-==== Query Parameters (9 parameters):
+==== Query Parameters (8 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *awsLambdaEndpoint* (producer) | The AWS-Lambda client to use. |  | String
 | *operation* (producer) | *Required* The operation to perform. It can be listFunctions getFunction createFunction deleteFunction or invokeFunction |  | LambdaOperations
 | *region* (producer) | Amazon AWS Region |  | String
 | *awsLambdaClient* (advanced) | To use a existing configured AwsLambdaClient as client |  | AWSLambda

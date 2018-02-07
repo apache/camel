@@ -20,6 +20,7 @@ import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import org.apache.camel.Component;
@@ -84,8 +85,8 @@ public class LambdaEndpoint extends DefaultEndpoint {
             builder = builder.withClientConfiguration(clientConfiguration);
         }
 
-        if (ObjectHelper.isNotEmpty(configuration.getAwsLambdaEndpoint())) {
-            builder = builder.withRegion(configuration.getAwsLambdaEndpoint());
+        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            builder = builder.withRegion(Regions.valueOf(configuration.getRegion()));
         }
 
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {

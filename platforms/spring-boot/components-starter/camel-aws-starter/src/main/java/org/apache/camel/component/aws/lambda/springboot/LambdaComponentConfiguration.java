@@ -122,10 +122,6 @@ public class LambdaComponentConfiguration
          */
         private String region;
         /**
-         * The AWS-Lambda client to use.
-         */
-        private String awsLambdaEndpoint;
-        /**
          * The operation to perform. It can be listFunctions, getFunction,
          * createFunction, deleteFunction or invokeFunction
          */
@@ -171,14 +167,6 @@ public class LambdaComponentConfiguration
 
         public void setRegion(String region) {
             this.region = region;
-        }
-
-        public String getAwsLambdaEndpoint() {
-            return awsLambdaEndpoint;
-        }
-
-        public void setAwsLambdaEndpoint(String awsLambdaEndpoint) {
-            this.awsLambdaEndpoint = awsLambdaEndpoint;
         }
 
         public LambdaOperations getOperation() {
