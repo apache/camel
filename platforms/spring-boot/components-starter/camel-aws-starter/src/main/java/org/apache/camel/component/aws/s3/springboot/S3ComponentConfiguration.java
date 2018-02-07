@@ -143,8 +143,7 @@ public class S3ComponentConfiguration
          */
         private String fileName;
         /**
-         * The region where the bucket is located. This option is used in the
-         * `com.amazonaws.services.s3.model.CreateBucketRequest`.
+         * The region in which S3 client needs to work
          */
         private String region;
         /**

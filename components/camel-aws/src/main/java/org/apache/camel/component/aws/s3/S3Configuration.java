@@ -184,8 +184,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * The region where the bucket is located. This option is used in the
-     * `com.amazonaws.services.s3.model.CreateBucketRequest`.
+     * The region in which S3 client needs to work
      */
     public void setRegion(String region) {
         this.region = region;
