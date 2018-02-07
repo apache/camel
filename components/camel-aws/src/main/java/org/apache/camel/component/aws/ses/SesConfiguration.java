@@ -39,8 +39,6 @@ public class SesConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam
-    private String amazonSESEndpoint;
-    @UriParam
     private String subject;
     @UriParam
     private List<String> to;
@@ -152,17 +150,6 @@ public class SesConfiguration implements Cloneable {
     
     public void setReplyToAddresses(String replyToAddresses) {
         this.replyToAddresses = Arrays.asList(replyToAddresses.split(","));
-    }
-    
-    public String getAmazonSESEndpoint() {
-        return amazonSESEndpoint;
-    }
-
-    /**
-     * The region with which the AWS-SES client wants to work with.
-     */
-    public void setAmazonSESEndpoint(String amazonSesEndpoint) {
-        this.amazonSESEndpoint = amazonSesEndpoint;
     }
     
     /**
