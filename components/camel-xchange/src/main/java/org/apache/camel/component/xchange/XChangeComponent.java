@@ -26,6 +26,8 @@ import org.knowm.xchange.utils.Assert;
 
 public class XChangeComponent extends DefaultComponent {
 
+    private XChange exchange;
+    
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
@@ -36,15 +38,29 @@ public class XChangeComponent extends DefaultComponent {
         // Set the the required name of the exchange
         configuration.setName(remaining);
 
-        // Get the XChange implementation
-        Class<? extends Exchange> exchangeClass = configuration.getXChangeClass();
-        Assert.notNull(exchangeClass, "XChange not supported: " + configuration.getName());
-        
-        // Create the XChange and associated Endpoint
-        XChange exchange = new XChange(ExchangeFactory.INSTANCE.createExchange(exchangeClass));
+        XChange exchange = createXChange(configuration);
         XChangeEndpoint endpoint = new XChangeEndpoint(uri, this, configuration, exchange);
         
         return endpoint;
+    }
+
+    public XChange getXChange() {
+        return exchange;
+    }
+    
+    private synchronized XChange createXChange(XChangeConfiguration configuration) {
+        
+        if (exchange == null) {
+            
+            // Get the XChange implementation
+            Class<? extends Exchange> exchangeClass = configuration.getXChangeClass();
+            Assert.notNull(exchangeClass, "XChange not supported: " + configuration.getName());
+            
+            // Create the XChange and associated Endpoint
+            exchange = new XChange(ExchangeFactory.INSTANCE.createExchange(exchangeClass));
+        }
+        
+        return exchange;
     }
 
 }
