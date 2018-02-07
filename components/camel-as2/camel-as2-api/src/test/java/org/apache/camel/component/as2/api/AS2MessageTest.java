@@ -91,7 +91,7 @@ public class AS2MessageTest {
             +"ALC+C+ABG'\n"
             +"MOA+8:525'\n"
             +"UNT+23+00000000000117'\n"
-            +"UNZ+1+00000000000778'\n";
+            +"UNZ+1+00000000000778'";
 
     private AS2SignedDataGenerator gen;
     
