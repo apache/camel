@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes.builds;
+package org.apache.camel.component.openshift.builds;
 
 import java.util.Map;
 
@@ -39,11 +39,11 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class KubernetesBuildsProducer extends DefaultProducer {
+public class OpenshiftBuildsProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesBuildsProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OpenshiftBuildsProducer.class);
 
-    public KubernetesBuildsProducer(AbstractKubernetesEndpoint endpoint) {
+    public OpenshiftBuildsProducer(AbstractKubernetesEndpoint endpoint) {
         super(endpoint);
     }
 

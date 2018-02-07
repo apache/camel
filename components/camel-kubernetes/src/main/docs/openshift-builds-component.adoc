@@ -1,5 +1,8 @@
-[[kubernetes-builds-component]]
+[[openshift-builds-component]]
+== Openshift Builds Component
 == Kubernetes Builds Component
+*Available as of Camel version 2.17*
+
 
 *Available as of Camel version 2.17*
 
@@ -10,17 +13,17 @@ provides a producer to execute kubernetes build operations.
 ### Component Options
 
 // component options: START
-The Kubernetes Builds component has no options.
+The Openshift Builds component has no options.
 // component options: END
 
 
 ### Endpoint Options
 
 // endpoint options: START
-The Kubernetes Builds endpoint is configured using URI syntax:
+The Openshift Builds endpoint is configured using URI syntax:
 
 ----
-kubernetes-builds:masterUrl
+openshift-builds:masterUrl
 ----
 
 with the following path and query parameters:

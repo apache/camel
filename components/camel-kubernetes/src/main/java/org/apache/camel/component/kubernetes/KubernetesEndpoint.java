@@ -20,7 +20,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.build_configs.KubernetesBuildConfigsProducer;
-import org.apache.camel.component.kubernetes.builds.KubernetesBuildsProducer;
 import org.apache.camel.component.kubernetes.config_maps.KubernetesConfigMapsProducer;
 import org.apache.camel.component.kubernetes.namespaces.KubernetesNamespacesConsumer;
 import org.apache.camel.component.kubernetes.namespaces.KubernetesNamespacesProducer;
@@ -37,6 +36,7 @@ import org.apache.camel.component.kubernetes.secrets.KubernetesSecretsProducer;
 import org.apache.camel.component.kubernetes.service_accounts.KubernetesServiceAccountsProducer;
 import org.apache.camel.component.kubernetes.services.KubernetesServicesConsumer;
 import org.apache.camel.component.kubernetes.services.KubernetesServicesProducer;
+import org.apache.camel.component.openshift.builds.OpenshiftBuildsProducer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -104,7 +104,7 @@ public class KubernetesEndpoint extends AbstractKubernetesEndpoint {
                 return new KubernetesConfigMapsProducer(this);
 
             case KubernetesCategory.BUILDS:
-                return new KubernetesBuildsProducer(this);
+                return new OpenshiftBuildsProducer(this);
 
             case KubernetesCategory.BUILD_CONFIGS:
                 return new KubernetesBuildConfigsProducer(this);
