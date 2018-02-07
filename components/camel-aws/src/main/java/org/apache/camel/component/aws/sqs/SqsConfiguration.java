@@ -35,8 +35,6 @@ public class SqsConfiguration implements Cloneable {
     private String secretKey;
     @UriParam(defaultValue = "amazonaws.com")
     private String amazonAWSHost = "amazonaws.com";
-    @UriParam
-    private String amazonSQSEndpoint;
     @UriParam(secret = true)
     private String queueOwnerAWSAccountId;
     @UriParam
@@ -98,19 +96,6 @@ public class SqsConfiguration implements Cloneable {
             return true;
         }
         return false;
-    }
-
-     /**
-     * The region with which the AWS-SQS client wants to work with.
-     * Only works if Camel creates the AWS-SQS client, i.e., if you explicitly set amazonSQSClient,
-     * then this setting will have no effect. You would have to set it on the client you create directly
-     */
-    public void setAmazonSQSEndpoint(String amazonSQSEndpoint) {
-        this.amazonSQSEndpoint = amazonSQSEndpoint;
-    }
-
-    public String getAmazonSQSEndpoint() {
-        return amazonSQSEndpoint;
     }
 
     public String getAmazonAWSHost() {
