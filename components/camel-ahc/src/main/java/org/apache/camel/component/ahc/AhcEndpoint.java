@@ -280,7 +280,7 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         super.doStart();
         if (client == null) {
             
-            AsyncHttpClientConfig config = null;
+            AsyncHttpClientConfig config;
             
             if (clientConfig != null) {
                 DefaultAsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
@@ -293,13 +293,18 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                 
                 config = builder.build();
             } else {
+                DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
+                /*
+                 * Not doing this will always create a cookie handler per endpoint, which is incompatible
+                 * to prior versions and interferes with the cookie handling in camel
+                 */
+                builder.setCookieStore(null);
                 if (sslContextParameters != null) {
-                    DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
                     SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
                     JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
                     builder.setSslContext(ssl);
-                    config = builder.build();
                 }
+                config = builder.build();
             }
             client = createClient(config);
         }
