@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.component.kubernetes.build_configs.KubernetesBuildConfigsComponent
+class=org.apache.camel.component.openshift.build_configs.OpenshiftBuildConfigsComponent

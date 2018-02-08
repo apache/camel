@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes.producer;
+package org.apache.camel.component.openshift.producer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +22,7 @@ import java.util.Map;
 
 import io.fabric8.openshift.api.model.BuildConfig;
 import io.fabric8.openshift.api.model.BuildConfigListBuilder;
+import io.fabric8.openshift.client.OpenShiftClient;
 import io.fabric8.openshift.client.server.mock.OpenShiftServer;
 
 import org.apache.camel.Exchange;
@@ -33,7 +34,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class KubernetesBuildConfigsProducerTest extends KubernetesTestSupport {
+public class OpenshiftBuildConfigsProducerTest extends KubernetesTestSupport {
 
     @Rule
     public OpenShiftServer server = new OpenShiftServer();
@@ -41,7 +42,7 @@ public class KubernetesBuildConfigsProducerTest extends KubernetesTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        registry.bind("client", server.getKubernetesClient());
+        registry.bind("client", server.getKubernetesClient().adapt(OpenShiftClient.class));
         return registry;
     }
 
@@ -78,8 +79,8 @@ public class KubernetesBuildConfigsProducerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list").to("kubernetes-build-configs:///?operation=listBuildConfigs&kubernetesClient=#client");
-                from("direct:listByLabels").to("kubernetes-build-configs:///?kubernetesClient=#client&operation=listBuildConfigsByLabels");
+                from("direct:list").to("openshift-build-configs:///?operation=listBuildConfigs&kubernetesClient=#client");
+                from("direct:listByLabels").to("openshift-build-configs:///?kubernetesClient=#client&operation=listBuildConfigsByLabels");
             }
         };
     }

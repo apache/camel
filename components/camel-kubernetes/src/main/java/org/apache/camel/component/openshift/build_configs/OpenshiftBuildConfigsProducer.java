@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes.build_configs;
+package org.apache.camel.component.openshift.build_configs;
 
 import java.util.Map;
 
 import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
-import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.openshift.api.model.Build;
 import io.fabric8.openshift.api.model.BuildConfig;
@@ -40,11 +39,11 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class KubernetesBuildConfigsProducer extends DefaultProducer {
+public class OpenshiftBuildConfigsProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesBuildConfigsProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OpenshiftBuildConfigsProducer.class);
 
-    public KubernetesBuildConfigsProducer(AbstractKubernetesEndpoint endpoint) {
+    public OpenshiftBuildConfigsProducer(AbstractKubernetesEndpoint endpoint) {
         super(endpoint);
     }
 

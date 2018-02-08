@@ -19,7 +19,6 @@ package org.apache.camel.component.kubernetes;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.kubernetes.build_configs.KubernetesBuildConfigsProducer;
 import org.apache.camel.component.kubernetes.config_maps.KubernetesConfigMapsProducer;
 import org.apache.camel.component.kubernetes.namespaces.KubernetesNamespacesConsumer;
 import org.apache.camel.component.kubernetes.namespaces.KubernetesNamespacesProducer;
@@ -36,6 +35,7 @@ import org.apache.camel.component.kubernetes.secrets.KubernetesSecretsProducer;
 import org.apache.camel.component.kubernetes.service_accounts.KubernetesServiceAccountsProducer;
 import org.apache.camel.component.kubernetes.services.KubernetesServicesConsumer;
 import org.apache.camel.component.kubernetes.services.KubernetesServicesProducer;
+import org.apache.camel.component.openshift.build_configs.OpenshiftBuildConfigsProducer;
 import org.apache.camel.component.openshift.builds.OpenshiftBuildsProducer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -107,7 +107,7 @@ public class KubernetesEndpoint extends AbstractKubernetesEndpoint {
                 return new OpenshiftBuildsProducer(this);
 
             case KubernetesCategory.BUILD_CONFIGS:
-                return new KubernetesBuildConfigsProducer(this);
+                return new OpenshiftBuildConfigsProducer(this);
 
             default:
                 throw new IllegalArgumentException("The " + category + " producer category doesn't exist");

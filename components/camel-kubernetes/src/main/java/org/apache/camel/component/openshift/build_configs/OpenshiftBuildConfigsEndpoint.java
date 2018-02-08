@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes.build_configs;
+package org.apache.camel.component.openshift.build_configs;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -28,24 +28,24 @@ import org.slf4j.LoggerFactory;
 /**
  * The Kubernetes Build Config component provides a producer to execute kubernetes build config operations.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-build-configs", title = "Kubernetes Build Config",
-    syntax = "kubernetes-build-configs:masterUrl", producerOnly = true, label = "container,cloud,paas")
-public class KubernetesBuildConfigsEndpoint extends AbstractKubernetesEndpoint {
+@UriEndpoint(firstVersion = "2.17.0", scheme = "openshift-build-configs", title = "Openshift Build Config",
+    syntax = "openshift-build-configs:masterUrl", producerOnly = true, label = "container,cloud,paas")
+public class OpenshiftBuildConfigsEndpoint extends AbstractKubernetesEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesBuildConfigsEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OpenshiftBuildConfigsEndpoint.class);
 
-    public KubernetesBuildConfigsEndpoint(String uri, KubernetesBuildConfigsComponent component, KubernetesConfiguration config) {
+    public OpenshiftBuildConfigsEndpoint(String uri, OpenshiftBuildConfigsComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new KubernetesBuildConfigsProducer(this);
+        return new OpenshiftBuildConfigsProducer(this);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new IllegalArgumentException("The kubernetes-build-configs doesn't support consumer");
+        throw new IllegalArgumentException("The openshift-build-configs doesn't support consumer");
     }
 
 }
