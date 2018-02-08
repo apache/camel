@@ -29,8 +29,8 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
-import org.asynchttpclient.ws.DefaultWebSocketListener;
 import org.asynchttpclient.ws.WebSocket;
+import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,7 +133,7 @@ public class WsEndpoint extends AhcEndpoint {
                 LOG.debug("Disconnecting from {}", getHttpUri().toASCIIString());
             }
             websocket.removeWebSocketListener(listener);
-            websocket.close();
+            websocket.sendCloseFrame();
             websocket = null;
         }
         super.doStop();
@@ -156,7 +156,7 @@ public class WsEndpoint extends AhcEndpoint {
         }
     }
 
-    class WsListener extends DefaultWebSocketListener {
+    class WsListener implements WebSocketListener {
 
         @Override
         public void onOpen(WebSocket websocket) {
@@ -164,7 +164,7 @@ public class WsEndpoint extends AhcEndpoint {
         }
 
         @Override
-        public void onClose(WebSocket websocket) {
+        public void onClose(WebSocket websocket, int code, String reason) {
             LOG.debug("websocket closed - reconnecting");
             try {
                 reConnect();
@@ -184,7 +184,7 @@ public class WsEndpoint extends AhcEndpoint {
         }
 
         @Override
-        public void onMessage(byte[] message) {
+        public void onBinaryFrame(byte[] message, boolean finalFragment, int rsv) {
             LOG.debug("Received message --> {}", message);
             for (WsConsumer consumer : consumers) {
                 consumer.sendMessage(message);
@@ -192,7 +192,7 @@ public class WsEndpoint extends AhcEndpoint {
         }
 
         @Override
-        public void onMessage(String message) {
+        public void onTextFrame(String message, boolean finalFragment, int rsv) {
             LOG.debug("Received message --> {}", message);
             for (WsConsumer consumer : consumers) {
                 consumer.sendMessage(message);

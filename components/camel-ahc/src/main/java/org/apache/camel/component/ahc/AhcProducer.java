@@ -24,9 +24,10 @@ import org.apache.camel.impl.DefaultAsyncProducer;
 import org.asynchttpclient.AsyncHandler;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.HttpResponseBodyPart;
-import org.asynchttpclient.HttpResponseHeaders;
 import org.asynchttpclient.HttpResponseStatus;
 import org.asynchttpclient.Request;
+
+import io.netty.handler.codec.http.HttpHeaders;
 
 /**
  *
@@ -144,7 +145,7 @@ public class AhcProducer extends DefaultAsyncProducer {
         }
 
         @Override
-        public State onHeadersReceived(HttpResponseHeaders headers) throws Exception {
+        public State onHeadersReceived(HttpHeaders headers) throws Exception {
             if (log.isTraceEnabled()) {
                 log.trace("{} onHeadersReceived {}", exchange.getExchangeId(), headers);
             }
@@ -156,5 +157,4 @@ public class AhcProducer extends DefaultAsyncProducer {
             return State.CONTINUE;
         }
     }
-
 }
