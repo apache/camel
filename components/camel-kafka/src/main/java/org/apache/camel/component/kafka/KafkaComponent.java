@@ -150,7 +150,6 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         this.breakOnFirstError = breakOnFirstError;
     }
 
-
     public boolean isAllowManualCommit() {
         return allowManualCommit;
     }
