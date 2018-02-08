@@ -470,9 +470,6 @@ Number of Components: 291 in 200 JAR artifacts (19 deprecated)
 | link:camel-kubernetes/src/main/docs/kubernetes-build-configs-component.adoc[Kubernetes Build Config] (camel-kubernetes) +
 `kubernetes-build-configs:masterUrl` | 2.17 | The Kubernetes Build Config component provides a producer to execute kubernetes build config operations.
 
-| link:camel-kubernetes/src/main/docs/kubernetes-builds-component.adoc[Kubernetes Builds] (camel-kubernetes) +
-`kubernetes-builds:masterUrl` | 2.17 | The Kubernetes Builds component provides a producer to execute kubernetes build operations.
-
 | link:camel-kubernetes/src/main/docs/kubernetes-config-maps-component.adoc[Kubernetes ConfigMap] (camel-kubernetes) +
 `kubernetes-config-maps:masterUrl` | 2.17 | The Kubernetes Configmaps component provides a producer to execute kubernetes configmap operations.
 
@@ -607,6 +604,9 @@ Number of Components: 291 in 200 JAR artifacts (19 deprecated)
 
 | link:camel-openshift/src/main/docs/openshift-component.adoc[OpenShift] (camel-openshift) +
 `openshift:clientId` | 2.14 | *deprecated* To manage your Openshift 2.x applications.
+
+| link:camel-kubernetes/src/main/docs/openshift-builds-component.adoc[Openshift Builds] (camel-kubernetes) +
+`openshift-builds:masterUrl` | 2.17 | The Openshift Builds component provides a producer to execute openshift build operations.
 
 | link:camel-openstack/src/main/docs/openstack-cinder-component.adoc[OpenStack Cinder] (camel-openstack) +
 `openstack-cinder:host` | 2.19 | The openstack-cinder component allows messages to be sent to an OpenStack block storage services.
