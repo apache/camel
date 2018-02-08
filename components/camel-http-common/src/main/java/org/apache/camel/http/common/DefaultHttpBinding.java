@@ -171,7 +171,15 @@ public class DefaultHttpBinding implements HttpBinding {
         }
 
         try {
-            populateRequestParameters(request, message);
+            // only populate request parameters if we are not bridged
+            boolean bridged = false;
+            Endpoint endpoint = message.getExchange().getFromEndpoint();
+            if (endpoint instanceof HttpCommonEndpoint && ((HttpCommonEndpoint)endpoint).isBridgeEndpoint()) {
+                bridged = true;
+            } 
+            if (!bridged) {
+                populateRequestParameters(request, message);
+            }
         } catch (Exception e) {
             throw new RuntimeCamelException("Cannot read request parameters due " + e.getMessage(), e);
         }
