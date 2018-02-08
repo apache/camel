@@ -1,4 +1,3 @@
-[[ConfluenceContent]]
 [[RX-CamelRX]]
 Camel RX (deprecated)
 ---------------------
