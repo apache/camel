@@ -227,6 +227,10 @@ public class CamelAutoConfiguration {
             camelContext.setReloadStrategy(reload);
         }
 
+        if (config.getThreadNamePattern() != null) {
+            camelContext.getExecutorServiceManager().setThreadNamePattern(config.getThreadNamePattern());
+        }
+
         // additional advanced configuration which is not configured using CamelConfigurationProperties
         afterPropertiesSet(applicationContext, camelContext);
 
