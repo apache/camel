@@ -299,9 +299,9 @@ Example].
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:twitter-websocket-example.html[Twitter Websocket Example]
+* Twitter Websocket Example

@@ -6,7 +6,7 @@
 The Simple Expression Language was a really simple language when it was
 created, but has since grown more powerful. It is primarily intended for
 being a really small and simple language for evaluating
-link:expression.html[Expression]s and link:predicate.html[Predicate]s
+Expressions and Predicates
 without requiring any new dependencies or knowledge of
 <<xpath-language,XPath>>; so it is ideal for testing in camel-core. The
 idea was to cover 95% of the common use cases when you need a little bit
@@ -18,7 +18,7 @@ choose a more expressive and powerful language such as:
 * <<spel-language,SpEL>>
 * <<mvel-component,Mvel>>
 * <<groovy-language,Groovy>>
-* link:javascript.html[JavaScript]
+* JavaScript
 * <<el-language,EL>>
 * <<ognl-language,OGNL>>
 * one of the supported link:scripting-languages.html[Scripting
@@ -43,7 +43,7 @@ For example if you have made a typo in one of the operators, then
 previously the parser would not be able to detect this, and cause the
 evaluation to be true. There are a few changes in the syntax which are
 no longer backwards compatible. When using <<simple-language,Simple>>
-language as a link:predicate.html[Predicate] then the literal text
+language as a Predicate then the literal text
 *must* be enclosed in either single or double quotes. For example:
 `"${body} == 'Camel'"`. Notice how we have single quotes around the
 literal. The old style of using `"body"` and `"header.foo"` to refer to
@@ -85,13 +85,13 @@ The Simple language supports 2 options which are listed below.
 |=======================================================================
 |Variable |Type |Description
 
-|camelId |String |*Camel 2.10:* the link:camelcontext.html[CamelContext] name
+|camelId |String |*Camel 2.10:* the CamelContext name
 
 |camelContext.*OGNL* |Object |*Camel 2.11:* the CamelContext invoked using a Camel OGNL expression.
 
-|exchange |Exchange |*Camel 2.16:* the link:exchange.html[Exchange]
+|exchange |Exchange |*Camel 2.16:* the Exchange
 
-|exchange.*OGNL* |Object |*Camel 2.16:* the link:exchange.html[Exchange] invoked using a Camel
+|exchange.*OGNL* |Object |*Camel 2.16:* the Exchange invoked using a Camel
 OGNL expression.
 
 |exchangeId |String |*Camel 2.3:* the exchange id
@@ -222,23 +222,23 @@ component.
 
 |properties:_locations:key_ |String |*Deprecated (use properties-location instead) Camel 2.3:* Lookup a
 property with the given key. The `locations` option is optional. See
-more at link:using-propertyplaceholder.html[Using PropertyPlaceholder].
+more at Using PropertyPlaceholder.
 
 |properties-location:_http://locationskey[locations:key]_ |String |*Camel 2.14.1:* Lookup a property with the given key. The `locations`
 option is optional. See more at
-link:using-propertyplaceholder.html[Using PropertyPlaceholder].
+Using PropertyPlaceholder.
 
 |properties:key:default |String |*Camel 2.14.1*: Lookup a property with the given key. If the key does
 not exists or has no value, then an optional default value can be
 specified.
 
 |routeId |String |*Camel 2.11:* Returns the id of the current route the
-link:exchange.html[Exchange] is being routed.
+Exchange is being routed.
 
 |threadName |String |*Camel 2.3:* Returns the name of the current thread. Can be used for
 logging purpose.
 
-|ref:xxx |Object |*Camel 2.6:* To lookup a bean from the link:registry.html[Registry] with
+|ref:xxx |Object |*Camel 2.6:* To lookup a bean from the Registry with
 the given id.
 
 |type:name.field |Object |*Camel 2.11:* To refer to a type or field by its FQN name. To refer to a
@@ -255,13 +255,13 @@ _max_ (excluded)
 
 |collate(group) |List |*Camel 2.17:* The collate function iterates the message body and groups
 the data into sub lists of specified size. This can be used with the
-link:splitter.html[Splitter] EIP to split a message body and group/batch
+Splitter EIP to split a message body and group/batch
 the splitted sub message into a group of N sub lists. This method works
 similar to the collate method in Groovy.
 
 |skip(number) |Iterator |*Camel 2.19:* The skip function iterates the message body and skips
 the first number of items. This can be used with the
-link:splitter.html[Splitter] EIP to split a message body and skip the first N number of items.
+Splitter EIP to split a message body and skip the first N number of items.
 
 |messageHistory |String |*Camel 2.17:* The message history of the current exchange how it has
 been routed. This is similar to the route stack-trace message history
@@ -741,7 +741,7 @@ In the Spring XML sample below we filter based on a header value:
 --------------------------------------------
 
 The Simple language can be used for the predicate test above in the
-link:message-filter.html[Message Filter] pattern, where we test if the
+Message Filter pattern, where we test if the
 in message has a `foo` header (a header with the key `foo` exists). If
 the expression evaluates to *true* then the message is routed to the
 `mock:fooOrders` endpoint, otherwise the message is dropped.
@@ -788,7 +788,7 @@ from("direct:order")
 ----
 
 Where `orderIdGenerator` is the id of the bean registered in the
-link:registry.html[Registry]. If using Spring then it is the Spring bean
+Registry. If using Spring then it is the Spring bean
 id.
 
 If we want to declare which method to invoke on the order id generator
@@ -857,7 +857,7 @@ From Camel 2.9 onwards you can nest functions, such as shown below:
 
 Suppose you have an enum for customers
 
-And in a link:content-based-router.html[Content Based Router] we can use
+And in a Content Based Router we can use
 the <<simple-language,Simple>> language to refer to this enum, to check
 the message which enum it matches.
 

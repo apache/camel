@@ -12,7 +12,7 @@ The File Expression Language is an extension to the
 <<simple-language,Simple>> language, adding file related capabilities.
 These capabilities are related to common use cases working with file
 path and names. The goal is to allow expressions to be used with the
-link:file2.html[File] and link:ftp.html[FTP] components for setting
+File and FTP components for setting
 dynamic file patterns for both consumer and producer.
 
 === File Language options
@@ -45,7 +45,7 @@ All the file tokens use the same expression name as the method on the
 `java.io.File.getAbsolute()` method. Notice that not all expressions are
 supported by the current Exchange. For instance the <<ftp-component,FTP>>
 component supports some of the options, where as the
-link:file2.html[File] component supports all of them.
+File component supports all of them.
 
 
 [width="100%",cols="10%,10%,10%,10%,10%,25%,25%",options="header",]
@@ -231,7 +231,7 @@ is pretty powerful for those common file path patterns.
 
 In Camel you can use the <<file-language,File Language>> directly
 from the <<simple-language,Simple>> language which makes a
-link:content-based-router.html[Content Based Router] easier to do in
+Content Based Router easier to do in
 Spring XML, where we can route based on file extensions as shown below:
 
 [source,xml]
@@ -252,7 +252,7 @@ Spring XML, where we can route based on file extensions as shown below:
   </choice>
 ----
 
-If you use the `fileName` option on the link:file2.html[File] endpoint
+If you use the `fileName` option on the File endpoint
 to set a dynamic filename using the <<file-language,File Language>> then make sure you  +
  use the alternative syntax (available from Camel 2.5 onwards) to avoid
 clashing with Springs `PropertyPlaceholderConfigurer`.

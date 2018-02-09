@@ -104,7 +104,7 @@ with the following path and query parameters:
 Required SWF component options
 
 You have to provide the amazonSWClient in the
-link:registry.html[Registry] or your accessKey and secretKey to access
+Registry or your accessKey and secretKey to access
 the http://aws.amazon.com/swf[Amazon's Simple Workflow Service].
 
 ### Usage
@@ -204,7 +204,7 @@ configuration you can create your own instance and refer to it from the
 URI:
 
 The `#client` refers to a AmazonSimpleWorkflowClient in the
-link:registry.html[Registry].
+Registry.
 
 For example if your Camel Application is running behind a firewall:
 
@@ -240,9 +240,9 @@ where `${camel-version`} must be replaced by the actual version of Camel
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-link:aws.html[AWS Component]
+AWS Component

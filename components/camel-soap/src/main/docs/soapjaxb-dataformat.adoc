@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.3*
 
-SOAP is a link:data-format.html[Data Format] which uses JAXB2 and JAX-WS
+SOAP is a Data Format which uses JAXB2 and JAX-WS
 annotations to marshal and unmarshal SOAP payloads. It provides the
 basic features of Apache CXF without need for the CXF Stack.
 
@@ -15,7 +15,7 @@ onwards.
 *Namespace prefix mapping*
 
 See <<jaxb-dataformat,JAXB>> for details how you can control namespace
-prefix mappings when marshalling using link:soap.html[SOAP] data format.
+prefix mappings when marshalling using SOAP data format.
 
 ### SOAP Options
 

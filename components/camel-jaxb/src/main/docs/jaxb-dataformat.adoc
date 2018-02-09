@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.0*
 
-JAXB is a link:data-format.html[Data Format] which uses the JAXB2 XML
+JAXB is a Data Format which uses the JAXB2 XML
 marshalling standard which is included in Java 6 to unmarshal an XML
 payload into Java objects or to marshal Java objects into an XML
 payload.
@@ -55,8 +55,8 @@ from("activemq:My.Queue").
 -------------------------------------------------------
 
 You can if you prefer use a named reference to a data format which can
-then be defined in your link:registry.html[Registry] such as via your
-link:spring.html[Spring] XML file. e.g.
+then be defined in your Registry such as via your
+Spring XML file. e.g.
 
 [source,java]
 -------------------------------
@@ -68,7 +68,7 @@ from("activemq:My.Queue").
 ### Using Spring XML
 
 The following example shows how to use JAXB to unmarshal using
-link:spring.html[Spring] configuring the jaxb data type
+Spring configuring the jaxb data type
 
 This example shows how to configure the data type just once and reuse it
 on multiple routes.
@@ -126,7 +126,7 @@ http://www.w3.org/TR/2004/REC-xml-20040204/#NT-Char[NonXML Character],
 you just need to set the filterNonXmlChars property to be true,
 JaxbDataFormat will replace the NonXML character with " " when it is
 marshaling or unmarshaling the message. You can also do it by setting
-the link:exchange.html[Exchange] property
+the Exchange property
 `Exchange.FILTER_NON_XML_CHARS`.
 
  
@@ -182,7 +182,7 @@ You can set the *encoding* option to use when marshalling. Its the
 `Marshaller.JAXB_ENCODING` encoding property on the JAXB Marshaller. +
  You can setup which encoding to use when you declare the JAXB data
 format. You can also provide the encoding in the
-link:exchange.html[Exchange] property `Exchange.CHARSET_NAME`. This
+Exchange property `Exchange.CHARSET_NAME`. This
 property will overrule the encoding set on the JAXB data format.
 
 In this Spring DSL we have defined to use `iso-8859-1` as the encoding:
@@ -215,7 +215,7 @@ namespace "http://www.mycompany.com/foo/2" is not using any prefix.
 
 To use this in <<jaxb-dataformat,JAXB>> or <<jaxb-dataformat,SOAP>> you refer to
 this map, using the `namespacePrefixRef` attribute as shown below. Then
-Camel will lookup in the link:registry.html[Registry] a `java.util.Map`
+Camel will lookup in the Registry a `java.util.Map`
 with the id "myMap", which was what we defined above.
 
 [source,xml]
@@ -229,7 +229,7 @@ with the id "myMap", which was what we defined above.
 
 *Available as of Camel 2.11*
 
-The JAXB link:data-format.html[Data Format] supports validation by
+The JAXB Data Format supports validation by
 marshalling and unmarshalling from/to XML. Your can use the prefix
 *classpath:*, *file:* or *http:* to specify how the resource should by
 resolved. You can separate multiple schema files by using the *','*
@@ -276,7 +276,7 @@ jaxbDataFormat.setSchemaFactory(thradSafeSchemaFactory);
 
 *Available as of Camel 2.14*
 
-The JAXB link:data-format.html[Data Format] supports to specify the
+The JAXB Data Format supports to specify the
 SchemaLocation when marshaling the XML. 
 
 Using the Java DSL, you can configure it in the following way:
@@ -317,7 +317,7 @@ To use JAXB in your camel routes you need to add the a dependency on
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,java]
 -------------------------------------

@@ -3,9 +3,9 @@ OnCompletion
 ~~~~~~~~~~~~
 
 Camel has this concept of a Unit of Work that encompass the
-link:exchange.html[Exchange]. The unit of work among others supports
+Exchange. The unit of work among others supports
 synchronization callbacks that are invoked when the
-link:exchange.html[Exchange] is complete. The callback API is defined in
+Exchange is complete. The callback API is defined in
 `org.apache.camel.spi.Synchronization`. From *Camel 2.14* onwards we
 have an extended synchronization
 `org.apache.camel.spi.SynchronizationRouteAware` that have callbacks for
@@ -60,10 +60,10 @@ etc. +
 route, then do *not* use *onCompletion* for that. Notice: if you use the
 `UnitOfWork` API as mentioned in the top of this page, then you can
 register a `Synchronization` callback on the
-link:exchange.html[Exchange] which is executed in the original route.
+Exchange which is executed in the original route.
 That way allows you to do some custom code when the route is completed;
 this is how custom components can enlist on completion services which
-they need, eg the link:file2.html[File] component does that for work
+they need, eg the File component does that for work
 that moves/deletes the original file etc.
 
 [[OnCompletion-onCompletionwithroutescope]]
@@ -71,9 +71,9 @@ onCompletion with route scope
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The *onCompletion* DSL allows you to add custom routes/processors when
-the original link:exchange.html[Exchange] is complete. Camel spin off a
-copy of the link:exchange.html[Exchange] and routes it in a separate
-thread, kinda like a link:wire-tap.html[Wire Tap]. This allows the
+the original Exchange is complete. Camel spin off a
+copy of the Exchange and routes it in a separate
+thread, kinda like a Wire Tap. This allows the
 original thread to continue while the *onCompletion* route is running
 concurrently. We decided for this model as we did not want the
 *onCompletion* route to interfere with the original route.
@@ -100,8 +100,8 @@ from("direct:start")
 -----------------------------------------------------------
 
 By default the *onCompletion* will be triggered when the
-link:exchange.html[Exchange] is complete and regardless if the
-link:exchange.html[Exchange] completed with success or with an failure
+Exchange is complete and regardless if the
+Exchange completed with success or with an failure
 (such as an Exception was thrown). You can limit the trigger to only
 occur `onCompleteOnly` or by `onFailureOnly` as shown below:
 
@@ -119,10 +119,10 @@ from("direct:start")
     .to("mock:result");
 -----------------------------------------------------------
 
-You can identify if the link:exchange.html[Exchange] is an
-*onCompletion* link:exchange.html[Exchange] as Camel will add the
+You can identify if the Exchange is an
+*onCompletion* Exchange as Camel will add the
 property `Exchange.ON_COMPLETION` with a boolean value of `true` when it
-spin offs the *onCompletion* link:exchange.html[Exchange].
+spin offs the *onCompletion* Exchange.
 
 [[OnCompletion-UsingonCompletionfromSpringDSL]]
 Using onCompletion from Spring DSL
@@ -214,7 +214,7 @@ scoped ones are never used.
 Using onCompletion with onWhen predicate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As other DSL in Camel you can attach a link:predicate.html[Predicate] to
+As other DSL in Camel you can attach a Predicate to
 the *onCompletion* so it only triggers in certain conditions, when the
 predicate matches. For example to only trigger if the message body contains the word
 `Hello` we can do like:
@@ -265,7 +265,7 @@ And in XML DSL
       </onCompletion>
 --------------------------------------------------------------
 
-You can also refer to a specific link:threading-model.html[thread pool]
+You can also refer to a specific thread pool
 to be used, using the executorServiceRef option
 
 [source,java]

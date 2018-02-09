@@ -47,7 +47,7 @@ for this component when using *Camel 2.8* or older:
 </dependency>
 ----
 
-From Camel 2.9 onwards the link:validation.html[Validation] component is
+From Camel 2.9 onwards the Validation component is
 provided directly in the camel-core.
 
 === Options

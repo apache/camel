@@ -560,7 +560,7 @@ Camel now offers 2 settings to control whether or not to register mbeans
 |`registerAlways` |`false` |If enabled then MBeans is always registered.
 
 |`registerNewRoutes` |`true` |If enabled then adding new routes after
-link:camelcontext.html[CamelContext] has been started will also register
+CamelContext has been started will also register
 MBeans from that given route.
 |=======================================================================
 
@@ -571,8 +571,8 @@ you for example add and remove temporary routes where management is not
 needed.
 
 Be a bit caution to use the `registerAlways` option when using dynamic
-link:eip.html[EIP] patterns such as the
-link:recipient-list.html[Recipient List] having unique endpoints. If so
+EIP patterns such as the
+Recipient List having unique endpoints. If so
 then each unique endpoint and its associated services/producers would
 also be registered. This could potential lead to system degration due
 the rising number of mbeans in the registry. A MBean is not a
@@ -598,12 +598,12 @@ image:camel-jmx.png[image]
 In *Camel 2.1* onwards *only* `singleton` endpoints are registered as
 the overhead for non singleton will be substantial in cases where
 thousands or millions of endpoints are used. This can happens when using
-a link:recipient-list.html[Recipient List] EIP or from a
+a Recipient List EIP or from a
 `ProducerTemplate` that sends a lot of messages.
 
 #### Which processors are registered
 
-See link:why-is-my-processor-not-showing-up-in-jconsole.html[this FAQ].
+See this FAQ.
 
 #### How to use the JMX NotificationListener to listen the camel events?
 
@@ -868,7 +868,7 @@ If you set an explicit naming pattern, then that pattern is always used,
 and the default patterns above is *not* used.
 
 This allows us to have full control, very easily, of the naming for both
-the `CamelContext` id in the link:registry.html[Registry] as well the
+the `CamelContext` id in the Registry as well the
 JMX MBeans in the `JMXMBeanRegistry`.
 
 From *Camel 2.15* onwards you can configure the default management
@@ -1010,7 +1010,7 @@ And from Spring DSL you do:
 *Available as of Camel 2.12*
 
 By default, Camel enlists MBeans in JMX such as endpoints configured
-using link:uris.html[URIs]. In this configuration, there may be
+using URIs. In this configuration, there may be
 sensitive information such as passwords.
 
 This information can be hidden by enabling the `mask` option as shown
@@ -1034,7 +1034,7 @@ And from Spring DSL you do:
     </camelContext>
 ----
 
-This will mask link:uris.html[URIs] having options such as password and
+This will mask URIs having options such as password and
 passphrase, and use `xxxxxx` as the replacement value.
 
 #### Declaring which JMX attributes and operations to mask
@@ -1057,6 +1057,6 @@ String getEndpointUri();
 
 ### See Also
 
-* link:management-example.html[Management Example]
+* Management Example
 * link:why-is-my-processor-not-showing-up-in-jconsole.html[Why is my
 processor not showing up in JConsole]

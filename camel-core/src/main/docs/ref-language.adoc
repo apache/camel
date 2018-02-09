@@ -4,7 +4,7 @@
 *Available as of Camel version 2.8*
 
 The Ref Expression Language is really just a way to lookup a custom
-link:expression.html[Expression] or link:predicate.html[Predicate] from the link:registry.html[Registry].
+Expression or Predicate from the Registry.
 
 This is particular useable in XML DSLs.
 
@@ -24,7 +24,7 @@ The Ref language supports 1 options which are listed below.
 
 === Example usage
 
-The link:splitter.html[Splitter] in XML DSL can utilize a custom
+The Splitter in XML DSL can utilize a custom
 expression using `<ref>` like:
 
 [source,xml]
@@ -40,10 +40,10 @@ expression using `<ref>` like:
 </route>
 ----
 
-in this case, the link:message.html[Message] coming from the seda:a
-link:endpoint.html[Endpoint] will be splitted using a custom
-link:expression.html[Expression] which has the id `myExpression` in the
-link:registry.html[Registry].
+in this case, the Message coming from the seda:a
+Endpoint will be splitted using a custom
+Expression which has the id `myExpression` in the
+Registry.
 
 And the same example using Java DSL:
 

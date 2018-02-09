@@ -20,7 +20,7 @@ configuration utility:
 * <<ahc-component,AHC>>
 * <<netty-component,Netty>>
 * <<cometd-component,Cometd>>
-* link:ftp2.html[FTP2]
+* FTP2
 * <<irc-component,IRC>>
 * <<mail-component,Mail>>
 * MINA 2

@@ -5,9 +5,9 @@
 
 Camel allows
 http://static.springsource.org/spring/docs/current/spring-framework-reference/htmlsingle/spring-framework-reference.html#expressions[SpEL]
-to be used as an link:expression.html[Expression] or
-link:predicate.html[Predicate] in the link:dsl.html[DSL] or
-link:xml-configuration.html[Xml Configuration].
+to be used as an Expression or
+Predicate in the DSL or
+Xml Configuration.
 
 ### Variables
 
@@ -73,7 +73,7 @@ from("direct:example").setBody(spel("Hello #{request.body}! What a beautiful #{r
 
 In the route above, notice spel is a static method which we need to
 import from `org.apache.camel.language.spel.SpelExpression.spel`, as we
-use spel as an link:expression.html[Expression] passed in as a parameter
+use spel as an Expression passed in as a parameter
 to the `setBody` method. Though if we use the fluent API we can do this
 instead:
 
@@ -99,7 +99,7 @@ day"_
 
 #### Bean integration
 
-You can reference beans defined in the link:registry.html[Registry]
+You can reference beans defined in the Registry
 (most likely an `ApplicationContext`) in your SpEL expressions. For
 example if you have a bean named "foo" in your `ApplicationContext` you
 can invoke the "bar" method on this bean like this:

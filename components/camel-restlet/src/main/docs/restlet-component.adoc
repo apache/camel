@@ -4,7 +4,7 @@
 *Available as of Camel version 2.0*
 
 The *Restlet* component provides http://www.restlet.org[Restlet] based
-link:endpoint.html[endpoints] for consuming and producing RESTful
+endpoints for consuming and producing RESTful
 resources.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -273,7 +273,7 @@ The `restletUriPatterns=#uriTemplates` option references the
 You may want to use the `org.restlet.Response` API to populate the
 response. This gives you full access to the Restlet API and fine grained
 control of the response. See the route snippet below where we generate
-the response from an inlined Camel link:processor.html[Processor]:
+the response from an inlined Camel Processor:
 
 *Generating response using Restlet Response API*
 
@@ -384,7 +384,7 @@ well:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

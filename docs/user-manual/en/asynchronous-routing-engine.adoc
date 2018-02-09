@@ -7,10 +7,10 @@ Asynchronous Routing Engine
 As of Camel 2.4 the asynchronous routing engine is back and kicking. +
 All the link:enterprise-integration-patterns.html[Enterprise
 Integration Patterns] are supported as well a selected number of
-link:components.html[Components]:
+Components:
 
 * <<ahc-component,AHC>> *Camel 2.8:* (only producer)
-* link:aws.html[AWS] *Camel 2.11:* (only consumer) for S3 and SNS.
+* AWS *Camel 2.11:* (only consumer) for S3 and SNS.
 * <<avro-component,Avro>> *Camel 2.10:* (only producer)
 * <<cxf-component,CXF>> *Camel 2.5:* (both consumer and producer)
 * <<cxfrs-component,CXFRS>> *Camel 2.5:* (only consumer)
@@ -19,15 +19,15 @@ and producer)
 * <<file-component,File>> - (only consumer)
 * <<ftp-component,FTP>> - (only consumer)
 * <<guava-eventbus-component,Guava EventBus>> *Camel 2.10:* (only consumer)
-* link:jbi.html[JBI] (both consumer and producer)
+* JBI (both consumer and producer)
 * <<jetty-component,Jetty>> (both consumer and producer)
 * <<jgroups-component,JGroups>> *Camel 2.10:* (only consumer)
 * <<jms-component,JMS>> *Camel 2.5:* (only producer for
-link:request-reply.html[Request Reply] messaging over JMS). *Camel 2.9:*
+Request Reply messaging over JMS). *Camel 2.9:*
 (consumer, if option `asyncConsumer=true` is used).
 * <<jms-component,JMS>> *Camel 2.9:* (also consumer)
 * <<mqtt-component,MQTT>> *Camel 2.10.2:* (only producer)
-* link:nmr.html[NMR] (both consumer and producer)
+* NMR (both consumer and producer)
 * <<netty-component,Netty>> only producer (*Camel 2.10:* also consumer)
 * <<restlet-component,Restlet>> *Camel 2.8:* (only producer)
 * <<seda-component,SEDA>> (both consumer and producer) SEDA was mistakenly
@@ -44,7 +44,7 @@ uses continuations and the async http client to be fully asynchronous
 and non blocked. That means no threads will ever be blocked while
 waiting for a reply.
 
-In the future additional link:components.html[Components] will be
+In the future additional Components will be
 supported as well where it's applicable.
 
 [[AsynchronousRoutingEngine-Forcingtousesynchronousprocessing]]
@@ -58,12 +58,12 @@ reply if `synchronous=true` was configured. Currently this option is
 supported by the all the producers. If you don't want to let the
 <<cxf-component,CXF>> consumer leverage the CXF continuation API to use the
 asynchronous processing, you can also use this option `synchronous=true`
-to disable it. The link:jbi.html[JBI] and link:nmr.html[NMR] component
+to disable it. The JBI and NMR component
 are always asynchronous and doesn't support this option.
 
 [[AsynchronousRoutingEngine-Backgroundinformation]]
 Background information
 ~~~~~~~~~~~~~~~~~~~~~~
 
-See link:asynchronous-processing.html[Asynchronous Processing] for
+See Asynchronous Processing for
 additional information and the concepts behind the asynchronous model.

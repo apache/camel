@@ -4,7 +4,7 @@
 *Available as of Camel version 2.14*
 
 The *ahc-ws* component provides Websocket
-based link:endpoint.html[endpoints] for a client communicating with
+based endpoints for a client communicating with
 external servers over Websocket (as a client opening a websocket
 connection to an external server). +
 The component uses the <<ahc-component,AHC>> component that in turn uses
@@ -161,10 +161,10 @@ And the equivalent Spring sample:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 * link:../../../../camel-ahc/src/main/docs/readme.html[AHC]
 * <<atmosphere-websocket-component,Atmosphere-Websocket>>

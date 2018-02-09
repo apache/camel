@@ -374,7 +374,7 @@ from("direct:start")
 ### Management of EHCache
 
 http://ehcache.org/[EHCache] has its own statistics and management from
-link:camel-jmx.html[JMX].
+JMX.
 
 Here's a snippet on how to expose them via JMX in a Spring application
 context:

@@ -26,7 +26,7 @@ ejb:ejbName[?options]
 ---------------------
 
 Where *ejbName* can be any string which is used to look up the EJB in
-the Application Server JNDI link:registry.html[Registry]
+the Application Server JNDI Registry
 
 ### Options
 
@@ -84,9 +84,9 @@ with the following path and query parameters:
 
 How bean methods to be invoked are chosen (if they are not specified
 explicitly through the *method* parameter) and how parameter values are
-constructed from the link:message.html[Message] are all defined by the
-link:bean-binding.html[Bean Binding] mechanism which is used throughout
-all of the various link:bean-integration.html[Bean Integration]
+constructed from the Message are all defined by the
+Bean Binding mechanism which is used throughout
+all of the various Bean Integration
 mechanisms in Camel.
 
 ### Examples
@@ -210,10 +210,10 @@ Before we are ready to use <<ejb-component,EJB>> in the Camel routes:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 * <<bean-component,Bean>>
-* link:bean-binding.html[Bean Binding]
-* link:bean-integration.html[Bean Integration]
+* Bean Binding
+* Bean Integration

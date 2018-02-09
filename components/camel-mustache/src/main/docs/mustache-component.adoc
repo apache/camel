@@ -5,7 +5,7 @@
 
 The *mustache:* component allows for processing a message using a
 http://mustache.github.io/[Mustache] template. This can be ideal when
-using link:templating.html[Templating] to generate responses for
+using Templating to generate responses for
 requests.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -179,7 +179,7 @@ Regards Camel Riders Bookstore
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

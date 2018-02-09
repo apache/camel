@@ -479,7 +479,7 @@ Contract-First Web Services]. Basically paragraph 3.6 "Implementing the
 Endpoint" is handled by this component (specifically paragraph 3.6.2
 "Routing the Message to the Endpoint" is where `CamelEndpointMapping`
 comes in). Also don't forget to check out the
-link:spring-ws-example.html[Spring Web Services Example] included in the
+Spring Web Services Example included in the
 Camel distribution.
 
 ### Endpoint mapping in routes
@@ -569,7 +569,7 @@ An example of a route using `beanname`:
 
 ### POJO (un)marshalling
 
-Camel's link:data-format.html[pluggable data formats] offer support for
+Camel's pluggable data formats offer support for
 pojo/xml marshalling using libraries such as JAXB, XStream, JibX, Castor
 and XMLBeans. You can use these data formats in your route to sent and
 receive pojo's, to and from web services.
@@ -596,7 +596,7 @@ from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointM
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

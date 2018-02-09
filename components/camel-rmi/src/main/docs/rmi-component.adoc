@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.0*
 
-The *rmi:* component binds link:exchange.html[Exchange]s to the RMI
+The *rmi:* component binds Exchanges to the RMI
 protocol (JRMP).
 
 Since this binding is just using RMI, normal RMI rules still apply
@@ -122,7 +122,7 @@ In XML DSL you can do as follows from *Camel 2.7* onwards:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

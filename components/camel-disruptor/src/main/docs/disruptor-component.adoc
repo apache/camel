@@ -13,7 +13,7 @@ utilized by the standard <<seda-component,SEDA>>. Alternatively, a
 *disruptor-vm:* endpoint is supported by this component, providing an
 alternative to the standard <<vm-component,VM>>. As with the SEDA
 component, buffers of the *disruptor:* endpoints are only visible within
-a *single* link:camelcontext.html[CamelContext] and no support is
+a *single* CamelContext and no support is
 provided for persistence or recovery. The buffers of the
 **disruptor-vm:** endpoints also provides support for communication
 across CamelContexts instances so you can use this mechanism to
@@ -77,7 +77,7 @@ or
 --------------------------------
 
 Where **someName** can be any string that uniquely identifies the
-endpoint within the current link:camelcontext.html[CamelContext] (or
+endpoint within the current CamelContext (or
 across contexts in case of +
  **disruptor-vm:**). +
  You can append query options to the URI in the following format:
@@ -197,7 +197,7 @@ from("disruptor:input").to("bean:processInput").to("bean:createResponse");
 
 In the route above, we have a TCP listener on port 9876 that accepts
 incoming requests. The request is routed to the _disruptor:input_
-buffer. As it is a link:request-reply.html[Request Reply] message, we
+buffer. As it is a Request Reply message, we
 wait for the response. When the consumer on the _disruptor:input_ buffer
 is complete, it copies the response to the original message response.
 

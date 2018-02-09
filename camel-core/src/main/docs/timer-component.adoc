@@ -111,7 +111,7 @@ TIP: Instead of 60000 you can use period=60s which is more friendly to read.
 
 The above route will generate an event and then invoke the
 `someMethodName` method on the bean called `myBean` in the
-link:registry.html[Registry] such as JNDI or link:spring.html[Spring].
+Registry such as JNDI or Spring.
 
 And the route in Spring DSL:
 

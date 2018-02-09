@@ -86,7 +86,7 @@ You can use the method `resolvePropertyPlaceholders` on the
 
 Camel now provides a new `PropertiesComponent` in *camel-core* which
 allows you to use property placeholders when defining Camel
-link:endpoint.html[Endpoint] URIs.
+Endpoint URIs.
 
 This works much like you would do if using Spring's
 `<property-placeholder>` tag. However Spring have a limitation which
@@ -103,7 +103,7 @@ with Camel, see further below for more details.
 The property placeholder is generally in use when doing:
 
 * lookup or creating endpoints
-* lookup of beans in the link:registry.html[Registry]
+* lookup of beans in the Registry
 * additional supported in Spring XML (see below in examples)
 * using Blueprint PropertyPlaceholder with Camel
 <<properties-component,Properties>> component
@@ -138,9 +138,9 @@ their own resolver to lookup properties. Camel provides a default
 implementation
 `org.apache.camel.component.properties.DefaultPropertiesResolver` which
 is capable of loading properties from the file system, classpath or
-link:registry.html[Registry]. You can prefix the locations with either:
+Registry. You can prefix the locations with either:
 
-* `ref:` *Camel 2.4:* to lookup in the link:registry.html[Registry]
+* `ref:` *Camel 2.4:* to lookup in the Registry
 * `file:` to load the from file system
 * `classpath:` to load from classpath (this is also the default if no
 prefix is provided)
@@ -303,7 +303,7 @@ Setting the properties location through the location tag works just fine but som
 Camel 2.10 onwards supports specifying a value for the cache option both
 inside the Spring as well as the Blueprint XML.
 
-=== Using a Properties from the link:registry.html[Registry]
+=== Using a Properties from the Registry
 
 *Available as of Camel 2.4* +
 For example in OSGi you may want to expose a service which returns the
@@ -319,7 +319,7 @@ follows:
 
 Where `myProperties` is the id to use for lookup in the OSGi registry.
 Notice we use the `ref:` prefix to tell Camel that it should lookup the
-properties for the link:registry.html[Registry].
+properties for the Registry.
 
 === Examples using properties component
 
@@ -401,7 +401,7 @@ from("{{cool.start}}")
 ----
 
 You can also your property placeholders when using
-link:producertemplate.html[ProducerTemplate] for example:
+ProducerTemplate for example:
 
 [source,java]
 ----
@@ -501,7 +501,7 @@ special placeholder namespace.
 In the example below we use the `prop` prefix for the namespace
 `http://camel.apache.org/schema/placeholder` by which we can use the
 `prop` prefix in the attributes in the XML DSLs. Notice how we use that
-in the link:multicast.html[Multicast] to indicate that the option
+in the Multicast to indicate that the option
 `stopOnException` should be the value of the placeholder with the key
 "stop".
 
@@ -516,7 +516,7 @@ stop=true
 
 *Available as of Camel 2.7*
 
-Camel supports link:using-osgi-blueprint-with-camel.html[Blueprint]
+Camel supports Blueprint
 which also offers a property placeholder service. Camel supports
 convention over configuration, so all you have to do is to define the
 OSGi Blueprint property placeholder in the XML file as shown below:
@@ -747,7 +747,7 @@ An alternative is to configure the `PropertyPlaceholderConfigurer` with
 
 *Available as of Camel 2.10*
 
-When link:testing.html[Testing] with Camel and using the
+When Testing with Camel and using the
 <<properties-component,Properties>> component, you may want to be able to
 provide the properties to be used from directly within the unit test
 source code. +
@@ -993,5 +993,5 @@ pc.addFunction(new MyBeerFunction());
 === See Also
 
 * <<properties-component,Properties>> component
-* link:jasypt.html[Jasypt] for using encrypted values (eg passwords) in
+* Jasypt for using encrypted values (eg passwords) in
 the properties

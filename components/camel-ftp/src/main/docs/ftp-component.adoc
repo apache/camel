@@ -255,7 +255,7 @@ FTPClient.
 
 If you do not like having many and long configuration in the url you can
 refer to the `ftpClient` or `ftpClientConfig` to use by letting Camel
-lookup in the link:registry.html[Registry] for it.
+lookup in the Registry for it.
 
 For example:
 
@@ -298,21 +298,21 @@ The FTP producer does *not* have this issue, it supports concurrency.
 
 ### More information
 
-This component is an extension of the link:file2.html[File] component.
-So there are more samples and details on the link:file2.html[File]
+This component is an extension of the File component.
+So there are more samples and details on the File
 component page.
 
 ====
 
 ### Default when consuming files
 
-The link:ftp2.html[FTP] consumer will by default leave the consumed
+The FTP consumer will by default leave the consumed
 files untouched on the remote FTP server. You have to configure it
 explicitly if you want it to delete the files or move them to another
 location. For example you can use `delete=true` to delete the files, or
 use `move=.done` to move the files into a hidden done sub directory.
 
-The regular link:file2.html[File] consumer is different as it will by
+The regular File consumer is different as it will by
 default move files to a `.camel` sub directory. The reason Camel does
 *not* do this by default for the FTP consumer is that it may lack
 permissions by default to be able to move or delete files.
@@ -322,7 +322,7 @@ permissions by default to be able to move or delete files.
 The option *readLock* can be used to force Camel *not* to consume files
 that is currently in the progress of being written. However, this option
 is turned off by default, as it requires that the user has write access.
-See the options table at link:file2.html[File2] for more details about
+See the options table at File2 for more details about
 read locks. +
  There are other solutions to avoid consuming files that are currently
 being written over FTP; for instance, you can write to a temporary
@@ -393,7 +393,7 @@ the local file using `FileOutputStream`.
 Camel will store to a local file with the same name as the remote file,
 though with `.inprogress` as extension while the file is being
 downloaded. Afterwards, the file is renamed to remove the `.inprogress`
-suffix. And finally, when the link:exchange.html[Exchange] is complete
+suffix. And finally, when the Exchange is complete
 the local file is deleted.
 
 So if you want to download files from a remote FTP server and store it
@@ -411,7 +411,7 @@ from("ftp://someone@someserver.com?password=secret&localWorkDirectory=/tmp").to(
 The route above is ultra efficient as it avoids reading the entire file
 content into memory. It will download the remote file directly to a
 local file stream. The `java.io.File` handle is then used as the
-link:exchange.html[Exchange] body. The file producer leverages this fact
+Exchange body. The file producer leverages this fact
 and can work directly on the work file `java.io.File` handle and perform
 a `java.io.File.rename` to the target filename. As Camel knows it's a
 local work file, it can optimize and use a rename instead of a file
@@ -421,7 +421,7 @@ copy, as the work file is meant to be deleted anyway.
 
 ### Stepwise changing directories
 
-Camel link:ftp2.html[FTP] can operate in two modes in terms of
+Camel FTP can operate in two modes in terms of
 traversing directories when consuming files (eg downloading) or
 producing files (eg uploading)
 
@@ -754,9 +754,9 @@ problems.
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:file2.html[File2]
+* File2

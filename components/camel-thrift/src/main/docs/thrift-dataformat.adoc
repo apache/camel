@@ -4,7 +4,7 @@
 *Available as of Camel version 2.20*
 
 
-Camel provides a link:data-format.html[Data Format] to serialize between
+Camel provides a Data Format to serialize between
 Java and the Apache Thrift . The project's site details why
 you may wish to
 https://thrift.apache.org/.
@@ -92,7 +92,7 @@ The generated classes implement org.apache.thrift.TBase which is required
 by the serialization mechanism. For this reason it important that only
 these classes are used in the body of your exchanges.
 Camel will throw an exception on route creation if you attempt to tell 
-the link:data-format.html[Data Format] to use a class that does not implement 
+the Data Format to use a class that does not implement 
 org.apache.thrift.TBase.
 
 ### Java DSL

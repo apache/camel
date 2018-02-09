@@ -192,7 +192,7 @@ and then send the exchange. The result of the query is returned in the
 OUT body:
 
 If you want to work on the rows one by one instead of the entire
-ResultSet at once you need to use the link:splitter.html[Splitter] EIP
+ResultSet at once you need to use the Splitter EIP
 such as:
 
 In Camel 2.13.x or older
@@ -245,9 +245,9 @@ from("timer://MoveNewCustomersEveryHour?period=3600000")
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 * <<sql-component,SQL>>

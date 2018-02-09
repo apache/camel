@@ -82,7 +82,7 @@ with the following path and query parameters:
 Required EC2 component options
 
 You have to provide the amazonEc2Client in the
-link:registry.html[Registry] or your accessKey and secretKey to access
+Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/it/ec2/[Amazon EC2] service.
 
 ### Usage
@@ -124,9 +124,9 @@ where `${camel-version`} must be replaced by the actual version of Camel
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:aws.html[AWS Component]
+* AWS Component

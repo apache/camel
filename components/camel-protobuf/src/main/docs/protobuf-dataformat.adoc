@@ -8,7 +8,7 @@ Protobuf - Protocol Buffers
 
 "Protocol Buffers - Google's data interchange format"
 
-Camel provides a link:data-format.html[Data Format] to serialize between
+Camel provides a Data Format to serialize between
 Java and the Protocol Buffer protocol. The project's site details why
 you may wish to
 https://developers.google.com/protocol-buffers/docs/overview[choose this format over xml].
@@ -147,7 +147,7 @@ implemented for you. The generated classes implement
 com.google.protobuf.Message which is required by the serialization
 mechanism. For this reason it important that only these classes are used
 in the body of your exchanges. Camel will throw an exception on route
-creation if you attempt to tell the link:data-format.html[Data Format]
+creation if you attempt to tell the Data Format
 to use a class that does not implement com.google.protobuf.Message. Use
 the generated builders to translate the data from any of your existing
 domain classes.

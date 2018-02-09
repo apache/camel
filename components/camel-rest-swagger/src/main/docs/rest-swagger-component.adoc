@@ -145,7 +145,7 @@ Swagger specification or download the specification and store it as
 `swagger.json` (in the root) of CLASSPATH that way it will be 
 automaticaly used. Let's use the <<undertow-component,Undertow>>
 component to perform all the requests and Camels excelent support for 
-link:spring-boot.html[Spring Boot].
+Spring Boot.
 
 Here are our dependencies defined in Maven POM file:
 

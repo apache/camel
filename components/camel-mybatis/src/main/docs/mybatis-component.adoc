@@ -278,7 +278,7 @@ dynamic queries] capabilities.
 #### Scheduled polling example
 
 This component supports scheduled polling and can therefore be used as
-a link:polling-consumer.html[Polling Consumer]. For example to poll the
+a Polling Consumer. For example to poll the
 database every minute:
 
 [source,java]
@@ -287,7 +287,7 @@ from("mybatis:selectAllAccounts?delay=60000").to("activemq:queue:allAccounts");
 -------------------------------------------------------------------------------
 
 See "ScheduledPollConsumer Options"
-on link:polling-consumer.html[Polling Consumer] for more options.
+on Polling Consumer for more options.
 
 Alternatively you can use another mechanism for triggering the scheduled
 polls, such as the <<timer-component,Timer>> or <<timer-component,Quartz>>
@@ -387,7 +387,7 @@ The camel-mybatis component is then configured with that factory:
     </bean>
 -----------------------------------------------------------------------------------
 
-Finally, a link:transactional-client.html[transaction policy] is defined
+Finally, a transaction policy is defined
 over the top of the transaction manager, which can then be used as
 usual:
 
@@ -409,7 +409,7 @@ usual:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

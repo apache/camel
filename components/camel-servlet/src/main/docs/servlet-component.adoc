@@ -4,7 +4,7 @@
 *Available as of Camel version 2.0*
 
 The *servlet:* component provides HTTP based
-link:endpoint.html[endpoints] for consuming HTTP requests that arrive at
+endpoints for consuming HTTP requests that arrive at
 a HTTP endpoint that is bound to a published Servlet.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -27,7 +27,7 @@ to Camel as a stream. That means you will only be able to read the
 content of the stream *once*. If you find a situation where the message
 body appears to be empty or you need to access the data multiple times
 (eg: doing multicasting, or redelivery error handling) you should use
-link:stream-caching.html[Stream caching] or convert the message body to
+Stream caching or convert the message body to
 a `String` which is safe to be read multiple times.
 
 ### URI format
@@ -209,7 +209,7 @@ address: `("http://localhost:8080/camel/services") + RELATIVE_PATH("/hello")`.
 
 #### Sample when using Spring 3.x
 
-See link:servlet-tomcat-example.html[Servlet Tomcat Example]
+See Servlet Tomcat Example
 
 #### Sample when using Spring 2.x
 
@@ -271,12 +271,12 @@ The automatic mapping of the Camel servlet can also be disabled.
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:servlet-tomcat-example.html[Servlet Tomcat Example]
+* Servlet Tomcat Example
 * link:servlet-tomcat-no-spring-example.html[Servlet Tomcat No Spring
 Example]
 * <<http-component,HTTP>>

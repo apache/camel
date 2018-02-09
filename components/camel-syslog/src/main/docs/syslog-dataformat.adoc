@@ -11,7 +11,7 @@ This component supports the following:
 * UDP consumption of syslog messages
 * Agnostic data format using either plain String objects or
 SyslogMessage model objects.
-* link:type-converter.html[Type Converter] from/to SyslogMessage and
+* Type Converter from/to SyslogMessage and
 String
 * Integration with the <<mina-component,camel-mina>> component.
 * Integration with the <<netty-component,camel-netty>> component.
@@ -133,7 +133,7 @@ The same route using <<mina-component,camel-mina>>
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

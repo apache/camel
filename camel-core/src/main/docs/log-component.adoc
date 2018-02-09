@@ -48,7 +48,7 @@ also ships with the `Throughput` logger, which is used whenever the
 TIP:*Also a log in the DSL*
 There is also a `log` directly in the DSL, but it has a different
 purpose. Its meant for lightweight and human logs. See more details at
-link:logeip.html[LogEIP].
+LogEIP.
 
 === Options
 
@@ -188,7 +188,7 @@ The following will be logged:
 *Available as of Camel 2.19*
 
 You can enable security masking for logging by setting `logMask` flag to `true`.
-Note that this option also affects link:logeip.html[Log EIP].
+Note that this option also affects Log EIP.
 
 To enable mask in Java DSL at CamelContext level:
 [source,java]
@@ -323,5 +323,5 @@ reference it using `logger` URI parameter.
 
 === See Also
 
-* link:logeip.html[LogEIP] for using `log` directly in the DSL for human
+* LogEIP for using `log` directly in the DSL for human
 logs.

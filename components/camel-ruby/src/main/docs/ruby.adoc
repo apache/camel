@@ -3,9 +3,9 @@ Ruby
 ~~~~
 
 Camel supports http://www.ruby-lang.org/en/[Ruby] among other
-link:scripting-languages.html[Scripting Languages] to allow an
-link:expression.html[Expression] or link:predicate.html[Predicate] to be
-used in the link:dsl.html[DSL] or link:xml-configuration.html[Xml
+Scripting Languages to allow an
+Expression or Predicate to be
+used in the DSL or link:xml-configuration.html[Xml
 Configuration].
 
 To use a Ruby expression use the following Java code
@@ -16,16 +16,16 @@ To use a Ruby expression use the following Java code
 -----------------------------------
 
 For example you could use the *ruby* function to create an
-link:predicate.html[Predicate] in a link:message-filter.html[Message
-Filter] or as an link:expression.html[Expression] for a
-link:recipient-list.html[Recipient List]
+Predicate in a link:message-filter.html[Message
+Filter] or as an Expression for a
+Recipient List
 
 [[Ruby-Example]]
 Example
 ^^^^^^^
 
 In the sample below we use Ruby to create a
-link:predicate.html[Predicate] use in the route path, to route exchanges
+Predicate use in the route path, to route exchanges
 from admin users to a special queue.
 
 [source,java]
@@ -82,7 +82,7 @@ Camels <<properties-component,Properties>> component from scripts. See
 further below for example.
 |=======================================================================
 
-See link:scripting-languages.html[Scripting Languages] for the list of
+See Scripting Languages for the list of
 languages with explicit DSL support.
 
 [[Ruby-AdditionalargumentstoScriptingEngine]]
@@ -165,7 +165,7 @@ engine.
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,xml]
 ---------------------------------------

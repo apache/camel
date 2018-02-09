@@ -4,7 +4,7 @@
 *Available as of Camel version 2.16*
 
 The *undertow* component provides HTTP-based
-link:endpoint.html[endpoints] for consuming and producing HTTP requests.
+endpoints for consuming and producing HTTP requests.
 That is, the Undertow component behaves as a simple Web server. +
  Undertow can also be used as a http client which mean you can also use
 it with Camel as a producer.
@@ -185,10 +185,10 @@ Transport].
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 * <<jetty-component,Jetty>>
 * <<http-component,HTTP>>

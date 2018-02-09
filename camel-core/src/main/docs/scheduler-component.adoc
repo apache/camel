@@ -124,7 +124,7 @@ from("scheduler://foo?period=60s").to("bean:myBean?method=someMethodName");
 
 The above route will generate an event and then invoke the
 `someMethodName` method on the bean called `myBean` in the
-link:registry.html[Registry] such as JNDI or link:spring.html[Spring].
+Registry such as JNDI or Spring.
 
 And the route in Spring DSL:
 

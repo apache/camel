@@ -2,20 +2,20 @@
 Expressions
 ~~~~~~~~~~~
 
-Expressions and link:predicate.html[Predicates] can then be used to
+Expressions and Predicates can then be used to
 create the various link:enterprise-integration-patterns.html[Enterprise
-Integration Patterns] in the link:dsl.html[DSL] or
-link:xml-configuration.html[Xml Configuration] like the
-link:recipient-list.html[Recipient List]. +
+Integration Patterns] in the DSL or
+Xml Configuration like the
+Recipient List. +
  To support dynamic rules Camel supports pluggable
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Expression.html[Expression]
-strategies using a variety of different link:languages.html[Languages].
+strategies using a variety of different Languages.
 
 [[Expression-API]]
 API
 ^^^
 
-If you are outside of the link:dsl.html[DSL] and want to create your own
+If you are outside of the DSL and want to create your own
 expressions you can either implement the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Expression.html[Expression
 interface], reuse one of the other builders or try the
@@ -82,11 +82,11 @@ The following languages are supported out of the box
 * <<mvel-component,Mvel>>
 * <<ognl-language,OGNL>>
 * <<ref-language,Ref Language>>
-* link:exchangeproperty.html[ExchangeProperty]
-/ link:property.html[Property]
-* link:scripting-languages.html[Scripting Languages] such as
-** link:beanshell.html[BeanShell]
-** link:javascript.html[JavaScript]
+* ExchangeProperty
+/ Property
+* Scripting Languages such as
+** BeanShell
+** JavaScript
 ** <<groovy-language,Groovy>>
 ** <<python-language,Python>>
 ** <<php-language,PHP>>
@@ -95,10 +95,10 @@ The following languages are supported out of the box
 ** <<file-language,File Language>>
 * <<spel-language,Spring Expression Language>>
 * <<sql-component,SQL>>
-* link:tokenizer.html[Tokenizer]
+* Tokenizer
 * <<xpath-language,XPath>>
 * <<xquery-component,XQuery>>
-* link:vtd-xml.html[VTD-XML]
+* VTD-XML
 
 Most of these languages is also supported used as
 link:annotation-based-expression-language.html[Annotation Based
@@ -116,8 +116,8 @@ wish to use.
 |=======================================================================
 |Language(s) |Builder class to import
 
-|link:scripting-languages.html[Scripting Languages] such as
-link:beanshell.html[BeanShell], link:javascript.html[JavaScript],
+|Scripting Languages such as
+BeanShell, JavaScript,
 <<groovy-language,Groovy>>, <<groovy-language,PHP>>, <<groovy-language,Python>>
 and <<ruby-language,Ruby>> |http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/ScriptBuilder.html[org.apache.camel.builder.script.ScriptBuilder]
 
@@ -132,5 +132,5 @@ and <<ruby-language,Ruby>> |http://camel.apache.org/maven/current/camel-script/a
 See Also
 ++++++++
 
-* link:predicate.html[Predicate]
+* Predicate
 

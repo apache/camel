@@ -72,7 +72,7 @@ with the following path and query parameters:
 Required SDB component options
 
 You have to provide the amazonSDBClient in the
-link:registry.html[Registry] or your accessKey and secretKey to access
+Registry or your accessKey and secretKey to access
 the http://aws.amazon.com/sdb[Amazon's SDB].
 
 ### Usage
@@ -181,7 +181,7 @@ from("direct:start")
 ----------------------------------------------------
 
 The `#client` refers to a `AmazonSimpleDB` in the
-link:registry.html[Registry].
+Registry.
 
 For example if your Camel Application is running behind a firewall:
 
@@ -217,9 +217,9 @@ where `${camel-version`} must be replaced by the actual version of Camel
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:aws.html[AWS Component]
+* AWS Component

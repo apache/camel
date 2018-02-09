@@ -7,7 +7,7 @@ The XMLSecurity Data Format facilitates encryption and decryption of XML
 payloads at the Document, Element, and Element Content levels (including
 simultaneous multi-node encryption/decryption using XPath). To sign
 messages using the XML Signature specification, please see the Camel XML
-Security link:xml-security-component.html[component].
+Security component.
 
 The encryption capability is based on formats supported using the Apache
 XML Security (Santuario) project. Symmetric encryption/decryption is

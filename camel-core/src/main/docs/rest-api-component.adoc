@@ -49,5 +49,5 @@ with the following path and query parameters:
 
 === See Also
 
-* link:rest-dsl.html[Rest DSL]
-* link:swagger-java.html[Swagger Java]
+* Rest DSL
+* Swagger Java
