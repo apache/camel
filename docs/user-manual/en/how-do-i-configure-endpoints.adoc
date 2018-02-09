@@ -13,8 +13,7 @@ You can explicitly configure a link:component.html[Component] using Java
 code as shown in this link:walk-through-an-example.html[example]
 
 Or you can explicitly get hold of an link:endpoint.html[Endpoint] and
-configure it using Java code as shown in the link:mock.html[Mock
-endpoint examples].
+configure it using Java code as shown in the <<mock-component,Mock endpoint examples>>.
 
 [source,java]
 ----
