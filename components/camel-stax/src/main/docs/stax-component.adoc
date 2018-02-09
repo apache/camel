@@ -6,7 +6,7 @@
 The StAX component allows messages to be process through a SAX
 http://download.oracle.com/javase/6/docs/api/org/xml/sax/ContentHandler.html[ContentHandler]. +
 Another feature of this component is to allow to iterate over JAXB
-records using StAX, for example using the link:splitter.html[Splitter]
+records using StAX, for example using the Splitter
 EIP.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -37,7 +37,7 @@ stax:org.superbiz.FooContentHandler
 -----------------------------------
 
 From *Camel 2.11.1* onwards you can lookup a
-`org.xml.sax.ContentHandler` bean from the link:registry.html[Registry]
+`org.xml.sax.ContentHandler` bean from the Registry
 using the # syntax as shown:
 
 [source,java]
@@ -183,7 +183,7 @@ Then you get a XML file to process:
 -------------------------------------------------------
 
 The StAX component provides an `StAXBuilder` which can be used when
-iterating XML elements with the Camel link:splitter.html[Splitter]
+iterating XML elements with the Camel Splitter
 
 [source,java]
 ------------------------------------------
@@ -211,7 +211,7 @@ The example above could be implemented as follows in XML DSL
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

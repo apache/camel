@@ -497,5 +497,5 @@ object can be easily converted to or from xml/json.
 
 ### See also
 
-* link:polling-consumer.html[Polling Consumer]
+* Polling Consumer
 * http://hbase.apache.org[Apache HBase]

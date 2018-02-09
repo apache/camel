@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.8*
 
-The *ahc:* component provides HTTP based link:endpoint.html[endpoints]
+The *ahc:* component provides HTTP based endpoints
 for consuming external HTTP resources (as a client to call external
 servers using HTTP). +
  The component uses the
@@ -435,10 +435,10 @@ Spring DSL based configuration of endpoint
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 * <<jetty-component,Jetty>>
 * <<http-component,HTTP>>

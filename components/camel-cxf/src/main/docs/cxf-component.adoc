@@ -11,7 +11,7 @@ The bean component's configuration is also simpler and provides the
 fastest method to implement web services using Camel and CXF.
 
 TIP:When using CXF in streaming modes (see DataFormat option), then also
-read about link:stream-caching.html[Stream caching].
+read about Stream caching.
 
 The *cxf:* component provides integration with
 http://cxf.apache.org[Apache CXF] for connecting to JAX-WS services
@@ -888,7 +888,7 @@ the key SOAPAction (case-insensitive).
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

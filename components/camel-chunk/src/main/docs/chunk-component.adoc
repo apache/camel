@@ -5,7 +5,7 @@
 
 The *chunk:* component allows for processing a message using a
 http://www.x5software.com/chunk/examples/ChunkExample?loc=en_US[Chunk] template.
-This can be ideal when using link:templating.html[Templating] to
+This can be ideal when using Templating to
 generate responses for requests.
 
 Maven users will need to add the following dependency to
@@ -184,7 +184,7 @@ Regards Camel Riders Bookstore
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

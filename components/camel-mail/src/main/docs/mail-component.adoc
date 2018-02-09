@@ -215,12 +215,12 @@ smtp://mycompany.mailserver:30?password=tiger&username=scott
 
 ### Components
 
-- link:imap.html[IMAP]
-- link:imaps.html[IMAPs]
-- link:pop3.html[POP3s]
-- link:pop3s.html[POP3s]
-- link:smtp.html[SMTP]
-- link:smtps.html[SMTPs]
+- IMAP
+- IMAPs
+- POP3s
+- POP3s
+- SMTP
+- SMTPs
 
 #### Default ports
 
@@ -366,7 +366,7 @@ You can specify recipients in the format, `name <email>`, to include
 both the name and the email address of the recipient.
 
 For example, you define the following headers on the a
-link:message.html[Message]:
+Message:
 
 [source,java]
 ---------------------------------------------------------
@@ -510,12 +510,12 @@ handle the attachments using standard API.
 
 In this example we consume mail messages which may have a number of
 attachments. What we want to do is to use the
-link:splitter.html[Splitter] EIP per individual attachment, to process
+Splitter EIP per individual attachment, to process
 the attachments separately. For example if the mail message has 5
-attachments, we want the link:splitter.html[Splitter] to process five
+attachments, we want the Splitter to process five
 messages, each having a single attachment. To do this we need to provide
-a custom link:expression.html[Expression] to the
-link:splitter.html[Splitter] where we provide a List<Message> that
+a custom Expression to the
+Splitter where we provide a List<Message> that
 contains the five messages with the single attachment.
 
 The code is provided out of the box in Camel 2.10 onwards in the
@@ -525,10 +525,10 @@ can find the source code
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-mail/src/main/java/org/apache/camel/component/mail/SplitAttachmentsExpression.java[here]
 
 In the Camel route you then need to use this
-link:expression.html[Expression] in the route as shown below:
+Expression in the route as shown below:
 
 If you use XML DSL then you need to declare a method call expression in
-the link:splitter.html[Splitter] as shown below
+the Splitter as shown below
 
 [source,xml]
 ---------------------------------------------------------------------------------
@@ -641,7 +641,7 @@ SearchTerm term = builder.build();
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

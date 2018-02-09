@@ -27,9 +27,9 @@ for this component:
 The SQL component also supports:
 
 * a JDBC based repository for the
-link:idempotent-consumer.html[Idempotent Consumer] EIP pattern. See
+Idempotent Consumer EIP pattern. See
 further below.
-* a JDBC based repository for the link:aggregator2.html[Aggregator] EIP
+* a JDBC based repository for the Aggregator EIP
 pattern. See further below.
 
 ### URI format
@@ -247,7 +247,7 @@ from("jms:order.inbox")
 From*Camel 2.18* onwards the producer supports outputType=StreamList
 that uses an iterator to stream the output of the query. This allows to
 process the data in a streaming fashion which for example can be used by
-the link:splitter.html[Splitter] EIP to process each row one at a time,
+the Splitter EIP to process each row one at a time,
 and load data from the database as needed.
 
 [source,java]
@@ -551,18 +551,18 @@ In Camel 2.6, the JdbcAggregationRepository is provided in the
 fly persists the aggregated messages. This ensures that you will not
 loose messages, as the default aggregator will use an in memory only
 `AggregationRepository`. The `JdbcAggregationRepository` allows together with Camel to provide
-persistent support for the link:aggregator2.html[Aggregator].
+persistent support for the Aggregator.
 
-Only when an link:exchange.html[Exchange] has been successfully
+Only when an Exchange has been successfully
 processed it will be marked as complete which happens when the `confirm`
 method is invoked on the `AggregationRepository`. This means if the same
-link:exchange.html[Exchange] fails again it will be kept retried until
+Exchange fails again it will be kept retried until
 it success.
 
 You can use option `maximumRedeliveries` to limit the maximum number of
-redelivery attempts for a given recovered link:exchange.html[Exchange].
+redelivery attempts for a given recovered Exchange.
 You must also set the `deadLetterUri` option so Camel knows where to
-send the link:exchange.html[Exchange] when the `maximumRedeliveries` was
+send the Exchange when the `maximumRedeliveries` was
 hit.
 
 You can see some examples in the unit tests of camel-sql, for example
@@ -773,11 +773,11 @@ You should also include the specific database driver, if needed.
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-link:sql-stored-procedure.html[SQL Stored Procedure]
+SQL Stored Procedure
 
 <<jdbc-component,JDBC>>

@@ -129,15 +129,15 @@ with the following path and query parameters:
 Required SQS component options
 
 You have to provide the amazonSQSClient in the
-link:registry.html[Registry] or your accessKey and secretKey to access
+Registry or your accessKey and secretKey to access
 the http://aws.amazon.com/sqs[Amazon's SQS].
 
 ### Batch Consumer
 
-This component implements the link:batch-consumer.html[Batch Consumer].
+This component implements the Batch Consumer.
 
 This allows you for instance to know how many messages exists in this
-batch and for instance let the link:aggregator.html[Aggregator]
+batch and for instance let the Aggregator
 aggregate this number of messages.
 
 ### Usage
@@ -219,7 +219,7 @@ where `${camel-version`} must be replaced by the actual version of Camel
 ### JMS-style Selectors
 
 SQS does not allow selectors, but you can effectively achieve this by
-using the link:message-filter.html[Camel Filter EIP] and setting an
+using the Camel Filter EIP and setting an
 appropriate `visibilityTimeout`. When SQS dispatches a message, it will
 wait up to the visibility timeout before it will try to dispatch the
 message to a different consumer unless a DeleteMessage is received. By
@@ -242,9 +242,9 @@ consumers.
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:aws.html[AWS Component]
+* AWS Component

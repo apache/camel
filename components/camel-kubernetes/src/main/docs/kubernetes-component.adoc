@@ -10,7 +10,7 @@ component splitted as following.
 
 * <<kubernetes-component,Kubernetes Components>>
   ** <<kubernetes-build-configs-component,Kubernetes Build Config>>
-  ** link:kubernetes-builds-component.html[Kubernetes Build]
+  ** Kubernetes Build
   ** <<kubernetes-config-maps-component,Kubernetes ConfigMap>>
   ** <<kubernetes-namespaces-component,Kubernetes Namespace>>
   ** <<kubernetes-nodes-component,Kubernetes Node>>

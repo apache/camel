@@ -54,7 +54,7 @@ The configuration properties for the AWS XRay tracer are:
 
 |excludePatterns |  | Sets exclude pattern(s) that will disable tracing for Camel
 messages that matches the pattern. The content is a Set<String> where the key is a pattern matching routeId's. The pattern
-uses the rules from link:intercept.html[Intercept].
+uses the rules from Intercept.
 
 |=======================================================================
 

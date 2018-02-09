@@ -5,7 +5,7 @@ using CDI as dependency injection framework based
 on _convention-over-configuration_. It auto-detects Camel routes
 available in the application and provides beans for common Camel
 primitives like `Endpoint`, `FluentProducerTemplate`, `ProducerTemplate` or `TypeConverter`. It
-implements standard link:bean-integration.html[Camel bean integration]
+implements standard Camel bean integration
 so that Camel annotations like `@Consume`, `@Produce`
 and `@PropertyInject` can be used seamlessly in CDI beans. Besides, it
 bridges Camel events (e.g. `RouteAddedEvent`,
@@ -19,7 +19,7 @@ model. Hence some of the features like the Camel events to CDI events
 bridge and the CDI events endpoint only apply starting Camel 2.17.
 
 More details on how to test Camel CDI applications are available in
-link:cdi-testing.html[Camel CDI testing].
+Camel CDI testing.
 
 [CAUTION]
 ====
@@ -411,7 +411,7 @@ configuration mechanism]:
 String value;
 ----
 
-See link:cdi.html[configuration properties] for more details.
+See configuration properties for more details.
 
 |Producer template injection (default Camel context) a|
 [source,java]
@@ -538,7 +538,7 @@ from("direct:inbound").bean("foo");
 ==== Referring beans from Endpoint URIs
 
 When configuring endpoints using the URI syntax you can refer to beans
-in the link:registry.html[Registry] using the `#` notation. If the URI
+in the Registry using the `#` notation. If the URI
 parameter value starts with a `#` sign then Camel CDI will lookup for a
 bean of the given type by name, e.g.:
 
@@ -967,7 +967,7 @@ class MyRouteBean extends CdiRouteBuilder {
 The Camel context beans are automatically adapted by Camel CDI so that
 they are registered as OSGi services and the various resolvers
 (like `ComponentResolver` and `DataFormatResolver`) integrate with the
-OSGi registry. That means that the link:karaf.html[Karaf Camel commands]
+OSGi registry. That means that the Karaf Camel commands
 can be used to operate the Camel contexts auto-configured by Camel CDI,
 e.g.:
 
@@ -1147,7 +1147,7 @@ in Java with CDI dependency Injection
 
 === See Also
 
-* link:cdi-testing.html[Camel CDI testing]
+* Camel CDI testing
 * http://www.cdi-spec.org[CDI specification Web site]
 * http://www.cdi-spec.org/ecosystem/[CDI ecosystem]
 * http://weld.cdi-spec.org[Weld home page]

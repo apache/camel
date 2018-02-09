@@ -5,7 +5,7 @@
 
 The *class:* component binds beans to Camel message exchanges. It works
 in the same way as the <<bean-component,Bean>> component but instead of
-looking up beans from a link:registry.html[Registry] it creates the bean
+looking up beans from a Registry it creates the bean
 based on the class name.
 
 === URI format
@@ -96,7 +96,7 @@ instance, for example if it has a `setPrefix` method:
 ---------------------------------------------------------------------------------
 
 And you can also use the `#` syntax to refer to properties to be looked
-up in the link:registry.html[Registry].
+up in the Registry.
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ up in the link:registry.html[Registry].
         .to("mock:result");
 --------------------------------------------------------------------------------
 
-Which will lookup a bean from the link:registry.html[Registry] with the
+Which will lookup a bean from the Registry with the
 id `foo` and invoke the `setCool` method on the created instance of the
 `MyPrefixBean` class.
 
@@ -120,11 +120,11 @@ component works in much the same way.
 
 === See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 * <<bean-component,Bean>>
-* link:bean-binding.html[Bean Binding]
-* link:bean-integration.html[Bean Integration]
+* Bean Binding
+* Bean Integration

@@ -25,7 +25,7 @@ The configuration properties for the OpenTracing tracer are:
 
 |excludePatterns |  | Sets exclude pattern(s) that will disable tracing for Camel
 messages that matches the pattern. The content is a Set<String> where the key is a pattern. The pattern
-uses the rules from link:intercept.html[Intercept].
+uses the rules from Intercept.
 
 |=======================================================================
 
@@ -62,7 +62,7 @@ OpenTracing tracer beans. Camel will automatically discover and use them.
 
 #### Spring Boot
 
-If you are using link:spring-boot.html[Spring Boot] then you can add
+If you are using Spring Boot then you can add
 the `camel-opentracing-starter` dependency, and turn on OpenTracing by annotating
 the main class with `@CamelOpenTracing`.
 

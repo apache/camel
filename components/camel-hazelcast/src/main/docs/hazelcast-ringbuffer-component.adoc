@@ -5,7 +5,7 @@
 
 *Avalaible from Camel 2.16*
 
-The http://www.hazelcast.com/[Hazelcast] ringbuffer component is one of link:hazelcast.html[Camel Hazelcast Components] which allows you to access Hazelcast ringbuffer.
+The http://www.hazelcast.com/[Hazelcast] ringbuffer component is one of Camel Hazelcast Components which allows you to access Hazelcast ringbuffer.
 Ringbuffer is a distributed data structure where the data is stored in a ring-like structure. You can think of it as a circular array with a certain capacity. 
 
 ### Options

@@ -6,18 +6,18 @@ http://www.scala-lang.org/[Scala] is a general purpose programming
 language designed to express common programming patterns in a concise,
 elegant, and type-safe way. It integrates very well with the Java
 platform. Our Scala DSL implementation is built on top of the existing
-Java-based link:dsl.html[DSL], but it adds Scala syntax sugar to make
+Java-based DSL, but it adds Scala syntax sugar to make
 building routes even more convenient.
 
 [[ScalaDSL-Documentation]]
 Documentation
 ^^^^^^^^^^^^^
 
-* link:scala-dsl-getting-started.html[Scala DSL - Getting Started] gives
+* Scala DSL - Getting Started gives
 you basic information on how to use the Scala DSL.
-* link:scala-dsl-eip.html[Scala DSL - EIP] shows you the Scala DSL
-syntax for every EIP supported. link:scala-dsl.html[Scala DSL] supports
-every EIP from the link:dsl.html[Java DSL].
+* Scala DSL - EIP shows you the Scala DSL
+syntax for every EIP supported. Scala DSL supports
+every EIP from the Java DSL.
 * link:scala-dsl-supported-languages.html[Scala DSL - Supported
 languages] explains the usage of traits to add support for other
 languages (e.g. XPath)
@@ -33,9 +33,9 @@ http://www.anova.be/files/camel-scala.pdf[Here are the presentation
 slides] .
 * Here's a
 http://davsclaus.blogspot.se/2011/12/apache-camel-little-scala-dsl-example.html[blog
-post] demonstrating the link:message-filter.html[Message Filter] EIP
-within the link:scala-dsl.html[Scala DSL], as well as how to use
-link:camel-test.html[Camel's test kit] to test the example.
+post] demonstrating the Message Filter EIP
+within the Scala DSL, as well as how to use
+Camel's test kit to test the example.
 
 [[ScalaDSL-Dependencies]]
 Dependencies

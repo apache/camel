@@ -87,7 +87,7 @@ with the following path and query parameters:
 Required Kinesis Firehose component options
 
 You have to provide the amazonKinesisClient in the
-link:registry.html[Registry] with proxies and relevant credentials
+Registry with proxies and relevant credentials
 configured.
 
 
@@ -160,9 +160,9 @@ where `${camel-version`} must be replaced by the actual version of Camel
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:aws.html[AWS Component]
+* AWS Component

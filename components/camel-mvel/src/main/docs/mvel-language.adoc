@@ -3,14 +3,14 @@
 
 *Available as of Camel version 2.0*
 
-Camel allows Mvel to be used as an link:expression.html[Expression] or
-link:predicate.html[Predicate] the link:dsl.html[DSL] or
-link:xml-configuration.html[Xml Configuration].
+Camel allows Mvel to be used as an Expression or
+Predicate the DSL or
+Xml Configuration.
 
-You could use Mvel to create an link:predicate.html[Predicate] in a
-link:message-filter.html[Message Filter] or as an
-link:expression.html[Expression] for a
-link:recipient-list.html[Recipient List]
+You could use Mvel to create an Predicate in a
+Message Filter or as an
+Expression for a
+Recipient List
 
 You can use Mvel dot notation to invoke operations. If you for instance
 have a body that contains a POJO that has a `getFamiliyName` method then
@@ -108,7 +108,7 @@ To use Mvel in your camel routes you need to add the a dependency on
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,java]
 -------------------------------------

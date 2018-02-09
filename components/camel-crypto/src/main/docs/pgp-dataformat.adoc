@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.9*
 
-The PGP link:data-format.html[Data Format] integrates the Java
+The PGP Data Format integrates the Java
 Cryptographic Extension into Camel, allowing simple and flexible
 encryption and decryption of messages using Camel's familiar marshall
 and unmarshal formatting mechanism. It assumes marshalling to mean
@@ -317,6 +317,6 @@ need to add the following dependency to your pom.
 
 ### See Also
 
-* link:data-format.html[Data Format]
-* link:crypto-digital-signatures.html[Crypto (Digital Signatures)]
+* Data Format
+* Crypto (Digital Signatures)
 * http://www.bouncycastle.org/java.html[http://www.bouncycastle.org/java.html]

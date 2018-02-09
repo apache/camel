@@ -4,7 +4,7 @@
 *Available as of Camel version 2.14*
 
 The *atmosphere-websocket:* component provides Websocket
-based link:endpoint.html[endpoints] for a servlet communicating with
+based endpoints for a servlet communicating with
 external clients over Websocket (as a servlet accepting websocket
 connections from external clients). +
 The component uses the <<servlet-component,SERVLET>> component and uses
@@ -180,10 +180,10 @@ And the equivalent Spring sample:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 * <<servlet-component,SERVLET>>
 * <<ahc-ws-component,AHC-WS>>

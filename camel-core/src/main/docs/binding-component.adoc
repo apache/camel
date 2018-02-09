@@ -4,10 +4,10 @@
 *Available as of Camel version 2.11*
 
 In Camel terms a _binding_ is a way of wrapping an
-link:endpoint.html[Endpoint] in a contract; such as a
-link:data-format.html[Data Format], a link:content-enricher.html[Content
+Endpoint in a contract; such as a
+Data Format, a link:content-enricher.html[Content
 Enricher] or validation step. Bindings are completely optional and you
-can choose to use them on any link:components.html[camel endpoint].
+can choose to use them on any camel endpoint.
 
 Bindings are inspired by the work of
 http://www.jboss.org/switchyard[SwitchYard project] adding service
@@ -76,13 +76,13 @@ from("binding:jaxb:activemq:myQueue").to("binding:jaxb:activemq:anotherQueue")
 ----
 
 Here we are using the "jaxb" binding which may, for example, use the
-JAXB link:data-format.html[Data Format] to marshal and unmarshal
+JAXB Data Format to marshal and unmarshal
 messages.
 
 === Using a BindingComponent
 
-There is a link:component.html[Component] called BindingComponent which
-can be configured in your link:registry.html[Registry] by dependency
+There is a Component called BindingComponent which
+can be configured in your Registry by dependency
 injection which allows the creation of endpoints which are already bound
 to some binding.
 
@@ -103,7 +103,7 @@ from("jsonmq:myQueue").to("jsonmq:anotherQueue")
 ----
 
 which would be using the queueus "foo.myQueue" and "foo.anotherQueue"
-and would use the given Jackson link:data-format.html[Data Format] to
+and would use the given Jackson Data Format to
 marshal on and off the queue.
 
 === When to use Bindings

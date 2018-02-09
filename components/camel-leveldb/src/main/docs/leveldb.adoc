@@ -7,7 +7,7 @@ LevelDB
 https://code.google.com/p/leveldb/[Leveldb] is a very lightweight and
 embedable key value database. It allows together with Camel to provide
 persistent support for various Camel features such as
-link:aggregator2.html[Aggregator].
+Aggregator.
 
 Current features it provides:
 
@@ -49,7 +49,7 @@ existed. By default this option is `false` to optimize as we do not need
 the old exchange when aggregating.
 
 |`useRecovery` |boolean |Whether or not recovery is enabled. This option is by default `true`.
-When enabled the Camel link:aggregator2.html[Aggregator] automatic
+When enabled the Camel Aggregator automatic
 recover failed aggregated exchange and have them resubmitted.
 
 |`recoveryInterval` |long |If recovery is enabled then a background task is run every x'th time to
@@ -62,7 +62,7 @@ dead letter channel if all redelivery attempts failed. By default this
 option is disabled. If this option is used then the `deadLetterUri`
 option must also be provided.
 
-|`deadLetterUri` |String |An endpoint uri for a link:dead-letter-channel.html[Dead Letter Channel]
+|`deadLetterUri` |String |An endpoint uri for a Dead Letter Channel
 where exhausted recovered Exchanges will be moved. If this option is
 used then the `maximumRedeliveries` option must also be provided.
 |=======================================================================
@@ -85,37 +85,37 @@ Recovery
 ^^^^^^^^
 
 The `LevelDBAggregationRepository` will by default recover any failed
-link:exchange.html[Exchange]. It does this by having a background tasks
-that scans for failed link:exchange.html[Exchange]s in the persistent
+Exchange. It does this by having a background tasks
+that scans for failed Exchanges in the persistent
 store. You can use the `checkInterval` option to set how often this task
 runs. The recovery works as transactional which ensures that Camel will
-try to recover and redeliver the failed link:exchange.html[Exchange].
-Any link:exchange.html[Exchange] which was found to be recovered will be
+try to recover and redeliver the failed Exchange.
+Any Exchange which was found to be recovered will be
 restored from the persistent store and resubmitted and send out again.
 
-The following headers is set when an link:exchange.html[Exchange] is
+The following headers is set when an Exchange is
 being recovered/redelivered:
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Header |Type |Description
 
-|`Exchange.REDELIVERED` |Boolean |Is set to true to indicate the link:exchange.html[Exchange] is being
+|`Exchange.REDELIVERED` |Boolean |Is set to true to indicate the Exchange is being
 redelivered.
 
 |`Exchange.REDELIVERY_COUNTER` |Integer |The redelivery attempt, starting from 1.
 |=======================================================================
 
-Only when an link:exchange.html[Exchange] has been successfully
+Only when an Exchange has been successfully
 processed it will be marked as complete which happens when the `confirm`
 method is invoked on the `AggregationRepository`. This means if the same
-link:exchange.html[Exchange] fails again it will be kept retried until
+Exchange fails again it will be kept retried until
 it success.
 
 You can use option `maximumRedeliveries` to limit the maximum number of
-redelivery attempts for a given recovered link:exchange.html[Exchange].
+redelivery attempts for a given recovered Exchange.
 You must also set the `deadLetterUri` option so Camel knows where to
-send the link:exchange.html[Exchange] when the `maximumRedeliveries` was
+send the Exchange when the `maximumRedeliveries` was
 hit.
 
 You can see some examples in the unit tests of camel-leveldb, for
@@ -140,12 +140,12 @@ The same example but using Spring XML instead:
 Dependencies
 ^^^^^^^^^^^^
 
-To use link:leveldb.html[LevelDB] in your camel routes you need to add
+To use LevelDB in your camel routes you need to add
 the a dependency on *camel-leveldb*.
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,xml]
 ----------------------------------------
@@ -160,12 +160,12 @@ link:download.html[the download page for the latest versions]).
 See Also
 ^^^^^^^^
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:aggregator2.html[Aggregator]
-* link:hawtdb.html[HawtDB]
-* link:components.html[Components]
+* Aggregator
+* HawtDB
+* Components
 

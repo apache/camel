@@ -2,10 +2,10 @@
 
 *Available as of Camel 2.3*
 
-The link:camel-eclipse.html[camel-eclipse] is a component which allows
+The camel-eclipse is a component which allows
 you to run Camel with Eclipse RCP. This component is needed due Eclipse
 classloading challenges. The component is a specialized Camel
-link:pluggable-class-resolvers.html[Pluggable Class Resolvers] to remedy
+Pluggable Class Resolvers to remedy
 this.
 
 The resolver is provided in the class
@@ -15,7 +15,7 @@ the `camel-eclipse` jar file.
 ### Using with Java DSL
 
 You need to configure the resolver on the
-link:camelcontext.html[CamelContext] which is done like this:
+CamelContext which is done like this:
 
 [source,java]
 -----------------------------------------------------------------------------------

@@ -10,7 +10,7 @@ http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[
 and consumers are invoked in a separate thread from the producer.
 
 Note that queues are only visible within a _single_
-link:camelcontext.html[CamelContext]. If you want to communicate across
+CamelContext. If you want to communicate across
 `CamelContext` instances (for example, communicating between Web
 applications), see the <<vm-component,VM>> component.
 
@@ -31,7 +31,7 @@ seda:someName[?options]
 ----
 
 Where *someName* can be any string that uniquely identifies the endpoint
-within the current link:camelcontext.html[CamelContext].
+within the current CamelContext.
 
 You can append query options to the URI in the following format:
 `?option=value&option=value&…`
@@ -134,8 +134,8 @@ ArrayBlockingQueueFactory and PriorityBlockingQueueFactory:
 === Use of Request Reply
 
 The <<seda-component,SEDA>> component supports using
-link:request-reply.html[Request Reply], where the caller will wait for
-the link:async.html[Async] route to complete. For instance:
+Request Reply, where the caller will wait for
+the Async route to complete. For instance:
 
 [source,java]
 ----
@@ -146,12 +146,12 @@ from("seda:input").to("bean:processInput").to("bean:createResponse");
 
 In the route above, we have a TCP listener on port 9876 that accepts
 incoming requests. The request is routed to the `seda:input` queue. As
-it is a link:request-reply.html[Request Reply] message, we wait for the
+it is a Request Reply message, we wait for the
 response. When the consumer on the `seda:input` queue is complete, it
 copies the response to the original message response.
 
 NOTE: *until 2.2: Works only with 2 endpoints*
-Using link:request-reply.html[Request Reply] over link:seda.html[SEDA]
+Using Request Reply over SEDA
 or <<vm-component,VM>> only works with 2 endpoints. You *cannot* chain
 endpoints by sending to A -> B -> C etc. Only between A -> B. The reason
 is the implementation logic is fairly simple. To support 3+ endpoints
@@ -244,4 +244,4 @@ int size = seda.getExchanges().size();
 * <<vm-component,VM>>
 * <<disruptor-component,Disruptor>>
 * <<direct-component,Direct>>
-* link:async.html[Async]
+* Async

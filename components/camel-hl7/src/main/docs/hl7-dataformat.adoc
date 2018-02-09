@@ -11,7 +11,7 @@ This component supports the following:
 
 * HL7 MLLP codec for <<mina2-component,Mina>>
 * HL7 MLLP codec for <<netty4-component,Netty4>> from *Camel 2.15* onwards
-* link:type-converter.html[Type Converter] from/to HAPI and String
+* Type Converter from/to HAPI and String
 * HL7 DataFormat using the HAPI library
 * Even more ease-of-use as it's integrated well with the
 <<mina2-component,camel-mina2>> component.
@@ -160,7 +160,7 @@ consumer, as this Java DSL example illustrates:
 ### HL7 Model using java.lang.String or byte[]
 
 The HL7 MLLP codec uses plain String as its data format. Camel uses its
-link:type-converter.html[Type Converter] to convert to/from strings to
+Type Converter to convert to/from strings to
 the HAPI HL7 model objects, but you can use the plain String objects if
 you prefer, for instance if you wish to parse the data yourself.
 
@@ -559,7 +559,7 @@ the example above.
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

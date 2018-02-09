@@ -198,7 +198,7 @@ processing in a separate route. For example:
 -----------------------------------------------------------------------
 
 You can also convert the payload of each message created to a `Map` for
-easy link:bean-integration.html[Bean Integration]
+easy Bean Integration
 
 ### Flatpack DataFormat
 
@@ -213,7 +213,7 @@ to a `java.util.List` as an
 `org.apache.camel.component.flatpack.DataSetList` instance. +
  The result of the operation will contain all the data. If you need to
 process each row one by one you can split the exchange, using
-link:splitter.html[Splitter].
+Splitter.
 
 *Notice:* The Flatpack library does currently not support header and
 trailers for the marshal operation.
@@ -289,7 +289,7 @@ To use Flatpack in your camel routes you need to add the a dependency on
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,java]
 -----------------------------------------
@@ -302,7 +302,7 @@ link:download.html[the download page for the latest versions]).
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

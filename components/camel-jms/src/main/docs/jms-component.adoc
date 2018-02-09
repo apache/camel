@@ -24,9 +24,9 @@ endif::[]
 *Using ActiveMQ*
 
 If you are using http://activemq.apache.org/[Apache ActiveMQ], you
-should prefer the link:activemq.html[ActiveMQ] component as it has been
-optimized for link:activemq.html[ActiveMQ]. All of the options and
-samples on this page are also valid for the link:activemq.html[ActiveMQ]
+should prefer the ActiveMQ component as it has been
+optimized for ActiveMQ. All of the options and
+samples on this page are also valid for the ActiveMQ
 component.
 ====
 
@@ -111,7 +111,7 @@ If you intend to use http://activemq.apache.org/[Apache ActiveMQ] as
 your Message Broker - which is a good choice as ActiveMQ rocks {icon-smile},
 then we recommend that you either:
 
-* Use the link:activemq.html[ActiveMQ] component, which is already
+* Use the ActiveMQ component, which is already
 optimized to use ActiveMQ efficiently
 * Use the `PoolingConnectionFactory` in ActiveMQ.
 
@@ -671,7 +671,7 @@ So pay attention to the message exchange pattern set on your exchanges.
 
 If you send a message to a JMS destination in the middle of your route
 you can specify the exchange pattern to use, see more at
-link:request-reply.html[Request Reply]. +
+Request Reply. +
  This is useful if you want to send an `InOnly` message to a JMS topic:
 
 [source,java]
@@ -738,7 +738,7 @@ another JMS endpoint).
 
 ### Configuring different JMS providers
 
-You can configure your JMS provider in link:spring.html[Spring] XML as
+You can configure your JMS provider in Spring XML as
 follows:
 
 Basically, you can configure as many JMS component instances as you wish
@@ -754,8 +754,8 @@ for all other JMS providers.
 
 This works by the SpringCamelContext lazily fetching components from the
 spring context for the scheme name you use for
-link:endpoint.html[Endpoint] link:uris.html[URIs] and having the
-link:component.html[Component] resolve the endpoint URIs.
+Endpoint URIs and having the
+Component resolve the endpoint URIs.
 
 #### Using JNDI to find the ConnectionFactory
 
@@ -804,7 +804,7 @@ message from the JMS broker, when the current message has been fully
 processed. You can set the option `asyncConsumer=true` to let the
 consumer pickup the next message from the JMS queue, while the previous
 message is being processed asynchronously (by the
-link:asynchronous-routing-engine.html[Asynchronous Routing Engine]). See
+Asynchronous Routing Engine). See
 more details in the table on top of the page about the `asyncConsumer`
 option.
 
@@ -816,7 +816,7 @@ from("jms:SomeQueue?concurrentConsumers=20&asyncConsumer=true").
 
 ### Request-reply over JMS
 
-Camel supports link:request-reply.html[Request Reply] over JMS. In
+Camel supports Request Reply over JMS. In
 essence the MEP of the Exchange should be `InOut` when you send a
 message to a JMS queue.
 
@@ -905,7 +905,7 @@ from(xxx)
 ---------------------------------
 
 In this route we instruct Camel to route replies
-link:async.html[asynchronously] using a thread pool with 5 threads.
+asynchronously using a thread pool with 5 threads.
 
 From *Camel 2.10.3* onwards you can now configure the listener to use
 concurrent threads using the `concurrentConsumers` and
@@ -923,7 +923,7 @@ from(xxx)
 #### Request-reply over JMS and using a shared fixed reply queue
 
 If you use a fixed reply queue when doing
-link:request-reply.html[Request Reply] over JMS as shown in the example
+Request Reply over JMS as shown in the example
 below, then pay attention.
 
 [source,java]
@@ -1049,7 +1049,7 @@ In the route above we have a endpoint configured `requestTimeout` of 30
 seconds. So Camel will wait up till 30 seconds for that reply message to
 come back on the bar queue. If no reply message is received then a
 `org.apache.camel.ExchangeTimedOutException` is set on the
-link:exchange.html[Exchange] and Camel continues routing the message,
+Exchange and Camel continues routing the message,
 which would then fail due the exception, and Camel's error handler
 reacts.
 
@@ -1089,12 +1089,12 @@ that you set the following properties on the component/endpoint:
 * `transactionManager` = a _Transsaction Manager_ - typically the
 `JmsTransactionManager`
 
-See the link:transactional-client.html[Transactional Client] EIP pattern
+See the Transactional Client EIP pattern
 for further details.
 
 Transactions and [Request Reply] over JMS
 
-When using link:request-reply.html[Request Reply] over JMS you cannot
+When using Request Reply over JMS you cannot
 use a single transaction; JMS will not send any messages until a commit
 is performed, so the server side won't receive anything at all until the
 transaction commits. Therefore to use link:request-reply.html[Request
@@ -1106,11 +1106,11 @@ specify transaction use for oneway messaging and request reply
 messaging:
 
 The `transacted` property applies *only* to the InOnly message
-link:exchange-pattern.html[Exchange Pattern] (MEP).
+Exchange Pattern (MEP).
 
 The `transactedInOut` property applies to the
-InOut(link:request-reply.html[Request Reply]) message
-link:exchange-pattern.html[Exchange Pattern] (MEP).
+InOut(Request Reply) message
+Exchange Pattern (MEP).
 
 If you want to use transactions for link:request-reply.html[Request
 Reply](InOut MEP), you *must* set `transactedInOut=true`.
@@ -1175,8 +1175,8 @@ For example:
 
 ### Using a request timeout
 
-In the sample below we send a link:request-reply.html[Request Reply]
-style message link:exchange.html[Exchange] (we use the `requestBody`
+In the sample below we send a Request Reply
+style message Exchange (we use the `requestBody`
 method = `InOut`) to the slow queue for further processing in Camel and
 we wait for a return reply:
 
@@ -1220,10 +1220,10 @@ from("file://orders").
   to("jms:topic:OrdersTopic");
 ------------------------------
 
-#### Using link:bean-integration.html[Annotations]
+#### Using Annotations
 
 Camel also has annotations so you can use link:pojo-consuming.html[POJO
-Consuming] and link:pojo-producing.html[POJO Producing].
+Consuming] and POJO Producing.
 
 #### Spring DSL sample
 
@@ -1247,7 +1247,7 @@ JMS appears in many of the examples for other components and EIP
 patterns, as well in this Camel documentation. So feel free to browse
 the documentation. If you have time, check out the this tutorial that
 uses JMS but focuses on how well Spring Remoting and Camel works
-together link:tutorial-jmsremoting.html[Tutorial-JmsRemoting].
+together Tutorial-JmsRemoting.
 
 #### Using JMS as a Dead Letter Queue storing Exchange
 
@@ -1257,7 +1257,7 @@ transfers the body and headers as the payload. If you want to use
 Channel], using a JMS queue as the Dead Letter Queue, then normally the
 caused Exception is not stored in the JMS message. You can, however, use
 the `transferExchange` option on the JMS dead letter queue to instruct
-Camel to store the entire link:exchange.html[Exchange] in the queue as a
+Camel to store the entire Exchange in the queue as a
 `javax.jms.ObjectMessage` that holds a
 `org.apache.camel.impl.DefaultExchangeHolder`. This allows you to
 consume from the Dead Letter Queue and retrieve the caused exception
@@ -1287,7 +1287,7 @@ String problem = cause.getMessage();
 
 You can use JMS to store the cause error message or to store a custom
 body, which you can initialize yourself. The following example uses the
-link:message-translator.html[Message Translator] EIP to do a
+Message Translator EIP to do a
 transformation on the failed exchange before it is moved to the
 <<jms-component,JMS>> dead letter queue:
 
@@ -1301,7 +1301,7 @@ from("seda:dead").transform(exceptionMessage()).to("jms:queue:dead");
 --------------------------------------------------------------------------------------------------
 
 Here we only store the original cause error message in the transform.
-You can, however, use any link:expression.html[Expression] to send
+You can, however, use any Expression to send
 whatever you like. For example, you can invoke a method on a Bean or use
 a custom processor.
 
@@ -1370,13 +1370,13 @@ wmq.setDestinationResolver(new DestinationResolver() {
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:transactional-client.html[Transactional Client]
-* link:bean-integration.html[Bean Integration]
-* link:tutorial-jmsremoting.html[Tutorial-JmsRemoting]
+* Transactional Client
+* Bean Integration
+* Tutorial-JmsRemoting
 * http://activemq.apache.org/jmstemplate-gotchas.html[JMSTemplate
 gotchas]

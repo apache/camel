@@ -34,9 +34,9 @@ a wildcard.
 |===
 | Transformer | Description
 
-| Data Format Transformer | Transform with using link:data-format.html[Data Format]
+| Data Format Transformer | Transform with using Data Format
 
-| Endpoint Transformer | Transform with using link:endpoint.html[Endpoint]
+| Endpoint Transformer | Transform with using Endpoint
 
 | Custom Transformer | Transform with using custom transformer class. Transformer must be a subclass of `org.apache.camel.spi.Transformer`
 |===
@@ -63,9 +63,9 @@ All transformers have following common options to specify which data type is sup
 |===
 | Name | Description
 
-| type | link:data-format.html[Data Format] type
+| type | Data Format type
 
-| ref | reference to the link:data-format.html[Data Format] ID
+| ref | reference to the Data Format ID
 |===
 
 Here is an example to specify bindy DataFormat type:
@@ -96,9 +96,9 @@ XML DSL:
 |===
 | Name | Description
 
-| ref | Reference to the link:endpoint.html[Endpoint] ID
+| ref | Reference to the Endpoint ID
 
-| uri | link:endpoint.html[Endpoint] URI
+| uri | Endpoint URI
 |===
 
 Here is an example to specify endpoint URI in Java DSL:

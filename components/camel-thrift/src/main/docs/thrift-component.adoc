@@ -155,7 +155,7 @@ https://thrift.apache.org/tutorial/java [Apache Thrift Java tutorial]
 
 ### See Also
 
-* link:getting-started.html[Getting Started]
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
+* Getting Started
+* Configuring Camel
+* Component
+* Endpoint

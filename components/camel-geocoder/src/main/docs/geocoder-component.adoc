@@ -90,7 +90,7 @@ with a JSON representation of the current location.
 
 If the option `headersOnly` is set to `true` then the message body is
 left as-is, and only headers will be added to the
-link:exchange.html[Exchange].
+Exchange.
 
 ### Message Headers
 

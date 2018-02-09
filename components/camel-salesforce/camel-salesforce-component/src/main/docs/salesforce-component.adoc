@@ -263,7 +263,7 @@ class and can be used in a custom processors or expressions.
 For instance, consider that you need to limit the API usage of Salesforce so that 10% of daily API requests is left for
 other routes. The body of output message contains an instance of
 `org.apache.camel.component.salesforce.api.dto.Limits` object that can be used in conjunction with
-link:content-based-router.html[Content Based Router] and link:content-based-router.html[Content Based Router] and 
+Content Based Router and Content Based Router and 
 <<spel-language,Spring Expression Language (SpEL)>> to choose when to perform queries.
 
 Notice how multiplying `1.0` with the integer value held in `body.dailyApiRequests.remaining` makes the expression
@@ -686,7 +686,7 @@ DateTime, and picklist fields are mapped to generated Java Enumerations.
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

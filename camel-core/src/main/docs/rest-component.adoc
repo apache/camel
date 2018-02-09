@@ -4,7 +4,7 @@
 *Available as of Camel version 2.14*
 
 The rest component allows to define REST endpoints (consumer) using the
-link:rest-dsl.html[Rest DSL] and plugin to other Camel components as the
+Rest DSL and plugin to other Camel components as the
 REST transport.
 
 From Camel 2.18 onwards the rest component can also be used as a client (producer) to call REST services.
@@ -77,7 +77,7 @@ with the following path and query parameters:
 
 === Supported rest components
 
-The following components support rest consumer (link:rest-dsl.html[Rest DSL]):
+The following components support rest consumer (Rest DSL):
 
 * camel-coap
 * camel-netty-http
@@ -233,16 +233,16 @@ IMPORTANT: You must configure `outType` option if you want POJO binding to happe
 
 === More examples
 
-See link:rest-dsl.html[Rest DSL] which offers more examples and how you
+See Rest DSL which offers more examples and how you
 can use the Rest DSL to define those in a nicer RESTful way.
 
 There is a *camel-example-servlet-rest-tomcat* example in the Apache
 Camel distribution, that demonstrates how to use the
-link:rest-dsl.html[Rest DSL] with link:servlet.html[SERVLET] as
+Rest DSL with SERVLET as
 transport that can be deployed on Apache Tomcat, or similar web
 containers.
 
 === See Also
 
-* link:rest-dsl.html[Rest DSL]
+* Rest DSL
 * <<servlet-component,SERVLET>>

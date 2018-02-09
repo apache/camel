@@ -82,6 +82,6 @@ with 200 millis.
 See Also
 ^^^^^^^^
 
-* link:tracer.html[Tracer]
-* link:debugger.html[Debugger]
+* Tracer
+* Debugger
 

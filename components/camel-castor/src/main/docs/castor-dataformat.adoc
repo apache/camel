@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.1*
 
-Castor is a link:data-format.html[Data Format] which uses the
+Castor is a Data Format which uses the
 http://www.castor.org/[Castor XML library] to unmarshal an XML payload
 into Java objects or to marshal Java objects into an XML payload.
 
@@ -132,7 +132,7 @@ To use Castor in your camel routes you need to add the a dependency on
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,java]
 ---------------------------------------

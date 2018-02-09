@@ -151,7 +151,7 @@ resolve them. For example if the feed uses `alt=rss`, then the following example
 
 You can filter out entries using XPath, as shown in the
 data format section above. You can also exploit Camel's
-link:bean-integration.html[Bean Integration] to implement your own
+Bean Integration to implement your own
 conditions. For instance, a filter equivalent to the XPath example above
 would be:
 
@@ -169,9 +169,9 @@ return firstEntry.getTitle().contains("Camel");
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 * <<atom-component,Atom>>

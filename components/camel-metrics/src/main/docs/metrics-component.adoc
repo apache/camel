@@ -470,7 +470,7 @@ from("direct:in")
 
 ### MetricsRoutePolicyFactory
 
-This factory allows to add a link:routepolicy.html[RoutePolicy] for each
+This factory allows to add a RoutePolicy for each
 route which exposes route utilization statistics using Dropwizard metrics.
 This factory can be used in Java and XML as the examples below
 demonstrates. 
@@ -502,7 +502,7 @@ following options:
 |Name |Default |Description
 |useJmx |false |Whether to report fine grained statistics to JMX by
 using the `com.codahale.metrics.JmxReporter`. +
-Notice that if JMX is enabled on link:camelcontext.html[CamelContext]
+Notice that if JMX is enabled on CamelContext
 then a `MetricsRegistryService` mbean is enlisted under the services
 type in the JMX tree. That mbean has a single operation to output the
 statistics using json. Setting `useJmx` to true is only needed if you
@@ -551,7 +551,7 @@ if (registryService != null) {
 *Available as of Camel 2.17*
 
 This factory allows to use metrics to
-capture link:message-history.html[Message History] performance
+capture Message History performance
 statistics while routing messages. It works by using a metrics Timer for
 each node in all the routes. This factory can be used in Java and XML as
 the examples below demonstrates. 
@@ -578,7 +578,7 @@ The following options is supported on the factory:
 |Name |Default |Description
 |useJmx |false |Whether to report fine grained statistics to JMX by
 using the `com.codahale.metrics.JmxReporter`. +
-Notice that if JMX is enabled on link:camelcontext.html[CamelContext]
+Notice that if JMX is enabled on CamelContext
 then a `MetricsRegistryService` mbean is enlisted under the services
 type in the JMX tree. That mbean has a single operation to output the
 statistics using json. Setting `useJmx` to true is only needed if you
@@ -628,7 +628,7 @@ with `name=MetricsMessageHistoryService`.
 
 This factory allows you to gather performance information about Camel Thread Pools by injecting a InstrumentedThreadPoolFactory
 which collects information from inside of Camel.
-See more details at link:advanced-configuration-of-camelcontext-using-spring.html[Advanced configuration of CamelContext using Spring]
+See more details at Advanced configuration of CamelContext using Spring
 
 
 ### See Also

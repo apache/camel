@@ -2,19 +2,19 @@
 Getting Started
 ~~~~~~~~~~~~~~~
 
-First you need to link:download.html[Download] the Camel distribution;
-or you could grab the link:source.html[Source] and try
-link:building.html[Building] it yourself.
+First you need to Download the Camel distribution;
+or you could grab the Source and try
+Building it yourself.
 
 Then come back here and you might want to read the following
 documentation before continuing:
 
-* link:book-getting-started.html[Longer Getting Started Guide]
+* Longer Getting Started Guide
 * Find out about link:enterprise-integration-patterns.html[Enterprise
 Integration Patterns] and how to implement them with Camel
-* Review the link:architecture.html[Architecture] guide to see how to
-build link:routes.html[Routes] using the Java link:dsl.html[DSL] or
-link:spring.html[Spring] based link:xml-configuration.html[Xml
+* Review the Architecture guide to see how to
+build Routes using the Java DSL or
+Spring based link:xml-configuration.html[Xml
 Configuration]
 
 [[GettingStarted-WorkingwithCamelContextsandRouteBuilders]]
@@ -23,29 +23,29 @@ Working with CamelContexts and RouteBuilders
 
 To get started with Camel:
 
-1.  Create a link:camelcontext.html[CamelContext].
+1.  Create a CamelContext.
 2.  Optionally, link:configuring-camel.html[configure components or
 endpoints].
-3.  Add whatever routing rules you wish using the link:dsl.html[DSL] and
-link:routebuilder.html[RouteBuilder] or using
-link:xml-configuration.html[Xml Configuration].
-4.  link:lifecycle.html[Start the context].
+3.  Add whatever routing rules you wish using the DSL and
+RouteBuilder or using
+Xml Configuration.
+4.  Start the context.
 
 When your application is closing you may wish to
-link:lifecycle.html[stop the context]
+stop the context
 
 When you are ready, why not link:walk-through-an-example.html[Walk
 through an Example]? +
  And then continue the walk link:walk-through-another-example.html[Walk
 through another example] +
- And after the walks head over to the link:tutorials.html[tutorials].
+ And after the walks head over to the tutorials.
 
 [[GettingStarted-WorkingwithSpring]]
 Working with Spring
 ^^^^^^^^^^^^^^^^^^^
 
 If you use Spring as a Dependency Injection container then please refer
-to the link:spring.html[Camel Spring documentation].
+to the Camel Spring documentation.
 
 [[GettingStarted-OtherResources]]
 Other Resources
@@ -70,10 +70,10 @@ Camel: Integration Nirvana]. Great article to learn what Camel is and
 has a good use case example.
 
 * Several of the vendors on the
-link:commercial-camel-offerings.html[Commercial Camel Offerings] page
+Commercial Camel Offerings page
 also offer various tutorials, webinars, examples, etc.... that may be
 useful.
 
-* link:articles.html[Articles] is a link collection with articles,
+* Articles is a link collection with articles,
 blogs, podcasts, presentations and the likes about Camel done by people
 from the community.

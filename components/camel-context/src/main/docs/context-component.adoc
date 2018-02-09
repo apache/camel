@@ -90,7 +90,7 @@ another CamelContext.
 #### Defining the context component
 
 First you need to create a CamelContext, add some routes in it, start it
-and then register the CamelContext into the link:registry.html[Registry]
+and then register the CamelContext into the Registry
 (JNDI, Spring, Guice or OSGi etc).
 
 This can be done in the usual Camel way from this

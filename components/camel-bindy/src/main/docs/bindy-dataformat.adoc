@@ -1696,8 +1696,8 @@ from("file://inbox")
 -----------------------------
 
 Alternatively, you can use a named reference to a data format which can
-then be defined in your link:registry.html[Registry] e.g. your
-link:spring.html[Spring] XML file:
+then be defined in your Registry e.g. your
+Spring XML file:
 
 [source,java]
 ---------------------------------
@@ -1736,7 +1736,7 @@ Each object can be retrieve using its class name.
 
 Assuming that you want to extract a single Order object from this map
 for processing in a route, you could use a combination of a
-link:splitter.html[Splitter] and a link:processor.html[Processor] as per
+Splitter and a Processor as per
 the following:
 
 [source,java]
@@ -1847,7 +1847,7 @@ To use Bindy in your camel routes you need to add the a dependency on
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,java]
 --------------------------------------

@@ -12,7 +12,7 @@ following features to Camel:
 being set must be convertible to `byte[]`).
 3.  Create and retrieve the list the child nodes attached to a
 particular node.
-4.  A Distributed link:routepolicy.html[`RoutePolicy`] that leverages a
+4.  A Distributed `RoutePolicy` that leverages a
 Leader election coordinated by ZooKeeper to determine if exchanges
 should get processed.
 
@@ -221,7 +221,7 @@ template.sendBodyAndHeader("direct:create-and-write-to-persistent-znode", testPa
 
 ZooKeeper allows for very simple and effective leader election out of
 the box. This component exploits this election capability in a
-link:routepolicy.html[`RoutePolicy`] to control when and how routes are
+`RoutePolicy` to control when and how routes are
 enabled. This policy would typically be used in fail-over scenarios, to
 control identical instances of a route across a cluster of Camel based
 servers. A very common scenario is a simple 'Master-Slave' setup where
@@ -277,7 +277,7 @@ There are currently 3 policies defined in the component, with different SLAs:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

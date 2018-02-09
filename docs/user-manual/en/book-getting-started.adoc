@@ -48,7 +48,7 @@ Online documentation for Camel
 The documentation is all under the Documentation category on the
 right-side menu of the Camel website (also available in
 http://camel.apache.org/manual.html[PDF form]).
-link:books.html[Camel-related books] are also available, in particular
+Camel-related books are also available, in particular
 the http://manning.com/ibsen[Camel in Action] book, presently serving as
 the Camel bible -- it has a
 http://www.manning.com/ibsen/chapter1sample.pdf[free Chapter One (pdf)],
@@ -191,7 +191,7 @@ application executes the following steps:
 
 1.  Create a `CamelContext` object.
 2.  Add endpoints – and possibly components, which are discussed in
-link:book-getting-started.html[Section 4.5 ("Components")] – to the
+Section 4.5 ("Components") – to the
 `CamelContext` object.
 3.  Add routes to the `CamelContext` object to connect the endpoints.
 4.  Invoke the `start()` operation on the `CamelContext` object. This
@@ -230,7 +230,7 @@ The `CamelTemplate` class is a thin wrapper around the `CamelContext`
 class. It has methods that send a `Message` or `Exchange` – both
 discussed in link:book-getting-started.html[Section 4.6 ("Message and
 Exchange")]) – to an `Endpoint` – discussed in
-link:book-getting-started.html[Section 4.1 ("Endpoint")]. This provides
+Section 4.1 ("Endpoint"). This provides
 a way to enter messages into source endpoints, so that the messages will
 move along routes – discussed in link:book-getting-started.html[Section
 4.8 ("Routes, RouteBuilders and Java DSL")] – to destination endpoints.
@@ -368,7 +368,7 @@ the "foo"" properties file on the CLASSPATH, get the value of the
 `class` property from that properties file, and use reflection APIs to
 create an instance of the specified class.
 
-As I said in link:book-getting-started.html[Section 4.1 ("Endpoint")],
+As I said in Section 4.1 ("Endpoint"),
 Camel provides out-of-the-box support for numerous communication
 technologies. The out-of-the-box support consists of classes that
 implement the `Component` interface plus properties files that enable a
@@ -472,7 +472,7 @@ An application-level developer might implement the `Processor` interface
 with a class that executes some business logic. However, there are many
 classes in the Camel library that implement the `Processor` interface in
 a way that provides support for a design pattern in the
-link:book-getting-started.html[EIP book]. For example, `ChoiceProcessor`
+EIP book. For example, `ChoiceProcessor`
 implements the message router pattern, that is, it uses a cascading
 if-then-else statement to route a message from an input queue to one of
 several output queues. Another example is the `FilterProcessor` class
@@ -571,5 +571,5 @@ currently required to study the API of the `RouterBuilder` classes.
 Continue Learning about Camel
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Return to the main link:getting-started.html[Getting Started] page for
+Return to the main Getting Started page for
 additional introductory reference information.

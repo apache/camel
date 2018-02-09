@@ -2,14 +2,14 @@
 Test Component
 ~~~~~~~~~~~~~~
 
-link:testing.html[Testing] of distributed and asynchronous processing is
+Testing of distributed and asynchronous processing is
 notoriously difficult. The <<mock-component,Mock>>, <<mock-component,Test>>
 and <<dataset-component,DataSet>> endpoints work great with the
-link:testing.html[Camel Testing Framework] to simplify your unit and
+Camel Testing Framework to simplify your unit and
 integration testing using
 link:enterprise-integration-patterns.html[Enterprise Integration
-Patterns] and Camel's large range of link:components.html[Components]
-together with the powerful link:bean-integration.html[Bean Integration].
+Patterns] and Camel's large range of Components
+together with the powerful Bean Integration.
 
 The *test* component extends the <<mock-component,Mock>> component to
 support pulling messages from another endpoint on startup to set the
@@ -49,7 +49,7 @@ test:expectedMessagesEndpointUri
 --------------------------------
 
 Where *expectedMessagesEndpointUri* refers to some other
-link:component.html[Component] URI that the expected message bodies are
+Component URI that the expected message bodies are
 pulled from before starting the test.
 
 [[Test-URIOptions]]
@@ -100,10 +100,10 @@ To see how you can set other expectations on the test endpoint, see the
 See Also
 ^^^^^^^^
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:spring-testing.html[Spring Testing]
+* Spring Testing
 
