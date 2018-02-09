@@ -21,7 +21,7 @@ The camel-kubernetes consists of 13 components:
 In OpenShift, also:
 
 * <<kubernetes-build-configs-component,Kubernetes Build Config>>
-* link:kubernetes-builds-component.html[Kubernetes Build]
+* Kubernetes Build
 
 
 

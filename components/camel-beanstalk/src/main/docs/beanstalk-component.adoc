@@ -151,7 +151,7 @@ it again. You can `release` and specify _jobDelay_ though.
 The beanstalk consumer is a Scheduled link:polling-consumer.html[Polling
 Consumer] which means there is more options you can configure, such as
 how frequent the consumer should poll. For more details
-see link:polling-consumer.html[Polling Consumer].
+see Polling Consumer.
 
 ### Consumer Headers
 
@@ -225,7 +225,7 @@ out of buried and/or delayed state to the normal queue.
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

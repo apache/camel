@@ -38,8 +38,8 @@ expression like:
 </route>
 ----
 
-in this case, the link:message.html[Message] coming from the seda:a
-link:endpoint.html[Endpoint] will have 'theHeader' header set to the
+in this case, the Message coming from the seda:a
+Endpoint will have 'theHeader' header set to the
 constant value 'the value'.
 
 And the same example using Java DSL:

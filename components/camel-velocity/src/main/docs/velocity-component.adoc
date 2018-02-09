@@ -5,7 +5,7 @@
 
 The *velocity:* component allows you to process a message using an
 http://velocity.apache.org/[Apache Velocity] template. This can be ideal
-when using link:templating.html[Templating] to generate responses for
+when using Templating to generate responses for
 requests.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -266,7 +266,7 @@ And the java code:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

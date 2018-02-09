@@ -4,14 +4,14 @@
 *Available as of Camel version 1.0*
 
 
-link:testing.html[Testing] of distributed and asynchronous processing is
+Testing of distributed and asynchronous processing is
 notoriously difficult. The <<mock-component,Mock>>, <<mock-component,Test>>
 and <<dataset-component,DataSet>> endpoints work great with the
-link:testing.html[Camel Testing Framework] to simplify your unit and
+Camel Testing Framework to simplify your unit and
 integration testing using
 link:enterprise-integration-patterns.html[Enterprise Integration
-Patterns] and Camel's large range of link:components.html[Components]
-together with the powerful link:bean-integration.html[Bean Integration].
+Patterns] and Camel's large range of Components
+together with the powerful Bean Integration.
 
 The Mock component provides a powerful declarative testing mechanism,
 which is similar to http://www.jmock.org[jMock] in
@@ -25,32 +25,32 @@ This allows you to test various things like:
 * The correct number of messages are received on each endpoint,
 * The correct payloads are received, in the right order,
 * Messages arrive on an endpoint in order, using some
-link:expression.html[Expression] to create an order testing function,
-* Messages arrive match some kind of link:predicate.html[Predicate] such
+Expression to create an order testing function,
+* Messages arrive match some kind of Predicate such
 as that specific headers have certain values, or that parts of the
 messages match some predicate, such as by evaluating an
 <<xpath-language,XPath>> or <<xpath-language,XQuery>>
-link:expression.html[Expression].
+Expression.
 
 [NOTE]
 There is also the <<test-component,Test endpoint>> which is a
 Mock endpoint, but which uses a second endpoint to provide the list of
 expected message bodies and automatically sets up the Mock endpoint
 assertions. In other words, it's a Mock endpoint that automatically sets
-up its assertions from some sample messages in a link:file2.html[File]
+up its assertions from some sample messages in a File
 or <<jpa-component,database>>, for example.
 
 [CAUTION]
 *Mock endpoints keep received Exchanges in memory indefinitely.* +
  +
 Remember that Mock is designed for testing. When you add Mock endpoints
-to a route, each link:exchange.html[Exchange] sent to the endpoint will
+to a route, each Exchange sent to the endpoint will
 be stored (to allow for later validation) in memory until explicitly
 reset or the JVM is restarted. If you are sending high volume and/or
 large messages, this may cause excessive memory use. If your goal is to
 test deployable routes inline, consider using
-link:notifybuilder.html[NotifyBuilder] or
-link:advicewith.html[AdviceWith] in your tests instead of adding Mock
+NotifyBuilder or
+AdviceWith in your tests instead of adding Mock
 endpoints to routes directly. +
  +
 From Camel 2.10 onwards there are two new options `retainFirst`, and
@@ -195,15 +195,15 @@ methods are as follows:
 
 |http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectsAscending(org.apache.camel.Expression)[expectsAscending(Expression)]
 |To add an expectation that messages are received in order, using the
-given link:expression.html[Expression] to compare messages.
+given Expression to compare messages.
 
 |http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectsDescending(org.apache.camel.Expression)[expectsDescending(Expression)]
 |To add an expectation that messages are received in order, using the
-given link:expression.html[Expression] to compare messages.
+given Expression to compare messages.
 
 |http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectsNoDuplicates(org.apache.camel.Expression)[expectsNoDuplicates(Expression)]
 |To add an expectation that no duplicate messages are received; using an
-link:expression.html[Expression] to calculate a unique identifier for
+Expression to calculate a unique identifier for
 each message. This could be something like the `JMSMessageID` if using
 JMS, or some unique reference number within the message.
 |===
@@ -291,7 +291,7 @@ include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockEn
 ----
 
 The pattern supported can be a wildcard or a regular expression. See
-more details about this at link:intercept.html[Intercept] as its the
+more details about this at Intercept as its the
 same matching function used by Camel.
 
 [NOTE]
@@ -368,7 +368,7 @@ in the constructor for the bean:
 Sometimes you want to easily mock and skip sending to a certain
 endpoints. So the message is detoured and send to the mock endpoint
 only. From Camel 2.10 onwards you can now use the `mockEndpointsAndSkip`
-method using link:advicewith.html[AdviceWith] or the
+method using AdviceWith or the
 https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=Test+Kit&linkCreation=true&fromPageId=52081[Test
 Kit]. The example below will skip sending to the two endpoints
 `"direct:foo"`, and `"direct:bar"`.
@@ -379,7 +379,7 @@ Kit]. The example below will skip sending to the two endpoints
 include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockMultipleEndpointsWithSkipTest.java[tags=e1]
 ----
 
-The same example using the link:testing.html[Test Kit]
+The same example using the Test Kit
 
 [source,java]
 .*isMockEndpointsAndSkip using camel-test kit*
@@ -392,14 +392,14 @@ include::../../../../components/camel-test/src/test/java/org/apache/camel/test/p
 *Available as of Camel 2.10*
 
 The <<mock-component,Mock>> endpoints will by default keep a copy of every
-link:exchange.html[Exchange] that it received. So if you test with a lot
+Exchange that it received. So if you test with a lot
 of messages, then it will consume memory. +
 From Camel 2.10 onwards we have introduced two options `retainFirst` and
 `retainLast` that can be used to specify to only keep N'th of the first
-and/or last link:exchange.html[Exchange]s.
+and/or last Exchanges.
 
 For example in the code below, we only want to retain a copy of the
-first 5 and last 5 link:exchange.html[Exchange]s the mock receives.
+first 5 and last 5 Exchanges the mock receives.
 
 [source,java]
 ----
@@ -413,8 +413,8 @@ first 5 and last 5 link:exchange.html[Exchange]s the mock receives.
 
 Using this has some limitations. The `getExchanges()` and
 `getReceivedExchanges()` methods on the `MockEndpoint` will return only
-the retained copies of the link:exchange.html[Exchange]s. So in the
-example above, the list will contain 10 link:exchange.html[Exchange]s;
+the retained copies of the Exchanges. So in the
+example above, the list will contain 10 Exchanges;
 the first five, and the last five. +
 The `retainFirst` and `retainLast` options also have limitations on
 which expectation methods you can use. For example the `expectedXXX`
@@ -427,7 +427,7 @@ expectations on the 10 retained messages.
 *Available as of Camel 2.7*
 
 The <<mock-component,Mock>> endpoint stores the arrival time of the message
-as a property on the link:exchange.html[Exchange].
+as a property on the Exchange.
 
 [source,java]
 ----
@@ -480,5 +480,5 @@ In the example above we use `seconds` as the time unit, but Camel offers
 
 === See Also
 
-* link:spring-testing.html[Spring Testing]
-* link:testing.html[Testing]
+* Spring Testing
+* Testing

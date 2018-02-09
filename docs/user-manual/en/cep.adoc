@@ -11,19 +11,19 @@ multiple sources.
 One approach to CEP with Camel is to use the link:esper.html[Esper
 endpoint] then use Esper's SQL-like DSL for working with event streams.
 
-Another approach to CEP with Camel is to use link:rx.html[Camel RX]
+Another approach to CEP with Camel is to use Camel RX
 which provides a typesafe DSL in Java, Scala, Groovy, clojure for
 processing events in a natural collection-like way (while being high
-performance and asynchronous under the covers). link:rx.html[Camel RX]
+performance and asynchronous under the covers). Camel RX
 uses the https://github.com/Netflix/RxJava/wiki[RxJava]
 http://netflix.github.com/RxJava/javadoc/[API] which is a JVM port of
 the https://rx.codeplex.com/[Reactive Extensions]
 
 [[CEP-CEPwithCamelRX]]
-CEP with link:rx.html[Camel RX]
+CEP with Camel RX
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-link:rx.html[Camel RX] provides various ways to get an
+Camel RX provides various ways to get an
 http://netflix.github.com/RxJava/javadoc/rx/Observable.html[Observable<T>]
 which provides the typesafe DSL for processing events on a single
 stream.

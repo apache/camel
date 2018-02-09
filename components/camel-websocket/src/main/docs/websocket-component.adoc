@@ -4,7 +4,7 @@
 *Available as of Camel version 2.10*
 
 The *websocket* component provides websocket
-link:endpoint.html[endpoints] for communicating with clients using
+endpoints for communicating with clients using
 websocket. The component uses Eclipse Jetty Server which implements the
 http://tools.ietf.org/html/rfc6455[IETF] specification (drafts and RFC
 6455). It supports the protocols ws:// and wss://. To use wss://
@@ -238,13 +238,13 @@ Java DSL based configuration of endpoint
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 * <<ahc-component,AHC>>
 * <<jetty-component,Jetty>>
-* link:twitter-websocket-example.html[Twitter Websocket Example]
+* Twitter Websocket Example
 demonstrates how to poll a constant feed of twitter searches and publish
 results in real time using web socket to a web page.

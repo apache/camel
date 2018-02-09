@@ -5,7 +5,7 @@
 
 The Spark-rest component allows to define REST endpoints using the
 http://sparkjava.com/[Spark REST Java library] using the
-link:rest-dsl.html[Rest DSL].
+Rest DSL.
 
 INFO: Spark Java requires Java 8 runtime.
 
@@ -172,7 +172,7 @@ service as shown below:
   </camelContext>
 --------------------------------------------------------------
 
-See more details at the link:rest-dsl.html[Rest DSL].
+See more details at the Rest DSL.
 
 ### More examples
 
@@ -183,9 +183,9 @@ containers.
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 * <<rest-component,Rest>>

@@ -6,7 +6,7 @@
 SJMS Batch is a specialized component for highly performant,
 transactional batch consumption from a JMS queue. It can be thought of
 as a hybrid of a consumer-only component and an
-link:aggregator2.html[aggregator].
+aggregator.
 
 A common use case in Camel is to consume messages from a queue and
 aggregate them before sending the aggregated state to another endpoint.
@@ -103,7 +103,7 @@ non-persistent, and loss is acceptable. If consumed within a transaction
 that fails, a topic message will likely not be redelivered by the
 broker. A plain <<sjms-component,SJMS>> consumer endpoint can be used in
 conjunction with a regular non-persistence backed
-link:aggregator2.html[aggregator] in this scenario.
+aggregator in this scenario.
 
 ### Component Options and Configurations
 

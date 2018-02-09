@@ -105,8 +105,8 @@ uri.
 Using load balancing eip
 ++++++++++++++++++++++++
 
-You can also use Camel's link:load-balancer.html[Load Balancer] together
-with link:urlrewrite.html[UrlRewrite], as shown below. In this code we
+You can also use Camel's Load Balancer together
+with UrlRewrite, as shown below. In this code we
 use the failover load balancer, to failover to the 2nd endpoint (which
 goes to myapp3) in case of any exception thrown.
 
@@ -177,10 +177,10 @@ the url doesn't start with the endpoint configured path.
 See Also
 ^^^^^^^^
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 * <<jetty-component,Jetty>>
 * <<http4-component,HTTP4>>

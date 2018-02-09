@@ -4,7 +4,7 @@
 *Available as of Camel version 2.12*
 
 The *dataformat:* component allows to use link:data-format.html[Data
-Format] as a Camel link:component.html[Component].
+Format] as a Camel Component.
 
 === URI format
 
@@ -13,10 +13,10 @@ Format] as a Camel link:component.html[Component].
 dataformat:name:(marshal|unmarshal)[?options]
 ----
 
-Where *name* is the name of the link:data-format.html[Data Format]. And
+Where *name* is the name of the Data Format. And
 then followed by the operation which must either be `marshal` or
 `unmarshal`. The options is used for configuring the link:data-format.html[Data
-Format] in use. See the link:data-format.html[Data Format] documentation
+Format] in use. See the Data Format documentation
 for which options it support.
 
 === DataFormat Options

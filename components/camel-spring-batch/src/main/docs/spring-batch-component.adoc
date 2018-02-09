@@ -103,13 +103,13 @@ according to the following algorithm:
 
 * if `JobLauncher` is manually set on the component, then use it.
 * if `jobLauncherRef` option is set on the component, then search Camel
-link:registry.html[Registry] for the `JobLauncher` with the given name.
+Registry for the `JobLauncher` with the given name.
 *Deprecated and will be removed in Camel 3.0!*
 * if there is `JobLauncher` registered in the Camel
-link:registry.html[Registry] under *jobLauncher* name, then use it.
+Registry under *jobLauncher* name, then use it.
 * if none of the steps above allow to resolve the `JobLauncher` and
 there is exactly one `JobLauncher` instance in the Camel
-link:registry.html[Registry], then use it.
+Registry, then use it.
 
 All headers found in the message are passed to the `JobLauncher` as job
 parameters. `String`, `Long`, `Double` and `java.util.Date` values are

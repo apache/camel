@@ -29,7 +29,7 @@ nagios://host[:port][?Options]
 Camel provides two abilities with the <<nagios-component,Nagios>>
 component. You can send passive check messages by sending a message to
 its endpoint. +
- Camel also provides a link:camel-jmx.html[EventNotifer] which allows
+ Camel also provides a EventNotifer which allows
 you to send notifications to Nagios.
 
 ### Options
@@ -96,7 +96,7 @@ with the following path and query parameters:
 
 You can send a message to Nagios where the message payload contains the
 message. By default it will be `OK` level and use the
-link:camelcontext.html[CamelContext] name as the service name. You can
+CamelContext name as the service name. You can
 overrule these values using headers as shown above.
 
 For example we send the `Hello Nagios` message to Nagios as follows:
@@ -122,7 +122,7 @@ To send a `CRITICAL` message you can send the headers such as:
 ### Using `NagiosEventNotifer`
 
 The <<nagios-component,Nagios>> component also provides an
-link:camel-jmx.html[EventNotifer] which you can use to send events to
+EventNotifer which you can use to send events to
 Nagios. For example we can enable this from Java as follows:
 
 [source,java]
@@ -144,7 +144,7 @@ configuration of CamelContext using Spring].
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

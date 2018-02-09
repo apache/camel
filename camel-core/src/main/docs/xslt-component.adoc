@@ -5,7 +5,7 @@
 
 The *xslt:* component allows you to process a message using an
 http://www.w3.org/TR/xslt[XSLT] template. This can be ideal when using
-link:templating.html[Templating] to generate respopnses for requests.
+Templating to generate respopnses for requests.
 
 === URI format
 
@@ -358,7 +358,7 @@ Hope this post saves newbie Camel riders some time.
 
 === See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

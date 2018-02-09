@@ -304,7 +304,7 @@ Spring type conversion API bridge
 Spring comes with
 the powerful http://docs.spring.io/spring/docs/current/spring-framework-reference/html/validation.html#core-convert[type
 conversion API]. Spring API happens to be very similar to the Camel
-link:type-converter.html[type converter API]. As those APIs are so
+type converter API. As those APIs are so
 similar, Camel Spring Boot automatically registers a bridge converter
 (`SpringTypeConverter`) that delegates to the Spring conversion API.That
 means that out-of-the-box Camel will treat Spring Converters like Camel
@@ -449,8 +449,8 @@ The Rest-DSL XML files should be Camel XML rests (not CamelContext) such as
 See Also
 ^^^^^^^^
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 

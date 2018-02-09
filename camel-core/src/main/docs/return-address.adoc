@@ -19,7 +19,7 @@ getMockEndpoint("queue:bar").expectedBodiesReceived("Bye World");
 template.sendBodyAndHeader("direct:start", "World", "JMSReplyTo", "queue:bar");
 ----
 
-*Route Using the link:fluent-builders.html[Fluent Builders]*
+*Route Using the Fluent Builders*
 
 [source,java]
 ----
@@ -30,7 +30,7 @@ from("activemq:queue:foo").transform(body().prepend("Bye "));
 from("activemq:queue:bar?disableReplyTo=true").to("mock:bar");
 ----
 
-*Route Using the link:spring-xml-extensions.html[Spring XML Extensions]*
+*Route Using the Spring XML Extensions*
 
 [source,xml]
 ----

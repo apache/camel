@@ -157,7 +157,7 @@ this data format is available from Camel 2.10 onwards, so only schemas
 from that version onwards will include these new XML elements and
 attributes.
 
-The syntax with link:using-osgi-blueprint-with-camel.html[Blueprint] is
+The syntax with Blueprint is
 identical to that of the Spring DSL. Just ensure the correct namespaces
 and schemaLocations are in use.
 
@@ -275,5 +275,5 @@ license with ASF; so add this manually -->
 
 ### See Also
 
-* link:data-format.html[Data Format]
+* Data Format
 * http://json-lib.sourceforge.net/[json-lib]

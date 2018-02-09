@@ -107,7 +107,7 @@ with the following path and query parameters:
 Required DynampDBStream component options
 
 You have to provide the amazonDynamoDbStreamsClient in the
-link:registry.html[Registry] with proxies and relevant credentials
+Registry with proxies and relevant credentials
 configured.
 
 ### Sequence Numbers
@@ -122,10 +122,10 @@ lead to the AWS call returning an HTTP 400.
 
 ### Batch Consumer
 
-This component implements the link:batch-consumer.html[Batch Consumer].
+This component implements the Batch Consumer.
 
 This allows you for instance to know how many messages exists in this
-batch and for instance let the link:aggregator.html[Aggregator]
+batch and for instance let the Aggregator
 aggregate this number of messages.
 
 ### Usage
@@ -192,10 +192,10 @@ where `${camel-version`} must be replaced by the actual version of Camel
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:aws.html[AWS Component] +
+* AWS Component +
  +

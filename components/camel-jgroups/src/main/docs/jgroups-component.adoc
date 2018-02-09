@@ -176,7 +176,7 @@ from("jgroups:clusterName?enableViewMessages=true").
 Starting from version *2.13.0* of Camel, JGroups component comes with
 predefined expressions factory class named `JGroupsExpressions.`
 
-If you would like to create link:delayer.html[delayer] that would affect
+If you would like to create delayer that would affect
 the route only if the Camel context has not been started yet, use the
 `JGroupsExpressions.delayIfContextNotStarted(long delay)` factory
 method. The expression created by this factory method will return given

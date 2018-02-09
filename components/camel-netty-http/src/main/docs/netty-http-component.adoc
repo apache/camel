@@ -16,7 +16,7 @@ Netty is stream based, which means the input it receives is submitted to
 Camel as a stream. That means you will only be able to read the content
 of the stream *once*. If you find a situation where the message body appears to be empty or
 you need to access the data multiple times (eg: doing multicasting, or
-redelivery error handling) you should use link:stream-caching.html[Stream caching] or convert the
+redelivery error handling) you should use Stream caching or convert the
 message body to a `String` which is safe to be re-read multiple times.
 Notice Netty4 HTTP reads the entire stream into memory using
 `io.netty.handler.codec.http.HttpObjectAggregator` to build the entire
@@ -279,7 +279,7 @@ with the value `Basic`.
 
 This component uses the
 `org.apache.camel.component.netty.http.NettyHttpMessage` as the message
-implementation on the link:exchange.html[Exchange]. This allows end
+implementation on the Exchange. This allows end
 users to get access to the original Netty request/response instances if
 needed, as shown below. Mind that the original response may not be
 accessible at all times.
@@ -301,7 +301,7 @@ server, which returns back a hardcoded "Bye World" message.
 ----------------------------------------------
 
 And we can call this HTTP server using Camel also, with the
-link:producertemplate.html[ProducerTemplate] as shown below:
+ProducerTemplate as shown below:
 
 [source,java]
 -----------------------------------------------------------------------------------------------------------
@@ -344,7 +344,7 @@ from("netty-http:http://0.0.0.0:8123?matchOnUriPrefix=true").to("mock:foo");
 
 ### Using multiple routes with same port
 
-In the same link:camelcontext.html[CamelContext] you can have multiple
+In the same CamelContext you can have multiple
 routes from <<netty-http-component,Netty HTTP>> that shares the same port
 (eg a `org.jboss.netty.bootstrap.ServerBootstrap` instance). Doing this
 requires a number of bootstrap options to be identical in the routes, as
@@ -435,7 +435,7 @@ And in the routes you refer to this option as shown below
 
 #### Reusing same server bootstrap configuration with multiple routes across multiple bundles in OSGi container
 
-See the link:netty-http-server-example.html[Netty HTTP Server Example]
+See the Netty HTTP Server Example
 for more details and example how to do that.
 
 ### Using HTTP Basic Authentication
@@ -515,11 +515,11 @@ below:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 * <<netty-component,Netty>>
-* link:netty-http-server-example.html[Netty HTTP Server Example]
+* Netty HTTP Server Example
 * <<jetty-component,Jetty>>

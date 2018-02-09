@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.18*
 
-Johnzon is a link:data-format.html[Data Format] which uses the
+Johnzon is a Data Format which uses the
 http://johnzon.apache.org/[Johnzon Library]
 
 [source,java]
@@ -55,7 +55,7 @@ on *camel-johnzon* which implements this data format.
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,xml]
 ----------------------------------------------------------

@@ -23,7 +23,7 @@ Route/Context Scope
 +++++++++++++++++++
 
 It might be desirable to have a single session for a route or a 
-link:camelcontext.html[CamelContext]. This essentially means that all calls to
+CamelContext. This essentially means that all calls to
 a server issued from a route or CamelContext share a single HTTP session.
 
 [[HTTPSession-EndpointScope]]
@@ -31,7 +31,7 @@ Endpoint Scope
 ++++++++++++++
 
 It is also possible to have a session on an
-link:endpoint.html[Endpoint] entity. This would mean that all invocations of
+Endpoint entity. This would mean that all invocations of
 an HTTP call issued by a single Endpoint share a session, whereas different
 Endpoints never share sessions, even if the call is sent to the same server.
 
@@ -43,7 +43,7 @@ Exchange Scope
 ++++++++++++++
 
 The third option to define a session scope is on 
-link:exchange.html[Exchange] level. This is particularly useful for scenarios
+Exchange level. This is particularly useful for scenarios
 where the server session is really maintaining state.
 
 In this case the route could e.g. first do a login call, then some update calls 

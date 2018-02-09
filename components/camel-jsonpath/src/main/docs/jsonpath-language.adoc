@@ -4,7 +4,7 @@
 *Available as of Camel version 2.13*
 
 Camel supports https://code.google.com/p/json-path/[JSonPath] to allow
-using link:expression.html[Expression] or link:predicate.html[Predicate]
+using Expression or Predicate
 on json messages.
 
 [source,java]
@@ -44,7 +44,7 @@ The JsonPath language supports 7 options which are listed below.
 
 === Using XML configuration
 
-If you prefer to configure your routes in your link:spring.html[Spring]
+If you prefer to configure your routes in your Spring
 XML file then you can use <<jsonpath-language,JSonPath>> expressions as
 follows
 
@@ -232,7 +232,7 @@ And in XML DSL:
 
 === JSonPath injection
 
-You can use link:bean-integration.html[Bean Integration] to invoke a
+You can use Bean Integration to invoke a
 method on a bean and use various languages such as JSonPath to extract a
 value from the message and bind it to a method parameter.
 
@@ -325,7 +325,7 @@ To use JSonPath in your camel routes you need to add the a dependency on
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,xml]
 ----

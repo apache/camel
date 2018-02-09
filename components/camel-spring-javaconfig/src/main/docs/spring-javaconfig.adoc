@@ -2,7 +2,7 @@
 Spring Java Config
 ~~~~~~~~~~~~~~~~~~
 
-link:spring.html[Spring] started life using XML Config to wire beans
+Spring started life using XML Config to wire beans
 together. However some folks don't like using XML and would rather use
 Java code which led to the creation of Guice along with the Spring
 JavaConfig project.
@@ -91,7 +91,7 @@ deprecated and could be removed in the future versions of Camel on the
 behalf of the `CamelSpringDelegatingTestContextLoader`.
 
 The *@ContextConfiguration* annotation tells the
-link:spring-testing.html[Spring Testing] framework to load the
+Spring Testing framework to load the
 *ContextConfig* class as the configuration to use. This class derives
 from *SingleRouteCamelConfiguration* which is a helper Spring Java
 Config class which will configure the CamelContext for us and then

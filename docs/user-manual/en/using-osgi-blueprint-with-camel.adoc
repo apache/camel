@@ -49,7 +49,7 @@ packages that are imported by your bundle
 * no startup ordering issue with respect to the custom namespaces and
 your bundles
 * you can use Blueprint property placeholders, see more at
-link:using-propertyplaceholder.html[Using PropertyPlaceholder]
+Using PropertyPlaceholder
 
 [[UsingOSGiblueprintwithCamel-Usingcamel-blueprint]]
 Using camel-blueprint

@@ -14,8 +14,8 @@ only have to actually configure things which are not the default
 behavior.
 
 For example with Camel you can configure a
-link:camelcontext.html[CamelContext]; capable of creating on demand
-link:component.html[Component] and link:endpoint.html[Endpoint]
+CamelContext; capable of creating on demand
+Component and Endpoint
 instances along with providing a powerful link:type-converter.html[Type
 Converter] registry all by using a single XML element...
 

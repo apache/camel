@@ -186,7 +186,7 @@ with the following path and query parameters:
 ### Registry based Options
 
 Codec Handlers and SSL Keystores can be enlisted in the
-link:registry.html[Registry], such as in the Spring XML file. 
+Registry, such as in the Spring XML file. 
 The values that could be passed in, are the following:
 
 [width="100%",cols="10%,90%",options="header",]
@@ -224,7 +224,7 @@ io.netty.channel.ChannelInboundHandlerAdapter.
 
 |`encoders` |A list of encoders to be used. You can use a String which have values
 separated by comma, and have the values be looked up in the
-link:registry.html[Registry]. Just remember to prefix the value with #
+Registry. Just remember to prefix the value with #
 so Camel knows it should lookup.
 
 |`decoder` |A custom `ChannelHandler` class that can be used to perform special
@@ -233,7 +233,7 @@ io.netty.channel.ChannelOutboundHandlerAdapter.
 
 |`decoders` |A list of decoders to be used. You can use a String which have values
 separated by comma, and have the values be looked up in the
-link:registry.html[Registry]. Just remember to prefix the value with #
+Registry. Just remember to prefix the value with #
 so Camel knows it should lookup.
 |=======================================================================
 
@@ -399,7 +399,7 @@ Getting access to SSLSession and the client certificate
 You can get access to the `javax.net.ssl.SSLSession` if you eg need to
 get details about the client certificate. When `ssl=true` then the
 <<netty4-component,Netty4>> component will store the `SSLSession` as a
-header on the Camel link:message.html[Message] as shown below:
+header on the Camel Message as shown below:
 
 [source,java]
 ----------------------------------------------------------------------------------------------------
@@ -417,7 +417,7 @@ may also get this exception if the client certificate is expired or not
 valid etc.
 
 TIP: The option `sslClientCertHeaders` can be set to `true` which then
-enriches the Camel link:message.html[Message] with headers having
+enriches the Camel Message with headers having
 details about the client certificate. For example the subject name is
 readily available in the header `CamelNettySSLClientCertSubjectName`.
 
@@ -636,7 +636,7 @@ Netty has two kind of thread pools: boss and worker. By default each
 Netty consumer and producer has their private thread pools. If you want
 to reuse these thread pools among multiple consumers or producers then
 the thread pools must be created and enlisted in the
-link:registry.html[Registry].
+Registry.
 
 For example using Spring XML we can create a shared worker thread pool
 using the `NettyWorkerPoolBuilder` with 2 worker threads as shown below:
@@ -689,10 +689,10 @@ And if we have another route we can refer to the shared worker pool:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 * <<netty-http-component,Netty HTTP>>
 * <<mina-component,MINA>>

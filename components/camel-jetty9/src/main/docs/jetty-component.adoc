@@ -5,7 +5,7 @@
 
 WARNING: The producer is deprecated - do not use. We only recommend using jetty as consumer (eg from jetty)
 
-The *jetty* component provides HTTP-based link:endpoint.html[endpoints]
+The *jetty* component provides HTTP-based endpoints
 for consuming and producing HTTP requests. That is, the Jetty component
 behaves as a simple Web server. +
  Jetty can also be used as a http client which mean you can also use it
@@ -20,7 +20,7 @@ the content of the stream *once*. +
 If you find a situation where the message body appears to be empty or
 you need to access the Exchange.HTTP_RESPONSE_CODE data multiple times
 (e.g.: doing multicasting, or redelivery error handling), you should use
-link:stream-caching.html[Stream caching] or convert the message body to
+Stream caching or convert the message body to
 a `String` which is safe to be re-read multiple times.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -290,7 +290,7 @@ exchange. For example, the following route enables sessions:
 <route>
 ---------------------------------------------------------------------------
 
-The `myCode` link:processor.html[Processor] can be instantiated by a
+The `myCode` Processor can be instantiated by a
 Spring `bean` element:
 
 [source,xml]
@@ -684,7 +684,7 @@ instead of the default reply message Camel <<jetty-component,Jetty>>
 replies with. +
  You could use a custom `HttpBinding` to be in control of the message
 mapping, but often it may be easier to use Camel's
-link:exception-clause.html[Exception Clause] to construct the custom
+Exception Clause to construct the custom
 reply message. For example as show here, where we return
 `Dude something went wrong` with HTTP error code 500:
 
@@ -733,9 +733,9 @@ name collisions when registering Jetty MBeans.
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 * <<http-component,HTTP>>

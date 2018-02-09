@@ -120,7 +120,7 @@ To use Docker in your Camel routes you need to add a dependency on
 
 If you use Maven you can just add the following to your pom.xml,
 substituting the version number for the latest and greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,java]
 -------------------------------------

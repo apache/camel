@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.11*
 
-The Zip File link:data-format.html[Data Format] is a message compression
+The Zip File Data Format is a message compression
 and de-compression format. Messages can be marshalled (compressed) to
 Zip files containing a single entry, and Zip files containing a single
 entry can be unmarshalled (decompressed) to the original file contents.
@@ -41,7 +41,7 @@ from("direct:start")
 
 The name of the Zip entry inside the created Zip file is based on the
 incoming `CamelFileName` message header, which is the standard message
-header used by the link:file2.html[file component]. Additionally, the
+header used by the file component. Additionally, the
 outgoing `CamelFileName` message header is automatically set to the
 value of the incoming `CamelFileName` message header, with the ".zip"
 suffix. So for example, if the following route finds a file named
@@ -56,7 +56,7 @@ from("file:input/directory?antInclude=*/.txt")
 ----
 
 If there is no incoming `CamelFileName` message header (for example, if
-the link:file2.html[file component] is not the consumer), then the
+the file component is not the consumer), then the
 message ID is used by default, and since the message ID is normally a
 unique generated ID, you will end up with filenames like
 `ID-MACHINENAME-2443-1211718892437-1-0.zip`. If you want to override
@@ -151,7 +151,7 @@ To use Zip files in your camel routes you need to add a dependency on
 
 If you use Maven you can just add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,xml]
 ----

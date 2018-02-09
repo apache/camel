@@ -1,7 +1,7 @@
 Scala DSL - Getting Started
 ===========================
 
-Just like the link:dsl.html[Java DSL], the Scala DSL has a RouteBuilder
+Just like the Java DSL, the Scala DSL has a RouteBuilder
 class (`org.apache.camel.scala.dsl.builder.RouteBuilder`) that you can
 extend to implement your own routes. This example shows two very simple
 routes:
@@ -20,7 +20,7 @@ CamelContext in the constructor, which will be used by the builder. The
 old class RouteBuilder is deprecated.
 
 
-If you compare this to the Java link:dsl.html[DSL], you notice:
+If you compare this to the Java DSL, you notice:
 
 * there is no configure() method to override
 * a route starts directly with a URI instead of `from(uri)`
@@ -42,7 +42,7 @@ invocation after the "from" part of the DSL.
 Creating a new Camel Scala project
 ----------------------------------
 
-Camel offers link:camel-maven-archetypes.html[Maven archetypes] that
+Camel offers Maven archetypes that
 allow you to quickly setup a new project.
 
 To do this, you can execute the following Maven goal from the command

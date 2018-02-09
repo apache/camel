@@ -261,9 +261,9 @@ The timeZone value is the values accepted by `java.util.TimeZone`.
 === Using QuartzScheduledPollConsumerScheduler
 
 The <<quartz2-component,Quartz2>> component provides a
-link:polling-consumer.html[Polling Consumer] scheduler which allows to
+Polling Consumer scheduler which allows to
 use cron based scheduling for link:polling-consumer.html[Polling
-Consumer] such as the link:file2.html[File] and link:ftp2.html[FTP]
+Consumer] such as the File and FTP
 consumers.
 
 For example to use a cron based expression to poll for files every 2nd
@@ -300,7 +300,7 @@ and used.
 |===
 
 *Important:* Remember configuring these options from the endpoint
-link:uris.html[URIs] must be prefixed with `scheduler.`. 
+URIs must be prefixed with `scheduler.`. 
 For example to configure the trigger id and group:
 
 [source,java]
@@ -309,7 +309,7 @@ For example to configure the trigger id and group:
        .to("bean:process");
 ----
 
-There is also a CRON scheduler in link:spring.html[Spring], so you can
+There is also a CRON scheduler in Spring, so you can
 use the following as well:
 
 [source,java]

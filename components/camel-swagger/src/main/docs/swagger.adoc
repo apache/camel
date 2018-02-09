@@ -4,7 +4,7 @@ Swagger Scala Component (deprecated)
 
 *Available as of Camel 2.14*
 
-The  link:rest-dsl.html[Rest DSL] can be integrated with
+The  Rest DSL can be integrated with
 the `camel-swagger` module which is used for exposing the REST services
 and their APIs using http://swagger.io/[Swagger].
 
@@ -12,7 +12,7 @@ Maven users will need to add the following dependency to
 their `pom.xml` for this component:
 
 WARNING:This component is deprecated. From Camel 2.16 onwards use the new Java
-based swagger module link:swagger-java.html[Swagger Java]
+based swagger module Swagger Java
 
 The Scala based camel-swagger module is deprecated, and to be removed in
 a future release.
@@ -42,7 +42,7 @@ Using with Camel 2.14.x
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 The Swagger servlet is integrated with Spring
-or link:servletlistener-component.html[ServletListener Component]. 
+or ServletListener Component. 
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -245,4 +245,4 @@ Swagger component.
 See Also
 ^^^^^^^^
 
-* link:swagger-java.html[Swagger Java]
+* Swagger Java

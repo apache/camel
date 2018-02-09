@@ -19,7 +19,7 @@ The mapping can be configured using:
 * endpoint url - A Camel endpoint url
 
 For both kinds you can match using wildcards and regular expressions,
-using the rules from link:intercept.html[Intercept].
+using the rules from Intercept.
 
 To match all Camel messages you can use * in the pattern and configure
 that to the same service name.
@@ -63,15 +63,15 @@ zipkin server.
 
 |clientServiceMappings |  | Sets the *client* service mappings that matches Camel events to the
 given zipkin service name. The content is a Map<String, String> where the key is a pattern and the
-value is the service name. The pattern uses the rules from link:intercept.html[Intercept].
+value is the service name. The pattern uses the rules from Intercept.
 
 |serverServiceMappings |  | Sets the *server* service mappings that matches Camel events to the
 given zipkin service name. The content is a Map<String, String> where the key is a pattern and the
-value is the service name. The pattern uses the rules from link:intercept.html[Intercept].
+value is the service name. The pattern uses the rules from Intercept.
 
 |excludePatterns |  | Sets exclude pattern(s) that will disable tracing with zipkin for Camel
 messages that matches the pattern. The content is a Set<String> where the key is a pattern. The pattern
-uses the rules from link:intercept.html[Intercept].
+uses the rules from Intercept.
 
 |includeMessageBody |false |Whether to include the Camel message body in the zipkin traces.
 This is not recommended for production usage, or when having big
@@ -80,7 +80,7 @@ link:how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.html[max
 debug log size]. 
 
 |includeMessageBodyStreams |false |Whether to include message bodies that are stream based in the zipkin
-traces. This requires enabling streamlink:stream-caching.html[caching] on the
+traces. This requires enabling streamcaching on the
 routes or globally on the CamelContext. This is not recommended for production usage, or when having big
 payloads. You can limit the size by configuring the
 link:how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.html[max
@@ -256,7 +256,7 @@ uris.
 camel-zipin-starter
 ^^^^^^^^^^^^^^^^^^^
 
-If you are using link:spring-boot.html[Spring Boot] then you can add
+If you are using Spring Boot then you can add
 the `camel-zipkin-starter` dependency, and turn on zipkin by annotating
 the main class with `@CamelZipkin`. You can then configure camel-zipkin
 in the `application.properties` file where you can configure the

@@ -2,7 +2,7 @@
 
 *Available as of Camel 2.16*
 
-The  link:rest-dsl.html[Rest DSL] can be integrated with
+The  Rest DSL can be integrated with
 the `camel-swagger-java` module which is used for exposing the REST
 services and their APIs using http://swagger.io/[Swagger].
 
@@ -135,7 +135,7 @@ false.
 |apiContextIdPattern |String |A pattern that allows to filter which CamelContext names is shown in the
 context listing. The pattern is using regular expression and * as
 wildcard. Its the same pattern matching as used by
-link:intercept.html[Intercept]
+Intercept
 |===
 
 

@@ -34,7 +34,7 @@ If the body is a List of entities, make sure to use
 producer endpoint.
 
 If the body does not contain one of the previous listed types, put a
-link:message-translator.html[Message Translator] in front of the
+Message Translator in front of the
 endpoint to perform the necessary conversion first.
 
 From *Camel 2.19* onwards you can use `query`, `namedQuery` or `nativeQuery`
@@ -226,7 +226,7 @@ For example, you can instantiate a JPA component that references the
 -------------------------------------------------------------------
 
 In *Camel 2.3* the `JpaComponent` will auto lookup the
-`EntityManagerFactory` from the link:registry.html[Registry] which means
+`EntityManagerFactory` from the Registry which means
 you do not need to configure this on the `JpaComponent` as shown above.
 You only need to do so if there is ambiguity, in which case Camel will
 log a WARN.
@@ -234,7 +234,7 @@ log a WARN.
 ### Configuring TransactionManager
 
 Since *Camel 2.3* the `JpaComponent` will auto lookup the
-`TransactionManager` from the link:registry.html[Registry.] If Camel
+`TransactionManager` from the Registry. If Camel
 won't find any `TransactionManager` instance registered, it will also
 look up for the `TransactionTemplate` and try to
 extract `TransactionManager` from it.

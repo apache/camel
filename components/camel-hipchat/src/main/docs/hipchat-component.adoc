@@ -92,12 +92,12 @@ with the following path and query parameters:
 ### Scheduled Poll Consumer
 
 This component implements the
-link:polling-consumer.html[ScheduledPollConsumer]. Only the last message
+ScheduledPollConsumer. Only the last message
 from the provided 'consumeUsers' are retrieved and sent as Exchange
 body. If you do not want the same message to be retrieved again when
 there are no new messages on next poll then you can add the
-link:idempotent-consumer.html[idempotent consumer] as shown below. All
-the options on the link:polling-consumer.html[ScheduledPollConsumer] can
+idempotent consumer as shown below. All
+the options on the ScheduledPollConsumer can
 also be used for more control on the consumer.
 
 [source,java]

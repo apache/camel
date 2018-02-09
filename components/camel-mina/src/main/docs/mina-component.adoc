@@ -33,7 +33,7 @@ mina:udp://hostname[:port][?options]
 mina:vm://hostname[:port][?options]
 ------------------------------------
 
-You can specify a codec in the link:registry.html[Registry] using the
+You can specify a codec in the Registry using the
 *codec* option. If you are using TCP and no codec is specified then the
 `textline` flag is used to determine if text line based codec or object
 serialization should be used instead. By default the object
@@ -140,7 +140,7 @@ with the following path and query parameters:
 See the http://mina.apache.org/tutorial-on-protocolcodecfilter.html[Mina
 documentation] how to write your own codec. To use your custom codec
 with `camel-mina`, you should register your codec in the
-link:registry.html[Registry]; for example, by creating a bean in the
+Registry; for example, by creating a bean in the
 Spring XML file. Then use the `codec` option to specify the bean ID of
 your codec. See <<hl7-dataformat,HL7>> that has a custom codec.
 
@@ -331,10 +331,10 @@ Then, you can configure your endpoint using Spring DSL:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 * <<mina2-component,MINA2>>
 * <<netty-component,Netty>>

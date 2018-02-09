@@ -4,15 +4,15 @@
 *Available as of Camel version 2.0*
 
 The tokenizer language is a built-in language in camel-core, which is
-most often used only with the link:splitter.html[Splitter] EIP to split
+most often used only with the Splitter EIP to split
 a message using a token-based strategy. +
 The tokenizer language is intended to tokenize text documents using a
 specified delimiter pattern. It can also be used to tokenize XML
 documents with some limited capability. For a truly XML-aware
-tokenization, the use of the link:xmltokenizer.html[XMLTokenizer]
+tokenization, the use of the XMLTokenizer
 language is recommended as it offers a faster, more efficient
 tokenization specifically for XML documents. For more details
-see link:splitter.html[Splitter].
+see Splitter.
 
 === Tokenize Options
 

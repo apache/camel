@@ -38,7 +38,7 @@ must be of the same type.
 2.  as a producer, if at least one split strategy is defined, the path
 is considered a directory and under that directory the producer creates
 a different file per split named using the configured
-link:uuidgenerator.html[UuidGenerator].
+UuidGenerator.
 
 *Note*
 
@@ -168,7 +168,7 @@ this problem in this way:
 
 * If the split strategy option has been defined, the hdfs path will be
 used as a directory and files will be created using the configured
-link:uuidgenerator.html[UuidGenerator]
+UuidGenerator
 * Every time a splitting condition is met, a new file is created. +
  The splitStrategy option is defined as a string with the following
 syntax: +
@@ -214,7 +214,7 @@ The following headers are supported by this component:
 
 |`CamelFileName` |*Camel 2.13:* Specifies the name of the file to write (relative to the
 endpoint path). The name can be a `String` or an
-link:expression.html[Expression] object. Only relevant when not using a
+Expression object. Only relevant when not using a
 split strategy.
 |=======================================================================
 

@@ -4,12 +4,12 @@
 *Available as of Camel version 1.1*
 
 Camel supports http://www.w3.org/TR/xpath[XPath] to allow an
-link:expression.html[Expression] or link:predicate.html[Predicate] to be
-used in the link:dsl.html[DSL] or link:xml-configuration.html[Xml
+Expression or Predicate to be
+used in the DSL or link:xml-configuration.html[Xml
 Configuration]. For example you could use XPath to create an
-link:predicate.html[Predicate] in a link:message-filter.html[Message
-Filter] or as an link:expression.html[Expression] for a
-link:recipient-list.html[Recipient List].
+Predicate in a link:message-filter.html[Message
+Filter] or as an Expression for a
+Recipient List.
 
 *Streams*
 
@@ -17,9 +17,9 @@ If the message body is stream based, which means the input it receives
 is submitted to Camel as a stream. That means you will only be able to
 read the content of the stream *once*. So often when you use
 <<xpath-language,XPath>> as <<xpath-language,Message Filter>> or
-link:content-based-router.html[Content Based Router] then you need to
+Content Based Router then you need to
 access the data multiple times, and you should use
-link:stream-caching.html[Stream Caching] or convert the message body to
+Stream Caching or convert the message body to
 a `String` prior which is safe to be re-read multiple times.
 
 [source,java]
@@ -132,7 +132,7 @@ exchange:
 
 CAUTION: `function:properties` and `function:simple` is not supported
 when the return type is a `NodeSet`, such as when using with a
-link:splitter.html[Splitter] EIP.
+Splitter EIP.
 
 Here's an example showing some of these functions in use.
 
@@ -140,7 +140,7 @@ And the new functions introduced in Camel 2.5:
 
 === Using XML configuration
 
-If you prefer to configure your routes in your link:spring.html[Spring]
+If you prefer to configure your routes in your Spring
 XML file then you can use XPath expressions as follows
 
 [source,xml]
@@ -224,7 +224,7 @@ shown:
 Here is a simple
 http://svn.apache.org/repos/asf/camel/trunk/camel-core/src/test/java/org/apache/camel/processor/XPathFilterTest.java[example]
 using an XPath expression as a predicate in a
-link:message-filter.html[Message Filter]
+Message Filter
 
 If you have a standard set of namespaces you wish to work with and wish
 to share them across many different XPath expressions you can use the
@@ -242,7 +242,7 @@ And the spring XML equivalent of the route:
 
 === XPath injection
 
-You can use link:bean-integration.html[Bean Integration] to invoke a
+You can use Bean Integration to invoke a
 method on a bean and use various languages such as XPath to extract a
 value from the message and bind it to a method parameter.
 
@@ -276,13 +276,13 @@ public class Foo {
 *Available as of Camel 2.3*
 
 You can now use the `org.apache.camel.builder.XPathBuilder` without the
-need for an link:exchange.html[Exchange]. This comes handy if you want
+need for an Exchange. This comes handy if you want
 to use it as a helper to do custom xpath evaluations.
 
-It requires that you pass in a link:camelcontext.html[CamelContext]
+It requires that you pass in a CamelContext
 since a lot of the moving parts inside the XPathBuilder requires access
-to the Camel link:type-converter.html[Type Converter] and hence why
-link:camelcontext.html[CamelContext] is needed.
+to the Camel Type Converter and hence why
+CamelContext is needed.
 
 For example you can do something like this:
 

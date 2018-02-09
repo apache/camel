@@ -4,12 +4,12 @@
 *Available as of Camel version 1.0*
 
 Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
-link:expression.html[Expression] or link:predicate.html[Predicate] to be
-used in the link:dsl.html[DSL] or link:xml-configuration.html[Xml
+Expression or Predicate to be
+used in the DSL or link:xml-configuration.html[Xml
 Configuration]. For example you could use XQuery to create an
-link:predicate.html[Predicate] in a link:message-filter.html[Message
-Filter] or as an link:expression.html[Expression] for a
-link:recipient-list.html[Recipient List].
+Predicate in a link:message-filter.html[Message
+Filter] or as an Expression for a
+Recipient List.
 
 ### Options
 
@@ -139,7 +139,7 @@ key name *foo* then its added as *foo*.
 
 ### Using XML configuration
 
-If you prefer to configure your routes in your link:spring.html[Spring]
+If you prefer to configure your routes in your Spring
 XML file then you can use XPath expressions as follows
 
 [source,xml]
@@ -201,8 +201,8 @@ from("direct:start").
 ### Using XQuery as an endpoint
 
 Sometimes an XQuery expression can be quite large; it can essentally be
-used for link:templating.html[Templating]. So you may want to use an
-link:xquery-endpoint.html[XQuery Endpoint] so you can route using XQuery
+used for Templating. So you may want to use an
+XQuery Endpoint so you can route using XQuery
 templates.
 
 The following example shows how to take a message of an ActiveMQ queue
@@ -226,12 +226,12 @@ Currently custom functions in XQuery might result in a NullPointerException (Cam
 Here is a simple
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryFilterTest.java[example]
 using an XQuery expression as a predicate in a
-link:message-filter.html[Message Filter]
+Message Filter
 
 This
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryWithNamespacesFilterTest.java[example]
 uses XQuery with namespaces as a predicate in a
-link:message-filter.html[Message Filter]
+Message Filter
 
 ### Learning XQuery
 
@@ -267,7 +267,7 @@ To use XQuery in your camel routes you need to add the a dependency on
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,java]
 --------------------------------------

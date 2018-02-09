@@ -251,14 +251,14 @@ In Camel 2.8.0 or older versions you would have to provide your custom
 `String` to `java.util.TimeZone` link:type-converter.html[Type
 Converter] to be able configure this from the endpoint uri. +
  From Camel 2.8.1 onwards we have included such a
-link:type-converter.html[Type Converter] in the camel-core.
+Type Converter in the camel-core.
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 * <<quartz2-component,Quartz2>>
 * <<timer-component,Timer>>

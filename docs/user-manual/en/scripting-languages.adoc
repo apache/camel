@@ -3,8 +3,8 @@ Scripting Languages
 ~~~~~~~~~~~~~~~~~~~
 
 Camel supports a number of scripting languages which can be used to
-create an link:expression.html[Expression] or
-link:predicate.html[Predicate] via the standard
+create an Expression or
+Predicate via the standard
 http://jcp.org/en/jsr/detail?id=223[JSR 223] which is a standard part of
 Java 6.
 
@@ -69,7 +69,7 @@ Camels <<properties-component,Properties>> component from scripts. See
 further below for example.
 |=======================================================================
 
-See link:scripting-languages.html[Scripting Languages] for the list of
+See Scripting Languages for the list of
 languages with explicit DSL support.
 
 [[ScriptingLanguages-AdditionalargumentstoScriptingEngine]]
@@ -154,7 +154,7 @@ engine.
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,xml]
 ---------------------------------------
@@ -169,7 +169,7 @@ link:download.html[the download page for the latest versions]).
 See Also
 ~~~~~~~~
 
-* link:languages.html[Languages]
-* link:dsl.html[DSL]
-* link:xml-configuration.html[Xml Configuration]
+* Languages
+* DSL
+* Xml Configuration
 
