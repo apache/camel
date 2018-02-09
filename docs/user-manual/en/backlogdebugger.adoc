@@ -103,5 +103,5 @@ See Also
 
 * link:backlogtracer.html[BacklogTracer]
 * link:debugger.html[Debugger]
-* link:log.html[Log]
+* <<log-component,Log>>
 

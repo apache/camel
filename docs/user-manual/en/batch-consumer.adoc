@@ -13,19 +13,19 @@ that a consumer can implement to indicate it support batching as well.
 The following components supports link:batch-consumer.html[Batch
 Consumer] by its consumer:
 
-* link:atom.html[Atom]
+* <<atom-component,Atom>>
 * link:file2.html[File]
 * link:ftp2.html[FTP]
-* link:hbase.html[hbase]
-* link:ibatis.html[iBatis]
-* link:jpa.html[JPA]
-* link:jclouds.html[JCLOUDS]
-* link:mail.html[Mail]
-* link:mybatis.html[MyBatis]
-* link:snmp.html[SNMP]
-* link:sql-component.html[SQL]
-* link:aws-sqs.html[SQS]
-* link:aws-s3.html[S3]
+* <<hbase-component,hbase>>
+* <<ibatis-component,iBatis>>
+* <<jpa-component,JPA>>
+* <<jclouds-component,JCLOUDS>>
+* <<mail-component,Mail>>
+* <<mybatis-component,MyBatis>>
+* <<snmp-component,SNMP>>
+* <<sql-component,SQL>>
+* <<aws-sqs-component,SQS>>
+* <<aws-s3-component,S3>>
 
 [[BatchConsumer-ConsumerOptions]]
 Consumer Options

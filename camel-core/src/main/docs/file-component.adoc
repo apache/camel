@@ -184,7 +184,7 @@ perform the move operation and move the file to the `.done` sub-folder.
 
 The *move* and the *preMove* options are considered as a directory name
 (though if you use an expression such as link:file-language.html[File
-Language], or link:simple.html[Simple] then the result of the expression
+Language], or <<simple-language,Simple>> then the result of the expression
 evaluation is the file name to be used - eg if you set
 
 [source]
@@ -192,7 +192,7 @@ evaluation is the file name to be used - eg if you set
 move=../backup/copy-of-${file:name}
 ----
 
-then that's using the link:file-language.html[File Language] which we
+then that's using the <<file-language,File Language>> which we
 use return the file name to be used), which can be either relative or
 absolute. If relative, the directory is created as a sub-folder from
 within the folder where the file was consumed.
@@ -230,10 +230,10 @@ processed and after it's processed, it's moved to the `.done` folder.
 
 The *move* and *preMove* options
 are link:expression.html[Expression]-based, so we have the full power of
-the link:file-language.html[File Language] to do advanced configuration
+the <<file-language,File Language>> to do advanced configuration
 of the directory and name pattern. +
  Camel will, in fact, internally convert the directory name you enter
-into a link:file-language.html[File Language] expression. So when we
+into a <<file-language,File Language>> expression. So when we
 enter `move=.done` Camel will convert this into:
 `${``file:parent``}/.done/${``file:onlyname`}. This is only done if
 Camel detects that you have not provided a $\{ } in the option value
@@ -256,7 +256,7 @@ choice. For example to move the files in an error folder with a
 timestamp you can use
 `moveFailed=/error/${``file:name.noext``}-${date:now:yyyyMMddHHmmssSSS}.${``file:ext`}.
 
-See more examples at link:file-language.html[File Language]
+See more examples at <<file-language,File Language>>
 
 === Message Headers
 
@@ -270,7 +270,7 @@ The following headers are supported by this component:
 
 |`CamelFileName` |Specifies the name of the file to write (relative to the endpoint
 directory). This name can be a `String`; a `String` with a
-link:file-language.html[File Language] or link:simple.html[Simple]
+<<file-language,File Language>> or <<file-language,Simple>>
 expression; or an link:expression.html[Expression] object. If it's
 `null` then Camel will auto-generate a filename based on the message
 unique ID.
@@ -478,8 +478,8 @@ from("direct:report").to("file:target/reports/?fileName=report.txt");
 === Filename Expression
 
 Filename can be set either using the *expression* option or as a
-string-based link:file-language.html[File Language] expression in the
-`CamelFileName` header. See the link:file-language.html[File Language]
+string-based <<file-language,File Language>> expression in the
+`CamelFileName` header. See the <<file-language,File Language>>
 for syntax and samples.
 
 === Consuming files from folders where others drop files directly
@@ -761,7 +761,7 @@ today's date as a sub-folder name:
 from("file://inbox?move=backup/${date:now:yyyyMMdd}/${file:name}").to("...");
 ----
 
-See link:file-language.html[File Language] for more samples.
+See <<file-language,File Language>> for more samples.
 
 === Avoiding reading the same file more than once (idempotent consumer)
 
@@ -962,7 +962,7 @@ link:registry.html[Registry] for a bean with the ID, `mySorter`.
 ==== Sorting using sortBy
 
 Camel supports pluggable sorting strategies. This strategy it to use the
-link:file-language.html[File Language] to configure the sorting. The
+<<file-language,File Language>> to configure the sorting. The
 `sortBy` option is configured as follows:
 
 [source]
@@ -986,7 +986,7 @@ This will sort by file name, you can reverse the order by prefixing
 sortBy=reverse:file:name
 ----
 
-As we have the full power of link:file-language.html[File Language] we
+As we have the full power of <<file-language,File Language>> we
 can use some of the other parameters, so if we want to sort by file size
 we do:
 
@@ -1122,6 +1122,6 @@ problems.
 
 === See Also
 
-* link:file-language.html[File Language]
+* <<file-language,File Language>>
 * link:ftp2.html[FTP]
 * link:polling-consumer.html[Polling Consumer]

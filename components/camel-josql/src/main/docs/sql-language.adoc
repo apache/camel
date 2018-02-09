@@ -6,13 +6,13 @@
 The SQL support is added by http://josql.sourceforge.net/[JoSQL] and is
 primarily used for performing SQL queries on in-memory objects. If you
 prefer to perform actual database queries then check out the
-link:jpa.html[JPA] component.
+<<jpa-component,JPA>> component.
 
 *Looking for the SQL component*
 
-Camel has both a link:sql.html[SQL] language and a
-link:sql-component.html[SQL Component]. This page is about the SQL
-language. Click on link:sql-component.html[SQL Component] if you are
+Camel has both a <<sql-component,SQL>> language and a
+<<sql-component,SQL Component>>. This page is about the SQL
+language. Click on <<sql-component,SQL Component>> if you are
 looking for the component instead.
 
 To use SQL in your camel routes you need to add the a dependency on

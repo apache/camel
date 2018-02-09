@@ -3,13 +3,13 @@
 
 *Available as of Camel version 2.12*
 
-The *netty-http* component is an extension to link:netty.html[Netty]
-component to facilitiate HTTP transport with link:netty.html[Netty].
+The *netty-http* component is an extension to <<netty-component,Netty>>
+component to facilitiate HTTP transport with <<netty-component,Netty>>.
 
 This camel component supports both producer and consumer endpoints.
 
 WARNING: This component is deprecated. You should use
-link:netty4-http.html[Netty4 HTTP].
+<<netty4-http-component,Netty4 HTTP>>.
 
 INFO: *Stream*.
 Netty is stream based, which means the input it receives is submitted to
@@ -66,10 +66,10 @@ at the endpoint URI definition level (like `to` or `from` DSL elements).
 ### HTTP Options
 
 INFO: *A lot more options*. *Important:* This component inherits all the options from
-link:netty.html[Netty]. So make sure to look at the
-link:netty.html[Netty] documentation as well. +
- Notice that some options from link:netty.html[Netty] is not applicable
-when using this link:netty-http.html[Netty HTTP] component, such as
+<<netty-component,Netty>>. So make sure to look at the
+<<netty-component,Netty>> documentation as well. +
+ Notice that some options from <<netty-component,Netty>> is not applicable
+when using this <<netty-http-component,Netty HTTP>> component, such as
 options related to UDP transport.
 
 
@@ -241,7 +241,7 @@ success, and 500 for failure.
 |=======================================================================
 
 The following headers is provided as meta-data when a route starts from
-an link:netty-http.html[Netty HTTP] endpoint:
+an <<netty-http-component,Netty HTTP>> endpoint:
 
 The description in the table takes offset in a route having:
 `from("netty-http:http:0.0.0.0:8080/myapp")...`
@@ -291,7 +291,7 @@ org.jboss.netty.handler.codec.http.HttpRequest request = exchange.getIn(NettyHtt
 
 ### Examples
 
-In the route below we use link:netty-http.html[Netty HTTP] as a HTTP
+In the route below we use <<netty-http-component,Netty HTTP>> as a HTTP
 server, which returns back a hardcoded "Bye World" message.
 
 [source,java]
@@ -313,7 +313,7 @@ And we get back "Bye World" as the output.
 
 ### How do I let Netty match wildcards
 
-By default link:netty-http.html[Netty HTTP] will only match on exact
+By default <<netty-http-component,Netty HTTP>> will only match on exact
 uri's. But you can instruct Netty to match prefixes. For example
 
 [source,java]
@@ -321,7 +321,7 @@ uri's. But you can instruct Netty to match prefixes. For example
 from("netty-http:http://0.0.0.0:8123/foo").to("mock:foo");
 ----------------------------------------------------------
 
-In the route above link:netty-http.html[Netty HTTP] will only match if
+In the route above <<netty-http-component,Netty HTTP>> will only match if
 the uri is an exact match, so it will match if you enter +
  `http://0.0.0.0:8123/foo` but not match if you do
 `http://0.0.0.0:8123/foo/bar`.
@@ -345,7 +345,7 @@ from("netty-http:http://0.0.0.0:8123?matchOnUriPrefix=true").to("mock:foo");
 ### Using multiple routes with same port
 
 In the same link:camelcontext.html[CamelContext] you can have multiple
-routes from link:netty-http.html[Netty HTTP] that shares the same port
+routes from <<netty-http-component,Netty HTTP>> that shares the same port
 (eg a `org.jboss.netty.bootstrap.ServerBootstrap` instance). Doing this
 requires a number of bootstrap options to be identical in the routes, as
 the routes will share the same
@@ -401,7 +401,7 @@ By configuring the common server bootstrap option in an single instance
 of a
 `org.apache.camel.component.netty.NettyServerBootstrapConfiguration`
 type, we can use the `bootstrapConfiguration` option on the
-link:netty-http.html[Netty HTTP] consumers to refer and reuse the same
+<<netty-http-component,Netty HTTP>> consumers to refer and reuse the same
 options across all consumers.
 
 [source,xml]
@@ -440,7 +440,7 @@ for more details and example how to do that.
 
 ### Using HTTP Basic Authentication
 
-The link:netty-http.html[Netty HTTP] consumer supports HTTP basic
+The <<netty-http-component,Netty HTTP>> consumer supports HTTP basic
 authentication by specifying the security realm name to use, as shown
 below
 
@@ -520,6 +520,6 @@ below:
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
 
-* link:netty.html[Netty]
+* <<netty-component,Netty>>
 * link:netty-http-server-example.html[Netty HTTP Server Example]
-* link:jetty.html[Jetty]
+* <<jetty-component,Jetty>>

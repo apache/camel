@@ -4,7 +4,7 @@
 *Available as of Camel version 1.4*
 
 The *sql:* component allows you to work with databases using JDBC
-queries. The difference between this component and link:jdbc.html[JDBC]
+queries. The difference between this component and <<jdbc-component,JDBC>>
 component is that in case of SQL the query is a property of the endpoint
 and it uses message payload as parameters passed to the query.
 
@@ -780,4 +780,4 @@ You should also include the specific database driver, if needed.
 
 link:sql-stored-procedure.html[SQL Stored Procedure]
 
-link:jdbc.html[JDBC]
+<<jdbc-component,JDBC>>

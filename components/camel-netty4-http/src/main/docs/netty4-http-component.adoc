@@ -3,8 +3,8 @@
 
 *Available as of Camel version 2.14*
 
-The *netty4-http* component is an extension to link:netty4.html[Netty4]
-component to facilitiate HTTP transport with link:netty4.html[Netty4].
+The *netty4-http* component is an extension to <<netty4-component,Netty4>>
+component to facilitiate HTTP transport with <<netty4-component,Netty4>>.
 
 This camel component supports both producer and consumer endpoints.
 
@@ -65,9 +65,9 @@ at the endpoint URI definition level (like `to` or `from` DSL elements).
 
 
 INFO: *A lot more options*. *Important:* This component inherits all the options from
-link:netty4.html[Netty4]. So make sure to look at
-the link:netty4.html[Netty4] documentation as well. +
- Notice that some options from link:netty4.html[Netty4] is not
+<<netty4-component,Netty4>>. So make sure to look at
+the <<netty4-component,Netty4>> documentation as well. +
+ Notice that some options from <<netty4-component,Netty4>> is not
 applicable when using this Netty4 HTTP component, such as options
 related to UDP transport.
 
@@ -524,6 +524,6 @@ below:
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
 
-* link:netty.html[Netty]
+* <<netty-component,Netty>>
 * link:netty-http-server-example.html[Netty HTTP Server Example]
-* link:jetty.html[Jetty]
+* <<jetty-component,Jetty>>

@@ -264,7 +264,7 @@ For instance, consider that you need to limit the API usage of Salesforce so tha
 other routes. The body of output message contains an instance of
 `org.apache.camel.component.salesforce.api.dto.Limits` object that can be used in conjunction with
 link:content-based-router.html[Content Based Router] and link:content-based-router.html[Content Based Router] and 
-link:spel-language.html[Spring Expression Language (SpEL)] to choose when to perform queries.
+<<spel-language,Spring Expression Language (SpEL)>> to choose when to perform queries.
 
 Notice how multiplying `1.0` with the integer value held in `body.dailyApiRequests.remaining` makes the expression
 evaluate as with floating point arithmetic, without it - it would end up making integral division which would result
@@ -539,7 +539,7 @@ final SObjectCompositeResult contactCreationResult = results.stream().filter(r -
 ### Camel Salesforce Maven Plugin
 
 This Maven plugin generates DTOs for the Camel
-link:salesforce.html[Salesforce].
+<<salesforce-component,Salesforce>>.
 
 ### Options
 

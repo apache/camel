@@ -67,8 +67,8 @@ to use the annotations for routing and messaging.
 Bean Component
 ^^^^^^^^^^^^^^
 
-The link:bean.html[Bean] component allows one to invoke a particular
-method. Alternately the link:bean.html[Bean] component supports the
+The <<bean-component,Bean>> component allows one to invoke a particular
+method. Alternately the <<bean-component,Bean>> component supports the
 creation of a proxy via
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/bean/ProxyHelper.html[ProxyHelper]
 to a Java interface; which the implementation just sends a message
@@ -94,7 +94,7 @@ headers and so forth.
 *Bean binding*
 
 Whenever Camel invokes a bean method via one of the above methods
-(link:bean.html[Bean] component, link:spring-remoting.html[Spring
+(<<bean-component,Bean>> component, link:spring-remoting.html[Spring
 Remoting] or link:pojo-consuming.html[POJO Consuming]) then the
 *link:bean-binding.html[Bean Binding]* mechanism is used to figure out
 what method to use (if it is not explicit) and how to bind the

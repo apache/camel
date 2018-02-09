@@ -403,7 +403,7 @@ val myProcessor = (exchange: Exchange) => {
 ----------------------------------------------------------------------------------------------------------------
 
 Off course, you can also use any other Camel component (e.g.
-link:velocity.html[Velocity]) to enrich the content and add it to a
+<<velocity-component,Velocity>>) to enrich the content and add it to a
 pipeline
 
 

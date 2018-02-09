@@ -10,6 +10,6 @@ provide connectivity to Azure services from Camel.
 |=======================================================================
 |Azure Service |Camel Component |Camel Version | Component Description
 
-|https://azure.microsoft.com/services/storage/blobs[Storage Blob Service] |link:azure-blob.html[Azure-Blob] |2.9.0 |Supports storing and retrieving of blobs
-|https://azure.microsoft.com/services/storage/queues[Storage Queue Service] |link:azure-queue.html[Azure-Queue] |2.9.0 |Supports storing and retrieving of messages in the queues
+|https://azure.microsoft.com/services/storage/blobs[Storage Blob Service] |<<azure-blob-component,Azure-Blob>> |2.9.0 |Supports storing and retrieving of blobs
+|https://azure.microsoft.com/services/storage/queues[Storage Queue Service] |<<azure-queue-component,Azure-Queue>> |2.9.0 |Supports storing and retrieving of messages in the queues
 |=======================================================================

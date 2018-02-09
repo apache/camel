@@ -58,7 +58,7 @@ with the following path and query parameters:
 
 === Samples
 
-For example to use the link:jaxb.html[JAXB] link:data-format.html[Data
+For example to use the <<jaxb-dataformat,JAXB>> link:data-format.html[Data
 Format] we can do as follows:
 
 [source,java]

@@ -5,8 +5,8 @@
 
 
 link:testing.html[Testing] of distributed and asynchronous processing is
-notoriously difficult. The link:mock.html[Mock], link:test.html[Test]
-and link:dataset.html[DataSet] endpoints work great with the
+notoriously difficult. The <<mock-component,Mock>>, <<mock-component,Test>>
+and <<dataset-component,DataSet>> endpoints work great with the
 link:testing.html[Camel Testing Framework] to simplify your unit and
 integration testing using
 link:enterprise-integration-patterns.html[Enterprise Integration
@@ -29,16 +29,16 @@ link:expression.html[Expression] to create an order testing function,
 * Messages arrive match some kind of link:predicate.html[Predicate] such
 as that specific headers have certain values, or that parts of the
 messages match some predicate, such as by evaluating an
-link:xpath.html[XPath] or link:xquery.html[XQuery]
+<<xpath-language,XPath>> or <<xpath-language,XQuery>>
 link:expression.html[Expression].
 
 [NOTE]
-There is also the link:test.html[Test endpoint] which is a
+There is also the <<test-component,Test endpoint>> which is a
 Mock endpoint, but which uses a second endpoint to provide the list of
 expected message bodies and automatically sets up the Mock endpoint
 assertions. In other words, it's a Mock endpoint that automatically sets
 up its assertions from some sample messages in a link:file2.html[File]
-or link:jpa.html[database], for example.
+or <<jpa-component,database>>, for example.
 
 [CAUTION]
 *Mock endpoints keep received Exchanges in memory indefinitely.* +
@@ -244,7 +244,7 @@ Camel routes.
 
 [NOTE]
 *How it works* The endpoints are still in action. What happens differently
-is that a link:mock.html[Mock] endpoint is injected and receives the
+is that a <<mock-component,Mock>> endpoint is injected and receives the
 message first and then delegates the message to the target endpoint. You
 can view this as a kind of intercept and delegate or endpoint listener.
 
@@ -351,7 +351,7 @@ include::../../../../components/camel-spring/src/test/resources/org/apache/camel
 Then in your unit test you load the new XML file
 (`test-camel-route.xml`) instead of `camel-route.xml`.
 
-To only mock all link:log.html[Log] endpoints you can define the pattern
+To only mock all <<log-component,Log>> endpoints you can define the pattern
 in the constructor for the bean:
 
 [source,xml]
@@ -391,7 +391,7 @@ include::../../../../components/camel-test/src/test/java/org/apache/camel/test/p
 
 *Available as of Camel 2.10*
 
-The link:mock.html[Mock] endpoints will by default keep a copy of every
+The <<mock-component,Mock>> endpoints will by default keep a copy of every
 link:exchange.html[Exchange] that it received. So if you test with a lot
 of messages, then it will consume memory. +
 From Camel 2.10 onwards we have introduced two options `retainFirst` and
@@ -426,7 +426,7 @@ expectations on the 10 retained messages.
 
 *Available as of Camel 2.7*
 
-The link:mock.html[Mock] endpoint stores the arrival time of the message
+The <<mock-component,Mock>> endpoint stores the arrival time of the message
 as a property on the link:exchange.html[Exchange].
 
 [source,java]
@@ -437,7 +437,7 @@ Date time = exchange.getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
 You can use this information to know when the message arrived on the
 mock. But it also provides foundation to know the time interval between
 the previous and next message arrived on the mock. You can use this to
-set expectations using the `arrives` DSL on the link:mock.html[Mock]
+set expectations using the `arrives` DSL on the <<mock-component,Mock>>
 endpoint.
 
 For example to say that the first message should arrive between 0-2

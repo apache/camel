@@ -174,4 +174,4 @@ return firstEntry.getTitle().contains("Camel");
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
 
-* link:atom.html[Atom]
+* <<atom-component,Atom>>

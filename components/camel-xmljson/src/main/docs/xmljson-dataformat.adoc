@@ -252,7 +252,7 @@ That's why the elements are in a different order in the output XML.
 
 ### Dependencies
 
-To use the link:xmljson.html[XmlJson] dataformat in your camel routes
+To use the <<xmljson-dataformat,XmlJson>> dataformat in your camel routes
 you need to add the following dependency to your pom:
 
 [source,xml]

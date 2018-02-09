@@ -9,11 +9,11 @@ consumers when a producer sends a message exchange. +
 camel context.
 
 TIP: *Asynchronous*
-The link:seda.html[SEDA] component provides asynchronous invocation of
+The <<seda-component,SEDA>> component provides asynchronous invocation of
 any consumers when a producer sends a message exchange.
 
 TIP: *Connection to other camel contexts*
-The link:vm.html[VM] component provides connections between Camel
+The <<vm-component,VM>> component provides connections between Camel
 contexts as long they run in the same *JVM*.
 
 === URI format
@@ -112,10 +112,10 @@ And the sample using spring DSL:
 </route>
 ----
 
-See also samples from the link:seda.html[SEDA] component, how they can
+See also samples from the <<seda-component,SEDA>> component, how they can
 be used together.
 
 === See Also
 
-* link:seda.html[SEDA]
-* link:vm.html[VM]
+* <<seda-component,SEDA>>
+* <<vm-component,VM>>

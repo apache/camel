@@ -12,8 +12,8 @@ implement this pattern using the underlying transport or protocols.
 image:http://www.enterpriseintegrationpatterns.com/img/EventMessageSolution.gif[image]
 
 The default behaviour of many link:components.html[Components] is InOnly
-such as for link:jms.html[JMS], link:file2.html[File] or
-link:seda.html[SEDA]
+such as for <<jms-component,JMS>>, <<jms-component,File>> or
+<<seda-component,SEDA>>
 
 TIP: See the related link:request-reply.html[Request Reply] message.
 

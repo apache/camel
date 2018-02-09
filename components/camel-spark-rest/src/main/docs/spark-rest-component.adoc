@@ -188,4 +188,4 @@ containers.
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
 
-* link:rest.html[Rest]
+* <<rest-component,Rest>>

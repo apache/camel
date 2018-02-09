@@ -19,7 +19,7 @@ for this component:
 </dependency>
 -----------------------------------------------------------------------
 
-For more information you can look at link:ftp.html[FTP component]
+For more information you can look at <<ftp-component,FTP component>>
 
 ### URI Options
 

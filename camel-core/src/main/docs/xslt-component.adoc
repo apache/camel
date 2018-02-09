@@ -48,7 +48,7 @@ for this component:
 </dependency>
 ----
 
-From *Camel 2.9* onwards the link:xslt.html[XSLT] component is provided
+From *Camel 2.9* onwards the <<xslt-component,XSLT>> component is provided
 directly in the camel-core.
 
 === Options

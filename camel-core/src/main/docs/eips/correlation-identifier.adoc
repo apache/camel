@@ -18,7 +18,7 @@ image:http://www.enterpriseintegrationpatterns.com/img/CorrelationIdentifierSolu
 The use of a Correlation Identifier is key to working with the
 link:bam.html[Camel Business Activity Monitoring Framework] and can also
 be highly useful when testing with simulation or canned data such as
-with the link:mock.html[Mock testing framework]
+with the <<mock-component,Mock testing framework>>
 
 Some link:eip.html[EIP] patterns will spin off a sub message, and in
 those cases, Camel will add a correlation id on the
@@ -31,7 +31,7 @@ Tap] EIP does this.
 
 The following example demonstrates using the Camel JMSMessageID as the
 Correlation Identifier within a request/reply pattern in
-the link:jms.html[JMS] component
+the <<jms-component,JMS>> component
 
 === Samples
 
