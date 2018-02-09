@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Test;
 
@@ -43,9 +43,9 @@ public class UndertowWsTwoRoutesToSameEndpointTest extends BaseUndertowTest {
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/bar").execute(
                 new WebSocketUpgradeHandler.Builder()
-                        .addWebSocketListener(new WebSocketTextListener() {
+                        .addWebSocketListener(new WebSocketListener() {
                             @Override
-                            public void onMessage(String message) {
+                            public void onTextFrame(String message, boolean finalFragment, int rsv) {
                                 received.add(message);
                                 log.info("received --> " + message);
                                 latch.countDown();
@@ -56,7 +56,7 @@ public class UndertowWsTwoRoutesToSameEndpointTest extends BaseUndertowTest {
                             }
 
                             @Override
-                            public void onClose(WebSocket websocket) {
+                            public void onClose(WebSocket websocket, int code, String reason) {
                             }
 
                             @Override
@@ -65,7 +65,7 @@ public class UndertowWsTwoRoutesToSameEndpointTest extends BaseUndertowTest {
                             }
                         }).build()).get();
 
-        websocket.sendMessage("Beer");
+        websocket.sendTextFrame("Beer");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertEquals(2, received.size());
@@ -74,7 +74,7 @@ public class UndertowWsTwoRoutesToSameEndpointTest extends BaseUndertowTest {
         assertTrue(received.contains("The bar has Beer"));
         assertTrue(received.contains("Broadcasting to Bar"));
 
-        websocket.close();
+        websocket.sendCloseFrame();
         c.close();
     }
 

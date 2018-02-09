@@ -40,7 +40,7 @@ import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.converter.IOConverter;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.ws.DefaultWebSocketListener;
+import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocket;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Assert;
@@ -56,11 +56,19 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/app1")
-                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new DefaultWebSocketListener() {
+                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
 
                     @Override
-                    public void onMessage(String message) {
+                    public void onTextFrame(String message, boolean finalFragment, int rsv) {
                         System.out.println("got message " + message);
+                    }
+
+                    @Override
+                    public void onOpen(WebSocket webSocket) {
+                    }
+
+                    @Override
+                    public void onClose(WebSocket webSocket, int code, String reason) {
                     }
 
                     @Override
@@ -73,12 +81,12 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         MockEndpoint result = getMockEndpoint("mock:result1");
         result.expectedBodiesReceived("Test");
 
-        websocket.sendMessage("Test");
+        websocket.sendTextFrame("Test");
 
         result.await(60, TimeUnit.SECONDS);
         result.assertIsSatisfied();
 
-        websocket.close();
+        websocket.sendCloseFrame();
         c.close();
     }
 
@@ -87,11 +95,19 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/app2")
-                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new DefaultWebSocketListener() {
+                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
 
                     @Override
-                    public void onMessage(String message) {
+                    public void onTextFrame(String message, boolean finalFragment, int rsv) {
                         System.out.println("got message " + message);
+                    }
+
+                    @Override
+                    public void onOpen(WebSocket webSocket) {
+                    }
+
+                    @Override
+                    public void onClose(WebSocket webSocket, int code, String reason) {
                     }
 
                     @Override
@@ -104,7 +120,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         MockEndpoint result = getMockEndpoint("mock:result2");
         result.expectedMessageCount(1);
 
-        websocket.sendMessage("Test");
+        websocket.sendTextFrame("Test");
 
         result.await(60, TimeUnit.SECONDS);
         List<Exchange> exchanges = result.getReceivedExchanges();
@@ -114,7 +130,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         Reader r = (Reader) body;
         Assert.assertEquals("Test", IOConverter.toString(r));
 
-        websocket.close();
+        websocket.sendCloseFrame();
         c.close();
     }
 
@@ -123,7 +139,15 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/app1")
-                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new DefaultWebSocketListener() {
+                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
+
+                    @Override
+                    public void onOpen(WebSocket webSocket) {
+                    }
+
+                    @Override
+                    public void onClose(WebSocket webSocket, int code, String reason) {
+                    }
 
                     @Override
                     public void onError(Throwable t) {
@@ -131,7 +155,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
                     }
 
                     @Override
-                    public void onMessage(byte[] message) {
+                    public void onBinaryFrame(byte[] message, boolean finalFragment, int rsv) {
                         System.out.println("got byte[] message");
                     }
                 }).build()).get();
@@ -140,11 +164,11 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         final byte[] testmessage = "Test".getBytes("utf-8");
         result.expectedBodiesReceived(testmessage);
 
-        websocket.sendMessage(testmessage);
+        websocket.sendBinaryFrame(testmessage);
 
         result.assertIsSatisfied();
 
-        websocket.close();
+        websocket.sendCloseFrame();
         c.close();
     }
 
@@ -153,11 +177,19 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/app2")
-                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new DefaultWebSocketListener() {
+                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
 
                     @Override
-                    public void onMessage(byte[] message) {
+                    public void onBinaryFrame(byte[] message, boolean finalFragment, int rsv) {
                         System.out.println("got message " + message);
+                    }
+
+                    @Override
+                    public void onOpen(WebSocket webSocket) {
+                    }
+
+                    @Override
+                    public void onClose(WebSocket webSocket, int code, String reason) {
                     }
 
                     @Override
@@ -171,7 +203,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         result.expectedMessageCount(1);
 
         final byte[] testmessage = "Test".getBytes("utf-8");
-        websocket.sendMessage(testmessage);
+        websocket.sendBinaryFrame(testmessage);
 
         result.await(60, TimeUnit.SECONDS);
         List<Exchange> exchanges = result.getReceivedExchanges();
@@ -181,7 +213,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         InputStream in = (InputStream) body;
         Assert.assertArrayEquals(testmessage, IOConverter.toBytes(in));
 
-        websocket.close();
+        websocket.sendCloseFrame();
         c.close();
     }
 
@@ -190,11 +222,19 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         AsyncHttpClient c1 = new DefaultAsyncHttpClient();
 
         WebSocket websocket1 = c1.prepareGet("ws://localhost:" + getPort() + "/app1")
-                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new DefaultWebSocketListener() {
+                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
 
                     @Override
-                    public void onMessage(String message) {
+                    public void onTextFrame(String message, boolean finalFragment, int rsv) {
                         System.out.println("got message " + message);
+                    }
+
+                    @Override
+                    public void onOpen(WebSocket webSocket) {
+                    }
+
+                    @Override
+                    public void onClose(WebSocket webSocket, int code, String reason) {
                     }
 
                     @Override
@@ -206,11 +246,19 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         AsyncHttpClient c2 = new DefaultAsyncHttpClient();
 
         WebSocket websocket2 = c2.prepareGet("ws://localhost:" + getPort() + "/app1")
-                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new DefaultWebSocketListener() {
+                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
 
                     @Override
-                    public void onMessage(String message) {
+                    public void onTextFrame(String message, boolean finalFragment, int rsv) {
                         System.out.println("got message " + message);
+                    }
+
+                    @Override
+                    public void onOpen(WebSocket webSocket) {
+                    }
+
+                    @Override
+                    public void onClose(WebSocket webSocket, int code, String reason) {
                     }
 
                     @Override
@@ -223,8 +271,8 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         MockEndpoint result = getMockEndpoint("mock:result1");
         result.expectedMessageCount(2);
 
-        websocket1.sendMessage("Test1");
-        websocket2.sendMessage("Test2");
+        websocket1.sendTextFrame("Test1");
+        websocket2.sendTextFrame("Test2");
 
         result.await(60, TimeUnit.SECONDS);
         result.assertIsSatisfied();
@@ -234,8 +282,8 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         actual.add(exchanges.get(1).getIn().getBody(String.class));
         Assert.assertEquals(new HashSet<String>(Arrays.asList("Test1", "Test2")), actual);
 
-        websocket1.close();
-        websocket2.close();
+        websocket1.sendCloseFrame();
+        websocket2.sendCloseFrame();
         c1.close();
         c2.close();
     }
