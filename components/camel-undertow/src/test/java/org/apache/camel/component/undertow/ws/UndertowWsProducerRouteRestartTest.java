@@ -29,7 +29,7 @@ import org.apache.camel.component.undertow.UndertowConstants;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Test;
 
@@ -69,9 +69,9 @@ public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
         AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/shop")
-                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketTextListener() {
-                    @Override
-                    public void onMessage(String message) {
+                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
+					@Override
+                    public void onTextFrame(String message, boolean finalFragment, int rsv) {
                         received.add(message);
                         log.info("received --> " + message);
                         latch.countDown();
@@ -82,7 +82,7 @@ public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
                     }
 
                     @Override
-                    public void onClose(WebSocket websocket) {
+                    public void onClose(WebSocket websocket, int code, String reason) {
                     }
 
                     @Override
@@ -101,7 +101,7 @@ public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
         assertTrue(r instanceof String);
         assertEquals("Beer on stock at Apache Mall", r);
 
-        websocket.close();
+        websocket.sendCloseFrame();
         c.close();
 
     }

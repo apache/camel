@@ -4,6 +4,7 @@
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
+
  * the License.  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
@@ -30,7 +31,7 @@ import org.apache.camel.component.undertow.UndertowConstants;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Test;
 
@@ -47,10 +48,10 @@ public class UndertowWsProducerRouteTest extends BaseUndertowTest {
         final List<Object> received = Collections.synchronizedList(new ArrayList<Object>());
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/shop")
-                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketTextListener() {
+                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
 
                     @Override
-                    public void onMessage(String message) {
+                    public void onTextFrame(String message, boolean finalFragment, int rsv) {
                         received.add(message);
                         log.info("received --> " + message);
                         latch.countDown();
@@ -61,7 +62,7 @@ public class UndertowWsProducerRouteTest extends BaseUndertowTest {
                     }
 
                     @Override
-                    public void onClose(WebSocket websocket) {
+                    public void onClose(WebSocket websocket, int code, String reason) {
                     }
 
                     @Override
@@ -80,7 +81,7 @@ public class UndertowWsProducerRouteTest extends BaseUndertowTest {
         assertTrue(r instanceof String);
         assertEquals("Beer on stock at Apache Mall", r);
 
-        websocket.close();
+        websocket.sendCloseFrame();
         c.close();
     }
 

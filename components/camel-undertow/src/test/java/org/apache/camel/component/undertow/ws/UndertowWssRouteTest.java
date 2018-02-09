@@ -44,7 +44,7 @@ import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -105,7 +105,7 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
                 .trustManager(InsecureTrustManagerFactory.INSTANCE)
                 .build();
         builder.setSslContext(sslContext);
-        builder.setAcceptAnyCertificate(true);
+        builder.setUseInsecureTrustManager(true);
         config = builder.build();
         c = new DefaultAsyncHttpClient(config);
 
@@ -120,9 +120,9 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
         AsyncHttpClient c = createAsyncHttpSSLClient();
         WebSocket websocket = c.prepareGet("wss://localhost:" + getPort() + "/test").execute(
                 new WebSocketUpgradeHandler.Builder()
-                        .addWebSocketListener(new WebSocketTextListener() {
+                        .addWebSocketListener(new WebSocketListener() {
                             @Override
-                            public void onMessage(String message) {
+                            public void onTextFrame(String message, boolean finalFragment, int rsv) {
                                 received.add(message);
                                 log.info("received --> " + message);
                                 latch.countDown();
@@ -133,7 +133,7 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
                             }
 
                             @Override
-                            public void onClose(WebSocket websocket) {
+                            public void onClose(WebSocket websocket, int code, String reason) {
                             }
 
                             @Override
@@ -144,7 +144,7 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
 
         getMockEndpoint("mock:client").expectedBodiesReceived("Hello from WS client");
 
-        websocket.sendMessage("Hello from WS client");
+        websocket.sendTextFrame("Hello from WS client");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();
@@ -154,7 +154,7 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
             assertEquals(">> Welcome on board!", received.get(i));
         }
 
-        websocket.close();
+        websocket.sendCloseFrame();
         c.close();
     }
 
