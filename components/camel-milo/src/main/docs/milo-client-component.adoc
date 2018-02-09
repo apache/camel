@@ -95,7 +95,7 @@ with the following path and query parameters:
 | *endpointUri* | *Required* The OPC UA server endpoint |  | String
 |===
 
-==== Query Parameters (23 parameters):
+==== Query Parameters (22 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -120,7 +120,6 @@ with the following path and query parameters:
 | *maxResponseMessageSize* (client) | The maximum number of bytes a response message may have |  | Long
 | *productUri* (client) | The product URI | http://camel.apache.org/EclipseMilo | String
 | *requestTimeout* (client) | Request timeout in milliseconds |  | Long
-| *secureChannel ReauthenticationEnabled* (client) | Whether secure channel re-authentication is enabled |  | Boolean
 | *sessionName* (client) | Session name |  | String
 | *sessionTimeout* (client) | Session timeout in milliseconds |  | Long
 |===

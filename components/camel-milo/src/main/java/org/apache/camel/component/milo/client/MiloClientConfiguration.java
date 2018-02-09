@@ -65,9 +65,6 @@ public class MiloClientConfiguration implements Cloneable {
     private Long maxResponseMessageSize;
 
     @UriParam(label = "client")
-    private Boolean secureChannelReauthenticationEnabled;
-
-    @UriParam(label = "client")
     private URL keyStoreUrl;
 
     @UriParam(label = "client")
@@ -209,17 +206,6 @@ public class MiloClientConfiguration implements Cloneable {
 
     public Long getMaxResponseMessageSize() {
         return this.maxResponseMessageSize;
-    }
-
-    /**
-     * Whether secure channel re-authentication is enabled
-     */
-    public void setSecureChannelReauthenticationEnabled(final Boolean secureChannelReauthenticationEnabled) {
-        this.secureChannelReauthenticationEnabled = secureChannelReauthenticationEnabled;
-    }
-
-    public Boolean getSecureChannelReauthenticationEnabled() {
-        return this.secureChannelReauthenticationEnabled;
     }
 
     /**

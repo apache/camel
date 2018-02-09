@@ -105,10 +105,6 @@ public class MiloClientComponent extends DefaultComponent {
             builder.setMaxResponseMessageSize(UInteger.valueOf(configuration.getMaxPendingPublishRequests()));
         }
 
-        if (configuration.getSecureChannelReauthenticationEnabled() != null) {
-            builder.setSecureChannelReauthenticationEnabled(configuration.getSecureChannelReauthenticationEnabled());
-        }
-
         if (configuration.getKeyStoreUrl() != null) {
             setKey(configuration, builder);
         }

@@ -137,7 +137,7 @@ public class CamelNamespace implements Namespace {
             final DataValue value;
 
             if (node != null) {
-                value = node.readAttribute(new AttributeContext(context), id.getAttributeId(), timestamps, id.getIndexRange());
+                value = node.readAttribute(new AttributeContext(context), id.getAttributeId(), timestamps, id.getIndexRange(), null);
             } else {
                 value = new DataValue(StatusCodes.Bad_NodeIdUnknown);
             }
