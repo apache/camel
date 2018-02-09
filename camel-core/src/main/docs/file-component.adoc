@@ -183,8 +183,7 @@ bean completes, and thus the route is completed, the file consumer will
 perform the move operation and move the file to the `.done` sub-folder.
 
 The *move* and the *preMove* options are considered as a directory name
-(though if you use an expression such as link:file-language.html[File
-Language], or <<simple-language,Simple>> then the result of the expression
+(though if you use an expression such as <<file-language,File Language>>, or <<simple-language,Simple>> then the result of the expression
 evaluation is the file name to be used - eg if you set
 
 [source]
@@ -1030,8 +1029,7 @@ sortBy=file:modified;file:name
 Now there is an issue here, can you spot it? Well the modified timestamp
 of the file is too fine as it will be in milliseconds, but what if we
 want to sort by date only and then subgroup by name? +
- Well as we have the true power of link:file-language.html[File
-Language] we can use its date command that supports patterns. So this
+ Well as we have the true power of <<file-language,File Language>> we can use its date command that supports patterns. So this
 can be solved as:
 
 [source]

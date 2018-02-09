@@ -253,8 +253,7 @@ Spring XML, where we can route based on file extensions as shown below:
 ----
 
 If you use the `fileName` option on the link:file2.html[File] endpoint
-to set a dynamic filename using the link:file-language.html[File
-Language] then make sure you  +
+to set a dynamic filename using the <<file-language,File Language>> then make sure you  +
  use the alternative syntax (available from Camel 2.5 onwards) to avoid
 clashing with Springs `PropertyPlaceholderConfigurer`.
 
