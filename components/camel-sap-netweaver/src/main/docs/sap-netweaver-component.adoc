@@ -188,4 +188,4 @@ Destination airport: SFO
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
 
-* link:http.html[HTTP]
+* <<http-component,HTTP>>

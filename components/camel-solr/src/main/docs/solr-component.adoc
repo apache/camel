@@ -186,7 +186,7 @@ delete routes and then call the commit route.
 ### Querying Solr
 
 Currently, this component doesn't support querying data natively (may be
-added later). For now, you can query Solr using link:http.html[HTTP] as
+added later). For now, you can query Solr using <<http-component,HTTP>> as
 follows:
 
 [source,java]

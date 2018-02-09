@@ -245,4 +245,4 @@ containers.
 === See Also
 
 * link:rest-dsl.html[Rest DSL]
-* link:servlet.html[SERVLET]
+* <<servlet-component,SERVLET>>

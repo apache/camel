@@ -18,7 +18,7 @@ the Message link:exchange.html[Exchange] indicating if a message
 exchange is a one way link:event-message.html[Event Message] (InOnly) or
 a link:request-reply.html[Request Reply] message exchange (InOut).
 
-For example to override the default pattern on a link:jms.html[JMS]
+For example to override the default pattern on a <<jms-component,JMS>>
 endpoint you could use this URI
 
 [source,java]

@@ -5,7 +5,7 @@
 
 The *scheduler:* component is used to generate message exchanges when a
 scheduler fires. This component is similar to the
- link:timer.html[Timer] component, but it offers more functionality in
+ <<timer-component,Timer>> component, but it offers more functionality in
 terms of scheduling. Also this component uses
 JDK `ScheduledExecutorService`. Where as the timer uses a JDK `Timer`.
 
@@ -158,5 +158,5 @@ exchange.
 
 === See Also
 
-* link:timer.html[Timer]
-* link:quartz.html[Quartz]
+* <<timer-component,Timer>>
+* <<quartz-component,Quartz>>

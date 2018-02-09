@@ -4,7 +4,7 @@
 *Available as of Camel version 2.16*
 
 The *elsql:* component is an extension to the existing
-link:sql-component.html[SQL Component] that uses
+<<sql-component,SQL Component>> that uses
 https://github.com/OpenGamma/ElSql[ElSql] to define the SQL queries. 
 
 This component uses `spring-jdbc` behind the scenes for the actual SQL
@@ -40,7 +40,7 @@ The parameters to the SQL queries are named parameters in the elsql
 mapping files, and maps to corresponding keys from the Camel message, in
 the given precedence:
 
-1. *Camel 2.16.1:* from message body if link:simple.html[Simple]
+1. *Camel 2.16.1:* from message body if <<simple-language,Simple>>
 expression.
 
 2. from message body if its a `java.util.Map`3. from message headers
@@ -227,6 +227,6 @@ assumes to have `getLicense` and `getMinimum` methods:
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
 
-* link:sql-component.html[SQL Component]
-* link:mybatis.html[MyBatis]
-* link:jdbc.html[JDBC]
+* <<sql-component,SQL Component>>
+* <<mybatis-component,MyBatis>>
+* <<jdbc-component,JDBC>>

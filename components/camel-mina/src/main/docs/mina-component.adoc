@@ -6,7 +6,7 @@
 *Deprecated*
 
 WARNING: This component is deprecated as the Apache Mina 1.x project is EOL.
-Instead use link:mina2.html[MINA2] or link:netty.html[Netty] instead.
+Instead use <<mina2-component,MINA2>> or <<mina2-component,Netty>> instead.
 
 The *mina:* component is a transport for working with
 http://mina.apache.org/[Apache MINA]
@@ -142,7 +142,7 @@ documentation] how to write your own codec. To use your custom codec
 with `camel-mina`, you should register your codec in the
 link:registry.html[Registry]; for example, by creating a bean in the
 Spring XML file. Then use the `codec` option to specify the bean ID of
-your codec. See link:hl7.html[HL7] that has a custom codec.
+your codec. See <<hl7-dataformat,HL7>> that has a custom codec.
 
 ### Sample with sync=false
 
@@ -167,7 +167,7 @@ fact, something we have dynamically set in our processor code logic.
 
 ### Sample with Spring DSL
 
-Spring DSL can, of course, also be used for link:mina.html[MINA]. In the
+Spring DSL can, of course, also be used for <<mina-component,MINA>>. In the
 sample below we expose a TCP server on port 5555:
 
 [source,xml]
@@ -336,5 +336,5 @@ Then, you can configure your endpoint using Spring DSL:
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
 
-* link:mina2.html[MINA2]
-* link:netty.html[Netty]
+* <<mina2-component,MINA2>>
+* <<netty-component,Netty>>

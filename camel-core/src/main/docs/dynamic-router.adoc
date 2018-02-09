@@ -60,7 +60,7 @@ from("direct:start")
     .dynamicRouter(method(DynamicRouterTest.class, "slip"));
 ----
 
-Which will leverage a link:bean.html[Bean] to compute the slip
+Which will leverage a <<bean-component,Bean>> to compute the slip
 _on-the-fly_, which could be implemented as follows:
 
 [source,java]
@@ -139,7 +139,7 @@ link:exchange.html[Exchange] are. Although there was a bug in the method
 call expression, see the warning below.
 
 WARNING:*Using beans to store state*
-Mind that in Camel 2.9.2 or older, when using a link:bean.html[Bean] the
+Mind that in Camel 2.9.2 or older, when using a <<bean-component,Bean>> the
 state is not propagated, so you will have to use a
 link:processor.html[Processor] instead. This is fixed in Camel 2.9.3
 onwards.
@@ -198,12 +198,12 @@ In the above we can use the
 link:parameter-binding-annotations.html[Parameter Binding Annotations]
 to bind different parts of the link:message.html[Message] to method
 parameters or use an link:expression.html[Expression] such as using
-link:xpath.html[XPath] or link:xquery.html[XQuery].
+<<xpath-language,XPath>> or <<xpath-language,XQuery>>.
 
 The method can be invoked in a number of ways as described in the
 link:bean-integration.html[Bean Integration] such as
 
 * link:pojo-producing.html[POJO Producing]
 * link:spring-remoting.html[Spring Remoting]
-* link:bean.html[Bean] component
+* <<bean-component,Bean>> component
 

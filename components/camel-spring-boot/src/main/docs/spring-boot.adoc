@@ -157,7 +157,7 @@ Spring Boot auto-configuration automatically connects
 to http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config[Spring
 Boot external configuration] (like properties placeholders, OS
 environment variables or system properties) with
-the link:properties.html[Camel properties support]. It basically means
+the <<properties-component,Camel properties support>>. It basically means
 that any property defined in `application.properties` file:  
 
 [source,xml]

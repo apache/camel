@@ -19,7 +19,7 @@ the message body and using any annotations on the bean methods.
 The link:bean-binding.html[Bean Binding] rules are used to bind the
 link:message.html[Message] Exchange to the method parameters; so you can
 annotate the bean to extract headers or other expressions such as
-link:xpath.html[XPath] or link:xquery.html[XQuery] from the message.
+<<xpath-language,XPath>> or <<xpath-language,XQuery>> from the message.
 
 === Bean Options
 
@@ -107,7 +107,7 @@ or other expressions.
 
 === Non registry beans
 
-The link:bean-language.html[Bean Language] also supports invoking beans
+The <<bean-language,Bean Language>> also supports invoking beans
 that isn't registered in the link:registry.html[Registry]. This is
 usable for quickly to invoke a bean from Java DSL where you don't need
 to register the bean in the link:registry.html[Registry] such as the

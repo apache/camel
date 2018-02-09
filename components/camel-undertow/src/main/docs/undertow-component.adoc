@@ -117,7 +117,7 @@ with the following path and query parameters:
 
 ### Message Headers
 
-Camel uses the same message headers as the link:http.html[HTTP]
+Camel uses the same message headers as the <<http-component,HTTP>>
 component.
  From Camel 2.2, it also uses
 `Exchange.HTTP_CHUNKED,CamelHttpChunked` header to turn on or turn off
@@ -190,5 +190,5 @@ Transport].
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
 
-* link:jetty.html[Jetty]
-* link:http.html[HTTP]
+* <<jetty-component,Jetty>>
+* <<http-component,HTTP>>

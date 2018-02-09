@@ -146,4 +146,4 @@ in any Container or using Spring.
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
 
-* link:rss.html[RSS]
+* <<rss-component,RSS>>

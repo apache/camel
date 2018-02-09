@@ -134,7 +134,7 @@ MongoDB instance.
 ### Sample route
 
 The following route defined in Spring XML executes the operation
-link:mongodb.html[*dbStats*] on a collection.
+<<mongodb-component,*dbStats*>> on a collection.
 
 *Get DB stats for specified collection*
 
@@ -170,7 +170,7 @@ from("direct:findById")
 
 
 TIP: *Supports optional parameters*. This operation supports specifying a fields filter. See
-link:mongodb.html[Specifying optional parameters].
+<<mongodb-component,Specifying optional parameters>>.
 
 #### findOneByQuery
 
@@ -178,7 +178,7 @@ Use this operation to retrieve just one element from the collection that
 matches a MongoDB query. *The query object is extracted from the IN
 message body*, i.e. it should be of type `DBObject` or convertible to
 `DBObject`. It can be a JSON String or a Hashmap. See
-link:mongodb.html[#Type conversions] for more info.
+<<mongodb-component,#Type conversions>> for more info.
 
 Example with no query (returns any object of the collection):
 
@@ -200,7 +200,7 @@ from("direct:findOneByQuery")
 ------------------------------------------------------------------------------------
 
 TIP: *Supports optional parameters*. This operation supports specifying a fields filter and/or a sort clause. See
-link:mongodb.html[Specifying optional parameters].
+<<mongodb-component,Specifying optional parameters>>.
 
 #### findAll
 
@@ -208,7 +208,7 @@ The `findAll` operation returns all documents matching a query, or none
 at all, in which case all documents contained in the collection are
 returned. *The query object is extracted from the IN message body*, i.e.
 it should be of type `DBObject` or convertible to `DBObject`. It can be
-a JSON String or a Hashmap. See link:mongodb.html[#Type conversions] for
+a JSON String or a Hashmap. See <<mongodb-component,#Type conversions>> for
 more info.
 
 Example with no query (returns all object in the collection):
@@ -287,7 +287,7 @@ consideration. |int/Integer
 |=======================================================================
 
 TIP: *Supports optional parameters*. This operation supports specifying a fields filter and/or a sort clause. See
-link:mongodb.html[Specifying optional parameters].
+<<mongodb-component,Specifying optional parameters>>.
 
 #### count
 

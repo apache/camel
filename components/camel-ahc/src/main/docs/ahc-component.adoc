@@ -440,6 +440,6 @@ Spring DSL based configuration of endpoint
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
 
-* link:jetty.html[Jetty]
-* link:http.html[HTTP]
-* link:http4.html[HTTP4]
+* <<jetty-component,Jetty>>
+* <<http-component,HTTP>>
+* <<http4-component,HTTP4>>

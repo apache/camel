@@ -54,7 +54,7 @@ invoke a bean
 
 You can also use link:templating.html[Templating] to consume a message
 from one destination, transform it with something like
-link:velocity.html[Velocity] or link:xquery.html[XQuery] and then send
+<<velocity-component,Velocity>> or <<velocity-component,XQuery>> and then send
 it on to another destination. For example using InOnly (one way
 messaging)
 

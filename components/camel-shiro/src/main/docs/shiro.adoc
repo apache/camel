@@ -135,7 +135,7 @@ of the roles in the list are applicable.
 these or pass in your own Cipher implementation
 
 |`base64` |`false` |`boolean` |*Camel 2.12:* To use base64 encoding for the security token header,
-which allows transferring the header over link:jms.html[JMS] etc. This
+which allows transferring the header over <<jms-component,JMS>> etc. This
 option must also be set on `ShiroSecurityTokenInjector` as well.
 
 |`allPermissionsRequired` |`false` |`boolean` |*Camel 2.13:* The default is that authorization is granted if any of the

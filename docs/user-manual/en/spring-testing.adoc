@@ -7,8 +7,8 @@ integration work. The Spring Framework offers a number of features that
 makes it easy to test while using Spring for Inversion of Control which
 works with JUnit 3.x, JUnit 4.x, and http://testng.org[TestNG].
 
-We can use Spring for IoC and the Camel link:mock.html[Mock] and
-link:test.html[Test] endpoints to create sophisticated integration/unit
+We can use Spring for IoC and the Camel <<mock-component,Mock>> and
+<<test-component,Test>> endpoints to create sophisticated integration/unit
 tests that are easy to run and debug inside your IDE.  There are three
 supported approaches for testing with Spring in Camel.
 
@@ -336,7 +336,7 @@ Adding more Mock expectations
 
 If you wish to programmatically add any new assertions to your test you
 can easily do so with the following. Notice how we use @EndpointInject
-to inject a Camel endpoint into our code then the link:mock.html[Mock]
+to inject a Camel endpoint into our code then the <<mock-component,Mock>>
 API to add an expectation on a specific message.
 
 [source,java]
@@ -363,7 +363,7 @@ public class MyCamelTest extends AbstractJUnit38SpringContextTests {
 Further processing the received messages
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Sometimes once a link:mock.html[Mock] endpoint has received some
+Sometimes once a <<mock-component,Mock>> endpoint has received some
 messages you want to then process them further to add further assertions
 that your test case worked as you expect.
 
@@ -403,7 +403,7 @@ It might be that the
 link:enterprise-integration-patterns.html[Enterprise Integration
 Patterns] you have defined in either link:spring.html[Spring] XML or
 using the Java link:dsl.html[DSL] do all of the sending and receiving
-and you might just work with the link:mock.html[Mock] endpoints as
+and you might just work with the <<mock-component,Mock>> endpoints as
 described above. However sometimes in a test case its useful to
 explicitly send or receive messages directly.
 
@@ -444,6 +444,6 @@ example test case using Mock and Spring] along with its
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/resources/org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.xml[Spring
 XML]
 * link:bean-integration.html[Bean Integration]
-* link:mock.html[Mock] endpoint
-* link:test.html[Test] endpoint
+* <<mock-component,Mock>> endpoint
+* <<test-component,Test>> endpoint
 

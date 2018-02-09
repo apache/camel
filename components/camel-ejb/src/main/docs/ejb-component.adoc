@@ -131,7 +131,7 @@ public class GreaterImpl implements GreaterLocal {
 
 In this example we want to invoke the `hello` method on the EJB. Since
 this example is based on an unit test using Apache OpenEJB we have to
-set a `JndiContext` on the link:ejb.html[EJB] component with the OpenEJB
+set a `JndiContext` on the <<ejb-component,EJB>> component with the OpenEJB
 settings.
 
 [source,java]
@@ -169,10 +169,10 @@ from("direct:start")
 *In a real application server*
 
 In a real application server you most likely do not have to setup a
-`JndiContext` on the link:ejb.html[EJB] component as it will create a
+`JndiContext` on the <<ejb-component,EJB>> component as it will create a
 default `JndiContext` on the same JVM as the application server, which
 usually allows it to access the JNDI registry and lookup the
-link:ejb.html[EJB]s. However if you need to access a application server on a remote JVM or
+<<ejb-component,EJB>>s. However if you need to access a application server on a remote JVM or
 the likes, you have to prepare the properties beforehand.
 
 #### Using Spring XML
@@ -180,7 +180,7 @@ the likes, you have to prepare the properties beforehand.
 And this is the same example using Spring XML instead:
 
 Again since this is based on an unit test we need to setup the
-link:ejb.html[EJB] component:
+<<ejb-component,EJB>> component:
 
 [source,XML]
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -195,7 +195,7 @@ link:ejb.html[EJB] component:
 </p:properties>
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Before we are ready to use link:ejb.html[EJB] in the Camel routes:
+Before we are ready to use <<ejb-component,EJB>> in the Camel routes:
 
 [source,XML]
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -214,6 +214,6 @@ Before we are ready to use link:ejb.html[EJB] in the Camel routes:
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-* link:bean.html[Bean]
+* <<bean-component,Bean>>
 * link:bean-binding.html[Bean Binding]
 * link:bean-integration.html[Bean Integration]

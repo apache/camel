@@ -9,7 +9,7 @@ the http://www.quartz-scheduler.org/[Quartz Scheduler 1.x].  +
 and JobDetail).
 
 TIP: If you are using Quartz 2.x then from Camel 2.12 onwards there is a
-link:quartz2.html[Quartz2] component you should use
+<<quartz2-component,Quartz2>> component you should use
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -120,7 +120,7 @@ INFO: *Running in OSGi and having multiple bundles with quartz
 routes*
 If you run in OSGi such as Apache ServiceMix, or Apache Karaf, and have
 multiple bundles with Camel routes that start from
-link:quartz.html[Quartz] endpoints, then make sure if you assign +
+<<quartz-component,Quartz>> endpoints, then make sure if you assign +
  an `id` to the <camelContext> that this id is unique, as this is
 required by the `QuartzScheduler` in the OSGi container. If you do not
 set any `id` on <camelContext> then +
@@ -133,7 +133,7 @@ By default Quartz will look for a `quartz.properties` file in the
 deployments this means just drop the quartz.properties in
 `WEB-INF/classes/org/quartz`.
 
-However the Camel link:quartz.html[Quartz] component also allows you to
+However the Camel <<quartz-component,Quartz>> component also allows you to
 configure properties:
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
@@ -180,7 +180,7 @@ This is an example:
 *Available as of Camel 2.4*
 
 If you use Quartz in clustered mode, e.g. the `JobStore` is clustered.
-Then from Camel 2.4 onwards the link:quartz.html[Quartz] component will
+Then from Camel 2.4 onwards the <<quartz-component,Quartz>> component will
 *not* pause/remove triggers when a node is being stopped/shutdown. This
 allows the trigger to keep running on the other nodes in the cluster.
 
@@ -260,5 +260,5 @@ link:type-converter.html[Type Converter] in the camel-core.
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
 
-* link:quartz2.html[Quartz2]
-* link:timer.html[Timer]
+* <<quartz2-component,Quartz2>>
+* <<timer-component,Timer>>
