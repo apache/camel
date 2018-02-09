@@ -154,10 +154,6 @@ public class MiloClientComponentConfiguration
          */
         private Long maxResponseMessageSize;
         /**
-         * Whether secure channel re-authentication is enabled
-         */
-        private Boolean secureChannelReauthenticationEnabled;
-        /**
          * The key store type
          */
         private String keyStoreType;
@@ -260,15 +256,6 @@ public class MiloClientComponentConfiguration
 
         public void setMaxResponseMessageSize(Long maxResponseMessageSize) {
             this.maxResponseMessageSize = maxResponseMessageSize;
-        }
-
-        public Boolean getSecureChannelReauthenticationEnabled() {
-            return secureChannelReauthenticationEnabled;
-        }
-
-        public void setSecureChannelReauthenticationEnabled(
-                Boolean secureChannelReauthenticationEnabled) {
-            this.secureChannelReauthenticationEnabled = secureChannelReauthenticationEnabled;
         }
 
         public String getKeyStoreType() {

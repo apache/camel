@@ -103,10 +103,10 @@ public class MiloServerComponent extends DefaultComponent {
             throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);
         }
 
-        @Override
-        public void verifyTrustChain(final X509Certificate certificate, final List<X509Certificate> chain) throws UaException {
-            throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);
-        }
+		@Override
+		public void verifyTrustChain(List<X509Certificate> certificateChain) throws UaException {
+			 throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);	
+		}
     }
 
     private String namespaceUri = DEFAULT_NAMESPACE_URI;
@@ -298,7 +298,7 @@ public class MiloServerComponent extends DefaultComponent {
      * Server hostname
      */
     public void setHostname(final String hostname) {
-        this.serverConfig.setHostname(hostname);
+        this.serverConfig.setServerName(hostname);
     }
 
     /**
