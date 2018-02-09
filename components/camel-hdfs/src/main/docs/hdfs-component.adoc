@@ -222,7 +222,7 @@ split strategy.
 
 *Available as of Camel 2.10.4*
 
-When using the link:hdfs.html[HDFS] producer *without* a split strategy,
+When using the <<hdfs-component,HDFS>> producer *without* a split strategy,
 then the file output stream is by default closed after the write.
 However you may want to keep the stream open, and only explicitly close
 the stream later. For that you can use the header

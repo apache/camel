@@ -13,10 +13,10 @@ This component supports the following:
 SyslogMessage model objects.
 * link:type-converter.html[Type Converter] from/to SyslogMessage and
 String
-* Integration with the link:mina.html[camel-mina] component.
-* Integration with the link:netty.html[camel-netty] component.
+* Integration with the <<mina-component,camel-mina>> component.
+* Integration with the <<netty-component,camel-netty>> component.
 * *Camel 2.14:* Encoder and decoder for
-the link:netty.html[camel-netty] component.
+the <<netty-component,camel-netty>> component.
 * *Camel 2.14:* Support for RFC5424 also.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -40,7 +40,7 @@ as its underlying transport layer mechanism.
 The UDP port that has been assigned to syslog is 514.
 
 To expose a Syslog listener service we reuse the existing
-link:mina.html[camel-mina] component or link:netty.html[camel-netty]
+<<mina-component,camel-mina>> component or <<mina-component,camel-netty>>
 where we just use the `Rfc3164SyslogDataFormat` to marshal and unmarshal
 messages. Notice that from *Camel 2.14* onwards the syslog dataformat is
 renamed to `SyslogDataFormat`.
@@ -64,8 +64,8 @@ The Syslog dataformat supports 1 options which are listed below.
 *Available as of Camel 2.14*
 
 To expose a Syslog listener service we reuse the
-existing link:mina.html[camel-mina] component
-or link:netty.html[camel-netty] where we just use
+existing <<mina-component,camel-mina>> component
+or <<netty-component,camel-netty>> where we just use
 the `SyslogDataFormat` to marshal and unmarshal messages
 
 #### Exposing a Syslog listener
@@ -93,7 +93,7 @@ as an InputStream:
 </camelContext>
 ------------------------------------------------------------------------------------------
 
-The same route using link:mina.html[camel-mina]
+The same route using <<mina-component,camel-mina>>
 
 [source,xml]
 -------------------------------------------------------------------------

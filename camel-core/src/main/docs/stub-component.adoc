@@ -6,12 +6,12 @@
 The *stub:* component provides a simple way to stub out any physical
 endpoints while in development or testing, allowing you for example to
 run a route without needing to actually connect to a specific
-link:mail.html[SMTP] or link:http.html[Http] endpoint. Just add *stub:*
+<<mail-component,SMTP>> or <<mail-component,Http>> endpoint. Just add *stub:*
 in front of any endpoint URI to stub out the endpoint.
 
-Internally the Stub component creates link:vm.html[VM] endpoints. The
-main difference between link:stub.html[Stub] and link:vm.html[VM] is
-that link:vm.html[VM] will validate the URI and parameters you give it,
+Internally the Stub component creates <<vm-component,VM>> endpoints. The
+main difference between <<stub-component,Stub>> and <<stub-component,VM>> is
+that <<vm-component,VM>> will validate the URI and parameters you give it,
 so putting vm: in front of a typical URI with query arguments will
 usually fail. Stub won't though, as it basically ignores all query
 parameters to let you quickly stub out one or more endpoints in your

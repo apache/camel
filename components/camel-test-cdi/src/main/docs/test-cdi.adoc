@@ -283,7 +283,7 @@ Using ShrinkWarp Descriptors, you have a complete control over the
 configuration and kind of Camel CDI applications you want to test. For
 example, to test a Camel CDI application that uses the Camel
 link:rest-dsl.html[REST DSL] configured with the
-link:servlet.html[Servlet component], you need to create a Web archive,
+<<servlet-component,Servlet component>>, you need to create a Web archive,
 e.g.:
 
 [source,java]
@@ -640,7 +640,7 @@ Routes advising with `adviceWith`
 can _advice_ an existing route before its being tested. It allows to
 add http://camel.apache.org/intercept.html[Intercept] or _weave_ routes
 for testing purpose, for example using
-the link:mock.html[Mock] component.
+the <<mock-component,Mock>> component.
 
 It is recommended to only advice routes which are not started already.
 To meet that requirement, you can use the `CamelContextStartingEvent`

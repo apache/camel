@@ -188,7 +188,7 @@ number of endpoints?
 of endpoints at the same time?
 
 |image:http://cwiki.apache.org/confluence/download/attachments/49204/clear.png[image]
-|link:loop.html[Loop] |How can I repeat processing a message in a loop?
+|<<loop-eip,Loop>> |How can I repeat processing a message in a loop?
 |=======================================================================
 
 [[EnterpriseIntegrationPatterns-MessageTransformation]]
@@ -216,12 +216,12 @@ content?
 semantically equivalent, but arrive in a different format?
 
 |image:http://cwiki.apache.org/confluence/download/attachments/49204/clear.png[image]
-|link:sort.html[Sort] |How can I sort the body of a message?
+|<<sort-eip,Sort>> |How can I sort the body of a message?
 
 |  |Script |How do I execute a script which may not change the message?
 
 |image:http://cwiki.apache.org/confluence/download/attachments/49204/clear.png[image]
-|link:validate.html[Validate] |How can I validate a message?
+|<<validate-eip,Validate>> |How can I validate a message?
 |=======================================================================
 
 [[EnterpriseIntegrationPatterns-MessagingEndpoints]]
@@ -284,7 +284,7 @@ System Management
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
 |image:http://www.eaipatterns.com/img/ControlBusIcon.gif[image]
-|link:controlbus.html[ControlBus] |How can we effectively administer a
+|<<controlbus-component,ControlBus>> |How can we effectively administer a
 messaging system that is distributed across multiple platforms and a
 wide geographic area?
 

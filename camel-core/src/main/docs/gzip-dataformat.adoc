@@ -5,7 +5,7 @@
 
 The GZip link:data-format.html[Data Format] is a message compression and
 de-compression format. It uses the same deflate algorithm that is used
-in link:zip-dataformat.html[Zip DataFormat], although some additional
+in <<zip-dataformat,Zip DataFormat>>, although some additional
 headers are provided. This format is produced by popular `gzip`/`gunzip`
 tool. Messages marshalled using GZip compression can be unmarshalled
 using GZip decompression just prior to being consumed at the endpoint.

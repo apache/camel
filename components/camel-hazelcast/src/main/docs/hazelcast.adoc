@@ -31,17 +31,17 @@ for this component:
 
 ### Hazelcast components
 See followings for each component usage:
-* link:hazelcast-map-component.html[map]
-* link:hazelcast-multimap-component.html[multimap]
-* link:hazelcast-queue-component.html[queue]
-* link:hazelcast-topic-component.html[topic]
-* link:hazelcast-list-component.html[list]
-* link:hazelcast-seda-component.html[seda]
-* link:hazelcast-set-component.html[set]
-* link:hazelcast-atomicvalue-component.html[atomic number]
-* link:hazelcast-instance-component.html[cluster support (instance)]
-* link:hazelcast-replicatedmap-component.html[replicatedmap] 
-* link:hazelcast-ringbuffer-component.html[ringbuffer] 
+* <<hazelcast-map-component,map>>
+* <<hazelcast-multimap-component,multimap>>
+* <<hazelcast-queue-component,queue>>
+* <<hazelcast-topic-component,topic>>
+* <<hazelcast-list-component,list>>
+* <<hazelcast-seda-component,seda>>
+* <<hazelcast-set-component,set>>
+* <<hazelcast-atomicvalue-component,atomic number>>
+* <<hazelcast-instance-component,cluster support (instance)>>
+* <<hazelcast-replicatedmap-component,replicatedmap>> 
+* <<hazelcast-ringbuffer-component,ringbuffer>> 
 
 
 

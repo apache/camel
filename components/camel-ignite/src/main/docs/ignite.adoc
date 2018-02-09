@@ -8,13 +8,13 @@ image:https://ignite.apache.org/images/apache-ignite.png[]
 
 This component offers seven endpoints to cover much of Ignite's functionality:
 
-* link:ignite-cache-component.html[Ignite Cache].
-* link:ignite-compute-component.html[Ignite Compute].
-* link:ignite-messaging-component.html[Ignite Messaging].
-* link:ignite-events-component.html[Ignite Events].
-* link:ignite-set-component.html[Ignite Sets].
-* link:ignite-queue-component.html[Ignite Queues].
-* link:ignite-idgen-component.html[Ignite ID Generator].
+* <<ignite-cache-component,Ignite Cache>>.
+* <<ignite-compute-component,Ignite Compute>>.
+* <<ignite-messaging-component,Ignite Messaging>>.
+* <<ignite-events-component,Ignite Events>>.
+* <<ignite-set-component,Ignite Sets>>.
+* <<ignite-queue-component,Ignite Queues>>.
+* <<ignite-idgen-component,Ignite ID Generator>>.
 
 To use this component, add the following dependency to your pom.xml:
 

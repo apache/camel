@@ -8,20 +8,20 @@
 The composite kubernetes component has been deprecated. Use individual
 component splitted as following.
 
-* link:kubernetes.html[Kubernetes Components]
-  ** link:kubernetes-build-configs-component.html[Kubernetes Build Config]
+* <<kubernetes-component,Kubernetes Components>>
+  ** <<kubernetes-build-configs-component,Kubernetes Build Config>>
   ** link:kubernetes-builds-component.html[Kubernetes Build]
-  ** link:kubernetes-config-maps-component.html[Kubernetes ConfigMap]
-  ** link:kubernetes-namespaces-component.html[Kubernetes Namespace]
-  ** link:kubernetes-nodes-component.html[Kubernetes Node]
-  ** link:kubernetes-persistent-volumes-component.html[Kubernetes Persistent Volume]
-  ** link:kubernetes-persistent-volumes-claims-component.html[Kubernetes Persistent Volume Claim]
-  ** link:kubernetes-pods-component.html[Kubernetes Pod]
-  ** link:kubernetes-replication-controllers-component.html[Kubernetes Replication Controller]
-  ** link:kubernetes-resources-quota-component.html[Kubernetes Resource Quota]
-  ** link:kubernetes-secrets-component.html[Kubernetes Secrets]
-  ** link:kubernetes-service-accounts-component.html[Kubernetes Service Account]
-  ** link:kubernetes-services-component.html[Kubernetes Service]
+  ** <<kubernetes-config-maps-component,Kubernetes ConfigMap>>
+  ** <<kubernetes-namespaces-component,Kubernetes Namespace>>
+  ** <<kubernetes-nodes-component,Kubernetes Node>>
+  ** <<kubernetes-persistent-volumes-component,Kubernetes Persistent Volume>>
+  ** <<kubernetes-persistent-volumes-claims-component,Kubernetes Persistent Volume Claim>>
+  ** <<kubernetes-pods-component,Kubernetes Pod>>
+  ** <<kubernetes-replication-controllers-component,Kubernetes Replication Controller>>
+  ** <<kubernetes-resources-quota-component,Kubernetes Resource Quota>>
+  ** <<kubernetes-secrets-component,Kubernetes Secrets>>
+  ** <<kubernetes-service-accounts-component,Kubernetes Service Account>>
+  ** <<kubernetes-services-component,Kubernetes Service>>
 ====================================================================================
 
 The *Kubernetes* component is a component for integrating your

@@ -7,11 +7,11 @@
 ====================================================================================
 The composite twitter component has been deprecated. Use individual component for directmessage, search, streaming and timeline.
 
-* link:twitter.html[Twitter Components]
-  ** link:twitter-directmessage-component.html[Twitter Direct Message]
-  ** link:twitter-search-component.html[Twitter Search]
-  ** link:twitter-streaming-component.html[Twitter Streaming]
-  ** link:twitter-timeline-component.html[Twitter Timeline]
+* <<twitter-component,Twitter Components>>
+  ** <<twitter-directmessage-component,Twitter Direct Message>>
+  ** <<twitter-search-component,Twitter Search>>
+  ** <<twitter-streaming-component,Twitter Streaming>>
+  ** <<twitter-timeline-component,Twitter Timeline>>
 ====================================================================================
 
 The Twitter component enables the most useful features of the Twitter

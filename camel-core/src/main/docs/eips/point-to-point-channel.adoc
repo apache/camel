@@ -6,18 +6,18 @@ http://www.enterpriseintegrationpatterns.com/PointToPointChannel.html[Point
 to Point Channel] from the link:enterprise-integration-patterns.html[EIP
 patterns] using the following components
 
-* link:seda.html[SEDA] for in-VM seda based messaging
-* link:jms.html[JMS] for working with JMS Queues for high performance,
+* <<seda-component,SEDA>> for in-VM seda based messaging
+* <<jms-component,JMS>> for working with JMS Queues for high performance,
 clustering and load balancing
-* link:jpa.html[JPA] for using a database as a simple message queue
-* link:xmpp.html[XMPP] for point-to-point communication over XMPP
+* <<jpa-component,JPA>> for using a database as a simple message queue
+* <<xmpp-component,XMPP>> for point-to-point communication over XMPP
 (Jabber)
 * and others
 
 image:http://www.enterpriseintegrationpatterns.com/img/PointToPointSolution.gif[image]
 
 The following example demonstrates point to point messaging using
-the link:jms.html[JMS] component 
+the <<jms-component,JMS>> component 
 
 [[PointtoPointChannel-Samples]]
 === Samples

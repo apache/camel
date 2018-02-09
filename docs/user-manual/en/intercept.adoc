@@ -117,7 +117,7 @@ particular route.
 
 So lets start with the logging example. We want to log all the
 *incoming* requests so we use `interceptFrom` to route to the
-link:log.html[Log] component. As `proceed` is default then the
+<<log-component,Log>> component. As `proceed` is default then the
 link:exchange.html[Exchange] will continue its route, and thus it will
 continue to `mock:first`.
 
@@ -193,7 +193,7 @@ Intercept endpoint is of course also available using Spring DSL.
 
 We start with the first example from above in Spring DSL:
 
-And the 2nd. Notice how we can leverage the link:simple.html[Simple]
+And the 2nd. Notice how we can leverage the <<simple-language,Simple>>
 language for the link:predicate.html[Predicate]:
 
 And the 3rd with the `skip`, notice skip is set with the

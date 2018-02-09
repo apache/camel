@@ -7,7 +7,7 @@ The *ahc-ws* component provides Websocket
 based link:endpoint.html[endpoints] for a client communicating with
 external servers over Websocket (as a client opening a websocket
 connection to an external server). +
-The component uses the link:ahc.html[AHC] component that in turn uses
+The component uses the <<ahc-component,AHC>> component that in turn uses
 the https://github.com/AsyncHttpClient/async-http-client[Async Http
 Client] library.
 
@@ -167,4 +167,4 @@ And the equivalent Spring sample:
 * link:getting-started.html[Getting Started]
 
 * link:../../../../camel-ahc/src/main/docs/readme.html[AHC]
-* link:atmosphere-websocket.html[Atmosphere-Websocket]
+* <<atmosphere-websocket-component,Atmosphere-Websocket>>

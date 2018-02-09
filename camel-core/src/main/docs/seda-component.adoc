@@ -12,15 +12,15 @@ and consumers are invoked in a separate thread from the producer.
 Note that queues are only visible within a _single_
 link:camelcontext.html[CamelContext]. If you want to communicate across
 `CamelContext` instances (for example, communicating between Web
-applications), see the link:vm.html[VM] component.
+applications), see the <<vm-component,VM>> component.
 
 This component does not implement any kind of persistence or recovery,
 if the VM terminates while messages are yet to be processed. If you need
 persistence, reliability or distributed SEDA, try using either
-link:jms.html[JMS] or link:activemq.html[ActiveMQ].
+<<jms-component,JMS>> or <<jms-component,ActiveMQ>>.
 
 TIP:*Synchronous*
-The link:direct.html[Direct] component provides synchronous invocation
+The <<direct-component,Direct>> component provides synchronous invocation
 of any consumers when a producer sends a message exchange.
 
 === URI format
@@ -133,7 +133,7 @@ ArrayBlockingQueueFactory and PriorityBlockingQueueFactory:
 
 === Use of Request Reply
 
-The link:seda.html[SEDA] component supports using
+The <<seda-component,SEDA>> component supports using
 link:request-reply.html[Request Reply], where the caller will wait for
 the link:async.html[Async] route to complete. For instance:
 
@@ -152,7 +152,7 @@ copies the response to the original message response.
 
 NOTE: *until 2.2: Works only with 2 endpoints*
 Using link:request-reply.html[Request Reply] over link:seda.html[SEDA]
-or link:vm.html[VM] only works with 2 endpoints. You *cannot* chain
+or <<vm-component,VM>> only works with 2 endpoints. You *cannot* chain
 endpoints by sending to A -> B -> C etc. Only between A -> B. The reason
 is the implementation logic is fairly simple. To support 3+ endpoints
 makes the logic much more complex to handle ordering and notification
@@ -187,7 +187,7 @@ from("seda:stageName").thread(5).process(...)
 
 Can wind up with two `BlockQueues`: one from the SEDA endpoint, and one
 from the workqueue of the thread pool, which may not be what you want.
-Instead, you might wish to configure a link:direct.html[Direct] endpoint
+Instead, you might wish to configure a <<direct-component,Direct>> endpoint
 with a thread pool, which can process messages both synchronously and
 asynchronously. For example:
 
@@ -241,7 +241,7 @@ int size = seda.getExchanges().size();
 
 === See Also
 
-* link:vm.html[VM]
-* link:disruptor.html[Disruptor]
-* link:direct.html[Direct]
+* <<vm-component,VM>>
+* <<disruptor-component,Disruptor>>
+* <<direct-component,Direct>>
 * link:async.html[Async]

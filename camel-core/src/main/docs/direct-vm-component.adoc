@@ -8,8 +8,8 @@ any consumers in the JVM when a producer sends a message exchange. +
  This endpoint can be used to connect existing routes in the same camel
 context, as well from other camel contexts in the *same* JVM.
 
-This component differs from the link:direct.html[Direct] component in
-that link:direct-vm.html[Direct-VM] supports communication across
+This component differs from the <<direct-component,Direct>> component in
+that <<direct-vm-component,Direct-VM>> supports communication across
 CamelContext instances - so you can use this mechanism to communicate
 across web applications (provided that camel-core.jar is on the
 system/boot classpath).
@@ -134,6 +134,6 @@ And the sample using spring DSL:
 
 === See Also
 
-* link:direct.html[Direct]
-* link:seda.html[SEDA]
-* link:vm.html[VM]
+* <<direct-component,Direct>>
+* <<seda-component,SEDA>>
+* <<vm-component,VM>>

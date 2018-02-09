@@ -202,7 +202,7 @@ easy link:bean-integration.html[Bean Integration]
 
 ### Flatpack DataFormat
 
-The link:flatpack.html[Flatpack] component ships with the Flatpack data
+The <<flatpack-component,Flatpack>> component ships with the Flatpack data
 format that can be used to format between fixed width or delimited text
 messages to a `List` of rows as `Map`.
 

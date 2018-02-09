@@ -122,7 +122,7 @@ Using Endpoint URIs
 ^^^^^^^^^^^^^^^^^^^
 
 Another approach is to use the URI syntax. The URI syntax supports the
-query notation. So for example with the link:mail.html[Mail] component
+query notation. So for example with the <<mail-component,Mail>> component
 you can configure the password property via the URI
 
 [source]

@@ -9,12 +9,12 @@ messages on a
 http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
 and invoking consumers in a separate thread pool.
 
-This component differs from the link:seda.html[Seda] component in that
+This component differs from the <<seda-component,Seda>> component in that
 VM supports communication across CamelContext instances - so you can use
 this mechanism to communicate across web applications (provided that
 `camel-core.jar` is on the `system/boot` classpath).
 
-VM is an extension to the link:seda.html[Seda] component.
+VM is an extension to the <<seda-component,Seda>> component.
 
 === URI format
 
@@ -30,9 +30,9 @@ camel-core.jar)
 You can append query options to the URI in the following format:
 `?option=value&option=value&...`
 
-An exactly identical link:vm.html[VM] endpoint URI *must* be used for
+An exactly identical <<vm-component,VM>> endpoint URI *must* be used for
 both the producer and the consumer endpoint. Otherwise, Camel will
-create a second link:vm.html[VM] endpoint despite that the `queueName`
+create a second <<vm-component,VM>> endpoint despite that the `queueName`
 portion of the URI is identical. For example:
 
 [source,java]
@@ -116,8 +116,8 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-See the link:seda.html[Seda] component for options and other important
-usage details as the same rules apply to the link:vm.html[Vm] component.
+See the <<seda-component,Seda>> component for options and other important
+usage details as the same rules apply to the <<vm-component,Vm>> component.
 
 === Samples
 
@@ -139,4 +139,4 @@ from("vm:order.email").bean(MyOrderEmailSender.class);
 
 === See Also
 
-* link:seda.html[Seda]
+* <<seda-component,Seda>>

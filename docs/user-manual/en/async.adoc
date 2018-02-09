@@ -50,7 +50,7 @@ event message.
 
 The link:request-reply.html[Request Reply] is when the caller sends a
 message and then *waits for a reply*. This is like the
-link:http.html[HTTP] protocol that we use every day when we surf the
+<<http-component,HTTP>> protocol that we use every day when we surf the
 web. We send a request to fetch a web page and wait until the reply message
 comes with the web content.
 
@@ -76,9 +76,9 @@ diagram below:
 image:async.data/camel_sync_request_reply.png[image]
 
 \1. The client sends a sync link:request-reply.html[Request Reply]
-message over link:http.html[HTTP] to Camel. The client application will
+message over <<http-component,HTTP>> to Camel. The client application will
 wait for the response that Camel routes and processes. +
- 2. The message invokes an external link:mina.html[TCP] service using
+ 2. The message invokes an external <<mina-component,TCP>> service using
 synchronous link:request-reply.html[Request Reply]. The client
 application still waits for the response. +
  3. The response is send back to the client.
@@ -100,7 +100,7 @@ image:async.data/camel_async_request_reply.png[image]
 link:request-reply.html[Request Reply] message over link:http.html[HTTP]
 to Camel. The control is immediately returned to the client application,
 that can continue and do other work while Camel routes the message. +
- 2. Camel invokes an external link:mina.html[TCP] service using
+ 2. Camel invokes an external <<mina-component,TCP>> service using
 synchronous link:request-reply.html[Request Reply]. The client
 application can do other work simultaneously. +
  3. The client wants to get the reply so it uses the Future handle it
@@ -119,9 +119,9 @@ completely. This is illustrated in the diagram below:
 image:async.data/camel_sync_request_only.png[image]
 
 \1. The client sends a link:event-message.html[Request only] and we can
-still use link:http.html[HTTP] despite http being
+still use <<http-component,HTTP>> despite http being
 link:request-reply.html[Request Reply] by nature. +
- 2. Camel invokes an external link:mina.html[TCP] service using
+ 2. Camel invokes an external <<mina-component,TCP>> service using
 synchronous link:request-reply.html[Request Reply]. The client
 application is still waiting. +
  3. The message is processed completely and the control is returned to
@@ -148,11 +148,11 @@ processed in Camel. This is illustrated in the diagram below:
 image:async.data/camel_async_request_only.png[image]
 
 \1. The client sends a link:event-message.html[Request only] and we can
-still use link:http.html[HTTP] despite http being
+still use <<http-component,HTTP>> despite http being
 link:request-reply.html[Request Reply] by nature. The control is
 immediately returned to the client application, that can continue and do
 other work while Camel routes the message. +
- 2. Camel invokes an external link:mina.html[TCP] service using
+ 2. Camel invokes an external <<mina-component,TCP>> service using
 synchronous link:request-reply.html[Request Reply]. The client
 application can do other work simultaneously. +
  3. The message completes but no result is returned to the client.
@@ -264,19 +264,19 @@ exception.
 Example: Asynchronous Request Reply
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Suppose we want to call a link:http.html[HTTP] service but it is usually
+Suppose we want to call a <<http-component,HTTP>> service but it is usually
 slow and thus we do not want to block and wait for the response, as we
 can do other important computation. So we can initiate an
 link:async.html[Async] exchange to the link:http.html[HTTP] endpoint and
-then do other stuff while the slow link:http.html[HTTP] service is
+then do other stuff while the slow <<http-component,HTTP>> service is
 processing our request. And then a bit later we can use the `Future`
-handle to get the response from the link:http.html[HTTP] service. Yeah
+handle to get the response from the <<http-component,HTTP>> service. Yeah
 nice so lets do it:
 
-First we define some routes in Camel. One for the link:http.html[HTTP]
+First we define some routes in Camel. One for the <<http-component,HTTP>>
 service where we simulate a slow server as it takes at least 1 second to
 reply. And then other route that we want to invoke while the
-link:http.html[HTTP] service is on route. This allows you to be able to
+<<http-component,HTTP>> service is on route. This allows you to be able to
 process the two routes simultaneously:
 
 And then we have the client API where we call the two routes and we can
@@ -300,13 +300,13 @@ messages that differs:
 Using the link:async.html[Async] API with callbacks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Suppose we want to call a link:http.html[HTTP] service but it is usually
+Suppose we want to call a <<http-component,HTTP>> service but it is usually
 slow and thus we do not want to block and wait for the response, but
 instead let a callback gather the response. This allows us to send
 multiple requests without waiting for the replies before we can send the
 next request.
 
-First we define a route in Camel for the link:http.html[HTTP] service
+First we define a route in Camel for the <<http-component,HTTP>> service
 where we simulate a slow server as it takes at least 1 second to reply.
 
 Then we define our callback where we gather the responses. As this is
@@ -318,7 +318,7 @@ link:exchange.html[Exchange] was processed successfully or failed. The
 `org.apache.camel.spi.Synchronization` API provides fine grained methods
 for `onCompletion` and `onFailure` for the two situations.
 
-And then we have the client API where we call the link:http.html[HTTP]
+And then we have the client API where we call the <<http-component,HTTP>>
 service using `asyncCallback` 3 times with different input. As the
 invocation is link:async.html[Async] the client will send 3 requests
 right after each other, so we have 3 concurrent exchanges in progress.
@@ -513,8 +513,8 @@ See Also
 *
 http://davsclaus.blogspot.com/2009/05/on-road-to-camel-20-concurrency-with.html[Blog
 entry on using async for concurrent file processing]
-* link:seda.html[SEDA]
-* link:direct.html[Direct]
+* <<seda-component,SEDA>>
+* <<direct-component,Direct>>
 * link:toasync.html[ToAsync] for non blocking
 link:request-reply.html[Request Reply]
 

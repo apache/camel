@@ -290,9 +290,9 @@ See "ScheduledPollConsumer Options"
 on link:polling-consumer.html[Polling Consumer] for more options.
 
 Alternatively you can use another mechanism for triggering the scheduled
-polls, such as the link:timer.html[Timer] or link:quartz.html[Quartz]
+polls, such as the <<timer-component,Timer>> or <<timer-component,Quartz>>
 components. In the sample below we poll the database, every 30 seconds
-using the link:timer.html[Timer] component and send the data to the JMS
+using the <<timer-component,Timer>> component and send the data to the JMS
 queue:
 
 [source,java]

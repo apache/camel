@@ -67,7 +67,7 @@ in the web.xml file.
 in Camel. You should prefix the option with "propertyPlaceholder.", for
 example to configure the location, use propertyPlaceholder.location as
 name. You can configure all the options from the
-link:properties.html[Properties] component.
+<<properties-component,Properties>> component.
 
 |jmx.XXX |  | To configure link:camel-jmx.html[JMX]. You should prefix the option with
 "jmx.", for example to disable JMX, use jmx.disabled as name. You can
@@ -293,8 +293,8 @@ JNDI or Simple as Camel link:registry.html[Registry]
 
 This component uses either JNDI or Simple as the
 link:registry.html[Registry]. +
- This allows you to lookup link:bean.html[Bean]s and other services in
-JNDI, and as well to bind and unbind your own link:bean.html[Bean]s.
+ This allows you to lookup <<bean-component,Bean>>s and other services in
+JNDI, and as well to bind and unbind your own <<bean-component,Bean>>s.
 
 This is done from Java code by implementing the
 `org.apache.camel.component.servletlistener.CamelContextLifecycle`.
@@ -321,8 +321,8 @@ interface.
   </context-param>
 -------------------------------------------------------------------------------------
 
-As we enlisted our HelloBean link:bean.html[Bean] using the name
-"myBean" we can refer to this link:bean.html[Bean] in the Camel routes
+As we enlisted our HelloBean <<bean-component,Bean>> using the name
+"myBean" we can refer to this <<bean-component,Bean>> in the Camel routes
 as shown below:
 
 [source,java]
@@ -348,7 +348,7 @@ then the `CamelContextLifecycle` must use the `SimpleRegistry`
 See Also
 ^^^^^^^^
 
-* link:servlet.html[SERVLET]
+* <<servlet-component,SERVLET>>
 * link:servlet-tomcat-example.html[Servlet Tomcat Example]
 * link:servlet-tomcat-no-spring-example.html[Servlet Tomcat No Spring
 Example]

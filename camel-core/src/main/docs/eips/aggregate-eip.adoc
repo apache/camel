@@ -190,7 +190,7 @@ The aggregator provides a pluggable repository which you can implement
 your own `org.apache.camel.spi.AggregationRepository`. +
  If you need persistent repository then you can use either Camel
 link:hawtdb.html[HawtDB], link:leveldb.html[LevelDB], or
-link:sql-component.html[SQL Component] components.
+<<sql-component,SQL Component>> components.
 
 === Using TimeoutAwareAggregationStrategy
 
