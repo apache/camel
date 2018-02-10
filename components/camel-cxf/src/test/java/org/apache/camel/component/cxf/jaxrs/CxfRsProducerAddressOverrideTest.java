@@ -149,4 +149,47 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
         assertEquals("Get a wrong customer id ", 123, response.getId());
         assertEquals("Get a wrong customer name", "John", response.getName());
     }
+
+    @Test
+    public void testAddressMultiOverride() {
+        // First call with override url
+        Exchange exchange = template.send("direct://http",
+            new SendProcessor("http://localhost:" + getPort1() + "/CxfRsProducerAddressOverrideTest"));
+        // get the response message
+        Customer response = (Customer) exchange.getOut().getBody();
+        assertNotNull("The response should not be null ", response);
+
+        // Second call with override url
+        exchange = template.send("direct://http",
+            new SendProcessor("http://localhost:" + getPort1() + "/CxfRsProducerNonExistingAddressOverrideTest"));
+
+        // Third call with override url
+        exchange = template.send("direct://http",
+            new SendProcessor("http://localhost:" + getPort1() + "/CxfRsProducerAddressOverrideTest"));
+        // get the response message
+        response = (Customer) exchange.getOut().getBody();
+        assertNotNull("The response should not be null ", response);
+    }
+
+    class SendProcessor implements Processor {
+        private String address;
+
+        public SendProcessor(String address) {
+            this.address = address;
+        }
+        public void process(Exchange exchange) throws Exception {
+            exchange.setPattern(ExchangePattern.InOut);
+            Message inMessage = exchange.getIn();
+
+            // using the http central client API
+            inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.TRUE);
+            // set the Http method
+            inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
+            // set the relative path
+            inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");
+            // Specify the response class , cxfrs will use InputStream as the response object type
+            inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
+            inMessage.setHeader(Exchange.DESTINATION_OVERRIDE_URL, address);
+        }
+    }
 }
