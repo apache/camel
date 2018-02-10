@@ -163,6 +163,16 @@ public class ControlBusProducer extends DefaultAsyncProducer {
                     getEndpoint().getCamelContext().suspendRoute(id);
                 } else if ("resume".equals(action)) {
                     getEndpoint().getCamelContext().resumeRoute(id);
+                } else if ("restart".equals(action)) {
+                    getEndpoint().getCamelContext().stopRoute(id);
+                    int delay = getEndpoint().getRestartDelay();
+                    try {
+                        log.debug("Sleeping {} ms before starting route");
+                        Thread.sleep(delay);
+                    } catch (InterruptedException e) {
+                        // ignore
+                    }
+                    getEndpoint().getCamelContext().startRoute(id);
                 } else if ("status".equals(action)) {
                     ServiceStatus status = getEndpoint().getCamelContext().getRouteStatus(id);
                     if (status != null) {

@@ -44,8 +44,10 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     private Language language;
     @UriParam
     private String routeId;
-    @UriParam(enums = "start,stop,suspend,resume,status")
+    @UriParam(enums = "start,stop,suspend,resume,restart,status,stats")
     private String action;
+    @UriParam(defaultValue = "1000")
+    private int restartDelay = 1000;
     @UriParam
     private boolean async;
     @UriParam(defaultValue = "INFO")
@@ -112,10 +114,21 @@ public class ControlBusEndpoint extends DefaultEndpoint {
      * You can use suspend and resume from Camel 2.11.1 onwards to either suspend or resume a route.
      * And from Camel 2.11.1 onwards you can use stats to get performance statics returned in XML format;
      * the routeId option can be used to define which route to get the performance stats for, if routeId is not defined,
-     * then you get statistics for the entire CamelContext.
+     * then you get statistics for the entire CamelContext. The restart action will restart the route.
      */
     public void setAction(String action) {
         this.action = action;
+    }
+
+    public int getRestartDelay() {
+        return restartDelay;
+    }
+
+    /**
+     * The delay in millis to use when restarting a route.
+     */
+    public void setRestartDelay(int restartDelay) {
+        this.restartDelay = restartDelay;
     }
 
     public boolean isAsync() {
