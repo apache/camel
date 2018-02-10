@@ -449,6 +449,18 @@ public class CamelConfigurationProperties {
      */
     private boolean useMDCLogging;
 
+    /**
+     * Sets the thread name pattern used for creating the full thread name.
+     * <p/>
+     * The default pattern is: <tt>Camel (#camelId#) thread ##counter# - #name#</tt>
+     * <p/>
+     * Where <tt>#camelId#</tt> is the name of the {@link org.apache.camel.CamelContext}
+     * <br/>and <tt>#counter#</tt> is a unique incrementing counter.
+     * <br/>and <tt>#name#</tt> is the regular thread name.
+     * <br/>You can also use <tt>#longName#</tt> is the long thread name which can includes endpoint parameters etc.
+     */
+    private String threadNamePattern;
+
     // Getters & setters
 
     public String getName() {
@@ -947,5 +959,13 @@ public class CamelConfigurationProperties {
     
     public void setUseMDCLogging(boolean useMDCLogging) {
         this.useMDCLogging = useMDCLogging;
+    }
+
+    public String getThreadNamePattern() {
+        return threadNamePattern;
+    }
+
+    public void setThreadNamePattern(String threadNamePattern) {
+        this.threadNamePattern = threadNamePattern;
     }
 }
