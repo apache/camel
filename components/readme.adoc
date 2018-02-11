@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 291 in 200 JAR artifacts (19 deprecated)
+Number of Components: 292 in 200 JAR artifacts (19 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -76,6 +76,9 @@ Number of Components: 291 in 200 JAR artifacts (19 deprecated)
 
 | link:camel-aws/src/main/docs/aws-kinesis-firehose-component.adoc[AWS Kinesis Firehose] (camel-aws) +
 `aws-kinesis-firehose:streamName` | 2.19 | The aws-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
+
+| link:camel-aws/src/main/docs/aws-kms-component.adoc[AWS KMS] (camel-aws) +
+`aws-kms:label` | 2.21 | The aws-mq is used for managing Amazon KMS
 
 | link:camel-aws/src/main/docs/aws-lambda-component.adoc[AWS Lambda] (camel-aws) +
 `aws-lambda:function` | 2.20 | The aws-lambda is used for managing and invoking functions from Amazon Lambda.
@@ -467,9 +470,6 @@ Number of Components: 291 in 200 JAR artifacts (19 deprecated)
 | link:camel-kubernetes/src/main/docs/kubernetes-component.adoc[Kubernetes] (camel-kubernetes) +
 `kubernetes:masterUrl` | 2.17 | *deprecated* Use splitted kubernetes components instead of this composite component.
 
-| link:camel-kubernetes/src/main/docs/kubernetes-build-configs-component.adoc[Kubernetes Build Config] (camel-kubernetes) +
-`kubernetes-build-configs:masterUrl` | 2.17 | The Kubernetes Build Config component provides a producer to execute kubernetes build config operations.
-
 | link:camel-kubernetes/src/main/docs/kubernetes-config-maps-component.adoc[Kubernetes ConfigMap] (camel-kubernetes) +
 `kubernetes-config-maps:masterUrl` | 2.17 | The Kubernetes Configmaps component provides a producer to execute kubernetes configmap operations.
 
@@ -604,6 +604,9 @@ Number of Components: 291 in 200 JAR artifacts (19 deprecated)
 
 | link:camel-openshift/src/main/docs/openshift-component.adoc[OpenShift] (camel-openshift) +
 `openshift:clientId` | 2.14 | *deprecated* To manage your Openshift 2.x applications.
+
+| link:camel-kubernetes/src/main/docs/openshift-build-configs-component.adoc[Openshift Build Config] (camel-kubernetes) +
+`openshift-build-configs:masterUrl` | 2.17 | The Kubernetes Build Config component provides a producer to execute kubernetes build config operations.
 
 | link:camel-kubernetes/src/main/docs/openshift-builds-component.adoc[Openshift Builds] (camel-kubernetes) +
 `openshift-builds:masterUrl` | 2.17 | The Openshift Builds component provides a producer to execute openshift build operations.
