@@ -78,7 +78,7 @@ Number of Components: 292 in 200 JAR artifacts (19 deprecated)
 `aws-kinesis-firehose:streamName` | 2.19 | The aws-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
 
 | link:camel-aws/src/main/docs/aws-kms-component.adoc[AWS KMS] (camel-aws) +
-`aws-kms:label` | 2.21 | The aws-mq is used for managing Amazon KMS
+`aws-kms:label` | 2.21 | The aws-kms is used for managing Amazon KMS
 
 | link:camel-aws/src/main/docs/aws-lambda-component.adoc[AWS Lambda] (camel-aws) +
 `aws-lambda:function` | 2.20 | The aws-lambda is used for managing and invoking functions from Amazon Lambda.
