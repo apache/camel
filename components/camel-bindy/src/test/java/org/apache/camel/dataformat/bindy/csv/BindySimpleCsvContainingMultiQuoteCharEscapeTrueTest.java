@@ -25,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
-import org.apache.camel.dataformat.bindy.csv.BindySimpleCsvContainingMultiQuoteCharEscapeFalseTest.BindyCsvRowFormat75191;
-import org.apache.camel.dataformat.bindy.csv.BindySimpleCsvContainingMultiQuoteCharEscapeFalseTest.BindyCsvRowFormat75192;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
