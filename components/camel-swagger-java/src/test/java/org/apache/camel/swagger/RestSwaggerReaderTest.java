@@ -74,7 +74,6 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         String json = mapper.writeValueAsString(swagger);
 
         log.info(json);
-        System.out.println(json);
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
         assertTrue(json.contains("\"basePath\" : \"/api\""));
@@ -84,6 +83,7 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         assertTrue(json.contains("\"/hello/hi/{name}\""));
         assertTrue(json.contains("\"type\" : \"number\""));
         assertTrue(json.contains("\"format\" : \"float\""));
+        assertTrue(json.contains("\"type\" : \"string\""));
 
         context.stop();
     }

@@ -305,20 +305,28 @@ public class RestSwaggerReader {
                     if (parameter instanceof BodyParameter) {
                         BodyParameter bp = (BodyParameter) parameter;
 
-                        if (verb.getType() != null) {
-                            if (verb.getType().endsWith("[]")) {
-                                String typeName = verb.getType();
-                                typeName = typeName.substring(0, typeName.length() - 2);
-                                Property prop = modelTypeAsProperty(typeName, swagger);
+                        String type = param.getDataType() != null ? param.getDataType() : verb.getType();
+                        if (type != null) {
+                            if (type.endsWith("[]")) {
+                                type = type.substring(0, type.length() - 2);
+                                Property prop = modelTypeAsProperty(type, swagger);
                                 if (prop != null) {
                                     ArrayModel arrayModel = new ArrayModel();
                                     arrayModel.setItems(prop);
                                     bp.setSchema(arrayModel);
                                 }
                             } else {
-                                String ref = modelTypeAsRef(verb.getType(), swagger);
+                                String ref = modelTypeAsRef(type, swagger);
                                 if (ref != null) {
                                     bp.setSchema(new RefModel(ref));
+                                } else {
+                                    Property prop = modelTypeAsProperty(type, swagger);
+                                    if (prop != null) {
+                                        ModelImpl model = new ModelImpl();
+                                        model.setFormat(prop.getFormat());
+                                        model.setType(prop.getType());
+                                        bp.setSchema(model);
+                                    }
                                 }
                             }
                         }
@@ -545,7 +553,7 @@ public class RestSwaggerReader {
             if (array && ("byte".equals(typeName) || "java.lang.Byte".equals(typeName))) {
                 prop = new ByteArrayProperty();
                 array = false;
-            } else if ("java.lang.String".equals(typeName)) {
+            } else if ("string".equalsIgnoreCase(typeName) || "java.lang.String".equals(typeName)) {
                 prop = new StringProperty();
             } else if ("int".equals(typeName) || "java.lang.Integer".equals(typeName)) {
                 prop = new IntegerProperty();
