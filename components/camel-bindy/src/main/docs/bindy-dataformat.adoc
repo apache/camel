@@ -437,6 +437,9 @@ a decimal point implied at a specified location
 |lengthPos |int |*Camel 2.11*: optional - can be used to identify a data field in a
 fixed-length record that defines the fixed length for this field
 
+|align |string |optional - default value = "R" - Align the text to the right or left within a fixed-length field.
+Use values 'R' or 'L'
+
 |delimiter |string |*Camel 2.11:* optional - can be used to demarcate the end of a variable-length field within a fixed-length record
 |=======================================================================
 
