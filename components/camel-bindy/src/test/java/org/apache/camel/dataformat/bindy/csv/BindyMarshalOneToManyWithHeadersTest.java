@@ -40,7 +40,6 @@ public class BindyMarshalOneToManyWithHeadersTest extends AbstractJUnit4SpringCo
     private static final String URI_MOCK_ERROR = "mock:error";
     private static final String URI_DIRECT_START = "direct:start";
 
-    private Order order;
     private String expected;
 
     @Produce(uri = URI_DIRECT_START)

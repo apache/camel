@@ -111,16 +111,8 @@ public class BindySimpleKeyValuePairFixTest extends AbstractJUnit4SpringContextT
             return id;
         }
 
-        public void setId(String id) {
-            id = id;
-        }
-
         public String getProduct() {
             return product;
-        }
-
-        public void setProduct(String product) {
-            this.product = product;
         }
 
         public String getQuantity() {

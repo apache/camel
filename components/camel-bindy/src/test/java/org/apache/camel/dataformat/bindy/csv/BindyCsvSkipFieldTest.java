@@ -45,8 +45,6 @@ public class BindyCsvSkipFieldTest  extends AbstractJUnit4SpringContextTests {
     @EndpointInject(uri = URI_MOCK_RESULT)
     private MockEndpoint result;
 
-    private String expected;
-    
     @Test
     @DirtiesContext
     public void testUnMarshalAndMarshal() throws Exception {
