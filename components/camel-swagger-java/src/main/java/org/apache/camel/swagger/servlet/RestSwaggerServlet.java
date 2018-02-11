@@ -34,6 +34,7 @@ import io.swagger.jaxrs.config.BeanConfig;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.swagger.RestApiResponseAdapter;
 import org.apache.camel.swagger.RestSwaggerSupport;
 import org.apache.camel.util.EndpointHelper;
@@ -58,6 +59,19 @@ public class RestSwaggerServlet extends HttpServlet {
 
     private String apiContextIdPattern;
     private boolean apiContextIdListing;
+    private boolean translateContextPath = true;
+
+
+    public boolean isTranslateContextPath() { return translateContextPath; }
+
+    /**
+     * Sets whether the context path of the request should be translated (true) or used as-is (false)
+     * Optional, Defaults to true
+     * @param translateContextPath
+     */
+    public void setTranslateContextPath(boolean translateContextPath) { this.translateContextPath = translateContextPath; }
+
+
 
     public String getApiContextIdPattern() {
         return apiContextIdPattern;
@@ -112,6 +126,11 @@ public class RestSwaggerServlet extends HttpServlet {
         if (listing != null) {
             apiContextIdListing = Boolean.valueOf(listing.toString());
         }
+        Object translate = parameters.remove("translateContextPath");
+        if (translate != null) {
+            translateContextPath = Boolean.valueOf(translate.toString());
+        }
+
     }
 
     @Override
@@ -189,7 +208,7 @@ public class RestSwaggerServlet extends HttpServlet {
                 if (!match) {
                     adapter.noContent();
                 } else {
-                    support.renderResourceListing(adapter, swaggerConfig, name, route, json, yaml, classResolver, null);
+                    support.renderResourceListing(adapter, swaggerConfig, name, route, json, yaml, classResolver, new RestConfiguration());
                 }
             }
         } catch (Exception e) {
@@ -226,6 +245,9 @@ public class RestSwaggerServlet extends HttpServlet {
      */
     private String translateContextPath(HttpServletRequest request) {
         String path = request.getContextPath();
+        if (!translateContextPath) {
+            return path;
+        }
         if (path.isEmpty() || path.equals("/")) {
             return "";
         } else {
