@@ -322,6 +322,7 @@ public class AmazonS3ClientMock extends AmazonS3Client {
         S3Object s3Object = new S3Object();
         s3Object.setBucketName(putObjectRequest.getBucketName());
         s3Object.setKey(putObjectRequest.getKey());
+        s3Object.getObjectMetadata().setUserMetadata(putObjectRequest.getMetadata().getUserMetadata());
         if (putObjectRequest.getFile() != null) {
             try {
                 s3Object.setObjectContent(new FileInputStream(putObjectRequest.getFile()));
