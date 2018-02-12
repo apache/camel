@@ -22,13 +22,12 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Integration test to confirm REQUEUE header causes message to be re-queued when an unhandled exception occurs.
  */
-public class RabbitMQRequeueUnhandledExceptionIntTest extends CamelTestSupport {
+public class RabbitMQRequeueUnhandledExceptionIntTest extends AbstractRabbitMQIntTest {
     public static final String ROUTING_KEY = "rk4";
 
     @Produce(uri = "direct:rabbitMQ")
