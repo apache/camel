@@ -326,8 +326,24 @@ public class MllpSocketBuffer {
         return "";
     }
 
+    public String toPrintFriendlyStringAndReset() {
+        String answer = toPrintFriendlyString();
+
+        reset();
+
+        return answer;
+    }
+
     public synchronized String toHl7String() {
         return this.toHl7String(StandardCharsets.US_ASCII.name());
+    }
+
+    public String toHl7StringAndReset() {
+        String answer = toHl7String();
+
+        reset();
+
+        return answer;
     }
 
     public synchronized String toHl7String(String charsetName) {
@@ -354,6 +370,14 @@ public class MllpSocketBuffer {
         return hl7String;
     }
 
+    public String toHl7StringAndReset(String charsetName) {
+        String answer = toHl7String(charsetName);
+
+        reset();
+
+        return answer;
+    }
+
     /**
      * Convert the enveloped contents of the buffer (excluding enveloping characters) to a print-friendly
      * String representation.
@@ -368,6 +392,14 @@ public class MllpSocketBuffer {
         }
 
         return "";
+    }
+
+    public String toPrintFriendlyHl7StringAndReset() {
+        String answer = toPrintFriendlyHl7String();
+
+        reset();
+
+        return answer;
     }
 
     public synchronized byte[] toMllpPayload() {
@@ -386,6 +418,14 @@ public class MllpSocketBuffer {
         }
 
         return mllpPayload;
+    }
+
+    public byte[] toMllpPayloadAndReset() {
+        byte[] answer = toMllpPayload();
+
+        reset();
+
+        return answer;
     }
 
     public synchronized int getMllpPayloadLength() {
@@ -576,7 +616,12 @@ public class MllpSocketBuffer {
                     updateIndexes(buffer[availableByteCount + i], i);
                 }
                 availableByteCount += readCount;
-                log.trace("Read {} bytes for a total of {} bytes", readCount, availableByteCount);
+
+                if (hasStartOfBlock()) {
+                    log.trace("Read {} bytes for a total of {} bytes", readCount, availableByteCount);
+                } else {
+                    log.warn("Ignoring {} bytes received before START_OF_BLOCK", size(), toPrintFriendlyStringAndReset());
+                }
             }
         } catch (SocketTimeoutException timeoutEx) {
             throw timeoutEx;

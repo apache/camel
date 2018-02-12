@@ -83,7 +83,7 @@ public class MllpSocketBufferReadFromTest extends SocketBufferTestSupport {
             instance.readFrom(socketStub);
             fail("Should have thrown and exception");
         } catch (SocketTimeoutException expectedEx) {
-            assertArrayEquals("FOOBAR".getBytes(), instance.toByteArray());
+            assertNull(instance.toByteArray());
         }
     }
 }

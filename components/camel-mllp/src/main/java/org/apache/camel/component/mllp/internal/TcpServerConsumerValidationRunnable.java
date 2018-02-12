@@ -138,18 +138,18 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
         log.debug("Checking {} for data", combinedAddress);
 
         try {
-            mllpBuffer.readFrom(clientSocket, 500, 50);
+            mllpBuffer.readFrom(clientSocket, Math.min(500, consumer.getConfiguration().getReceiveTimeout()), consumer.getConfiguration().getReadTimeout());
             if (mllpBuffer.hasCompleteEnvelope()  || mllpBuffer.hasStartOfBlock()) {
                 consumer.startConsumer(clientSocket, mllpBuffer);
             } else if (!mllpBuffer.isEmpty()) {
                 // We have some leading out-of-band data but no START_OF_BLOCK
-                log.info("Ignoring out-of-band data on initial read: {}", mllpBuffer.toStringAndReset());
+                log.info("Ignoring out-of-band data on initial read [{} bytes]: {}", mllpBuffer.size(), mllpBuffer.toPrintFriendlyStringAndReset());
                 mllpBuffer.resetSocket(clientSocket);
             }
         } catch (MllpSocketException socketEx) {
             // TODO:  The socket is invalid for some reason
             if (!mllpBuffer.isEmpty()) {
-                log.warn("Exception encountered receiving complete message: ", mllpBuffer.toStringAndReset());
+                log.warn("Exception encountered receiving complete initial message [{} bytes]: {}", mllpBuffer.size(), mllpBuffer.toPrintFriendlyStringAndReset());
             }
             mllpBuffer.resetSocket(clientSocket);
         } catch (SocketTimeoutException timeoutEx) {
@@ -157,7 +157,7 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
                 log.debug("Initial read timed-out but no data was read - starting consumer");
                 consumer.startConsumer(clientSocket, mllpBuffer);
             } else {
-                log.warn("Timeout receiving complete message: {}", mllpBuffer.toStringAndReset());
+                log.warn("Timeout receiving complete initial message on read [{} bytes]: {}", mllpBuffer.size(), mllpBuffer.toPrintFriendlyStringAndReset());
                 mllpBuffer.resetSocket(clientSocket);
             }
         } finally {
