@@ -3,8 +3,6 @@
 
 *Available as of Camel version 2.15*
 
-### Component Description
-
 The Google Calendar component provides access
 to http://google.com/calendar[Google Calendar] via
 the https://developers.google.com/google-apps/calendar/v3/reference/[Google

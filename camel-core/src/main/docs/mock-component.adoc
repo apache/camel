@@ -1,9 +1,7 @@
 [[mock-component]]
 == Mock Component
-*Available as of Camel version 1.0*
-*Available as of Camel version 1.0*
 
-
+*Available as of Camel version 1.0*
 
 Testing of distributed and asynchronous processing is
 notoriously difficult. The <<mock-component,Mock>>, <<mock-component,Test>>

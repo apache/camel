@@ -3,8 +3,6 @@
 
 *Available as of Camel version 2.10*
 
-*Available since Camel 2.10.0*
-
 The
 http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/eventbus/package-summary.html[Google
 Guava EventBus] allows publish-subscribe-style communication between
