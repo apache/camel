@@ -1,0 +1,81 @@
+{
+  "name": "Embedded Broker",
+  "modelVersion": "7.0",
+  "accesscontrolproviders": [
+    {
+      "name": "myprovider",
+      "type": "AclFile",
+      "path": "src/test/resources/qpid-test.acl"
+    }
+  ],
+  "authenticationproviders": [
+    {
+      "name": "plain",
+      "type": "Plain",
+      "users": [
+        {
+          "name": "admin",
+          "type": "managed",
+          "password": "admin"
+        },
+        {
+          "name": "cameltest",
+          "type": "managed",
+          "password": "cameltest"
+        },
+        {
+          "name": "guest",
+          "type": "managed",
+          "password": "guest"
+        }
+      ],
+      "secureOnlyMechanisms": []
+    }
+  ],
+  "plugins": [
+    {
+      "type": "MANAGEMENT-HTTP",
+      "name": "httpManagement"
+    }
+  ],
+  "ports": [
+    {
+      "name": "AMQP",
+      "port": "${qpid.amqp_port}",
+      "protocols": [
+        "AMQP_0_9_1"
+      ],
+      "authenticationProvider": "plain",
+      "virtualhostaliases": [
+        {
+          "name": "nameAlias",
+          "type": "nameAlias"
+        },
+        {
+          "name": "defaultAlias",
+          "type": "defaultAlias"
+        },
+        {
+          "name": "hostnameAlias",
+          "type": "hostnameAlias"
+        }
+      ]
+    },
+    {
+      "name": "HTTP",
+      "port": "${qpid.http_port}",
+      "authenticationProvider": "plain",
+      "protocols": [
+        "HTTP"
+      ]
+    }
+  ],
+  "virtualhostnodes": [
+    {
+      "name": "default",
+      "type": "Memory",
+      "defaultVirtualHostNode": "true",
+      "virtualHostInitialConfiguration": "{\"type\" : \"Memory\",\"name\" : \"default\",\"modelVersion\" : \"7.0\"}"
+    }
+  ]
+}

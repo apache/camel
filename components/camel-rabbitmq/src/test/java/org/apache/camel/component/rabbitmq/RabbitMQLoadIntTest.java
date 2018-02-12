@@ -29,14 +29,13 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Integration test to check that RabbitMQ Endpoint is able handle heavy load using multiple producers and
  * consumers
  */
-public class RabbitMQLoadIntTest extends CamelTestSupport {
+public class RabbitMQLoadIntTest extends AbstractRabbitMQIntTest {
     public static final String ROUTING_KEY = "rk4";
     private static final int PRODUCER_COUNT = 10;
     private static final int CONSUMER_COUNT = 10;
