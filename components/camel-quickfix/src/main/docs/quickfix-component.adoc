@@ -1,9 +1,7 @@
 [[quickfix-component]]
 == QuickFix Component
+
 *Available as of Camel version 2.1*
-
-
-### QuickFIX/J Component
 
 The *quickfix* component adapts the
 http://www.quickfixj.org/[QuickFIX/J] FIX engine for using in Camel .
