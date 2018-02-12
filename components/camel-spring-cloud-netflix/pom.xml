@@ -70,6 +70,11 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-boot</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.reactivex</groupId>
+      <artifactId>rxjava</artifactId>
+      <version>${rxjava-version}</version>
+    </dependency>
 
     <!-- Testing dependencies -->
     <dependency>
