@@ -22,13 +22,12 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Integration test to confirm REQUEUE header causes message to be re-queued instead of sent to DLQ.
  */
-public class RabbitMQRequeueIntTest extends CamelTestSupport {
+public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
     public static final String ROUTING_KEY = "rk4";
 
     @Produce(uri = "direct:rabbitMQ")

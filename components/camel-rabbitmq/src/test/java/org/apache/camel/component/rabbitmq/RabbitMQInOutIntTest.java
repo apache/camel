@@ -40,10 +40,9 @@ import org.apache.camel.component.rabbitmq.testbeans.TestNonSerializableObject;
 import org.apache.camel.component.rabbitmq.testbeans.TestPartiallySerializableObject;
 import org.apache.camel.component.rabbitmq.testbeans.TestSerializableObject;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class RabbitMQInOutIntTest extends CamelTestSupport {
+public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
     public static final String ROUTING_KEY = "rk5";
     public static final long TIMEOUT_MS = 2000;

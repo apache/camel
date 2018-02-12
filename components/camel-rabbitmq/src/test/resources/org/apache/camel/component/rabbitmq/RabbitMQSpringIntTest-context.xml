@@ -18,28 +18,19 @@
 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-    ">
-    <!-- To create and grant user cameltest:
-        rabbitmqctl add_user cameltest cameltest
-        rabbitmqctl set_permissions -p / cameltest ".*" ".*" ".*"
-    -->
-    <!-- START SNIPPET: custom connection factory -->
-    <bean id="customConnectionFactory" class="com.rabbitmq.client.ConnectionFactory">
-        <property name="host" value="localhost"/>
-        <property name="port" value="5672"/>
-        <property name="username" value="cameltest"/>
-        <property name="password" value="cameltest"/>
-    </bean>
-
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <route>
-            <from uri="direct:rabbitMQ"/>
-            <to uri="rabbitmq://localhost:5672/ex2?connectionFactory=#customConnectionFactory&amp;queue=q2&amp;routingKey=rk2"/>
-        </route>
-    </camelContext>
-    <!-- END SNIPPET: example -->
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd     ">
+  <!-- START SNIPPET: custom connection factory -->
+  <bean class="com.rabbitmq.client.ConnectionFactory" id="customConnectionFactory">
+    <property name="host" value="localhost"/>
+    <property name="port" value="5672"/>
+    <property name="username" value="cameltest"/>
+    <property name="password" value="cameltest"/>
+  </bean>
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <route id="_route1">
+      <from id="_from1" uri="direct:rabbitMQ"/>
+      <to id="_to1" uri="rabbitmq://localhost:5672/ex2?connectionFactory=#customConnectionFactory&amp;queue=q2&amp;routingKey=rk2"/>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: example -->
 </beans>
