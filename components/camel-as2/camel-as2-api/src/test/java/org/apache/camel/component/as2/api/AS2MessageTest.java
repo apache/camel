@@ -21,6 +21,7 @@ import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.http.ExceptionLogger;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -127,7 +128,16 @@ public class AS2MessageTest {
                     @Override
                     public void handle(HttpRequest request, HttpResponse response, HttpContext context)
                             throws HttpException, IOException {
-//                        Util.printRequest(System.out, request);
+//                        try {
+//                            org.apache.camel.component.as2.api.entity.EntityParser.parseAS2MessageEntity(request);
+//                        } catch (Exception e) {
+//                            throw new HttpException("Failed to parse AS2 Message Entity", e);
+//                        }
+//                        if (request instanceof HttpEntityEnclosingRequest && ((HttpEntityEnclosingRequest)request).getEntity() instanceof MultipartSignedEntity) {
+//                            MultipartSignedEntity entity = (MultipartSignedEntity) ((HttpEntityEnclosingRequest)request).getEntity();
+//                            LOG.info("Signed entity is valid?: " + entity.isValid());
+//                            LOG.info("*** Recieved Request ***\n" + Util.printRequest(request));
+//                        }
                     }
                 })
                 .create();
@@ -306,7 +316,8 @@ public class AS2MessageTest {
         ApplicationPkcs7SignatureEntity signatureEntity = signedEntity.getSignatureEntity();
         assertNotNull("Multipart signed entity does not contain signature entity", signatureEntity);
         
-        LOG.info("Signed entity Valid? : " + signedEntity.isValid());
+//        LOG.info("Signed entity Valid? : " + signedEntity.isValid());
+//        LOG.info("*** Recieved Request ***\n" + Util.printRequest(request));
 
     }
         
