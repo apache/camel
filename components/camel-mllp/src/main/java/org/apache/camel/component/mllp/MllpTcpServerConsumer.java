@@ -194,7 +194,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         TcpServerConsumerValidationRunnable client = new TcpServerConsumerValidationRunnable(this, clientSocket, mllpBuffer);
 
         try {
-            log.info("Validating consumer for Socket {}", clientSocket);
+            log.debug("Validating consumer for Socket {}", clientSocket);
             validationExecutor.submit(client);
         } catch (RejectedExecutionException rejectedExecutionEx) {
             log.warn("Cannot validate consumer - max validations already active");

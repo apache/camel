@@ -607,9 +607,8 @@ public class MllpSocketBuffer {
         try {
             int readCount = socketInputStream.read(buffer, availableByteCount, buffer.length - availableByteCount);
             if (readCount == MllpProtocolConstants.END_OF_STREAM) {
-                final String exceptionMessage = "END_OF_STREAM returned from SocketInputStream.read(byte[], off, len)";
-                resetSocket(socket, exceptionMessage);
-                throw new SocketException(exceptionMessage);
+                resetSocket(socket);
+                throw new SocketException("END_OF_STREAM returned from SocketInputStream.read(byte[], off, len)");
             }
             if (readCount > 0) {
                 for (int i = 0; (startOfBlockIndex == -1 || endOfBlockIndex == -1) && i < readCount; ++i) {
@@ -626,13 +625,12 @@ public class MllpSocketBuffer {
         } catch (SocketTimeoutException timeoutEx) {
             throw timeoutEx;
         } catch (SocketException socketEx) {
-            final String exceptionMessage = "SocketException encountered in readSocketInputStream";
-            resetSocket(socket, exceptionMessage);
-            throw new MllpSocketException(exceptionMessage, socketEx);
+            resetSocket(socket);
+            throw new MllpSocketException("SocketException encountered in readSocketInputStream", socketEx);
         } catch (IOException ioEx) {
             final String exceptionMessage = "IOException thrown from SocketInputStream.read(byte[], off, len)";
-            resetSocket(socket, exceptionMessage);
-            throw new MllpSocketException(exceptionMessage, ioEx);
+            resetSocket(socket);
+            throw new MllpSocketException("IOException thrown from SocketInputStream.read(byte[], off, len)", ioEx);
         } finally {
             log.trace("Exiting readSocketInputStream - size = {}", size());
         }
@@ -659,7 +657,7 @@ public class MllpSocketBuffer {
             if (logMessage != null && !logMessage.isEmpty()) {
                 log.info("{} - {} socket {}", reset ? "Resetting" : "Closing", logMessage, socket);
             } else {
-                log.info("{} socket {}", reset ? "Resetting" : "Closing", socket);
+                log.debug("{} socket {}", reset ? "Resetting" : "Closing", socket);
             }
 
             endpoint.updateLastConnectionTerminatedTicks();
