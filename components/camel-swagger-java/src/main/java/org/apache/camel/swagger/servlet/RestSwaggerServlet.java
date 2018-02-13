@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.swagger.jaxrs.config.BeanConfig;
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RestConfiguration;
@@ -64,18 +63,6 @@ public class RestSwaggerServlet extends HttpServlet {
     private boolean apiContextIdListing;
     private boolean translateContextPath = true;
 
-
-    public boolean isTranslateContextPath() { return translateContextPath; }
-
-    /**
-     * Sets whether the context path of the request should be translated (true) or used as-is (false)
-     * Optional, Defaults to true
-     * @param translateContextPath
-     */
-    public void setTranslateContextPath(boolean translateContextPath) { this.translateContextPath = translateContextPath; }
-
-
-
     public String getApiContextIdPattern() {
         return apiContextIdPattern;
     }
@@ -101,6 +88,18 @@ public class RestSwaggerServlet extends HttpServlet {
      */
     public void setApiContextIdListing(boolean apiContextIdListing) {
         this.apiContextIdListing = apiContextIdListing;
+    }
+
+    public boolean isTranslateContextPath() {
+        return translateContextPath;
+    }
+
+    /**
+     * Sets whether the context path of the request should be translated (true) or used as-is (false)
+     * Optional, Defaults to true
+     */
+    public void setTranslateContextPath(boolean translateContextPath) {
+        this.translateContextPath = translateContextPath;
     }
 
     @Override
@@ -133,7 +132,6 @@ public class RestSwaggerServlet extends HttpServlet {
         if (translate != null) {
             translateContextPath = Boolean.valueOf(translate.toString());
         }
-
     }
 
     @Override
