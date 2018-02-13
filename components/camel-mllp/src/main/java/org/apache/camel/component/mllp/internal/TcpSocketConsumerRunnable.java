@@ -166,9 +166,11 @@ public class TcpSocketConsumerRunnable implements Runnable {
                     mllpBuffer.readFrom(clientSocket);
                     if (mllpBuffer.hasCompleteEnvelope()) {
                         hl7MessageBytes = mllpBuffer.toMllpPayload();
-                        log.debug("Received {} byte message {}", hl7MessageBytes.length, Hl7Util.convertToPrintFriendlyString(hl7MessageBytes));
+                        if (log.isDebugEnabled()) {
+                            log.debug("Received {} byte message {}", hl7MessageBytes.length, Hl7Util.convertToPrintFriendlyString(hl7MessageBytes));
+                        }
                         if (mllpBuffer.hasLeadingOutOfBandData()) {
-                            // TODO:  Move the convertion utilities to the MllpSocketBuffer to avoid a byte[] copy
+                            // TODO:  Move the conversion utilities to the MllpSocketBuffer to avoid a byte[] copy
                             log.warn("Ignoring leading out-of-band data: {}", Hl7Util.convertToPrintFriendlyString(mllpBuffer.getLeadingOutOfBandData()));
                         }
                         if (mllpBuffer.hasTrailingOutOfBandData()) {
@@ -206,7 +208,7 @@ public class TcpSocketConsumerRunnable implements Runnable {
                     if (!mllpBuffer.isEmpty()) {
                         consumer.handleMessageException("Exception encountered reading payload", mllpBuffer.toByteArrayAndReset(), mllpSocketEx);
                     } else {
-                        log.warn("Ignoring exception encountered checking for data", mllpSocketEx);
+                        log.debug("Ignoring exception encountered checking for data", mllpSocketEx);
                     }
                 }
             }
