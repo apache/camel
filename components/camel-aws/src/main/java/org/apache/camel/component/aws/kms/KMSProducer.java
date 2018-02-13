@@ -24,6 +24,8 @@ import com.amazonaws.services.kms.model.DisableKeyRequest;
 import com.amazonaws.services.kms.model.DisableKeyResult;
 import com.amazonaws.services.kms.model.ListKeysRequest;
 import com.amazonaws.services.kms.model.ListKeysResult;
+import com.amazonaws.services.kms.model.ScheduleKeyDeletionRequest;
+import com.amazonaws.services.kms.model.ScheduleKeyDeletionResult;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -60,6 +62,9 @@ public class KMSProducer extends DefaultProducer {
             break;
         case disableKey:
             disableKey(getEndpoint().getKmsClient(), exchange);
+            break;
+        case scheduleKeyDeletion:
+            scheduleKeyDeletion(getEndpoint().getKmsClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -138,6 +143,29 @@ public class KMSProducer extends DefaultProducer {
             result = kmsClient.disableKey(request);
         } catch (AmazonServiceException ase) {
             LOG.trace("Disable Key command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void scheduleKeyDeletion(AWSKMS kmsClient, Exchange exchange) {
+        ScheduleKeyDeletionRequest request = new ScheduleKeyDeletionRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMSConstants.KEY_ID))) {
+            String keyId = exchange.getIn().getHeader(KMSConstants.KEY_ID, String.class);
+            request.withKeyId(keyId);
+        } else {
+            throw new IllegalArgumentException("Key Id must be specified");
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMSConstants.PENDING_WINDOW_IN_DAYS))) {
+            int pendingWindows = exchange.getIn().getHeader(KMSConstants.PENDING_WINDOW_IN_DAYS, Integer.class);
+            request.withPendingWindowInDays(pendingWindows);
+        } 
+        ScheduleKeyDeletionResult result;
+        try {
+            result = kmsClient.scheduleKeyDeletion(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Schedule Key Deletion command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

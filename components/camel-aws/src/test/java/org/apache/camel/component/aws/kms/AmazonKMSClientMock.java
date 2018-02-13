@@ -300,7 +300,9 @@ public class AmazonKMSClientMock implements AWSKMS {
 
     @Override
     public ScheduleKeyDeletionResult scheduleKeyDeletion(ScheduleKeyDeletionRequest scheduleKeyDeletionRequest) {
-        throw new UnsupportedOperationException();
+        ScheduleKeyDeletionResult result = new ScheduleKeyDeletionResult();
+        result.withKeyId("test");
+        return result;
     }
 
     @Override
