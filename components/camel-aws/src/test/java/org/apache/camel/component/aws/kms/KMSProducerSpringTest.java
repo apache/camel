@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.kms;
 
 import com.amazonaws.services.kms.model.CreateKeyResult;
 import com.amazonaws.services.kms.model.ListKeysResult;
+import com.amazonaws.services.kms.model.ScheduleKeyDeletionResult;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -82,6 +83,24 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
         
+    }
+    
+    @Test
+    public void kmsScheduleKeyDeletionTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:scheduleDelete", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KMSConstants.OPERATION, KMSOperations.scheduleKeyDeletion);
+                exchange.getIn().setHeader(KMSConstants.KEY_ID, "test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+        
+        ScheduleKeyDeletionResult resultGet = (ScheduleKeyDeletionResult) exchange.getIn().getBody();
+        assertEquals("test", resultGet.getKeyId());
     }
 
     @Override

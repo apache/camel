@@ -25,4 +25,5 @@ public interface KMSConstants {
     String LIMIT                    = "CamelAwsKMSLimit";
     String DESCRIPTION              = "CamelAwsKMSDescription";
     String KEY_ID                   = "CamelAwsKMSKeyId";
+    String PENDING_WINDOW_IN_DAYS   = "CamelAwsKMSPendingWindowInDays";
 }
