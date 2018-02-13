@@ -46,7 +46,7 @@ public class SlackProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
 
         // Create an HttpClient and Post object
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost httpPost = new HttpPost(slackEndpoint.getWebhookUrl());
 
         // Build Helper object
