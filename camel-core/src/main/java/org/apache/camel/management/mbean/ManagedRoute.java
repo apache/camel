@@ -265,6 +265,25 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return context.removeRoute(getRouteId());
     }
 
+    @Override
+    public void restart() throws Exception {
+        restart(1);
+    }
+
+    @Override
+    public void restart(long delay) throws Exception {
+        stop();
+        if (delay > 0) {
+            try {
+                LOG.debug("Sleeping {} seconds before starting route: {}", delay, getRouteId());
+                Thread.sleep(delay * 1000);
+            } catch (InterruptedException e) {
+                // ignore
+            }
+        }
+        start();
+    }
+
     public String dumpRouteAsXml() throws Exception {
         return dumpRouteAsXml(false);
     }

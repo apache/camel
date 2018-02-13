@@ -104,6 +104,12 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedOperation(description = "Remove route (must be stopped)")
     boolean remove() throws Exception;
 
+    @ManagedOperation(description = "Restarts route (1 second delay before starting)")
+    void restart() throws Exception;
+
+    @ManagedOperation(description = "Restarts route (using delay in seconds before starting)")
+    void restart(long delay) throws Exception;
+
     @ManagedOperation(description = "Dumps the route as XML")
     String dumpRouteAsXml() throws Exception;
 
