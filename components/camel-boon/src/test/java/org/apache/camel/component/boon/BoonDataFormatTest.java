@@ -99,8 +99,6 @@ public class BoonDataFormatTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reversePojosMap");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Map.class);
-        mock.message(0).body().matches().simple("${body[test1].name} == 'Camel'");
-        mock.message(0).body().matches().simple("${body[test2].name} == 'Camel'");
 
         Object marshalled = template.requestBody("direct:inPojosMap", map);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
