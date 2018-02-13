@@ -2278,10 +2278,9 @@
     <bundle>mvn:org.apache.camel/camel-univocity-parsers/${project.version}</bundle>
   </feature>
   <feature name='camel-urlrewrite' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
-    <feature version='${project.version}'>camel-http</feature>
+    <feature>jetty</feature>
     <feature version='${project.version}'>camel-http4</feature>
-    <feature version='${project.version}'>camel-jetty</feature>
+    <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.urlrewritefilter/${urlrewritefilter-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-urlrewrite/${project.version}</bundle>
   </feature>
