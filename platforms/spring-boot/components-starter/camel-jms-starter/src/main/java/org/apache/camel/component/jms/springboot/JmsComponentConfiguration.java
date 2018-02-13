@@ -1564,10 +1564,10 @@ public class JmsComponentConfiguration
          */
         private Boolean lazyCreateTransactionManager = true;
         /**
-         * Enables eager loading of JMS properties as soon as a message is
-         * loaded which generally is inefficient as the JMS properties may not
-         * be required but sometimes can catch early any issues with the
-         * underlying JMS provider and the use of JMS properties
+         * Enables eager loading of JMS properties and payload as soon as a
+         * message is loaded which generally is inefficient as the JMS
+         * properties may not be required but sometimes can catch early any
+         * issues with the underlying JMS provider and the use of JMS properties
          */
         private Boolean eagerLoadingOfProperties = false;
         /**
