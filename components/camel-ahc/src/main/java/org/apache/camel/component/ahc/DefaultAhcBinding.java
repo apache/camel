@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import io.netty.handler.codec.http.HttpHeaders;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -49,8 +51,6 @@ import org.asynchttpclient.request.body.generator.FileBodyGenerator;
 import org.asynchttpclient.request.body.generator.InputStreamBodyGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.netty.handler.codec.http.HttpHeaders;
 
 public class DefaultAhcBinding implements AhcBinding {
 

@@ -18,6 +18,8 @@ package org.apache.camel.component.ahc;
 
 import java.io.ByteArrayOutputStream;
 
+import io.netty.handler.codec.http.HttpHeaders;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
@@ -26,8 +28,6 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.HttpResponseBodyPart;
 import org.asynchttpclient.HttpResponseStatus;
 import org.asynchttpclient.Request;
-
-import io.netty.handler.codec.http.HttpHeaders;
 
 /**
  *
