@@ -333,8 +333,11 @@ public class SubscriptionHelper extends ServiceSupport {
         // use default Jetty client from SalesforceComponent, its shared by all consumers
         final SalesforceHttpClient httpClient = component.getConfig().getHttpClient();
 
-        Map<String, Object> options = new HashMap<String, Object>();
+        Map<String, Object> options = new HashMap<>();
         options.put(ClientTransport.MAX_NETWORK_DELAY_OPTION, httpClient.getTimeout());
+        if(component.getLongPollingTransportProperties() != null){
+            options = component.getLongPollingTransportProperties();
+        }
 
         final SalesforceSession session = component.getSession();
         // check login access token

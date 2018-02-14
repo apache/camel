@@ -134,6 +134,12 @@ public class SalesforceComponentConfiguration
      */
     private Map<String, Object> httpClientProperties;
     /**
+     * Used to set any properties that can be configured on the
+     * LongPollingTransport used by the BayeuxClient (CometD) used by the
+     * streaming api
+     */
+    private Map<String, Object> longPollingTransportProperties;
+    /**
      * SSL parameters to use see SSLContextParameters class for all available
      * options.
      */
@@ -308,6 +314,15 @@ public class SalesforceComponentConfiguration
 
     public void setHttpClientProperties(Map<String, Object> httpClientProperties) {
         this.httpClientProperties = httpClientProperties;
+    }
+
+    public Map<String, Object> getLongPollingTransportProperties() {
+        return longPollingTransportProperties;
+    }
+
+    public void setLongPollingTransportProperties(
+            Map<String, Object> longPollingTransportProperties) {
+        this.longPollingTransportProperties = longPollingTransportProperties;
     }
 
     public SSLContextParameters getSslContextParameters() {
