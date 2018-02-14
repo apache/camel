@@ -28,6 +28,10 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
+/**
+ * {@link org.apache.camel.Processor} used to interceptor and detour the routing
+ * when using the {@link InterceptSendToEndpoint} functionality.
+ */
 public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(InterceptSendToEndpointProcessor.class);
@@ -36,11 +40,11 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     private final Producer producer;
     private final boolean skip;
 
-    public InterceptSendToEndpointProcessor(InterceptSendToEndpoint endpoint, Endpoint delegate, boolean skip) throws Exception {
+    public InterceptSendToEndpointProcessor(InterceptSendToEndpoint endpoint, Endpoint delegate, Producer producer, boolean skip) throws Exception {
         super(delegate);
         this.endpoint = endpoint;
         this.delegate = delegate;
-        this.producer = delegate.createProducer();
+        this.producer = producer;
         this.skip = skip;
     }
 
