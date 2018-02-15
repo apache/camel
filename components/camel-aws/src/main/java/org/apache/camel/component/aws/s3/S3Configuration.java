@@ -84,6 +84,8 @@ public class S3Configuration implements Cloneable {
     private boolean useAwsKMS;
     @UriParam(label = "producer,advanced")
     private String awsKMSKeyId;
+    @UriParam(defaultValue = "false")
+    private boolean useIAMCredentials;
 
     public long getPartSize() {
         return partSize;
@@ -403,7 +405,7 @@ public class S3Configuration implements Cloneable {
     public boolean isDualstackEnabled() {
         return dualstackEnabled;
     }
-    
+
     /**
      * Define if Dualstack enabled is true or false
      */
@@ -433,7 +435,19 @@ public class S3Configuration implements Cloneable {
         this.forceGlobalBucketAccessEnabled = forceGlobalBucketAccessEnabled;
     }
 
-    boolean hasProxyConfiguration() {
+    /**
+     * Set whether the S3 client should expect to load credentials on an EC2 instance or to
+     * expect static credentials to be passed in.
+     */
+    public void setUseIAMCredentials(Boolean useIAMCredentials) {
+        this.useIAMCredentials = useIAMCredentials;
+    }
+
+    public Boolean isUseIAMCredentials() {
+        return useIAMCredentials;
+    }
+
+    public boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
     }
     
