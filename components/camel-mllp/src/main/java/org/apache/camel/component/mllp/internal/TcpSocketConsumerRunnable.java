@@ -194,7 +194,8 @@ public class TcpSocketConsumerRunnable implements Runnable {
                             long lastReceivedMessageTicks = consumer.getConsumerRunnables().get(this);
                             long idleTime = currentTicks - lastReceivedMessageTicks;
                             if (idleTime >= consumer.getConfiguration().getIdleTimeout()) {
-                                consumer.getEndpoint().doConnectionClose(clientSocket, true, log);
+                                String resetMessage = String.format("Connection idle time {} exceeded idleTimeout {}", idleTime, consumer.getConfiguration().getIdleTimeout());
+                                mllpBuffer.resetSocket(clientSocket, resetMessage);
                             }
                         }
                         log.debug("No data received - ignoring timeout");
