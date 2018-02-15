@@ -66,6 +66,14 @@ public class KinesisFirehoseEndpoint extends DefaultEndpoint {
             : createKinesisFirehoseClient();
                
     }
+    
+    @Override
+    public void doStop() throws Exception {
+        if (kinesisFirehoseClient != null) {
+            kinesisFirehoseClient.shutdown();
+        }
+        super.doStop();
+    }
 
     @Override
     public boolean isSingleton() {
