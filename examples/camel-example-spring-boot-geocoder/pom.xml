@@ -34,6 +34,7 @@
   <properties>
     <category>Rest</category>
     <spring.boot-version>${spring-boot-version}</spring.boot-version>
+    <skipTests>true</skipTests>
   </properties>
 
   <!-- Spring-Boot and Camel BOM -->
