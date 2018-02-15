@@ -220,8 +220,11 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     }
 
     @Override
-    protected void doStop() throws Exception {
-        client = null;
+    public void doStop() throws Exception {
+        if (client != null) {
+            client.shutdown();
+        }
+        super.doStop();
     }
 
     public Exchange createExchange(com.amazonaws.services.sqs.model.Message msg) {
