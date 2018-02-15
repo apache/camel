@@ -30,11 +30,13 @@ import org.junit.Test;
  */
 public class XmppProducerConcurrentTest extends CamelTestSupport {
 
+    private EmbeddedXmppTestServer embeddedXmppTestServer;
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
 
-        EmbeddedXmppTestServer.instance().bindSSLContextTo(registry);
+        embeddedXmppTestServer.bindSSLContextTo(registry);
 
         return registry;
     }
@@ -48,7 +50,6 @@ public class XmppProducerConcurrentTest extends CamelTestSupport {
     public void testConcurrentProducers() throws Exception {
         doSendMessages(10, 5);
     }
-
 
     private void doSendMessages(int files, int poolSize) throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(files);
@@ -75,10 +76,21 @@ public class XmppProducerConcurrentTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
+                    .to("xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
                             + "?connectionConfig=#customConnectionConfig&user=camel_consumer&password=secret&serviceName=apache.camel")
                     .to("mock:result");
             }
         };
+    }
+
+    @Override
+    public void doPreSetup() throws Exception {
+        embeddedXmppTestServer = new EmbeddedXmppTestServer();
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+        embeddedXmppTestServer.stop();
     }
 }
