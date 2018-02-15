@@ -17,12 +17,13 @@
 
 package org.apache.camel.component.mllp;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,7 @@ import org.slf4j.LoggerFactory;
 public class MllpComponent extends DefaultComponent {
     public static final String MLLP_LOG_PHI_PROPERTY = "org.apache.camel.component.mllp.logPHI";
     public static final String MLLP_LOG_PHI_MAX_BYTES_PROPERTY = "org.apache.camel.component.mllp.logPHI.maxBytes";
+    public static final String MLLP_DEFAULT_CHARSET_PROPERTY = "org.apache.camel.component.mllp.charset.default";
     public static final boolean DEFAULT_LOG_PHI = true;
     public static final int DEFAULT_LOG_PHI_MAX_BYTES = 5120;
 
@@ -42,6 +44,8 @@ public class MllpComponent extends DefaultComponent {
     static Boolean logPhi;
     @Metadata(label = "advanced", defaultValue = "5120")
     static Integer logPhiMaxBytes;
+    @Metadata(label = "advanced", defaultValue = "ISO-8859-1")
+    static Charset defaultCharset;
 
     MllpConfiguration configuration;
 
@@ -133,6 +137,65 @@ public class MllpComponent extends DefaultComponent {
     }
 
 
+    public static boolean hasDefaultCharset() {
+        return defaultCharset != null;
+    }
+
+    public static Charset getDefaultCharset() {
+        if (hasDefaultCharset()) {
+            return defaultCharset;
+        }
+
+        String defaultCharacterSetNamePropertyValue = System.getProperty(MllpComponent.MLLP_DEFAULT_CHARSET_PROPERTY);
+
+        if (defaultCharacterSetNamePropertyValue != null && !defaultCharacterSetNamePropertyValue.isEmpty()) {
+            try {
+                if (Charset.isSupported(defaultCharacterSetNamePropertyValue)) {
+                    defaultCharset = Charset.forName(defaultCharacterSetNamePropertyValue);
+                } else {
+                    defaultCharset = StandardCharsets.ISO_8859_1;
+                    log.warn("Unsupported character set name '{}' in system property {} - using character set {} as default",
+                        defaultCharacterSetNamePropertyValue, MllpComponent.MLLP_DEFAULT_CHARSET_PROPERTY, defaultCharset);
+                }
+            } catch (Exception charsetEx) {
+                defaultCharset = StandardCharsets.ISO_8859_1;
+                log.warn("Exception encountered determining character set for '{}' found in  system property {} - using default value of {}",
+                    defaultCharacterSetNamePropertyValue, MllpComponent.MLLP_DEFAULT_CHARSET_PROPERTY, defaultCharset);
+            }
+        } else {
+            defaultCharset = StandardCharsets.ISO_8859_1;
+        }
+
+        return defaultCharset;
+    }
+
+    /**
+     * Set the default character set to use for byte[] to/from String conversions.
+     *
+     * @param defaultCharacterSetName the name of the Java Charset.
+     */
+    public static void setDefaultCharset(String defaultCharacterSetName) {
+        if (defaultCharacterSetName != null && !defaultCharacterSetName.isEmpty()) {
+            try {
+                if (Charset.isSupported(defaultCharacterSetName)) {
+                    MllpComponent.defaultCharset = Charset.forName(defaultCharacterSetName);
+                } else {
+                    log.warn("Unsupported character set name '{}' in system property {} - continuing to use character set {} as default",
+                        defaultCharacterSetName, defaultCharset);
+                }
+            } catch (Exception charsetEx) {
+                MllpComponent.defaultCharset = StandardCharsets.ISO_8859_1;
+                log.warn("Exception encountered determining character set for '{}' - continuing to use character set {} as default",
+                    defaultCharacterSetName, defaultCharset);
+            }
+        }
+    }
+
+    public static void setDefaultCharset(Charset defaultCharset) {
+        if (defaultCharset != null) {
+            MllpComponent.defaultCharset = defaultCharset;
+        }
+    }
 
     public boolean hasConfiguration() {
         return configuration != null;

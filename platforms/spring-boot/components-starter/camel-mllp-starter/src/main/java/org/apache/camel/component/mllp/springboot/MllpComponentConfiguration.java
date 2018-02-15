@@ -45,6 +45,10 @@ public class MllpComponentConfiguration
      */
     private Integer logPhiMaxBytes = 5120;
     /**
+     * Set the default character set to use for byte to/from String conversions.
+     */
+    private String defaultCharset = "ISO-8859-1";
+    /**
      * Sets the default configuration to use when creating MLLP endpoints.
      */
     private MllpConfigurationNestedConfiguration configuration;
@@ -69,6 +73,14 @@ public class MllpComponentConfiguration
 
     public void setLogPhiMaxBytes(Integer logPhiMaxBytes) {
         this.logPhiMaxBytes = logPhiMaxBytes;
+    }
+
+    public String getDefaultCharset() {
+        return defaultCharset;
+    }
+
+    public void setDefaultCharset(String defaultCharset) {
+        this.defaultCharset = defaultCharset;
     }
 
     public MllpConfigurationNestedConfiguration getConfiguration() {
@@ -290,8 +302,8 @@ public class MllpComponentConfiguration
          * to a String. If the charsetName property is set, that character set
          * will be used for the conversion. If the charsetName property is not
          * set, the value of MSH-18 will be used to determine th appropriate
-         * character set. If MSH-18 is not set, then the default ASCII character
-         * set will be use.
+         * character set. If MSH-18 is not set, then the default ISO-8859-1
+         * character set will be use.
          * 
          * @param stringPayload
          *            enabled if true, otherwise disabled

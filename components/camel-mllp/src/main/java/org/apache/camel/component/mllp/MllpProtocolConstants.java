@@ -35,7 +35,6 @@ public final class MllpProtocolConstants {
 
     public static final byte[] PAYLOAD_TERMINATOR;
 
-    public static final Charset DEFAULT_CHARSET = StandardCharsets.US_ASCII;
     public static final Map<String, Charset> MSH18_VALUES;
 
     static {
@@ -56,15 +55,15 @@ public final class MllpProtocolConstants {
         MSH18_VALUES.put("8859/8", Charset.forName("ISO-8859-8"));
         MSH18_VALUES.put("8859/9", Charset.forName("ISO-8859-9"));
 
-    /*
-      // These are defined in the HL7 Spec, but I don't know how to map them to Java charset names
+        /*
+          // These are defined in the HL7 Spec, but I don't know how to map them to Java charset names
 
-      MSH18_VALUES.put("JAS2020", "????");
-      MSH18_VALUES.put("JIS X 0202", "????");
-      MSH18_VALUES.put("JIS X 0201-1976", "????");
-      MSH18_VALUES.put("JIS X 0208-1990", "????");
-      MSH18_VALUES.put("JIS X 0212-1990", "????");
-    */
+          MSH18_VALUES.put("JAS2020", "????");
+          MSH18_VALUES.put("JIS X 0202", "????");
+          MSH18_VALUES.put("JIS X 0201-1976", "????");
+          MSH18_VALUES.put("JIS X 0208-1990", "????");
+          MSH18_VALUES.put("JIS X 0212-1990", "????");
+        */
     }
 
     private MllpProtocolConstants() {

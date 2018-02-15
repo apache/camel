@@ -18,7 +18,6 @@
 package org.apache.camel.component.mllp;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -216,7 +215,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             consumerExecutor.submit(client);
         } catch (RejectedExecutionException rejectedExecutionEx) {
             log.warn("Cannot start consumer - max consumers already active");
-            getEndpoint().doConnectionClose(clientSocket, true, null);
+            mllpBuffer.resetSocket(clientSocket);
         }
     }
 
@@ -226,8 +225,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         // Send the message on to Camel for processing and wait for the response
         log.debug("Populating the exchange with received message");
         Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOut);
-        // TODO: Evaluate the CHARSET handling - may not be correct
-        exchange.setProperty(Exchange.CHARSET_NAME, getEndpoint().determineCharset(hl7MessageBytes, null));
+        if (getConfiguration().hasCharsetName()) {
+            exchange.setProperty(Exchange.CHARSET_NAME, getConfiguration().getCharsetName());
+        }
         try {
             createUoW(exchange);
             Message message = exchange.getIn();
@@ -254,7 +254,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
             if (getConfiguration().isStringPayload()) {
                 if (hl7MessageBytes != null && hl7MessageBytes.length > 0) {
-                    message.setBody(getEndpoint().createNewString(hl7MessageBytes, message.getHeader(MllpConstants.MLLP_CHARSET, String.class)), String.class);
+                    message.setBody(new String(hl7MessageBytes, getConfiguration().getCharset(exchange, hl7MessageBytes)));
                 } else {
                     message.setBody("", String.class);
                 }
@@ -308,7 +308,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 log.error("Population of message headers failed - unable to find the end of the MSH segment");
             } else if (getConfiguration().isHl7Headers()) {
                 log.debug("Populating the HL7 message headers");
-                Charset charset = Charset.forName(IOHelper.getCharsetName(exchange));
+                Charset charset = getConfiguration().getCharset(exchange);
 
                 for (int i = 2; i < fieldSeparatorIndexes.size(); ++i) {
                     int startingFieldSeparatorIndex = fieldSeparatorIndexes.get(i - 1);
@@ -356,9 +356,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                             continue;
                         }
 
-                        String headerValue = new String(hl7MessageBytes, startingFieldSeparatorIndex + 1,
-                            endingFieldSeparatorIndex - startingFieldSeparatorIndex - 1,
-                            charset);
+                        String headerValue = (i == 17 && getConfiguration().hasCharsetName())
+                            ? getConfiguration().getCharsetName()
+                            : new String(hl7MessageBytes, startingFieldSeparatorIndex + 1, endingFieldSeparatorIndex - startingFieldSeparatorIndex - 1, charset);
+
                         message.setHeader(headerName, headerValue);
 
                         // For MSH-9, set a couple more headers
@@ -498,10 +499,12 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, acknowledgementMessageType);
         }
 
+        Charset charset = getConfiguration().getCharset(exchange);
+
         if (consumerRunnable.getMllpBuffer().hasCompleteEnvelope()) {
             // The mllpBuffer will be used if bufferWrites is set or if auto acknowledgement is used
             message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT, consumerRunnable.getMllpBuffer().toMllpPayload());
-            message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, consumerRunnable.getMllpBuffer().toHl7String(IOHelper.getCharsetName(exchange, false)));
+            message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, consumerRunnable.getMllpBuffer().toHl7String(charset));
 
             // Send the acknowledgement
             if (log.isDebugEnabled()) {
@@ -519,18 +522,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             }
         } else if (acknowledgementMessageBytes != null && acknowledgementMessageBytes.length > 0) {
             message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT, acknowledgementMessageBytes);
-            String acknowledgementMessageString = "";
-            String exchangeCharset = IOHelper.getCharsetName(exchange, false);
-            if (exchangeCharset != null && !exchangeCharset.isEmpty()) {
-                try {
-                    acknowledgementMessageString = new String(acknowledgementMessageBytes, exchangeCharset);
-                } catch (UnsupportedEncodingException e) {
-                    log.warn("Failed to covert acknowledgment to string using {} charset - falling back to default charset {}", exchange, MllpProtocolConstants.DEFAULT_CHARSET);
-                    acknowledgementMessageString = new String(acknowledgementMessageBytes, MllpProtocolConstants.DEFAULT_CHARSET);
-                }
-            } else {
-                acknowledgementMessageString = new String(acknowledgementMessageBytes, MllpProtocolConstants.DEFAULT_CHARSET);
-            }
+            String acknowledgementMessageString = new String(acknowledgementMessageBytes, charset);
             message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, acknowledgementMessageString);
 
             // Send the acknowledgement

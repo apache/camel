@@ -17,10 +17,13 @@
 
 package org.apache.camel.component.mllp.internal;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.component.mllp.MllpComponent;
 import org.apache.camel.component.mllp.MllpProtocolConstants;
@@ -29,21 +32,51 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Hl7Util {
-    public static final String START_OF_BLOCK_REPLACEMENT_VALUE = "<VT>";      // VT (vertical tab)        - decimal 11, octal 013
-    public static final String END_OF_BLOCK_REPLACEMENT_VALUE = "<FS>";        // FS (file separator)      - decimal 28, octal 034
-    public static final String SEGMENT_DELIMITER_REPLACEMENT_VALUE = "<CR>";   // CR (carriage return)     - decimal 13, octal 015
-    public static final String MESSAGE_TERMINATOR_REPLACEMENT_VALUE = "<LF>";  // LF (line feed, new line) - decimal 10, octal 012
-    // Some other non-printable characters
-    public static final String TAB_REPLACEMENT_VALUE = "<TAB>";      // TAB (tab)        - decimal 9, octal 011
-    public static final String BACKSPACE_REPLACEMENT_VALUE = "<BS>";      // BS (backspace)        - decimal 8, octal 010
-    public static final String FORMFEED_REPLACEMENT_VALUE = "<FF>";      // FF (tab)        - decimal 12, octal 014
-
     public static final String NULL_REPLACEMENT_VALUE = "<null>";
     public static final String EMPTY_REPLACEMENT_VALUE = "<>";
+
+    public static final Map<Character, String> CHARACTER_REPLACEMENTS;
 
     static final int STRING_BUFFER_PAD_SIZE = 100;
 
     static final Logger LOG = LoggerFactory.getLogger(Hl7Util.class);
+
+    static {
+        CHARACTER_REPLACEMENTS = new HashMap<>();
+        CHARACTER_REPLACEMENTS.put((char)0x00, "<0x00 NUL>");
+        CHARACTER_REPLACEMENTS.put((char)0x01, "<0x01 SOH>");
+        CHARACTER_REPLACEMENTS.put((char)0x02, "<0x02 STX>");
+        CHARACTER_REPLACEMENTS.put((char)0x03, "<0x03 ETX>");
+        CHARACTER_REPLACEMENTS.put((char)0x04, "<0x04 EOT>");
+        CHARACTER_REPLACEMENTS.put((char)0x05, "<0x05 ENQ>");
+        CHARACTER_REPLACEMENTS.put((char)0x06, "<0x06 ACK>");
+        CHARACTER_REPLACEMENTS.put((char)0x07, "<0x07 BEL>");
+        CHARACTER_REPLACEMENTS.put((char)0x08, "<0x08 BS>");
+        CHARACTER_REPLACEMENTS.put((char)0x09, "<0x09 TAB>");
+        CHARACTER_REPLACEMENTS.put((char)0x0A, "<0x0A LF>");
+        CHARACTER_REPLACEMENTS.put((char)0x0B, "<0x0B VT>");
+        CHARACTER_REPLACEMENTS.put((char)0x0C, "<0x0C FF>");
+        CHARACTER_REPLACEMENTS.put((char)0x0D, "<0x0D CR>");
+        CHARACTER_REPLACEMENTS.put((char)0x0E, "<0x0E SO>");
+        CHARACTER_REPLACEMENTS.put((char)0x0F, "<0x0F SI>");
+        CHARACTER_REPLACEMENTS.put((char)0x10, "<0x10 DLE>");
+        CHARACTER_REPLACEMENTS.put((char)0x11, "<0x11 DC1>");
+        CHARACTER_REPLACEMENTS.put((char)0x12, "<0x12 DC2>");
+        CHARACTER_REPLACEMENTS.put((char)0x13, "<0x13 DC3>");
+        CHARACTER_REPLACEMENTS.put((char)0x14, "<0x14 DC4>");
+        CHARACTER_REPLACEMENTS.put((char)0x15, "<0x15 NAK>");
+        CHARACTER_REPLACEMENTS.put((char)0x16, "<0x16 SYN>");
+        CHARACTER_REPLACEMENTS.put((char)0x17, "<0x17 ETB>");
+        CHARACTER_REPLACEMENTS.put((char)0x18, "<0x18 CAN>");
+        CHARACTER_REPLACEMENTS.put((char)0x19, "<0x19 EM>");
+        CHARACTER_REPLACEMENTS.put((char)0x1A, "<0x1A SUB>");
+        CHARACTER_REPLACEMENTS.put((char)0x1B, "<0x1B ESC>");
+        CHARACTER_REPLACEMENTS.put((char)0x1C, "<0x1C FS>");
+        CHARACTER_REPLACEMENTS.put((char)0x1D, "<0x1D GS>");
+        CHARACTER_REPLACEMENTS.put((char)0x1E, "<0x1E RS>");
+        CHARACTER_REPLACEMENTS.put((char)0x1F, "<0x1F US>");
+        CHARACTER_REPLACEMENTS.put((char)0x7F, "<0x7F DEL>");
+    }
 
     private Hl7Util() {
         //utility class, never constructed
@@ -133,11 +166,11 @@ public final class Hl7Util {
     }
 
     /**
-     * Find the String value of MSH-19 (Character set).
+     * Find the String value of MSH-18 (Character set).
      *
      * @param hl7Message the HL7 binary data to search
      *
-     * @return the String value of MSH-19, or an empty String if not found.
+     * @return the String value of MSH-18, or an empty String if not found.
      */
     public static String findMsh18(byte[] hl7Message) {
         String answer = "";
@@ -146,12 +179,12 @@ public final class Hl7Util {
 
             List<Integer> fieldSeparatorIndexes = findFieldSeparatorIndicesInSegment(hl7Message, 0);
 
-            if (fieldSeparatorIndexes.size() > 18) {
-                int startOfMsh19 = fieldSeparatorIndexes.get(17) + 1;
-                int length = fieldSeparatorIndexes.get(18) - fieldSeparatorIndexes.get(17) - 1;
+            if (fieldSeparatorIndexes.size() > 17) {
+                int startOfMsh19 = fieldSeparatorIndexes.get(16) + 1;
+                int length = fieldSeparatorIndexes.get(17) - fieldSeparatorIndexes.get(16) - 1;
 
                 if (length > 0) {
-                    answer = new String(hl7Message, startOfMsh19, length, StandardCharsets.US_ASCII);
+                    answer = new String(hl7Message, startOfMsh19, length, MllpComponent.getDefaultCharset());
                 }
             }
         }
@@ -348,43 +381,19 @@ public final class Hl7Util {
     }
 
     static void appendCharacterAsPrintFriendlyString(StringBuilder builder, char c) {
-        switch (c) {
-        case MllpProtocolConstants.START_OF_BLOCK:
-            builder.append(START_OF_BLOCK_REPLACEMENT_VALUE);
-            break;
-        case MllpProtocolConstants.END_OF_BLOCK:
-            builder.append(END_OF_BLOCK_REPLACEMENT_VALUE);
-            break;
-        case MllpProtocolConstants.SEGMENT_DELIMITER:
-            builder.append(SEGMENT_DELIMITER_REPLACEMENT_VALUE);
-            break;
-        case MllpProtocolConstants.MESSAGE_TERMINATOR:
-            builder.append(MESSAGE_TERMINATOR_REPLACEMENT_VALUE);
-            break;
-        default:
+        if (CHARACTER_REPLACEMENTS.containsKey(c)) {
+            builder.append(CHARACTER_REPLACEMENTS.get(c));
+        } else {
             builder.append(c);
         }
     }
 
     public static String getCharacterAsPrintFriendlyString(char c) {
-        switch (c) {
-        case MllpProtocolConstants.START_OF_BLOCK:
-            return START_OF_BLOCK_REPLACEMENT_VALUE;
-        case MllpProtocolConstants.END_OF_BLOCK:
-            return END_OF_BLOCK_REPLACEMENT_VALUE;
-        case MllpProtocolConstants.SEGMENT_DELIMITER:
-            return SEGMENT_DELIMITER_REPLACEMENT_VALUE;
-        case MllpProtocolConstants.MESSAGE_TERMINATOR:
-            return MESSAGE_TERMINATOR_REPLACEMENT_VALUE;
-        case '\t':
-            return TAB_REPLACEMENT_VALUE;
-        case '\b':
-            return BACKSPACE_REPLACEMENT_VALUE;
-        case '\f':
-            return FORMFEED_REPLACEMENT_VALUE;
-        default:
-            return String.valueOf(c);
+        if (CHARACTER_REPLACEMENTS.containsKey(c)) {
+            return CHARACTER_REPLACEMENTS.get(c);
         }
+
+        return String.valueOf(c);
     }
 
     /**

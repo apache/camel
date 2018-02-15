@@ -151,15 +151,9 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                 hl7MessageBytes = (byte[]) messageBody;
             } else if (messageBody instanceof String) {
                 String stringBody = (String) messageBody;
-                byte[] tmpHl7MessageBytes = stringBody.getBytes(MllpProtocolConstants.DEFAULT_CHARSET);
-                Charset tmpCharset = getEndpoint().determineCharset(tmpHl7MessageBytes, null);
-                exchange.setProperty(Exchange.CHARSET_NAME, tmpCharset.name());
-                if (tmpCharset != null && tmpCharset != MllpProtocolConstants.DEFAULT_CHARSET) {
-                    hl7MessageBytes = stringBody.getBytes(tmpCharset);
-                    exchange.setProperty(Exchange.CHARSET_NAME, tmpCharset.name());
-                } else {
-                    hl7MessageBytes = tmpHl7MessageBytes;
-                    exchange.setProperty(Exchange.CHARSET_NAME, MllpProtocolConstants.DEFAULT_CHARSET.name());
+                hl7MessageBytes = stringBody.getBytes(getConfiguration().getCharset(exchange));
+                if (getConfiguration().hasCharsetName()) {
+                    exchange.setProperty(Exchange.CHARSET_NAME, getConfiguration().getCharsetName());
                 }
             }
 
@@ -247,8 +241,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                         log.debug("Populating message headers with the acknowledgement from the external system");
                         message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT, acknowledgementBytes);
                         if (acknowledgementBytes != null && acknowledgementBytes.length > 0) {
-                            message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING,
-                                getEndpoint().createNewString(acknowledgementBytes, message.getHeader(MllpConstants.MLLP_CHARSET, String.class)));
+                            message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, new String(acknowledgementBytes, getConfiguration().getCharset(exchange, acknowledgementBytes)));
                         } else {
                             message.setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, "");
                         }
@@ -272,7 +265,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                             getEndpoint().checkAfterSendProperties(exchange, socket, log);
                         }
                     } else {
-                        exchange.setException(new MllpInvalidAcknowledgementException("Invalid acknowledgement received", hl7MessageBytes, mllpBuffer.toByteArray()));
+                        exchange.setException(new MllpInvalidAcknowledgementException("Invalid acknowledgement received", hl7MessageBytes, mllpBuffer.toByteArrayAndReset()));
                     }
                 }
             }
