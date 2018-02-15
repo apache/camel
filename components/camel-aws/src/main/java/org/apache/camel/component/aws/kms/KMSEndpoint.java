@@ -67,6 +67,14 @@ public class KMSEndpoint extends ScheduledPollEndpoint {
 
         kmsClient = configuration.getKmsClient() != null ? configuration.getKmsClient() : createKMSClient();
     }
+    
+    @Override
+    public void doStop() throws Exception {
+        if (kmsClient != null) {
+            kmsClient.shutdown();
+        }
+        super.doStop();
+    }
 
     public KMSConfiguration getConfiguration() {
         return configuration;
