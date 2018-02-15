@@ -27,6 +27,7 @@ import org.junit.Test;
  */
 public class XmppRouteChatTest extends CamelTestSupport {
 
+    private EmbeddedXmppTestServer embeddedXmppTestServer;
     protected MockEndpoint consumerEndpoint;
     protected MockEndpoint producerEndpoint;
     protected String body1 = "the first message";
@@ -36,7 +37,7 @@ public class XmppRouteChatTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
 
-        EmbeddedXmppTestServer.instance().bindSSLContextTo(registry);
+        embeddedXmppTestServer.bindSSLContextTo(registry);
 
         return registry;
     }
@@ -83,12 +84,23 @@ public class XmppRouteChatTest extends CamelTestSupport {
     }
 
     protected String getProducerUri() {
-        return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
+        return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
             + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-producer@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
     }
     
     protected String getConsumerUri() {
-        return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
+        return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
             + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-consumer@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel";
+    }
+
+    @Override
+    public void doPreSetup() throws Exception {
+        embeddedXmppTestServer = new EmbeddedXmppTestServer();
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+        embeddedXmppTestServer.stop();
     }
 }
