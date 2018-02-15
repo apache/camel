@@ -64,6 +64,14 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
             throw new IllegalArgumentException("Sequence Number must be specified with iterator Types AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER");
         }
     }
+    
+    @Override
+    public void doStop() throws Exception {
+        if (kinesisClient != null) {
+            kinesisClient.shutdown();
+        }
+        super.doStop();
+    }
 
     @Override
     public Producer createProducer() throws Exception {
