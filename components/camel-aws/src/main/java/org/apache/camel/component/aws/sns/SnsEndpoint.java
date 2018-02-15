@@ -22,7 +22,6 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
@@ -152,6 +151,14 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             LOG.trace("Topic policy updated");
         }
         
+    }
+    
+    @Override
+    public void doStop() throws Exception {
+        if (snsClient != null) {
+            snsClient.shutdown();
+        }
+        super.doStop();
     }
 
     public SnsConfiguration getConfiguration() {
