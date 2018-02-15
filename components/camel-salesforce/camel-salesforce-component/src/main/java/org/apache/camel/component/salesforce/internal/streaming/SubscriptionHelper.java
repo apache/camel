@@ -335,7 +335,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
         Map<String, Object> options = new HashMap<>();
         options.put(ClientTransport.MAX_NETWORK_DELAY_OPTION, httpClient.getTimeout());
-        if(component.getLongPollingTransportProperties() != null){
+        if (component.getLongPollingTransportProperties() != null) {
             options = component.getLongPollingTransportProperties();
         }
 
