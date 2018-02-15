@@ -150,6 +150,11 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         + " look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options.",
         label = "common,advanced")
     private Map<String, Object> httpClientProperties;
+	
+    @Metadata(description = "Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient",
+        label = "common,advanced")
+    private Map<String, Object> longPollingTransportProperties;
+
 
     @Metadata(description = "SSL parameters to use, see SSLContextParameters class for all available options.",
         label = "common,security")
@@ -500,6 +505,14 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
     public void setHttpClientProperties(Map<String, Object> httpClientProperties) {
         this.httpClientProperties = httpClientProperties;
+    }
+	
+    public Map<String, Object> getLongPollingTransportProperties() {
+        return longPollingTransportProperties;
+    }
+
+    public void setLongPollingTransportProperties(Map<String, Object> longPollingTransportProperties) {
+        this.longPollingTransportProperties = longPollingTransportProperties;
     }
 
     public SSLContextParameters getSslContextParameters() {
