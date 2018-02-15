@@ -111,6 +111,14 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
             LOG.trace("Table [{}] created", tableName);
         }
     }
+    
+    @Override
+    public void doStop() throws Exception {
+        if (ddbClient != null) {
+            ddbClient.shutdown();
+        }
+        super.doStop();
+    }
 
     private TableDescription createTable(String tableName) {
         CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(tableName)
