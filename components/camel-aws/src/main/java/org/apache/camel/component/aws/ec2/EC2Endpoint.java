@@ -69,6 +69,14 @@ public class EC2Endpoint extends ScheduledPollEndpoint {
         
         ec2Client = configuration.getAmazonEc2Client() != null ? configuration.getAmazonEc2Client() : (AmazonEC2Client) createEc2Client();
     }
+    
+    @Override
+    public void doStop() throws Exception {
+        if (ec2Client != null) {
+            ec2Client.shutdown();
+        }
+        super.doStop();
+    }
 
     public EC2Configuration getConfiguration() {
         return configuration;
