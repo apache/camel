@@ -66,6 +66,14 @@ public class LambdaEndpoint extends DefaultEndpoint {
         super.doStart();
         awsLambdaClient = configuration.getAwsLambdaClient() != null ? configuration.getAwsLambdaClient() : createLambdaClient();
     }
+    
+    @Override
+    public void doStop() throws Exception {
+        if (awsLambdaClient != null) {
+            awsLambdaClient.shutdown();
+        }
+        super.doStop();
+    }
 
     public LambdaConfiguration getConfiguration() {
         return configuration;
