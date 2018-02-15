@@ -146,6 +146,14 @@ public class S3Endpoint extends ScheduledPollEndpoint {
             LOG.trace("Bucket policy updated");
         }
     }
+    
+    @Override
+    public void doStop() throws Exception {
+        if (s3Client != null) {
+            s3Client.shutdown();
+        }
+        super.doStop();
+    }
 
     public Exchange createExchange(S3Object s3Object) {
         return createExchange(getExchangePattern(), s3Object);
