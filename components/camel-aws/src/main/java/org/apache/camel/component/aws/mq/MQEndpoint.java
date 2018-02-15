@@ -68,6 +68,14 @@ public class MQEndpoint extends ScheduledPollEndpoint {
 
         mqClient = configuration.getAmazonMqClient() != null ? configuration.getAmazonMqClient() : (AmazonMQClient)createMQClient();
     }
+    
+    @Override
+    public void doStop() throws Exception {
+        if (mqClient != null) {
+            mqClient.shutdown();
+        }
+        super.doStop();
+    }
 
     public MQConfiguration getConfiguration() {
         return configuration;
