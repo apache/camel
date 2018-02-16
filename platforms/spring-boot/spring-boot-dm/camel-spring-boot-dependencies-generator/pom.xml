@@ -73,57 +73,6 @@
         <version>${jackson-version}</version>
       </dependency>
 
-      <!-- Added to match the version of related libraries provided by spring-boot -->
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-ext</artifactId>
-        <version>${slf4j-version}</version>
-      </dependency>
-
-      <!-- Added to match the version of related libraries provided by spring-boot -->
-      <dependency>
-        <groupId>net.java.dev.jna</groupId>
-        <artifactId>jna-platform</artifactId>
-        <version>${jna-version}</version>
-      </dependency>
-
-      <!-- Added to match the version of related libraries provided by spring-boot -->
-      <!-- Seems that htmlunit 2.21 is not present in Maven central -->
-      <!--<dependency>-->
-      <!--<groupId>net.sourceforge.htmlunit</groupId>-->
-      <!--<artifactId>htmlunit-core-js</artifactId>-->
-      <!--<version>${htmlunit-version}</version>-->
-      <!--</dependency>-->
-
-      <!-- Added to match the version of related libraries provided by spring-boot -->
-      <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-util-ajax</artifactId>
-        <version>${jetty-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-rewrite</artifactId>
-        <version>${jetty-version}</version>
-      </dependency>
-
-      <!-- Added to match the version of related libraries provided by spring-boot -->
-      <dependency>
-        <groupId>org.eclipse.jetty.websocket</groupId>
-        <artifactId>websocket-api</artifactId>
-        <version>${jetty-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.jetty.websocket</groupId>
-        <artifactId>websocket-common</artifactId>
-        <version>${jetty-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.jetty.websocket</groupId>
-        <artifactId>websocket-servlet</artifactId>
-        <version>${jetty-version}</version>
-      </dependency>
-
       <!-- Dependencies from Camel parent at the end -->
       <dependency>
         <groupId>org.apache.camel</groupId>
@@ -157,27 +106,7 @@
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot-version}</version>
               </bom>
-              <!-- Other BOMs imported by SB should be listed explicitly -->
-              <bom>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>${spring-version}</version>
-              </bom>
-              <bom>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-releasetrain</artifactId>
-                <version>${spring-data-releasetrain-version}</version>
-              </bom>
-              <bom>
-                <groupId>org.springframework.integration</groupId>
-                <artifactId>spring-integration-bom</artifactId>
-                <version>${spring-integration-version}</version>
-              </bom>
-              <bom>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-bom</artifactId>
-                <version>${spring-security-version}</version>
-              </bom>
+              <!-- Other BOMs used by SB are transitively imported now -->
             </boms>
           </checkConflicts>
           <dependencies>
@@ -206,12 +135,7 @@
               <exclude>org.hsqldb:*</exclude>
               <exclude>org.mockito:*</exclude>
 
-              <exclude>org.slf4j:jul-to-slf4j</exclude>
-              <exclude>org.slf4j:log4j-over-slf4j</exclude>
-              <exclude>org.slf4j:slf4j-api</exclude>
-              <exclude>org.slf4j:slf4j-log4j12</exclude>
-              <exclude>org.slf4j:slf4j-simple</exclude>
-              <exclude>org.slf4j:slf4j-ext</exclude>
+              <exclude>org.slf4j:*</exclude>
 
               <exclude>org.springframework*:*</exclude>
 
@@ -239,14 +163,8 @@
               <exclude>io.netty*:*</exclude>
               <exclude>org.scala-lang:*</exclude>
               <exclude>org.apache.lucene:*</exclude>
-              <exclude>net.java.dev.jna:*</exclude>
 
-              <!-- Jetty -->
-              <exclude>org.eclipse.jetty:jetty-rewrite</exclude>
-              <exclude>org.eclipse.jetty:jetty-util-ajax</exclude>
-              <exclude>org.eclipse.jetty.websocket:websocket-api</exclude>
-              <exclude>org.eclipse.jetty.websocket:websocket-common</exclude>
-              <exclude>org.eclipse.jetty.websocket:websocket-servlet</exclude>
+
 
               <!-- Unrelated -->
               <exclude>org.apache.servicemix.bundles:*</exclude>
