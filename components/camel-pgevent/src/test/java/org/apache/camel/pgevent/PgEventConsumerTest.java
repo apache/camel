@@ -47,7 +47,7 @@ public class PgEventConsumerTest {
         Processor processor = mock(Processor.class);
 
         when(endpoint.getDatasource()).thenReturn(dataSource);
-        when(endpoint.initJdbc()).thenReturn(connection);
+        when(dataSource.getConnection()).thenReturn(connection);
         when(connection.prepareStatement("LISTEN camel")).thenReturn(statement);
         when(endpoint.getChannel()).thenReturn("camel");
 
@@ -67,7 +67,7 @@ public class PgEventConsumerTest {
         Processor processor = mock(Processor.class);
 
         when(endpoint.getDatasource()).thenReturn(dataSource);
-        when(endpoint.initJdbc()).thenReturn(connection);
+        when(dataSource.getConnection()).thenReturn(connection);
         when(connection.prepareStatement("LISTEN camel")).thenReturn(statement);
         when(endpoint.getChannel()).thenReturn("camel");
         when(connection.prepareStatement("UNLISTEN camel")).thenReturn(statement);
@@ -98,5 +98,4 @@ public class PgEventConsumerTest {
         verify(message).setBody("some event");
         verify(processor).process(exchange);
     }
-
 }
