@@ -26,8 +26,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
-import static org.hamcrest.core.IsNull.nullValue;
-
 public class BindyPaddingAndTrimmingTest extends CamelTestSupport {
 
     private static final String URI_DIRECT_UNMARSHAL = "direct:unmarshall";
@@ -56,7 +54,7 @@ public class BindyPaddingAndTrimmingTest extends CamelTestSupport {
         unmarhsalResult.assertIsSatisfied();
         MyBindyModel myBindyModel = unmarhsalResult.getReceivedExchanges().get(0).getIn().getBody(MyBindyModel.class);
         assertEquals("foo  ", myBindyModel.foo);
-        assertThat(myBindyModel.bar, Is.is(nullValue()));
+        assertThat(myBindyModel.bar, Is.is(""));
     }
 
     @Test
