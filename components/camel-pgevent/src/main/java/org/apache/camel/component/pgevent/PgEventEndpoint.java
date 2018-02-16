@@ -84,7 +84,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
     public final PGConnection initJdbc() throws Exception {
         PGConnection conn;
         if (this.getDatasource() != null) {
-            conn = (PGConnection) this.getDatasource().getConnection();
+            conn = PgEventHelper.toPGConnection(this.getDatasource().getConnection());
         } else {
             // ensure we can load the class
             ClassResolver classResolver = getCamelContext().getClassResolver();
