@@ -40,7 +40,7 @@ public class CamelMongodbTest extends AbstractSpringBootTestSupport {
 
     @Test
     public void componentTests() throws Exception {
-        this.runComponentTest(config);
+        // no component test
         this.runModuleUnitTestsIfEnabled(config);
     }
 

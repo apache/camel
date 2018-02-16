@@ -320,6 +320,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
         loggingImpl.add("ch.qos.logback:logback-classic");
 
         loggingImpl.add("org.apache.logging.log4j:log4j");
+        loggingImpl.add("org.apache.logging.log4j:log4j-jcl");
         loggingImpl.add("org.apache.logging.log4j:log4j-core");
         loggingImpl.add("org.apache.logging.log4j:log4j-slf4j-impl");
 

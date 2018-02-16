@@ -37,8 +37,6 @@ public class CamelInfinispanTest extends AbstractSpringBootTestSupport {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelInfinispanTest.class))
                 .disableJmx("org.infinispan:*")
-                // arquillian fails, but the tests pass
-                .dependency("org.apache.logging.log4j:log4j-jcl:" + DependencyResolver.resolveParentProperty("${log4j2-version}"))
                 .build();
     }
 
