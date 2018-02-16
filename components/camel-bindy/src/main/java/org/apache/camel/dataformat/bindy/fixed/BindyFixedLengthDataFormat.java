@@ -313,6 +313,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         return factory.isIgnoreTrailingChars() && myLine.length() > factory.recordLength();
     }
 
+    @SuppressWarnings("unused")
     private String rightPad(String myLine, int length) {
         return String.format("%1$-" + length + "s", myLine);
     }
