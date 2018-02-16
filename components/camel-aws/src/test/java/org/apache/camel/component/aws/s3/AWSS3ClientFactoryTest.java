@@ -25,28 +25,28 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class AWSS3ClientFactoryTest {
-	private static final int maxConnections = 1;
+    private static final int MAX_CONNECTIONS = 1;
 
-	@Test
-	public void getStandardS3ClientDefault() {
-		S3Configuration s3Configuration = new S3Configuration();
-		AWSS3Client awss3Client = AWSS3ClientFactory.getAWSS3Client(s3Configuration, maxConnections);
-		Assert.assertTrue(awss3Client instanceof StandardAWSS3ClientImpl);
-	}
+    @Test
+    public void getStandardS3ClientDefault() {
+        S3Configuration s3Configuration = new S3Configuration();
+        AWSS3Client awss3Client = AWSS3ClientFactory.getAWSS3Client(s3Configuration, MAX_CONNECTIONS);
+        Assert.assertTrue(awss3Client instanceof StandardAWSS3ClientImpl);
+    }
 
-	@Test
-	public void getStandardS3Client() {
-		S3Configuration s3Configuration = new S3Configuration();
-		s3Configuration.setUseIAMCredentials(false);
-		AWSS3Client awss3Client = AWSS3ClientFactory.getAWSS3Client(s3Configuration, maxConnections);
-		Assert.assertTrue(awss3Client instanceof StandardAWSS3ClientImpl);
-	}
+    @Test
+    public void getStandardS3Client() {
+        S3Configuration s3Configuration = new S3Configuration();
+        s3Configuration.setUseIAMCredentials(false);
+        AWSS3Client awss3Client = AWSS3ClientFactory.getAWSS3Client(s3Configuration, MAX_CONNECTIONS);
+        Assert.assertTrue(awss3Client instanceof StandardAWSS3ClientImpl);
+    }
 
-	@Test
-	public void getIAMOptimizedS3Client() {
-		S3Configuration s3Configuration = new S3Configuration();
-		s3Configuration.setUseIAMCredentials(true);
-		AWSS3Client awss3Client = AWSS3ClientFactory.getAWSS3Client(s3Configuration, maxConnections);
-		Assert.assertTrue(awss3Client instanceof IAMOptimizedAWSS3ClientImpl);
-	}
+    @Test
+    public void getIAMOptimizedS3Client() {
+        S3Configuration s3Configuration = new S3Configuration();
+        s3Configuration.setUseIAMCredentials(true);
+        AWSS3Client awss3Client = AWSS3ClientFactory.getAWSS3Client(s3Configuration, MAX_CONNECTIONS);
+        Assert.assertTrue(awss3Client instanceof IAMOptimizedAWSS3ClientImpl);
+    }
 }

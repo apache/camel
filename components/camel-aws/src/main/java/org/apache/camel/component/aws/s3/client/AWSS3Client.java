@@ -23,9 +23,9 @@ import com.amazonaws.services.s3.AmazonS3;
  */
 public interface AWSS3Client {
 
-	/**
-	 * Returns an s3 client after a factory method determines which one to return.
-	 * @return AmazonS3 AmazonS3
-	 */
-	public AmazonS3 getS3Client();
+    /**
+     * Returns an s3 client after a factory method determines which one to return.
+     * @return AmazonS3 AmazonS3
+     */
+    AmazonS3 getS3Client();
 }

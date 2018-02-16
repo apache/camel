@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.s3.client.impl;
 
 import com.amazonaws.ClientConfiguration;
@@ -34,75 +35,75 @@ import org.slf4j.LoggerFactory;
  * This implementation is for remote instances to manage the credentials on their own (eliminating credential rotations)
  */
 public class IAMOptimizedAWSS3ClientImpl implements AWSS3Client {
-	private static final Logger LOG = LoggerFactory.getLogger(IAMOptimizedAWSS3ClientImpl.class);
-	private S3Configuration configuration;
-	private int maxConnections;
+    private static final Logger LOG = LoggerFactory.getLogger(IAMOptimizedAWSS3ClientImpl.class);
+    private S3Configuration configuration;
+    private int maxConnections;
 
-	/**
-	 * Constructor that uses the config file.
-	 */
-	public IAMOptimizedAWSS3ClientImpl(S3Configuration configuration, int maxConnections) {
-		LOG.trace("Creating an AWS S3 client for an ec2 instance with IAM temporary credentials (normal for ec2s).");
-		this.configuration = configuration;
-		this.maxConnections = maxConnections;
-	}
+    /**
+     * Constructor that uses the config file.
+     */
+    public IAMOptimizedAWSS3ClientImpl(S3Configuration configuration, int maxConnections) {
+        LOG.trace("Creating an AWS S3 client for an ec2 instance with IAM temporary credentials (normal for ec2s).");
+        this.configuration = configuration;
+        this.maxConnections = maxConnections;
+    }
 
-	/**
-	 * Getting the s3 aws client that is used.
-	 * @return Amazon S3 Client.
-	 */
-	public AmazonS3 getS3Client() {
-		AmazonS3 client = null;
-		AmazonS3ClientBuilder clientBuilder = null;
-		AmazonS3EncryptionClientBuilder encClientBuilder = null;
-		ClientConfiguration clientConfiguration = null;
-		if (configuration.hasProxyConfiguration()) {
-			clientConfiguration = new ClientConfiguration();
-			clientConfiguration.setProxyHost(configuration.getProxyHost());
-			clientConfiguration.setProxyPort(configuration.getProxyPort());
-			clientConfiguration.setMaxConnections(maxConnections);
-		} else {
-			clientConfiguration = new ClientConfiguration();
-			clientConfiguration.setMaxConnections(maxConnections);
-		}
+    /**
+     * Getting the s3 aws client that is used.
+     * @return Amazon S3 Client.
+     */
+    public AmazonS3 getS3Client() {
+        AmazonS3 client = null;
+        AmazonS3ClientBuilder clientBuilder = null;
+        AmazonS3EncryptionClientBuilder encClientBuilder = null;
+        ClientConfiguration clientConfiguration = null;
+        if (configuration.hasProxyConfiguration()) {
+            clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            clientConfiguration.setMaxConnections(maxConnections);
+        } else {
+            clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setMaxConnections(maxConnections);
+        }
 
-		if (configuration.getAccessKey() != null || configuration.getSecretKey() != null) {
-			LOG.trace("Do not pass in unnecessary static credentials when selecting the IAM credential option.");
-		}
+        if (configuration.getAccessKey() != null || configuration.getSecretKey() != null) {
+            LOG.trace("Do not pass in unnecessary static credentials when selecting the IAM credential option.");
+        }
 
-		if (!configuration.isUseEncryption()) {
-			clientBuilder = AmazonS3ClientBuilder
-									.standard()
-							 		.withCredentials(new InstanceProfileCredentialsProvider(false));
-		} else if (configuration.isUseEncryption()) {
-			StaticEncryptionMaterialsProvider encryptionMaterialsProvider = new StaticEncryptionMaterialsProvider(
-					configuration.getEncryptionMaterials());
-			encClientBuilder = AmazonS3EncryptionClientBuilder
-									.standard()
-									.withClientConfiguration(clientConfiguration)
-									.withEncryptionMaterials(encryptionMaterialsProvider)
-									.withCredentials(new InstanceProfileCredentialsProvider(false));
-		} else {
-			clientBuilder = AmazonS3ClientBuilder
-									.standard()
-									.withClientConfiguration(clientConfiguration)
-									.withCredentials(new InstanceProfileCredentialsProvider(false));
-		}
+        if (!configuration.isUseEncryption()) {
+            clientBuilder = AmazonS3ClientBuilder
+                                    .standard()
+                                    .withCredentials(new InstanceProfileCredentialsProvider(false));
+        } else if (configuration.isUseEncryption()) {
+            StaticEncryptionMaterialsProvider encryptionMaterialsProvider = new StaticEncryptionMaterialsProvider(
+                    configuration.getEncryptionMaterials());
+            encClientBuilder = AmazonS3EncryptionClientBuilder
+                                    .standard()
+                                    .withClientConfiguration(clientConfiguration)
+                                    .withEncryptionMaterials(encryptionMaterialsProvider)
+                                    .withCredentials(new InstanceProfileCredentialsProvider(false));
+        } else {
+            clientBuilder = AmazonS3ClientBuilder
+                                    .standard()
+                                    .withClientConfiguration(clientConfiguration)
+                                    .withCredentials(new InstanceProfileCredentialsProvider(false));
+        }
 
-		if (!configuration.isUseEncryption()) {
-			if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-				clientBuilder = clientBuilder.withRegion(Regions.fromName(configuration.getRegion()));
-			}
-			clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
-			client = clientBuilder.build();
-		} else {
-			if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-				encClientBuilder = encClientBuilder.withRegion(Regions.fromName(configuration.getRegion()));
-			}
-			encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
-			client = encClientBuilder.build();
-		}
+        if (!configuration.isUseEncryption()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                clientBuilder = clientBuilder.withRegion(Regions.fromName(configuration.getRegion()));
+            }
+            clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
+            client = clientBuilder.build();
+        } else {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                encClientBuilder = encClientBuilder.withRegion(Regions.fromName(configuration.getRegion()));
+            }
+            encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
+            client = encClientBuilder.build();
+        }
 
-		return client;
-	}
+        return client;
+    }
 }

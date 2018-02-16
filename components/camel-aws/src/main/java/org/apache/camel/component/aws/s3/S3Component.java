@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.s3;
 
 import java.util.Map;
@@ -67,7 +68,7 @@ public class S3Component extends DefaultComponent {
         if (ObjectHelper.isEmpty(configuration.getRegion())) {
             setRegion(region);
         }
-        if (configuration.isUseIAMCredentials() == false && configuration.getAmazonS3Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (!configuration.isUseIAMCredentials() && configuration.getAmazonS3Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("useIAMCredentials is set to false, AmazonS3Client or accessKey and secretKey must be specified");
         }
 
