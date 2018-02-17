@@ -21,7 +21,7 @@ import com.amazonaws.services.s3.AmazonS3;
 /**
  * Mange the required actions of an s3 client for either local or remote.
  */
-public interface AWSS3Client {
+public interface S3Client {
 
     /**
      * Returns an s3 client after a factory method determines which one to return.

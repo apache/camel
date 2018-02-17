@@ -30,7 +30,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.aws.s3.client.AWSS3ClientFactory;
+import org.apache.camel.component.aws.s3.client.S3ClientFactory;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -93,7 +93,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         super.doStart();
 
         s3Client = configuration.getAmazonS3Client() != null ? configuration.getAmazonS3Client()
-                : AWSS3ClientFactory.getAWSS3Client(configuration, getMaxConnections()).getS3Client();
+                : S3ClientFactory.getAWSS3Client(configuration, getMaxConnections()).getS3Client();
 
         String fileName = getConfiguration().getFileName();
 
