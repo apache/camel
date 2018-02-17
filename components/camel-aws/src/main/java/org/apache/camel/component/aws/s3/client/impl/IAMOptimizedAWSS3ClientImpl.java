@@ -92,13 +92,13 @@ public class IAMOptimizedAWSS3ClientImpl implements AWSS3Client {
 
         if (!configuration.isUseEncryption()) {
             if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-                clientBuilder = clientBuilder.withRegion(Regions.fromName(configuration.getRegion()));
+                clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
             }
             clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
             client = clientBuilder.build();
         } else {
             if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-                encClientBuilder = encClientBuilder.withRegion(Regions.fromName(configuration.getRegion()));
+                encClientBuilder = encClientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
             }
             encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
             client = encClientBuilder.build();
