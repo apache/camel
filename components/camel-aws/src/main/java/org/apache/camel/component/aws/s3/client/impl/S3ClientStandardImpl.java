@@ -28,7 +28,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.AmazonS3EncryptionClientBuilder;
 import com.amazonaws.services.s3.model.StaticEncryptionMaterialsProvider;
 import org.apache.camel.component.aws.s3.S3Configuration;
-import org.apache.camel.component.aws.s3.client.AWSS3Client;
+import org.apache.camel.component.aws.s3.client.S3Client;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,15 +37,15 @@ import org.slf4j.LoggerFactory;
  * Manage an AWS s3 client for all users to use.
  * This implementation is for local instances to use a static and solid credential set.
  */
-public class StandardAWSS3ClientImpl implements AWSS3Client {
-    private static final Logger LOG = LoggerFactory.getLogger(StandardAWSS3ClientImpl.class);
+public class S3ClientStandardImpl implements S3Client {
+    private static final Logger LOG = LoggerFactory.getLogger(S3ClientStandardImpl.class);
     private S3Configuration configuration;
     private int maxConnections;
 
     /**
      * Constructor that uses the config file.
      */
-    public StandardAWSS3ClientImpl(S3Configuration configuration, int maxConnections) {
+    public S3ClientStandardImpl(S3Configuration configuration, int maxConnections) {
         LOG.trace("Creating an AWS S3 manager using static credentials.");
         this.configuration = configuration;
         this.maxConnections = maxConnections;

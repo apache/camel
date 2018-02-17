@@ -17,10 +17,10 @@
 
 package org.apache.camel.component.aws.s3;
 
-import org.apache.camel.component.aws.s3.client.AWSS3Client;
-import org.apache.camel.component.aws.s3.client.AWSS3ClientFactory;
-import org.apache.camel.component.aws.s3.client.impl.IAMOptimizedAWSS3ClientImpl;
-import org.apache.camel.component.aws.s3.client.impl.StandardAWSS3ClientImpl;
+import org.apache.camel.component.aws.s3.client.S3Client;
+import org.apache.camel.component.aws.s3.client.S3ClientFactory;
+import org.apache.camel.component.aws.s3.client.impl.S3ClientIAMOptimizedImpl;
+import org.apache.camel.component.aws.s3.client.impl.S3ClientStandardImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -30,23 +30,23 @@ public class AWSS3ClientFactoryTest {
     @Test
     public void getStandardS3ClientDefault() {
         S3Configuration s3Configuration = new S3Configuration();
-        AWSS3Client awss3Client = AWSS3ClientFactory.getAWSS3Client(s3Configuration, MAX_CONNECTIONS);
-        Assert.assertTrue(awss3Client instanceof StandardAWSS3ClientImpl);
+        S3Client awss3Client = S3ClientFactory.getAWSS3Client(s3Configuration, MAX_CONNECTIONS);
+        Assert.assertTrue(awss3Client instanceof S3ClientStandardImpl);
     }
 
     @Test
     public void getStandardS3Client() {
         S3Configuration s3Configuration = new S3Configuration();
         s3Configuration.setUseIAMCredentials(false);
-        AWSS3Client awss3Client = AWSS3ClientFactory.getAWSS3Client(s3Configuration, MAX_CONNECTIONS);
-        Assert.assertTrue(awss3Client instanceof StandardAWSS3ClientImpl);
+        S3Client awss3Client = S3ClientFactory.getAWSS3Client(s3Configuration, MAX_CONNECTIONS);
+        Assert.assertTrue(awss3Client instanceof S3ClientStandardImpl);
     }
 
     @Test
     public void getIAMOptimizedS3Client() {
         S3Configuration s3Configuration = new S3Configuration();
         s3Configuration.setUseIAMCredentials(true);
-        AWSS3Client awss3Client = AWSS3ClientFactory.getAWSS3Client(s3Configuration, MAX_CONNECTIONS);
-        Assert.assertTrue(awss3Client instanceof IAMOptimizedAWSS3ClientImpl);
+        S3Client awss3Client = S3ClientFactory.getAWSS3Client(s3Configuration, MAX_CONNECTIONS);
+        Assert.assertTrue(awss3Client instanceof S3ClientIAMOptimizedImpl);
     }
 }

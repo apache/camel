@@ -37,7 +37,7 @@ public class IAMOptimizedAWSS3ClientImplTest {
 
     @Test
     public void iamOptimizedAWSS3ClientImplNoEncryption() {
-        IAMOptimizedAWSS3ClientImpl iamOptimizedAWSS3Client = new IAMOptimizedAWSS3ClientImpl(getS3ConfigurationNoEncryption(), MAX_CONNECTIONS);
+        S3ClientIAMOptimizedImpl iamOptimizedAWSS3Client = new S3ClientIAMOptimizedImpl(getS3ConfigurationNoEncryption(), MAX_CONNECTIONS);
         AmazonS3 s3Client = iamOptimizedAWSS3Client.getS3Client();
         Assert.assertNotNull(s3Client);
         Assert.assertFalse(s3Client instanceof AmazonS3EncryptionClient);
@@ -45,7 +45,7 @@ public class IAMOptimizedAWSS3ClientImplTest {
 
     @Test
     public void iamOptimizedAWSS3ClientImplUseEncryption() {
-        IAMOptimizedAWSS3ClientImpl iamOptimizedAWSS3Client = new IAMOptimizedAWSS3ClientImpl(getS3ConfigurationUseEncryption(), MAX_CONNECTIONS);
+        S3ClientIAMOptimizedImpl iamOptimizedAWSS3Client = new S3ClientIAMOptimizedImpl(getS3ConfigurationUseEncryption(), MAX_CONNECTIONS);
         AmazonS3 s3Client = iamOptimizedAWSS3Client.getS3Client();
         Assert.assertNotNull(s3Client);
         Assert.assertTrue(s3Client instanceof AmazonS3EncryptionClient);

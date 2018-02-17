@@ -17,15 +17,15 @@
 package org.apache.camel.component.aws.s3.client;
 
 import org.apache.camel.component.aws.s3.S3Configuration;
-import org.apache.camel.component.aws.s3.client.impl.IAMOptimizedAWSS3ClientImpl;
-import org.apache.camel.component.aws.s3.client.impl.StandardAWSS3ClientImpl;
+import org.apache.camel.component.aws.s3.client.impl.S3ClientIAMOptimizedImpl;
+import org.apache.camel.component.aws.s3.client.impl.S3ClientStandardImpl;
 
 /**
  * Factory class to return the correct type of AWS S3 aws.
  */
-public final class AWSS3ClientFactory {
+public final class S3ClientFactory {
 
-    private AWSS3ClientFactory() {
+    private S3ClientFactory() {
         // Prevent instantiation of this factory class.
         throw new RuntimeException("Do not instantiate a Factory class! Refer to the class "
                                    + "to learn how to properly use this factory implementation.");
@@ -36,8 +36,8 @@ public final class AWSS3ClientFactory {
      * @param maxConnections max connections
      * @return AWSS3Client
      */
-    public static AWSS3Client getAWSS3Client(S3Configuration configuration, int maxConnections) {
-        return configuration.isUseIAMCredentials() ? new IAMOptimizedAWSS3ClientImpl(configuration, maxConnections)
-                : new StandardAWSS3ClientImpl(configuration, maxConnections);
+    public static S3Client getAWSS3Client(S3Configuration configuration, int maxConnections) {
+        return configuration.isUseIAMCredentials() ? new S3ClientIAMOptimizedImpl(configuration, maxConnections)
+                : new S3ClientStandardImpl(configuration, maxConnections);
     }
 }
