@@ -67,15 +67,14 @@ public class JsonPathEngine {
         this.writeAsString = writeAsString;
         this.headerName = headerName;
 
-        Configuration defaults = Configuration.defaultConfiguration();
         if (options != null) {
-            Configuration.ConfigurationBuilder builder = Configuration.builder().jsonProvider(defaults.jsonProvider()).options(options);
+            Configuration.ConfigurationBuilder builder = Configuration.builder().options(options);
             if (suppressExceptions) {
                 builder.options(SUPPRESS_EXCEPTIONS);
             }
             this.configuration = builder.build();
         } else {
-            Configuration.ConfigurationBuilder builder = Configuration.builder().jsonProvider(defaults.jsonProvider());
+            Configuration.ConfigurationBuilder builder = Configuration.builder();
             if (suppressExceptions) {
                 builder.options(SUPPRESS_EXCEPTIONS);
             }
