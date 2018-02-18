@@ -453,6 +453,8 @@
 	* [Castor](castor-dataformat.adoc)
 	* [Crypto (Java Cryptographic Extension)](crypto-dataformat.adoc)
 	* [CSV](csv-dataformat.adoc)
+	* [FHIR JSON](fhir-json-dataformat.adoc)
+	* [FHIR XML](fhir-xml-dataformat.adoc)
 	* [Flatpack](flatpack-dataformat.adoc)
 	* [GZip](gzip-dataformat.adoc)
 	* [Hessian](hessian-dataformat.adoc)

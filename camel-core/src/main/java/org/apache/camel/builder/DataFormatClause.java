@@ -34,6 +34,8 @@ import org.apache.camel.model.dataformat.BoonDataFormat;
 import org.apache.camel.model.dataformat.CastorDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
+import org.apache.camel.model.dataformat.FhirJsonDataFormat;
+import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.HessianDataFormat;
@@ -1181,6 +1183,34 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     
     public T asn1(Boolean usingIterator) {
         return dataFormat(new ASN1DataFormat(usingIterator));
+    }
+
+    /**
+     * Uses the FHIR JSON data format
+     */
+    public T fhirJson(Object fhirContext) {
+        FhirJsonDataFormat jsonDataFormat = new FhirJsonDataFormat();
+        jsonDataFormat.setFhirContext(fhirContext);
+        return dataFormat(jsonDataFormat);
+    }
+
+    public T fhirJson() {
+        FhirJsonDataFormat jsonDataFormat = new FhirJsonDataFormat();
+        return dataFormat(jsonDataFormat);
+    }
+
+    /**
+     * Uses the FHIR XML data format
+     */
+    public T fhirXml(Object fhirContext) {
+        FhirXmlDataFormat fhirXmlDataFormat = new FhirXmlDataFormat();
+        fhirXmlDataFormat.setFhirContext(fhirContext);
+        return dataFormat(fhirXmlDataFormat);
+    }
+
+    public T fhirXml() {
+        FhirXmlDataFormat fhirXmlDataFormat = new FhirXmlDataFormat();
+        return dataFormat(fhirXmlDataFormat);
     }
 
     @SuppressWarnings("unchecked")
