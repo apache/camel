@@ -1188,28 +1188,28 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the FHIR JSON data format
      */
-    public T fhirJson(Object fhirContext) {
+    public T fhirJson() {
         FhirJsonDataFormat jsonDataFormat = new FhirJsonDataFormat();
-        jsonDataFormat.setFhirContext(fhirContext);
         return dataFormat(jsonDataFormat);
     }
 
-    public T fhirJson() {
+    public T fhirJson(String version) {
         FhirJsonDataFormat jsonDataFormat = new FhirJsonDataFormat();
+        jsonDataFormat.setFhirVersion(version);
         return dataFormat(jsonDataFormat);
     }
 
     /**
      * Uses the FHIR XML data format
      */
-    public T fhirXml(Object fhirContext) {
+    public T fhirXml() {
         FhirXmlDataFormat fhirXmlDataFormat = new FhirXmlDataFormat();
-        fhirXmlDataFormat.setFhirContext(fhirContext);
         return dataFormat(fhirXmlDataFormat);
     }
 
-    public T fhirXml() {
+    public T fhirXml(String version) {
         FhirXmlDataFormat fhirXmlDataFormat = new FhirXmlDataFormat();
+        fhirXmlDataFormat.setFhirVersion(version);
         return dataFormat(fhirXmlDataFormat);
     }
 

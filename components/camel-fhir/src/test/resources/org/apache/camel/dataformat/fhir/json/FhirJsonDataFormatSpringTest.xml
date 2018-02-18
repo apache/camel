@@ -28,7 +28,7 @@
     <route>
       <from uri="direct:marshal"/>
       <marshal>
-        <fhirJson/>
+        <fhirJson fhirVersion="DSTU3"/>
       </marshal>
       <to uri="mock:result"/>
     </route>

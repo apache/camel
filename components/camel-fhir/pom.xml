@@ -13,7 +13,7 @@
   <packaging>jar</packaging>
 
   <name>Camel :: Fhir</name>
-  <description>Camel Fhir support</description>
+  <description>Camel FHIR HL7 support</description>
 
   <properties>
     <camel.osgi.export.service>

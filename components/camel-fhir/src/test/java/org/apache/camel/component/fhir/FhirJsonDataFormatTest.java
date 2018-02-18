@@ -78,7 +78,7 @@ public class FhirJsonDataFormatTest extends CamelTestSupport {
             public void configure() {
 
                 from("direct:marshal")
-                        .marshal().fhirJson()
+                        .marshal().fhirJson("DSTU3")
                         .to("mock:result");
 
                 from("direct:unmarshal")

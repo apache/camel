@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.context.FhirVersionEnum;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
@@ -31,15 +32,23 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 public class FhirXmlDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     
     private FhirContext fhirContext;
+    private String fhirVersion;
     private boolean contentTypeHeader = true;
 
+    public FhirContext getFhirContext() {
+        return fhirContext;
+    }
 
-    public FhirXmlDataFormat(FhirContext fhirContext) {
+    public void setFhirContext(FhirContext fhirContext) {
         this.fhirContext = fhirContext;
     }
 
-    public FhirXmlDataFormat() {
-        this.fhirContext = FhirContext.forDstu3();
+    public String getFhirVersion() {
+        return fhirVersion;
+    }
+
+    public void setFhirVersion(String fhirVersion) {
+        this.fhirVersion = fhirVersion;
     }
 
     public boolean isContentTypeHeader() {
@@ -50,14 +59,6 @@ public class FhirXmlDataFormat extends ServiceSupport implements DataFormat, Dat
         this.contentTypeHeader = contentTypeHeader;
     }
 
-    public FhirContext getFhirContext() {
-        return fhirContext;
-    }
-
-    public void setFhirContext(FhirContext fhirContext) {
-        this.fhirContext = fhirContext;
-    }
-
     @Override
     public void marshal(Exchange exchange, Object o, OutputStream outputStream) throws Exception {
         IBaseResource iBaseResource;
@@ -66,13 +67,11 @@ public class FhirXmlDataFormat extends ServiceSupport implements DataFormat, Dat
         } else {
             iBaseResource = (IBaseResource) o;
         }
+
         fhirContext.newXmlParser().encodeResourceToWriter(iBaseResource, new OutputStreamWriter(outputStream));
+
         if (isContentTypeHeader()) {
-            if (exchange.hasOut()) {
-                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-            } else {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-            }
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/json");
         }
     }
 
@@ -88,7 +87,12 @@ public class FhirXmlDataFormat extends ServiceSupport implements DataFormat, Dat
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        if (fhirContext == null && fhirVersion != null) {
+            FhirVersionEnum version = FhirVersionEnum.valueOf(fhirVersion);
+            fhirContext = new FhirContext(version);
+        } else if (fhirContext == null) {
+            fhirContext = FhirContext.forDstu3();
+        }
     }
 
     @Override

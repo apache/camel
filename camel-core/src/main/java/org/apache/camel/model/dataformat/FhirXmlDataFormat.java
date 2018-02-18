@@ -18,7 +18,10 @@ package org.apache.camel.model.dataformat;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
@@ -27,12 +30,18 @@ import org.apache.camel.spi.Metadata;
 /**
  * The FHIR XML data format is used to marshall/unmarshall from/to FHIR objects to/from XML.
  */
-@Metadata(firstVersion = "2.21.0", label = "dataformat,transformation,xml,hl7", title = "FHIR XML")
+@Metadata(firstVersion = "2.21.0", label = "dataformat,transformation,hl7", title = "FHIR XML")
 @XmlRootElement(name = "fhirXml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FhirXmlDataFormat extends DataFormatDefinition {
 
+    @XmlTransient
+    @Metadata(label = "advanced")
     private Object fhirContext;
+
+    @XmlAttribute
+    @Metadata(enums = "DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4", defaultValue = "DSTU3")
+    private String fhirVersion;
 
     public FhirXmlDataFormat() {
         super("fhirXml");
@@ -46,10 +55,27 @@ public class FhirXmlDataFormat extends DataFormatDefinition {
         this.fhirContext = fhirContext;
     }
 
+    public String getFhirVersion() {
+        return fhirVersion;
+    }
+
+    /**
+     * The version of FHIR to use. Possible values are: DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4
+     */
+    public void setFhirVersion(String fhirVersion) {
+        this.fhirVersion = fhirVersion;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
+        if (getContentTypeHeader() != null) {
+            setProperty(camelContext, dataFormat, "contentTypeHeader", getContentTypeHeader());
+        }
         if (getFhirContext() != null) {
             setProperty(camelContext, dataFormat, "fhirContext", getFhirContext());
+        }
+        if (getFhirVersion() != null) {
+            setProperty(camelContext, dataFormat, "fhirVersion", getFhirVersion());
         }
     }
 }
