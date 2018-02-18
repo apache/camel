@@ -331,7 +331,7 @@
           </plugin>
           <plugin>
             <artifactId>maven-archetype-plugin</artifactId>
-            <version>3.0.1</version>
+            <version>${maven-archetype-plugin-version}</version>
             <executions>
               <execution>
                 <id>generate-my-car-service</id>
