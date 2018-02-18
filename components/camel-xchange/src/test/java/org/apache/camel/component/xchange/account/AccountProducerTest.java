@@ -37,13 +37,13 @@ public class AccountProducerTest extends CamelTestSupport {
             public void configure() throws Exception {
                 
                 from("direct:balances")
-                .to("xchange:binance?service=account&method=balances");
+                    .to("xchange:binance?service=account&method=balances");
                 
                 from("direct:wallets")
-                .to("xchange:binance?service=account&method=wallets");
+                    .to("xchange:binance?service=account&method=wallets");
                 
                 from("direct:fundingHistory")
-                .to("xchange:binance?service=account&method=fundingHistory");
+                    .to("xchange:binance?service=account&method=fundingHistory");
             }
         };
     }

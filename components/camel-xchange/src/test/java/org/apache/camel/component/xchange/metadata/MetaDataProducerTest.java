@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.xchange.metadata;
 
-import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY;
-import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
-
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -30,6 +27,9 @@ import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.dto.meta.CurrencyPairMetaData;
 
+import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY;
+import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
+
 public class MetaDataProducerTest extends CamelTestSupport {
 
     @Override
@@ -39,16 +39,16 @@ public class MetaDataProducerTest extends CamelTestSupport {
             public void configure() throws Exception {
                 
                 from("direct:currencies")
-                .to("xchange:binance?service=metadata&method=currencies");
+                    .to("xchange:binance?service=metadata&method=currencies");
                 
                 from("direct:currencyMetaData")
-                .to("xchange:binance?service=metadata&method=currencyMetaData");
+                    .to("xchange:binance?service=metadata&method=currencyMetaData");
                 
                 from("direct:currencyPairs")
-                .to("xchange:binance?service=metadata&method=currencyPairs");
+                    .to("xchange:binance?service=metadata&method=currencyPairs");
                 
                 from("direct:currencyPairMetaData")
-                .to("xchange:binance?service=metadata&method=currencyPairMetaData");
+                    .to("xchange:binance?service=metadata&method=currencyPairMetaData");
             }
         };
     }

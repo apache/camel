@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.xchange;
 
-import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY;
-import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod;
 import org.apache.camel.impl.DefaultProducer;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
+
+import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY;
+import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
 
 public class XChangeMetaDataProducer extends DefaultProducer {
     
@@ -45,22 +45,16 @@ public class XChangeMetaDataProducer extends DefaultProducer {
         if (XChangeMethod.currencies == method) {
             Object body = endpoint.getCurrencies();
             exchange.getMessage().setBody(body);
-        } 
-        
-        else if (XChangeMethod.currencyPairs == method) {
+        } else if (XChangeMethod.currencyPairs == method) {
             Object body = endpoint.getCurrencyPairs();
             exchange.getMessage().setBody(body);
-        } 
-        
-        else if (XChangeMethod.currencyMetaData == method) {
+        } else if (XChangeMethod.currencyMetaData == method) {
             Currency curr = exchange.getMessage().getHeader(HEADER_CURRENCY, Currency.class);
             curr = curr != null ? curr : exchange.getMessage().getBody(Currency.class);
             curr = curr != null ? curr : endpoint.getConfiguration().getCurrency();
             Object body = endpoint.getCurrencyMetaData(curr);
             exchange.getMessage().setBody(body);
-        } 
-        
-        else if (XChangeMethod.currencyPairMetaData == method) {
+        } else if (XChangeMethod.currencyPairMetaData == method) {
             CurrencyPair pair = exchange.getIn().getHeader(HEADER_CURRENCY_PAIR, CurrencyPair.class);
             pair = pair != null ? pair : exchange.getMessage().getBody(CurrencyPair.class);
             pair = pair != null ? pair : endpoint.getConfiguration().getCurrencyPair();
