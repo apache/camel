@@ -66,7 +66,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-archetype-plugin</artifactId>
-          <version>2.2</version>
+          <version>${maven-archetype-plugin-version}</version>
           <configuration>
             <skip>${maven.test.skip.exec}</skip>
           </configuration>
