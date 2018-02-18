@@ -34,7 +34,7 @@ import org.json.simple.Jsoner;
  */
 public final class JsonSchemaHelper {
 
-    private static final String VALID_CHARS = ".-='/\\!&():;";
+    private static final String VALID_CHARS = ".,-='/\\!&%():;";
 
     private JsonSchemaHelper() {
     }
