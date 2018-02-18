@@ -46,12 +46,12 @@ public class EtcdServiceCallServiceDiscoveryConfigurationCommon {
      */
     private String servicePath = "/services/";
     /**
-     * To set the discovery type valid values are on-demand and watch.
+     * To set the discovery type, valid values are on-demand and watch.
      */
     private String type = "on-demand";
     /**
      * Set client properties to use. These properties are specific to what
-     * service call implementation are in use. For example if using ribbon then
+     * service call implementation are in use. For example if using ribbon, then
      * the client properties are define in
      * com.netflix.client.config.CommonClientConfigKey.
      */

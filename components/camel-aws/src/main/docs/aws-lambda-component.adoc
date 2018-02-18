@@ -72,10 +72,10 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *operation* (producer) | *Required* The operation to perform. It can be listFunctions getFunction createFunction deleteFunction or invokeFunction |  | LambdaOperations
+| *operation* (producer) | *Required* The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction |  | LambdaOperations
 | *region* (producer) | Amazon AWS Region |  | String
 | *awsLambdaClient* (advanced) | To use a existing configured AwsLambdaClient as client |  | AWSLambda
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *proxyHost* (proxy) | To define a proxy host when instantiating the Lambda client |  | String
 | *proxyPort* (proxy) | To define a proxy port when instantiating the Lambda client |  | Integer
 | *accessKey* (security) | Amazon AWS Access Key |  | String

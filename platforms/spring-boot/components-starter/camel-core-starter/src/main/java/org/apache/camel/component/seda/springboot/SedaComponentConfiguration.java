@@ -36,7 +36,7 @@ public class SedaComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Sets the default maximum capacity of the SEDA queue (i.e. the number of
+     * Sets the default maximum capacity of the SEDA queue (i.e., the number of
      * messages it can hold).
      */
     private Integer queueSize;

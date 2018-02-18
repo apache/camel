@@ -32,11 +32,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class RestConfigurationDefinitionProperties {
 
     /**
-     * The Camel Rest component to use for the REST transport (consumer) such as
-     * restlet spark-rest. If no component has been explicit configured then
-     * Camel will lookup if there is a Camel component that integrates with the
-     * Rest DSL or if a org.apache.camel.spi.RestConsumerFactory is registered
-     * in the registry. If either one is found then that is being used.
+     * The Camel Rest component to use for the REST transport (consumer), such
+     * as restlet, spark-rest. If no component has been explicit configured,
+     * then Camel will lookup if there is a Camel component that integrates with
+     * the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is
+     * registered in the registry. If either one is found, then that is being
+     * used.
      */
     private String component;
     /**
@@ -63,22 +64,22 @@ public class RestConfigurationDefinitionProperties {
     private String apiHost;
     /**
      * The port number to use for exposing the REST service. Notice if you use
-     * servlet component then the port number configured here does not apply as
+     * servlet component then the port number configured here does not apply, as
      * the port number in use is the actual port number the servlet component is
-     * using. eg if using Apache Tomcat its the tomcat http port if using Apache
-     * Karaf its the HTTP service in Karaf that uses port 8181 by default etc.
-     * Though in those situations setting the port number here allows tooling
-     * and JMX to know the port number so its recommended to set the port number
-     * to the number that the servlet engine uses.
+     * using. eg if using Apache Tomcat its the tomcat http port, if using
+     * Apache Karaf its the HTTP service in Karaf that uses port 8181 by default
+     * etc. Though in those situations setting the port number here, allows
+     * tooling and JMX to know the port number, so its recommended to set the
+     * port number to the number that the servlet engine uses.
      */
     private String port;
     /**
      * Sets the location of the api document (swagger api) the REST producer
      * will use to validate the REST uri and query parameters are valid
      * accordingly to the api document. This requires adding camel-swagger-java
-     * to the classpath and any miss configuration will let Camel fail on
+     * to the classpath, and any miss configuration will let Camel fail on
      * startup and report the error(s). The location of the api document is
-     * loaded from classpath by default but you can use file: or http: to refer
+     * loaded from classpath by default, but you can use file: or http: to refer
      * to resources to load from file or http url.
      */
     private String producerApiDoc;
@@ -103,28 +104,28 @@ public class RestConfigurationDefinitionProperties {
     /**
      * Sets an CamelContext id pattern to only allow Rest APIs from rest
      * services within CamelContext's which name matches the pattern. The
-     * pattern name refers to the CamelContext name to match on the current
-     * CamelContext only. For any other value the pattern uses the rules from
-     * link org.apache.camel.util.EndpointHelpermatchPattern(String String)
+     * pattern name refers to the CamelContext name, to match on the current
+     * CamelContext only. For any other value, the pattern uses the rules from
+     * link org.apache.camel.util.EndpointHelpermatchPattern(String, String)
      */
     private String apiContextIdPattern;
     /**
      * Sets whether listing of all available CamelContext's with REST services
-     * in the JVM is enabled. If enabled it allows to discover these contexts if
-     * false then only the current CamelContext is in use.
+     * in the JVM is enabled. If enabled it allows to discover these contexts,
+     * if false then only the current CamelContext is in use.
      */
     private Boolean apiContextListing = false;
     /**
      * Whether vendor extension is enabled in the Rest APIs. If enabled then
      * Camel will include additional information as vendor extension (eg keys
-     * starting with x-) such as route ids class names etc. Not all 3rd party
+     * starting with x-) such as route ids, class names etc. Not all 3rd party
      * API gateways and tools supports vendor-extensions when importing your API
      * docs.
      */
     private Boolean apiVendorExtension = false;
     /**
-     * If no hostname has been explicit configured then this resolver is used to
-     * compute the hostname the REST service will be using.
+     * If no hostname has been explicit configured, then this resolver is used
+     * to compute the hostname the REST service will be using.
      */
     private RestHostNameResolver hostNameResolver;
     /**
@@ -134,7 +135,7 @@ public class RestConfigurationDefinitionProperties {
     /**
      * Whether to skip binding on output if there is a custom HTTP error code
      * header. This allows to build custom error messages that do not bind to
-     * json / xml etc as success messages otherwise will do.
+     * json / xml etc, as success messages otherwise will do.
      */
     private Boolean skipBindingOnErrorCode = false;
     /**
@@ -145,13 +146,13 @@ public class RestConfigurationDefinitionProperties {
     /**
      * Name of specific json data format to use. By default json-jackson will be
      * used. Important: This option is only for setting a custom name of the
-     * data format not to refer to an existing data format instance.
+     * data format, not to refer to an existing data format instance.
      */
     private String jsonDataFormat;
     /**
      * Name of specific XML data format to use. By default jaxb will be used.
      * Important: This option is only for setting a custom name of the data
-     * format not to refer to an existing data format instance.
+     * format, not to refer to an existing data format instance.
      */
     private String xmlDataFormat;
     /**

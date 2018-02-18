@@ -79,18 +79,18 @@ with the following path and query parameters:
 | *reconnectTimeWait* (common) | Waiting time before attempts reconnection (in milliseconds) | 2000 | int
 | *topic* (common) | *Required* The name of topic we want to use |  | String
 | *verbose* (common) | Whether or not running in verbose mode | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *maxMessages* (consumer) | Stop receiving messages from a topic we are subscribing to after maxMessages |  | String
 | *poolSize* (consumer) | Consumer pool size | 10 | int
 | *queueName* (consumer) | The Queue name if we are using nats for a queue configuration |  | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *replySubject* (producer) | the subject to which subscribers should send response |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *secure* (security) | Set secure option indicating TLS is required | false | boolean
 | *ssl* (security) | Whether or not using SSL | false | boolean
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
-| *tlsDebug* (security) | TLS Debug it will add additional console output | false | boolean
+| *tlsDebug* (security) | TLS Debug, it will add additional console output | false | boolean
 |===
 // endpoint options: END
 

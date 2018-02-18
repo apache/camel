@@ -70,11 +70,11 @@ with the following path and query parameters:
 | *proxyHost* (producer) | To define a proxy host when instantiating the SES client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the SES client |  | Integer
 | *region* (producer) | The region in which SES client needs to work |  | String
-| *replyToAddresses* (producer) | List of reply-to email address(es) for the message override it using 'CamelAwsSesReplyToAddresses' header. |  | List
-| *returnPath* (producer) | The email address to which bounce notifications are to be forwarded override it using 'CamelAwsSesReturnPath' header. |  | String
+| *replyToAddresses* (producer) | List of reply-to email address(es) for the message, override it using 'CamelAwsSesReplyToAddresses' header. |  | List
+| *returnPath* (producer) | The email address to which bounce notifications are to be forwarded, override it using 'CamelAwsSesReturnPath' header. |  | String
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSesSubject' is not present. |  | String
 | *to* (producer) | List of destination email address. Can be overriden with 'CamelAwsSesTo' header. |  | List
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===

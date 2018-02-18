@@ -35,14 +35,14 @@ public class HazelcastSetComponentConfiguration
 
     /**
      * The hazelcast instance reference which can be used for hazelcast
-     * endpoint. If you don't specify the instance reference camel use the
+     * endpoint. If you don't specify the instance reference, camel use the
      * default hazelcast instance from the camel-hazelcast instance.
      */
     @NestedConfigurationProperty
     private HazelcastInstance hazelcastInstance;
     /**
      * The hazelcast mode reference which kind of instance should be used. If
-     * you don't specify the mode then the node mode will be the default.
+     * you don't specify the mode, then the node mode will be the default.
      */
     private String hazelcastMode = "node";
     /**

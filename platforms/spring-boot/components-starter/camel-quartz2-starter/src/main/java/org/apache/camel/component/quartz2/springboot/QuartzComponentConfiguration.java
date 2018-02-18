@@ -64,7 +64,7 @@ public class QuartzComponentConfiguration
     private String propertiesFile;
     /**
      * Whether to prefix the Quartz Scheduler instance name with the
-     * CamelContext name. This is enabled by default to let each CamelContext
+     * CamelContext name. This is enabled by default, to let each CamelContext
      * use its own Quartz scheduler instance by default. You can set this option
      * to false to reuse Quartz scheduler instances between multiple
      * CamelContext's.
@@ -82,7 +82,7 @@ public class QuartzComponentConfiguration
     @NestedConfigurationProperty
     private SchedulerFactory schedulerFactory;
     /**
-     * To use the custom configured Quartz scheduler instead of creating a new
+     * To use the custom configured Quartz scheduler, instead of creating a new
      * Scheduler.
      */
     @NestedConfigurationProperty

@@ -44,7 +44,7 @@ public class JGroupsComponentConfiguration
      */
     private String channelProperties;
     /**
-     * If set to true the consumer endpoint will receive org.jgroups.View
+     * If set to true, the consumer endpoint will receive org.jgroups.View
      * messages as well (not only org.jgroups.Message instances). By default
      * only regular messages are consumed by the endpoint.
      */

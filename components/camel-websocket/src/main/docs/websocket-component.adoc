@@ -40,13 +40,13 @@ The Jetty Websocket component supports 14 options which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *staticResources* (consumer) | Set a resource path for static resources (such as .html files etc). The resources can be loaded from classpath if you prefix with classpath: otherwise the resources is loaded from file system or from JAR files. For example to load from root classpath use classpath:. or classpath:WEB-INF/static If not configured (eg null) then no static resource is in use. |  | String
+| *staticResources* (consumer) | Set a resource path for static resources (such as .html files etc). The resources can be loaded from classpath, if you prefix with classpath:, otherwise the resources is loaded from file system or from JAR files. For example to load from root classpath use classpath:., or classpath:WEB-INF/static If not configured (eg null) then no static resource is in use. |  | String
 | *host* (common) | The hostname. The default value is 0.0.0.0 | 0.0.0.0 | String
 | *port* (common) | The port number. The default value is 9292 | 9292 | Integer
 | *sslKeyPassword* (security) | The password for the keystore when using SSL. |  | String
 | *sslPassword* (security) | The password when using SSL. |  | String
 | *sslKeystore* (security) | The path to the keystore. |  | String
-| *enableJmx* (advanced) | If this option is true Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details. | false | boolean
+| *enableJmx* (advanced) | If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details. | false | boolean
 | *minThreads* (advanced) | To set a value for minimum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9. The default values for minThreads is 1. |  | Integer
 | *maxThreads* (advanced) | To set a value for maximum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9. The default values for maxThreads is 1 2 noCores. |  | Integer
 | *threadPool* (advanced) | To use a custom thread pool for the server. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9. |  | ThreadPool
@@ -91,22 +91,22 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *maxBinaryMessageSize* (common) | Can be used to set the size in bytes that the websocket created by the websocketServlet may be accept before closing. (Default is -1 - or unlimited) | -1 | Integer
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *sessionSupport* (consumer) | Whether to enable session support which enables HttpSession for each http request. | false | boolean
-| *staticResources* (consumer) | Set a resource path for static resources (such as .html files etc). The resources can be loaded from classpath if you prefix with classpath: otherwise the resources is loaded from file system or from JAR files. For example to load from root classpath use classpath:. or classpath:WEB-INF/static If not configured (eg null) then no static resource is in use. |  | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *staticResources* (consumer) | Set a resource path for static resources (such as .html files etc). The resources can be loaded from classpath, if you prefix with classpath:, otherwise the resources is loaded from file system or from JAR files. For example to load from root classpath use classpath:., or classpath:WEB-INF/static If not configured (eg null) then no static resource is in use. |  | String
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *sendTimeout* (producer) | Timeout in millis when sending to a websocket channel. The default timeout is 30000 (30 seconds). | 30000 | Integer
-| *sendToAll* (producer) | To send to all websocket subscribers. Can be used to configure on endpoint level instead of having to use the WebsocketConstants.SEND_TO_ALL header on the message. |  | Boolean
-| *bufferSize* (advanced) | Set the buffer size of the websocketServlet which is also the max frame byte size (default 8192) | 8192 | Integer
+| *sendToAll* (producer) | To send to all websocket subscribers. Can be used to configure on endpoint level, instead of having to use the WebsocketConstants.SEND_TO_ALL header on the message. |  | Boolean
+| *bufferSize* (advanced) | Set the buffer size of the websocketServlet, which is also the max frame byte size (default 8192) | 8192 | Integer
 | *maxIdleTime* (advanced) | Set the time in ms that the websocket created by the websocketServlet may be idle before closing. (default is 300000) | 300000 | Integer
 | *maxTextMessageSize* (advanced) | Can be used to set the size in characters that the websocket created by the websocketServlet may be accept before closing. |  | Integer
 | *minVersion* (advanced) | Can be used to set the minimum protocol version accepted for the websocketServlet. (Default 13 - the RFC6455 version) | 13 | Integer
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *allowedOrigins* (cors) | The CORS allowed origins. Use to allow all. |  | String
 | *crossOriginFilterOn* (cors) | Whether to enable CORS | false | boolean
 | *filterPath* (cors) | Context path for filtering CORS |  | String
-| *enableJmx* (monitoring) | If this option is true Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details. | false | boolean
+| *enableJmx* (monitoring) | If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details. | false | boolean
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 |===
 // endpoint options: END

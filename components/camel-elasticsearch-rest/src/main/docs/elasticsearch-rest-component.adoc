@@ -38,7 +38,7 @@ The Elastichsearch Rest component supports 12 options which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *client* (advanced) | To use an existing configured Elasticsearch client instead of creating a client per endpoint. This allow to customize the client with specific settings. |  | RestClient
+| *client* (advanced) | To use an existing configured Elasticsearch client, instead of creating a client per endpoint. This allow to customize the client with specific settings. |  | RestClient
 | *hostAddresses* (advanced) | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for hostAddresses to be considered instead. |  | String
 | *socketTimeout* (advanced) | The timeout in ms to wait before the socket will timeout. | 30000 | int
 | *connectionTimeout* (advanced) | The time in ms to wait before connection will timeout. | 30000 | int
@@ -86,7 +86,7 @@ with the following path and query parameters:
 | *operation* (producer) | What operation to perform |  | ElasticsearchOperation
 | *socketTimeout* (producer) | The timeout in ms to wait before the socket will timeout. | 30000 | int
 | *waitForActiveShards* (producer) | Index creation waits for the write consistency number of shards to be available | 1 | int
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

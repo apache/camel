@@ -33,18 +33,18 @@ public class TidyMarkupDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
-     * What data type to unmarshal as can either be org.w3c.dom.Node or
+     * What data type to unmarshal as, can either be org.w3c.dom.Node or
      * java.lang.String. Is by default org.w3c.dom.Node
      */
     private String dataObjectType = "org.w3c.dom.Node";
     /**
-     * When returning a String do we omit the XML declaration in the top.
+     * When returning a String, do we omit the XML declaration in the top.
      */
     private Boolean omitXmlDeclaration = false;
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
-     * example application/xml for data formats marshalling to XML or
+     * example application/xml for data formats marshalling to XML, or
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;

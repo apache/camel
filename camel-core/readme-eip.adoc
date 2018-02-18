@@ -26,7 +26,7 @@ Number of EIPs: 64 (2 deprecated)
 `<circuitBreaker>` | *deprecated* Circuit break load balancer
 
 | link:src/main/docs/eips/claimCheck-eip.adoc[Claim Check] +
-`<claimCheck>` | The Claim Check EIP allows you to replace message content with a claim check (a unique key) which can be used to retrieve the message content at a later time.
+`<claimCheck>` | The Claim Check EIP allows you to replace message content with a claim check (a unique key), which can be used to retrieve the message content at a later time.
 
 | link:src/main/docs/eips/convertBodyTo-eip.adoc[Convert Body To] +
 `<convertBodyTo>` | Converts the message body to another type

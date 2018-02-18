@@ -84,7 +84,7 @@ with the following path and query parameters:
 | *iconUrl* (producer) | The avatar that the component will use when sending message to a channel or user. |  | String
 | *username* (producer) | This is the username that the bot will have when sending messages to a channel or user. |  | String
 | *webhookUrl* (producer) | The incoming webhook URL |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

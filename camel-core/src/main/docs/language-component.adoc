@@ -57,7 +57,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *languageName* | *Required* Sets the name of the language to use |  | String
-| *resourceUri* | Path to the resource or a reference to lookup a bean in the Registry to use as the resource |  | String
+| *resourceUri* | Path to the resource, or a reference to lookup a bean in the Registry to use as the resource |  | String
 |===
 
 ==== Query Parameters (6 parameters):
@@ -70,7 +70,7 @@ with the following path and query parameters:
 | *contentCache* (producer) | Sets whether to use resource content cache or not. | false | boolean
 | *script* (producer) | Sets the script to execute |  | String
 | *transform* (producer) | Whether or not the result of the script should be used as message body. This options is default true. | true | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

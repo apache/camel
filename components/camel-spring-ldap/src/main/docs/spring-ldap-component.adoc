@@ -64,7 +64,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *operation* (producer) | *Required* The LDAP operation to be performed. |  | LdapOperation
 | *scope* (producer) | The scope of the search operation. | subtree | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

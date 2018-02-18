@@ -33,12 +33,12 @@ public class RestComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * The Camel Rest component to use for the REST transport such as restlet
-     * spark-rest. If no component has been explicit configured then Camel will
-     * lookup if there is a Camel component that integrates with the Rest DSL or
-     * if a org.apache.camel.spi.RestConsumerFactory (consumer) or
+     * The Camel Rest component to use for the REST transport, such as restlet,
+     * spark-rest. If no component has been explicit configured, then Camel will
+     * lookup if there is a Camel component that integrates with the Rest DSL,
+     * or if a org.apache.camel.spi.RestConsumerFactory (consumer) or
      * org.apache.camel.spi.RestProducerFactory (producer) is registered in the
-     * registry. If either one is found then that is being used.
+     * registry. If either one is found, then that is being used.
      */
     private String componentName;
     /**

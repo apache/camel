@@ -51,7 +51,7 @@ public class UndertowComponentConfiguration
      */
     private Boolean useGlobalSslContextParameters = false;
     /**
-     * To configure common options such as thread pools
+     * To configure common options, such as thread pools
      */
     private UndertowHostOptionsNestedConfiguration hostOptions;
     /**

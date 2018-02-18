@@ -73,7 +73,7 @@ with the following path and query parameters:
 | *proxyHost* (producer) | To define a proxy host when instantiating the DDBStreams client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the DDBStreams client |  | Integer
 | *region* (producer) | The region in which Kinesis client needs to work |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===

@@ -39,14 +39,14 @@ public class ThriftDataFormatConfiguration
     /**
      * Defines a content type format in which thrift message will be
      * serialized/deserialized from(to) the Java been. The format can either be
-     * native or json for either native binary thrift json or simple json fields
-     * representation. The default value is binary.
+     * native or json for either native binary thrift, json or simple json
+     * fields representation. The default value is binary.
      */
     private String contentTypeFormat = "binary";
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
-     * example application/xml for data formats marshalling to XML or
+     * example application/xml for data formats marshalling to XML, or
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;

@@ -45,14 +45,14 @@ with the following path and query parameters:
 | *statisticsEnabled* (common) | Whether statistics gathering is enabled | false | boolean
 | *storeByValue* (common) | If cache should use store-by-value or store-by-reference semantics | true | boolean
 | *writeThrough* (common) | If write-through caching should be used | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *filteredEvents* (consumer) | Events a consumer should filter. If using filteredEvents option then eventFilters one will be ignored |  | List
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *filteredEvents* (consumer) | Events a consumer should filter. If using filteredEvents option, then eventFilters one will be ignored |  | List
 | *oldValueRequired* (consumer) | if the old value is required for events | false | boolean
 | *synchronous* (consumer) | if the the event listener should block the thread causing the event | false | boolean
-| *eventFilters* (consumer) | The CacheEntryEventFilter. If using eventFilters option then filteredEvents one will be ignored |  | List
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *eventFilters* (consumer) | The CacheEntryEventFilter. If using eventFilters option, then filteredEvents one will be ignored |  | List
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *action* (producer) | To configure using a cache operation by default. If an operation in the message header then the operation from the header takes precedence. |  | String
+| *action* (producer) | To configure using a cache operation by default. If an operation in the message header, then the operation from the header takes precedence. |  | String
 | *cacheLoaderFactory* (advanced) | The CacheLoader factory |  | CacheLoader>
 | *cacheWriterFactory* (advanced) | The CacheWriter factory |  | CacheWriter>
 | *createCacheIfNotExists* (advanced) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean

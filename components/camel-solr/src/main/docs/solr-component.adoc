@@ -69,12 +69,12 @@ with the following path and query parameters:
 | *maxRetries* (producer) | Maximum number of retries to attempt in the event of transient errors |  | Integer
 | *maxTotalConnections* (producer) | maxTotalConnection on the underlying HttpConnectionManager |  | Integer
 | *requestHandler* (producer) | Set the request handler to be used |  | String
-| *soTimeout* (producer) | Read timeout on the underlying HttpConnectionManager. This is desirable for queries but probably not for indexing |  | Integer
+| *soTimeout* (producer) | Read timeout on the underlying HttpConnectionManager. This is desirable for queries, but probably not for indexing |  | Integer
 | *streamingQueueSize* (producer) | Set the queue size for the StreamingUpdateSolrServer | 10 | int
 | *streamingThreadCount* (producer) | Set the number of threads for the StreamingUpdateSolrServer | 2 | int
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *collection* (solrCloud) | Set the collection name which the solrCloud server could use |  | String
-| *zkHost* (solrCloud) | Set the ZooKeeper host information which the solrCloud could use such as zkhost=localhost:8123. |  | String
+| *zkHost* (solrCloud) | Set the ZooKeeper host information which the solrCloud could use, such as zkhost=localhost:8123. |  | String
 |===
 // endpoint options: END
 

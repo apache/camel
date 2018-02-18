@@ -66,7 +66,7 @@ with the following path and query parameters:
 | *tikaConfigUri* (producer) | Tika Config Uri: The URI of tika-config.xml |  | String
 | *tikaParseOutputEncoding* (producer) | Tika Parse Output Encoding - Used to specify the character encoding of the parsed output. Defaults to Charset.defaultCharset() . |  | String
 | *tikaParseOutputFormat* (producer) | Tika Output Format. Supported output formats. xml: Returns Parsed Content as XML. html: Returns Parsed Content as HTML. text: Returns Parsed Content as Text. textMain: Uses the boilerpipe library to automatically extract the main content from a web page. | xml | TikaParseOutputFormat
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

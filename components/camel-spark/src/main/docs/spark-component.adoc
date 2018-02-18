@@ -82,7 +82,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *endpointType* | *Required* Type of the endpoint (rdd dataframe hive). |  | EndpointType
+| *endpointType* | *Required* Type of the endpoint (rdd, dataframe, hive). |  | EndpointType
 |===
 
 ==== Query Parameters (6 parameters):
@@ -95,7 +95,7 @@ with the following path and query parameters:
 | *dataFrameCallback* (producer) | Function performing action against an DataFrame. |  | DataFrameCallback
 | *rdd* (producer) | RDD to compute against. |  | JavaRDDLike
 | *rddCallback* (producer) | Function performing action against an RDD. |  | RddCallback
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

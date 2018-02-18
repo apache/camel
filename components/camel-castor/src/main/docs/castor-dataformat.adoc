@@ -115,13 +115,13 @@ The Castor dataformat supports 9 options which are listed below.
 | Name | Default | Java Type | Description
 | mappingFile |  | String | Path to a Castor mapping file to load from the classpath.
 | whitelistEnabled | true | Boolean | Define if Whitelist feature is enabled or not
-| allowedUnmarshallObjects |  | String | Define the allowed objects to be unmarshalled. You can specify the FQN class name of allowed objects and you can use comma to separate multiple entries. It is also possible to use wildcards and regular expression which is based on the pattern defined by link org.apache.camel.util.EndpointHelpermatchPattern(String String). Denied objects takes precedence over allowed objects.
-| deniedUnmarshallObjects |  | String | Define the denied objects to be unmarshalled. You can specify the FQN class name of deined objects and you can use comma to separate multiple entries. It is also possible to use wildcards and regular expression which is based on the pattern defined by link org.apache.camel.util.EndpointHelpermatchPattern(String String). Denied objects takes precedence over allowed objects.
+| allowedUnmarshallObjects |  | String | Define the allowed objects to be unmarshalled. You can specify the FQN class name of allowed objects, and you can use comma to separate multiple entries. It is also possible to use wildcards and regular expression which is based on the pattern defined by link org.apache.camel.util.EndpointHelpermatchPattern(String, String). Denied objects takes precedence over allowed objects.
+| deniedUnmarshallObjects |  | String | Define the denied objects to be unmarshalled. You can specify the FQN class name of deined objects, and you can use comma to separate multiple entries. It is also possible to use wildcards and regular expression which is based on the pattern defined by link org.apache.camel.util.EndpointHelpermatchPattern(String, String). Denied objects takes precedence over allowed objects.
 | validation | true | Boolean | Whether validation is turned on or off. Is by default true.
 | encoding | UTF-8 | String | Encoding to use when marshalling an Object to XML. Is by default UTF-8
 | packages |  | String[] | Add additional packages to Castor XmlContext
 | classes |  | String[] | Add additional class names to Castor XmlContext
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
 

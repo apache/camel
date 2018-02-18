@@ -41,7 +41,7 @@ public class IgniteQueueComponentConfiguration
     @NestedConfigurationProperty
     private Ignite ignite;
     /**
-     * Sets the resource from where to load the configuration. It can be a: URI
+     * Sets the resource from where to load the configuration. It can be a: URI,
      * String (URI) or an InputStream.
      */
     private Object configurationResource;

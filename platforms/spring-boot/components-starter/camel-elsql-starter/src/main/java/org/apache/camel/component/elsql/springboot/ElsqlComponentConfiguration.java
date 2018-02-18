@@ -53,7 +53,7 @@ public class ElsqlComponentConfiguration
     /**
      * The resource file which contains the elsql SQL statements to use. You can
      * specify multiple resources separated by comma. The resources are loaded
-     * on the classpath by default you can prefix with file: to load from file
+     * on the classpath by default, you can prefix with file: to load from file
      * system. Notice you can set this option on the component and then you do
      * not have to configure this on the endpoint.
      */

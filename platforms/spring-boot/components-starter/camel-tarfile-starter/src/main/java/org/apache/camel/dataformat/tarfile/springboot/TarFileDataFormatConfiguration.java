@@ -33,25 +33,25 @@ public class TarFileDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
-     * If the tar file has more then one entry the setting this option to true
-     * allows to work with the splitter EIP to split the data using an iterator
+     * If the tar file has more then one entry, the setting this option to true,
+     * allows to work with the splitter EIP, to split the data using an iterator
      * in a streaming mode.
      */
     private Boolean usingIterator = false;
     /**
-     * If the tar file has more then one entry setting this option to true
+     * If the tar file has more then one entry, setting this option to true,
      * allows to get the iterator even if the directory is empty
      */
     private Boolean allowEmptyDirectory = false;
     /**
-     * If the file name contains path elements setting this option to true
+     * If the file name contains path elements, setting this option to true,
      * allows the path to be maintained in the tar file.
      */
     private Boolean preservePathElements = false;
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
-     * example application/xml for data formats marshalling to XML or
+     * example application/xml for data formats marshalling to XML, or
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;
