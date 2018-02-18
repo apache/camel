@@ -33,14 +33,14 @@ public class ZipDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
-     * To specify a specific compression between 0-9. -1 is default compression
-     * 0 is no compression and 9 is best compression.
+     * To specify a specific compression between 0-9. -1 is default compression,
+     * 0 is no compression, and 9 is best compression.
      */
     private Integer compressionLevel = -1;
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
-     * example application/xml for data formats marshalling to XML or
+     * example application/xml for data formats marshalling to XML, or
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;

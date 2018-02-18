@@ -18,7 +18,7 @@ The Ignite Messaging component supports 4 options which are listed below.
 |===
 | Name | Description | Default | Type
 | *ignite* (common) | Sets the Ignite instance. |  | Ignite
-| *configurationResource* (common) | Sets the resource from where to load the configuration. It can be a: URI String (URI) or an InputStream. |  | Object
+| *configurationResource* (common) | Sets the resource from where to load the configuration. It can be a: URI, String (URI) or an InputStream. |  | Object
 | *igniteConfiguration* (common) | Allows the user to set a programmatic IgniteConfiguration. |  | IgniteConfiguration
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
@@ -47,14 +47,14 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *propagateIncomingBodyIfNo ReturnValue* (common) | Sets whether to propagate the incoming body if the return type of the underlying Ignite operation is void. | true | boolean
-| *treatCollectionsAsCache Objects* (common) | Sets whether to treat Collections as cache objects or as Collections of items to insert/update/compute etc. | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *treatCollectionsAsCache Objects* (common) | Sets whether to treat Collections as cache objects or as Collections of items to insert/update/compute, etc. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *clusterGroupExpression* (producer) | The cluster group expression. |  | ClusterGroupExpression
-| *sendMode* (producer) | The send mode to use. Possible values: UNORDERED ORDERED. | UNORDERED | IgniteMessagingSend Mode
+| *sendMode* (producer) | The send mode to use. Possible values: UNORDERED, ORDERED. | UNORDERED | IgniteMessagingSend Mode
 | *timeout* (producer) | The timeout for the send operation when using ordered messages. |  | Long
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

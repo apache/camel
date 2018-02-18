@@ -59,7 +59,7 @@ public class QuickfixjComponentConfiguration
      */
     private Map<String, QuickfixjConfiguration> configurations;
     /**
-     * If set to true the engines will be created and started when needed (when
+     * If set to true, the engines will be created and started when needed (when
      * first message is send)
      */
     private Boolean lazyCreateEngines = false;

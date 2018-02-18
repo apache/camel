@@ -68,7 +68,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *hostname* | *Required* Hostname for the IRC chat server |  | String
-| *port* | Port number for the IRC chat server. If no port is configured then a default port of either 6667 6668 or 6669 is used. |  | int
+| *port* | Port number for the IRC chat server. If no port is configured then a default port of either 6667, 6668 or 6669 is used. |  | int
 |===
 
 ==== Query Parameters (24 parameters):
@@ -81,11 +81,11 @@ with the following path and query parameters:
 | *nickname* (common) | The nickname used in chat. |  | String
 | *persistent* (common) | *Deprecated* Use persistent messages. | true | boolean
 | *realname* (common) | The IRC user's actual name. |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *colors* (advanced) | Whether or not the server supports color codes. | true | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *onJoin* (filter) | Handle user join events. | true | boolean
 | *onKick* (filter) | Handle kick events. | true | boolean
 | *onMode* (filter) | Handle mode change events. | true | boolean

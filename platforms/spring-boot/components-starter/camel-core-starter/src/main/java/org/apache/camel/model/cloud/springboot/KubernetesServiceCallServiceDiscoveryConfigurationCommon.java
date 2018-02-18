@@ -26,12 +26,13 @@ import javax.annotation.Generated;
 public class KubernetesServiceCallServiceDiscoveryConfigurationCommon {
 
     /**
-     * How to perform service lookup. Possible values: client dns environment.
-     * When using client then the client queries the kubernetes master to obtain
-     * a list of active pods that provides the service and then random (or round
-     * robin) select a pod. When using dns the service name is resolved as
-     * name.namespace.service.dnsDomain. When using environment then environment
-     * variables are used to lookup the service. By default environment is used.
+     * How to perform service lookup. Possible values: client, dns, environment.
+     * When using client, then the client queries the kubernetes master to
+     * obtain a list of active pods that provides the service, and then random
+     * (or round robin) select a pod. When using dns the service name is
+     * resolved as name.namespace.service.dnsDomain. When using environment then
+     * environment variables are used to lookup the service. By default
+     * environment is used.
      */
     private String lookup = "environment";
     /**
@@ -83,7 +84,7 @@ public class KubernetesServiceCallServiceDiscoveryConfigurationCommon {
      */
     private String clientCertFile;
     /**
-     * Sets the Client Keystore algorithm such as RSA when using client lookup
+     * Sets the Client Keystore algorithm, such as RSA when using client lookup
      */
     private String clientKeyAlgo;
     /**
@@ -105,7 +106,7 @@ public class KubernetesServiceCallServiceDiscoveryConfigurationCommon {
     private Boolean trustCerts = false;
     /**
      * Set client properties to use. These properties are specific to what
-     * service call implementation are in use. For example if using ribbon then
+     * service call implementation are in use. For example if using ribbon, then
      * the client properties are define in
      * com.netflix.client.config.CommonClientConfigKey.
      */

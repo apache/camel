@@ -19,11 +19,11 @@ The CSV dataformat supports 27 options which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| formatRef |  | String | The reference format to use it will be updated with the other format options the default value is CSVFormat.DEFAULT
-| formatName |  | String | The name of the format to use the default value is CSVFormat.DEFAULT
+| formatRef |  | String | The reference format to use, it will be updated with the other format options, the default value is CSVFormat.DEFAULT
+| formatName |  | String | The name of the format to use, the default value is CSVFormat.DEFAULT
 | commentMarkerDisabled | false | Boolean | Disables the comment marker of the reference format.
 | commentMarker |  | String | Sets the comment marker of the reference format.
-| delimiter |  | String | Sets the delimiter to use. The default value is (comma)
+| delimiter |  | String | Sets the delimiter to use. The default value is , (comma)
 | escapeDisabled | false | Boolean | Use for disabling using escape character
 | escape |  | String | Sets the escape character to use
 | headerDisabled | false | Boolean | Use for disabling headers
@@ -45,7 +45,7 @@ The CSV dataformat supports 27 options which are listed below.
 | lazyLoad | false | Boolean | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one.
 | useMaps | false | Boolean | Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected).
 | recordConverterRef |  | String | Refers to a custom CsvRecordConverter to lookup from the registry to use.
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
 

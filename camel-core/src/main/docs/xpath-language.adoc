@@ -52,8 +52,8 @@ The XPath language supports 9 options which are listed below.
 | factoryRef |  | String | References to a custom XPathFactory to lookup in the registry
 | objectModel |  | String | The XPath object model to use
 | logNamespaces | false | Boolean | Whether to log namespaces which can assist during trouble shooting
-| headerName |  | String | Name of header to use as input instead of the message body
-| threadSafety | false | Boolean | Whether to enable thread-safety for the returned result of the xpath expression. This applies to when using NODESET as the result type and the returned set has multiple elements. In this situation there can be thread-safety issues if you process the NODESET concurrently such as from a Camel Splitter EIP in parallel processing mode. This option prevents concurrency issues by doing defensive copies of the nodes. It is recommended to turn this option on if you are using camel-saxon or Saxon in your application. Saxon has thread-safety issues which can be prevented by turning this option on.
+| headerName |  | String | Name of header to use as input, instead of the message body
+| threadSafety | false | Boolean | Whether to enable thread-safety for the returned result of the xpath expression. This applies to when using NODESET as the result type, and the returned set has multiple elements. In this situation there can be thread-safety issues if you process the NODESET concurrently such as from a Camel Splitter EIP in parallel processing mode. This option prevents concurrency issues by doing defensive copies of the nodes. It is recommended to turn this option on if you are using camel-saxon or Saxon in your application. Saxon has thread-safety issues which can be prevented by turning this option on.
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |===
 // language options: END

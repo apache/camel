@@ -34,8 +34,8 @@ public class CxfComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * This option controls whether the CXF component when running in PAYLOAD
-     * mode will DOM parse the incoming messages into DOM Elements or keep the
+     * This option controls whether the CXF component, when running in PAYLOAD
+     * mode, will DOM parse the incoming messages into DOM Elements or keep the
      * payload as a javax.xml.transform.Source object that would allow streaming
      * in some cases.
      */

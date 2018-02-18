@@ -53,8 +53,8 @@ public class XPathLanguageConfiguration
     private Boolean logNamespaces = false;
     /**
      * Whether to enable thread-safety for the returned result of the xpath
-     * expression. This applies to when using NODESET as the result type and the
-     * returned set has multiple elements. In this situation there can be
+     * expression. This applies to when using NODESET as the result type, and
+     * the returned set has multiple elements. In this situation there can be
      * thread-safety issues if you process the NODESET concurrently such as from
      * a Camel Splitter EIP in parallel processing mode. This option prevents
      * concurrency issues by doing defensive copies of the nodes. It is

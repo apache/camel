@@ -56,7 +56,7 @@ The uniVocity TSV dataformat supports 15 options which are listed below.
 | skipEmptyLines | true | Boolean | Whether or not the empty lines must be ignored. The default value is true
 | ignoreTrailingWhitespaces | true | Boolean | Whether or not the trailing white spaces must ignored. The default value is true
 | ignoreLeadingWhitespaces | true | Boolean | Whether or not the leading white spaces must be ignored. The default value is true
-| headersDisabled | false | Boolean | Whether or not the headers are disabled. When defined this option explicitly sets the headers as null which indicates that there is no header. The default value is false
+| headersDisabled | false | Boolean | Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which indicates that there is no header. The default value is false
 | headerExtractionEnabled | false | Boolean | Whether or not the header must be read in the first line of the test document The default value is false
 | numberOfRecordsToRead |  | Integer | The maximum number of record to read.
 | emptyValue |  | String | The String representation of an empty value
@@ -66,7 +66,7 @@ The uniVocity TSV dataformat supports 15 options which are listed below.
 | comment | # | String | The comment symbol. The default value is
 | lazyLoad | false | Boolean | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one. The default value is false
 | asMap | false | Boolean | Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected). The default value is false
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
 

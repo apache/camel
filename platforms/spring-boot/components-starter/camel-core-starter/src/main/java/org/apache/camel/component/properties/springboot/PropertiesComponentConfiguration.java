@@ -51,7 +51,7 @@ public class PropertiesComponentConfiguration
     private String location;
     /**
      * Encoding to use when loading properties file from the file system or
-     * classpath. If no encoding has been set then the properties files is
+     * classpath. If no encoding has been set, then the properties files is
      * loaded using ISO-8859-1 encoding (latin-1) as documented by link
      * java.util.Propertiesload(java.io.InputStream)
      */
@@ -79,18 +79,18 @@ public class PropertiesComponentConfiguration
      */
     private String propertySuffix;
     /**
-     * If true first attempt resolution of property name augmented with
+     * If true, first attempt resolution of property name augmented with
      * propertyPrefix and propertySuffix before falling back the plain property
-     * name specified. If false only the augmented property name is searched.
+     * name specified. If false, only the augmented property name is searched.
      */
     private Boolean fallbackToUnaugmentedProperty = true;
     /**
-     * If false the component does not attempt to find a default for the key by
+     * If false, the component does not attempt to find a default for the key by
      * looking after the colon separator.
      */
     private Boolean defaultFallbackEnabled = true;
     /**
-     * Whether to silently ignore if a location cannot be located such as a
+     * Whether to silently ignore if a location cannot be located, such as a
      * properties file not found.
      */
     private Boolean ignoreMissingLocation = false;
@@ -113,7 +113,7 @@ public class PropertiesComponentConfiguration
     private Properties initialProperties;
     /**
      * Sets a special list of override properties that take precedence and will
-     * use first if a property exist.
+     * use first, if a property exist.
      */
     private Properties overrideProperties;
     /**

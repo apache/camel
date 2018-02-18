@@ -33,9 +33,9 @@ public class ASN1DataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
-     * If the asn1 file has more then one entry the setting this option to true
-     * allows to work with the splitter EIP to split the data using an iterator
-     * in a streaming mode.
+     * If the asn1 file has more then one entry, the setting this option to
+     * true, allows to work with the splitter EIP, to split the data using an
+     * iterator in a streaming mode.
      */
     private Boolean usingIterator = false;
     /**
@@ -45,7 +45,7 @@ public class ASN1DataFormatConfiguration
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
-     * example application/xml for data formats marshalling to XML or
+     * example application/xml for data formats marshalling to XML, or
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;

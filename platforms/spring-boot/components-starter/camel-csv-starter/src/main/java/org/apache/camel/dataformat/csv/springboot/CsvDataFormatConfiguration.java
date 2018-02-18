@@ -33,12 +33,12 @@ public class CsvDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
-     * The reference format to use it will be updated with the other format
-     * options the default value is CSVFormat.DEFAULT
+     * The reference format to use, it will be updated with the other format
+     * options, the default value is CSVFormat.DEFAULT
      */
     private String formatRef;
     /**
-     * The name of the format to use the default value is CSVFormat.DEFAULT
+     * The name of the format to use, the default value is CSVFormat.DEFAULT
      */
     private String formatName;
     /**
@@ -50,7 +50,7 @@ public class CsvDataFormatConfiguration
      */
     private String commentMarker;
     /**
-     * Sets the delimiter to use. The default value is (comma)
+     * Sets the delimiter to use. The default value is , (comma)
      */
     private String delimiter;
     /**
@@ -144,7 +144,7 @@ public class CsvDataFormatConfiguration
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
-     * example application/xml for data formats marshalling to XML or
+     * example application/xml for data formats marshalling to XML, or
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;

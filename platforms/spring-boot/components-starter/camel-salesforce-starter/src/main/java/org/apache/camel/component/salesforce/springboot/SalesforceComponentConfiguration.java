@@ -50,24 +50,24 @@ public class SalesforceComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Explicit authentication method to be used one of USERNAME_PASSWORD
+     * Explicit authentication method to be used, one of USERNAME_PASSWORD,
      * REFRESH_TOKEN or JWT. Salesforce component can auto-determine the
-     * authentication method to use from the properties set set this property to
-     * eliminate any ambiguity.
+     * authentication method to use from the properties set, set this property
+     * to eliminate any ambiguity.
      */
     private AuthenticationType authenticationType;
     /**
-     * All authentication configuration in one nested bean all properties set
+     * All authentication configuration in one nested bean, all properties set
      * there can be set directly on the component as well
      */
     private SalesforceLoginConfigNestedConfiguration loginConfig;
     /**
-     * URL of the Salesforce instance used after authantication by default
+     * URL of the Salesforce instance used after authantication, by default
      * received from Salesforce on successful authentication
      */
     private String instanceUrl;
     /**
-     * URL of the Salesforce instance used for authentication by default set to
+     * URL of the Salesforce instance used for authentication, by default set to
      * https://login.salesforce.com
      */
     private String loginUrl = "https://login.salesforce.com";
@@ -85,7 +85,7 @@ public class SalesforceComponentConfiguration
     /**
      * KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain
      * only one entry with private key and certificate. Salesforce does not
-     * verify the certificate chain so this can easily be a selfsigned
+     * verify the certificate chain, so this can easily be a selfsigned
      * certificate. Make sure that you upload the certificate to the
      * corresponding connected app.
      */
@@ -94,7 +94,7 @@ public class SalesforceComponentConfiguration
     /**
      * Refresh token already obtained in the refresh token OAuth flow. One needs
      * to setup a web application and configure a callback URL to receive the
-     * refresh token or configure using the builtin callback at
+     * refresh token, or configure using the builtin callback at
      * https://login.salesforce.com/services/oauth2/success or
      * https://test.salesforce.com/services/oauth2/success and then retrive the
      * refresh_token from the URL at the end of the flow. Note that in
@@ -104,13 +104,13 @@ public class SalesforceComponentConfiguration
     private String refreshToken;
     /**
      * Username used in OAuth flow to gain access to access token. It's easy to
-     * get started with password OAuth flow but in general one should avoid it
+     * get started with password OAuth flow, but in general one should avoid it
      * as it is deemed less secure than other flows.
      */
     private String userName;
     /**
      * Password used in OAuth flow to gain access to access token. It's easy to
-     * get started with password OAuth flow but in general one should avoid it
+     * get started with password OAuth flow, but in general one should avoid it
      * as it is deemed less secure than other flows. Make sure that you append
      * security token to the end of the password if using one.
      */
@@ -140,7 +140,7 @@ public class SalesforceComponentConfiguration
      */
     private Map<String, Object> longPollingTransportProperties;
     /**
-     * SSL parameters to use see SSLContextParameters class for all available
+     * SSL parameters to use, see SSLContextParameters class for all available
      * options.
      */
     @NestedConfigurationProperty
@@ -182,19 +182,19 @@ public class SalesforceComponentConfiguration
      */
     private Set<String> httpProxyExcludedAddresses;
     /**
-     * Used in authentication against the HTTP proxy server needs to match the
+     * Used in authentication against the HTTP proxy server, needs to match the
      * URI of the proxy server in order for the httpProxyUsername and
      * httpProxyPassword to be used for authentication.
      */
     private String httpProxyAuthUri;
     /**
-     * Realm of the proxy server used in preemptive Basic/Digest authentication
+     * Realm of the proxy server, used in preemptive Basic/Digest authentication
      * methods against the HTTP proxy server.
      */
     private String httpProxyRealm;
     /**
      * If set to true Digest authentication will be used when authenticating to
-     * the HTTP proxyotherwise Basic authorization method will be used
+     * the HTTP proxy,otherwise Basic authorization method will be used
      */
     private Boolean httpProxyUseDigestAuth = false;
     /**

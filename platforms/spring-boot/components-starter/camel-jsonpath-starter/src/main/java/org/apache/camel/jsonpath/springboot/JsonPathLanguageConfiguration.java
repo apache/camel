@@ -49,7 +49,7 @@ public class JsonPathLanguageConfiguration
      */
     private Boolean writeAsString = false;
     /**
-     * Name of header to use as input instead of the message body
+     * Name of header to use as input, instead of the message body
      */
     private String headerName;
     /**

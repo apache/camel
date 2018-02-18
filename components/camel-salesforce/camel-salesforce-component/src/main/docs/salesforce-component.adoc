@@ -557,21 +557,21 @@ The Salesforce component supports 29 options which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *authenticationType* (security) | Explicit authentication method to be used one of USERNAME_PASSWORD REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set set this property to eliminate any ambiguity. |  | AuthenticationType
-| *loginConfig* (security) | All authentication configuration in one nested bean all properties set there can be set directly on the component as well |  | SalesforceLoginConfig
-| *instanceUrl* (security) | URL of the Salesforce instance used after authantication by default received from Salesforce on successful authentication |  | String
-| *loginUrl* (security) | *Required* URL of the Salesforce instance used for authentication by default set to https://login.salesforce.com | https://login.salesforce.com | String
+| *authenticationType* (security) | Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set, set this property to eliminate any ambiguity. |  | AuthenticationType
+| *loginConfig* (security) | All authentication configuration in one nested bean, all properties set there can be set directly on the component as well |  | SalesforceLoginConfig
+| *instanceUrl* (security) | URL of the Salesforce instance used after authantication, by default received from Salesforce on successful authentication |  | String
+| *loginUrl* (security) | *Required* URL of the Salesforce instance used for authentication, by default set to https://login.salesforce.com | https://login.salesforce.com | String
 | *clientId* (security) | *Required* OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package. |  | String
 | *clientSecret* (security) | OAuth Consumer Secret of the connected app configured in the Salesforce instance setup. |  | String
-| *keystore* (security) | KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry with private key and certificate. Salesforce does not verify the certificate chain so this can easily be a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app. |  | KeyStoreParameters
-| *refreshToken* (security) | Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web application and configure a callback URL to receive the refresh token or configure using the builtin callback at https://login.salesforce.com/services/oauth2/success or https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the end of the flow. Note that in development organizations Salesforce allows hosting the callback web application at localhost. |  | String
-| *userName* (security) | Username used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow but in general one should avoid it as it is deemed less secure than other flows. |  | String
-| *password* (security) | Password used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow but in general one should avoid it as it is deemed less secure than other flows. Make sure that you append security token to the end of the password if using one. |  | String
+| *keystore* (security) | KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry with private key and certificate. Salesforce does not verify the certificate chain, so this can easily be a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app. |  | KeyStoreParameters
+| *refreshToken* (security) | Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web application and configure a callback URL to receive the refresh token, or configure using the builtin callback at https://login.salesforce.com/services/oauth2/success or https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the end of the flow. Note that in development organizations Salesforce allows hosting the callback web application at localhost. |  | String
+| *userName* (security) | Username used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. |  | String
+| *password* (security) | Password used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. Make sure that you append security token to the end of the password if using one. |  | String
 | *lazyLogin* (security) | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generaly set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | boolean
 | *config* (common) | Global endpoint configuration - use to set values that are common to all endpoints |  | SalesforceEndpoint Config
 | *httpClientProperties* (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
 | *longPollingTransport Properties* (common) | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api |  | Map
-| *sslContextParameters* (security) | SSL parameters to use see SSLContextParameters class for all available options. |  | SSLContextParameters
+| *sslContextParameters* (security) | SSL parameters to use, see SSLContextParameters class for all available options. |  | SSLContextParameters
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters | false | boolean
 | *httpProxyHost* (proxy) | Hostname of the HTTP proxy server to use. |  | String
 | *httpProxyPort* (proxy) | Port number of the HTTP proxy server to use. |  | Integer
@@ -581,9 +581,9 @@ The Salesforce component supports 29 options which are listed below.
 | *isHttpProxySecure* (security) | If set to false disables the use of TLS when accessing the HTTP proxy. | true | boolean
 | *httpProxyIncluded Addresses* (proxy) | A list of addresses for which HTTP proxy server should be used. |  | Set
 | *httpProxyExcluded Addresses* (proxy) | A list of addresses for which HTTP proxy server should not be used. |  | Set
-| *httpProxyAuthUri* (security) | Used in authentication against the HTTP proxy server needs to match the URI of the proxy server in order for the httpProxyUsername and httpProxyPassword to be used for authentication. |  | String
-| *httpProxyRealm* (security) | Realm of the proxy server used in preemptive Basic/Digest authentication methods against the HTTP proxy server. |  | String
-| *httpProxyUseDigest Auth* (security) | If set to true Digest authentication will be used when authenticating to the HTTP proxyotherwise Basic authorization method will be used | false | boolean
+| *httpProxyAuthUri* (security) | Used in authentication against the HTTP proxy server, needs to match the URI of the proxy server in order for the httpProxyUsername and httpProxyPassword to be used for authentication. |  | String
+| *httpProxyRealm* (security) | Realm of the proxy server, used in preemptive Basic/Digest authentication methods against the HTTP proxy server. |  | String
+| *httpProxyUseDigest Auth* (security) | If set to true Digest authentication will be used when authenticating to the HTTP proxy,otherwise Basic authorization method will be used | false | boolean
 | *packages* (common) | In what packages are the generated DTO classes. Typically the classes would be generated using camel-salesforce-maven-plugin. Set it if using the generated DTOs to gain the benefit of using short SObject names in parameters/header values. |  | String[]
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
@@ -624,33 +624,33 @@ with the following path and query parameters:
 | *apexMethod* (common) | APEX method name |  | String
 | *apexQueryParams* (common) | Query params for APEX method |  | Map
 | *apexUrl* (common) | APEX method URL |  | String
-| *apiVersion* (common) | Salesforce API version defaults to SalesforceEndpointConfig.DEFAULT_VERSION |  | String
+| *apiVersion* (common) | Salesforce API version, defaults to SalesforceEndpointConfig.DEFAULT_VERSION |  | String
 | *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
 | *batchId* (common) | Bulk API Batch ID |  | String
-| *contentType* (common) | Bulk API content type one of XML CSV ZIP_XML ZIP_CSV |  | ContentType
+| *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV |  | ContentType
 | *defaultReplayId* (common) | Default replayId setting if no value is found in link initialReplayIdMap |  | Long
-| *format* (common) | Payload format to use for Salesforce API calls either JSON or XML defaults to JSON |  | PayloadFormat
+| *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON |  | PayloadFormat
 | *httpClient* (common) | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
-| *includeDetails* (common) | Include details in Salesforce1 Analytics report defaults to false. |  | Boolean
+| *includeDetails* (common) | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
 | *initialReplayIdMap* (common) | Replay IDs to start from per channel name. |  | Map
 | *instanceId* (common) | Salesforce1 Analytics report execution instance ID |  | String
 | *jobId* (common) | Bulk API Job ID |  | String
-| *limit* (common) | Limit on number of returned records. Applicable to some of the API check the Salesforce documentation. |  | Integer
+| *limit* (common) | Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation. |  | Integer
 | *maxBackoff* (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
 | *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL link NotFoundBehaviourNULL or should a exception be signaled on the exchange link NotFoundBehaviourEXCEPTION - the default. |  | NotFoundBehaviour
-| *notifyForFields* (common) | Notify for fields options are ALL REFERENCED SELECT WHERE |  | NotifyForFieldsEnum
-| *notifyForOperationCreate* (common) | Notify for create operation defaults to false (API version = 29.0) |  | Boolean
-| *notifyForOperationDelete* (common) | Notify for delete operation defaults to false (API version = 29.0) |  | Boolean
-| *notifyForOperations* (common) | Notify for operations options are ALL CREATE EXTENDED UPDATE (API version 29.0) |  | NotifyForOperations Enum
-| *notifyForOperationUndelete* (common) | Notify for un-delete operation defaults to false (API version = 29.0) |  | Boolean
-| *notifyForOperationUpdate* (common) | Notify for update operation defaults to false (API version = 29.0) |  | Boolean
+| *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
+| *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0) |  | NotifyForOperations Enum
+| *notifyForOperationUndelete* (common) | Notify for un-delete operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
 | *objectMapper* (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
-| *rawPayload* (common) | Use raw payload String for request and response (either JSON or XML depending on format) instead of DTOs false by default | false | boolean
+| *rawPayload* (common) | Use raw payload String for request and response (either JSON or XML depending on format), instead of DTOs, false by default | false | boolean
 | *reportId* (common) | Salesforce1 Analytics report Id |  | String
 | *reportMetadata* (common) | Salesforce1 Analytics report metadata for filtering |  | ReportMetadata
 | *resultId* (common) | Bulk API Result ID |  | String
 | *sObjectBlobFieldName* (common) | SObject blob field name |  | String
-| *sObjectClass* (common) | Fully qualified SObject class name usually generated using camel-salesforce-maven-plugin |  | String
+| *sObjectClass* (common) | Fully qualified SObject class name, usually generated using camel-salesforce-maven-plugin |  | String
 | *sObjectFields* (common) | SObject fields to retrieve |  | String
 | *sObjectId* (common) | SObject ID if required by API |  | String
 | *sObjectIdName* (common) | SObject external ID field name |  | String
@@ -658,12 +658,12 @@ with the following path and query parameters:
 | *sObjectName* (common) | SObject name if required or supported by API |  | String
 | *sObjectQuery* (common) | Salesforce SOQL query string |  | String
 | *sObjectSearch* (common) | Salesforce SOSL search string |  | String
-| *updateTopic* (common) | Whether to update an existing Push Topic when using the Streaming API defaults to false | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *updateTopic* (common) | Whether to update an existing Push Topic when using the Streaming API, defaults to false | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *replayId* (consumer) | The replayId value to use when subscribing |  | Long
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

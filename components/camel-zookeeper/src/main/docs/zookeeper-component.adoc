@@ -81,14 +81,14 @@ with the following path and query parameters:
 | *listChildren* (common) | Whether the children of the node should be listed | false | boolean
 | *timeout* (common) | The time interval to wait on connection before timing out. | 5000 | int
 | *backoff* (consumer) | The time interval to backoff for after an error before retrying. | 5000 | long
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *repeat* (consumer) | Should changes to the znode be 'watched' and repeatedly processed. | false | boolean
-| *sendEmptyMessageOnDelete* (consumer) | Upon the delete of a znode should an empty message be send to the consumer | true | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *sendEmptyMessageOnDelete* (consumer) | Upon the delete of a znode, should an empty message be send to the consumer | true | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *create* (producer) | Should the endpoint create the node if it does not currently exist. | false | boolean
 | *createMode* (producer) | The create mode that should be used for the newly created node | EPHEMERAL | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

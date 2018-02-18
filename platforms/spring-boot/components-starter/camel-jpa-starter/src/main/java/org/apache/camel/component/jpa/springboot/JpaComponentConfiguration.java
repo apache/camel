@@ -47,9 +47,9 @@ public class JpaComponentConfiguration
     private PlatformTransactionManager transactionManager;
     /**
      * The camel-jpa component will join transaction by default. You can use
-     * this option to turn this off for example if you use LOCAL_RESOURCE and
+     * this option to turn this off, for example if you use LOCAL_RESOURCE and
      * join transaction doesn't work with your JPA provider. This option can
-     * also be set globally on the JpaComponent instead of having to set it on
+     * also be set globally on the JpaComponent, instead of having to set it on
      * all endpoints.
      */
     private Boolean joinTransaction = true;

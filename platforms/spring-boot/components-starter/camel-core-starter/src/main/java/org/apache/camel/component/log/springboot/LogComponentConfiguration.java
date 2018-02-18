@@ -35,7 +35,7 @@ public class LogComponentConfiguration
 
     /**
      * Sets a custom ExchangeFormatter to convert the Exchange to a String
-     * suitable for logging. If not specified we default to
+     * suitable for logging. If not specified, we default to
      * DefaultExchangeFormatter.
      */
     @NestedConfigurationProperty

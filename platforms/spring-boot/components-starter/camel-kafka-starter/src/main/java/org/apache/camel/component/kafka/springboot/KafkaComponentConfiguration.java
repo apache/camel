@@ -43,8 +43,8 @@ public class KafkaComponentConfiguration
      */
     private KafkaConfigurationNestedConfiguration configuration;
     /**
-     * URL of the Kafka brokers to use. The format is host1:port1host2:port2 and
-     * the list can be a subset of brokers or a VIP pointing to a subset of
+     * URL of the Kafka brokers to use. The format is host1:port1,host2:port2,
+     * and the list can be a subset of brokers or a VIP pointing to a subset of
      * brokers. This option is known as bootstrap.servers in the Kafka
      * documentation.
      */
@@ -65,17 +65,17 @@ public class KafkaComponentConfiguration
      * This options controls what happens when a consumer is processing an
      * exchange and it fails. If the option is false then the consumer continues
      * to the next message and processes it. If the option is true then the
-     * consumer breaks out and will seek back to offset of the message that
-     * caused a failure and then re-attempt to process this message. However
+     * consumer breaks out, and will seek back to offset of the message that
+     * caused a failure, and then re-attempt to process this message. However
      * this can lead to endless processing of the same message if its bound to
-     * fail every time eg a poison message. Therefore its recommended to deal
+     * fail every time, eg a poison message. Therefore its recommended to deal
      * with that for example by using Camel's error handler.
      */
     private Boolean breakOnFirstError = false;
     /**
      * Whether to allow doing manual commits via KafkaManualCommit. If this
      * option is enabled then an instance of KafkaManualCommit is stored on the
-     * Exchange message header which allows end users to access this API and
+     * Exchange message header, which allows end users to access this API and
      * perform manual offset commits via the Kafka consumer.
      */
     private Boolean allowManualCommit = false;

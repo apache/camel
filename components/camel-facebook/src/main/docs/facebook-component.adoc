@@ -97,7 +97,7 @@ with the following path and query parameters:
 | *appId* (common) | The ID of the Facebook Application |  | String
 | *center* (common) | Location latitude and longitude |  | GeoLocation
 | *checkinId* (common) | The checkin ID |  | String
-| *checkinUpdate* (common) | *Deprecated* The checkin to be created. Deprecated instead create a Post with an attached location |  | CheckinUpdate
+| *checkinUpdate* (common) | *Deprecated* The checkin to be created. Deprecated, instead create a Post with an attached location |  | CheckinUpdate
 | *clientURL* (common) | Facebook4J API client URL |  | String
 | *clientVersion* (common) | Facebook4J client API version |  | String
 | *commentId* (common) | The comment ID |  | String
@@ -127,16 +127,16 @@ with the following path and query parameters:
 | *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
 | *includeRead* (common) | Enables notifications that the user has already read in addition to unread ones |  | Boolean
 | *isHidden* (common) | Whether hidden |  | Boolean
-| *jsonStoreEnabled* (common) | If set to true raw JSON forms will be stored in DataObjectFactory | false | Boolean
+| *jsonStoreEnabled* (common) | If set to true, raw JSON forms will be stored in DataObjectFactory | false | Boolean
 | *link* (common) | Link URL |  | URL
 | *linkId* (common) | Link ID |  | String
 | *locale* (common) | Desired FQL locale |  | Locale
-| *mbeanEnabled* (common) | If set to true Facebook4J mbean will be registerd | false | Boolean
+| *mbeanEnabled* (common) | If set to true, Facebook4J mbean will be registerd | false | Boolean
 | *message* (common) | The message text |  | String
 | *messageId* (common) | The message ID |  | String
 | *metric* (common) | The metric name |  | String
 | *milestoneId* (common) | The milestone id |  | String
-| *name* (common) | Test user name must be of the form 'first last' |  | String
+| *name* (common) | Test user name, must be of the form 'first last' |  | String
 | *noteId* (common) | The note ID |  | String
 | *notificationId* (common) | The notification ID |  | String
 | *objectId* (common) | The insight object ID |  | String
@@ -144,7 +144,7 @@ with the following path and query parameters:
 | *optionDescription* (common) | The question's answer option description |  | String
 | *pageId* (common) | The page id |  | String
 | *permissionName* (common) | The permission name |  | String
-| *permissions* (common) | Test user permissions in the format perm1perm2... |  | String
+| *permissions* (common) | Test user permissions in the format perm1,perm2,... |  | String
 | *photoId* (common) | The photo ID |  | String
 | *pictureId* (common) | The picture id |  | Integer
 | *pictureId2* (common) | The picture2 id |  | Integer
@@ -160,7 +160,7 @@ with the following path and query parameters:
 | *readingOptions* (common) | To configure Reading using key/value pairs from the Map. |  | Map
 | *restBaseURL* (common) | API base URL | https://graph.facebook.com/ | String
 | *scoreValue* (common) | The numeric score with value |  | Integer
-| *size* (common) | The picture size one of large normal small or square |  | PictureSize
+| *size* (common) | The picture size, one of large, normal, small or square |  | PictureSize
 | *source* (common) | The media content from either a java.io.File or java.io.Inputstream |  | Media
 | *subject* (common) | The note of the subject |  | String
 | *tabId* (common) | The tab id |  | String
@@ -179,10 +179,10 @@ with the following path and query parameters:
 | *useSSL* (common) | Use SSL | true | Boolean
 | *videoBaseURL* (common) | Video API base URL | https://graph-video.facebook.com/ | String
 | *videoId* (common) | The video ID |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *httpProxyHost* (proxy) | HTTP proxy server host name |  | String
 | *httpProxyPassword* (proxy) | HTTP proxy server password |  | String
 | *httpProxyPort* (proxy) | HTTP proxy server port |  | Integer

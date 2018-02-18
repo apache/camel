@@ -93,11 +93,11 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *analyzer* (producer) | An Analyzer builds TokenStreams which analyze text. It thus represents a policy for extracting index terms from text. The value for analyzer can be any class that extends the abstract class org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of analyzers out of the box |  | Analyzer
+| *analyzer* (producer) | An Analyzer builds TokenStreams, which analyze text. It thus represents a policy for extracting index terms from text. The value for analyzer can be any class that extends the abstract class org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of analyzers out of the box |  | Analyzer
 | *indexDir* (producer) | A file system directory in which index files are created upon analysis of the document by the specified analyzer |  | File
 | *maxHits* (producer) | An integer value that limits the result set of the search operation |  | int
 | *srcDir* (producer) | An optional directory containing files to be used to be analyzed and added to the index at producer startup. |  | File
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

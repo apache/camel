@@ -71,7 +71,7 @@ public class SjmsComponentConfiguration
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
     /**
      * To configure which kind of commit strategy to use. Camel provides two
-     * implementations out of the box default and batch.
+     * implementations out of the box, default and batch.
      */
     @NestedConfigurationProperty
     private TransactionCommitStrategy transactionCommitStrategy;

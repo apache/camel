@@ -58,12 +58,12 @@ public class ConsulServiceCallServiceDiscoveryConfigurationCommon {
      */
     private Long writeTimeoutMillis;
     /**
-     * The seconds to wait for a watch event default 10 seconds
+     * The seconds to wait for a watch event, default 10 seconds
      */
     private Integer blockSeconds = 10;
     /**
      * Set client properties to use. These properties are specific to what
-     * service call implementation are in use. For example if using ribbon then
+     * service call implementation are in use. For example if using ribbon, then
      * the client properties are define in
      * com.netflix.client.config.CommonClientConfigKey.
      */

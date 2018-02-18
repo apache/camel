@@ -37,7 +37,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *operation* | *Required* The endpoint operation. |  | String
-| *operationDetail* | The second part of an endpoint operation. Needed only when endpoint semantic is not enough like wordpress:post:delete |  | String
+| *operationDetail* | The second part of an endpoint operation. Needed only when endpoint semantic is not enough, like wordpress:post:delete |  | String
 |===
 
 ==== Query Parameters (11 parameters):
@@ -50,12 +50,12 @@ with the following path and query parameters:
 | *force* (common) | Whether to bypass trash and force deletion. | false | Boolean
 | *id* (common) | The entity id |  | Integer
 | *password* (common) | Password from authorized user |  | String
-| *url* (common) | *Required* The Wordpress API URL from your site e.g. http://myblog.com/wp-json/ |  | String
+| *url* (common) | *Required* The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/ |  | String
 | *user* (common) | Authorized user to perform writing operations |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

@@ -53,8 +53,8 @@ public class NettyComponentConfiguration
      */
     private NettyConfigurationNestedConfiguration configuration;
     /**
-     * The core pool size for the ordered thread pool if its in use. The default
-     * value is 16.
+     * The core pool size for the ordered thread pool, if its in use. The
+     * default value is 16.
      */
     private Integer maximumPoolSize = 16;
     /**

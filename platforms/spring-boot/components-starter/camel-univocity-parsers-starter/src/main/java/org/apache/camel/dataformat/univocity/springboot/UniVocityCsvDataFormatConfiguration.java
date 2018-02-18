@@ -67,7 +67,7 @@ public class UniVocityCsvDataFormatConfiguration
      */
     private Boolean ignoreLeadingWhitespaces = true;
     /**
-     * Whether or not the headers are disabled. When defined this option
+     * Whether or not the headers are disabled. When defined, this option
      * explicitly sets the headers as null which indicates that there is no
      * header. The default value is false
      */
@@ -114,7 +114,7 @@ public class UniVocityCsvDataFormatConfiguration
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
-     * example application/xml for data formats marshalling to XML or
+     * example application/xml for data formats marshalling to XML, or
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;
