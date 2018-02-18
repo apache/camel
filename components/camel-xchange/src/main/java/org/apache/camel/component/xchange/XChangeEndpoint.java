@@ -134,7 +134,7 @@ public class XChangeEndpoint extends DefaultEndpoint {
         });
         return balances.stream().sorted(new Comparator<Balance>() {
             public int compare(Balance o1, Balance o2) {
-               return o1.getCurrency().compareTo(o2.getCurrency());
+                return o1.getCurrency().compareTo(o2.getCurrency());
             }
         }).collect(Collectors.toList());
     }

@@ -44,11 +44,13 @@ public class XChangeConfiguration {
         currencies, currencyMetaData, currencyPairs, currencyPairMetaData,
         // Marketdata service methods
         ticker 
-        }
+    }
     
     public static final String HEADER_CURRENCY = "Currency";
     public static final String HEADER_CURRENCY_PAIR = "CurrencyPair";
     
+    static Map<String, Class<? extends Exchange>> xchangeMapping = new HashMap<>();
+
     @UriPath(description = "The exchange to connect to") @Metadata(required = "true")
     private String name;
     @UriParam(description = "The service to call") @Metadata(required = "true")
@@ -60,12 +62,6 @@ public class XChangeConfiguration {
     @UriParam(description = "The currency pair") 
     private CurrencyPair currencyPair;
 
-    static Map<String, Class<? extends Exchange>> xchangeMapping = new HashMap<>();
-    static {
-        // Add name mappings here that do not follow the convention 
-        // nameMapping.put("binance", BinanceExchange.class);
-    }
-    
     public XChangeConfiguration(XChangeComponent component) {
         ObjectHelper.notNull(component, "component");
     }

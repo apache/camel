@@ -40,14 +40,10 @@ public class XChangeAccountProducer extends DefaultProducer {
         if (XChangeMethod.balances == method) {
             Object body = endpoint.getBalances();
             exchange.getMessage().setBody(body);
-        } 
-        
-        else if (XChangeMethod.fundingHistory == method) {
+        } else if (XChangeMethod.fundingHistory == method) {
             Object body = endpoint.getFundingHistory();
             exchange.getMessage().setBody(body);
-        } 
-        
-        else if (XChangeMethod.wallets == method) {
+        } else if (XChangeMethod.wallets == method) {
             Object body = endpoint.getWallets();
             exchange.getMessage().setBody(body);
         } 

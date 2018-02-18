@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.xchange.market;
 
-import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Ticker;
+
+import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
 
 public class MarketDataProducerTest extends CamelTestSupport {
 
@@ -34,10 +34,10 @@ public class MarketDataProducerTest extends CamelTestSupport {
             public void configure() throws Exception {
                 
                 from("direct:ticker")
-                .to("xchange:binance?service=marketdata&method=ticker");
+                    .to("xchange:binance?service=marketdata&method=ticker");
                 
                 from("direct:tickerBTCUSDT")
-                .to("xchange:binance?service=marketdata&method=ticker&currencyPair=BTC/USDT");
+                    .to("xchange:binance?service=marketdata&method=ticker&currencyPair=BTC/USDT");
             }
         };
     }

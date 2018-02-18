@@ -307,7 +307,7 @@ public class MailBinding {
 
         for (int i = 0; i < mp.getCount(); i++) {
             Part part = mp.getBodyPart(i);
-            LOG.trace("Part #{}: {}", i , part);
+            LOG.trace("Part #{}: {}", i, part);
 
             if (part.isMimeType("multipart/*")) {
                 LOG.trace("Part #{}: is mimetype: multipart/*", i);

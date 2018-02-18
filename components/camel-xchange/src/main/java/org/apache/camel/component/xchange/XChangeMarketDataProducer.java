@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.xchange;
 
-import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod;
 import org.apache.camel.impl.DefaultProducer;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Ticker;
+
+import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
 
 public class XChangeMarketDataProducer extends DefaultProducer {
     

@@ -28,10 +28,10 @@ import org.junit.Test;
  */
 public class XmppMultiUserChatTest extends CamelTestSupport {
 
-    private EmbeddedXmppTestServer embeddedXmppTestServer;
     protected MockEndpoint consumerEndpoint;
     protected String body1 = "the first message";
     protected String body2 = "the second message";
+    private EmbeddedXmppTestServer embeddedXmppTestServer;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

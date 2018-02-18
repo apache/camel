@@ -26,9 +26,9 @@ import org.junit.Test;
  * @version 
  */
 public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSupport {
-    private EmbeddedXmppTestServer embeddedXmppTestServer;
     protected MockEndpoint goodEndpoint;
     protected MockEndpoint badEndpoint;
+    private EmbeddedXmppTestServer embeddedXmppTestServer;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
