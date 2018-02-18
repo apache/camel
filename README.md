@@ -36,10 +36,10 @@ unit test your routes.
 Apache Camel comes with a lot of artifacts with components, data formats, languages and various other kinds.
 The up to date list is available online at:
 
-* Components: <https://github.com/apache/camel/tree/master/components#components>
-* Data Formats: <https://github.com/apache/camel/tree/master/components#data-formats>
-* Languages: <https://github.com/apache/camel/tree/master/components#expression-languages>
-* Miscellaneous: <https://github.com/apache/camel/tree/master/components#miscellaneous-components>
+* Components: <https://github.com/apache/camel/tree/master/components/readme.adoc#components>
+* Data Formats: <https://github.com/apache/camel/tree/master/components/readme.adoc#data-formats>
+* Languages: <https://github.com/apache/camel/tree/master/components/readme.adoc#expression-languages>
+* Miscellaneous: <https://github.com/apache/camel/tree/master/components/readme.adoc#miscellaneous-components>
 
 ## Examples
 
@@ -58,7 +58,7 @@ To help you get started, try the following links:
 
 It is also recommended to get started by trying out some of the beginner examples.
 
-* Examples: <https://github.com/apache/camel/tree/master/examples#examples>
+* Examples: <https://github.com/apache/camel/tree/master/examples/README.adoc#examples>
 
 **Building**
   
