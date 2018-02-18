@@ -18,7 +18,6 @@ package org.apache.camel.component.fhir;
 
 import java.util.List;
 import ca.uhn.fhir.model.base.resource.BaseOperationOutcome;
-import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.PreferReturnEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IClientExecutable;
@@ -32,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Simple Patient precessor that converts the Patient segment of a {@link ORU_R01} message into a FHIR dtsu3 {@link Patient}.
+ * Simple Patient processor that converts the Patient segment of a {@link ORU_R01} message into a FHIR dtsu3 {@link Patient}.
  */
 public class PatientProcessor implements Processor {
     private final Logger log = LoggerFactory.getLogger(PatientProcessor.class.getName());
