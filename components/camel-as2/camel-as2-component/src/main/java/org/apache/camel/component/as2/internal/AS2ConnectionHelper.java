@@ -18,6 +18,8 @@ package org.apache.camel.component.as2.internal;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.component.as2.AS2Configuration;
 import org.apache.camel.component.as2.api.AS2ClientConnection;
@@ -27,6 +29,8 @@ import org.apache.camel.component.as2.api.AS2ServerConnection;
  * Utility class for creating AS2 connections.
  */
 public class AS2ConnectionHelper {
+    
+    private static Map<Integer, AS2ServerConnection> serverConnections = new HashMap<Integer, AS2ServerConnection>(); 
     
     /**
      * Prevent instantiation
@@ -55,6 +59,13 @@ public class AS2ConnectionHelper {
      * @throws IOException 
      */
     public static AS2ServerConnection createAS2ServerConnection(AS2Configuration configuration) throws IOException {
-        return new AS2ServerConnection(configuration.getServer(), configuration.getServerPortNumber());
+        synchronized(serverConnections) {
+            AS2ServerConnection serverConnection = serverConnections.get(configuration.getServerPortNumber());
+            if (serverConnection == null) {
+                serverConnection = new AS2ServerConnection(configuration.getServer(), configuration.getServerPortNumber());
+                serverConnections.put(configuration.getServerPortNumber(), serverConnection);
+            }
+            return serverConnection;
+        }
     }
 }
