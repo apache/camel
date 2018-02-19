@@ -72,5 +72,16 @@ pipeline {
             }
         }
     }
+
+    post {
+        always {
+            emailext(
+                subject: '${DEFAULT_SUBJECT}',
+                to: 'zoran+cameldev@regvart.com',
+                body: '${DEFAULT_CONTENT}',
+                recipientProviders: [[$class: 'CulpritsRecipientProvider']]
+            )
+        }
+    }
 }
 
