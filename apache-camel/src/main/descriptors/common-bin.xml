@@ -406,6 +406,7 @@
         <include>org.apache.camel:camel-exec-starter</include>
         <include>org.apache.camel:camel-facebook-starter</include>
         <include>org.apache.camel:camel-fastjson-starter</include>
+        <include>org.apache.camel:camel-fhir-starter</include>
         <include>org.apache.camel:camel-flatpack-starter</include>
         <include>org.apache.camel:camel-flink-starter</include>
         <include>org.apache.camel:camel-fop-starter</include>
