@@ -100,6 +100,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-aws-xray</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-azure</artifactId>
     </dependency>
     <dependency>
@@ -285,6 +289,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-elasticsearch</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-elasticsearch-rest</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -652,6 +660,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-linkedin</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-lra</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -1119,6 +1131,14 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-wordpress</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-xchange</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-xmlbeans</artifactId>
     </dependency>
     <dependency>
@@ -1229,6 +1249,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-aws-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-aws-xray-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -1433,6 +1458,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-elasticsearch-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-elasticsearch-rest-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -1858,6 +1888,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-linkedin-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-lra-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -2368,6 +2403,16 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-websocket-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-wordpress-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-xchange-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
