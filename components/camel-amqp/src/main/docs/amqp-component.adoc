@@ -353,7 +353,7 @@ AMQPConnectionDetails amqpConnection() {
 }
 -----------------------------------------------
 
-*Enabling amqp specific options*
+*Enabling AMQP specific options*
 
 If you, for example, need to enable `amqp.traceFrames` you can do that by appending the option to your URI, like the following example:
 
