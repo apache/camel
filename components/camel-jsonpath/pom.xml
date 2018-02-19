@@ -35,7 +35,7 @@
   <properties>
     <camel.osgi.export.pkg>
       org.apache.camel.jsonpath,
-      !org.apache.camel.jsonpath.jackson
+      org.apache.camel.jsonpath.*
     </camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.LanguageResolver;language=jsonpath</camel.osgi.export.service>
     <camel.osgi.import>
