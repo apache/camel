@@ -328,15 +328,13 @@ Likewise, you can also use CDI producer methods when using Camel-CDI
 AMQPConnectionDetails amqpConnection() {
   return new AMQPConnectionDetails("amqp://localhost:5672");
 }
-------------------------------------------------------------------------------------- 
+-------------------------------------------------------------------------------------
 
 You can also rely on the <<properties-component,Camel properties>> to read
 the AMQP connection details. Factory
 method `AMQPConnectionDetails.discoverAMQP()` attempts to read Camel
 properties in a Kubernetes-like convention, just as demonstrated on the
 snippet below:
-
- 
 
 *AMQP connection details auto-configuration*
 
