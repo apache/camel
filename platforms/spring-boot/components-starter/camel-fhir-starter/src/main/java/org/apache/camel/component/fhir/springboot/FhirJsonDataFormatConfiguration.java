@@ -34,13 +34,13 @@ public class FhirJsonDataFormatConfiguration
 
     /**
      * The version of FHIR to use. Possible values are:
-     * DSTU2DSTU2_HL7ORGDSTU2_1DSTU3R4
+     * DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4
      */
     private String fhirVersion = "DSTU3";
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
-     * example application/xml for data formats marshalling to XML or
+     * example application/xml for data formats marshalling to XML, or
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;
