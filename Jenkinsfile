@@ -37,6 +37,12 @@ pipeline {
 
     stages {
 
+        stage('Build') {
+            steps {
+                sh "./mvnw $MAVEN_PARAMS -Dnoassembly -Dmaven.test.skip.exec=true -Dmaven.install.skip=true clean install"
+            }
+        }
+
         stage('Checks') {
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Psourcecheck checkstyle:check"
@@ -45,12 +51,6 @@ pipeline {
                 always {
                     checkstyle pattern: '**/checkstyle-result.xml', canRunOnFailed: true
                 }
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh "./mvnw $MAVEN_PARAMS -Dnoassembly -Dmaven.test.skip.exec=true -Dmaven.install.skip=true clean install"
             }
         }
 
