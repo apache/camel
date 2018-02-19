@@ -56,7 +56,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Pintegration -Dnoassembly test"
+                sh "./mvnw $MAVEN_PARAMS -Pintegration -Dnoassembly -Dmaven.test.failure.ignore=true test"
             }
             post {
                 always {
