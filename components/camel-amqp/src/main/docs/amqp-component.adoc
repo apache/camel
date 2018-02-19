@@ -353,6 +353,15 @@ AMQPConnectionDetails amqpConnection() {
 }
 -----------------------------------------------
 
+*Enabling amqp specific options*
+
+If you, for example, need to enable `amqp.traceFrames` you can do that by appending the option to your URI, like the following example:
+
+[source,java]
+--------------------------------------------------------------------------------------------------------
+AMQPComponent amqp = AMQPComponent.amqpComponent("amqp://localhost:5672?amqp.traceFrames=true");
+--------------------------------------------------------------------------------------------------------
+
 ### Using topics
 
 To have using topics working with `camel-amqp` you need to configure the
