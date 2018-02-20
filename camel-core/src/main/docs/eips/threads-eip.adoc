@@ -20,7 +20,7 @@ The Threads EIP supports 10 options which are listed below:
 | *allowCoreThreadTimeOut* | Whether idle core threads is allowed to timeout and therefore can shrink the pool size below the core pool size Is by default false | false | Boolean
 | *threadName* | Sets the thread name to use. | Threads | String
 | *rejectedPolicy* | Sets the handler for tasks which cannot be executed by the thread pool. |  | ThreadPoolRejected Policy
-| *callerRunsWhenRejected* | Whether or not to use as caller runs as fallback when a task is rejected being added to the thread pool (when its full). This is only used as fallback if no rejectedPolicy has been configured or the thread pool has no configured rejection handler. Is by default true | true | Boolean
+| *callerRunsWhenRejected* | Whether or not to use as caller runs as fallback when a task is rejected being added to the thread pool (when its full). This is only used as fallback if no rejectedPolicy has been configured, or the thread pool has no configured rejection handler. Is by default true | true | Boolean
 |===
 // eip options: END
 
