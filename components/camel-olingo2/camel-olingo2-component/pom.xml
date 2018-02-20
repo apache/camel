@@ -284,20 +284,30 @@
            If the sample service jar becomes available, we can use it directly -->
       <id>get-olingo2-sample</id>
       <activation>
-        <file>
-          <missing>${basedir}/target/olingo2-my-car-service</missing>
-        </file>
-        <!-- the above condition is evaluated prior to the mvn execution and consequently
-             it evaluates to false when "mvn clean install" is invoked while the folder exists,
-             which is correct, yet unfortunate, as the clean phase will remove the folder and
-             subsequently the source folder is not created.
-             So, we need activate this profle by default and set -fn option to the mvn below to
-             ignore the duplicate error ;-((
-        -->
         <activeByDefault>true</activeByDefault>
       </activation>
       <build>
         <plugins>
+          <plugin>
+            <artifactId>maven-clean-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>clean-olingo2-sample</id>
+                <phase>generate-test-sources</phase>
+                <goals>
+                  <goal>clean</goal>
+                </goals>
+                <configuration>
+                  <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                  <filesets>
+                    <fileset>
+                      <directory>${project.build.directory}/olingo2-my-car-service</directory>
+                    </fileset>
+                  </filesets>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>org.codehaus.gmavenplus</groupId>
             <artifactId>gmavenplus-plugin</artifactId>
