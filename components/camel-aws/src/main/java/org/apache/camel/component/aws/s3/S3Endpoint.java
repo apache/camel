@@ -180,6 +180,9 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         message.setHeader(S3Constants.S3_HEADERS, objectMetadata.getRawMetadata());
         message.setHeader(S3Constants.SERVER_SIDE_ENCRYPTION, objectMetadata.getSSEAlgorithm());
         message.setHeader(S3Constants.USER_METADATA, objectMetadata.getUserMetadata());
+        message.setHeader(S3Constants.EXPIRATION_TIME, objectMetadata.getExpirationTime());
+        message.setHeader(S3Constants.REPLICATION_STATUS, objectMetadata.getReplicationStatus());
+        message.setHeader(S3Constants.STORAGE_CLASS, objectMetadata.getStorageClass());
 
         /**
          * If includeBody != true, it is safe to close the object here. If
