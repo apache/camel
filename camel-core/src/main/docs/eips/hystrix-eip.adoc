@@ -25,7 +25,7 @@ The Hystrix EIP supports 2 options which are listed below:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *hystrixConfiguration* | Configures the Hystrix EIP Use end when configuration is complete to return back to the Hystrix EIP. |  | HystrixConfiguration Definition
+| *hystrixConfiguration* | Configures the Hystrix EIP Use end when configuration is complete, to return back to the Hystrix EIP. |  | HystrixConfiguration Definition
 | *hystrixConfigurationRef* | Refers to a Hystrix configuration to use for configuring the Hystrix EIP. |  | String
 |===
 // eip options: END
