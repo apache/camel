@@ -1,7 +1,7 @@
 [[topic-eip]]
 == Topic EIP
 
-Topic Load Balancer
+Topic Load Balancer, with this policy you'll get a Topic behavior by sending to all destinations.
 
 === Options
 
