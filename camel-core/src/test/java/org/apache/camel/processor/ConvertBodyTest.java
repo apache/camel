@@ -25,6 +25,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -56,6 +57,24 @@ public class ConvertBodyTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.CHARSET_NAME).isNull();
 
         template.sendBody("direct:foo", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testConvertBodyCharsetWithExistingCharsetName() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:foo").convertBodyTo(byte[].class, "iso-8859-1").to("mock:foo");
+            }
+        });
+
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        // do not propagate charset to avoid side effects with double conversion etc
+        getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.CHARSET_NAME).isEqualTo("UTF-8");
+
+        Exchange srcExchange = ExchangeBuilder.anExchange(context).withProperty(Exchange.CHARSET_NAME, "UTF-8").withBody("Hello World").build();
+
+        template.send("direct:foo", srcExchange);
 
         assertMockEndpointsSatisfied();
     }
