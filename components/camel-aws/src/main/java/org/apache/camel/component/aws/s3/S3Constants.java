@@ -44,4 +44,6 @@ public interface S3Constants {
     String S3_HEADERS                      = "CamelAwsS3Headers";
     String S3_OPERATION                    = "CamelAwsS3Operation";
     String SERVER_SIDE_ENCRYPTION          = "CamelAwsS3ServerSideEncryption";
+    String EXPIRATION_TIME                 = "CamelAwsS3ExpirationTime";
+    String REPLICATION_STATUS              = "CamelAwsS3ReplicationStatus";
 }
