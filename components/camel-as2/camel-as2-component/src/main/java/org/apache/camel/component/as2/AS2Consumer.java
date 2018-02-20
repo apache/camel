@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.camel.Processor;
 import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.api.AS2ServerManager;
+import org.apache.camel.component.as2.api.entity.EntityParser;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.util.component.AbstractApiConsumer;
 import org.apache.camel.util.component.ApiConsumerHelper;
@@ -97,6 +98,7 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
     public void handle(HttpRequest request, HttpResponse response, HttpContext context)
             throws HttpException, IOException {
         try {
+            EntityParser.parseAS2MessageEntity(request);
             // Convert HTTP context to exchange and process
             log.debug("Processed {} event for {}", ApiConsumerHelper.getResultsProcessed(this, context, false),
                     as2ServerConnection);
