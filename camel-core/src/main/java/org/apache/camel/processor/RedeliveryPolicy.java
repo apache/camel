@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
  *   <li>logHandled = false</li>
  *   <li>logExhausted = true</li>
  *   <li>logExhaustedMessageHistory = true</li>
+ *   <li>logExhaustedMessageBody = false</li>
  *   <li>logNewException = true</li>
  *   <li>allowRedeliveryWhileStopping = true</li>
  * </ul>
