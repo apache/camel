@@ -32,7 +32,8 @@ public abstract class RestDslGenerator<G> {
 
     final Swagger swagger;
 
-    private DestinationGenerator destinationGenerator = new DirectToOperationId();
+    DestinationGenerator destinationGenerator = new DirectToOperationId();
+    OperationFilter filter = new OperationFilter();
 
     RestDslGenerator(final Swagger swagger) {
         this.swagger = notNull(swagger, "swagger");
@@ -50,6 +51,24 @@ public abstract class RestDslGenerator<G> {
 
     DestinationGenerator destinationGenerator() {
         return destinationGenerator;
+    }
+
+    public G withOperationFilter(OperationFilter filter) {
+        this.filter = filter;
+
+        @SuppressWarnings("unchecked")
+        final G that = (G) this;
+
+        return that;
+    }
+
+    public G withOperationFilter(String include) {
+        this.filter.setIncludes(include);
+
+        @SuppressWarnings("unchecked")
+        final G that = (G) this;
+
+        return that;
     }
 
     public static RestDslSourceCodeGenerator<Appendable> toAppendable(final Swagger swagger) {

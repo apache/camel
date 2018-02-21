@@ -23,16 +23,18 @@ class PathVisitor<T> {
     private final DestinationGenerator destinationGenerator;
 
     private final CodeEmitter<T> emitter;
+    private final OperationFilter filter;
 
-    PathVisitor(final CodeEmitter<T> emitter, final DestinationGenerator destinationGenerator) {
+    PathVisitor(final CodeEmitter<T> emitter, OperationFilter filter, final DestinationGenerator destinationGenerator) {
         this.emitter = emitter;
+        this.filter = filter;
         this.destinationGenerator = destinationGenerator;
 
         emitter.emit("rest");
     }
 
     void visit(final String path, final Path definition) {
-        final OperationVisitor<T> restDslOperation = new OperationVisitor<>(emitter, path, destinationGenerator);
+        final OperationVisitor<T> restDslOperation = new OperationVisitor<>(emitter, filter, path, destinationGenerator);
 
         definition.getOperationMap().forEach(restDslOperation::visit);
     }
