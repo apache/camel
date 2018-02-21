@@ -23,8 +23,15 @@ import org.apache.camel.model.rest.RestsDefinition;
 
 public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
 
+    private boolean blueprint;
+
     RestDslXmlGenerator(final Swagger swagger) {
         super(swagger);
+    }
+
+    public RestDslXmlGenerator withBlueprint() {
+        this.blueprint = true;
+        return this;
     }
 
     public String generate(final CamelContext context) throws Exception {
@@ -36,6 +43,9 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
 
         RestsDefinition rests = emitter.result();
         String xml = ModelHelper.dumpModelAsXml(context, rests);
+        if (blueprint) {
+            xml = xml.replace("http://camel.apache.org/schema/spring", "http://camel.apache.org/schema/blueprint");
+        }
         return xml;
     }
 }

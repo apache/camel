@@ -45,6 +45,9 @@
             <goals>
               <goal>generate-xml</goal>
             </goals>
+            <configuration>
+              <blueprint>true</blueprint>
+            </configuration>
           </execution>
         </executions>
       </plugin>
