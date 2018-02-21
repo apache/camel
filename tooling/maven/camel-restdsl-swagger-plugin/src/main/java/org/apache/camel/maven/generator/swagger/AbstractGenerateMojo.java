@@ -33,6 +33,9 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter
     String destinationGenerator;
 
+    @Parameter
+    String filterOperation;
+
     @Parameter(defaultValue = "${project}")
     MavenProject project;
 

@@ -16,25 +16,30 @@
  */
 package org.apache.camel.generator.swagger;
 
-import io.swagger.models.Swagger;
+import java.util.Arrays;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.util.EndpointHelper;
 
-public final class RestDslDefinitionGenerator extends RestDslGenerator<RestDslDefinitionGenerator> {
+class OperationFilter {
 
-    RestDslDefinitionGenerator(final Swagger swagger) {
-        super(swagger);
+    // operation names to include separated by comma (wildcards can be used, eg find*)
+    private String includes;
+
+    public String getIncludes() {
+        return includes;
     }
 
-    public RestsDefinition generate(final CamelContext context) {
-        final RestDefinitionEmitter emitter = new RestDefinitionEmitter(context);
-
-        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(emitter, filter, destinationGenerator());
-
-        swagger.getPaths().forEach(restDslStatement::visit);
-
-        return emitter.result();
+    public void setIncludes(String includes) {
+        this.includes = includes;
     }
 
+    boolean accept(String name) {
+        boolean match = true;
+
+        if (includes != null) {
+            String[] patterns = includes.split(",");
+            match = Arrays.stream(patterns).anyMatch(pattern -> EndpointHelper.matchPattern(name, pattern));
+        }
+        return match;
+    }
 }

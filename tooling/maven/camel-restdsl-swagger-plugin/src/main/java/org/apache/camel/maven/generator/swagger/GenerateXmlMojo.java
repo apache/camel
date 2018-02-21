@@ -45,7 +45,7 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
     private String fileName;
 
     @Parameter(defaultValue = "false")
-    boolean blueprint;
+    private boolean blueprint;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -64,12 +64,12 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
 
         final RestDslXmlGenerator generator = RestDslGenerator.toXml(swagger);
 
-        System.out.println(blueprint);
-        System.out.println(blueprint);
-        System.out.println(blueprint);
-
         if (blueprint) {
             generator.withBlueprint();
+        }
+
+        if (ObjectHelper.isNotEmpty(filterOperation)) {
+            generator.withOperationFilter(filterOperation);
         }
 
         if (ObjectHelper.isNotEmpty(destinationGenerator)) {

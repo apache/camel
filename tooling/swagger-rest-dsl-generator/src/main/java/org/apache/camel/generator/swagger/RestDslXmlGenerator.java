@@ -37,7 +37,7 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
     public String generate(final CamelContext context) throws Exception {
         final RestDefinitionEmitter emitter = new RestDefinitionEmitter(context);
 
-        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(emitter, destinationGenerator());
+        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(emitter, filter, destinationGenerator());
 
         swagger.getPaths().forEach(restDslStatement::visit);
 
@@ -46,6 +46,9 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
         if (blueprint) {
             xml = xml.replace("http://camel.apache.org/schema/spring", "http://camel.apache.org/schema/blueprint");
         }
+        // remove all customId attributes as we do not want them in the output
+        xml = xml.replaceAll(" customId=\"true\"", "");
+        xml = xml.replaceAll(" customId=\"false\"", "");
         return xml;
     }
 }
