@@ -17,11 +17,9 @@
 package org.apache.camel.generator.swagger;
 
 import java.nio.file.Path;
-
 import javax.annotation.processing.Filer;
 
 import io.swagger.models.Swagger;
-
 import org.apache.camel.model.rest.RestsDefinition;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -60,6 +58,10 @@ public abstract class RestDslGenerator<G> {
 
     public static RestDslDefinitionGenerator toDefinition(final Swagger swagger) {
         return new RestDslDefinitionGenerator(swagger);
+    }
+
+    public static RestDslXmlGenerator toXml(final Swagger swagger) {
+        return new RestDslXmlGenerator(swagger);
     }
 
     public static RestDslSourceCodeGenerator<Filer> toFiler(final Swagger swagger) {
