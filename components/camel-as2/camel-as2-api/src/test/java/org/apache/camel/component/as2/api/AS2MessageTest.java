@@ -67,6 +67,9 @@ public class AS2MessageTest {
     private static final String SUBJECT = "Test Case";
     private static final String FROM = "mrAS@example.org";
     private static final String CLIENT_FQDN = "example.org";
+    private static final String DISPOSITION_NOTIFICATION_TO = "mrAS@example.org";
+    private static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] { "sha1", "md5" };
+    
 
     public static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
             +"UNH+00000000000117+INVOIC:D:97B:UN'\n"
@@ -128,16 +131,16 @@ public class AS2MessageTest {
                     @Override
                     public void handle(HttpRequest request, HttpResponse response, HttpContext context)
                             throws HttpException, IOException {
-//                        try {
-//                            org.apache.camel.component.as2.api.entity.EntityParser.parseAS2MessageEntity(request);
-//                        } catch (Exception e) {
-//                            throw new HttpException("Failed to parse AS2 Message Entity", e);
-//                        }
-//                        if (request instanceof HttpEntityEnclosingRequest && ((HttpEntityEnclosingRequest)request).getEntity() instanceof MultipartSignedEntity) {
-//                            MultipartSignedEntity entity = (MultipartSignedEntity) ((HttpEntityEnclosingRequest)request).getEntity();
-//                            LOG.info("Signed entity is valid?: " + entity.isValid());
-//                            LOG.info("*** Recieved Request ***\n" + Util.printRequest(request));
-//                        }
+                        try {
+                            org.apache.camel.component.as2.api.entity.EntityParser.parseAS2MessageEntity(request);
+                        } catch (Exception e) {
+                            throw new HttpException("Failed to parse AS2 Message Entity", e);
+                        }
+                        if (request instanceof HttpEntityEnclosingRequest && ((HttpEntityEnclosingRequest)request).getEntity() instanceof MultipartSignedEntity) {
+                            MultipartSignedEntity entity = (MultipartSignedEntity) ((HttpEntityEnclosingRequest)request).getEntity();
+                            LOG.debug("Signed entity is valid?: " + entity.isValid());
+                            LOG.debug("*** Recieved Request ***\n" + Util.printRequest(request));
+                        }
                     }
                 })
                 .create();
@@ -188,17 +191,7 @@ public class AS2MessageTest {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
-        // Add Context attributes
-        HttpCoreContext httpContext = HttpCoreContext.create();
-        httpContext.setAttribute(AS2ClientManager.REQUEST_URI, REQUEST_URI);
-        httpContext.setAttribute(AS2ClientManager.SUBJECT, SUBJECT);
-        httpContext.setAttribute(AS2ClientManager.FROM, FROM);
-        httpContext.setAttribute(AS2ClientManager.AS2_FROM, AS2_NAME);
-        httpContext.setAttribute(AS2ClientManager.AS2_TO, AS2_NAME);
-        httpContext.setAttribute(AS2ClientManager.AS2_MESSAGE_STRUCTURE, AS2MessageStructure.PLAIN);
-        httpContext.setAttribute(AS2ClientManager.EDI_MESSAGE_CONTENT_TYPE, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2CharSet.US_ASCII));
-        
-        clientManager.send(EDI_MESSAGE, httpContext);
+        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2CharSet.US_ASCII), null, null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
         
         HttpRequest request = httpContext.getRequest();
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -231,19 +224,7 @@ public class AS2MessageTest {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
-        // Add Context attributes
-        HttpCoreContext httpContext = HttpCoreContext.create();
-        httpContext.setAttribute(AS2ClientManager.REQUEST_URI, REQUEST_URI);
-        httpContext.setAttribute(AS2ClientManager.SUBJECT, SUBJECT);
-        httpContext.setAttribute(AS2ClientManager.FROM, FROM);
-        httpContext.setAttribute(AS2ClientManager.AS2_FROM, AS2_NAME);
-        httpContext.setAttribute(AS2ClientManager.AS2_TO, AS2_NAME);
-        httpContext.setAttribute(AS2ClientManager.AS2_MESSAGE_STRUCTURE, AS2MessageStructure.SIGNED);
-        httpContext.setAttribute(AS2ClientManager.SIGNING_ALGORITHM_NAME, algorithmName);
-        httpContext.setAttribute(AS2ClientManager.SIGNING_CERTIFICATE_CHAIN, chain);
-        httpContext.setAttribute(AS2ClientManager.SIGNING_PRIVATE_KEY, privateKey);
-        
-        clientManager.send(EDI_MESSAGE, httpContext);
+         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2CharSet.US_ASCII), null, algorithmName, certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
         
         HttpRequest request = httpContext.getRequest();
 //        Util.printRequest(System.out, request);
@@ -290,20 +271,7 @@ public class AS2MessageTest {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
-        // Add Context attributes
-        HttpCoreContext httpContext = HttpCoreContext.create();
-        httpContext.setAttribute(AS2ClientManager.REQUEST_URI, REQUEST_URI);
-        httpContext.setAttribute(AS2ClientManager.SUBJECT, SUBJECT);
-        httpContext.setAttribute(AS2ClientManager.FROM, FROM);
-        httpContext.setAttribute(AS2ClientManager.AS2_FROM, AS2_NAME);
-        httpContext.setAttribute(AS2ClientManager.AS2_TO, AS2_NAME);
-        httpContext.setAttribute(AS2ClientManager.AS2_MESSAGE_STRUCTURE, AS2MessageStructure.SIGNED);
-        httpContext.setAttribute(AS2ClientManager.EDI_MESSAGE_CONTENT_TYPE, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2CharSet.US_ASCII));
-        httpContext.setAttribute(AS2ClientManager.SIGNING_ALGORITHM_NAME, algorithmName);
-        httpContext.setAttribute(AS2ClientManager.SIGNING_CERTIFICATE_CHAIN, certList.toArray(new Certificate[0]));
-        httpContext.setAttribute(AS2ClientManager.SIGNING_PRIVATE_KEY, signingKP.getPrivate());
-        
-        clientManager.send(EDI_MESSAGE, httpContext);
+        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2CharSet.US_ASCII), null, algorithmName, certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
         
         HttpRequest request = httpContext.getRequest();
         assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
@@ -316,8 +284,8 @@ public class AS2MessageTest {
         ApplicationPkcs7SignatureEntity signatureEntity = signedEntity.getSignatureEntity();
         assertNotNull("Multipart signed entity does not contain signature entity", signatureEntity);
         
-//        LOG.info("Signed entity Valid? : " + signedEntity.isValid());
-//        LOG.info("*** Recieved Request ***\n" + Util.printRequest(request));
+        // Validate Signature
+        assertTrue("Signature is invalid", signedEntity.isValid());
 
     }
         

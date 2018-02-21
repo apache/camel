@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import org.apache.camel.component.as2.api.protocol.RequestAS2;
+import org.apache.camel.component.as2.api.protocol.RequestMDN;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -59,6 +61,8 @@ public class AS2ClientConnection {
                 
         // Build Processor
         httpProcessor = HttpProcessorBuilder.create()
+                .add(new RequestAS2(as2Version, clientFqdn))
+                .add(new RequestMDN())
                 .add(new RequestTargetHost())
                 .add(new RequestUserAgent(this.userAgent))
                 .add(new RequestDate())

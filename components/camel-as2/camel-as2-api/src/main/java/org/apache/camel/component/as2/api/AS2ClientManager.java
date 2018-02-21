@@ -134,6 +134,18 @@ public class AS2ClientManager {
      */
     public static final String SIGNING_PRIVATE_KEY = CAMEL_AS2_PREFIX + "signing-private-key";
 
+    /**
+     * The HTTP Context Attribute containing the internet e-mail address of
+     * sending system requesting a message disposition notification. 
+     */
+    public static final String DISPOSITION_NOTIFICATION_TO = CAMEL_AS2_PREFIX + "disposition-notification-to";
+
+    /**
+     * The HTTP Context Attribute containing the list of names of the requested MIC algorithms to be used 
+     * by the receiving system to construct a message disposition notification. 
+     */
+    public static final String SIGNED_RECEIPT_MIC_ALGORITHMS = CAMEL_AS2_PREFIX + "signed-receipt-mic-algorithms";
+
     //
 
     private AS2ClientConnection as2ClientConnection;
@@ -151,11 +163,28 @@ public class AS2ClientManager {
      *            - the subject sent in the interchange request.
      * @throws HttpException
      */
-    public void send(String ediMessage, HttpCoreContext httpContext) throws HttpException {
-        String requestUri = httpContext.getAttribute(REQUEST_URI, String.class);
-        if (requestUri == null) {
-            throw new HttpException("Request URI missing");
-        }
+    public HttpCoreContext send(String ediMessage, String requestUri, String subject, String from, String as2From, String as2To, AS2MessageStructure as2MessageStructure, ContentType ediMessageContentType, String ediMessageTransferEncoding, String signingAlgorithmName, Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, String dispositionNotificationTo, String[] signedReceiptMicAlgorithms) throws HttpException {
+        
+        Args.notNull(ediMessage, "EDI Message");
+        Args.notNull(as2MessageStructure, "AS2 Message Structure");
+        Args.notNull(requestUri, "Request URI");
+        Args.notNull(ediMessageContentType, "EDI Message Content Type");
+        
+        // Add Context attributes
+        HttpCoreContext httpContext = HttpCoreContext.create();
+        httpContext.setAttribute(AS2ClientManager.REQUEST_URI, requestUri);
+        httpContext.setAttribute(AS2ClientManager.SUBJECT, subject);
+        httpContext.setAttribute(AS2ClientManager.FROM, from);
+        httpContext.setAttribute(AS2ClientManager.AS2_FROM, as2From);
+        httpContext.setAttribute(AS2ClientManager.AS2_TO, as2To);
+        httpContext.setAttribute(AS2ClientManager.AS2_MESSAGE_STRUCTURE, as2MessageStructure);
+        httpContext.setAttribute(AS2ClientManager.EDI_MESSAGE_CONTENT_TYPE, ediMessageContentType);
+        httpContext.setAttribute(AS2ClientManager.EDI_MESSAGE_TRANSFER_ENCODING, ediMessageTransferEncoding);
+        httpContext.setAttribute(AS2ClientManager.SIGNING_ALGORITHM_NAME, signingAlgorithmName);
+        httpContext.setAttribute(AS2ClientManager.SIGNING_CERTIFICATE_CHAIN, signingCertificateChain);
+        httpContext.setAttribute(AS2ClientManager.SIGNING_PRIVATE_KEY, signingPrivateKey);
+        httpContext.setAttribute(AS2ClientManager.DISPOSITION_NOTIFICATION_TO, dispositionNotificationTo);
+        httpContext.setAttribute(AS2ClientManager.SIGNED_RECEIPT_MIC_ALGORITHMS, signedReceiptMicAlgorithms);
         
         AS2MessageStructure messageStructure = httpContext.getAttribute(AS2_MESSAGE_STRUCTURE, AS2MessageStructure.class);
         if (messageStructure == null) {

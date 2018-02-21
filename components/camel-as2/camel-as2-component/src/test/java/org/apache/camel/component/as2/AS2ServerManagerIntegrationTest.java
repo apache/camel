@@ -70,6 +70,8 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
     private static final String SUBJECT = "Test Case";
     private static final String FROM = "mrAS@example.org";
     private static final String CLIENT_FQDN = "example.org";
+    private static final String DISPOSITION_NOTIFICATION_TO = "mrAS@example.org";
+    private static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] { "sha1", "md5" };
 
     public static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
             +"UNH+00000000000117+INVOIC:D:97B:UN'\n"
@@ -114,7 +116,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
-        clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2CharSet.US_ASCII), null, null, null, null);
+        clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2CharSet.US_ASCII), null, null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
         
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
         mockEndpoint.expectedMinimumMessageCount(1);
@@ -167,7 +169,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
-        clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2CharSet.US_ASCII), null, algorithmName, certList.toArray(new Certificate[0]), signingKP.getPrivate());
+        clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2CharSet.US_ASCII), null, algorithmName, certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
         
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
         mockEndpoint.expectedMinimumMessageCount(1);
