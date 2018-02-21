@@ -29,7 +29,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <!-- setup beanio data format -->
     <dataFormats>
-      <beanio id="myBeanio" mapping="org/apache/camel/dataformat/beanio/mappings.xml" streamName="employeeFile"/>
+      <beanio id="myBeanio" mapping="org/apache/camel/dataformat/beanio/mappings.xml" streamName="employeeFile" encoding="UTF-8"/>
     </dataFormats>
 
     <route>
