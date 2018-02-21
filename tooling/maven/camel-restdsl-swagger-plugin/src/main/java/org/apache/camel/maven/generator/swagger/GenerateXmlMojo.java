@@ -26,7 +26,6 @@ import org.apache.camel.generator.swagger.DestinationGenerator;
 import org.apache.camel.generator.swagger.RestDslGenerator;
 import org.apache.camel.generator.swagger.RestDslXmlGenerator;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -45,6 +44,9 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
     @Parameter(defaultValue = "camel-rest.xml", required = true)
     private String fileName;
 
+    @Parameter(defaultValue = "false")
+    boolean blueprint;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skip) {
@@ -61,6 +63,14 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
         }
 
         final RestDslXmlGenerator generator = RestDslGenerator.toXml(swagger);
+
+        System.out.println(blueprint);
+        System.out.println(blueprint);
+        System.out.println(blueprint);
+
+        if (blueprint) {
+            generator.withBlueprint();
+        }
 
         if (ObjectHelper.isNotEmpty(destinationGenerator)) {
             final DestinationGenerator destinationGeneratorObject = createDestinationGenerator();
