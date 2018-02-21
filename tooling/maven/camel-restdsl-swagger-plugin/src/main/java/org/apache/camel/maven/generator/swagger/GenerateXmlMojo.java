@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,39 +17,36 @@
 package org.apache.camel.maven.generator.swagger;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
+import java.io.FileOutputStream;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
+import org.apache.camel.CamelContext;
 import org.apache.camel.generator.swagger.DestinationGenerator;
 import org.apache.camel.generator.swagger.RestDslGenerator;
-import org.apache.camel.generator.swagger.RestDslSourceCodeGenerator;
+import org.apache.camel.generator.swagger.RestDslXmlGenerator;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-@Mojo(name = "generate", inheritByDefault = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+@Mojo(name = "generate-xml", inheritByDefault = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES,
     requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
-public class GenerateMojo extends AbstractGenerateMojo {
-
-    @Parameter
-    private String className;
-
-    @Parameter
-    private String indent;
+public class GenerateXmlMojo extends AbstractGenerateMojo {
 
     @Parameter(defaultValue = "${project.build.directory}/generated-sources/restdsl-swagger", required = true)
     private String outputDirectory;
 
-    @Parameter
-    private String packageName;
+    @Parameter(defaultValue = "camel-rest.xml", required = true)
+    private String fileName;
 
     @Override
-    public void execute() throws MojoExecutionException {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         if (skip) {
             return;
         }
@@ -63,19 +60,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 + specificationUri + ", make sure that the specification is available at the given URI");
         }
 
-        final RestDslSourceCodeGenerator<Path> generator = RestDslGenerator.toPath(swagger);
-
-        if (ObjectHelper.isNotEmpty(className)) {
-            generator.withClassName(className);
-        }
-
-        if (indent != null) {
-            generator.withIndent(indent.replace("\\t", "\t"));
-        }
-
-        if (ObjectHelper.isNotEmpty(packageName)) {
-            generator.withPackageName(packageName);
-        }
+        final RestDslXmlGenerator generator = RestDslGenerator.toXml(swagger);
 
         if (ObjectHelper.isNotEmpty(destinationGenerator)) {
             final DestinationGenerator destinationGeneratorObject = createDestinationGenerator();
@@ -83,11 +68,19 @@ public class GenerateMojo extends AbstractGenerateMojo {
             generator.withDestinationGenerator(destinationGeneratorObject);
         }
 
-        final Path outputPath = new File(outputDirectory).toPath();
-
         try {
-            generator.generate(outputPath);
-        } catch (final IOException e) {
+            CamelContext camel = new DefaultCamelContext();
+            String xml = generator.generate(camel);
+
+            // ensure output folder is created
+            new File(outputDirectory).mkdirs();
+            File out = new File(outputDirectory, fileName);
+
+            FileOutputStream fos = new FileOutputStream(out);
+            fos.write(xml.getBytes());
+            fos.close();
+
+        } catch (final Exception e) {
             throw new MojoExecutionException(
                 "Unable to generate REST DSL Swagger sources from specification: " + specificationUri, e);
         }
