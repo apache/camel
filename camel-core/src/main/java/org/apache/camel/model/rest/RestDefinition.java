@@ -910,7 +910,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
             // the route should be from this rest endpoint
             route.fromRest(from);
-            route.id(routeId);
+            route.routeId(routeId);
             route.setRestDefinition(this);
             answer.add(route);
         }

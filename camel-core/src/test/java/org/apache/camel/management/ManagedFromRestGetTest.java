@@ -76,6 +76,10 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         // and we should have rest in the routes that indicate its from a rest dsl
         assertTrue(xml2.contains("rest=\"true\""));
 
+        assertTrue(xml2.contains(" <to id=\"to1\" uri=\"direct:hello\"/>"));
+        assertTrue(xml2.contains("<to id=\"to2\" uri=\"direct:bye\"/>"));
+        assertTrue(xml2.contains("<to id=\"to3\" uri=\"mock:update\"/>"));
+
         // there should be 3 + 2 routes
         assertEquals(3 + 2, context.getRouteDefinitions().size());
     }
