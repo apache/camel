@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.RuntimeCamelException;
@@ -75,7 +76,19 @@ public class CamelServlet extends HttpServlet {
             //run async
             context.start(() -> doServiceAsync(context));
         } else {
-            doService(req, resp);
+            try {
+                doService(req, resp);
+            } catch (Exception e) {
+                //An error shouldn't occur as we should handle most of error in doService
+                log.error("Error processing request", e);
+                try {
+                    resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                } catch (Exception e1) {
+                    log.debug("Cannot send reply to client!", e1);
+                }
+                //Need to wrap it in RuntimeException as it occurs in a Runnable
+                throw new RuntimeCamelException(e);
+            }
         }
     }
 
@@ -86,111 +99,31 @@ public class CamelServlet extends HttpServlet {
     protected void doServiceAsync(AsyncContext context) {
         final HttpServletRequest request = (HttpServletRequest) context.getRequest();
         final HttpServletResponse response = (HttpServletResponse) context.getResponse();
-        try {
-            doService(request, response);
-        } catch (Exception e) {
-            //An error shouldn't occur as we should handle most of error in doService
-            log.error("Error processing request", e);
-            try {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            } catch (Exception e1) {
-                log.debug("Cannot send reply to client!", e1);
+        doServiceAsync(request, response, new AsyncCallback() {
+              
+            @Override
+            public void done(boolean doneSync) {
+                if (!doneSync) {
+                    context.complete();
+                }
             }
-            //Need to wrap it in RuntimeException as it occurs in a Runnable
-            throw new RuntimeCamelException(e);
-        } finally {
-            context.complete();
-        }
+        });
     }
 
-    /**
-     * This is the logical implementation to handle request with {@link CamelServlet}
-     * This is where most exceptions should be handled
-     *
-     * @param request the {@link HttpServletRequest}
-     * @param response the {@link HttpServletResponse}
-     * @throws ServletException
-     * @throws IOException
-     */
     protected void doService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.trace("Service: {}", request);
 
         // Is there a consumer registered for the request.
         HttpConsumer consumer = resolve(request);
-        if (consumer == null) {
-            // okay we cannot process this requires so return either 404 or 405.
-            // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
-            boolean hasAnyMethod = METHODS.stream().anyMatch(m -> getServletResolveConsumerStrategy().isHttpMethodAllowed(request, m, getConsumers()));
-            if (hasAnyMethod) {
-                log.debug("No consumer to service request {} as method {} is not allowed", request, request.getMethod());
-                response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-                return;
-            } else {
-                log.debug("No consumer to service request {} as resource is not found", request);
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }
-        }       
-        
-        // are we suspended?
-        if (consumer.isSuspended()) {
-            log.debug("Consumer suspended, cannot service request {}", request);
-            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            return;
-        }
-
-        // if its an OPTIONS request then return which method is allowed
-        if ("OPTIONS".equals(request.getMethod()) && !consumer.isOptionsEnabled()) {
-            String s;
-            if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
-                s = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
-            } else {
-                // allow them all
-                s = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
-            }
-            response.addHeader("Allow", s);
-            response.setStatus(HttpServletResponse.SC_OK);
-            return;
-        }
-        
-        if (consumer.getEndpoint().getHttpMethodRestrict() != null 
-            && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.getMethod())) {
-            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-            return;
-        }
-
-        if ("TRACE".equals(request.getMethod()) && !consumer.isTraceEnabled()) {
-            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        boolean check = nullCheckConsumer(request, response, consumer);
+        if (check) {
             return;
         }
         
         // create exchange and set data on it
-        Exchange exchange = consumer.getEndpoint().createExchange(ExchangePattern.InOut);
-
-        if (consumer.getEndpoint().isBridgeEndpoint()) {
-            exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
-            exchange.setProperty(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.TRUE);
-        }
-        if (consumer.getEndpoint().isDisableStreamCache()) {
-            exchange.setProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.TRUE);
-        }
-
-        // we override the classloader before building the HttpMessage just in case the binding
-        // does some class resolution
-        ClassLoader oldTccl = overrideTccl(exchange);
-        HttpHelper.setCharsetFromContentType(request.getContentType(), exchange);
-        exchange.setIn(new HttpMessage(exchange, consumer.getEndpoint(), request, response));
-        // set context path as header
-        String contextPath = consumer.getEndpoint().getPath();
-        exchange.getIn().setHeader("CamelServletContextPath", contextPath);
-
-        String httpPath = (String)exchange.getIn().getHeader(Exchange.HTTP_PATH);
-        // here we just remove the CamelServletContextPath part from the HTTP_PATH
-        if (contextPath != null
-            && httpPath.startsWith(contextPath)) {
-            exchange.getIn().setHeader(Exchange.HTTP_PATH,
-                    httpPath.substring(contextPath.length()));
-        }
+        Exchange exchange = createCamelExchange(consumer);
+        
+        ClassLoader oldTccl = createTccl(request, response, exchange, consumer);
 
         // we want to handle the UoW
         try {
@@ -231,6 +164,155 @@ public class CamelServlet extends HttpServlet {
             consumer.doneUoW(exchange);
             restoreTccl(exchange, oldTccl);
         }
+    }
+    
+    private Exchange createCamelExchange(HttpConsumer consumer) {
+        Exchange exchange = consumer.getEndpoint().createExchange(ExchangePattern.InOut);
+
+        if (consumer.getEndpoint().isBridgeEndpoint()) {
+            exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
+            exchange.setProperty(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.TRUE);
+        }
+        if (consumer.getEndpoint().isDisableStreamCache()) {
+            exchange.setProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.TRUE);
+        }
+        return exchange;
+    }
+    
+    /**
+     * This is the logical implementation to handle request with {@link CamelServlet}
+     * This is where all exceptions should be handled and no further thrown
+     *
+     * @param request the {@link HttpServletRequest}
+     * @param response the {@link HttpServletResponse}
+     * @param asyncCallback {@link AsyncCallback}
+     */
+    protected void doServiceAsync(HttpServletRequest request, HttpServletResponse response, AsyncCallback asyncCallback) {
+        log.trace("Service: {}", request);
+        Exchange exchange = null;
+        HttpConsumer consumer = null;
+        ClassLoader oldTccl = null;
+        try {
+            // Is there a consumer registered for the request.
+            consumer = resolve(request);
+            boolean check = nullCheckConsumer(request, response, consumer);
+            if (check) {
+                return;
+            }
+            
+            // create exchange and set data on it
+            exchange = createCamelExchange(consumer);
+
+            oldTccl = createTccl(request, response, exchange, consumer);
+            
+            // we want to handle the UoW
+            consumer.createUoW(exchange);
+            
+            if (log.isTraceEnabled()) {
+                log.trace("Processing request for exchangeId: {}", exchange.getExchangeId());
+            }
+            // process the exchange
+
+            consumer.getAsyncProcessor().process(exchange, asyncCallback);
+            
+            // now lets output to the response
+            if (log.isTraceEnabled()) {
+                log.trace("Writing response for exchangeId: {}", exchange.getExchangeId());
+            }
+            Integer bs = consumer.getEndpoint().getResponseBufferSize();
+            if (bs != null) {
+                log.trace("Using response buffer size: {}", bs);
+                response.setBufferSize(bs);
+            }
+            consumer.getBinding().writeResponse(exchange, response);
+            
+        } catch (Exception e) {
+            log.error("Error processing request", e);
+            if (exchange != null) {
+                exchange.setException(e);
+            }
+        } finally {
+            if (consumer != null) {
+                consumer.doneUoW(exchange);
+            }
+            if (exchange != null && oldTccl != null) {
+                restoreTccl(exchange, oldTccl);
+            }
+            if (asyncCallback != null) {
+                asyncCallback.done(false);
+            }
+        }
+    }
+
+    private ClassLoader createTccl(HttpServletRequest request, HttpServletResponse response, Exchange exchange,
+        HttpConsumer consumer) {
+        // we override the classloader before building the HttpMessage just in case the binding
+        // does some class resolution
+        ClassLoader oldTccl = overrideTccl(exchange);
+        HttpHelper.setCharsetFromContentType(request.getContentType(), exchange);
+        exchange.setIn(new HttpMessage(exchange, consumer.getEndpoint(), request, response));
+        // set context path as header
+        String contextPath = consumer.getEndpoint().getPath();
+        exchange.getIn().setHeader("CamelServletContextPath", contextPath);
+
+        String httpPath = (String)exchange.getIn().getHeader(Exchange.HTTP_PATH);
+        // here we just remove the CamelServletContextPath part from the HTTP_PATH
+        if (contextPath != null
+            && httpPath.startsWith(contextPath)) {
+            exchange.getIn().setHeader(Exchange.HTTP_PATH,
+                    httpPath.substring(contextPath.length()));
+        }
+        return oldTccl;
+    }
+
+    private boolean nullCheckConsumer(HttpServletRequest request, HttpServletResponse response, HttpConsumer consumer) throws IOException {
+        boolean isReturn = false;
+        if (consumer == null) {
+            // okay we cannot process this requires so return either 404 or 405.
+            // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
+            boolean hasAnyMethod = METHODS.stream().anyMatch(m -> getServletResolveConsumerStrategy().isHttpMethodAllowed(request, m, getConsumers()));
+            if (hasAnyMethod) {
+                log.debug("No consumer to service request {} as method {} is not allowed", request, request.getMethod());
+                response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                return true;
+            } else {
+                log.debug("No consumer to service request {} as resource is not found", request);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return true;
+            }
+        }
+        // are we suspended?
+        if (consumer.isSuspended()) {
+            log.debug("Consumer suspended, cannot service request {}", request);
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            return true;
+        }
+
+        // if its an OPTIONS request then return which method is allowed
+        if ("OPTIONS".equals(request.getMethod()) && !consumer.isOptionsEnabled()) {
+            String s;
+            if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
+                s = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
+            } else {
+                // allow them all
+                s = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
+            }
+            response.addHeader("Allow", s);
+            response.setStatus(HttpServletResponse.SC_OK);
+            return true;
+        }
+        
+        if (consumer.getEndpoint().getHttpMethodRestrict() != null 
+            && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.getMethod())) {
+            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            return true;
+        }
+
+        if ("TRACE".equals(request.getMethod()) && !consumer.isTraceEnabled()) {
+            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            return true;
+        }
+        return isReturn;
     }
 
     /**
