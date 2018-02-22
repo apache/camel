@@ -95,7 +95,7 @@ with the following path and query parameters:
 | *endpointUri* | *Required* The OPC UA server endpoint |  | String
 |===
 
-==== Query Parameters (23 parameters):
+==== Query Parameters (24 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -119,6 +119,7 @@ with the following path and query parameters:
 | *keyStoreUrl* (client) | The URL where the key should be loaded from |  | URL
 | *maxPendingPublishRequests* (client) | The maximum number of pending publish requests |  | Long
 | *maxResponseMessageSize* (client) | The maximum number of bytes a response message may have |  | Long
+| *overrideHost* (client) | Override the server reported endpoint host with the host from the endpoint URI. | false | boolean
 | *productUri* (client) | The product URI | http://camel.apache.org/EclipseMilo | String
 | *requestTimeout* (client) | Request timeout in milliseconds |  | Long
 | *sessionName* (client) | Session name |  | String
