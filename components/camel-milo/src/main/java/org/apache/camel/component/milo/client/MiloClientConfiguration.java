@@ -85,6 +85,9 @@ public class MiloClientConfiguration implements Cloneable {
     @UriParam(label = "client", javaType = "java.lang.String")
     private Set<String> allowedSecurityPolicies = new HashSet<>();
 
+    @UriParam(label = "client")
+    private boolean overrideHost;
+
     public MiloClientConfiguration() {
     }
 
@@ -95,6 +98,7 @@ public class MiloClientConfiguration implements Cloneable {
         this.productUri = other.productUri;
         this.requestTimeout = other.requestTimeout;
         this.allowedSecurityPolicies = allowedSecurityPolicies != null ? new HashSet<>(other.allowedSecurityPolicies) : null;
+        this.overrideHost = other.overrideHost;
     }
 
     public void setEndpointUri(final String endpointUri) {
@@ -316,7 +320,19 @@ public class MiloClientConfiguration implements Cloneable {
     }
 
     public Set<String> getAllowedSecurityPolicies() {
-        return allowedSecurityPolicies;
+        return this.allowedSecurityPolicies;
+    }
+
+    /**
+     * Override the server reported endpoint host with the host from the
+     * endpoint URI.
+     */
+    public void setOverrideHost(boolean overrideHost) {
+        this.overrideHost = overrideHost;
+    }
+
+    public boolean isOverrideHost() {
+        return overrideHost;
     }
 
     @Override
