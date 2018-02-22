@@ -63,14 +63,14 @@ The OPC UA Server component supports 19 options which are listed below.
 
 
 
-### URI format
+=== URI format
 
 [source,java]
 ------------------------
 milo-server:itemId[?options]
 ------------------------
 
-### URI options
+=== URI options
 
 
 
@@ -108,7 +108,7 @@ with the following path and query parameters:
 
 
 
-### See Also
+=== See Also
 
 * Configuring Camel
 * Component
