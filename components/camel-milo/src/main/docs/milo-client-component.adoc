@@ -95,7 +95,7 @@ with the following path and query parameters:
 | *endpointUri* | *Required* The OPC UA server endpoint |  | String
 |===
 
-==== Query Parameters (22 parameters):
+==== Query Parameters (23 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -108,6 +108,7 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *allowedSecurityPolicies* (client) | A set of allowed security policy URIs. Default is to accept all and use the highest. |  | String
 | *applicationName* (client) | The application name | Apache Camel adapter for Eclipse Milo | String
 | *applicationUri* (client) | The application URI | http://camel.apache.org/EclipseMilo/Client | String
 | *channelLifetime* (client) | Channel lifetime in milliseconds |  | Long
@@ -160,6 +161,15 @@ However Camel allows to wrap the actual value inside `RAW(…)`, which makes esc
 ------------------------
 milo-client://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)
 ------------------------
+
+==== Security policies
+
+When setting the allowing security policies is it possible to use the well known OPC UA URIs (e.g. `http://opcfoundation.org/UA/SecurityPolicy#Basic128Rsa15`)
+or to use the Milo enum literals (e.g. `None`). Specifying an unknown security policy URI or enum is an error.
+
+The known security policy URIs and enum literals are can be seen here: https://github.com/eclipse/milo/blob/master/opc-ua-stack/stack-core/src/main/java/org/eclipse/milo/opcua/stack/core/security/SecurityPolicy.java[SecurityPolicy.java] 
+
+**Note:** In any case security policies are considered case sensitive.
 
 === See Also
 

@@ -18,10 +18,13 @@ package org.apache.camel.component.milo.client;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.camel.component.milo.KeyStoreLoader;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 
 @UriParams
 public class MiloClientConfiguration implements Cloneable {
@@ -79,6 +82,9 @@ public class MiloClientConfiguration implements Cloneable {
     @UriParam(label = "client", secret = true)
     private String keyPassword;
 
+    @UriParam(label = "client", javaType = "java.lang.String")
+    private Set<String> allowedSecurityPolicies = new HashSet<>();
+
     public MiloClientConfiguration() {
     }
 
@@ -88,6 +94,7 @@ public class MiloClientConfiguration implements Cloneable {
         this.applicationName = other.applicationName;
         this.productUri = other.productUri;
         this.requestTimeout = other.requestTimeout;
+        this.allowedSecurityPolicies = allowedSecurityPolicies != null ? new HashSet<>(other.allowedSecurityPolicies) : null;
     }
 
     public void setEndpointUri(final String endpointUri) {
@@ -261,6 +268,55 @@ public class MiloClientConfiguration implements Cloneable {
 
     public String getKeyPassword() {
         return this.keyPassword;
+    }
+
+    /**
+     * A set of allowed security policy URIs. Default is to accept all and use
+     * the highest.
+     */
+    public void setAllowedSecurityPolicies(final Set<String> allowedSecurityPolicies) {
+        this.allowedSecurityPolicies = allowedSecurityPolicies;
+    }
+
+    public void setAllowedSecurityPolicies(final String allowedSecurityPolicies) {
+
+        // check if we are reset or set
+
+        if (allowedSecurityPolicies == null) {
+            // resetting to null
+            this.allowedSecurityPolicies = null;
+            return;
+        }
+
+        // split and convert
+
+        this.allowedSecurityPolicies = new HashSet<>();
+        final String[] policies = allowedSecurityPolicies.split(",");
+        for (final String policy : policies) {
+
+            String adding = null;
+            try {
+                adding = SecurityPolicy.fromUri(policy).getSecurityPolicyUri();
+            } catch (Exception e) {
+            }
+            if (adding == null) {
+                try {
+                    adding = SecurityPolicy.valueOf(policy).getSecurityPolicyUri();
+                } catch (Exception e) {
+                }
+            }
+
+            if (adding == null) {
+                throw new RuntimeException("Unknown security policy: " + policy);
+            }
+
+            this.allowedSecurityPolicies.add(adding);
+        }
+
+    }
+
+    public Set<String> getAllowedSecurityPolicies() {
+        return allowedSecurityPolicies;
     }
 
     @Override
