@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.milo.client.springboot;
 
+import java.util.Set;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -169,6 +170,11 @@ public class MiloClientComponentConfiguration
          * The key password
          */
         private String keyPassword;
+        /**
+         * A set of allowed security policy URIs. Default is to accept all and
+         * use the highest.
+         */
+        private Set allowedSecurityPolicies;
 
         public String getEndpointUri() {
             return endpointUri;
@@ -288,6 +294,14 @@ public class MiloClientComponentConfiguration
 
         public void setKeyPassword(String keyPassword) {
             this.keyPassword = keyPassword;
+        }
+
+        public Set getAllowedSecurityPolicies() {
+            return allowedSecurityPolicies;
+        }
+
+        public void setAllowedSecurityPolicies(Set allowedSecurityPolicies) {
+            this.allowedSecurityPolicies = allowedSecurityPolicies;
         }
     }
 }

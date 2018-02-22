@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -31,6 +32,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.apache.camel.component.milo.NamespaceId;
 import org.apache.camel.component.milo.PartialNodeId;
@@ -445,6 +447,7 @@ public class SubscriptionManager {
         cfg.setEndpoint(endpoint);
 
         final OpcUaClient client = new OpcUaClient(cfg.build());
+        client.connect().get();
 
         try {
             final UaSubscription manager = client.getSubscriptionManager().createSubscription(1_000.0).get();
@@ -493,8 +496,23 @@ public class SubscriptionManager {
     }
 
     private EndpointDescription findEndpoint(final EndpointDescription[] endpoints) {
+
+        final Predicate<String> allowed;
+        final Set<String> uris = this.configuration.getAllowedSecurityPolicies();
+
+        if (this.configuration.getAllowedSecurityPolicies() == null || this.configuration.getAllowedSecurityPolicies().isEmpty()) {
+            allowed = uri -> true;
+        } else {
+            allowed = uris::contains;
+        }
+
         EndpointDescription best = null;
         for (final EndpointDescription ep : endpoints) {
+
+            if (!allowed.test(ep.getSecurityPolicyUri())) {
+                continue;
+            }
+
             if (best == null || ep.getSecurityLevel().compareTo(best.getSecurityLevel()) > 0) {
                 best = ep;
             }
