@@ -25,5 +25,13 @@ public interface AS2MimeType {
      * Mime Type for Application/EDI-consent
      */
     public static final String APPLICATION_EDI_CONSENT = "application/edi-consent";
+    /**
+     * Mime Type for Multipart/Report
+     */
+    public static final String MULTIPART_REPORT = "multipart/report";
+    /**
+     * Mime Type for Message/Disposition-Notification
+     */
+    public static final String MESSAGE_DISPOSITION_NOTIFICATION = "message/disposition-notification";
 
 }
