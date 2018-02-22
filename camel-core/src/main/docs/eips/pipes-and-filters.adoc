@@ -1,22 +1,19 @@
 [[PipesandFilters-PipesandFilters]]
 == Pipes and Filters
 
-Camel supports the
-http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes
-and Filters] from the link:enterprise-integration-patterns.html[EIP
-patterns] in various ways.
+Camel supports the link:http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters] from the link:https://github.com/apache/camel/blob/master/docs/user-manual/en/enterprise-integration-patterns.adoc[EIP patterns] in various ways.
 
 image:http://www.enterpriseintegrationpatterns.com/img/PipesAndFilters.gif[image]
 
 With Camel you can split your processing across multiple independent
-link:endpoint.html[Endpoint] instances which can then be chained
+link:https://github.com/apache/camel/blob/master/docs/user-manual/en/endpoint.adoc[Endpoint] instances which can then be chained
 together.
 
 [[PipesandFilters-Samples]]
 === Samples
 
 You can create pipelines of logic using multiple
-link:endpoint.html[Endpoint] or link:message-translator.html[Message
+link:https://github.com/apache/camel/blob/master/docs/user-manual/en/endpoint.adoc[Endpoint] or link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message
 Translator] instances as follows
 
 Though pipeline is the default mode of operation when you specify
