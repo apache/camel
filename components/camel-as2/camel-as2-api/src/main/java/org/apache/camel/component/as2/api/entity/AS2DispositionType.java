@@ -1,14 +1,12 @@
 package org.apache.camel.component.as2.api.entity;
 
-public enum DispositionType {
-    DISPLAYED("displayed"),
-    DISPATCHED("dispatched"),
+public enum AS2DispositionType {
     PROCESSED("processed"),
-    DELETED("deleted");
+    FAILED("failed");
     
     private String type;
     
-    private DispositionType(String type) {
+    private AS2DispositionType(String type) {
         this.type = type;
     }
 
