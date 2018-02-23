@@ -182,7 +182,7 @@
     <derby-version>10.14.1.0</derby-version>
     <digitalocean-api-client-version>2.13</digitalocean-api-client-version>
     <digitalocean-api-client-bundle-version>2.13_1</digitalocean-api-client-bundle-version>
-    <disruptor-version>3.3.7</disruptor-version>
+    <disruptor-version>3.3.8</disruptor-version>
     <dnsjava-version>2.1.8</dnsjava-version>
     <dnsjava-bundle-version>2.1.8_1</dnsjava-bundle-version>
     <docker-java-version>3.0.14</docker-java-version>
