@@ -1,12 +1,12 @@
-[[inOnly-eip]]
-== In Only EIP
+[[inOut-eip]]
+== In Out EIP
 
-The *inOnly:* EIP define an InOnly ExchangePattern.
+The *inOut:* EIP define an InOut ExchangePattern.
 
 === EIP options
 
 // eip options: START
-The In Only EIP supports 2 options which are listed below:
+The In Out EIP supports 2 options which are listed below:
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
