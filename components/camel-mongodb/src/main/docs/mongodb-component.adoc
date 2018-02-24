@@ -961,5 +961,5 @@ anything manually.
 * http://api.mongodb.org/java/current/[MongoDB Java driver API docs -
 current version]
 *
-http://svn.apache.org/viewvc/camel/trunk/components/camel-mongodb/src/test/[Unit
+https://github.com/apache/camel/tree/master/components/camel-mongodb/src/test[Unit
 tests] for more examples of usage
