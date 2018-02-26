@@ -50,6 +50,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -57,7 +58,9 @@ with the following path and query parameters:
 | *latlng* | The geo latitude and longitude which should be prefixed with latlng: |  | String
 |===
 
+
 ==== Query Parameters (14 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

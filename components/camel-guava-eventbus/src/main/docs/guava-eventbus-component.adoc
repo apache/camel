@@ -74,13 +74,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *eventBusRef* | To lookup the Guava EventBus from the registry with the given name |  | String
 |===
 
+
 ==== Query Parameters (6 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

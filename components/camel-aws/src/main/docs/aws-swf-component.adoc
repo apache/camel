@@ -55,13 +55,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *type* | *Required* Activity or workflow |  | String
 |===
 
+
 ==== Query Parameters (30 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

@@ -89,13 +89,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *statement* | *Required* The statement name in the iBatis XML mapping file which maps to the query, insert, update or delete operation you wish to evaluate. |  | String
 |===
 
+
 ==== Query Parameters (27 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

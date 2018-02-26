@@ -62,13 +62,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *path* | *Required* Path of the datastore is the relative path of the folder that krati will use for its datastore. |  | String
 |===
 
+
 ==== Query Parameters (29 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

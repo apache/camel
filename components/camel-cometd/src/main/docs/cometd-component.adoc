@@ -83,6 +83,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (3 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -91,7 +92,9 @@ with the following path and query parameters:
 | *channelName* | *Required* The channelName represents a topic that can be subscribed to by the Camel endpoints. |  | String
 |===
 
+
 ==== Query Parameters (16 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

@@ -76,6 +76,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -83,7 +84,9 @@ with the following path and query parameters:
 | *resourceUri* | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default, you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint. |  | String
 |===
 
+
 ==== Query Parameters (47 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

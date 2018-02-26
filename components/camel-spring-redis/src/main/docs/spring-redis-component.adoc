@@ -46,6 +46,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -53,7 +54,9 @@ with the following path and query parameters:
 | *port* | *Required* Redis server port number |  | Integer
 |===
 
+
 ==== Query Parameters (10 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

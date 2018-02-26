@@ -65,6 +65,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -72,7 +73,9 @@ with the following path and query parameters:
 | *path* | *Required* The node in the ZooKeeper server (aka znode) |  | String
 |===
 
+
 ==== Query Parameters (12 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

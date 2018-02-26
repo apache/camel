@@ -60,13 +60,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *type* | *Required* Operation to perform such as create a new issue or a new comment |  | JIRAType
 |===
 
+
 ==== Query Parameters (9 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

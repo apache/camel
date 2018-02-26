@@ -49,13 +49,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *connectionURL* | *Required* The URL to the jBPM server. |  | URL
 |===
 
+
 ==== Query Parameters (25 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

@@ -64,6 +64,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -71,7 +72,9 @@ with the following path and query parameters:
 | *port* | Port number for the IRC chat server. If no port is configured then a default port of either 6667, 6668 or 6669 is used. |  | int
 |===
 
+
 ==== Query Parameters (24 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
