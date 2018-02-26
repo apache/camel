@@ -1,6 +1,8 @@
+@if{eipOptions.isEmpty()}
+The @{title} EIP has no options.
+@else{}
 The @{title} EIP supports @{eipOptions.size()} options which are listed below:
 
-@if{!eipOptions.isEmpty()}
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
