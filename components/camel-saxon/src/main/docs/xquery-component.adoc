@@ -44,13 +44,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *resourceUri* | *Required* The name of the template to load from classpath or file system |  | String
 |===
 
+
 ==== Query Parameters (31 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

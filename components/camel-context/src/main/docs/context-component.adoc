@@ -59,6 +59,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -66,7 +67,9 @@ with the following path and query parameters:
 | *localEndpointUrl* | *Required* Can be a valid Camel URI evaluated within the black box CamelContext. Or it can be a logical name which is mapped to any local endpoints. For example if you locally have endpoints like direct:invoices and seda:purchaseOrders inside a CamelContext of id supplyChain, then you can just use the URIs supplyChain:invoices or supplyChain:purchaseOrders to omit the physical endpoint kind and use pure logical URIs. |  | String
 |===
 
+
 ==== Query Parameters (4 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

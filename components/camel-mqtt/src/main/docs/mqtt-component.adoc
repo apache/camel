@@ -66,13 +66,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *name* | *Required* A logical name to use which is not the topic name. |  | String
 |===
 
+
 ==== Query Parameters (39 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

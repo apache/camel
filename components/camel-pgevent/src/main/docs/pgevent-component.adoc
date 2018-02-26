@@ -54,6 +54,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (4 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -63,7 +64,9 @@ with the following path and query parameters:
 | *channel* | *Required* The channel name |  | String
 |===
 
+
 ==== Query Parameters (7 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

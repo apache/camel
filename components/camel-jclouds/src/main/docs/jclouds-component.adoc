@@ -132,6 +132,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -139,7 +140,9 @@ with the following path and query parameters:
 | *providerId* | *Required* The name of the cloud provider that provides the target service (e.g. aws-s3 or aws_ec2). |  | String
 |===
 
+
 ==== Query Parameters (15 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

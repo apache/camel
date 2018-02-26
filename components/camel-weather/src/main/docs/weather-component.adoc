@@ -58,13 +58,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *name* | *Required* The name value is not used. |  | String
 |===
 
+
 ==== Query Parameters (43 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

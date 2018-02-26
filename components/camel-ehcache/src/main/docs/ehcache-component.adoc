@@ -68,13 +68,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *cacheName* | *Required* the cache name |  | String
 |===
 
+
 ==== Query Parameters (17 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

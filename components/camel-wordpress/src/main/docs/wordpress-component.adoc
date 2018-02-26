@@ -33,6 +33,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -40,7 +41,9 @@ with the following path and query parameters:
 | *operationDetail* | The second part of an endpoint operation. Needed only when endpoint semantic is not enough, like wordpress:post:delete |  | String
 |===
 
+
 ==== Query Parameters (11 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

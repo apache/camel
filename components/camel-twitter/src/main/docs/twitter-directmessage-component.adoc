@@ -41,13 +41,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *user* | *Required* The user name to send a direct message. This will be ignored for consumer. |  | String
 |===
 
+
 ==== Query Parameters (41 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

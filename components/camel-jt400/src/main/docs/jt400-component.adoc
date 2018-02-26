@@ -63,6 +63,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (5 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -73,7 +74,9 @@ with the following path and query parameters:
 | *type* | *Required* Whether to work with data queues or remote program call |  | Jt400Type
 |===
 
+
 ==== Query Parameters (30 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

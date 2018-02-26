@@ -145,6 +145,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -152,7 +153,9 @@ with the following path and query parameters:
 | *destinationName* | *Required* Name of the queue or topic to use as destination |  | String
 |===
 
+
 ==== Query Parameters (90 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

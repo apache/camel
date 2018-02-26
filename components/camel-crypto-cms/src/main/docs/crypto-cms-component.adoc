@@ -58,6 +58,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -65,7 +66,9 @@ with the following path and query parameters:
 | *name* | *Required* The name part in the URI can be chosen by the user to distinguish between different signer/verifier/encryptor/decryptor endpoints within the camel context. |  | String
 |===
 
+
 ==== Query Parameters (15 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

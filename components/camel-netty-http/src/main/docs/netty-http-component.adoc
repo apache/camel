@@ -112,6 +112,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (4 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -121,7 +122,9 @@ with the following path and query parameters:
 | *path* | Resource path |  | String
 |===
 
+
 ==== Query Parameters (78 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

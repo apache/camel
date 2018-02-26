@@ -64,13 +64,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *kind* | *Required* Kind of stream to use such as System.in or System.out. |  | String
 |===
 
+
 ==== Query Parameters (18 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

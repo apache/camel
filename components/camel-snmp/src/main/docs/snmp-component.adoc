@@ -60,6 +60,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -67,7 +68,9 @@ with the following path and query parameters:
 | *port* | *Required* Port number of the SNMP enabled device |  | Integer
 |===
 
+
 ==== Query Parameters (34 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

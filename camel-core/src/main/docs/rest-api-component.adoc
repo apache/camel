@@ -25,6 +25,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -32,7 +33,9 @@ with the following path and query parameters:
 | *contextIdPattern* | Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern. |  | String
 |===
 
+
 ==== Query Parameters (6 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

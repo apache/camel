@@ -64,13 +64,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *topic* | *Required* Name of the topic to use. On the consumer you can use comma to separate multiple topics. A producer can only send a message to a single topic. |  | String
 |===
 
+
 ==== Query Parameters (90 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

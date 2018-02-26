@@ -116,13 +116,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *routeboxName* | *Required* Logical name for the routebox (eg like a queue name) |  | String
 |===
 
+
 ==== Query Parameters (17 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

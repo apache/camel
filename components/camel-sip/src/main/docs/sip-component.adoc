@@ -86,13 +86,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *uri* | *Required* URI of the SIP server to connect to (the username and password can be included such as: john:secretmyserver:9999) |  | URI
 |===
 
+
 ==== Query Parameters (44 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
