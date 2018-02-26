@@ -16,7 +16,6 @@
  */
 package org.apache.camel.opentracing.decorators;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +25,7 @@ import io.opentracing.tag.Tags;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.opentracing.SpanDecorator;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -43,7 +43,7 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
         // OpenTracing aims to use low cardinality operation names. Ideally a specific
         // span decorator should be defined for all relevant Camel components that
         // identify a meaningful operation name
-        return URI.create(endpoint.getEndpointUri()).getScheme();
+        return getComponentName(endpoint);
     }
 
     /**
@@ -69,7 +69,8 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
 
     @Override
     public void pre(Span span, Exchange exchange, Endpoint endpoint) {
-        span.setTag(Tags.COMPONENT.getKey(), CAMEL_COMPONENT + URI.create(endpoint.getEndpointUri()).getScheme());
+        String scheme = getComponentName(endpoint);
+        span.setTag(Tags.COMPONENT.getKey(), CAMEL_COMPONENT + scheme);
 
         // Including the endpoint URI provides access to any options that may have been provided, for
         // subsequent analysis
@@ -114,6 +115,15 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
             return map;
         }
         return Collections.emptyMap();
+    }
+
+    private static String getComponentName(Endpoint endpoint) {
+        String[] splitURI = StringHelper.splitOnCharacter(endpoint.getEndpointUri(), ":", 2);
+        if (splitURI.length > 0) {
+            return splitURI[0];
+        } else {
+            return null;
+        }
     }
 
 }
