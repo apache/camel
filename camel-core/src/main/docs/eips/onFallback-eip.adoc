@@ -10,7 +10,6 @@ Hystrix has many options as listed in the table above. For example to set a high
 // eip options: START
 The On Fallback EIP supports 1 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

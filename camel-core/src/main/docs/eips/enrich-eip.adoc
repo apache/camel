@@ -8,7 +8,6 @@ image:http://www.enterpriseintegrationpatterns.com/img/DataEnricher.gif[image]
 // eip options: START
 The Enrich EIP supports 7 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

@@ -13,7 +13,7 @@ together.
 == Options
 
 // eip options: START
-The Pipeline EIP supports 0 options which are listed below:
+The Pipeline EIP has no options.
 // eip options: END
 
 [[PipesandFilters-Samples]]

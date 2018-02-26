@@ -7,7 +7,6 @@ The Remove Header EIP allows you to remove an header from your exchange.
 // eip options: START
 The Remove Header EIP supports 1 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
