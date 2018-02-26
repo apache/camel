@@ -32,6 +32,9 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import jdk.nashorn.api.scripting.NashornScriptEngine;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -480,6 +483,13 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         // As the script could have multiple statement, we need to look up the result from the engine value set
         if (result == null) {
             result = engine.get("result");
+        }
+        
+        // into jdk8 a list will be mapped to ScriptObjectMirror
+        if (engine instanceof NashornScriptEngine && result != null && result instanceof ScriptObjectMirror) {
+            if (((ScriptObjectMirror)result).isArray()) {
+                result = ((ScriptObjectMirror)result).values();
+            }
         }
         return result;
     }
