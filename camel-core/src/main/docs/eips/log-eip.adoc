@@ -14,7 +14,6 @@ Camel provides many ways to log the fact that you are processing a message. Here
 // eip options: START
 The Log EIP supports 5 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

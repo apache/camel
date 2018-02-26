@@ -25,7 +25,6 @@ Compensating actions can be declared in Camel routes using the Java or XML DSL a
 // eip options: START
 The Saga EIP supports 6 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

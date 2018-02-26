@@ -95,7 +95,6 @@ from("direct:start")
 // eip options: START
 The Service Call EIP supports 14 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

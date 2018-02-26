@@ -14,7 +14,6 @@ Notice by default the loop uses the same exchange throughout the looping. So the
 // eip options: START
 The Loop EIP supports 2 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

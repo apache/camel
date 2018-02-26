@@ -5,7 +5,6 @@
 // eip options: START
 The Stream-config EIP supports 6 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

@@ -19,7 +19,6 @@ single correlation key into a single message exchange.
 // eip options: START
 The Aggregate EIP supports 24 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

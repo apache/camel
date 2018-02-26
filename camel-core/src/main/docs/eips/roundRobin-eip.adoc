@@ -6,7 +6,7 @@ Round Robin Load Balancer. With this Load Balancing policy, a random endpoint is
 === Options
 
 // eip options: START
-The Round Robin EIP supports 0 options which are listed below:
+The Round Robin EIP has no options.
 // eip options: END
 
 === Examples

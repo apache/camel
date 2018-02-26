@@ -11,7 +11,6 @@ You need to specify a Splitter as `split()`. In earlier versions of Camel, you n
 // eip options: START
 The Split EIP supports 12 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
