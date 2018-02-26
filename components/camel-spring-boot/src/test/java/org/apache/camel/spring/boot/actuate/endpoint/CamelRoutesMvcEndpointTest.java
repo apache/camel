@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -39,7 +40,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
 @SpringBootApplication
-@SpringBootTest(classes = {CamelAutoConfiguration.class, CamelRoutesEndpointAutoConfiguration.class, ActuatorTestRoute.class})
+@SpringBootTest(classes = {CamelAutoConfiguration.class, CamelRoutesEndpointAutoConfiguration.class, ActuatorTestRoute.class},
+    properties = {
+        "endpoints.enabled = false",
+        "endpoints.camelroutes.enabled = true",
+        "endpoints.camelroutes.read-only = false"
+    })
 public class CamelRoutesMvcEndpointTest extends Assert {
 
     @Autowired
@@ -63,6 +69,13 @@ public class CamelRoutesMvcEndpointTest extends Assert {
 
         assertTrue(result instanceof RouteDetailsInfo);
         assertEquals("foo-route", ((RouteDetailsInfo)result).getId());
+    }
+
+    @Test
+    public void testMvcRoutesEndpointStop() throws Exception {
+        Object result = endpoint.stop("foo-route", null, null);
+        ResponseEntity ent = (ResponseEntity) result;
+        assertEquals(200, ent.getStatusCodeValue());
     }
 
 }

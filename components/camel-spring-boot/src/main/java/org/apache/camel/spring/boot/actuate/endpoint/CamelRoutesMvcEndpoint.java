@@ -101,7 +101,7 @@ public class CamelRoutesMvcEndpoint extends AbstractCamelMvcEndpoint<CamelRoutes
             @RequestAttribute(required = false) Long timeout,
             @RequestAttribute(required = false) Boolean abortAfterTimeout) {
 
-        return doIfEnabled(() -> {
+        return doIfEnabledAndNotReadOnly(() -> {
             try {
                 delegate().stopRoute(
                     id,
@@ -128,7 +128,7 @@ public class CamelRoutesMvcEndpoint extends AbstractCamelMvcEndpoint<CamelRoutes
     public Object start(
             @PathVariable String id) {
 
-        return doIfEnabled(() -> {
+        return doIfEnabledAndNotReadOnly(() -> {
             try {
                 delegate().startRoute(id);
             } catch (Exception e) {
@@ -143,7 +143,7 @@ public class CamelRoutesMvcEndpoint extends AbstractCamelMvcEndpoint<CamelRoutes
     @PostMapping(value = "/{id}/reset", produces = {ActuatorMediaTypes.APPLICATION_ACTUATOR_V1_JSON_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public Object reset(@PathVariable String id) {
 
-        return doIfEnabled(() -> {
+        return doIfEnabledAndNotReadOnly(() -> {
             try {
                 delegate().resetRoute(id);
             } catch (Exception e) {
@@ -167,7 +167,7 @@ public class CamelRoutesMvcEndpoint extends AbstractCamelMvcEndpoint<CamelRoutes
             @PathVariable String id,
             @RequestAttribute(required = false) Long timeout) {
 
-        return doIfEnabled(() -> {
+        return doIfEnabledAndNotReadOnly(() -> {
             try {
                 delegate().suspendRoute(
                     id,
@@ -193,7 +193,7 @@ public class CamelRoutesMvcEndpoint extends AbstractCamelMvcEndpoint<CamelRoutes
     public Object resume(
             @PathVariable String id) {
 
-        return doIfEnabled(() -> {
+        return doIfEnabledAndNotReadOnly(() -> {
             try {
                 delegate().resumeRoute(id);
             } catch (Exception e) {
