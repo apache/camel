@@ -14,23 +14,17 @@ following dependency to their `pom.xml`:
 *pom.xml*
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-tika</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
-
-### URI format
+----
 
 The TIKA component only supports producer endpoints.
 
-[source,java]
------------------------
-tika:operation[?options]
------------------------
 
 ### Options
 
@@ -74,35 +68,23 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-### Headers
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Header |Description
-|=======================================================================
 
 ### To Detect a file's MIME Type
 
 The file should be placed in the Body.
 
 [source,java]
--------------------------------
+----
 from("direct:start")
         .to("tika:detect");
--------------------------------
+----
 
 ### To Parse a File
 
 The file should be placed in the Body.
 
 [source,java]
--------------------------------
+----
 from("direct:start")
         .to("tika:parse");
--------------------------------
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
+----
