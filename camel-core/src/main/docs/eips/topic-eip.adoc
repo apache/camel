@@ -6,7 +6,7 @@ Topic Load Balancer, with this policy you'll get a Topic behavior by sending to 
 === Options
 
 // eip options: START
-The Topic EIP supports 0 options which are listed below:
+The Topic EIP has no options.
 // eip options: END
 
 === Examples

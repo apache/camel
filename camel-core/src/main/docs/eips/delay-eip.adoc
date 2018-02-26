@@ -7,7 +7,6 @@ The Delayer Pattern allows you to delay the delivery of messages to some destina
 // eip options: START
 The Delay EIP supports 3 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

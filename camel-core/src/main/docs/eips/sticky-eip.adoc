@@ -8,7 +8,6 @@ Sticky Load Balancer. Sticky load balancing uses an Expression to calculate a co
 // eip options: START
 The Sticky EIP supports 1 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

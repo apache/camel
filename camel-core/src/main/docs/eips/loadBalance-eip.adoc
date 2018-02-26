@@ -26,7 +26,6 @@ Camel provides the following policies out-of-the-box:
 // eip options: START
 The Load Balance EIP supports 2 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

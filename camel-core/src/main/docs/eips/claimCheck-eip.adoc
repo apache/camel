@@ -16,7 +16,6 @@ NOTE: The Camel implementation of this EIP pattern stores the message content te
 // eip options: START
 The Claim Check EIP supports 5 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

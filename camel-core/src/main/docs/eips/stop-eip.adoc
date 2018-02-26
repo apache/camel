@@ -5,7 +5,7 @@ The Stop EIP stops the processing of the current message
 == Options
 
 // eip options: START
-The Stop EIP supports 0 options which are listed below:
+The Stop EIP has no options.
 // eip options: END
 
 == Examples

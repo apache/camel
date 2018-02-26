@@ -7,7 +7,6 @@ When the circuit breaker is closed, it will throw a `java.util.concurrent.Reject
 // eip options: START
 The Circuit Breaker EIP supports 3 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

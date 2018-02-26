@@ -41,7 +41,6 @@ The `pollEnrich` works just as the `enrich` however as it uses a Polling Consume
 // eip options: START
 The Poll Enrich EIP supports 7 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

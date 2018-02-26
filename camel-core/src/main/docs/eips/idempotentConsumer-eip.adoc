@@ -40,7 +40,6 @@ Camel 2.18.0)****
 // eip options: START
 The Idempotent Consumer EIP supports 5 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

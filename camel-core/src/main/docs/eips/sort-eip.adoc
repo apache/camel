@@ -10,7 +10,6 @@ Sort will by default sort the body using a default comparator that handles numer
 // eip options: START
 The Sort EIP supports 1 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

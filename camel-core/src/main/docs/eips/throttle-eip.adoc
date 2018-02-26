@@ -8,7 +8,6 @@ The Throttler Pattern allows you to ensure that a specific endpoint does not get
 // eip options: START
 The Throttle EIP supports 5 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

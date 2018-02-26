@@ -18,7 +18,6 @@ You must ensure the expression used for the `dynamicRouter` such as a bean, will
 // eip options: START
 The Dynamic Router EIP supports 3 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

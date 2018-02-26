@@ -12,7 +12,7 @@ If the return value should be used as a changed message body then use link:./mes
 === Options
 
 // eip options: START
-The Script EIP supports 0 options which are listed below:
+The Script EIP has no options.
 // eip options: END
 
 === Samples

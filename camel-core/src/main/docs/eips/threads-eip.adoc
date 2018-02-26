@@ -7,7 +7,6 @@ The Threads Pattern allows you to introduce a thread pool into a route.
 // eip options: START
 The Threads EIP supports 10 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
