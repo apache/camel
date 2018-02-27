@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
@@ -42,6 +43,7 @@ import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelp
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.jsse.KeyStoreParameters;
@@ -334,6 +336,11 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
             httpClient = createHttpClient(sslContextFactory);
         }
 
+        if (httpClientProperties == null) {
+            httpClientProperties = new HashMap<>();
+        }
+
+        defineComponentPropertiesIn(httpClientProperties, this);
         setupHttpClient(httpClient, getCamelContext(), httpClientProperties);
 
         // support restarts
@@ -778,5 +785,30 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         }
 
         return httpClient;
+    }
+
+    private static void defineComponentPropertiesIn(final Map<String, Object> httpClientProperties, final SalesforceComponent salesforce) {
+        putValueIfGivenTo(httpClientProperties, HTTP_PROXY_HOST, salesforce::getHttpProxyHost);
+        putValueIfGivenTo(httpClientProperties, HTTP_PROXY_PORT, salesforce::getHttpProxyPort);
+        putValueIfGivenTo(httpClientProperties, HTTP_PROXY_INCLUDE, salesforce::getHttpProxyIncludedAddresses);
+        putValueIfGivenTo(httpClientProperties, HTTP_PROXY_EXCLUDE, salesforce::getHttpProxyExcludedAddresses);
+        putValueIfGivenTo(httpClientProperties, HTTP_PROXY_USERNAME, salesforce::getHttpProxyUsername);
+        putValueIfGivenTo(httpClientProperties, HTTP_PROXY_PASSWORD, salesforce::getHttpProxyPassword);
+        putValueIfGivenTo(httpClientProperties, HTTP_PROXY_REALM, salesforce::getHttpProxyRealm);
+        putValueIfGivenTo(httpClientProperties, HTTP_PROXY_AUTH_URI, salesforce::getHttpProxyAuthUri);
+
+        if (ObjectHelper.isNotEmpty(salesforce.getHttpProxyHost())) {
+            // let's not put `false` values in client properties if no proxy is used
+            putValueIfGivenTo(httpClientProperties, HTTP_PROXY_IS_SOCKS4, salesforce::isHttpProxySocks4);
+            putValueIfGivenTo(httpClientProperties, HTTP_PROXY_IS_SECURE, salesforce::isHttpProxySecure);
+            putValueIfGivenTo(httpClientProperties, HTTP_PROXY_USE_DIGEST_AUTH, salesforce::isHttpProxyUseDigestAuth);
+        }
+    }
+
+    private static void putValueIfGivenTo(final Map<String, Object> properties, final String key, final Supplier<Object> valueSupplier) {
+        final Object value = valueSupplier.get();
+        if (ObjectHelper.isNotEmpty(value)) {
+            properties.putIfAbsent(key, value);
+        }
     }
 }
