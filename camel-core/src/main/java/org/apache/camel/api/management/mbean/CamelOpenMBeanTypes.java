@@ -32,14 +32,14 @@ public final class CamelOpenMBeanTypes {
 
     public static TabularType listTypeConvertersTabularType() throws OpenDataException {
         CompositeType ct = listTypeConvertersCompositeType();
-        return new TabularType("listTypeConverters", "Lists all the type converters in the registry (from -> to)", ct, new String[]{"from", "to"});
+        return new TabularType("listTypeConverters", "Lists all the type converters in the registry (from -> to)", ct, new String[]{"from", "to", "index"});
     }
 
     public static CompositeType listTypeConvertersCompositeType() throws OpenDataException {
         return new CompositeType("types", "From/To types",
-                new String[]{"from", "to"},
-                new String[]{"From type", "To type"},
-                new OpenType[]{SimpleType.STRING, SimpleType.STRING});
+                new String[]{"from", "to", "index", },
+                new String[]{"From type", "To type", "Index"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.INTEGER});
     }
 
     public static TabularType listRestServicesTabularType() throws OpenDataException {
