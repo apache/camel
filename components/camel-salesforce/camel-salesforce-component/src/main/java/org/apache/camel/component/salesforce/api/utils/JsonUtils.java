@@ -27,10 +27,19 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.joining;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat;
+import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
+import com.fasterxml.jackson.databind.ser.BeanSerializerFactory;
+import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
+import com.fasterxml.jackson.databind.ser.PropertyWriter;
+import com.fasterxml.jackson.databind.ser.SerializerFactory;
+import com.fasterxml.jackson.databind.ser.std.NullSerializer;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema;
@@ -306,6 +315,25 @@ public abstract class JsonUtils {
         }
 
         return getJsonSchemaAsSchema(allSchemas, DEFAULT_ID_PREFIX + ":GlobalObjects");
+    }
+
+    public static ObjectMapper withNullSerialization(final ObjectMapper objectMapper) {
+        final SerializerFactory factory = BeanSerializerFactory.instance
+            .withSerializerModifier(new BeanSerializerModifier() {
+                @Override
+                public JsonSerializer<?> modifySerializer(final SerializationConfig config,
+                    final BeanDescription beanDesc, final JsonSerializer<?> serializer) {
+                    for (final PropertyWriter writer : (Iterable<PropertyWriter>) serializer::properties) {
+                        if (writer instanceof BeanPropertyWriter) {
+                            ((BeanPropertyWriter) writer).assignNullSerializer(NullSerializer.instance);
+                        }
+                    }
+
+                    return serializer;
+                }
+            });
+
+        return objectMapper.copy().setSerializerFactory(factory);
     }
 
 }
