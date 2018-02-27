@@ -26,6 +26,18 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.util.Args;
 
 public class AS2MessageDispositionNotificationEntity extends MimeEntity {
+    
+    private static final String ADDRESS_TYPE_PREFIX = "rfc822;";
+    private static final String MTA_NAME_TYPE_PREFIX = "dns;";
+    private static final String REPORTING_UA = "Reporting-UA";
+    private static final String MDN_GATEWAY = "MDN-Gateway";
+    private static final String FINAL_RECIPIENT = "Final-Recipient";
+    private static final String ORIGINAL_MESSAGE_ID = "Original-Message-ID";
+    private static final String AS2_DISPOSITION = "Disposition";
+    private static final String FAILURE = "Failure";
+    private static final String ERROR = "Error";
+    private static final String WARNING = "Warning";
+    private static final String RECEIVED_CONTENT_MIC = "Received-content-MIC";
 
     String reportingUA;
     String mtnName;
@@ -138,6 +150,77 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
 
     @Override
     public void writeTo(OutputStream outstream) throws IOException {
+        NoCloseOutputStream ncos = new NoCloseOutputStream(outstream);
+        try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, AS2CharSet.US_ASCII)) {
+
+            // Write out mime part headers if this is not the main body of message.
+            if (!isMainBody()) { 
+                HeaderIterator it = headerIterator();
+                while (it.hasNext()) {
+                    Header header = it.nextHeader();
+                    canonicalOutstream.writeln(header.toString());
+                }
+                canonicalOutstream.writeln(); // ensure empty line between headers and body; RFC2046 - 5.1.1
+            }
+            
+            if(reportingUA != null) {
+                Header reportingUAField = new BasicHeader(REPORTING_UA, reportingUA);
+                canonicalOutstream.writeln(reportingUAField.toString());
+            }
+            
+            if(mtnName != null) {
+                Header mdnGatewayField = new BasicHeader(MDN_GATEWAY, MTA_NAME_TYPE_PREFIX + reportingUA);
+                canonicalOutstream.writeln(mdnGatewayField.toString());
+            }
+            
+            Header finalRecipientField = new BasicHeader(FINAL_RECIPIENT, ADDRESS_TYPE_PREFIX + finalRecipient);
+            canonicalOutstream.writeln(finalRecipientField.toString());
+            
+            if(originalMessageId != null) {
+                Header originalMessageIdField = new BasicHeader(ORIGINAL_MESSAGE_ID, originalMessageId);
+                canonicalOutstream.writeln(originalMessageIdField.toString());
+            }
+            
+            String as2Disposition = dispositionMode.toString() + ";" + dispositionType.toString();
+            if (dispositionModifier != null) {
+                as2Disposition = as2Disposition + "/" + dispositionModifier.toString();
+            }
+            Header as2DispositionField = new BasicHeader(AS2_DISPOSITION, dispositionMode.toString() + ";" + dispositionType.toString());
+            canonicalOutstream.writeln(as2DispositionField.toString());
+            
+            if(failureFields != null) {
+                for (String field: failureFields) {
+                    Header failureField = new BasicHeader(FAILURE, field);
+                    canonicalOutstream.writeln(failureField.toString());
+                }
+            }
+            
+            if(errorFields != null) {
+                for (String field: errorFields) {
+                    Header errorField = new BasicHeader(ERROR, field);
+                    canonicalOutstream.writeln(errorField.toString());
+                }
+            }
+            
+            if(failureFields != null) {
+                for (String field: failureFields) {
+                    Header failureField = new BasicHeader(WARNING, field);
+                    canonicalOutstream.writeln(failureField.toString());
+                }
+            }
+            
+            if(extensionFields != null) {
+                for (Entry<String,String> entry: extensionFields.entrySet()) {
+                    Header failureField = new BasicHeader(entry.getKey(), entry.getValue());
+                    canonicalOutstream.writeln(failureField.toString());
+                }
+            }
+            
+            if(encodedMessageDigest != null && digestAlgorithmId != null) {
+                Header as2ReceivedContentMicField = new BasicHeader(RECEIVED_CONTENT_MIC, encodedMessageDigest + "'" + digestAlgorithmId);
+                canonicalOutstream.writeln(as2ReceivedContentMicField.toString());
+            }
+        }            
     }
 
 }

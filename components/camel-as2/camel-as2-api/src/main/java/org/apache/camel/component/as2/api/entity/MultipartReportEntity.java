@@ -30,32 +30,6 @@ import org.apache.http.util.CharArrayBuffer;
 
 public class MultipartReportEntity extends MultipartMimeEntity {
 
-    public MultipartReportEntity(String reportingUA,
-                                 String mtnName,
-                                 String originalRecipient,
-                                 String finalRecipient,
-                                 String originalMessageId,
-                                 DispositionMode dispositionMode,
-                                 AS2DispositionType dispositionType,
-                                 AS2DispositionModifier dispositionModifier,
-                                 String[] failureFields,
-                                 String[] errorFields,
-                                 String[] warningFields,
-                                 Map<String, String> extensionFields,
-                                 String encodedMessageDigest,
-                                 String digestAlgorithmId,
-                                 String charset,
-                                 boolean isMainBody,
-                                 String boundary) {
-
-        super(ContentType.create(AS2MimeType.MULTIPART_REPORT, charset), isMainBody, boundary);
-        addPart(buildPlainTextReport(reportingUA, mtnName, originalRecipient, finalRecipient, originalMessageId,
-                dispositionMode, dispositionType, dispositionModifier, failureFields, errorFields, warningFields, extensionFields, encodedMessageDigest, digestAlgorithmId));
-        addPart(new AS2MessageDispositionNotificationEntity(reportingUA, mtnName, originalRecipient, finalRecipient,
-                originalMessageId, dispositionMode, dispositionType, dispositionModifier, failureFields, errorFields, warningFields, extensionFields, encodedMessageDigest, digestAlgorithmId, charset,
-                isMainBody));
-    }
-
     public MultipartReportEntity(HttpEntityEnclosingRequest request,
                                  String reportingUA,
                                  String mtnName,
@@ -68,7 +42,7 @@ public class MultipartReportEntity extends MultipartMimeEntity {
                                  Map<String, String> extensionFields,
                                  String encodedMessageDigest,
                                  String digestAlgorithmId,
-                                String charset,
+                                 String charset,
                                  boolean isMainBody,
                                  String boundary) throws HttpException {
 
@@ -81,7 +55,10 @@ public class MultipartReportEntity extends MultipartMimeEntity {
         if (originalMessageId == null) {
             throw new HttpException("The " + AS2Header.MESSAGE_ID + " is missing");
         }
-
+        
+        String dispositionNotificationOptionsString =  HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS);
+        DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser.parseDispositionNotificationOptions(dispositionNotificationOptionsString, null);
+        dispositionNotificationOptions.getMicAlgorithms();
 
         addPart(buildPlainTextReport(reportingUA, mtnName, originalRecipient, finalRecipient, originalMessageId,
                 dispositionMode, dispositionType, dispositionModifier, failureFields, errorFields, warningFields, extensionFields, encodedMessageDigest, digestAlgorithmId));
@@ -89,7 +66,8 @@ public class MultipartReportEntity extends MultipartMimeEntity {
                 originalMessageId, dispositionMode, dispositionType, dispositionModifier, failureFields, errorFields, warningFields, extensionFields, encodedMessageDigest, digestAlgorithmId, charset,
                 isMainBody));
     }
-
+    
+    
     protected TextPlainEntity buildPlainTextReport(String reportingUA,
                                                    String mtnName,
                                                    String originalRecipient,
