@@ -109,11 +109,12 @@ public class ManagedTypeConverterRegistry extends ManagedService implements Mana
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listTypeConvertersTabularType());
             List<Class<?>[]> converters = registry.listAllTypeConvertersFromTo();
+            int index = 0;
             for (Class<?>[] entry : converters) {
                 CompositeType ct = CamelOpenMBeanTypes.listTypeConvertersCompositeType();
                 String from = entry[0].getCanonicalName();
                 String to = entry[1].getCanonicalName();
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"from", "to"}, new Object[]{from, to});
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"from", "to", "index"}, new Object[]{from, to, index++});
                 answer.put(data);
             }
             return answer;
