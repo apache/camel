@@ -188,8 +188,7 @@ consumer etc)
 The aggregator provides a pluggable repository which you can implement
 your own `org.apache.camel.spi.AggregationRepository`. +
  If you need persistent repository then you can use either Camel
-link:hawtdb.html[HawtDB], link:leveldb.html[LevelDB], or
-<<sql-component,SQL Component>> components.
+link:leveldb.html[LevelDB], or <<sql-component,SQL Component>> components.
 
 === Using TimeoutAwareAggregationStrategy
 
@@ -224,7 +223,7 @@ completion predicates / sizes / timeouts etc, and complete the group.
 
 For example the following logic (from an unit test) will complete the
 group if the message body size is larger than 5. This is done by setting
-the property Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP to true.
+the property `Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP` to `true`.
 
 [source,java]
 ----
@@ -245,34 +244,71 @@ the property Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP to true.
     }
 ----
 
+
+=== Completing all previous group decided from the AggregationStrategy
+
+*Available as of Camel 2.21*
+
+The `AggregationStrategy` can now included a property on the
+returned `Exchange` that contains a boolean to indicate if all previous
+groups should be completed. This allows to overrule any existing
+completion predicates / sizes / timeouts etc, and complete all the existing
+previous group.
+
+For example the following logic (from an unit test) will complete all the
+previous group when a new aggregation group is started. This is done by
+setting the property `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS` to `true`.
+
+[source,java]
+----
+    public final class MyCompletionStrategy implements AggregationStrategy {
+        @Override
+        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+            if (oldExchange == null) {
+                // we start a new correlation group, so complete all previous groups
+                newExchange.setProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, true);
+                return newExchange;
+            }
+
+            String body1 = oldExchange.getIn().getBody(String.class);
+            String body2 = newExchange.getIn().getBody(String.class);
+
+            oldExchange.getIn().setBody(body1 + body2);
+            return oldExchange;
+        }
+    }
+----
+
  
 
 === Manually Force the Completion of All Aggregated Exchanges Immediately
 
-*Available as of Camel 2.9* +
- You can manually trigger completion of all current aggregated exchanges
+*Available as of Camel 2.9*
+
+You can manually trigger completion of all current aggregated exchanges
 by sending a message containing the header
-Exchange.AGGREGATION_COMPLETE_ALL_GROUPS set to true. The message is
+`Exchange.AGGREGATION_COMPLETE_ALL_GROUPS` set to `true`. The message is
 considered a signal message only, the message headers/contents will not
 be processed otherwise.
 
-*Available as of Camel 2.11* +
- You can alternatively set the header
-Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE to true to trigger
+*Available as of Camel 2.11*
+
+You can alternatively set the header
+`Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE` to `true` to trigger
 completion of all groups after processing the current message.
 
 === Using a List<V> in AggregationStrategy
 
 *Available as of Camel 2.11*
 
-If you want to aggregate some value from the messages <V> into a List<V>
+If you want to aggregate some value from the messages `<V>` into a `List<V>`
 then we have added a
 `org.apache.camel.processor.aggregate.AbstractListAggregationStrategy`
 abstract class in *Camel 2.11* that makes this easier. The completed
-Exchange that is sent out of the aggregator will contain the List<V> in
+Exchange that is sent out of the aggregator will contain the `List<V>` in
 the message body.
 
-For example to aggregate a List<Integer> you can extend this class as
+For example to aggregate a `List<Integer>` you can extend this class as
 shown below, and implement the `getValue` method:
 
 === Using AggregateController
@@ -359,10 +395,10 @@ from("direct:start")
     .to("mock:result");
 ----
 
-As a result we have one outgoing link:exchange.html[Exchange] being
-routed the the "mock:result" endpoint. The exchange is a holder
-containing all the incoming Exchanges. +
- To get access to these exchanges you need to access them from a
+As a result we have one outgoing `Exchange` being
+routed the the `"mock:result"` endpoint. The exchange is a holder
+containing all the incoming Exchanges.
+To get access to these exchanges you need to access them from a
 property on the outgoing exchange as shown:
 
 [source,java]
@@ -418,7 +454,7 @@ public String append(String existing, String next) {
 
 In the method below, we have only 4 parameters, so the 1st parameter is
 the body of the `oldExchange`, and the 2nd is the Map of the
-`oldExchange} headers, and the 3rd is paired to the body of the {{newExchange`,
+`oldExchange` headers, and the 3rd is paired to the body of the `newExchange`,
 and the 4th parameter is the Map of the `newExchange` headers:
 
 [source,java]
@@ -429,7 +465,7 @@ public String append(String existing, Map existingHeaders, String next, Map next
 ----
 
 And finally if we have 6 parameters the we also have the properties of
-the link:exchange.html[Exchange]s:
+the Exchanges:
 
 [source,java]
 ----
@@ -439,7 +475,7 @@ public String append(String existing, Map existingHeaders, Map existingPropertie
 }
 ----
 
-To use this with the link:aggregator2.html[Aggregate] EIP we can use a
+To use this with the Aggregate EIP we can use a
 POJO with the aggregate logic as follows:
 
 [source,java]
@@ -542,21 +578,21 @@ By default when using POJOs as AggregationStrategy, then the method is
 use the option `strategyMethodAllowNull` to configure this. Where as
 without using POJOs then you may have `null` as `oldExchange` or
 `newExchange` parameters. For example the
-link:aggregator2.html[Aggregate] EIP will invoke the
+Aggregate EIP will invoke the
 `AggregationStrategy` with `oldExchange` as null, for the first
-link:exchange.html[Exchange] incoming to the aggregator. And then for
+Exchange incoming to the aggregator. And then for
 subsequent link:exchange.html[Exchange]s then `oldExchange` and
 `newExchange` parameters are both not null.
 
-Example with link:content-enricher.html[Content Enricher] and no data
+Example with Content Enricher EIP and no data
 
-Though with POJOs as AggregationStrategy we made this simpler and only
+Though with POJOs as `AggregationStrategy` we made this simpler and only
 call the method when `oldExchange` and `newExchange` is not null, as
 that would be the most common use-case. If you need to allow
 `oldExchange` or `newExchange` to be null, then you can configure this
 with the POJO using the `AggregationStrategyBeanAdapter` as shown below.
 On the bean adapter we call `setAllowNullNewExchange` to allow the new
-exchange to be null.
+exchange to be `null`.
 
 [source,java]
 ----
