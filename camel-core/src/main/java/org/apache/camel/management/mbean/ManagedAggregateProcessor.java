@@ -118,6 +118,10 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
         return processor.isCompletionFromBatchConsumer();
     }
 
+    public boolean isCompletionOnNewCorrelationGroup() {
+        return processor.isCompletionOnNewCorrelationGroup();
+    }
+
     public boolean isIgnoreInvalidCorrelationKeys() {
         return processor.isIgnoreInvalidCorrelationKeys();
     }

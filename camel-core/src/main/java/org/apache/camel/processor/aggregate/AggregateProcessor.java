@@ -206,6 +206,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private int completionSize;
     private Expression completionSizeExpression;
     private boolean completionFromBatchConsumer;
+    private boolean completionOnNewCorrelationGroup;
     private AtomicInteger batchConsumerCounter = new AtomicInteger();
     private boolean discardOnCompletionTimeout;
     private boolean forceCompletionOnStop;
@@ -461,6 +462,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         if (completeAllGroups) {
             // remove the exchange property so we do not complete again
             answer.removeProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
+            forceCompletionOfAllGroups();
+        } else if (isCompletionOnNewCorrelationGroup() && originalExchange == null) {
+            // its a new group so force complete of all existing groups
             forceCompletionOfAllGroups();
         }
 
@@ -935,6 +939,14 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
     public void setCompletionFromBatchConsumer(boolean completionFromBatchConsumer) {
         this.completionFromBatchConsumer = completionFromBatchConsumer;
+    }
+
+    public boolean isCompletionOnNewCorrelationGroup() {
+        return completionOnNewCorrelationGroup;
+    }
+
+    public void setCompletionOnNewCorrelationGroup(boolean completionOnNewCorrelationGroup) {
+        this.completionOnNewCorrelationGroup = completionOnNewCorrelationGroup;
     }
 
     public boolean isCompleteAllOnStop() {
