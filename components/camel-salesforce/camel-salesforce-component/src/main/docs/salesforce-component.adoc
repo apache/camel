@@ -609,7 +609,6 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -617,9 +616,7 @@ with the following path and query parameters:
 | *topicName* | The name of the topic to use |  | String
 |===
 
-
-==== Query Parameters (43 parameters):
-
+==== Query Parameters (44 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -652,6 +649,7 @@ with the following path and query parameters:
 | *reportId* (common) | Salesforce1 Analytics report Id |  | String
 | *reportMetadata* (common) | Salesforce1 Analytics report metadata for filtering |  | ReportMetadata
 | *resultId* (common) | Bulk API Result ID |  | String
+| *serializeNulls* (common) | Should the NULL values of given DTO be serialized with empty (NULL) values. This affects only JSON data format. | false | boolean
 | *sObjectBlobFieldName* (common) | SObject blob field name |  | String
 | *sObjectClass* (common) | Fully qualified SObject class name, usually generated using camel-salesforce-maven-plugin |  | String
 | *sObjectFields* (common) | SObject fields to retrieve |  | String

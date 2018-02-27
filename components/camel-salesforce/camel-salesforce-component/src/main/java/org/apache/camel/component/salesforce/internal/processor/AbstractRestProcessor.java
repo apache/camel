@@ -271,7 +271,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
             requestsBody = new ApprovalRequests(request);
         }
 
-        final InputStream request = getRequestStream(requestsBody);
+        final InputStream request = getRequestStream(incomingMessage, requestsBody);
 
         restClient.approval(request, determineHeaders(exchange), processWithResponseCallback(exchange, callback));
     }
@@ -744,7 +744,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
      *            object to serialize
      * @return stream to read serialized object from
      */
-    protected abstract InputStream getRequestStream(Object object) throws SalesforceException;
+    protected abstract InputStream getRequestStream(Message in, Object object) throws SalesforceException;
 
     private void setResponseClass(Exchange exchange, String sObjectName) throws SalesforceException {
 
