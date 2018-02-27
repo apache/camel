@@ -108,6 +108,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlAttribute
     private Boolean completionFromBatchConsumer;
     @XmlAttribute
+    private Boolean completionOnNewCorrelationGroup;
+    @XmlAttribute
     @Deprecated
     private Boolean groupExchanges;
     @XmlAttribute
@@ -256,6 +258,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         }
         if (getCompletionFromBatchConsumer() != null) {
             answer.setCompletionFromBatchConsumer(getCompletionFromBatchConsumer());
+        }
+        if (getCompletionOnNewCorrelationGroup() != null) {
+            answer.setCompletionOnNewCorrelationGroup(getCompletionOnNewCorrelationGroup());
         }
         if (getEagerCheckCompletion() != null) {
             answer.setEagerCheckCompletion(getEagerCheckCompletion());
@@ -541,6 +546,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.completionFromBatchConsumer = completionFromBatchConsumer;
     }
 
+    public Boolean getCompletionOnNewCorrelationGroup() {
+        return completionOnNewCorrelationGroup;
+    }
+
+    public void setCompletionOnNewCorrelationGroup(Boolean completionOnNewCorrelationGroup) {
+        this.completionOnNewCorrelationGroup = completionOnNewCorrelationGroup;
+    }
+
     public ExecutorService getExecutorService() {
         return executorService;
     }
@@ -733,6 +746,19 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      */
     public AggregateDefinition completionFromBatchConsumer() {
         setCompletionFromBatchConsumer(true);
+        return this;
+    }
+
+    /**
+     * Enables completion on all previous groups when a new incoming correlation group. This can for example be used
+     * to complete groups with same correlation keys when they are in consecutive order.
+     * Notice when this is enabled then only 1 correlation group can be in progress as when a new correlation group
+     * starts, then the previous groups is forced completed.
+     *
+     * @return builder
+     */
+    public AggregateDefinition completionOnNewCorrelationGroup() {
+        setCompletionOnNewCorrelationGroup(true);
         return this;
     }
 
