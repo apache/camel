@@ -178,6 +178,10 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <!-- skip jetty producer tests as its deprecated and causes CI server hangs -->
+          <excludes>
+            <exclude>org/apache/camel/component/jetty/jettyproducer/**.java</exclude>
+          </excludes>
           <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
         </configuration>
       </plugin>
