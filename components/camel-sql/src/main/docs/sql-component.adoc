@@ -72,7 +72,7 @@ sql:select * from table where id=:#${property.myId} order by name[?options]
 ---------------------------------------------------------------------------
 
 Notice that the standard `?` symbol that denotes the parameters to an
-SQL query is substituted with the `#` symbol, because the `?` symbol is
+SQL query is substituted with the `pass:[#]` symbol, because the `?` symbol is
 used to specify options for the endpoint. The `?` symbol replacement can
 be configured on endpoint basis.
 
@@ -202,15 +202,15 @@ with the following path and query parameters:
 
 The SQL component tries to convert the message body to an object of
 `java.util.Iterator` type and then uses this iterator to fill the query
-parameters (where each query parameter is represented by a `#` symbol
+parameters (where each query parameter is represented by a `pass:[#]` symbol
 (or configured placeholder) in the endpoint URI). If the message body is
 not an array or collection, the conversion results in an iterator that
 iterates over only one object, which is the body itself.
 
 For example, if the message body is an instance of `java.util.List`, the
-first item in the list is substituted into the first occurrence of `#`
+first item in the list is substituted into the first occurrence of `pass:[#]`
 in the SQL query, the second item in the list is substituted into the
-second occurrence of `#`, and so on.
+second occurrence of `pass:[#]`, and so on.
 
 If `batch` is set to `true`, then the interpretation of the inbound
 message body changes slightly – instead of an iterator of parameters,
@@ -285,7 +285,7 @@ outputType=StreamList.
 
 |`CamelSqlQuery` |*Camel 2.8:* Query to execute. This query takes precedence over the
 query specified in the endpoint URI. Note that query parameters in the
-header _are_ represented by a `?` instead of a `#` symbol
+header _are_ represented by a `?` instead of a `pass:[#]` symbol
 |=======================================================================
 
 When performing `insert` operations, the SQL Component stores the rows

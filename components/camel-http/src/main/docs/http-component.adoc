@@ -11,21 +11,21 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-http</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
-### URI format
+=== URI format
 
 [source,java]
-------------------------------------------------------------------
+----
 http:hostname[:port][/resourceUri][?param1=value1][&param2=value2]
-------------------------------------------------------------------
+----
 
 Will by default use port 80 for HTTP and 443 for HTTPS.
 
@@ -38,7 +38,7 @@ route, you can use the <<jetty-component,Jetty Component>> or the
 <<servlet-component,Servlet Component>>
 
 
-### Examples
+=== Examples
 
 Call the url with the body using POST and return response as out
 message. If body is null call URL using GET and return response as out
@@ -49,16 +49,16 @@ Java DSL
 Spring DSL
 
 [source,java]
-------------------------------
+----
 from("direct:start")
   .to("http://myhost/mypath");
-------------------------------
+----
 
 [source,xml]
---------------------------
+----
 <from uri="direct:start"/>
 <to uri="http://oldhost"/>
---------------------------
+----
 
 You can override the HTTP endpoint URI by adding a header. Camel will
 call the http://newhost. This is very handy for e.g. REST urls.
@@ -66,11 +66,11 @@ call the http://newhost. This is very handy for e.g. REST urls.
 Java DSL
 
 [source,java]
------------------------------------------------------------------------------------
+----
 from("direct:start")
   .setHeader(Exchange.HTTP_URI, simple("http://myserver/orders/${header.orderId}"))
   .to("http://dummyhost");
------------------------------------------------------------------------------------
+----
 
 URI parameters can either be set directly on the endpoint URI or as a
 header
@@ -78,13 +78,13 @@ header
 Java DSL
 
 [source,java]
----------------------------------------------------------------------
+----
 from("direct:start")
   .to("http://oldhost?order=123&detail=short");
 from("direct:start")
   .setHeader(Exchange.HTTP_QUERY, constant("order=123&detail=short"))
   .to("http://oldhost");
----------------------------------------------------------------------
+----
 
 Set the HTTP request method to POST
 
@@ -93,23 +93,23 @@ Java DSL
 Spring DSL
 
 [source,java]
-----------------------------------------------------
+----
 from("direct:start")
   .setHeader(Exchange.HTTP_METHOD, constant("POST"))
   .to("http://www.google.com");
-----------------------------------------------------
+----
 
 [source,xml]
-----------------------------------------
+----
 <from uri="direct:start"/>
 <setHeader headerName="CamelHttpMethod">
   <constant>POST</constant>
 </setHeader>
 <to uri="http://www.google.com"/>
 <to uri="mock:results"/>
-----------------------------------------
+----
 
-### Http Options
+=== Http Options
 
 
 
@@ -212,7 +212,7 @@ with the following path and query parameters:
 
 
 
-### Message Headers
+=== Message Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -257,14 +257,14 @@ default value "HTTP/1.1"
 The header name above are constants. For the spring DSL you have to use
 the value of the constant instead of the name.
 
-### Message Body
+=== Message Body
 
 Camel will store the HTTP response from the external server on the OUT
 body. All headers from the IN message will be copied to the OUT message,
 so headers are preserved during routing. Additionally Camel will add the
 HTTP response headers as well to the OUT message headers.
 
-### Response code
+=== Response code
 
 Camel will handle according to the HTTP response code:
 
@@ -284,7 +284,7 @@ codes. This allows you to get any response from the remote server. +
 There is a sample below demonstrating this.
 
 
-### HttpOperationFailedException
+=== HttpOperationFailedException
 
 This exception contains the following information:
 
@@ -294,7 +294,7 @@ This exception contains the following information:
 * Response body as a `java.lang.String`, if server provided a body as
 response
 
-### Which HTTP method will be used
+=== Which HTTP method will be used
 
 The following algorithm is used to determine what HTTP method should be used: +
  1. Use method provided as endpoint configuration (`httpMethod`). +
@@ -304,90 +304,90 @@ The following algorithm is used to determine what HTTP method should be used: +
  5. `POST` if there is data to send (body is not `null`). +
  6. `GET` otherwise.
 
-### How to get access to HttpServletRequest and HttpServletResponse
+=== How to get access to HttpServletRequest and HttpServletResponse
 
 You can get access to these two using the Camel type converter system
 using
 
 [source,java]
-----------------------------------------------------------------------------------
+----
 HttpServletRequest request = exchange.getIn().getBody(HttpServletRequest.class);
 HttpServletRequest response = exchange.getIn().getBody(HttpServletResponse.class);
-----------------------------------------------------------------------------------
+----
 
-### Using client timeout - SO_TIMEOUT
+=== Using client timeout - SO_TIMEOUT
 
 See the unit test in
 http://svn.apache.org/viewvc?view=rev&revision=781775[this link]
 
-### More Examples
+=== More Examples
 
-### Configuring a Proxy
+==== Configuring a Proxy
 
 Java DSL
 
 [source,java]
----------------------------------------------------------------
+----
 from("direct:start")
   .to("http://oldhost?proxyHost=www.myproxy.com&proxyPort=80");
----------------------------------------------------------------
+----
 
 There is also support for proxy authentication via the `proxyUsername`
 and `proxyPassword` options.
 
-#### Using proxy settings outside of URI
+==== Using proxy settings outside of URI
 
 Java DSL
 
 Spring DSL
 
 [source,java]
----------------------------------------------------------------
+----
  context.getProperties().put("http.proxyHost", "172.168.18.9");
  context.getProperties().put("http.proxyPort" "8080");
----------------------------------------------------------------
+----
 
-[source,java]
-----------------------------------------------------------------
+[source,xml]
+----
    <camelContext>
        <properties>
            <property key="http.proxyHost" value="172.168.18.9"/>
            <property key="http.proxyPort" value="8080"/>
       </properties>
    </camelContext>
-----------------------------------------------------------------
+----
 
 Options on Endpoint will override options on the context.
 
-### Configuring charset
+=== Configuring charset
 
 If you are using `POST` to send data you can configure the `charset`
 
 [source,java]
--------------------------------------------------
+----
 setProperty(Exchange.CHARSET_NAME, "iso-8859-1");
--------------------------------------------------
+----
 
-### Sample with scheduled poll
+=== Sample with scheduled poll
 
 The sample polls the Google homepage every 10 seconds and write the page
 to the file `message.html`:
 
 [source,java]
-----------------------------------------------------------------------------------------
+----
 from("timer://foo?fixedRate=true&delay=0&period=10000")
     .to("http://www.google.com")
     .setHeader(FileComponent.HEADER_FILE_NAME, "message.html").to("file:target/google");
-----------------------------------------------------------------------------------------
+----
 
-### Getting the Response Code
+=== Getting the Response Code
 
 You can get the HTTP response code from the HTTP component by getting
 the value from the Out message header with
 `Exchange.HTTP_RESPONSE_CODE`.
 
 [source,java]
-----------------------------------------------------------------------------------------------
+----
    Exchange exchange = template.send("http://www.google.com/search", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.HTTP_QUERY, constant("hl=en&q=activemq"));
@@ -395,9 +395,9 @@ the value from the Out message header with
    });
    Message out = exchange.getOut();
    int responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
-----------------------------------------------------------------------------------------------
+----
 
-### Using `throwExceptionOnFailure=false` to get any response back
+=== Using `throwExceptionOnFailure=false` to get any response back
 
 In the route below we want to route a message that we
 enrich with data returned from a remote HTTP
@@ -406,19 +406,19 @@ call. As we want any response from the remote server, we set the
 the `AggregationStrategy`. As the code is based on a unit test that
 simulates a HTTP status code 404, there is some assertion code etc.
 
-### Disabling Cookies
+=== Disabling Cookies
 
 To disable cookies you can set the HTTP Client to ignore cookies by
 adding this URI option: +
  `httpClient.cookiePolicy=ignoreCookies`
 
-### Advanced Usage
+=== Advanced Usage
 
 If you need more control over the HTTP producer you should use the
 `HttpComponent` where you can set various classes to give you custom
 behavior.
 
-#### Setting MaxConnectionsPerHost
+==== Setting MaxConnectionsPerHost
 
 The <<http-component,HTTP>> Component has a
 `org.apache.commons.httpclient.HttpConnectionManager` where you can
@@ -437,7 +437,7 @@ connection to 5 instead of the default of 2.
 
 And then we can just use it as we normally do in our routes:
 
-#### Using preemptive authentication
+==== Using preemptive authentication
 
 An end user reported that he had problem with authenticating with HTTPS.
 The problem was eventually resolved when he discovered the HTTPS server
@@ -445,14 +445,14 @@ did not return a HTTP code 401 Authorization Required. The solution was
 to set the following URI option:
 `httpClient.authenticationPreemptive=true`
 
-#### Accepting self signed certificates from remote server
+==== Accepting self signed certificates from remote server
 
 See this
 http://www.nabble.com/Using-HTTPS-in-camel-http-when-remote-side-has-self-signed-cert-td25916878.html[link]
 from a mailing list discussion with some code to outline how to do this
 with the Apache Commons HTTP API.
 
-#### Setting up SSL for HTTP Client
+==== Setting up SSL for HTTP Client
 
 [[HTTP-UsingtheJSSEConfigurationUtility]]
 Using the JSSE Configuration Utility
@@ -474,7 +474,7 @@ demonstrates how to configure the protocol registry and use the
 registered protocol information in a route.
 
 [source,java]
-----------------------------------------------------------------
+----
 KeyStoreParameters ksp = new KeyStoreParameters();
 ksp.setResource("/users/home/server/keystore.jks");
 ksp.setPassword("keystorePassword");
@@ -497,7 +497,7 @@ Protocol.registerProtocol("https",
 
 from("direct:start")
         .to("https://mail.google.com/mail/").to("mock:results");
-----------------------------------------------------------------
+----
 
 [[HTTP-ConfiguringApacheHTTPClientDirectly]]
 Configuring Apache HTTP Client Directly
@@ -511,13 +511,13 @@ However if you _just_ want to specify the keystore and truststore you
 can do this with Apache HTTP `HttpClientConfigurer`, for example:
 
 [source,java]
-----------------------------------------------------------------------------
+----
 Protocol authhttps = new Protocol("https", new AuthSSLProtocolSocketFactory(
   new URL("file:my.keystore"), "mypassword",
   new URL("file:my.truststore"), "mypassword"), 443);
 
 Protocol.registerProtocol("https", authhttps);
-----------------------------------------------------------------------------
+----
 
 And then you need to create a class that implements
 `HttpClientConfigurer`, and registers https protocol providing a
@@ -525,27 +525,27 @@ keystore or truststore per example above. Then, from your camel route
 builder class you can hook it up like so:
 
 [source,java]
--------------------------------------------------------------------------------------
+----
 HttpComponent httpComponent = getContext().getComponent("http", HttpComponent.class);
 httpComponent.setHttpClientConfigurer(new MyHttpClientConfigurer());
--------------------------------------------------------------------------------------
+----
 
 If you are doing this using the Spring DSL, you can specify your
 `HttpClientConfigurer` using the URI. For example:
 
 [source,java]
--------------------------------------------------------------------------------------------
+----
 <bean id="myHttpClientConfigurer"
  class="my.https.HttpClientConfigurer">
 </bean>
 
 <to uri="https://myhostname.com:443/myURL?httpClientConfigurerRef=myHttpClientConfigurer"/>
--------------------------------------------------------------------------------------------
+----
 
 As long as you implement the HttpClientConfigurer and configure your
 keystore and truststore as described above, it will work fine.
 
-### See Also
+=== See Also
 
 * Configuring Camel
 * Component

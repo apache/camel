@@ -108,7 +108,7 @@ You have to provide the containerOrBlob name and the credentials if the private 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Header |Type |Description
-
+| | |
 |=======================================================================
 
 #### Message headers set by the Azure Storage Blob Service producer

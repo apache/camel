@@ -84,6 +84,7 @@ with the following path and query parameters:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Name |Type |Message |Description
+| | |
 |=======================================================================
 
 ### Message body
