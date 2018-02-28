@@ -31,10 +31,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
+import org.apache.camel.util.FileUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -43,6 +40,9 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Injects EIP documentation to camel schema.
@@ -99,11 +99,24 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     @Parameter(defaultValue = "target/classes/org/apache/camel/spring")
     public String pathToSpringModelDir;
 
+    /**
+     * Optional file pattern to delete files after the documentation enrichment is complete.
+     */
+    @Parameter
+    public String deleteFilesAfterRun;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (pathToModelDir == null) {
             throw new MojoExecutionException("pathToModelDir parameter must not be null");
         }
+
+        // skip if input file does not exists
+        if (inputCamelSchemaFile == null || !inputCamelSchemaFile.exists()) {
+            getLog().info("Input Camel schema file: " + inputCamelSchemaFile + " does not exist. Skip EIP document enrichment");
+            return;
+        }
+
         validateExists(inputCamelSchemaFile, "inputCamelSchemaFile");
         validateIsFile(inputCamelSchemaFile, "inputCamelSchemaFile");
         validateExists(camelCoreDir, "camelCoreDir");
@@ -116,6 +129,9 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
             runPlugin();
         } catch (Exception e) {
             throw new MojoExecutionException("Error during plugin execution", e);
+        }
+        if (deleteFilesAfterRun != null) {
+            deleteFilesAfterDone(deleteFilesAfterRun);
         }
     }
 
@@ -159,6 +175,14 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     private boolean jsonFileExistsForElement(Map<String, File> jsonFiles,
                                              String elementName) {
         return jsonFiles.containsKey(elementName);
+    }
+
+    private void deleteFilesAfterDone(String deleteFiles) {
+        String[] names = deleteFiles.split(",");
+        for (String name : names) {
+            File file = new File(name);
+            FileUtil.deleteFile(file);
+        }
     }
 
     /**

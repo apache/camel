@@ -48,20 +48,6 @@ public class EipDocumentationEnricherMojoTest {
     }
 
     @Test
-    public void testExecuteCamelCoreDoesNotExist() throws Exception {
-        when(mockCamelCore.exists()).thenReturn(false);
-        when(mockInputSchema.exists()).thenReturn(true);
-        when(mockInputSchema.isFile()).thenReturn(true);
-
-        try {
-            eipDocumentationEnricherMojo.execute();
-            fail("Expected MojoExecutionException");
-        } catch (MojoExecutionException e) {
-            // Expected.
-        }
-    }
-
-    @Test
     public void testExecuteCamelCoreIsNull() throws Exception {
         eipDocumentationEnricherMojo.camelCoreDir = null;
 
@@ -81,30 +67,6 @@ public class EipDocumentationEnricherMojoTest {
         when(mockCamelCore.exists()).thenReturn(true);
         when(mockInputSchema.exists()).thenReturn(true);
         when(mockInputSchema.isFile()).thenReturn(true);
-
-        try {
-            eipDocumentationEnricherMojo.execute();
-            fail("Expected MojoExecutionException");
-        } catch (MojoExecutionException e) {
-            // Expected.
-        }
-    }
-
-    @Test
-    public void testExecuteInputCamelSchemaDoesNotExist() throws Exception {
-        when(mockInputSchema.exists()).thenReturn(false);
-
-        try {
-            eipDocumentationEnricherMojo.execute();
-            fail("Expected MojoExecutionException");
-        } catch (MojoExecutionException e) {
-            // Expected.
-        }
-    }
-
-    @Test
-    public void testExecuteInputCamelSchemaIsNull() throws Exception {
-        eipDocumentationEnricherMojo.inputCamelSchemaFile = null;
 
         try {
             eipDocumentationEnricherMojo.execute();
