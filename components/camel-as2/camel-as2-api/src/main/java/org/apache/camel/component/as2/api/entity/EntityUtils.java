@@ -16,20 +16,28 @@
  */
 package org.apache.camel.component.as2.api.entity;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.commons.codec.binary.Base64OutputStream;
+import org.apache.commons.codec.net.QuotedPrintableCodec;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.util.Args;
+import org.bouncycastle.util.encoders.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EntityUtils {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(EntityUtils.class);
 
     private static AtomicLong partNumber = new AtomicLong();
+    
+    private EntityUtils() {}
 
     /**
      * Generated a unique value for a Multipart boundary string.
@@ -56,6 +64,30 @@ public class EntityUtils {
 
     public static String appendParameter(String headerString, String parameterName, String parameterValue) {
         return headerString + "; " + parameterName + "=" + parameterValue;
+    }
+    
+    public static byte[] encode(byte[] data, String encoding) throws Exception{
+        Args.notNull(data, "Data");
+        
+        if (encoding == null) {
+            // Identity encoding
+            return data;
+        }
+        
+        switch(encoding.toLowerCase()) {
+        case "base64":
+            return Base64.encode(data);
+        case "quoted-printable":
+            // TODO: implement QuotedPrintableOutputStream
+            return QuotedPrintableCodec.encodeQuotedPrintable(null, data);
+        case "binary":
+        case "7bit":
+        case "8bit":
+            // Identity encoding
+            return data;
+         default:
+            throw new Exception("Unknown encoding: " + encoding);
+        }
     }
     
     public static OutputStream encode(OutputStream os, String encoding) throws Exception {
@@ -130,5 +162,19 @@ public class EntityUtils {
             }
         }
     }
+    
+    public static byte[] getContent(HttpEntity entity) {
+        try {
+            final ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+            entity.writeTo(outstream);
+            outstream.flush();
+            return outstream.toByteArray();
+        } catch (Exception e) {
+            LOG.debug("failed to get content", e);
+            return null;
+        }
+    }
+
+
     
 }

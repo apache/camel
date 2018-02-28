@@ -26,6 +26,10 @@ public interface AS2MimeType {
      */
     public static final String APPLICATION_PKCS7_SIGNATURE = "application/pkcs7-signature";
     /**
+     * Mime Type for Application PKCS7 Signature
+     */
+    public static final String APPLICATION_PKCS7_MIME = "application/pkcs7-mime";
+    /**
      * Mime Type for Text/Plain Data
      */
     public static final String TEXT_PLAIN = "text/plain";

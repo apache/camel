@@ -118,7 +118,7 @@ public abstract class ApplicationEDIEntity extends MimeEntity {
                 canonicalOutstream.writeln(); // ensure empty line between headers and body; RFC2046 - 5.1.1
             }
             
-            canonicalOutstream.write(content.getBytes(AS2CharSet.US_ASCII), 0, content.length());
+            canonicalOutstream.write(ediMessage.getBytes(getCharset()), 0, ediMessage.length());
         }
     }
 

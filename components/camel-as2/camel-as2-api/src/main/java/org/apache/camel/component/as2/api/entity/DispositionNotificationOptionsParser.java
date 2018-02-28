@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.http.ParseException;
 import org.apache.http.message.ParserCursor;
 import org.apache.http.message.TokenParser;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.util.Args;
 import org.apache.http.util.CharArrayBuffer;
 
@@ -107,19 +106,6 @@ public class DispositionNotificationOptionsParser {
                     "Invalid disposition notification options: " + buffer.substring(indexFrom, indexTo));
         }
 
-    }
-
-    public void parseSignedReceiptMicalg(final CharArrayBuffer buffer, final ParserCursor cursor) {
-
-    }
-
-    protected void skipWhitespace(final CharArrayBuffer buffer, final ParserCursor cursor) {
-        int pos = cursor.getPos();
-        final int indexTo = cursor.getUpperBound();
-        while ((pos < indexTo) && HTTP.isWhitespace(buffer.charAt(pos))) {
-            pos++;
-        }
-        cursor.updatePos(pos);
     }
 
 }

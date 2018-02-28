@@ -119,7 +119,7 @@ public class EntityParser {
         
     }
 
-    public static HttpEntity parseMultipartSignedEntity(HttpEntity entity, boolean isMainBody) throws Exception{
+    public static HttpEntity parseMultipartSignedEntity(HttpEntity entity, boolean isMainBody) throws HttpException{
         Args.notNull(entity, "Entity");
         Args.check(entity.isStreaming(), "Entity is not streaming");
         MultipartSignedEntity multipartSignedEntity = null;
@@ -368,6 +368,37 @@ public class EntityParser {
         }
     }
 
-    static final String APPLICATION_EDIT_CONTENT_TYPE_PREFIX = "application/edi";
+    public static void parseAS2MessageEntity(HttpRequest request) throws HttpException {
+        HttpEntity entity = null;
+        if (request instanceof HttpEntityEnclosingRequest) {
+            entity = ((HttpEntityEnclosingRequest) request).getEntity();
+            if (entity.getContentType() != null) {
+                ContentType contentType;
+                try {
+                    contentType =  ContentType.parse(entity.getContentType().getValue());
+                } catch (Exception e) {
+                    throw new HttpException("Failed to get Content Type", e);
+                }
+                switch (contentType.getMimeType().toLowerCase()) {
+                case AS2MimeType.APPLICATION_EDIFACT:
+                case AS2MimeType.APPLICATION_EDI_X12:
+                case AS2MimeType.APPLICATION_EDI_CONSENT:
+                    entity = parseApplicationEDIEntity(entity, true);
+                    ((HttpEntityEnclosingRequest) request).setEntity(entity);
+                    break;
+                case AS2MimeType.MULTIPART_SIGNED:
+                    entity = parseMultipartSignedEntity(entity, true);
+                    ((HttpEntityEnclosingRequest) request).setEntity(entity);
+                    break;
+                case AS2MimeType.APPLICATION_PKCS7_MIME:
+                    break;
+                case AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION:
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+    }
 
 }
