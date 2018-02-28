@@ -343,6 +343,7 @@
                 <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
                   <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*" />
                   <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*" />
+                  <fileset dir="${basedir}/src/main/java" includes="**/*" />
                 </jar>
               </target>
             </configuration>
