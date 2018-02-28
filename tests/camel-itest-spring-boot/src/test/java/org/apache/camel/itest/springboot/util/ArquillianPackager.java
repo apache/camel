@@ -305,6 +305,7 @@ public final class ArquillianPackager {
         ignore.add("io.netty:netty:jar"); // an old version
         ignore.add("io.netty:netty-tcnative-boringssl-static");
         ignore.add("io.swagger:swagger-parser");
+        ignore.add("io.opentracing.contrib:opentracing-");
         ignore.add("org.apache.commons");
         ignore.add("org.apache.curator");
         ignore.add("org.apache.cxf:cxf-api");
