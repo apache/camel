@@ -696,6 +696,5 @@ And if we have another route we can refer to the shared worker pool:
 * Component
 * Endpoint
 * Getting Started
-
 * <<netty-http-component,Netty HTTP>>
-* <<mina-component,MINA>>
+* <<mina2-component,MINA>>

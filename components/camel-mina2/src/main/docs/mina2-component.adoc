@@ -206,7 +206,7 @@ assertEquals("Bye World", response);
 
 ### Sample with Spring DSL
 
-Spring DSL can, of course, also be used for <<mina-component,MINA>>. In the
+Spring DSL can, of course, also be used for <<mina2-component,MINA>>. In the
 sample below we expose a TCP server on port 5555:
 
 [source,xml]
@@ -272,6 +272,4 @@ is, after `codec` and `logger`.
 * Component
 * Endpoint
 * Getting Started
-
-* <<mina-component,MINA>>
 * <<netty-component,Netty>>

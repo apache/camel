@@ -275,7 +275,7 @@ Jetty component will copy the HTTP request parameter, `one` to the
 exchange's `in.header`. We can then use the `simple` language to route
 exchanges that contain this header to a specific endpoint and all others
 to another. If we used a language more powerful than
-<<simple-language,Simple>> (such as <<simple-language,EL>> or
+<<simple-language,Simple>> (such as <<el-language,EL>> or
 <<ognl-language,OGNL>>) we could also test for the parameter value and do
 routing based on the header value as well.
 
