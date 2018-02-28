@@ -39,7 +39,6 @@
     <category>Messaging</category>
   </properties>
 
-
   <dependencies>
 
     <!-- camel -->
@@ -57,13 +56,17 @@
     </dependency>
 
     <!-- Embbeded Artemis AMQP JMS Broker -->
-    <!-- ATTENTION: Needs to be placed before Camel's AMQP component -->
-    <!-- Netty versions between both enter in conflict -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>artemis-server</artifactId>
       <version>${activemq-artemis-version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-all</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
@@ -76,6 +79,12 @@
       <artifactId>artemis-amqp-protocol</artifactId>
       <version>${activemq-artemis-version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.qpid</groupId>
+          <artifactId>proton-j</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Camel's AMQP connectivity -->
