@@ -674,11 +674,11 @@
 
           <groups>
             <group>
-              <title>Camel Spring Classes</title>
+              <title>Camel Spring classes</title>
               <packages>org.apache.camel.spring</packages>
             </group>
             <group>
-              <title>Spring Remoting Classes</title>
+              <title>Spring remoting classes</title>
               <packages>org.apache.camel.spring.remoting</packages>
             </group>
             <group>
@@ -686,16 +686,28 @@
               <packages>org.apache.camel.component:org.apache.camel.component.*</packages>
             </group>
             <group>
+              <title>Camel Languages</title>
+              <packages>org.apache.camel.language:org.apache.camel.language.*</packages>
+            </group>
+            <group>
               <title>Camel SPI implementations for Spring</title>
               <packages>org.apache.camel.spring.spi</packages>
             </group>
             <group>
-              <title>Spring Namespace Handling Code</title>
+              <title>Camel Spring Scheduler Polling Consumer support</title>
+              <packages>org.apache.camel.spring.pollingconsumer</packages>
+            </group>
+            <group>
+              <title>Camel Spring Idempotent Repository</title>
+              <packages>org.apache.camel.spring.processor.idempotent</packages>
+            </group>
+            <group>
+              <title>Spring XML Namespace handling code</title>
               <packages>org.apache.camel.spring.handler</packages>
             </group>
             <group>
               <title>Utility classes</title>
-              <packages>org.apache.camel.spring.util:org.apache.camel.spring.factory</packages>
+              <packages>org.apache.camel.spring.util</packages>
             </group>
           </groups>
         </configuration>
