@@ -33,7 +33,8 @@ public class MongoDbComponent extends UriEndpointComponent {
     
     public static final Set<MongoDbOperation> WRITE_OPERATIONS = 
             new HashSet<MongoDbOperation>(Arrays.asList(MongoDbOperation.insert, MongoDbOperation.save, 
-                    MongoDbOperation.update, MongoDbOperation.remove));
+                    MongoDbOperation.update, MongoDbOperation.remove, MongoDbOperation.bulkWrite));
+    
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbComponent.class);
 
     public MongoDbComponent() {
