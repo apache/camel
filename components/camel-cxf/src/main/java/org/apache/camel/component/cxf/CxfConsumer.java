@@ -187,6 +187,7 @@ public class CxfConsumer extends DefaultConsumer {
         // NOTE this code cannot work with CXF 2.2.x and JMSContinuation
         // as it doesn't break out the interceptor chain when we call it
         private Object asyncInvoke(Exchange cxfExchange, final Continuation continuation) {
+            log.trace("asyncInvoke continuation: {}", continuation);
             synchronized (continuation) {
                 if (continuation.isNew()) {
                     final org.apache.camel.Exchange camelExchange = prepareCamelExchange(cxfExchange);
