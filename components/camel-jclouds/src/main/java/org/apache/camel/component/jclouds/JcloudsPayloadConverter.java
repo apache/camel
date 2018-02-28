@@ -27,7 +27,6 @@ import javax.xml.transform.stream.StreamSource;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -107,12 +106,7 @@ public final class JcloudsPayloadConverter {
         InputStreamPayload payload = new InputStreamPayload(is);
         // only set the contentlength if possible
         if (is.markSupported()) {
-            long contentLength = ByteStreams.length(new InputSupplier<InputStream>() {
-                @Override
-                public InputStream getInput() throws IOException {
-                    return is;
-                }
-            });
+            long contentLength = ByteStreams.toByteArray(is).length;
             is.reset();
             payload.getContentMetadata().setContentLength(contentLength);
         }
@@ -126,12 +120,7 @@ public final class JcloudsPayloadConverter {
 
     @Converter
     public static Payload toPayload(final StreamSourceCache cache, Exchange exchange) throws IOException {
-        long contentLength = ByteStreams.length(new InputSupplier<InputStream>() {
-            @Override
-            public InputStream getInput() throws IOException {
-                return cache.getInputStream();
-            }
-        });
+        long contentLength = ByteStreams.toByteArray(cache.getInputStream()).length;
         cache.reset();
         InputStreamPayload payload = new InputStreamPayload(cache.getInputStream());
         payload.getContentMetadata().setContentLength(contentLength);
