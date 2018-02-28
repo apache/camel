@@ -10,7 +10,7 @@ encrypted values will automatically be decrypted on-the-fly by Camel.
 This ensures that human eyes can't easily spot sensitive information
 such as usernames and passwords.
 
-Maven users will need to add the following dependency to their `pom.xml`
+If you are using Maven, you need to add the following dependency to your `pom.xml`
 for this component:
 
 [source,xml]
@@ -22,6 +22,20 @@ for this component:
     <!-- use the same version as your Camel core version -->
 </dependency>
 ------------------------------------------------------------
+
+If you are using an Apache Karaf container, you need to add the following dependency to your `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+  <groupId>org.apache.karaf.jaas</groupId>
+  <artifactId>org.apache.karaf.jaas.jasypt</artifactId>
+  <version>x.x.x.x</version>			
+  <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
 
 ### Tooling
 
@@ -279,4 +293,3 @@ to Jasypt.
 * http://activemq.apache.org/encrypted-passwords.html[Encrypted
 passwords in ActiveMQ] - ActiveMQ has a similar feature as this
 `camel-jasypt` component
-
