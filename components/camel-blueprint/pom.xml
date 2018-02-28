@@ -210,8 +210,9 @@
               <goal>eip-documentation-enricher</goal>
             </goals>
             <configuration>
-              <inputCamelSchemaFile>${project.build.directory}/schema/camel-blueprint.xsd</inputCamelSchemaFile>
+              <inputCamelSchemaFile>${project.build.directory}/schema/schema1.xsd</inputCamelSchemaFile>
               <outputCamelSchemaFile>${project.build.directory}/schema/camel-blueprint.xsd</outputCamelSchemaFile>
+              <deleteFilesAfterRun>${project.build.directory}/schema/schema1.xsd,${project.build.directory}/schema/schema2.xsd</deleteFilesAfterRun>
             </configuration>
           </execution>
         </executions>
@@ -376,21 +377,6 @@
                       <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*"/>
                       <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*"/>
                     </jar>
-                  </target>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>copy-schema</id>
-                <phase>process-test-sources</phase>
-                <configuration>
-                  <target>
-                    <echo>Copying XSD schema to be included in JAR</echo>
-                    <move file="${project.build.directory}/schema/schema1.xsd"
-                          tofile="${project.build.directory}/schema/camel-blueprint.xsd"/>
-                    <delete file="${project.build.directory}/schema/schema2.xsd"/>
                   </target>
                 </configuration>
                 <goals>
