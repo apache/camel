@@ -39,12 +39,12 @@ The simple JSON format is write-only (marshal) and produces a simple output form
 The sample code shows below:
 
 [source,java]
---------------------------------------------------------------------------------------------------
+----
 from("direct:marshal")
     .unmarshal()
     .thrift("org.apache.camel.dataformat.thrift.generated.Work", "json")
     .to("mock:reverse");
---------------------------------------------------------------------------------------------------
+----
 
 ### Thrift overview
 
@@ -59,7 +59,7 @@ This is defined in a .thrift file as so:
 *tutorial.thrift*
 
 [source,java]
-------------------------------------------------------------
+----
 namespace java org.apache.camel.dataformat.thrift.generated
 
 enum Operation {
@@ -75,7 +75,7 @@ struct Work {
   3: Operation op,
   4: optional string comment,
 }
-------------------------------------------------------------
+----
 
 ### Generating Java classes
 
@@ -101,18 +101,18 @@ You can use create the ThriftDataFormat instance and pass it to Camel
 DataFormat marshal and unmarshal API like this.
 
 [source,java]
------------------------------------------------------------------------------------
+----
    ThriftDataFormat format = new ThriftDataFormat(new Work());
 
    from("direct:in").marshal(format);
    from("direct:back").unmarshal(format).to("mock:reverse");
------------------------------------------------------------------------------------
+----
 
 Or use the DSL thrift() passing the unmarshal default instance or
 default instance class name like this.
 
 [source,java]
---------------------------------------------------------------------------------------------------
+----
    // You don't need to specify the default instance for the thrift marshaling               
    from("direct:marshal").marshal().thrift();
    from("direct:unmarshalA").unmarshal()
@@ -120,7 +120,7 @@ default instance class name like this.
        .to("mock:reverse");
                 
    from("direct:unmarshalB").unmarshal().thrift(new Work()).to("mock:reverse");
---------------------------------------------------------------------------------------------------
+----
 
 ### Spring DSL
 
@@ -128,7 +128,7 @@ The following example shows how to use Thrift to unmarshal using Spring
 configuring the thrift data type
 
 [source,java]
-----------------------------------------------------------------------------------------------------------
+----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
   <route>
     <from uri="direct:start"/>
@@ -138,7 +138,7 @@ configuring the thrift data type
     <to uri="mock:result"/>
   </route>
 </camelContext>
-----------------------------------------------------------------------------------------------------------
+----
 
 ### Dependencies
 
@@ -146,12 +146,11 @@ To use Thrift in your camel routes you need to add the a dependency on
 *camel-thrift* which implements this data format.
 
 [source,xml]
------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-thrift</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
------------------------------------------
-### See Also
+----

@@ -538,8 +538,8 @@ from("direct:inbound").bean("foo");
 ==== Referring beans from Endpoint URIs
 
 When configuring endpoints using the URI syntax you can refer to beans
-in the Registry using the `#` notation. If the URI
-parameter value starts with a `#` sign then Camel CDI will lookup for a
+in the Registry using the `pass:[#]` notation. If the URI
+parameter value starts with a `pass:[#]` sign then Camel CDI will lookup for a
 bean of the given type by name, e.g.:
 
 [source,java]

@@ -99,7 +99,7 @@ You have to provide the containerAndQueue URI  and the credentials.
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Header |Type |Description
-
+| | |
 |=======================================================================
 
 #### Message headers set by the Azure Storage Queue Service producer
@@ -107,6 +107,7 @@ You have to provide the containerAndQueue URI  and the credentials.
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Header |Type |Description
+| | |
 |=======================================================================
 
 #### Message headers set by the Azure Storage Queue Service producer consumer
@@ -114,6 +115,7 @@ You have to provide the containerAndQueue URI  and the credentials.
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Header |Type |Description
+| | |
 |=======================================================================
 
 #### Azure Queue Client configuration

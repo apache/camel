@@ -9,7 +9,7 @@ The composite kubernetes component has been deprecated. Use individual
 component splitted as following.
 
 * <<kubernetes-component,Kubernetes Components>>
-  ** <<kubernetes-build-configs-component,Kubernetes Build Config>>
+  ** <<openshift-build-configs-component,Kubernetes Build Config>>
   ** Kubernetes Build
   ** <<kubernetes-config-maps-component,Kubernetes ConfigMap>>
   ** <<kubernetes-namespaces-component,Kubernetes Namespace>>
@@ -40,7 +40,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+=== URI format
 
 [source,java]
 ------------------------------
@@ -50,7 +50,7 @@ kubernetes:masterUrl[?options]
 You can append query options to the URI in the following
 format, `?option=value&option=value&...`
 
-### Options
+=== Options
 
 
 // component options: START
@@ -126,7 +126,7 @@ with the following path and query parameters:
 
 
 
-### Headers
+=== Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -210,7 +210,7 @@ with the following path and query parameters:
 |=======================================================================
 
 
-### Categories
+=== Categories
 
 Actually the camel-kubernetes component supports the following Kubernetes resources
 
@@ -231,13 +231,13 @@ In Openshift also
 - Builds
 - BuildConfigs
 
-### Usage
+=== Usage
 
-#### Producer examples
+==== Producer examples
 
 Here we show some examples of producer using camel-kubernetes.
 
-#### Create a pod
+==== Create a pod
 
 [source,java]
 -------------------------------------------------------------
@@ -247,7 +247,7 @@ from("direct:createPod")
 
 By using the KubernetesConstants.KUBERNETES_POD_SPEC header you can specify your PodSpec and pass it to this operation.
 
-#### Delete a pod
+==== Delete a pod
 
 [source,java]
 -------------------------------------------------------------

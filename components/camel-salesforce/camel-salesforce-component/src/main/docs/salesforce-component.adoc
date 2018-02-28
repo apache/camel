@@ -12,20 +12,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-salesforce</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 NOTE: Developers wishing to contribute to the component are instructed
 to look at the README.md file on instructions on how to get started and
 setup your environment for running integration tests.
 
-## Authenticating to Salesforce
+=== Authenticating to Salesforce
 
 The component supports three OAuth authentication flows:
 
@@ -56,27 +56,27 @@ NOTE: The certificate used in JWT Bearer Token Flow can be a selfsigned
 certificate. The KeyStore holding the certificate and the private key
 must contain only single certificate-private key entry.
 
-### URI format
+=== URI format
 
 When used as a consumer, receiving streaming events, the URI scheme is:
 
 [source,java]
-------------------------
+----
 salesforce:topic?options
-------------------------
+----
 
 When used as a producer, invoking the Salesforce RSET APIs, the URI
 scheme is:
 
 [source,java]
-------------------------
+----
 salesforce:operationName?options
-------------------------
+----
 
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Passing in Salesforce headers and fetching Salesforce response headers
+=== Passing in Salesforce headers and fetching Salesforce response headers
 
 With Camel 2.21 there is support to pass https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/headers.htm[Salesforce headers]
 via inbound message headers, header names that start with `Sforce` or
@@ -87,7 +87,7 @@ message headers.
 For example to fetch API limits you can specify:
 
 [source,java]
-------------------------
+----
 // in your Camel route set the header before Salesforce endpoint
 //...
   .setHeader("Sforce-Limit-Info", constant("api-usage"))
@@ -102,16 +102,16 @@ class MyProcessor implements Processor {
         String apiLimits = in.getHeader("Sforce-Limit-Info", String.class);
    }
 }
-------------------------
+----
 
-### Supported Salesforce APIs
+=== Supported Salesforce APIs
 
 The component supports the following Salesforce APIs
 
 Producer endpoints can use the following APIs. Most of the APIs process
 one record at a time, the Query API can retrieve multiple Records.
 
-#### Rest API
+==== Rest API
 
 You can use the following for `operationName`:
 
@@ -151,11 +151,11 @@ updated, or `CreateSObjectResult` with an id of the new record, or a
 list of errors while creating the new object.
 
 [source,java]
------------------------------------------------------------
+----
 ...to("salesforce:upsertSObject?sObjectIdName=Name")...
------------------------------------------------------------
+----
 
-#### Rest Bulk API
+==== Rest Bulk API
 
 Producer endpoints can use the following APIs. All Job data formats,
 i.e. xml, csv, zip/xml, and zip/csv are supported.  +
@@ -189,11 +189,11 @@ will contain `BatchInfo` on success, or throw a `SalesforceException` on
 error.
 
 [source,java]
-----------------------------------------
+----
 ...to("salesforce:createBatchJob")..
-----------------------------------------
+----
 
-#### Rest Streaming API
+==== Rest Streaming API
 
 Consumer endpoints can use the following sytax for streaming endpoints
 to receive Salesforce notifications on create/update.
@@ -201,25 +201,25 @@ to receive Salesforce notifications on create/update.
 To create and subscribe to a topic
 
 [source,java]
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&sObjectName=Merchandise__c&updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")...
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 To subscribe to an existing topic
 
 [source,java]
--------------------------------------------------------------------
+----
 from("salesforce:CamelTestTopic&sObjectName=Merchandise__c")...
--------------------------------------------------------------------
+----
 
-### Examples
+=== Examples
 
-### Uploading a document to a ContentWorkspace
+==== Uploading a document to a ContentWorkspace
 
 Create the ContentVersion in Java, using a Processor instance:
 
 [source,java]
------------------------------------------------------------------------------------
+----
 public class ContentProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         Message message = exchange.getIn();
@@ -242,19 +242,19 @@ public class ContentProcessor implements Processor {
         ....
     }
 } 
------------------------------------------------------------------------------------
+----
 
 Give the output from the processor to the Salesforce component:
 
 [source,java]
------------------------------------------------------------------------------------------------------
+----
 from("file:///home/camel/library")
     .to(new ContentProcessor())     // convert bytes from the file into a ContentVersion SObject 
                                     // for the salesforce component
     .to("salesforce:createSObject"); 
------------------------------------------------------------------------------------------------------
+----
 
-### Using Salesforce Limits API
+=== Using Salesforce Limits API
 
 With `salesforce:limits` operation you can fetch of API limits from Salesforce and then act upon that data received.
 The result of `salesforce:limits` operation is mapped to `org.apache.camel.component.salesforce.api.dto.Limits`
@@ -271,7 +271,7 @@ evaluate as with floating point arithmetic, without it - it would end up making 
 with either `0` (some API limits consumed) or `1` (no API limits consumed).
 
 [source,java]
------------------------------------------------------------------------------------------------------
+----
 from("direct:querySalesforce")
     .to("salesforce:limits")
     .choice()
@@ -280,9 +280,9 @@ from("direct:querySalesforce")
     .otherwise()
         .setBody(constant("Used up Salesforce API limits, leaving 10% for critical routes"))
     .endChoice()
------------------------------------------------------------------------------------------------------
+----
 
-### Working with approvals
+=== Working with approvals
 
 All the properties are named exactly the same as in the Salesforce REST API prefixed with `approval.`. You can set
 approval properties by setting `approval.PropertyName` of the Endpoint these will be used as template -- meaning
@@ -305,7 +305,7 @@ For example to send one record for approval using values in headers use:
 Given a route:
 
 [source,java]
------------------------------------------------------------------------------------------------------
+----
 from("direct:example1")//
         .setHeader("approval.ContextId", simple("${body['contextId']}"))
         .setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
@@ -314,20 +314,20 @@ from("direct:example1")//
             + "&approval.comments=this is a test"//
             + "&approval.processDefinitionNameOrId=Test_Account_Process"//
             + "&approval.skipEntryCriteria=true");
------------------------------------------------------------------------------------------------------
+----
 
 You could send a record for approval using:
 
 [source,java]
------------------------------------------------------------------------------------------------------
+----
 final Map<String, String> body = new HashMap<>();
 body.put("contextId", accountIds.iterator().next());
 body.put("nextApproverIds", userId);
 
 final ApprovalResult result = template.requestBody("direct:example1", body, ApprovalResult.class);
------------------------------------------------------------------------------------------------------
+----
 
-### Using Salesforce Recent Items API
+=== Using Salesforce Recent Items API
 
 To fetch the recent items use `salesforce:recent` operation. This operation returns an `java.util.List` of
 `org.apache.camel.component.salesforce.api.dto.RecentItem` objects (`List<RecentItem>`) that in turn contain
@@ -335,14 +335,14 @@ the `Id`, `Name` and `Attributes` (with `type` and `url` properties). You can li
 by specifying `limit` parameter set to maximum number of records to return. For example:
 
 [source,java]
------------------------------------------------------------------------------------------------------
+----
 from("direct:fetchRecentItems")
     to("salesforce:recent")
         .split().body()
             .log("${body.name} at ${body.attributes.url}");
------------------------------------------------------------------------------------------------------
+----
 
-### Working with approvals
+=== Working with approvals
 
 All the properties are named exactly the same as in the Salesforce REST API prefixed with `approval.`. You can set
 approval properties by setting `approval.PropertyName` of the Endpoint these will be used as template -- meaning
@@ -365,7 +365,7 @@ For example to send one record for approval using values in headers use:
 Given a route:
 
 [source,java]
------------------------------------------------------------------------------------------------------
+----
 from("direct:example1")//
         .setHeader("approval.ContextId", simple("${body['contextId']}"))
         .setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
@@ -374,20 +374,20 @@ from("direct:example1")//
             + "&approvalComments=this is a test"//
             + "&approvalProcessDefinitionNameOrId=Test_Account_Process"//
             + "&approvalSkipEntryCriteria=true");
------------------------------------------------------------------------------------------------------
+----
 
 You could send a record for approval using:
 
 [source,java]
------------------------------------------------------------------------------------------------------
+----
 final Map<String, String> body = new HashMap<>();
 body.put("contextId", accountIds.iterator().next());
 body.put("nextApproverIds", userId);
 
 final ApprovalResult result = template.requestBody("direct:example1", body, ApprovalResult.class);
------------------------------------------------------------------------------------------------------
+----
 
-### Using Salesforce Composite API to submit SObject tree
+=== Using Salesforce Composite API to submit SObject tree
 
 To create up to 200 records including parent-child relationships use `salesforce:composite-tree` operation. This
 requires an instance of `org.apache.camel.component.salesforce.api.dto.composite.SObjectTree` in the input 
@@ -405,7 +405,7 @@ from your database.
 Lets look at an example:
 
 [source,java]
------------------------------------------------------------------------------------------------------
+----
 Account account = ...
 Contact president = ...
 Contact marketing = ...
@@ -427,9 +427,9 @@ final List<SObjectNode> withErrors = result.get(true);
 final List<SObjectNode> succeeded = result.get(false);
 
 final String firstId = succeeded.get(0).getId();
------------------------------------------------------------------------------------------------------
+----
 
-### Using Salesforce Composite API to submit multiple requests in a batch
+=== Using Salesforce Composite API to submit multiple requests in a batch
 The Composite API batch operation (`composite-batch`) allows you to accumulate multiple requests in a batch and then
 submit them in one go, saving the round trip cost of multiple individual requests. Each response is then received in a
 list of responses with the order preserved, so that the n-th requests response is in the n-th place of the response.
@@ -444,7 +444,7 @@ handling code.
 Lets look at an example:
 
 [source,java]
------------------------------------------------------------------------------------------------------
+----
 final String acountId = ...
 final SObjectBatch batch = new SObjectBatch("38.0");
 
@@ -483,10 +483,9 @@ final String accountBillingPostalCode = retrieveData.get("BillingPostalCode"); /
 final SObjectBatchResult deleteResult = results.get(3); // delete result
 final int updateStatus = deleteResult.getStatusCode(); // probably 204
 final Object updateResultData = deleteResult.getResult(); // probably null
+----
 
------------------------------------------------------------------------------------------------------
-
-### Using Salesforce Composite API to submit multiple chained requests
+=== Using Salesforce Composite API to submit multiple chained requests
 The `composite` operation allows submitting up to 25 requests that can be chained together, for instance identifier
 generated in previous request can be used in subsequent request. Individual requests and responses are linked with the
 provided _reference_.
@@ -501,7 +500,7 @@ strings and what values are numbers), so in general those will be more type frie
 Lets look at an example:
 
 [source,java]
------------------------------------------------------------------------------------------------------
+----
 SObjectComposite composite = new SObjectComposite("38.0", true);
 
 // first insert operation via an external id
@@ -531,17 +530,15 @@ final int statusCode = accountUpdateResult.getHttpStatusCode(); // should be 200
 final Map<String, ?> accountUpdateBody = accountUpdateResult.getBody();
 
 final SObjectCompositeResult contactCreationResult = results.stream().filter(r -> "JunctionRecord".equals(r.getReferenceId())).findFirst().get()
-// ...
-
------------------------------------------------------------------------------------------------------
+----
 
 
-### Camel Salesforce Maven Plugin
+=== Camel Salesforce Maven Plugin
 
 This Maven plugin generates DTOs for the Camel
 <<salesforce-component,Salesforce>>.
 
-### Options
+=== Options
 
 
 
@@ -680,16 +677,16 @@ The plugin should be configured for the rest of the properties, and can
 be executed using the following command:
 
 [source,java]
----------------------------------------------------------------------------------------------------------------------------------
+----
 mvn camel-salesforce:generate -DcamelSalesforce.clientId=<clientid> -DcamelSalesforce.clientSecret=<clientsecret> \
     -DcamelSalesforce.userName=<username> -DcamelSalesforce.password=<password>
----------------------------------------------------------------------------------------------------------------------------------
+----
 
 The generated DTOs use Jackson and XStream annotations. All Salesforce
 field types are supported. Date and time fields are mapped to Joda
 DateTime, and picklist fields are mapped to generated Java Enumerations.
 
-### See Also
+=== See Also
 
 * Configuring Camel
 * Component
