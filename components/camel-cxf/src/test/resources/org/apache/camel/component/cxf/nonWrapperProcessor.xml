@@ -39,7 +39,7 @@
    <camelContext xmlns="http://camel.apache.org/schema/spring">
       <route>
             <from uri="cxf:bean:routerEndpoint?dataFormat=POJO"/>
-            <process ref= "personProcessor"/>
+            <process ref="personProcessor"/>
       </route>
 
     </camelContext>
