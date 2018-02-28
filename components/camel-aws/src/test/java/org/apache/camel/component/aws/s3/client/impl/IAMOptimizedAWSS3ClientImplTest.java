@@ -53,12 +53,14 @@ public class IAMOptimizedAWSS3ClientImplTest {
 
     private S3Configuration getS3ConfigurationNoEncryption() {
         S3Configuration s3Configuration = mock(S3Configuration.class);
+        when(s3Configuration.getRegion()).thenReturn("US_EAST_1");
         when(s3Configuration.isUseEncryption()).thenReturn(false);
         return s3Configuration;
     }
 
     private S3Configuration getS3ConfigurationUseEncryption() {
         S3Configuration s3Configuration = mock(S3Configuration.class);
+        when(s3Configuration.getRegion()).thenReturn("US_EAST_1");
         when(s3Configuration.isUseEncryption()).thenReturn(true);
         return s3Configuration;
     }
