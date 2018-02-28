@@ -34,6 +34,9 @@ public enum MongoDbOperation {
     // delete operations
     remove, 
     
+    //Bulk operations
+    bulkWrite,
+    
     // aggregate
     aggregate,
     
