@@ -482,6 +482,8 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <excludes>
+                <!-- exclude doc tests as they dont work on CI server -->
+                <exclude>**/doc/*Test.java</exclude>
               </excludes>
             </configuration>
           </plugin>
