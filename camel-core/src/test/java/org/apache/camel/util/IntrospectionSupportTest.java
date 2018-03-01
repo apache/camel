@@ -57,6 +57,35 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("Willem", overloadedBean.getName());
     }
 
+    public void testPassword() throws Exception {
+        MyPasswordBean passwordBean = new MyPasswordBean();
+        IntrospectionSupport.setProperty(context.getTypeConverter(), passwordBean, "oldPassword", "Donald");
+        IntrospectionSupport.setProperty(context.getTypeConverter(), passwordBean, "newPassword", "Duck");
+        assertEquals("Donald", passwordBean.getOldPassword());
+        assertEquals("Duck", passwordBean.getNewPassword());
+    }
+
+    public class MyPasswordBean {
+        private String oldPassword;
+        private String newPassword;
+
+        public String getOldPassword() {
+            return oldPassword;
+        }
+
+        public void setOldPassword(String oldPassword) {
+            this.oldPassword = oldPassword;
+        }
+
+        public String getNewPassword() {
+            return newPassword;
+        }
+
+        public void setNewPassword(String newPassword) {
+            this.newPassword = newPassword;
+        }
+    }
+
     public class MyOverloadedBean {
         private ExampleBean bean;
 
