@@ -1,6 +1,5 @@
 package org.apache.camel.component.as2.api.util;
 
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -19,19 +18,47 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.entity.ContentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MicUtils {
+    private static final Logger LOG = LoggerFactory.getLogger(MicUtils.class);
+    
+    public static class ReceivedContentMic {
+        private final String digestAlgorithmId;
+        private final String encodedMessageDigest;
+        
+        public ReceivedContentMic(String digestAlgorithmId, byte[] messageDigest) throws Exception {
+            this.digestAlgorithmId = digestAlgorithmId;
+            messageDigest = EntityUtils.encode(messageDigest, "base64");
+            this.encodedMessageDigest = new String(messageDigest, AS2CharSet.US_ASCII);
+        }
+
+        public String getDigestAlgorithmId() {
+            return digestAlgorithmId;
+        }
+
+        public String getEncodedMessageDigest() {
+            return encodedMessageDigest;
+        }
+        
+        @Override
+        public String toString() {
+            return encodedMessageDigest + "," + digestAlgorithmId;
+        }
+    }
     
     public static byte[] createMic(byte[] content, String algorithmId) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance(algorithmId, "BC");
             return messageDigest.digest(content);
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            LOG.debug("failed to get message digets '" + algorithmId + "'");
             return null;
         }
     }
     
-    public static String createMessageIntegrityCheck(HttpEntityEnclosingRequest request) throws HttpException {
+    public static ReceivedContentMic createReceivedContentMic(HttpEntityEnclosingRequest request) throws HttpException {
         
         String contentTypeString = HttpMessageUtils.getHeaderValue(request, AS2Header.CONTENT_TYPE);
         if(contentTypeString == null) {
@@ -73,8 +100,7 @@ public class MicUtils {
         
         byte[] mic = createMic(content, micAlgorithm);
         try {
-            mic = EntityUtils.encode(mic, "base64");
-            return new String(mic, AS2CharSet.US_ASCII);
+            return new ReceivedContentMic(micAlgorithm, mic);
         } catch (Exception e) {
             throw new HttpException("failed to encode MIC", e);
         }

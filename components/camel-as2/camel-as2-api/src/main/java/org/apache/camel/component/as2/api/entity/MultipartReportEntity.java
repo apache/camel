@@ -25,14 +25,14 @@ import org.apache.camel.component.as2.api.AS2TransferEncoding;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
+import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
 import org.apache.http.util.CharArrayBuffer;
 
 public class MultipartReportEntity extends MultipartMimeEntity {
 
     public MultipartReportEntity(HttpEntityEnclosingRequest request,
-                                 String reportingUA,
-                                 String mtnName,
+                                 HttpResponse response,
                                  DispositionMode dispositionMode,
                                  AS2DispositionType dispositionType,
                                  AS2DispositionModifier dispositionModifier,
@@ -40,58 +40,43 @@ public class MultipartReportEntity extends MultipartMimeEntity {
                                  String[] errorFields,
                                  String[] warningFields,
                                  Map<String, String> extensionFields,
-                                 String encodedMessageDigest,
-                                 String digestAlgorithmId,
                                  String charset,
                                  boolean isMainBody,
-                                 String boundary) throws HttpException {
+                                 String boundary)
+            throws HttpException {
 
         super(ContentType.create(AS2MimeType.MULTIPART_REPORT, charset), isMainBody, boundary);
-        
-        String originalRecipient, finalRecipient;
-        originalRecipient = finalRecipient = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_TO);
-        
-        String originalMessageId  = HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID);
-        if (originalMessageId == null) {
-            throw new HttpException("The " + AS2Header.MESSAGE_ID + " is missing");
-        }
-        
-        String dispositionNotificationOptionsString =  HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS);
-        DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser.parseDispositionNotificationOptions(dispositionNotificationOptionsString, null);
-        dispositionNotificationOptions.getMicAlgorithms();
 
-        addPart(buildPlainTextReport(reportingUA, mtnName, originalRecipient, finalRecipient, originalMessageId,
-                dispositionMode, dispositionType, dispositionModifier, failureFields, errorFields, warningFields, extensionFields, encodedMessageDigest, digestAlgorithmId));
-        addPart(new AS2MessageDispositionNotificationEntity(reportingUA, mtnName, originalRecipient, finalRecipient,
-                originalMessageId, dispositionMode, dispositionType, dispositionModifier, failureFields, errorFields, warningFields, extensionFields, encodedMessageDigest, digestAlgorithmId, charset,
-                isMainBody));
+        addPart(buildPlainTextReport(request, response, dispositionMode, dispositionType,
+                dispositionModifier, failureFields, errorFields, warningFields, extensionFields));
+        addPart(new AS2MessageDispositionNotificationEntity(request, response, dispositionMode, dispositionType,
+                dispositionModifier, failureFields, errorFields, warningFields, extensionFields, charset, isMainBody));
     }
-    
-    
-    protected TextPlainEntity buildPlainTextReport(String reportingUA,
-                                                   String mtnName,
-                                                   String originalRecipient,
-                                                   String finalRecipient,
-                                                   String originalMessageId,
+
+    protected TextPlainEntity buildPlainTextReport(HttpEntityEnclosingRequest request,
+                                                   HttpResponse response,
                                                    DispositionMode dispositionMode,
                                                    AS2DispositionType dispositionType,
                                                    AS2DispositionModifier dispositionModifier,
                                                    String[] failureFields,
                                                    String[] errorFields,
                                                    String[] warningFields,
-                                                   Map<String, String> extensionFields,
-                                                   String encodedMessageDigest,
-                                                   String digestAlgorithmId) {
+                                                   Map<String, String> extensionFields) throws HttpException {
 
         CharArrayBuffer charBuffer = new CharArrayBuffer(10);
 
+       String originalMessageId  = HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID);
+        
+        String receivedFrom = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_FROM);
+        String sentTo = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_TO);
+        String date = HttpMessageUtils.getHeaderValue(response, AS2Header.DATE);
+        
         charBuffer.append("MDN for -\n");
         charBuffer.append(" Message ID: " + originalMessageId + "\n");
-        charBuffer.append("  From: " + "\n");
-        charBuffer.append("  To: " + "\n");
-        charBuffer.append("  Received on: " + "\n");
-        charBuffer.append(" Status: " + "\n");
-        charBuffer.append(" Comment: " + "\n");
+        charBuffer.append("  From: " + receivedFrom + "\n");
+        charBuffer.append("  To: " + sentTo + "\n");
+        charBuffer.append("  Received on: " + date + "\n");
+        charBuffer.append(" Status: " + dispositionType + "\n");
 
         return new TextPlainEntity(charBuffer.toString(), AS2CharSet.US_ASCII, AS2TransferEncoding._7BIT, false);
     }

@@ -21,12 +21,23 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.component.as2.api.AS2CharSet;
+import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MimeType;
+import org.apache.camel.component.as2.api.CanonicalOutputStream;
+import org.apache.camel.component.as2.api.util.HttpMessageUtils;
+import org.apache.camel.component.as2.api.util.MicUtils;
+import org.apache.camel.component.as2.api.util.MicUtils.ReceivedContentMic;
+import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpException;
+import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
 import org.apache.http.util.Args;
 
 public class AS2MessageDispositionNotificationEntity extends MimeEntity {
-    
+
     private static final String ADDRESS_TYPE_PREFIX = "rfc822;";
     private static final String MTA_NAME_TYPE_PREFIX = "dns;";
     private static final String REPORTING_UA = "Reporting-UA";
@@ -39,44 +50,45 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
     private static final String WARNING = "Warning";
     private static final String RECEIVED_CONTENT_MIC = "Received-content-MIC";
 
-    String reportingUA;
-    String mtnName;
-    String originalRecipient;
-    String finalRecipient;
-    String originalMessageId;
-    DispositionMode dispositionMode;
-    AS2DispositionType dispositionType;
-    AS2DispositionModifier dispositionModifier;
-    String[] failureFields; 
-    String[] errorFields; 
-    String[] warningFields; 
-    Map<String, String> extensionFields = new HashMap<String, String>();
-    String encodedMessageDigest;
-    String digestAlgorithmId;
+    private String reportingUA;
+    // TODO determine if we need to support this field.
+    private String mtnName;
+    private String finalRecipient;
+    private String originalMessageId;
+    private DispositionMode dispositionMode;
+    private AS2DispositionType dispositionType;
+    private AS2DispositionModifier dispositionModifier;
+    private String[] failureFields;
+    private String[] errorFields;
+    private String[] warningFields;
+    private Map<String, String> extensionFields = new HashMap<String, String>();
+    private ReceivedContentMic receivedContentMic;
 
-    public AS2MessageDispositionNotificationEntity(String reportingUA,
-                                                String mtnName,
-                                                String originalRecipient,
-                                                String finalRecipient,
-                                                String originalMessageId,
-                                                DispositionMode dispositionMode,
-                                                AS2DispositionType dispositionType,
-                                                AS2DispositionModifier dispositionModifier,
-                                                String[] failureFields,
-                                                String[] errorFields,
-                                                String[] warningFields,
-                                                Map<String, String> extensionFields,
-                                                String encodedMessageDigest,
-                                                String digestAlgorithmId,
-                                                String charset,
-                                                boolean isMainBody) {
+    public AS2MessageDispositionNotificationEntity(HttpEntityEnclosingRequest request,
+                                                   HttpResponse response,
+                                                   DispositionMode dispositionMode,
+                                                   AS2DispositionType dispositionType,
+                                                   AS2DispositionModifier dispositionModifier,
+                                                   String[] failureFields,
+                                                   String[] errorFields,
+                                                   String[] warningFields,
+                                                   Map<String, String> extensionFields,
+                                                   String charset,
+                                                   boolean isMainBody) throws HttpException {
         setMainBody(isMainBody);
         setContentType(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, charset));
-        this.reportingUA = reportingUA;
-        this.mtnName = mtnName;
-        this.originalRecipient = originalRecipient;
-        this.finalRecipient = Args.notNull(finalRecipient, "Final Recipient");
-        this.originalMessageId = originalMessageId;
+        
+        this.finalRecipient = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_TO);
+        if (this.finalRecipient == null) {
+            throw new HttpException("The " + AS2Header.AS2_TO + " is missing");
+        }
+        
+        this.originalMessageId  = HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID);
+
+        this.receivedContentMic = MicUtils.createReceivedContentMic(request);
+        
+        this.reportingUA = HttpMessageUtils.getHeaderValue(response, AS2Header.SERVER);
+
         this.dispositionMode = Args.notNull(dispositionMode, "Disposition Mode");
         this.dispositionType = Args.notNull(dispositionType, "Disposition Type");
         this.dispositionModifier = dispositionModifier;
@@ -88,8 +100,6 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
         } else {
             this.extensionFields.putAll(extensionFields);
         }
-        this.encodedMessageDigest = encodedMessageDigest;
-        this.digestAlgorithmId = digestAlgorithmId;
     }
 
     public String getReportingUA() {
@@ -140,12 +150,8 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
         return extensionFields;
     }
 
-    public String getEncodedMessageDigest() {
-        return encodedMessageDigest;
-    }
-
-    public String getDigestAlgorithmId() {
-        return digestAlgorithmId;
+    public ReceivedContentMic getReceivedContentMic() {
+        return receivedContentMic;
     }
 
     @Override
@@ -153,74 +159,79 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
         NoCloseOutputStream ncos = new NoCloseOutputStream(outstream);
         try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, AS2CharSet.US_ASCII)) {
 
-            // Write out mime part headers if this is not the main body of message.
-            if (!isMainBody()) { 
+            // Write out mime part headers if this is not the main body of
+            // message.
+            if (!isMainBody()) {
                 HeaderIterator it = headerIterator();
                 while (it.hasNext()) {
                     Header header = it.nextHeader();
                     canonicalOutstream.writeln(header.toString());
                 }
-                canonicalOutstream.writeln(); // ensure empty line between headers and body; RFC2046 - 5.1.1
+                canonicalOutstream.writeln(); // ensure empty line between
+                                              // headers and body; RFC2046 -
+                                              // 5.1.1
             }
-            
-            if(reportingUA != null) {
+
+            if (reportingUA != null) {
                 Header reportingUAField = new BasicHeader(REPORTING_UA, reportingUA);
                 canonicalOutstream.writeln(reportingUAField.toString());
             }
-            
-            if(mtnName != null) {
-                Header mdnGatewayField = new BasicHeader(MDN_GATEWAY, MTA_NAME_TYPE_PREFIX + reportingUA);
+
+            if (mtnName != null) {
+                Header mdnGatewayField = new BasicHeader(MDN_GATEWAY, MTA_NAME_TYPE_PREFIX + mtnName);
                 canonicalOutstream.writeln(mdnGatewayField.toString());
             }
-            
+
             Header finalRecipientField = new BasicHeader(FINAL_RECIPIENT, ADDRESS_TYPE_PREFIX + finalRecipient);
             canonicalOutstream.writeln(finalRecipientField.toString());
-            
-            if(originalMessageId != null) {
+
+            if (originalMessageId != null) {
                 Header originalMessageIdField = new BasicHeader(ORIGINAL_MESSAGE_ID, originalMessageId);
                 canonicalOutstream.writeln(originalMessageIdField.toString());
             }
-            
+
             String as2Disposition = dispositionMode.toString() + ";" + dispositionType.toString();
             if (dispositionModifier != null) {
                 as2Disposition = as2Disposition + "/" + dispositionModifier.toString();
             }
-            Header as2DispositionField = new BasicHeader(AS2_DISPOSITION, dispositionMode.toString() + ";" + dispositionType.toString());
+            Header as2DispositionField = new BasicHeader(AS2_DISPOSITION,
+                    dispositionMode.toString() + ";" + dispositionType.toString());
             canonicalOutstream.writeln(as2DispositionField.toString());
-            
-            if(failureFields != null) {
-                for (String field: failureFields) {
+
+            if (failureFields != null) {
+                for (String field : failureFields) {
                     Header failureField = new BasicHeader(FAILURE, field);
                     canonicalOutstream.writeln(failureField.toString());
                 }
             }
-            
-            if(errorFields != null) {
-                for (String field: errorFields) {
+
+            if (errorFields != null) {
+                for (String field : errorFields) {
                     Header errorField = new BasicHeader(ERROR, field);
                     canonicalOutstream.writeln(errorField.toString());
                 }
             }
-            
-            if(failureFields != null) {
-                for (String field: failureFields) {
+
+            if (failureFields != null) {
+                for (String field : failureFields) {
                     Header failureField = new BasicHeader(WARNING, field);
                     canonicalOutstream.writeln(failureField.toString());
                 }
             }
-            
-            if(extensionFields != null) {
-                for (Entry<String,String> entry: extensionFields.entrySet()) {
+
+            if (extensionFields != null) {
+                for (Entry<String, String> entry : extensionFields.entrySet()) {
                     Header failureField = new BasicHeader(entry.getKey(), entry.getValue());
                     canonicalOutstream.writeln(failureField.toString());
                 }
             }
-            
-            if(encodedMessageDigest != null && digestAlgorithmId != null) {
-                Header as2ReceivedContentMicField = new BasicHeader(RECEIVED_CONTENT_MIC, encodedMessageDigest + "'" + digestAlgorithmId);
+
+            if (receivedContentMic != null) {
+                Header as2ReceivedContentMicField = new BasicHeader(RECEIVED_CONTENT_MIC,
+                        receivedContentMic.toString());
                 canonicalOutstream.writeln(as2ReceivedContentMicField.toString());
             }
-        }            
+        }
     }
 
 }
