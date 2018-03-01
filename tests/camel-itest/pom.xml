@@ -430,6 +430,10 @@
           <systemPropertyVariables>
             <derby.stream.error.file>target/derby.log</derby.stream.error.file>
           </systemPropertyVariables>
+          <excludes>
+            <!-- exclude doc tests as they dont work on CI server -->
+            <exclude>**/*DocumentationTest.*</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>
@@ -483,7 +487,7 @@
             <configuration>
               <excludes>
                 <!-- exclude doc tests as they dont work on CI server -->
-                <exclude>**/doc/*Test.java</exclude>
+                <exclude>**/*DocumentationTest.*</exclude>
               </excludes>
             </configuration>
           </plugin>
