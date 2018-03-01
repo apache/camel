@@ -83,7 +83,7 @@ public class CxfConsumerContinuationTimeoutTest extends CamelTestSupport {
                             pool.submit(() -> {
                                 try {
                                     log.info("Sleeping for 50 seconds to simulate slow response");
-                                    Thread.sleep(50000);
+                                    Thread.sleep(35000);
                                 } catch (InterruptedException e) {
                                     // ignore
                                 } finally {
@@ -116,8 +116,8 @@ public class CxfConsumerContinuationTimeoutTest extends CamelTestSupport {
     @Test
     @Ignore("CAMEL-12104")
     public void testTimeout() throws Exception {
-        Object out = template.requestBodyAndHeader("direct:start", "Bye World", "priority", "slow", String.class);
-        // here we should get some kind of timeout exception
+        String out = template.requestBodyAndHeader("direct:start", "Bye World", "priority", "slow", String.class);
+        assertTrue(out.contains("The OUT message was not received within: 30000 millis."));
     }
 
 }
