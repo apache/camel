@@ -1232,6 +1232,22 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
         getConfiguration().setStreamMessageTypeEnabled(streamMessageTypeEnabled);
     }
 
+    /**
+     * Gets whether date headers should be formatted according to the ISO 8601
+     * standard.
+     */
+    public boolean isFormatDateHeadersToIso8601() {
+        return getConfiguration().isFormatDateHeadersToIso8601();
+    }
+
+    /**
+     * Sets whether date headers should be formatted according to the ISO 8601
+     * standard.
+     */
+    @Metadata(label = "producer", description = "Sets whether date headers should be formatted according to the ISO 8601 standard.")
+    public void setFormatDateHeadersToIso8601(boolean formatDateHeadersToIso8601) {
+        getConfiguration().setFormatDateHeadersToIso8601(formatDateHeadersToIso8601);
+    }
 
     // Implementation methods
     // -------------------------------------------------------------------------

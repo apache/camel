@@ -491,6 +491,9 @@ public class JmsConfiguration implements Cloneable {
         + " By enabling this option the message payload is read into memory in chunks and each chunk is then written to the StreamMessage until no more data.")
     private boolean streamMessageTypeEnabled;
 
+    @UriParam(label = "producer", description = "Sets whether JMS date properties should be formatted according to the ISO 8601 standard.")
+    private boolean formatDateHeadersToIso8601;
+
     public JmsConfiguration() {
     }
 
@@ -2213,4 +2216,21 @@ public class JmsConfiguration implements Cloneable {
     public void setStreamMessageTypeEnabled(boolean streamMessageTypeEnabled) {
         this.streamMessageTypeEnabled = streamMessageTypeEnabled;
     }
+
+    /**
+     * Gets whether date headers should be formatted according to the ISO 8601
+     * standard.
+     */
+    public boolean isFormatDateHeadersToIso8601() {
+        return formatDateHeadersToIso8601;
+    }
+
+    /**
+     * Sets whether date headers should be formatted according to the ISO 8601
+     * standard.
+     */
+    public void setFormatDateHeadersToIso8601(boolean formatDateHeadersToIso8601) {
+        this.formatDateHeadersToIso8601 = formatDateHeadersToIso8601;
+    }
+
 }
