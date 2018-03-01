@@ -24,6 +24,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -488,7 +490,11 @@ public class JmsBinding {
         } else if (headerValue instanceof Boolean) {
             return headerValue;
         } else if (headerValue instanceof Date) {
-            return headerValue.toString();
+            if (this.endpoint.getConfiguration().isFormatDateHeadersToIso8601()) {
+                return ZonedDateTime.ofInstant(((Date)headerValue).toInstant(), ZoneOffset.UTC).toString();
+            } else {
+                return headerValue.toString();
+            }
         }
         return null;
     }

@@ -608,6 +608,11 @@ public class AMQPComponentConfiguration
      */
     private Boolean streamMessageTypeEnabled = false;
     /**
+     * Sets whether date headers should be formatted according to the ISO 8601
+     * standard.
+     */
+    private Boolean formatDateHeadersToIso8601 = false;
+    /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
      * header to and from Camel message.
      */
@@ -1247,6 +1252,14 @@ public class AMQPComponentConfiguration
 
     public void setStreamMessageTypeEnabled(Boolean streamMessageTypeEnabled) {
         this.streamMessageTypeEnabled = streamMessageTypeEnabled;
+    }
+
+    public Boolean getFormatDateHeadersToIso8601() {
+        return formatDateHeadersToIso8601;
+    }
+
+    public void setFormatDateHeadersToIso8601(Boolean formatDateHeadersToIso8601) {
+        this.formatDateHeadersToIso8601 = formatDateHeadersToIso8601;
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {

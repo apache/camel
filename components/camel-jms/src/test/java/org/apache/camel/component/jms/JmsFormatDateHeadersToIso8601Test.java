@@ -16,56 +16,42 @@
  */
 package org.apache.camel.component.jms;
 
-import java.io.File;
-import java.io.InputStream;
+import java.time.Instant;
+import java.util.Date;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.FileUtil;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-public class JmsStreamMessageTypeTest extends CamelTestSupport {
+public class JmsFormatDateHeadersToIso8601Test extends CamelTestSupport {
 
-    @Override
-    public void setUp() throws Exception {
-        deleteDirectory("target/stream");
-        super.setUp();
+    private static final Date DATE = Date.from(Instant.ofEpochMilli(1519672338000L));
+
+    @Test
+    public void testComponentFormatDateHeaderToIso8601() throws Exception {
+        String outDate = template.requestBodyAndHeader("direct:start-isoformat", "body", "date", DATE, String.class);
+        assertEquals(outDate, "2018-02-26T19:12:18Z");
+    }
+
+    @Test
+    public void testBindingFormatDateHeaderToIso8601() throws Exception {
+        String outDate = template.requestBodyAndHeader("direct:start-nonisoformat", "body", "date", DATE, String.class);
+        assertNotEquals(outDate, "2018-02-26T19:12:18Z");
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.setStreamMessageTypeEnabled(true); // turn on streaming
-        camelContext.addComponent("jms", jms);
+        jms.setFormatDateHeadersToIso8601(true);
+        camelContext.addComponent("activemq", jms);
         return camelContext;
-    }
-
-    @Test
-    public void testStreamType() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        // copy the file
-        FileUtil.copyFile(new File("src/test/data/message1.xml"), new File("target/stream/in/message1.xml"));
-
-        assertMockEndpointsSatisfied();
-
-        StreamMessageInputStream is = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody(StreamMessageInputStream.class);
-        assertNotNull(is);
-
-        // no more bytes should be available on the inputstream
-        assertEquals(0, is.available());
-
-        // assert on the content of input versus output file
-        String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/message1.xml"));
-        String dstContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("target/stream/out/message1.xml"));
-        assertEquals("both the source and destination files should have the same content", srcContent, dstContent);
     }
 
     @Override
@@ -73,11 +59,10 @@ public class JmsStreamMessageTypeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/stream/in").to("jms:queue:foo");
-
-                from("jms:queue:foo").to("file:target/stream/out").to("mock:result");
+                from("direct:start-isoformat").to("activemq:queue:foo");
+                from("direct:start-nonisoformat").to("activemq:queue:foo?formatDateHeadersToIso8601=false");
+                from("activemq:queue:foo").setBody(simple("${in.header.date}"));
             }
         };
     }
-
 }
