@@ -482,8 +482,6 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <excludes>
-                <!-- TODO: until CXF-7520 is resolved and released. -->
-                <exclude>**/*GreeterClientCxfMessageTest.java</exclude>
               </excludes>
             </configuration>
           </plugin>
