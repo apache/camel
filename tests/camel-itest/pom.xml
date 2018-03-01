@@ -32,11 +32,6 @@
   <description>Performs cross component integration tests</description>
 
   <repositories>
-    <repository>
-      <id>maven-restlet</id>
-      <name>Public online Restlet repository</name>
-      <url>http://maven.restlet.org</url>
-    </repository>
 
     <!-- required for validator tests -->
     <repository>
@@ -138,18 +133,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-redis</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-restlet</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <!-- restlet JAXB binding -->
-    <dependency>
-      <groupId>org.restlet.osgi</groupId>
-      <artifactId>org.restlet.ext.jaxb</artifactId>
-      <version>${restlet-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
