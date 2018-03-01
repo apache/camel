@@ -354,6 +354,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertFalse(endpoint.isTransferException());
         assertFalse(endpoint.isTransactedInOut());
         assertFalse(endpoint.isTransferException());
+        assertFalse(endpoint.isFormatDateHeadersToIso8601());
     }
 
     @SuppressWarnings("deprecation")
@@ -491,6 +492,9 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
         endpoint.setJmsMessageType(JmsMessageType.Text);
         assertEquals(JmsMessageType.Text, endpoint.getJmsMessageType());
+
+        endpoint.setFormatDateHeadersToIso8601(true);
+        assertTrue(endpoint.isFormatDateHeadersToIso8601());
     }
 
     protected void assertCacheLevel(JmsEndpoint endpoint, int expected) throws Exception {
