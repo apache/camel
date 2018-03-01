@@ -650,7 +650,7 @@
     <spring-batch-bundle-version>3.0.8.RELEASE_1</spring-batch-bundle-version>
     <spring-boot-version>1.5.7.RELEASE</spring-boot-version>
     <spring-boot1-version>1.5.7.RELEASE</spring-boot1-version>
-    <spring-boot2-version>2.0.0.M7</spring-boot2-version>
+    <spring-boot2-version>2.0.0.RELEASE</spring-boot2-version>
     <!-- use same version of spring-cloud 1.2.x -->
     <spring-cloud-commons-version>1.2.3.RELEASE</spring-cloud-commons-version>
     <spring-cloud-netflix-version>1.3.4.RELEASE</spring-cloud-netflix-version>
