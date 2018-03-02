@@ -3,7 +3,6 @@
 ifdef::env-github[]
 *Available as of Camel version 1.0.0*
 
-:icon-smile: :smiley:
 :caution-caption: :boom:
 :important-caption: :exclamation:
 :note-caption: :information_source:
@@ -13,7 +12,6 @@ endif::[]
 
 ifndef::env-github[]
 :icons: font
-:icon-smile: icon:smile-o[fw,role=yellow]
 endif::[]
 
 
@@ -108,7 +106,7 @@ some caching in the JMS provider to avoid
 http://activemq.apache.org/jmstemplate-gotchas.html[poor performance].
 
 If you intend to use http://activemq.apache.org/[Apache ActiveMQ] as
-your Message Broker - which is a good choice as ActiveMQ rocks {icon-smile},
+your Message Broker - which is a good choice as ActiveMQ rocks,
 then we recommend that you either:
 
 * Use the ActiveMQ component, which is already

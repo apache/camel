@@ -99,7 +99,7 @@ template.sendBody("direct://code", "This is a testmessage!");
 
 You should find inside the 'barcode_out' folder this image:
 
-image:barcode-data-format.data/qr-code.png[image]
+image:qr-code.png[image]
 
 #### Unmarshalling
 
