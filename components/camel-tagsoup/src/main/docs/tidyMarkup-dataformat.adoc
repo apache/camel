@@ -15,8 +15,7 @@ data format to tidy up the wiki html pages that are used as base for
 rendering the pdf manuals. And then the mysterious symbols vanished.
 
 TidyMarkup only supports the *unmarshal* operation
-as we really don't want to turn well formed HTML into ugly HTML
-image:https://cwiki.apache.org/confluence/s/en_GB/5982/f2b47fb3d636c8bc9fd0b11c0ec6d0ae18646be7.1/_/images/icons/emoticons/smile.png[(smile)]
+as we really don't want to turn well formed HTML into ugly HTML.
 
 ### TidyMarkup Options
 
