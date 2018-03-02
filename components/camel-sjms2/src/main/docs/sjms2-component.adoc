@@ -28,7 +28,7 @@ Transactions only)
 *Why the S in SJMS*
 
 S stands for Simple and Standard and Springless. Also camel-jms was
-already taken. {icon-smile}
+already taken.
 ====
 
 Maven users will need to add the following dependency to their `pom.xml`
