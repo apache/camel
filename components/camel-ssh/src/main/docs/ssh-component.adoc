@@ -121,7 +121,7 @@ will send the message body as the command to execute on the remote SSH
 server.
 
 Here is an example of this within the XML DSL. Note that the command has
-an XML encoded newline (`&#10;`).
+an XML encoded newline (`+&#10;+`).
 
 [source,xml]
 ----------------------------------------------
