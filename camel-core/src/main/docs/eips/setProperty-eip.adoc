@@ -41,6 +41,7 @@ And the same example using XML:
         <setProperty propertyName="myProperty">
             <constant>test</constant>
         </setProperty>
+        <to uri="direct:b"/>
     </route>
 </camelContext>
 ----
