@@ -159,7 +159,7 @@ public class LambdaProducerTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
 
-        AWSLambdaClient clientMock = new AmazonLambdaClientMock();
+        AmazonLambdaClientMock clientMock = new AmazonLambdaClientMock();
 
         registry.bind("awsLambdaClient", clientMock);
 
