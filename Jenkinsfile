@@ -17,7 +17,7 @@
  * under the License.
  */
 
-def MAVEN_PARAMS = '-B -e -fae -V -Dmaven.repo.local=/home/jenkins/jenkins-slave/maven-repositories/0'
+def MAVEN_PARAMS = '-U -B -e -fae -V -Dmaven.repo.local=/home/jenkins/jenkins-slave/maven-repositories/0 -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2'
 
 pipeline {
 
