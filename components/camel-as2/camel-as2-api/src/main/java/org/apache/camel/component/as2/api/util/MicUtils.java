@@ -1,3 +1,29 @@
+/*
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
 package org.apache.camel.component.as2.api.util;
 
 import java.security.MessageDigest;
@@ -60,22 +86,24 @@ public class MicUtils {
     
     public static ReceivedContentMic createReceivedContentMic(HttpEntityEnclosingRequest request) throws HttpException {
         
-        String contentTypeString = HttpMessageUtils.getHeaderValue(request, AS2Header.CONTENT_TYPE);
-        if(contentTypeString == null) {
-            throw new HttpException("content type missing from request");
-        }
-        ContentType contentType = ContentType.parse(contentTypeString);
-
         String dispositionNotificationOptionsString =  HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS);
         if (dispositionNotificationOptionsString == null) {
-            throw new HttpException("disposition notification options missing from request ");
+            LOG.debug("can not create MIC: disposition notification options missing from request");
+            return null;
         }
         DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser.parseDispositionNotificationOptions(dispositionNotificationOptionsString, null);
-        String micAlgorithm = getMicJdkAlgorithmName(dispositionNotificationOptions.getMicAlgorithms());
+        String micAlgorithm = getMicJdkAlgorithmName(dispositionNotificationOptions.getSignedReceiptMicalg().getValues());
         if (micAlgorithm == null) {
-            throw new HttpException("no matching MIC algorithms found");
+            LOG.debug("can not create MIC: no matching MIC algorithms found");
+            return null;
         }
 
+        String contentTypeString = HttpMessageUtils.getHeaderValue(request, AS2Header.CONTENT_TYPE);
+        if(contentTypeString == null) {
+            LOG.debug("can not create MIC: content type missing from request");
+            return null;
+        }
+        ContentType contentType = ContentType.parse(contentTypeString);
         
         HttpEntity entity = null;
         switch(contentType.getMimeType().toLowerCase()) {
@@ -93,7 +121,8 @@ public class MicUtils {
             break;
         }
          default:
-             throw new HttpException("invalid content type '" + contentType.getMimeType() + "' for message integrity check");
+             LOG.debug("can not create MIC: invalid content type '" + contentType.getMimeType() + "' for message integrity check");
+             return null;
         }
         
         byte[] content = EntityUtils.getContent(entity);
@@ -107,6 +136,9 @@ public class MicUtils {
     }
     
     private static String getMicJdkAlgorithmName(String[] micAs2AlgorithmNames) {
+        if (micAs2AlgorithmNames == null) {
+            return null;
+        }
         for(String micAs2AlgorithmName : micAs2AlgorithmNames) {
             String micAlgorithmName = AS2MicAlgorithm.getJdkAlgorithmName(micAs2AlgorithmName);
             if (micAlgorithmName != null) {

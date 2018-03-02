@@ -22,9 +22,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Processor;
+import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.api.AS2ServerManager;
 import org.apache.camel.component.as2.api.entity.EntityParser;
+import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.util.component.AbstractApiConsumer;
 import org.apache.camel.util.component.ApiConsumerHelper;
@@ -106,5 +108,12 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
             log.info("Received exception consuming AS2 message: ", e);
         }
         
+    }
+    
+    protected void processMDNRequest(HttpRequest request, HttpResponse response, HttpContext context) {
+        String dispositionNotificationTo = HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_TO);
+        if (dispositionNotificationTo != null) {
+            
+        }
     }
 }

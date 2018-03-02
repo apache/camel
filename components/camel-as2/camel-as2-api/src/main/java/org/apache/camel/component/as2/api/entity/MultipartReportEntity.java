@@ -65,17 +65,22 @@ public class MultipartReportEntity extends MultipartMimeEntity {
 
         CharArrayBuffer charBuffer = new CharArrayBuffer(10);
 
-       String originalMessageId  = HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID);
+        String originalMessageId  = HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID);
+        String sentDate = HttpMessageUtils.getHeaderValue(request, AS2Header.DATE);
+        String subject = HttpMessageUtils.getHeaderValue(request, AS2Header.SUBJECT);
         
         String receivedFrom = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_FROM);
         String sentTo = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_TO);
-        String date = HttpMessageUtils.getHeaderValue(response, AS2Header.DATE);
+        
+        String receivedDate = HttpMessageUtils.getHeaderValue(response, AS2Header.DATE);
         
         charBuffer.append("MDN for -\n");
         charBuffer.append(" Message ID: " + originalMessageId + "\n");
+        charBuffer.append("  Subject: " + (subject == null ? "" : subject) + "\n");
+        charBuffer.append("  Date: " + (sentDate == null ? "" : sentDate) + "\n");
         charBuffer.append("  From: " + receivedFrom + "\n");
         charBuffer.append("  To: " + sentTo + "\n");
-        charBuffer.append("  Received on: " + date + "\n");
+        charBuffer.append("  Received on: " + receivedDate + "\n");
         charBuffer.append(" Status: " + dispositionType + "\n");
 
         return new TextPlainEntity(charBuffer.toString(), AS2CharSet.US_ASCII, AS2TransferEncoding._7BIT, false);
