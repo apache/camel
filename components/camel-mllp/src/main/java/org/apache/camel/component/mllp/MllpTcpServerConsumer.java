@@ -230,6 +230,11 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         }
         try {
             createUoW(exchange);
+
+            if (exchange.hasProperties() || exchange.getProperty(MllpConstants.MLLP_AUTO_ACKNOWLEDGE) == null) {
+                exchange.setProperty(MllpConstants.MLLP_AUTO_ACKNOWLEDGE, getConfiguration().isAutoAck());
+            }
+
             Message message = exchange.getIn();
 
             if (consumerRunnable.hasLocalAddress()) {
@@ -238,10 +243,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
             if (consumerRunnable.hasRemoteAddress()) {
                 message.setHeader(MllpConstants.MLLP_REMOTE_ADDRESS, consumerRunnable.getRemoteAddress());
-            }
-
-            if (message.hasHeaders() && message.getHeader(MllpConstants.MLLP_AUTO_ACKNOWLEDGE) == null) {
-                message.setHeader(MllpConstants.MLLP_AUTO_ACKNOWLEDGE, getConfiguration().isAutoAck());
             }
 
             if (getConfiguration().isValidatePayload()) {
@@ -399,24 +400,29 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             if (!autoAck) {
                 Object acknowledgementBytesProperty = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT);
                 Object acknowledgementStringProperty = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING);
-                if (acknowledgementBytesProperty == null && acknowledgementStringProperty == null) {
-                    final String exceptionMessage = "Automatic Acknowledgement is disabled and the "
-                        + MllpConstants.MLLP_ACKNOWLEDGEMENT + " and " + MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING + " exchange properties are null";
-                    exchange.setException(new MllpInvalidAcknowledgementException(exceptionMessage, originalHl7MessageBytes, acknowledgementMessageBytes));
-                } else {
-                    final String exceptionMessage = "Automatic Acknowledgement is disabled and neither the "
-                        + MllpConstants.MLLP_ACKNOWLEDGEMENT + "(type = " + acknowledgementBytesProperty.getClass().getSimpleName() + ") nor  the"
+                final String exceptionMessage = (acknowledgementBytesProperty == null && acknowledgementStringProperty == null)
+                    ? "Automatic Acknowledgement is disabled and the "
+                        + MllpConstants.MLLP_ACKNOWLEDGEMENT + " and " + MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING + " exchange properties are null"
+                    : "Automatic Acknowledgement is disabled and neither the "
+                        + MllpConstants.MLLP_ACKNOWLEDGEMENT + "(type = " + acknowledgementBytesProperty.getClass().getSimpleName() + ") nor the"
                         + MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING + "(type = " + acknowledgementBytesProperty.getClass().getSimpleName() + ") exchange properties can be converted to byte[]";
-                    exchange.setException(new MllpInvalidAcknowledgementException(exceptionMessage, originalHl7MessageBytes, acknowledgementMessageBytes));
-                }
+                MllpInvalidAcknowledgementException invalidAckEx = new MllpInvalidAcknowledgementException(exceptionMessage, originalHl7MessageBytes, acknowledgementMessageBytes);
+                exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION, invalidAckEx);
+                handleException(invalidAckEx);
             } else {
                 String acknowledgmentTypeProperty = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, String.class);
+                String msa3 = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_MSA_TEXT, String.class);
+                Exception exchangeEx = exchange.getException();
+
                 try {
                     if (null == acknowledgmentTypeProperty) {
-                        if (null == exchange.getException()) {
+                        if (null == exchangeEx) {
                             acknowledgementMessageType = "AA";
                         } else {
                             acknowledgementMessageType = "AE";
+                            if (msa3 == null || msa3.isEmpty()) {
+                                msa3 = exchangeEx.getClass().getName();
+                            }
                         }
                     } else {
                         switch (acknowledgmentTypeProperty) {
@@ -425,9 +431,15 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                             break;
                         case "AE":
                             acknowledgementMessageType = "AE";
+                            if (exchangeEx != null && msa3 != null && msa3.isEmpty()) {
+                                msa3 = exchangeEx.getClass().getName();
+                            }
                             break;
                         case "AR":
                             acknowledgementMessageType = "AR";
+                            if (exchangeEx != null && msa3 != null && msa3.isEmpty()) {
+                                msa3 = exchangeEx.getClass().getName();
+                            }
                             break;
                         default:
                             exchange.setException(new Hl7AcknowledgementGenerationException("Unsupported acknowledgment type: " + acknowledgmentTypeProperty));
@@ -435,11 +447,11 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         }
                     }
 
-                    Hl7Util.generateAcknowledgementPayload(consumerRunnable.getMllpBuffer(), originalHl7MessageBytes, acknowledgementMessageType);
+                    Hl7Util.generateAcknowledgementPayload(consumerRunnable.getMllpBuffer(), originalHl7MessageBytes, acknowledgementMessageType, msa3);
 
-                } catch (Hl7AcknowledgementGenerationException ackGenerationException) {
+                } catch (MllpAcknowledgementGenerationException ackGenerationException) {
                     exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION, ackGenerationException);
-                    exchange.setException(ackGenerationException);
+                    handleException(ackGenerationException);
                 }
             }
         } else {

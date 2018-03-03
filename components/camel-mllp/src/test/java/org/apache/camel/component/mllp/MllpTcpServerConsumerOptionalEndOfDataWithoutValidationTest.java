@@ -47,8 +47,6 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithoutValidationTest extends
 
     @Override
     public void testNthInvalidMessage() throws Exception {
-        expectedFailedCount = 1;
-
         runNthInvalidMessage();
     }
 
