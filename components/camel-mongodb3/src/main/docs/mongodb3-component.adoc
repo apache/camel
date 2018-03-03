@@ -574,9 +574,9 @@ containing the number of records deleted (copied from
 ===== aggregate
 
 Perform a aggregation with the given pipeline contained in the
-body. *Aggregations could be long and heavy operations. Use with care.*
+body.
+*Aggregations could be long and heavy operations. Use with care.*
 
- 
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -590,14 +590,17 @@ from("direct:aggregate")
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-Efficient retrieval is supported via outputType=MongoIterable and the following header :
+Supports the following IN message headers:
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
 |Header key |Quick constant |Description (extracted from MongoDB API doc) |Expected type
 
 |`CamelMongoDbBatchSize` |`MongoDbConstants.BATCH_SIZE` | Sets the number of documents to return per batch. |int/Integer
+|`CamelMongoDbAllowDiskUse` |`MongoDbConstants.ALLOW_DISK_USE` | Enable aggregation pipeline stages to write data to temporary files. |boolean/Boolean
 |=======================================================================
+
+Efficient retrieval is supported via outputType=MongoIterable.
 
 You can also "stream" the documents returned from the server into your route by including outputType=DBCursor (Camel 2.21+) as an endpoint option
 which may prove simpler than setting the above headers. This hands your Exchange the DBCursor from the Mongo driver, just as if you were executing
