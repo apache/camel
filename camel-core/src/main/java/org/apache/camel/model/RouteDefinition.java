@@ -278,6 +278,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             throw new IllegalArgumentException("You can not advice with error handlers. Remove the error handlers from the route builder.");
         }
 
+        String beforeAsXml = ModelHelper.dumpModelAsXml(camelContext, this);
+
         // stop and remove this existing route
         camelContext.removeRouteDefinition(this);
 
@@ -297,6 +299,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
         // log the merged route at info level to make it easier to end users to spot any mistakes they may have made
         log.info("AdviceWith route after: {}", merged);
+
+        String afterAsXml = ModelHelper.dumpModelAsXml(camelContext, merged);
+        log.info("Adviced route before/after as XML:\n{}\n{}", beforeAsXml, afterAsXml);
 
         // If the camel context is started then we start the route
         if (camelContext instanceof StatefulService) {
