@@ -19,14 +19,17 @@ package org.apache.camel.component.mllp.internal;
 
 import java.io.ByteArrayOutputStream;
 
+import org.apache.camel.component.mllp.MllpAcknowledgementGenerationException;
 import org.apache.camel.component.mllp.MllpProtocolConstants;
 
-import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
 import org.apache.camel.test.stub.camel.MllpEndpointStub;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class Hl7UtilTest {
@@ -48,11 +51,17 @@ public class Hl7UtilTest {
             + "565-33-2222|||||^^^^^USA|||UNKNOWN|||||||||||||||||||||||||||||" + '\r'
             + "UB2||||||||" + '\r';
 
-    static final String EXPTECTED_ACKNOWLEDGEMENT_PAYLOAD =
+    static final String EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START = MllpProtocolConstants.START_OF_BLOCK + "MSH|^~\\&|JCAPS|CC|ADT|EPIC|";
+
+    static final String EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END = "||ACK^A08|00001A|D|2.3^^|||||||\r"
+        + "MSA|AA|00001\r"
+        + MllpProtocolConstants.END_OF_BLOCK + MllpProtocolConstants.END_OF_DATA;
+
+    static final String EXPECTED_ACKNOWLEDGEMENT_PAYLOAD =
         MllpProtocolConstants.START_OF_BLOCK
-            + "MSH|^~\\&|JCAPS|CC|ADT|EPIC|20161206193919|RISTECH|ACK^A08|00001|D|2.3^^|||||||\r"
-            + "MSA|AA|00001\r"
-            + MllpProtocolConstants.END_OF_BLOCK + MllpProtocolConstants.END_OF_DATA;
+        + "MSH|^~\\&|JCAPS|CC|ADT|EPIC|20161206193919||ACK^A08|00001A|D|2.3^^|||||||\r"
+        + "MSA|AA|00001\r"
+        + MllpProtocolConstants.END_OF_BLOCK + MllpProtocolConstants.END_OF_DATA;
 
     static final String EXPECTED_MESSAGE =
         "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20161206193919|RISTECH|ADT^A08|00001|D|2.3^^|||||||" + "<0x0D CR>"
@@ -179,7 +188,10 @@ public class Hl7UtilTest {
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
         Hl7Util.generateAcknowledgementPayload(mllpSocketBuffer, TEST_MESSAGE.getBytes(), "AA");
 
-        assertEquals(EXPTECTED_ACKNOWLEDGEMENT_PAYLOAD, mllpSocketBuffer.toString());
+        String actual = mllpSocketBuffer.toString();
+
+        assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START));
+        assertThat(actual, endsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END));
     }
 
     /**
@@ -187,12 +199,12 @@ public class Hl7UtilTest {
      *
      * @throws Exception in the event of a test error.
      */
-    @Test(expected = Hl7AcknowledgementGenerationException.class)
+    @Test(expected = MllpAcknowledgementGenerationException.class)
     public void testGenerateAcknowledgementPayloadFromNullMessage() throws Exception {
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
         Hl7Util.generateAcknowledgementPayload(mllpSocketBuffer, null, "AA");
 
-        assertEquals(EXPTECTED_ACKNOWLEDGEMENT_PAYLOAD, mllpSocketBuffer.toString());
+        assertEquals(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD, mllpSocketBuffer.toString());
     }
 
     /**
@@ -200,12 +212,12 @@ public class Hl7UtilTest {
      *
      * @throws Exception in the event of a test error.
      */
-    @Test(expected = Hl7AcknowledgementGenerationException.class)
+    @Test(expected = MllpAcknowledgementGenerationException.class)
     public void testGenerateAcknowledgementPayloadFromEmptyMessage() throws Exception {
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
         Hl7Util.generateAcknowledgementPayload(mllpSocketBuffer, new byte[0], "AA");
 
-        assertEquals(EXPTECTED_ACKNOWLEDGEMENT_PAYLOAD, mllpSocketBuffer.toString());
+        assertEquals(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD, mllpSocketBuffer.toString());
     }
 
     /**
@@ -213,12 +225,12 @@ public class Hl7UtilTest {
      *
      * @throws Exception in the event of a test error.
      */
-    @Test
+    @Test(expected = MllpAcknowledgementGenerationException.class)
     public void testGenerateAcknowledgementPayloadWithoutEnoughFields() throws Exception {
-        MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
-        Hl7Util.generateAcknowledgementPayload(mllpSocketBuffer, TEST_MESSAGE.replaceFirst("|RISTECH|ADT^A08|00001|D|2.3^^|||||||", "").getBytes(), "AA");
+        final byte[] testMessage = TEST_MESSAGE.replace("|RISTECH|ADT^A08|00001|D|2.3^^|||||||", "").getBytes();
 
-        assertEquals(EXPTECTED_ACKNOWLEDGEMENT_PAYLOAD, mllpSocketBuffer.toString());
+        MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
+        Hl7Util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage, "AA");
     }
 
     /**
@@ -231,17 +243,15 @@ public class Hl7UtilTest {
         String junkMessage = "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20161206193919|RISTECH|ADT^A08|00001|D|2.3^^|||||||"
             + "EVN|A08|20150107161440||REG_UPDATE_SEND_VISIT_MESSAGES_ON_PATIENT_CHANGES|RISTECH^RADIOLOGY^TECHNOLOGIST^^^^^^UCLA^^^^^RRMC||";
 
-        String junkAcknowledgement =
-            MllpProtocolConstants.START_OF_BLOCK
-                + "MSH|^~\\&|JCAPS|CC|ADT|EPIC|20161206193919|RISTECH|ACK^A08|00001|D|2.3^^|||||||"
-                + "EVN|A08|20150107161440||REG_UPDATE_SEND_VISIT_MESSAGES_ON_PATIENT_CHANGES|RISTECH^RADIOLOGY^TECHNOLOGIST^^^^^^UCLA^^^^^RRMC|\r"
-                + "MSA|AA|00001\r"
-                + MllpProtocolConstants.END_OF_BLOCK + MllpProtocolConstants.END_OF_DATA;
-
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
         Hl7Util.generateAcknowledgementPayload(mllpSocketBuffer, junkMessage.getBytes(), "AA");
 
-        assertEquals(junkAcknowledgement, mllpSocketBuffer.toString());
+        String actual = mllpSocketBuffer.toString();
+
+        assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START));
+        assertThat(actual, endsWith("|EVN|A08|20150107161440||REG_UPDATE_SEND_VISIT_MESSAGES_ON_PATIENT_CHANGES|RISTECH^RADIOLOGY^TECHNOLOGIST^^^^^^UCLA^^^^^RRMC|\r"
+                                    + "MSA|AA|00001\r"
+                                    + MllpProtocolConstants.END_OF_BLOCK + MllpProtocolConstants.END_OF_DATA));
     }
 
     /**

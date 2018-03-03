@@ -37,15 +37,11 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithoutValidationTest extends
 
     @Override
     public void testInvalidMessage() throws Exception {
-        expectedFailedCount = 1;
-
         runNthInvalidMessage();
     }
 
     @Override
     public void testNthInvalidMessage() throws Exception {
-        expectedFailedCount = 1;
-
         runNthInvalidMessage();
     }
 
