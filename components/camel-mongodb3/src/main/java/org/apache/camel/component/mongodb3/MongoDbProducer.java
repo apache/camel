@@ -47,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb3.MongoDbConstants.ALLOW_DISK_USE;
 import static org.apache.camel.component.mongodb3.MongoDbConstants.BATCH_SIZE;
 import static org.apache.camel.component.mongodb3.MongoDbConstants.COLLECTION;
 import static org.apache.camel.component.mongodb3.MongoDbConstants.COLLECTION_INDEX;
@@ -530,8 +531,11 @@ public class MongoDbProducer extends DefaultProducer {
                 if (batchSize != null) {
                     aggregationResult.batchSize(batchSize);
                 }
-                
-                Iterable<Document> result;                
+
+                Boolean allowDiskUse  = exchange.getIn().getHeader(MongoDbConstants.ALLOW_DISK_USE, Boolean.FALSE, Boolean.class);
+                aggregationResult.allowDiskUse(allowDiskUse);
+
+                Iterable<Document> result;
                 if (!MongoDbOutputType.MongoIterable.equals(endpoint.getOutputType())) {
                     try {
                         result = new ArrayList<>();
