@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 import org.apache.camel.Exchange;
@@ -33,10 +34,13 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -84,6 +88,20 @@ public class SqsProducerTest {
         when(inMessage.getBody(String.class)).thenReturn(SAMPLE_MESSAGE_BODY);
         when(sqsEndpoint.getQueueUrl()).thenReturn(QUEUE_URL);
         when(sqsEndpoint.getHeaderFilterStrategy()).thenReturn(headerFilterStrategy);
+    }
+
+    @Test
+    public void translateAttributes() {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("key1", null);
+        headers.put("key2", "");
+        headers.put("key3", "value3");
+
+        Map<String, MessageAttributeValue> translateAttributes = underTest.translateAttributes(headers, exchange);
+
+        assertThat(translateAttributes.size(), is(1));
+        assertThat(translateAttributes.get("key3").getDataType(), is("String"));
+        assertThat(translateAttributes.get("key3").getStringValue(), is("value3"));
     }
 
     @Test
