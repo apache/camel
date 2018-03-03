@@ -510,7 +510,10 @@ public class MongoDbProducer extends DefaultProducer {
                 if (batchSize != null) {
                     aggregationResult.batchSize(batchSize);
                 }
-                
+
+                Boolean allowDiskUse  = exchange.getIn().getHeader(MongoDbConstants.ALLOW_DISK_USE, Boolean.FALSE, Boolean.class);
+                aggregationResult.allowDiskUse(allowDiskUse);
+
                 Iterable<BasicDBObject> result;
                 if (!MongoDbOutputType.DBCursor.equals(endpoint.getOutputType())) {
                     try {

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.mongodb3;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.mongodb.client.MongoIterable;
 
@@ -76,14 +78,18 @@ public class MongoDbAggregateOperationTest extends AbstractMongoDbTest {
     }
 
     @Test
-    public void testAggregateDBCursorBatchSize() {
+    public void testAggregateWithOptions() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.count());
         pumpDataIntoTestCollection();
 
+        Map<String, Object> options = new HashMap<>();
+        options.put(MongoDbConstants.BATCH_SIZE, 10);
+        options.put(MongoDbConstants.ALLOW_DISK_USE, true);
+
         Object result = template
-                .requestBodyAndHeader("direct:aggregateDBCursor",
-                        "[{ $match : {$or : [{\"scientist\" : \"Darwin\"},{\"scientist\" : \"Einstein\"}]}}]", MongoDbConstants.BATCH_SIZE, 10);
+                .requestBodyAndHeaders("direct:aggregateDBCursor",
+                        "[{ $match : {$or : [{\"scientist\" : \"Darwin\"},{\"scientist\" : \"Einstein\"}]}}]", options);
 
         assertTrue("Result is not of type DBCursor", result instanceof MongoIterable);
 
