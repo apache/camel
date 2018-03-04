@@ -59,7 +59,7 @@ public class MongoDbBulkWriteOperationTest extends AbstractMongoDbTest {
         // 1 updateOne + 100 updateMany + 1 replaceOne
         assertEquals("Records matched should be 102 : ", 102, result.getMatchedCount());
         assertEquals("Records modified should be 102 : ", 102, result.getModifiedCount());
-        // 1 updateOne + 100 updateMany
+        // 1 deleteOne + 100 deleteMany
         assertEquals("Records deleted should be 101 : ", 101, result.getDeletedCount());
     }
 
