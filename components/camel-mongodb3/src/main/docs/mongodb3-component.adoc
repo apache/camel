@@ -576,7 +576,7 @@ containing the number of records deleted (copied from
 *Available as of Camel 2.21*
 
 Performs write operations in bulk with controls for order of execution.
-Requires a `List<WriteModel<DBObject>>` as the IN message body containing commands for insert, update, and delete operations.
+Requires a `List<WriteModel<Document>>` as the IN message body containing commands for insert, update, and delete operations.
 
 The following example will insert a new scientist "Pierre Curie", update record with id "5" by setting the value of the "scientist" field to
 "Marie Curie" and delete record with id "3" :
