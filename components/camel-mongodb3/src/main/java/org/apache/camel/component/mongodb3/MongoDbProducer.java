@@ -24,13 +24,16 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.DistinctIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.BulkWriteOptions;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.WriteModel;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 
@@ -78,6 +81,7 @@ public class MongoDbProducer extends DefaultProducer {
 
     {
         bind(MongoDbOperation.aggregate, createDoAggregate());
+        bind(MongoDbOperation.bulkWrite, createDoBulkWrite());
         bind(MongoDbOperation.command, createDoCommand());
         bind(MongoDbOperation.count, createDoCount());
         bind(MongoDbOperation.findDistinct, createDoDistinct());
@@ -609,6 +613,26 @@ public class MongoDbProducer extends DefaultProducer {
                 return result;
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Body incorrect type for save", e);
+            }
+        };
+    }
+    
+    private Function<Exchange, Object> createDoBulkWrite() {
+        return exchange -> {
+            try {
+                MongoCollection<Document> dbCol = calculateCollection(exchange);
+
+                Boolean ordered = exchange.getIn().getHeader(MongoDbConstants.BULK_ORDERED, Boolean.TRUE, Boolean.class);
+                BulkWriteOptions options = new BulkWriteOptions().ordered(ordered);
+
+                @SuppressWarnings("unchecked")
+                List<WriteModel<Document>> requests = (List<WriteModel<Document>>) exchange.getIn().getMandatoryBody((Class<List<WriteModel<Document>>>)Class.class.cast(List.class));
+
+                BulkWriteResult result = dbCol.bulkWrite(requests, options);
+                return result;
+
+            } catch (InvalidPayloadException e) {
+                throw new CamelMongoDbException("Invalid payload for bulk write", e);
             }
         };
     }
