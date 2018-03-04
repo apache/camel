@@ -569,6 +569,42 @@ A header with key `CamelMongoDbRecordsAffected` is returned
 containing the number of records deleted (copied from
 `WriteResult.getN()`).
 
+==== Bulk Write Operations
+
+===== bulkWrite
+
+*Available as of Camel 2.21*
+
+Performs write operations in bulk with controls for order of execution.
+Requires a `List<WriteModel<Document>>` as the IN message body containing commands for insert, update, and delete operations.
+
+The following example will insert a new scientist "Pierre Curie", update record with id "5" by setting the value of the "scientist" field to
+"Marie Curie" and delete record with id "3" :
+
+[source,java]
+------------------------------------------------------------------------------------------------------------------
+// route: from("direct:bulkWrite").to("mongodb:myDb?database=science&collection=notableScientists&operation=bulkWrite");
+List<WriteModel<Document>> bulkOperations = Arrays.asList(
+            new InsertOneModel<>(new Document("scientist", "Pierre Curie")),
+            new UpdateOneModel<>(new Document("_id", "5"), 
+                                 new Document("$set", new Document("scientist", "Marie Curie"))),
+            new DeleteOneModel<>(new Document("_id", "3")));
+
+BulkWriteResult result = template.requestBody("direct:bulkWrite", bulkOperations, BulkWriteResult.class);
+------------------------------------------------------------------------------------------------------------------
+
+By default, operations are executed in order and interrupted on the first write error without processing any remaining write operations in the list.
+To instruct MongoDB to continue to process remaining write operations in the list, set the `CamelMongoDbBulkOrdered` IN message header to `false`. 
+Unordered operations are executed in parallel and this behavior is not guaranteed.
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|=======================================================================
+|Header key |Quick constant |Description (extracted from MongoDB API doc) |Expected type
+
+|`CamelMongoDbBulkOrdered` |`MongoDbConstants.BULK_ORDERED` | Perform an ordered or unordered operation execution. Defaults to true. |boolean/Boolean
+|=======================================================================
+
+
 ==== Other operations
 
 ===== aggregate
