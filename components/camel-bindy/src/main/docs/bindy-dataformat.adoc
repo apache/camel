@@ -24,13 +24,13 @@ For the BigDecimal numbers, you can also define the precision and the
 decimal or grouping separators.
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
+|===
 |Type |Format Type |Pattern example |Link
 
 |Date |DateFormat |`dd-MM-yyyy` |http://java.sun.com/j2se/1.5.0/docs/api/java/text/SimpleDateFormat.html[http://java.sun.com/j2se/1.5.0/docs/api/java/text/SimpleDateFormat.html]
 
 |Decimal* |Decimalformat |`##.###.###` |http://java.sun.com/j2se/1.5.0/docs/api/java/text/DecimalFormat.html[http://java.sun.com/j2se/1.5.0/docs/api/java/text/DecimalFormat.html]
-|=======================================================================
+|===
 
 Decimal* = Double, Integer, Float, Short, Long
 
@@ -53,7 +53,7 @@ From *Camel 2.16* onwards this is no longer the case, as you can safely
 have multiple models in the same package, as you configure bindy using
 class names instead of package names now.
 
-### Options
+=== Options
 
 // dataformat options: START
 The Bindy dataformat supports 5 options which are listed below.
@@ -73,7 +73,7 @@ The Bindy dataformat supports 5 options which are listed below.
 
 
 
-### Annotations
+=== Annotations
 
 The annotations created allow to map different concept of your model to
 the POJO like :
@@ -91,21 +91,21 @@ financial messages),
 
 This section will describe them :
 
-### 1. CsvRecord
+=== 1. CsvRecord
 
 The CsvRecord annotation is used to identified the root class of the
 model. It represents a record = a line of a CSV file and can be linked
 to several children model classes.
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Annotation name |Record type |Level
 
 |*CsvRecord* |csv |Class
-|=======================================================================
+|===
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Parameter name |type |Info
 
 |separator |string |mandatory - can be ',' or ';' or 'anything'. This value is interpreted
@@ -143,22 +143,24 @@ must be quoted when marshaling when CSV is generated.
 should end with a line break.
 
 |
-|=======================================================================
+|===
 
 *case 1 : separator = ','*
 
 The separator used to segregate the fields in the CSV record is ',' :
 
+----
 10, J, Pauline, M, XD12345678, Fortis Dynamic 15/15, 2500,
 USD,08-01-2009
+----
 
 [source,java]
------------------------------
+----
 @CsvRecord( separator = "," )
 public Class Order {
-...
+
 }
------------------------------
+----
 
 *case 2 : separator = ';'*
 
@@ -168,30 +170,33 @@ Compare to the previous case, the separator here is ';' instead of ',' :
 08-01-2009
 
 [source,java]
------------------------------
+----
 @CsvRecord( separator = ";" )
 public Class Order {
-...
+
 }
------------------------------
+----
 
 *case 3 : separator = '|'*
 
 Compare to the previous case, the separator here is '|' instead of ';' :
 
+----
 10| J| Pauline| M| XD12345678| Fortis Dynamic 15/15| 2500| USD|
 08-01-2009
+----
 
 [source,java]
--------------------------------
+----
 @CsvRecord( separator = "\\|" )
 public Class Order {
-...
-}
--------------------------------
 
-*case 4 : separator = '\",\"'* +
- *Applies for Camel 2.8.2 or older*
+}
+----
+
+*case 4 : separator = '\",\"'*
+
+*Applies for Camel 2.8.2 or older*
 
 When the field to be parsed of the CSV record contains ',' or ';' which
 is also used as separator, we whould find another strategy +
@@ -202,44 +207,48 @@ NY", "USA"). +
  Remark : In this case, the first and last character of the line which
 are a simple or double quotes will removed by bindy
 
+----
 "10","J","Pauline"," M","XD12345678","Fortis Dynamic 15,15"
 2500","USD","08-01-2009"
+----
 
 [source,java]
----------------------------------
+----
 @CsvRecord( separator = "\",\"" )
 public Class Order {
-...
+
 }
----------------------------------
+----
 
 From *Camel 2.8.3/2.9 or never* bindy will automatic detect if the
 record is enclosed with either single or double quotes and automatic
 remove those quotes when unmarshalling from CSV to Object. Therefore do
 *not* include the quotes in the separator, but simple do as below:
 
+----
 "10","J","Pauline"," M","XD12345678","Fortis Dynamic 15,15"
 2500","USD","08-01-2009"
+----
 
 [source,java]
------------------------------
+----
 @CsvRecord( separator = "," )
 public Class Order {
-...
+
 }
------------------------------
+----
 
 Notice that if you want to marshal from Object to CSV and use quotes,
 then you need to specify which quote character to use, using the `quote`
 attribute on the @CsvRecord as shown below:
 
 [source,java]
--------------------------------------------
+----
 @CsvRecord( separator = ",", quote = "\"" )
 public Class Order {
-...
+
 }
--------------------------------------------
+----
 
 *case 5 : separator & skipfirstline*
 
@@ -253,12 +262,12 @@ To inform bindy that this first line must be skipped during the parsing
 process, then we use the attribute :
 
 [source,java]
--------------------------------------------------
+----
 @CsvRecord(separator = ",", skipFirstLine = true)
 public Class Order {
-...
+
 }
--------------------------------------------------
+----
 
 *case 6 : generateHeaderColumns*
 
@@ -266,20 +275,22 @@ To add at the first line of the CSV generated, the attribute
 generateHeaderColumns must be set to true in the annotation like this :
 
 [source,java]
-------------------------------------------
+----
 @CsvRecord( generateHeaderColumns = true )
 public Class Order {
-...
+
 }
-------------------------------------------
+----
 
 As a result, Bindy during the unmarshaling process will generate CSV
 like this :
 
 order id, client id, first name, last name, isin code, instrument name,
 quantity, currency, date +
- 10, J, Pauline, M, XD12345678, Fortis Dynamic 15/15, 2500,
-USD,08-01-2009
+
+----
+10, J, Pauline, M, XD12345678, Fortis Dynamic 15/15, 2500, USD,08-01-2009
+----
 
 *case 7 : carriage return*
 
@@ -288,12 +299,12 @@ or Unix, than you can change the crlf property like this. Three values
 are available : WINDOWS, UNIX or MAC
 
 [source,java]
----------------------------------------
+----
 @CsvRecord(separator = ",", crlf="MAC")
 public Class Order {
-...
+
 }
----------------------------------------
+----
 
 Additionally, if for some reason you need to add a different line ending
 character, you can opt to specify it using the crlf parameter. In the
@@ -301,12 +312,12 @@ following example, we can end the line with a comma followed by the
 newline character:
 
 [source,java]
----------------------------------------
+----
 @CsvRecord(separator = ",", crlf=",\n")
 public Class Order {
-...
+
 }
----------------------------------------
+----
 
 *case 8 : isOrdered*
 
@@ -317,7 +328,7 @@ indicate this in combination with attribute 'position' of the DataField
 annotation.
 
 [source,java]
--------------------------------------
+----
 @CsvRecord(isOrdered = true)
 public Class Order {
 
@@ -327,32 +338,31 @@ public Class Order {
    @DataField(pos = 2, position = 10)
    private String clientNr;
 
-...
 }
--------------------------------------
+----
 
 Remark : pos is used to parse the file, stream while positions is used
 to generate the CSV
 
-### 2. Link
+=== 2. Link
 
 The link annotation will allow to link objects together.
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Annotation name |Record type |Level
 
 |*Link* |all |Class & Property
-|=======================================================================
+|===
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Parameter name |type |Info
 
 |linkType |LinkType |optional - by default the value is LinkType.oneToOne - so you are not
 obliged to mention it
 
-|=======================================================================
+|===
 
 Only one-to-one relation is allowed.
 
@@ -362,7 +372,7 @@ annotation Link in the Order class like this :
 *Property Link*
 
 [source,java]
----------------------------
+----
 @CsvRecord(separator = ",")
 public class Order {
 
@@ -371,44 +381,43 @@ public class Order {
 
     @Link
     private Client client;
-...
----------------------------
+}
+----
 
 AND for the class Client :
 
 *Class Link*
 
 [source,java]
----------------------
+----
 @Link
 public class Client {
-...
-}
----------------------
 
-### 3. DataField
+}
+----
+
+=== 3. DataField
 
 The DataField annotation defines the property of the field. Each
 datafield is identified by its position in the record, a type (string,
 int, date, ...) and optionally of a pattern
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Annotation name |Record type |Level
 
 |*DataField* |all |Property
-|=======================================================================
+|===
 
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Parameter name |type |Info
 
 |pos |int |mandatory - The *input* position of the field. digit number starting
 from 1 to ... - See the position parameter.
 
 |pattern |string |optional - default value = "" - will be used to format Decimal, Date,
-...
 
 |length |int |optional - represents the length of the field for fixed length format
 
@@ -442,7 +451,7 @@ fixed-length record that defines the fixed length for this field
 Use values 'R' or 'L'
 
 |delimiter |string |*Camel 2.11:* optional - can be used to demarcate the end of a variable-length field within a fixed-length record
-|=======================================================================
+|===
 
 *case 1 : pos*
 
@@ -452,7 +461,7 @@ record
 *Position*
 
 [source,java]
-----------------------------
+----
 @CsvRecord(separator = ",")
 public class Order {
 
@@ -462,9 +471,8 @@ public class Order {
     @DataField(pos = 5)
     private String isinCode;
 
-...
 }
-----------------------------
+----
 
 As you can see in this example the position starts at '1' but continues
 at '5' in the class Order. The numbers from '2' to '4' are defined in
@@ -473,7 +481,7 @@ the class Client (see here after).
 *Position continues in another model class*
 
 [source,java]
------------------------------
+----
 public class Client {
 
     @DataField(pos = 2)
@@ -484,9 +492,8 @@ public class Client {
 
     @DataField(pos = 4)
     private String lastName;
-...
 }
------------------------------
+----
 
 *case 2 : pattern*
 
@@ -495,7 +502,7 @@ The pattern allows to enrich or validates the format of your data
 *Pattern*
 
 [source,java]
-----------------------------------------------------------------------------------------------------------
+----
 @CsvRecord(separator = ",")
 public class Order {
 
@@ -514,11 +521,11 @@ public class Order {
     @DataField(pos = 8)
     private String currency;
 
-    @DataField(pos = 9, pattern = "dd-MM-yyyy") -- pattern used during parsing or when the date is created
+    // pattern used during parsing or when the date is created
+    @DataField(pos = 9, pattern = "dd-MM-yyyy")
     private Date orderDate;
-...
 }
-----------------------------------------------------------------------------------------------------------
+----
 
 *case 3 : precision*
 
@@ -528,7 +535,7 @@ your number
 *Precision*
 
 [source,java]
----------------------------------------------------
+----
 @CsvRecord(separator = ",")
 public class Order {
 
@@ -544,7 +551,7 @@ public class Order {
     @DataField(name = "Name", pos = 6)
     private String instrumentName;
 
-    @DataField(pos = 7, precision = 2) -- precision
+    @DataField(pos = 7, precision = 2)
     private BigDecimal amount;
 
     @DataField(pos = 8)
@@ -552,9 +559,8 @@ public class Order {
 
     @DataField(pos = 9, pattern = "dd-MM-yyyy")
     private Date orderDate;
-...
 }
----------------------------------------------------
+----
 
 *case 4 : Position is different in output*
 
@@ -569,9 +575,7 @@ Here is an example
 *Position is different in output*
 
 [source,java]
-----------------------------------------------------------
-@CsvRecord(separator = ",")
-public class Order {
+----
 @CsvRecord(separator = ",", isOrdered = true)
 public class Order {
 
@@ -594,9 +598,8 @@ public class Order {
 
     @DataField(pos = 6, position = 6)
     private String instrumentNumber;
-...
 }
-----------------------------------------------------------
+----
 
 This attribute of the annotation @DataField must be used in combination
 with attribute isOrdered = true of the annotation @CsvRecord
@@ -609,7 +612,7 @@ true
 *Required*
 
 [source,java]
-----------------------------------------
+----
 @CsvRecord(separator = ",")
 public class Order {
 
@@ -624,9 +627,8 @@ public class Order {
 
     @DataField(pos = 4, required = true)
     private String lastName;
-...
 }
-----------------------------------------
+----
 
 If this field is not present in the record, than an error will be raised
 by the parser with the following information :
@@ -642,7 +644,7 @@ true
 *Trim*
 
 [source,java]
-----------------------------------------
+----
 @CsvRecord(separator = ",")
 public class Order {
 
@@ -657,9 +659,8 @@ public class Order {
 
     @DataField(pos = 4)
     private String lastName;
-...
 }
-----------------------------------------
+----
 
 *case 7 : defaultValue*
 
@@ -669,7 +670,7 @@ defaultValue attribute
 *Default value*
 
 [source,java]
------------------------------------------------
+----
 @CsvRecord(separator = ",")
 public class Order {
 
@@ -684,13 +685,12 @@ public class Order {
 
     @DataField(pos = 4, defaultValue = "Barin")
     private String lastName;
-...
 }
------------------------------------------------
+----
 
 This attribute is only applicable to optional fields.
 
-### 4. FixedLengthRecord
+=== 4. FixedLengthRecord
 
 The FixedLengthRecord annotation is used to identified the root class of
 the model. It represents a record = a line of a file/message containing
@@ -701,14 +701,14 @@ aligned to the right or to the left. +
 field, we can then add 'padd' characters.
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Annotation name |Record type |Level
 
 |*FixedLengthRecord* |fixed |Class
-|=======================================================================
+|===
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Parameter name |type |Info
 
 |crlf |string |optional - possible values = WINDOWS,UNIX,MAC, or custom; default value.
@@ -751,7 +751,7 @@ record
 |ignoreTrailingChars |boolean |*Camel 2.11.1* - optional - Indicates that characters beyond the last
 mapped filed can be ignored when unmarshalling / parsing. This annotation is associated to the root class of the model and must be
 declared one time.
-|=======================================================================
+|===
 
 
 The hasHeader/hasFooter parameters are mutually exclusive with
@@ -763,98 +763,102 @@ primary fixed-length record.
 This simple example shows how to design the model to parse/format a
 fixed message
 
+----
 10A9PaulineMISINXD12345678BUYShare2500.45USD01-08-2009
+----
 
 *Fixed-simple*
 
 [source,java]
----------------------------------------------------------------
-   @FixedLengthRecord(length=54, paddingChar=' ')
-    public static class Order {
+----
+@FixedLengthRecord(length=54, paddingChar=' ')
+public static class Order {
 
-        @DataField(pos = 1, length=2)
-        private int orderNr;
+    @DataField(pos = 1, length=2)
+    private int orderNr;
 
-        @DataField(pos = 3, length=2)
-        private String clientNr;
+    @DataField(pos = 3, length=2)
+    private String clientNr;
 
-        @DataField(pos = 5, length=7)
-        private String firstName;
+    @DataField(pos = 5, length=7)
+    private String firstName;
 
-        @DataField(pos = 12, length=1, align="L")
-        private String lastName;
+    @DataField(pos = 12, length=1, align="L")
+    private String lastName;
 
-        @DataField(pos = 13, length=4)
-        private String instrumentCode;
+    @DataField(pos = 13, length=4)
+    private String instrumentCode;
 
-        @DataField(pos = 17, length=10)
-        private String instrumentNumber;
+    @DataField(pos = 17, length=10)
+    private String instrumentNumber;
 
-        @DataField(pos = 27, length=3)
-        private String orderType;
+    @DataField(pos = 27, length=3)
+    private String orderType;
 
-        @DataField(pos = 30, length=5)
-        private String instrumentType;
+    @DataField(pos = 30, length=5)
+    private String instrumentType;
 
-        @DataField(pos = 35, precision = 2, length=7)
-        private BigDecimal amount;
+    @DataField(pos = 35, precision = 2, length=7)
+    private BigDecimal amount;
 
-        @DataField(pos = 42, length=3)
-        private String currency;
+    @DataField(pos = 42, length=3)
+    private String currency;
 
-        @DataField(pos = 45, length=10, pattern = "dd-MM-yyyy")
-        private Date orderDate;
-        ...
----------------------------------------------------------------
+    @DataField(pos = 45, length=10, pattern = "dd-MM-yyyy")
+    private Date orderDate;
+}
+----
 
 *case 2 : Fixed length record with alignment and padding*
 
 This more elaborated example show how to define the alignment for a
 field and how to assign a padding character which is ' ' here''
 
+----
 10A9 PaulineM ISINXD12345678BUYShare2500.45USD01-08-2009
+----
 
 *Fixed-padding-align*
 
 [source,java]
------------------------------------------------------------------------------------------------
-   @FixedLengthRecord(length=60, paddingChar=' ')
-    public static class Order {
+----
+@FixedLengthRecord(length=60, paddingChar=' ')
+public static class Order {
 
-        @DataField(pos = 1, length=2)
-        private int orderNr;
+    @DataField(pos = 1, length=2)
+    private int orderNr;
 
-        @DataField(pos = 3, length=2)
-        private String clientNr;
+    @DataField(pos = 3, length=2)
+    private String clientNr;
 
-        @DataField(pos = 5, length=9)
-        private String firstName;
+    @DataField(pos = 5, length=9)
+    private String firstName;
 
-        @DataField(pos = 14, length=5, align="L")   // align text to the LEFT zone of the block
-        private String lastName;
+    @DataField(pos = 14, length=5, align="L")   // align text to the LEFT zone of the block
+    private String lastName;
 
-        @DataField(pos = 19, length=4)
-        private String instrumentCode;
+    @DataField(pos = 19, length=4)
+    private String instrumentCode;
 
-        @DataField(pos = 23, length=10)
-        private String instrumentNumber;
+    @DataField(pos = 23, length=10)
+    private String instrumentNumber;
 
-        @DataField(pos = 33, length=3)
-        private String orderType;
+    @DataField(pos = 33, length=3)
+    private String orderType;
 
-        @DataField(pos = 36, length=5)
-        private String instrumentType;
+    @DataField(pos = 36, length=5)
+    private String instrumentType;
 
-        @DataField(pos = 41, precision = 2, length=7)
-        private BigDecimal amount;
+    @DataField(pos = 41, precision = 2, length=7)
+    private BigDecimal amount;
 
-        @DataField(pos = 48, length=3)
-        private String currency;
+    @DataField(pos = 48, length=3)
+    private String currency;
 
-        @DataField(pos = 51, length=10, pattern = "dd-MM-yyyy")
-        private Date orderDate;
-        ...
------------------------------------------------------------------------------------------------
+    @DataField(pos = 51, length=10, pattern = "dd-MM-yyyy")
+    private Date orderDate;
+}
+----
 
 *case 3 : Field padding*
 
@@ -863,49 +867,51 @@ the field as we have a number format where we would like to padd with
 '0' instead of ' '. In this case, you can use in the model the attribute
 paddingField to set this value.
 
+----
 10A9 PaulineM ISINXD12345678BUYShare000002500.45USD01-08-2009
+----
 
 *Fixed-padding-field*
 
 [source,java]
----------------------------------------------------------------------------
-    @FixedLengthRecord(length = 65, paddingChar = ' ')
-    public static class Order {
+----
+@FixedLengthRecord(length = 65, paddingChar = ' ')
+public static class Order {
 
-        @DataField(pos = 1, length = 2)
-        private int orderNr;
+    @DataField(pos = 1, length = 2)
+    private int orderNr;
 
-        @DataField(pos = 3, length = 2)
-        private String clientNr;
+    @DataField(pos = 3, length = 2)
+    private String clientNr;
 
-        @DataField(pos = 5, length = 9)
-        private String firstName;
+    @DataField(pos = 5, length = 9)
+    private String firstName;
 
-        @DataField(pos = 14, length = 5, align = "L")
-        private String lastName;
+    @DataField(pos = 14, length = 5, align = "L")
+    private String lastName;
 
-        @DataField(pos = 19, length = 4)
-        private String instrumentCode;
+    @DataField(pos = 19, length = 4)
+    private String instrumentCode;
 
-        @DataField(pos = 23, length = 10)
-        private String instrumentNumber;
+    @DataField(pos = 23, length = 10)
+    private String instrumentNumber;
 
-        @DataField(pos = 33, length = 3)
-        private String orderType;
+    @DataField(pos = 33, length = 3)
+    private String orderType;
 
-        @DataField(pos = 36, length = 5)
-        private String instrumentType;
+    @DataField(pos = 36, length = 5)
+    private String instrumentType;
 
-        @DataField(pos = 41, precision = 2, length = 12, paddingChar = '0')
-        private BigDecimal amount;
+    @DataField(pos = 41, precision = 2, length = 12, paddingChar = '0')
+    private BigDecimal amount;
 
-        @DataField(pos = 53, length = 3)
-        private String currency;
+    @DataField(pos = 53, length = 3)
+    private String currency;
 
-        @DataField(pos = 56, length = 10, pattern = "dd-MM-yyyy")
-        private Date orderDate;
-        ...
----------------------------------------------------------------------------
+    @DataField(pos = 56, length = 10, pattern = "dd-MM-yyyy")
+    private Date orderDate;
+}
+----
 
 *case 4: Fixed length record with delimiter*
 
@@ -913,48 +919,51 @@ Fixed-length records sometimes have delimited content within the record.
 The firstName and lastName fields are delimited with the '^' character
 in the following example:
 
+----
 10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009
+----
 
 *Fixed-delimited*
 
 [source,java]
---------------------------------------------------------------------------
-    @FixedLengthRecord()
-    public static class Order {
+----
+@FixedLengthRecord()
+public static class Order {
 
-        @DataField(pos = 1, length = 2)
-        private int orderNr;
+    @DataField(pos = 1, length = 2)
+    private int orderNr;
 
-        @DataField(pos = 2, length = 2)
-        private String clientNr;
+    @DataField(pos = 2, length = 2)
+    private String clientNr;
 
-        @DataField(pos = 3, delimiter = "^")
-        private String firstName;
+    @DataField(pos = 3, delimiter = "^")
+    private String firstName;
 
-        @DataField(pos = 4, delimiter = "^")
-        private String lastName;
+    @DataField(pos = 4, delimiter = "^")
+    private String lastName;
 
-        @DataField(pos = 5, length = 4)
-        private String instrumentCode;
+    @DataField(pos = 5, length = 4)
+    private String instrumentCode;
 
-        @DataField(pos = 6, length = 10)
-        private String instrumentNumber;
+    @DataField(pos = 6, length = 10)
+    private String instrumentNumber;
 
-        @DataField(pos = 7, length = 3)
-        private String orderType;
+    @DataField(pos = 7, length = 3)
+    private String orderType;
 
-        @DataField(pos = 8, length = 5)
-        private String instrumentType;
+    @DataField(pos = 8, length = 5)
+    private String instrumentType;
 
-        @DataField(pos = 9, precision = 2, length = 12, paddingChar = '0')
-        private BigDecimal amount;
+    @DataField(pos = 9, precision = 2, length = 12, paddingChar = '0')
+    private BigDecimal amount;
 
-        @DataField(pos = 10, length = 3)
-        private String currency;
+    @DataField(pos = 10, length = 3)
+    private String currency;
 
-        @DataField(pos = 11, length = 10, pattern = "dd-MM-yyyy")
-        private Date orderDate;
---------------------------------------------------------------------------
+    @DataField(pos = 11, length = 10, pattern = "dd-MM-yyyy")
+    private Date orderDate;
+}
+----
 
 As of *Camel 2.11* the 'pos' value(s) in a fixed-length record may
 optionally be defined using ordinal, sequential values instead of
@@ -967,51 +976,54 @@ expected length of another field within the same record. In the
 following example the length of the instrumentNumber field value is
 defined by the value of instrumentNumberLen field in the record.
 
+----
 10A9Pauline^M^ISIN10XD12345678BUYShare000002500.45USD01-08-2009
+----
 
 *Fixed-delimited*
 
 [source,java]
----------------------------------------------------------------------------
-    @FixedLengthRecord()
-    public static class Order {
+----
+@FixedLengthRecord()
+public static class Order {
 
-        @DataField(pos = 1, length = 2)
-        private int orderNr;
+    @DataField(pos = 1, length = 2)
+    private int orderNr;
 
-        @DataField(pos = 2, length = 2)
-        private String clientNr;
+    @DataField(pos = 2, length = 2)
+    private String clientNr;
 
-        @DataField(pos = 3, delimiter = "^")
-        private String firstName;
+    @DataField(pos = 3, delimiter = "^")
+    private String firstName;
 
-        @DataField(pos = 4, delimiter = "^")
-        private String lastName;
+    @DataField(pos = 4, delimiter = "^")
+    private String lastName;
 
-        @DataField(pos = 5, length = 4)
-        private String instrumentCode;
+    @DataField(pos = 5, length = 4)
+    private String instrumentCode;
 
-        @DataField(pos = 6, length = 2, align = "R", paddingChar = '0')
-        private int instrumentNumberLen;
-        
-        @DataField(pos = 7, lengthPos=6)
-        private String instrumentNumber;
+    @DataField(pos = 6, length = 2, align = "R", paddingChar = '0')
+    private int instrumentNumberLen;
 
-        @DataField(pos = 8, length = 3)
-        private String orderType;
+    @DataField(pos = 7, lengthPos=6)
+    private String instrumentNumber;
 
-        @DataField(pos = 9, length = 5)
-        private String instrumentType;
+    @DataField(pos = 8, length = 3)
+    private String orderType;
 
-        @DataField(pos = 10, precision = 2, length = 12, paddingChar = '0')
-        private BigDecimal amount;
+    @DataField(pos = 9, length = 5)
+    private String instrumentType;
 
-        @DataField(pos = 11, length = 3)
-        private String currency;
+    @DataField(pos = 10, precision = 2, length = 12, paddingChar = '0')
+    private BigDecimal amount;
 
-        @DataField(pos = 12, length = 10, pattern = "dd-MM-yyyy")
-        private Date orderDate;
----------------------------------------------------------------------------
+    @DataField(pos = 11, length = 3)
+    private String currency;
+
+    @DataField(pos = 12, length = 10, pattern = "dd-MM-yyyy")
+    private Date orderDate;
+}
+----
 
 *case 6 : Fixed length record with header and footer*
 
@@ -1022,15 +1034,16 @@ class, or within one of the configured scan packages. The following text
 illustrates two fixed-length records that are bracketed by a header
 record and footer record.
 
-101-08-2009 +
- 10A9 PaulineM ISINXD12345678BUYShare000002500.45USD01-08-2009 +
- 10A9 RichN ISINXD12345678BUYShare000002700.45USD01-08-2009 +
- 9000000002
-
+----
+101-08-2009
+10A9 PaulineM ISINXD12345678BUYShare000002500.45USD01-08-2009
+10A9 RichN ISINXD12345678BUYShare000002700.45USD01-08-2009
+9000000002
+----
 *Fixed-header-and-footer-main-class*
 
 [source,java]
-----------------------------------------------------------------------
+----
 @FixedLengthRecord(hasHeader = true, hasFooter = true)
 public class Order {
 
@@ -1066,9 +1079,7 @@ public class Order {
 
     @DataField(pos = 11, length = 10, pattern = "dd-MM-yyyy")
     private Date orderDate;
-...
 }
-
 
 @FixedLengthRecord(isHeader = true)
 public  class OrderHeader {
@@ -1077,10 +1088,7 @@ public  class OrderHeader {
     
     @DataField(pos = 2, length = 10, pattern = "dd-MM-yyyy")
     private Date recordDate;
-    
-...
 }
-
 
 @FixedLengthRecord(isFooter = true)
 public class OrderFooter {
@@ -1090,10 +1098,8 @@ public class OrderFooter {
     
     @DataField(pos = 2, length = 9, align = "R", paddingChar = '0')
     private int numberOfRecordsInTheFile;
-
-...
 }
-----------------------------------------------------------------------
+----
 
 *case 7 : Skipping content when parsing a fixed length record. (Camel
 2.11.1)*
@@ -1113,22 +1119,22 @@ everything beyond the last mapped field by setting the
 *ignoreTrailingChars* property on the @FixedLengthRecord declaration.
 
 [source,java]
--------------------------------------------------------------------------------
+----
 @FixedLengthRecord(ignoreTrailingChars = true)
 public static class Order {
 
-        @DataField(pos = 1, length = 2)
-        private int orderNr;
+    @DataField(pos = 1, length = 2)
+    private int orderNr;
 
-        @DataField(pos = 3, length = 2)
-        private String clientNr;
+    @DataField(pos = 3, length = 2)
+    private String clientNr;
 
-    ... any characters that appear beyond the last mapped field will be ignored
+    // any characters that appear beyond the last mapped field will be ignored
 
 }
--------------------------------------------------------------------------------
+----
 
-### 5. Message
+=== 5. Message
 
 The Message annotation is used to identified the class of your model who
 will contain key value pairs fields. This kind of format is used mainly
@@ -1149,14 +1155,14 @@ combination with camel-fix which is a Fix gateway based on quickFix
 project http://www.quickfixj.org/[http://www.quickfixj.org/].
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Annotation name |Record type |Level
 
 |*Message* |key value pair |Class
-|=======================================================================
+|===
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Parameter name |type |Info
 
 |pairSeparator |string |mandatory - can be '=' or ';' or 'anything'
@@ -1175,7 +1181,7 @@ specify a value other than the three listed before, the value you enter
 |isOrdered |boolean |optional - default value = false - allow to change the order of the
 fields when FIX message is generated. This annotation is associated to the message class of the model and must
 be declared one time.
-|=======================================================================
+|===
 
 *case 1 : separator = 'u0001'*
 
@@ -1184,20 +1190,22 @@ message is the ASCII '01' character or in unicode format '\u0001'. This
 character must be escaped a second time to avoid a java runtime error.
 Here is an example :
 
+----
 8=FIX.4.1 9=20 34=1 35=0 49=INVMGR 56=BRKR 1=BE.CHM.001 11=CHM0001-01
 22=4 ...
+----
 
 and how to use the annotation
 
 *FIX - message*
 
 [source,java]
-------------------------------------------------------------------------------------------
+----
 @Message(keyValuePairSeparator = "=", pairSeparator = "\u0001", type="FIX", version="4.1")
 public class Order {
-...
+
 }
-------------------------------------------------------------------------------------------
+----
 
  *Look at test cases*
 
@@ -1207,7 +1215,7 @@ message looks like (src\test\data\fix\fix.txt) and the Order, Trailer,
 Header classes
 (src\test\java\org\apache\camel\dataformat\bindy\model\fix\simple\Order.java)
 
-### 6. KeyValuePairField
+=== 6. KeyValuePairField
 
 The KeyValuePairField annotation defines the property of a key value
 pair field. Each KeyValuePairField is identified by a tag (= key) and
@@ -1215,14 +1223,14 @@ its value associated, a type (string, int, date, ...), optionaly a
 pattern and if the field is required
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Annotation name |Record type |Level
 
 |*KeyValuePairField* |Key Value Pair - FIX |Property
-|=======================================================================
+|===
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Parameter name |type |Info
 
 |tag |int |mandatory - digit number identifying the field in the message - must be
@@ -1241,7 +1249,7 @@ message must be different
 
 |impliedDecimalSeparator |boolean |*Camel 2.11:* optional - default value = "false" - Indicates if there is
 a decimal point implied at a specified location
-|=======================================================================
+|===
 
 *case 1 : tag*
 
@@ -1250,7 +1258,7 @@ This parameter represents the key of the field in the message
 *FIX message - Tag*
 
 [source,java]
-------------------------------------------------------------------------------------------
+----
 @Message(keyValuePairSeparator = "=", pairSeparator = "\u0001", type="FIX", version="4.1")
 public class Order {
 
@@ -1275,10 +1283,8 @@ public class Order {
 
     @KeyValuePairField(tag = 58) // Free text
     private String Text;
-
-...
 }
-------------------------------------------------------------------------------------------
+----
 
 *case 2 : Different position in output*
 
@@ -1289,7 +1295,7 @@ annotation @KeyValuePairField
 *FIX message - Tag - sort*
 
 [source,java]
------------------------------------------------------------------------------------------------------------------
+----
 @Message(keyValuePairSeparator = "=", pairSeparator = "\\u0001", type = "FIX", version = "4.1", isOrdered = true)
 public class Order {
 
@@ -1302,12 +1308,10 @@ public class Order {
 
     @KeyValuePairField(tag = 11, position = 3) // Order reference
     private String clOrdId;
-
-...
 }
------------------------------------------------------------------------------------------------------------------
+----
 
-### 7. Section
+=== 7. Section
 
 In FIX message of fixed length records, it is common to have different
 sections in the representation of the information : header, body and
@@ -1318,18 +1322,18 @@ section 2) and footer (= section 3)
 Only one attribute/parameter exists for this annotation.
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Annotation name |Record type |Level
 
 |*Section* |FIX |Class
-|=======================================================================
+|===
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Parameter name |type |Info
 
 |number |int |digit number identifying the section position
-|=======================================================================
+|===
 
 *case 1 : Section*
 
@@ -1338,7 +1342,7 @@ Definition of the header section
 *FIX message - Section - Header*
 
 [source,java]
----------------------------------------------------------------
+----
 @Section(number = 1)
 public class Header {
 
@@ -1347,16 +1351,15 @@ public class Header {
 
     @KeyValuePairField(tag = 9, position = 2) // Checksum
     private int bodyLength;
-...
 }
----------------------------------------------------------------
+----
 
 Definition of the body section
 
 *FIX message - Section - Body*
 
 [source,java]
------------------------------------------------------------------------------------------------------------------
+----
 @Section(number = 2)
 @Message(keyValuePairSeparator = "=", pairSeparator = "\\u0001", type = "FIX", version = "4.1", isOrdered = true)
 public class Order {
@@ -1370,14 +1373,14 @@ public class Order {
 
     @KeyValuePairField(tag = 11, position = 3) // Order reference
     private String clOrdId;
------------------------------------------------------------------------------------------------------------------
+----
 
 Definition of the footer section
 
 *FIX message - Section - Footer*
 
 [source,java]
-----------------------------------------------
+----
 @Section(number = 3)
 public class Trailer {
 
@@ -1388,12 +1391,12 @@ public class Trailer {
     public int getCheckSum() {
         return checkSum;
     }
-----------------------------------------------
+----
 
-### 8. OneToMany
+=== 8. OneToMany
 
 The purpose of the annotation @OneToMany is to allow to work with a
-List<?> field defined a POJO class or from a record containing
+`List<?>` field defined a POJO class or from a record containing
 repetitive groups.
 
  *Restrictions OneToMany*
@@ -1408,28 +1411,30 @@ tags/keys)
 * Generating a CSV with repetitive data
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Annotation name |Record type |Level
 
 |*OneToMany* |all |property
-|=======================================================================
+|===
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Parameter name |type |Info
 
 |mappedTo |string |optional - string - class name associated to the type of the List<Type
 of the Class>
-|=======================================================================
+|===
 
 *case 1 : Generating CSV with repetitive data*
 
 Here is the CSV output that we want :
 
- Claus,Ibsen,Camel in Action 1,2010,35 +
- Claus,Ibsen,Camel in Action 2,2012,35 +
- Claus,Ibsen,Camel in Action 3,2013,35 +
- Claus,Ibsen,Camel in Action 4,2014,35
+----
+Claus,Ibsen,Camel in Action 1,2010,35
+Claus,Ibsen,Camel in Action 2,2012,35
+Claus,Ibsen,Camel in Action 3,2013,35
+Claus,Ibsen,Camel in Action 4,2014,35
+----
 
 Remark : the repetitive data concern the title of the book and its
 publication date while first, last name and age are common
@@ -1440,7 +1445,7 @@ of Book.
 *Generate CSV with repetitive data*
 
 [source,java]
------------------------------
+----
 @CsvRecord(separator=",")
 public class Author {
 
@@ -1455,8 +1460,7 @@ public class Author {
 
     @DataField(pos = 5)
     private String Age;
-...
-
+}
 
 public class Book {
 
@@ -1465,7 +1469,8 @@ public class Book {
 
     @DataField(pos = 4)
     private String year;
------------------------------
+}
+----
 
 Very simple isn't it !!!
 
@@ -1473,12 +1478,14 @@ Very simple isn't it !!!
 
 Here is the message that we would like to process in our model :
 
-"8=FIX 4.19=2034=135=049=INVMGR56=BRKR" +
- "1=BE.CHM.00111=CHM0001-0158=this is a camel - bindy test" +
- "22=448=BE000124567854=1" +
- "22=548=BE000987654354=2" +
- "22=648=BE000999999954=3" +
- "10=220"
+----
+8=FIX 4.19=2034=135=049=INVMGR56=BRKR
+1=BE.CHM.00111=CHM0001-0158=this is a camel - bindy test
+22=448=BE000124567854=1
+22=548=BE000987654354=2
+22=648=BE000999999954=3
+10=220
+----
 
 tags 22, 48 and 54 are repeated
 
@@ -1487,7 +1494,7 @@ and the code
 *Reading FIX message containing group of tags/keys*
 
 [source,java]
----------------------------------------------------------------------------------------------------
+----
 public class Order {
 
     @Link Header header;
@@ -1505,7 +1512,7 @@ public class Order {
 
     @OneToMany(mappedTo = "org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Security")
     List<Security> securities;
-...
+}
 
 public class Security {
 
@@ -1517,92 +1524,89 @@ public class Security {
 
     @KeyValuePairField(tag = 54) // Movement type ( 1 = Buy, 2 = sell)
     private String side;
----------------------------------------------------------------------------------------------------
+}
+----
 
-### 9. BindyConverter
+=== 9. BindyConverter
 
 The purpose of the annotation @BindyConverter is define a converter
 to be used on field level. The provided class must implement the
 Format interface.
 
 [source,java]
----------------------------------------------------------------------------------------------------
-...
-    @FixedLengthRecord(length = 10, paddingChar = ' ')
-    public static class DataModel {
-        @DataField(pos =  1, length = 10, trim = true)
-        @BindyConverter(CustomConverter.class)
-        public String field1;
+----
+@FixedLengthRecord(length = 10, paddingChar = ' ')
+public static class DataModel {
+    @DataField(pos =  1, length = 10, trim = true)
+    @BindyConverter(CustomConverter.class)
+    public String field1;
+}
+
+public static class CustomConverter implements Format<String> {
+    @Override
+    public String format(String object) throws Exception {
+        return (new StringBuilder(object)).reverse().toString();
     }
 
-    public static class CustomConverter implements Format<String> {
-        @Override
-        public String format(String object) throws Exception {
-            return (new StringBuilder(object)).reverse().toString();
-        }
-
-        @Override
-        public String parse(String string) throws Exception {
-            return (new StringBuilder(string)).reverse().toString();
-        }
+    @Override
+    public String parse(String string) throws Exception {
+        return (new StringBuilder(string)).reverse().toString();
     }
-...
----------------------------------------------------------------------------------------------------
+}
+----
 
-### 10. FormatFactories
+=== 10. FormatFactories
 
 The purpose of the annotation @FormatFactories is to define a set of converters
 at record-level. The provided classes must implement the FormatFactoryInterface interface.
 
 [source,java]
----------------------------------------------------------------------------------------------------
-    @CsvRecord(separator = ",")
-    @FormatFactories({OrderNumberFormatFactory.class})
-    public static class Order {
+----
+@CsvRecord(separator = ",")
+@FormatFactories({OrderNumberFormatFactory.class})
+public static class Order {
 
-        @DataField(pos = 1)
-        private OrderNumber orderNr;
+    @DataField(pos = 1)
+    private OrderNumber orderNr;
 
-        @DataField(pos = 2)
-        private String firstName;
+    @DataField(pos = 2)
+    private String firstName;
+}
 
-...
+public static class OrderNumber {
+    private int orderNr;
+
+    public static OrderNumber ofString(String orderNumber) {
+        OrderNumber result = new OrderNumber();
+        result.orderNr = Integer.valueOf(orderNumber);
+        return result;
+    }
+}
+
+public static class OrderNumberFormatFactory extends AbstractFormatFactory {
+
+    {
+        supportedClasses.add(OrderNumber.class);
     }
 
-    public static class OrderNumber {
-        private int orderNr;
+    @Override
+    public Format<?> build(FormattingOptions formattingOptions) {
+        return new Format<OrderNumber>() {
+            @Override
+            public String format(OrderNumber object) throws Exception {
+                return String.valueOf(object.orderNr);
+            }
 
-        public static OrderNumber ofString(String orderNumber) {
-            OrderNumber result = new OrderNumber();
-            result.orderNr = Integer.valueOf(orderNumber);
-            return result;
-        }
+            @Override
+            public OrderNumber parse(String string) throws Exception {
+                return OrderNumber.ofString(string);
+            }
+        };
     }
+}
+----
 
-    public static class OrderNumberFormatFactory extends AbstractFormatFactory {
-
-        {
-            supportedClasses.add(OrderNumber.class);
-        }
-
-        @Override
-        public Format<?> build(FormattingOptions formattingOptions) {
-            return new Format<OrderNumber>() {
-                @Override
-                public String format(OrderNumber object) throws Exception {
-                    return String.valueOf(object.orderNr);
-                }
-
-                @Override
-                public OrderNumber parse(String string) throws Exception {
-                    return OrderNumber.ofString(string);
-                }
-            };
-        }
-    }
----------------------------------------------------------------------------------------------------
-
-### Supported Datatypes
+=== Supported Datatypes
 
 The DefaultFormatFactory makes formatting of the following datatype available by
 returning an instance of the interface FormatFactoryInterface based on the provided
@@ -1628,7 +1632,7 @@ FormattingOptions:
 The DefaultFormatFactory can be overridden by providing an instance of
 FactoryRegistry in the registry in use (e.g. spring or JNDI).
 
-### Using the Java DSL
+=== Using the Java DSL
 
 The next step consists in instantiating the DataFormat _bindy_ class
 associated with this record type and providing Java package name(s) as
@@ -1636,79 +1640,77 @@ parameter.
 
 For example the following uses the class `BindyCsvDataFormat` (who
 correspond to the class associated with the CSV record type) which is
-configured with "com.acme.model" +
- package name to initialize the model objects configured in this
-package.
+configured with `com.acme.model` package name to initialize the model objects
+configured in this package.
 
 [source,java]
-------------------------------------------------------------------------
+----
 // Camel 2.15 or older (configure by package name)
 DataFormat bindy = new BindyCsvDataFormat("com.acme.model");
 
  
 // Camel 2.16 onwards (configure by class name)
 DataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
-------------------------------------------------------------------------
+----
 
-#### Setting locale
+==== Setting locale
 
 Bindy supports configuring the locale on the dataformat, such as 
 
 [source,java]
---------------------------------------------------------------------------------
+----
 // Camel 2.15 or older (configure by package name)
 BindyCsvDataFormat bindy = new BindyCsvDataFormat("com.acme.model");
 // Camel 2.16 onwards (configure by class name)
 BindyCsvDataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
 
 bindy.setLocale("us");
---------------------------------------------------------------------------------
+----
 
 Or to use the platform default locale then use "default" as the locale
 name. Notice this requires Camel 2.14/2.13.3/2.12.5.
 
 [source,java]
---------------------------------------------------------------------------------
+----
 // Camel 2.15 or older (configure by package name)
 BindyCsvDataFormat bindy = new BindyCsvDataFormat("com.acme.model");
 // Camel 2.16 onwards (configure by class name)
 BindyCsvDataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
 
 bindy.setLocale("default");
---------------------------------------------------------------------------------
+----
 
 for older releases you can set it using Java code as shown
 
 [source,java]
---------------------------------------------------------------------------------
+----
 // Camel 2.15 or older (configure by package name)
 BindyCsvDataFormat bindy = new BindyCsvDataFormat("com.acme.model");
 // Camel 2.16 onwards (configure by class name)
 BindyCsvDataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
 
-
 bindy.setLocale(Locale.getDefault().getISO3Country());
---------------------------------------------------------------------------------
+----
 
-#### Unmarshaling
+==== Unmarshaling
 
 [source,java]
------------------------------
+----
 from("file://inbox")
   .unmarshal(bindy)
   .to("direct:handleOrders");
------------------------------
+----
 
 Alternatively, you can use a named reference to a data format which can
 then be defined in your Registry e.g. your
 Spring XML file:
 
 [source,java]
----------------------------------
+----
 from("file://inbox")
   .unmarshal("myBindyDataFormat")
   .to("direct:handleOrders");
----------------------------------
+----
 
 The Camel route will pick-up files in the inbox directory, unmarshall
 CSV records into a collection of model objects and send the collection +
@@ -1723,20 +1725,20 @@ object to be returned per line.
 Each object can be retrieve using its class name.
 
 [source,java]
----------------------------------------------------------------------------------------------------------
-    List<Map<String, Object>> unmarshaledModels = (List<Map<String, Object>>) exchange.getIn().getBody();
+----
+List<Map<String, Object>> unmarshaledModels = (List<Map<String, Object>>) exchange.getIn().getBody();
 
-    int modelCount = 0;
-    for (Map<String, Object> model : unmarshaledModels) {
-      for (String className : model.keySet()) {
-         Object obj = model.get(className);
-         LOG.info("Count : " + modelCount + ", " + obj.toString());
-      }
-     modelCount++;
-    }
+int modelCount = 0;
+for (Map<String, Object> model : unmarshaledModels) {
+  for (String className : model.keySet()) {
+     Object obj = model.get(className);
+     LOG.info("Count : " + modelCount + ", " + obj.toString());
+  }
+ modelCount++;
+}
 
-    LOG.info("Total CSV records received by the csv bean : " + modelCount);
----------------------------------------------------------------------------------------------------------
+LOG.info("Total CSV records received by the csv bean : " + modelCount);
+----
 
 Assuming that you want to extract a single Order object from this map
 for processing in a route, you could use a combination of a
@@ -1744,7 +1746,7 @@ Splitter and a Processor as per
 the following:
 
 [source,java]
-----------------------------------------------------------------------------------
+----
 from("file://inbox")
     .unmarshal(bindy)
     .split(body())
@@ -1757,7 +1759,7 @@ from("file://inbox")
         })
         .to("direct:handleSingleOrder")
     .end();
-----------------------------------------------------------------------------------
+----
 
 Take care of the fact that Bindy uses CHARSET_NAME property or the CHARSET_NAME header as define in the
 Exchange interface to do a characterset conversion of the inputstream received for unmarshalling.
@@ -1767,26 +1769,26 @@ exchange before sending it to the unmarshal. If you don't remove it the conversi
 which might lead to unwanted results.
 
 [source,java]
----------------------------------
+----
 from("file://inbox?charset=Cp922")
   .removeProperty(Exchange.CHARSET_NAME)
   .unmarshal("myBindyDataFormat")
   .to("direct:handleOrders");
----------------------------------
+----
 
-#### Marshaling
+==== Marshaling
 
 To generate CSV records from a collection of model objects, you create
 the following route :
 
 [source,java]
----------------------------
+----
 from("direct:handleOrders")
    .marshal(bindy)
    .to("file://outbox")
----------------------------
+----
 
-### Using Spring XML
+=== Using Spring XML
 
 This is really easy to use Spring as your favorite DSL language to
 declare the routes to be used for camel-bindy. The following example
@@ -1800,8 +1802,8 @@ is for using Camel 2.16 onwards.
 
 *spring dsl*
 
-[source,java]
--------------------------------------------------------------------------------------------------
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -1812,15 +1814,12 @@ is for using Camel 2.16 onwards.
        http://camel.apache.org/schema/spring
        http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-        <!-- Queuing engine - ActiveMq - work locally in mode virtual memory -->
+    <!-- Queuing engine - ActiveMq - work locally in mode virtual memory -->
     <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="brokerURL" value="vm://localhost:61616"/>
     </bean>
 
-
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-
-
         <dataFormats>
           <bindy id="bindyDataformat" type="Csv" classType="org.apache.camel.bindy.model.Order"/>
         </dataFormats>
@@ -1839,12 +1838,12 @@ is for using Camel 2.16 onwards.
         </route>
     </camelContext>
 </beans>
--------------------------------------------------------------------------------------------------
+----
 
-*Note:* Please verify that your model classes implements serializable otherwise
+NOTE: Please verify that your model classes implements serializable otherwise
 the queue manager will raise an error
 
-### Dependencies
+=== Dependencies
 
 To use Bindy in your camel routes you need to add the a dependency on
 *camel-bindy* which implements this data format.
