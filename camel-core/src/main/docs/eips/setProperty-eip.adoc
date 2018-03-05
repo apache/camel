@@ -1,7 +1,7 @@
 [[setProperty-eip]]
 == Set Property EIP
 
-The SetProperty EIP allows you to set the body of your exchange.
+The SetProperty EIP allows you to set a property on your exchange.
 
 === Options
 
