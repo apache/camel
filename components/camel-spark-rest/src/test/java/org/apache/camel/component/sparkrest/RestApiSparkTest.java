@@ -18,8 +18,10 @@ package org.apache.camel.component.sparkrest;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestParamType;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Does not run well on CI due test uses JMX mbeans")
 public class RestApiSparkTest extends BaseSparkTest {
 
     @Override

@@ -263,7 +263,6 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <!-- skip file stress tests as they are intended to run manually -->
           <excludes>
             <exclude>${platform.skip.tests}</exclude>
           </excludes>
