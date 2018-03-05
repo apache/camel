@@ -47,6 +47,11 @@ public class BindyKeyValuePairDataFormatConfiguration
      */
     private String locale;
     /**
+     * When unmarshalling should a single instance be unwrapped and returned
+     * instead of wrapped in a java.util.List.
+     */
+    private Boolean unwrapSingleInstance = true;
+    /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
      * example application/xml for data formats marshalling to XML, or
@@ -76,6 +81,14 @@ public class BindyKeyValuePairDataFormatConfiguration
 
     public void setLocale(String locale) {
         this.locale = locale;
+    }
+
+    public Boolean getUnwrapSingleInstance() {
+        return unwrapSingleInstance;
+    }
+
+    public void setUnwrapSingleInstance(Boolean unwrapSingleInstance) {
+        this.unwrapSingleInstance = unwrapSingleInstance;
     }
 
     public Boolean getContentTypeHeader() {
