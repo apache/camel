@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.impl.ExpressionSupport;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.spring.util.RegistryBeanResolver;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.expression.EvaluationContext;
@@ -71,6 +72,8 @@ public class SpelExpression extends ExpressionSupport {
             // Support references (like @foo) in expressions to beans defined in the Registry/ApplicationContext
             ApplicationContext applicationContext = ((SpringCamelContext) exchange.getContext()).getApplicationContext();
             evaluationContext.setBeanResolver(new BeanFactoryResolver(applicationContext));
+        } else {
+            evaluationContext.setBeanResolver(new RegistryBeanResolver(exchange.getContext().getRegistry()));
         }
         return evaluationContext;
     }
