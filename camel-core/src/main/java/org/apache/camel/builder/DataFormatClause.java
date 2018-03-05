@@ -188,6 +188,21 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
+     * Uses the Bindy data format
+     *
+     * @param type      the type of bindy data format to use
+     * @param classType the POJO class type
+     * @param unwrapSingleInstance whether unmarshal should unwrap if there is a single instance in the result
+     */
+    public T bindy(BindyType type, Class<?> classType, boolean unwrapSingleInstance) {
+        BindyDataFormat bindy = new BindyDataFormat();
+        bindy.setType(type);
+        bindy.setClassType(classType);
+        bindy.setUnwrapSingleInstance(unwrapSingleInstance);
+        return dataFormat(bindy);
+    }
+
+    /**
      * Uses the Boon data format
      *
      * @param classType the POJO class type

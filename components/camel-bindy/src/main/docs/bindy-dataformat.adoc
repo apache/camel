@@ -56,7 +56,7 @@ class names instead of package names now.
 ### Options
 
 // dataformat options: START
-The Bindy dataformat supports 4 options which are listed below.
+The Bindy dataformat supports 5 options which are listed below.
 
 
 
@@ -66,6 +66,7 @@ The Bindy dataformat supports 4 options which are listed below.
 | type |  | BindyType | Whether to use csv, fixed or key value pairs mode. The default value is either Csv or KeyValue depending on chosen dataformat.
 | classType |  | String | Name of model class to use.
 | locale |  | String | To configure a default locale to use, such as us for united states. To use the JVM platform default locale then use the name default
+| unwrapSingleInstance | true | Boolean | When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a java.util.List.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
