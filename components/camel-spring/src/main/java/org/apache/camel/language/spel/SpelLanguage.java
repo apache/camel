@@ -18,22 +18,47 @@ package org.apache.camel.language.spel;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.Service;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.spring.util.RegistryBeanResolver;
 import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.util.ObjectHelper;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.expression.BeanFactoryResolver;
+import org.springframework.expression.BeanResolver;
 
 /**
  * A Spring Expression {@link Language} plugin
  */
-public class SpelLanguage extends LanguageSupport {
+public class SpelLanguage extends LanguageSupport implements Service {
+
+    private BeanResolver beanResolver;
 
     public Predicate createPredicate(String expression) {
         expression = loadResource(expression);
-        return new SpelExpression(expression, Boolean.class);
+        return new SpelExpression(expression, Boolean.class, beanResolver);
     }
 
     public Expression createExpression(String expression) {
         expression = loadResource(expression);
-        return new SpelExpression(expression, Object.class);
+        return new SpelExpression(expression, Object.class, beanResolver);
     }
 
+    @Override
+    public void start() throws Exception {
+        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
+
+        if (getCamelContext() instanceof SpringCamelContext) {
+            ApplicationContext applicationContext = ((SpringCamelContext) getCamelContext()).getApplicationContext();
+            beanResolver = new BeanFactoryResolver(applicationContext);
+        } else {
+            beanResolver = new RegistryBeanResolver(getCamelContext().getRegistry());
+        }
+    }
+
+    @Override
+    public void stop() throws Exception {
+        // noop
+    }
 }
