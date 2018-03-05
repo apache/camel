@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.jetty.rest;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Does not run well on CI due test uses JMX mbeans")
 public class RestApiJettyYamlTest extends RestApiJettyTest {
 
     @Test

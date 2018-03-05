@@ -19,12 +19,14 @@ package org.apache.camel.component.restlet;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestParamType;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.apache.camel.Exchange.HTTP_RESPONSE_CODE;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 
+@Ignore("Does not run well on CI due test uses JMX mbeans")
 public class RestRestletApiTest extends RestletTestSupport {
 
     @Override

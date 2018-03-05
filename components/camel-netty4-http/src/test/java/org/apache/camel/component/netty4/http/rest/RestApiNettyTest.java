@@ -19,8 +19,10 @@ package org.apache.camel.component.netty4.http.rest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty4.http.BaseNettyTest;
 import org.apache.camel.model.rest.RestParamType;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Does not run well on CI due test uses JMX mbeans")
 public class RestApiNettyTest extends BaseNettyTest {
 
     @Override
