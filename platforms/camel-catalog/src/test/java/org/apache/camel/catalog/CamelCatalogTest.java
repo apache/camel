@@ -1040,6 +1040,18 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateJSonPathLanguage() throws Exception {
+        LanguageValidationResult result = catalog.validateLanguageExpression(null, "jsonpath", "$.store.book[?(@.price < 10)]");
+        assertTrue(result.isSuccess());
+        assertEquals("$.store.book[?(@.price < 10)]", result.getText());
+
+        result = catalog.validateLanguageExpression(null, "jsonpath", "$.store.book[?(@.price ^^^ 10)]");
+        assertFalse(result.isSuccess());
+        assertEquals("$.store.book[?(@.price ^^^ 10)]", result.getText());
+        assertEquals("Illegal syntax: $.store.book[?(@.price ^^^ 10)]", result.getError());
+    }
+
+    @Test
     public void testSpringCamelContext() throws Exception {
         String json = catalog.modelJSonSchema("camelContext");
         assertNotNull(json);
