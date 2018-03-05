@@ -20,19 +20,19 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+=== URI format
 
-[source,java]
-----------------------------
+[source,text]
+----
 restlet:restletUrl[?options]
-----------------------------
+----
 
 Format of restletUrl:
 
-[source,java]
---------------------------------------------
+[source,text]
+----
 protocol://hostname[:port][/resourcePattern]
---------------------------------------------
+----
 
 Restlet promotes decoupling of protocol and application concerns. The
 reference implementation of
@@ -58,7 +58,7 @@ synchronous=true as option on the endpoint uris, Or set it on the
 RestletComponent as a global option so all endpoints inherit this
 option.
 
-### Options
+=== Options
 
 
 
@@ -129,10 +129,10 @@ with the following path and query parameters:
 | *restletMethod* (common) | On a producer endpoint, specifies the request method to use. On a consumer endpoint, specifies that the endpoint consumes only restletMethod requests. | GET | Method
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *restletMethods* (consumer) | Specify one or more methods separated by commas (e.g. restletMethods=post,put) to be serviced by a restlet consumer endpoint. If both restletMethod and restletMethods options are specified, the restletMethod setting is ignored. The possible methods are: ALL,CONNECT,DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT,TRACE |  | String
-| *restletUriPatterns* (consumer) | Specify one ore more URI templates to be serviced by a restlet consumer endpoint, using the notation to reference a List in the Camel Registry. If a URI pattern has been defined in the endpoint URI, both the URI pattern defined in the endpoint and the restletUriPatterns option will be honored. |  | List
 | *disableStreamCache* (consumer) | Determines whether or not the raw input stream from Restlet is cached or not (Camel will read the stream into a in memory/overflow to file, Stream caching) cache. By default Camel will cache the Restlet input stream to support reading it multiple times to ensure Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream, such as streaming it directly to a file or other persistent store. DefaultRestletBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *restletUriPatterns* (consumer) | *Deprecated* Specify one ore more URI templates to be serviced by a restlet consumer endpoint, using the notation to reference a List in the Camel Registry. If a URI pattern has been defined in the endpoint URI, both the URI pattern defined in the endpoint and the restletUriPatterns option will be honored. |  | List
 | *connectTimeout* (producer) | The Client will give up connection if the connection is timeout, 0 for unlimited wait. | 30000 | int
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
 | *socketTimeout* (producer) | The Client socket receive timeout, 0 for unlimited wait. | 30000 | int
@@ -148,10 +148,10 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-### Message Headers
+=== Message Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Name |Type |Description
 
 |`Content-Type` |`String` |Specifies the content type, which can be set on the OUT message by the
@@ -196,17 +196,17 @@ create responses using the API from Restlet. See examples below.
 
 |`cache-control` |`String` or `List<CacheDirective>` |*Camel 2.11:* User can set the cache-control with the String value or
 the List of CacheDirective of Restlet from the camel message header.
-|=======================================================================
+|===
 
-### Message Body
+=== Message Body
 
 Camel will store the restlet response from the external server on the
 OUT body. All headers from the IN message will be copied to the OUT
 message, so that headers are preserved during routing.
 
-### Samples
+=== Samples
 
-#### Restlet Endpoint with Authentication
+==== Restlet Endpoint with Authentication
 
 The following route starts a `restlet` consumer endpoint that listens
 for `POST` requests on http://localhost:8080. The processor creates a
@@ -240,11 +240,13 @@ Restlet header.
 The sample client gets a response like the following:
 
 [source,text]
---------------------------------------------------
+----
 received [<order foo='1'/>] as an order id = 89531
---------------------------------------------------
+----
 
-#### Single restlet endpoint to service multiple methods and URI templates
+==== Single restlet endpoint to service multiple methods and URI templates (deprecated)
+
+This functionality is *deprecated* so do NOT use!
 
 It is possible to create a single route to service multiple HTTP methods
 using the `restletMethods` option. This snippet also shows how to
@@ -262,14 +264,14 @@ The `restletUriPatterns=#uriTemplates` option references the
 `List<String>` bean defined in the Spring XML configuration.
 
 [source,xml]
---------------------------------------------------------
+----
 <util:list id="uriTemplates">
     <value>/users/{username}</value>
     <value>/atom/collection/{id}/component/{cid}</value>
 </util:list>
---------------------------------------------------------
+----
 
-#### Using Restlet API to populate response
+==== Using Restlet API to populate response
 
 *Available as of Camel 2.8*
 
@@ -280,19 +282,19 @@ the response from an inlined Camel Processor:
 
 *Generating response using Restlet Response API*
 
-#### Configuring max threads on component
+==== Configuring max threads on component
 
 To configure the max threads options you must do this on the component,
 such as:
 
 [source,xml]
--------------------------------------------------------------------------------
+----
 <bean id="restlet" class="org.apache.camel.component.restlet.RestletComponent">
   <property name="maxThreads" value="100"/>
 </bean>
--------------------------------------------------------------------------------
+----
 
-#### Using the Restlet servlet within a webapp
+==== Using the Restlet servlet within a webapp
 
 *Available as of Camel 2.8* +
  There are
@@ -310,7 +312,7 @@ process on a new port).
 To configure, add the following to your camel-context.xml;
 
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <camelContext>
   <route id="RS_RestletDemo">
     <from uri="restlet:/demo/{id}" />
@@ -327,12 +329,12 @@ To configure, add the following to your camel-context.xml;
     <ref bean="RestletComponent" />
   </constructor-arg>
 </bean>
------------------------------------------------------------------------------------------------
+----
 
 And add this to your web.xml;
 
 [source,xml]
----------------------------------------------------------------------------
+----
 <!-- Restlet Servlet -->
 <servlet>
   <servlet-name>RestletServlet</servlet-name>
@@ -347,47 +349,41 @@ And add this to your web.xml;
   <servlet-name>RestletServlet</servlet-name>
   <url-pattern>/rs/*</url-pattern>
 </servlet-mapping>
----------------------------------------------------------------------------
+----
 
 You will then be able to access the deployed route at
-http://localhost:8080/mywebapp/rs/demo/1234 where;
+`http://localhost:8080/mywebapp/rs/demo/1234` where;
 
-localhost:8080 is the server and port of your servlet container +
- mywebapp is the name of your deployed webapp +
+`localhost:8080` is the server and port of your servlet container +
+ `mywebapp` is the name of your deployed webapp +
  Your browser will then show the following content;
 
-[source,java]
-----------------------------------
+[source,text]
+----
 "Request type : GET and ID : 1234"
-----------------------------------
+----
 
 You will need to add dependency on the Spring extension to restlet which
 you can do in your Maven pom.xml file:
 
 [source,xml]
--------------------------------------------------
+----
 <dependency>
   <groupId>org.restlet.jee</groupId>
   <artifactId>org.restlet.ext.spring</artifactId>
   <version>${restlet-version}</version>
 </dependency>
--------------------------------------------------
+----
 
 And you would need to add dependency on the restlet maven repository as
 well:
 
 [source,xml]
---------------------------------------------------
+----
 <repository>  
    <id>maven-restlet</id>  
    <name>Public online Restlet repository</name>  
    <url>http://maven.restlet.org</url>  
 </repository>
---------------------------------------------------
+----
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
