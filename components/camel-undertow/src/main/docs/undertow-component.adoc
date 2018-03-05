@@ -3,13 +3,14 @@
 
 *Available as of Camel version 2.16*
 
-The *undertow* component provides HTTP-based
-endpoints for consuming and producing HTTP requests.
-That is, the Undertow component behaves as a simple Web server. +
- Undertow can also be used as a http client which mean you can also use
+The *undertow* component provides HTTP and WebSocket based endpoints for consuming
+and producing HTTP/WebSocket requests.
+
+That is, the Undertow component behaves as a simple Web server.
+Undertow can also be used as a http client which mean you can also use
 it with Camel as a producer.
 
-Since Camel version 2.21, the *undertow* component also supports WebSocket
+TIP: Since Camel version 2.21, the *undertow* component also supports WebSocket
 connections and can thus serve as a drop-in replacement for Camel websocket
 component or atmosphere-websocket component.
 
@@ -17,33 +18,29 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-undertow</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
-### URI format
+=== URI format
 
-[source,java]
--------------------------------------------------------
+[source,text]
+----
 undertow:http://hostname[:port][/resourceUri][?options]
 undertow:https://hostname[:port][/resourceUri][?options]
 undertow:ws://hostname[:port][/resourceUri][?options]
 undertow:wss://hostname[:port][/resourceUri][?options]
--------------------------------------------------------
+----
 
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
-
-
-
-
+=== Options
 
 // component options: START
 The Undertow component supports 5 options which are listed below.
@@ -60,11 +57,6 @@ The Undertow component supports 5 options which are listed below.
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
-
-
-
-
-
 
 
 // endpoint options: START
@@ -118,7 +110,7 @@ with the following path and query parameters:
 
 
 
-### Message Headers
+=== Message Headers
 
 Camel uses the same message headers as the <<http-component,HTTP>>
 component.
@@ -131,7 +123,7 @@ example, given a client request with the URL,
 `http://myserver/myserver?orderid=123`, the exchange will contain a
 header named `orderid` with the value 123.
 
-### Producer Example
+=== Producer Example
 
 The following is a basic example of how to send an HTTP request to an
 existing HTTP endpoint.
@@ -139,34 +131,36 @@ existing HTTP endpoint.
 in Java DSL
 
 [source,java]
-----------------------------------------------------------
-from("direct:start").to("undertow:http://www.google.com");
-----------------------------------------------------------
+----
+from("direct:start")
+    .to("undertow:http://www.google.com");
+----
 
-or in Spring XML
+or in XML
 
 [source,xml]
-----------------------------------------------
+----
 <route>
     <from uri="direct:start"/>
     <to uri="undertow:http://www.google.com"/>
 <route>
-----------------------------------------------
+----
 
-### Consumer Example
+=== Consumer Example
 
 In this sample we define a route that exposes a HTTP service at
 `http://localhost:8080/myapp/myservice`:
 
 [source,xml]
---------------------------------------------------------------
+----
 <route>
   <from uri="undertow:http://localhost:8080/myapp/myservice"/>
   <to uri="bean:myBean"/>
 </route>
---------------------------------------------------------------
+----
 
-NOTE:*Usage of localhost*
+=== Using localhost as host
+
 When you specify `localhost` in a URL, Camel exposes the endpoint only
 on the local TCP/IP network interface, so it cannot be accessed from
 outside the machine it operates on.
@@ -176,22 +170,12 @@ the numerical IP address of this interface should be used as the host.
 If you need to expose a Jetty endpoint on all network interfaces, the
 `0.0.0.0` address should be used.
 
-TIP:To listen across an entire URI prefix, see
+To listen across an entire URI prefix, see
 link:how-do-i-let-jetty-match-wildcards.html[How do I let Jetty match
 wildcards].
 
-
-TIP:If you actually want to expose routes by HTTP and already have a
+If you actually want to expose routes by HTTP and already have a
 Servlet, you should instead refer to the
 https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=46339[Servlet
 Transport].
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* <<jetty-component,Jetty>>
-* <<http-component,HTTP>>
