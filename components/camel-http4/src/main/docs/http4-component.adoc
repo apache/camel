@@ -52,7 +52,7 @@ route, use the <<jetty-component,Jetty Component>> instead.
 
 
 // component options: START
-The HTTP4 component supports 15 options which are listed below.
+The HTTP4 component supports 18 options which are listed below.
 
 
 
@@ -69,6 +69,9 @@ The HTTP4 component supports 15 options which are listed below.
 | *connectionsPerRoute* (advanced) | The maximum number of connections per route. | 20 | int
 | *connectionTimeToLive* (advanced) | The time for connection to live, the time unit is millisecond, the default value is always keep alive. |  | long
 | *cookieStore* (producer) | To use a custom org.apache.http.client.CookieStore. By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy). |  | CookieStore
+| *connectionRequest Timeout* (timeout) | The timeout in milliseconds used when requesting a connection from the connection manager. A timeout value of zero is interpreted as an infinite timeout. A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: code -1 | -1 | int
+| *connectTimeout* (timeout) | Determines the timeout in milliseconds until a connection is established. A timeout value of zero is interpreted as an infinite timeout. A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: code -1 | -1 | int
+| *socketTimeout* (timeout) | Defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets). A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: code -1 | -1 | int
 | *httpBinding* (advanced) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
 | *httpConfiguration* (advanced) | To use the shared HttpConfiguration as base configuration. |  | HttpConfiguration
 | *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
