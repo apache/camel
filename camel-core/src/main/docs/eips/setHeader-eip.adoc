@@ -17,7 +17,7 @@ The Set Header EIP supports 1 options which are listed below:
 
 === Examples
 
-The following example shows how to use the SetProperty EIP
+The following example shows how to use the SetHeader EIP
 
 [source,java]
 ----
