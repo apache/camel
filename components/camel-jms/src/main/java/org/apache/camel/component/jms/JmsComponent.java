@@ -43,7 +43,7 @@ import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.ErrorHandler;
 
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+import static org.apache.camel.util.StringHelper.removeStartingCharacters;
 
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Component</a>
