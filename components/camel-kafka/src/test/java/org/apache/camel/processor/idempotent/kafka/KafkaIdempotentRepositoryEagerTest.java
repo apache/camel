@@ -106,14 +106,4 @@ public class KafkaIdempotentRepositoryEagerTest extends CamelTestSupport {
         assertEquals(10, mockBefore.getReceivedCounter());
     }
 
-    @Test
-    public void testClear() throws InterruptedException {
-        mockOut.setExpectedMessageCount(2);
-
-        template.sendBodyAndHeader("direct:in", "Test message", "id", 0);
-        kafkaIdempotentRepository.clear();
-        template.sendBodyAndHeader("direct:in", "Test message", "id", 0);
-
-        assertMockEndpointsSatisfied();
-    }
 }
