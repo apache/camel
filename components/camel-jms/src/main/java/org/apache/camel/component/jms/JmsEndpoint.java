@@ -49,7 +49,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -265,10 +265,10 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
      * @return the destination name resolved from the endpoint uri
      */
     public String getEndpointConfiguredDestinationName() {
-        String remainder = ObjectHelper.after(getEndpointKey(), "//");
+        String remainder = StringHelper.after(getEndpointKey(), "//");
         if (remainder != null && remainder.contains("?")) {
             // remove parameters
-            remainder = ObjectHelper.before(remainder, "?");
+            remainder = StringHelper.before(remainder, "?");
         }
         return JmsMessageHelper.normalizeDestinationName(remainder);
     }

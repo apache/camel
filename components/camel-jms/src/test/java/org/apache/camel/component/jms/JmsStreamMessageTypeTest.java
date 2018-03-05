@@ -17,7 +17,6 @@
 package org.apache.camel.component.jms;
 
 import java.io.File;
-import java.io.InputStream;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;

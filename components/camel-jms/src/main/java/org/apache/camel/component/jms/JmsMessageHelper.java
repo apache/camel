@@ -34,7 +34,7 @@ import static org.apache.camel.component.jms.JmsConfiguration.QUEUE_PREFIX;
 import static org.apache.camel.component.jms.JmsConfiguration.TEMP_QUEUE_PREFIX;
 import static org.apache.camel.component.jms.JmsConfiguration.TEMP_TOPIC_PREFIX;
 import static org.apache.camel.component.jms.JmsConfiguration.TOPIC_PREFIX;
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+import static org.apache.camel.util.StringHelper.removeStartingCharacters;
 
 /**
  * Utility class for {@link javax.jms.Message}.
