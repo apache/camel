@@ -1,6 +1,5 @@
 [[Zipkin-ZipkinComponent]]
-Zipkin Component
-~~~~~~~~~~~~~~~~
+=== Zipkin Component
 
 *Available as of Camel 2.18*
 
@@ -9,6 +8,9 @@ outgoing Camel messages using http://zipkin.io/[zipkin].
 
 Events (span) are captured for incoming and outgoing messages being sent
 to/from Camel.
+
+NOTE: camel-zipkin is planned to be refactored in Camel 2.22.0 to not use zipkin-scribe
+but use the default http transport. This work may cause backwards incompatibility.
 
 This means you need to configure which Camel endpoints map
 to zipkin service names.
@@ -45,11 +47,10 @@ platform can run your application in a linux container where service
 configurations are provided as environment variables.
 
 [[camel-zipkin-Options]]
-Options
-^^^^^^^
+=== Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Option |Default |Description
 
 |rate |1.0f |Configures a rate that decides how many events should be traced by
@@ -85,16 +86,15 @@ routes or globally on the CamelContext. This is not recommended for production u
 payloads. You can limit the size by configuring the
 link:how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.html[max
 debug log size].  
-|=======================================================================
+|===
 
 [[camel-zipkin-Example]]
-Example
-^^^^^^^
+=== Example
 
 To enable camel-zipkin you need to configure first
 
 [source,java]
---------------------------------------------------------------------------------------------------
+----
 ZipkinTracer zipkin = new ZipkinTracer();
 // Configure a reporter, which controls how often spans are sent
 //   (the dependency is io.zipkin.reporter2:zipkin-sender-okhttp3)
@@ -102,7 +102,7 @@ sender = OkHttpSender.create("http://127.0.0.1:9411/api/v2/spans");
 zipkin.setSpanReporter(AsyncReporter.create(sender));
 // and then add zipkin to the CamelContext
 zipkin.init(camelContext);
---------------------------------------------------------------------------------------------------
+----
 
 The configuration above will trace all incoming and outgoing
 messages in Camel routes. 
@@ -111,7 +111,7 @@ To use ZipkinTracer in XML, all you need to do is to define scribe and
 zipkin tracer beans. Camel will automatically discover and use them.
 
 [source,xml]
----------------------------------------------------------------------------------------------------------
+----
   <!-- configure how to reporter spans to a Zipkin collector
           (the dependency is io.zipkin.reporter2:zipkin-reporter-spring-beans) -->
   <bean id="http" class="zipkin2.reporter.beans.AsyncReporterFactoryBean">
@@ -129,11 +129,10 @@ zipkin tracer beans. Camel will automatically discover and use them.
     <property name="serviceName" value="dude"/>
     <property name="spanReporter" ref="http"/>
   </bean>
----------------------------------------------------------------------------------------------------------
+----
 
 [[camel-zipkin-ServiceName]]
-ServiceName
-+++++++++++
+==== ServiceName
 
 However, if you want to map Camel endpoints to human friendly logical
 names, you can add mappings
@@ -144,17 +143,16 @@ You can configure a global service name that all events will fallback
 and use, such as:
 
 [source,java]
-----------------------------------
+----
 zipkin.setServiceName("invoices");
-----------------------------------
+----
 
 This will use the same service name for all incoming and outgoing zipkin
 traces. If your application uses different services, you should map
 them to more finely grained client / server service mappings
 
 [[camel-zipkin-ClientandServerServiceMappings]]
-Client and Server Service Mappings
-++++++++++++++++++++++++++++++++++
+==== Client and Server Service Mappings
 
 * ClientServiceMappings
 * ServerServiceMappings
@@ -164,19 +162,18 @@ the Camel route endpoint to a server service mapping. For example,
 suppose your Camel application has the following route:
 
 [source,java]
-----------------------------------
+----
 from("activemq:queue:inbox")
-  ...
   .to("http:someserver/somepath");
-----------------------------------
+----
 
 And you want to make that as a server service, you can add the following
 mapping:
 
 [source,java]
------------------------------------------------------------------
+----
 zipkin.addServerServiceMapping("activemq:queue:inbox", "orders");
------------------------------------------------------------------
+----
 
 Then when a message is consumed from that inbox queue, it becomes a
 zipkin server event with the service name 'orders'.
@@ -185,9 +182,9 @@ Now suppose that the call to http:someserver/somepath is also a service,
 which you want to map to a client service name, which can be done as:
 
 [source,java]
---------------------------------------------------------------------
+----
 zipkin.addClientServiceMapping("http:someserver/somepath", "audit");
---------------------------------------------------------------------
+----
 
 Then in the same Camel application you have mapped incoming and outgoing
 endpoints to different zipkin service names.
@@ -195,13 +192,12 @@ endpoints to different zipkin service names.
 You can use wildcards in the service mapping. To match all outgoing
 calls to the same HTTP server you can do:
 
-------------------------------------------------------------
+----
 zipkin.addClientServiceMapping("http:someserver*", "audit");
-------------------------------------------------------------
+----
 
 [[camel-zipkin-Mappingrules]]
-Mapping rules
-+++++++++++++
+=== Mapping rules
 
 The service name mapping for server occurs using the following rules
 
@@ -231,8 +227,7 @@ service name
 5.  No service name was found, the exchange is not traced by zipkin
 
 [[camel-zipkin-Noclientorservermappings]]
-No client or server mappings
-++++++++++++++++++++++++++++
+==== No client or server mappings
 
 If there has been no configuration of client or server service mappings,
 CamelZipkin runs in a fallback mode, and uses endpoint
@@ -242,10 +237,10 @@ In the example above, this would mean the service names would be defined as
 if you add the following code yourself:
 
 [source,java]
----------------------------------------------------------------------------------------
+----
 zipkin.addServerServiceMapping("activemq:queue:inbox", "activemq:queue:inbox");
 zipkin.addClientServiceMapping("http:someserver/somepath", "http:someserver/somepath");
----------------------------------------------------------------------------------------
+----
 
 This is not a recommended approach, but gets you up and running quickly
 without doing any service name mappings. However, when you have multiple
@@ -253,8 +248,7 @@ systems across your infrastructure, then you should consider using human-readabl
 uris.
 
 [[camel-zipkin-camel-zipin-starter]]
-camel-zipin-starter
-^^^^^^^^^^^^^^^^^^^
+=== camel-zipin-starter
 
 If you are using Spring Boot then you can add
 the `camel-zipkin-starter` dependency, and turn on zipkin by annotating
