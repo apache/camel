@@ -38,4 +38,6 @@ public interface ElasticsearchConstants {
     String TRANSPORT_ADDRESSES_SEPARATOR_REGEX = ",";
     String IP_PORT_SEPARATOR_REGEX = ":";
     String ES_QUERY_DSL_PREFIX = "query";
+    String ES_QUERY_SIZE = "size";
+    String ES_QUERY_FROM = "from";
 }
