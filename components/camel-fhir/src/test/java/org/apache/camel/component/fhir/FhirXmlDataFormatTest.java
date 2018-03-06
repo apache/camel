@@ -50,8 +50,12 @@ public class FhirXmlDataFormatTest extends CamelTestSupport {
     
     @Test
     public void unmarshal() throws Exception {
-        template.sendBody("direct:unmarshal", PATIENT);
         mockEndpoint.expectedMessageCount(1);
+
+        template.sendBody("direct:unmarshal", PATIENT);
+
+        mockEndpoint.assertIsSatisfied();
+
         Exchange exchange = mockEndpoint.getExchanges().get(0);
         Patient patient = (Patient) exchange.getIn().getBody();
         assertTrue("Patients should be equal!", patient.equalsDeep(getPatient()));
@@ -59,10 +63,13 @@ public class FhirXmlDataFormatTest extends CamelTestSupport {
 
     @Test
     public void marshal() throws Exception {
+        mockEndpoint.expectedMessageCount(1);
+
         Patient patient = getPatient();
-        mockEndpoint.expectedMessageCount(1);
         template.sendBody("direct:marshal", patient);
-        mockEndpoint.expectedMessageCount(1);
+
+        mockEndpoint.assertIsSatisfied();
+
         Exchange exchange = mockEndpoint.getExchanges().get(0);
         InputStream inputStream = exchange.getIn().getBody(InputStream.class);
         final IBaseResource iBaseResource = FhirContext.forDstu3().newXmlParser().parseResource(new InputStreamReader(inputStream));
@@ -78,7 +85,6 @@ public class FhirXmlDataFormatTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-
                 from("direct:marshal")
                     .marshal().fhirXml()
                     .to("mock:result");
@@ -86,7 +92,6 @@ public class FhirXmlDataFormatTest extends CamelTestSupport {
                 from("direct:unmarshal")
                     .unmarshal().fhirXml()
                     .to("mock:result");
-
             }
         };
     }

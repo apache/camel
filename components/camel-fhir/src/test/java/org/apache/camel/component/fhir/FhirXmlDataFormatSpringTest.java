@@ -51,8 +51,12 @@ public class FhirXmlDataFormatSpringTest extends CamelSpringTestSupport {
 
     @Test
     public void unmarshal() throws Exception {
-        template.sendBody("direct:unmarshal", PATIENT);
         mockEndpoint.expectedMessageCount(1);
+
+        template.sendBody("direct:unmarshal", PATIENT);
+
+        mockEndpoint.assertIsSatisfied();
+
         Exchange exchange = mockEndpoint.getExchanges().get(0);
         Patient patient = (Patient) exchange.getIn().getBody();
         assertTrue("Patients should be equal!", patient.equalsDeep(getPatient()));
@@ -60,10 +64,13 @@ public class FhirXmlDataFormatSpringTest extends CamelSpringTestSupport {
 
     @Test
     public void marshal() throws Exception {
+        mockEndpoint.expectedMessageCount(1);
+
         Patient patient = getPatient();
-        mockEndpoint.expectedMessageCount(1);
         template.sendBody("direct:marshal", patient);
-        mockEndpoint.expectedMessageCount(1);
+
+        mockEndpoint.assertIsSatisfied();
+
         Exchange exchange = mockEndpoint.getExchanges().get(0);
         InputStream inputStream = exchange.getIn().getBody(InputStream.class);
         final IBaseResource iBaseResource = FhirContext.forDstu3().newXmlParser().parseResource(new InputStreamReader(inputStream));

@@ -65,12 +65,16 @@ public class Hl7v2PatientToFhirPatientIT extends CamelTestSupport {
 
     @Test
     public void testUnmarshalWithExplicitUTF16Charset() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.setExpectedMessageCount(1);
+
         // Message with explicit encoding in MSH
         String charset = "ASCII";
         byte[] body = HL7_MESSAGE.getBytes(Charset.forName(charset));
         template.sendBodyAndHeader("direct:input", new ByteArrayInputStream(body), Exchange.CHARSET_NAME, charset);
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.assertIsSatisfied();
+
         final MethodOutcome results = (MethodOutcome) mock.getExchanges().get(0).getIn().getBody();
         Patient patient = (Patient) results.getResource();
         assertNotNull(patient);
@@ -78,10 +82,8 @@ public class Hl7v2PatientToFhirPatientIT extends CamelTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-
         return new RouteBuilder() {
             public void configure() throws Exception {
-                
                 Processor patientProcessor = new PatientProcessor(client, getContext());
                 from("direct:input")
                     .unmarshal(hl7)
