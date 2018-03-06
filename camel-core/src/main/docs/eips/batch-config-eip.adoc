@@ -1,6 +1,7 @@
 [[batch-config-eip]]
 == Batch-config EIP
 
+Batch-processing resequence EIP
 
 // eip options: START
 The Batch-config EIP supports 5 options which are listed below:
