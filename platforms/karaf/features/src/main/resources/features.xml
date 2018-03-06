@@ -685,7 +685,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:ca.uhn.hapi/hapi-osgi-base/${hapi-version}</bundle>
     <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-client/${hapi-fhir-version}</bundle>
-    <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-base/${hapi-fhir-version}</bundle>
+    <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-base/${hapi-fhir-version}$DynamicImport-Package=*</bundle>
     <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-structures-dstu3/${hapi-fhir-version}</bundle>
     <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-utilities/${hapi-fhir-version}</bundle>
     <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-structures-dstu2/${hapi-fhir-version}</bundle>
