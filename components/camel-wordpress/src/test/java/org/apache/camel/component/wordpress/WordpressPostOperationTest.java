@@ -27,15 +27,11 @@ import static org.hamcrest.CoreMatchers.is;
 
 public class WordpressPostOperationTest extends WordpressComponentTestSupport {
 
-    public WordpressPostOperationTest() {
-
-    }
-
     @Test
     public void testPostSingleRequest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultSingle");
         mock.expectedMinimumMessageCount(1);
-        mock.expectedBodyReceived().body(Post.class);
+        mock.allMessages().body().isInstanceOf(Post.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -44,7 +40,7 @@ public class WordpressPostOperationTest extends WordpressComponentTestSupport {
     public void testPostListRequest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultList");
         mock.expectedMinimumMessageCount(1);
-        mock.expectedBodyReceived().body(Post.class);
+        mock.allMessages().body().isInstanceOf(Post.class);
 
         assertMockEndpointsSatisfied();
     }

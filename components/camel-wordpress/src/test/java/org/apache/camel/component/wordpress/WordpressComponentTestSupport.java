@@ -24,10 +24,6 @@ import org.junit.BeforeClass;
 
 public class WordpressComponentTestSupport extends CamelTestSupport {
 
-    public WordpressComponentTestSupport() {
-
-    }
-
     @BeforeClass
     public static void beforeClass() throws IOException {
         WordpressMockServerTestSupport.setUpMockServer();
