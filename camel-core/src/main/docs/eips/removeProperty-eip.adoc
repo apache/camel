@@ -1,7 +1,7 @@
 [[removeProperty-eip]]
 == Remove Property EIP
 
-The RemoveProperty EIP allows you to set the body of your exchange.
+The RemoveProperty EIP allows you to remove a Property from your exchange.
 
 === Options
 
@@ -17,7 +17,7 @@ The Remove Property EIP supports 1 options which are listed below:
 
 === Examples
 
-The following example shows how to use the SetProperty EIP
+The following example shows how to use the Remove Property EIP
 
 [source,java]
 ----
@@ -39,6 +39,7 @@ And the same example using XML:
     <route>
         <from uri="direct:a"/>
            <removeProperty propertyName="myProperty"/>
+        <to uri="direct:b"/>
     </route>
 </camelContext>
 ----
