@@ -79,7 +79,10 @@ public class ExpressionClauseSupport<T> {
     }
 
     /**
-     * Specify the constant expression value
+     * Specify the constant expression value.
+     *
+     * <b>Important:</b> this is a fixed constant value that is only set once during starting up the route,
+     * do not use this if you want dynamic values during routing.
      */
     public T constant(Object value) {
         if (value instanceof String) {
