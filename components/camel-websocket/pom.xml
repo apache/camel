@@ -31,7 +31,7 @@
   <artifactId>camel-websocket</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: WebSocket</name>
-  <description>Camel WebSocket</description>
+  <description>Camel WebSocket using Jetty</description>
 
   <properties>
     <camel.osgi.export.pkg>

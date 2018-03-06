@@ -426,7 +426,7 @@ Number of Components: 291 in 199 JAR artifacts (19 deprecated)
 `jetty:httpUri` | 1.2 | The jetty component provides HTTP-based endpoints for consuming and producing HTTP requests.
 
 | link:camel-websocket/src/main/docs/websocket-component.adoc[Jetty Websocket] (camel-websocket) +
-`websocket:host:port/resourceUri` | 2.10 | The websocket component provides websocket endpoints for communicating with clients using websocket.
+`websocket:host:port/resourceUri` | 2.10 | The websocket component provides websocket endpoints with Jetty for communicating with clients using websocket.
 
 | link:camel-jgroups/src/main/docs/jgroups-component.adoc[JGroups] (camel-jgroups) +
 `jgroups:clusterName` | 2.13 | The jgroups component provides exchange of messages between Camel and JGroups clusters.
