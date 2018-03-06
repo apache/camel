@@ -35,7 +35,7 @@ from("activemq:SomeQueue")
     .pipeline()
     .bean("foo")
     .bean("bar")
-    .to("acitvemq:OutputQueueu");
+    .to("acitvemq:OutputQueue");
 ----
 
 The pipeline is the default mode, which can be omitted, and therefore you almost often write as:
@@ -45,7 +45,7 @@ The pipeline is the default mode, which can be omitted, and therefore you almost
 from("activemq:SomeQueue")
     .bean("foo")
     .bean("bar")
-    .to("acitvemq:OutputQueueu");
+    .to("acitvemq:OutputQueue");
 ----
 
 In XML you can use the `<pipeline>` element
