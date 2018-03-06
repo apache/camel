@@ -33,6 +33,7 @@ And the same example using XML:
     <route>
         <from uri="direct:a"/>
         <setBody><constant>test</constant></setBody>
+        <to uri="direct:b"/>
     </route>
 </camelContext>
 ----
