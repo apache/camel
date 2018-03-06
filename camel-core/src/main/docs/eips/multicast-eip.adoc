@@ -1,7 +1,7 @@
 [[multicast-eip]]
 == Multicast EIP
 
-The Multicast allows to route the same message to a number of endpoints
+The Multicast EIP allows to route the same message to a number of endpoints
 and process them in a different way. The main difference between the
 Multicast and Splitter is that Splitter will split the message into
 several pieces but the Multicast will not modify the request message.
