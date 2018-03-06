@@ -1,6 +1,7 @@
 [[stream-config-eip]]
 == Stream-config EIP
 
+Stream-processing resequence EIP
 
 // eip options: START
 The Stream-config EIP supports 6 options which are listed below:
