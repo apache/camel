@@ -98,6 +98,26 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
     }
         
     @Test
+    public void testSearchWithMapQueryFromAndSize() throws Exception {
+        //first, INDEX a value
+        Map<String, String> map = createIndexedData();
+        sendBody("direct:index", map);
+
+        //now, verify GET succeeded
+        Map<String, Object> actualQuery = new HashMap<String, Object>();
+        actualQuery.put("content", "searchtest");
+        Map<String, Object> match = new HashMap<String, Object>();
+        match.put("match", actualQuery);
+        Map<String, Object> query = new HashMap<String, Object>();
+        query.put("query", match);
+        query.put("size", "5");
+        query.put("from", "0");
+        SearchResponse response = template.requestBody("direct:search", query, SearchResponse.class);
+        assertNotNull("response should not be null", response);
+        assertNotNull("response hits should be == 1", response.getHits().totalHits());
+    }
+
+    @Test
     public void testSearchWithStringQuery() throws Exception {
         //first, INDEX a value
         Map<String, String> map = createIndexedData();
@@ -110,6 +130,19 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         assertNotNull("response hits should be == 1", response.getHits().totalHits());
     }
     
+    @Test
+    public void testSearchWithStringQueryFromAndSize() throws Exception {
+        //first, INDEX a value
+        Map<String, String> map = createIndexedData();
+        sendBody("direct:index", map);
+
+        //now, verify GET succeeded
+        String query = "{\"query\":{\"match\":{\"content\":\"searchtest\"}},\"from\": 0,\"size\": 10}";
+        SearchResponse response = template.requestBody("direct:search", query, SearchResponse.class);
+        assertNotNull("response should not be null", response);
+        assertNotNull("response hits should be == 1", response.getHits().totalHits());
+    }
+
     @Test
     public void testUpdate() throws Exception {
         Map<String, String> map = createIndexedData();
