@@ -124,6 +124,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
     @Override
     public synchronized void process(Exchange exchange) throws Exception {
         log.trace("Processing Exchange {}", exchange.getExchangeId());
+        getEndpoint().updateLastConnectionActivityTicks();
 
         Message message = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
 
@@ -272,6 +273,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
 
         } catch (IOException ioEx) {
             exchange.setException(ioEx);
+            mllpBuffer.resetSocket(socket);
         } finally {
             mllpBuffer.reset();
         }
