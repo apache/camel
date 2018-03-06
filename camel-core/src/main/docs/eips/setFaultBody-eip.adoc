@@ -1,0 +1,39 @@
+[[setFaultBody-eip]]
+== Set Fault Body EIP
+
+The SetFaultBody EIP allows you to set contents of a fault message's body.
+
+=== Options
+
+// eip options: START
+The Set Fault Body EIP has no options.
+// eip options: END
+
+=== Examples
+
+The following example shows how to use the SetFaultBody EIP
+
+[source,java]
+----
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        from("direct:a")
+            .setFaultBody(constant("test"))
+            .to("direct:b");
+    }
+};
+----
+
+
+And the same example using XML:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:a"/>
+        <setFaultBody><constant>test</constant></setFaultBody>
+        <to uri="direct:b"/>
+    </route>
+</camelContext>
+----
