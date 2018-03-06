@@ -674,6 +674,23 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.fastjson/${fastjson-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-fastjson/${project.version}</bundle>
   </feature>
+  <feature name='camel-fhir' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+    <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
+    <bundle dependency='true'>mvn:ca.uhn.hapi/hapi-osgi-base/${hapi-version}</bundle>
+    <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-client/${hapi-fhir-version}</bundle>
+    <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-base/${hapi-fhir-version}</bundle>
+    <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-structures-dstu3/${hapi-fhir-version}</bundle>
+    <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-utilities/${hapi-fhir-version}</bundle>
+    <bundle>wrap:mvn:ca.uhn.hapi.fhir/hapi-fhir-structures-dstu2/${hapi-fhir-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-fhir/${project.version}</bundle>
+  </feature>
   <feature name='camel-flatpack' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
