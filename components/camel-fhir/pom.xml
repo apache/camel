@@ -11,11 +11,13 @@
   
   <artifactId>camel-fhir</artifactId>
   <packaging>jar</packaging>
-
   <name>Camel :: Fhir</name>
   <description>Camel FHIR HL7 support</description>
 
   <properties>
+    <camel.osgi.export.pkg>
+      org.apache.camel.component.fhir.*
+    </camel.osgi.export.pkg>
     <camel.osgi.export.service>
       org.apache.camel.spi.DataFormatResolver;dataformat=fhirJson,
       org.apache.camel.spi.DataFormatResolver;dataformat=fhirXml
