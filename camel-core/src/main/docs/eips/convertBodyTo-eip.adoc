@@ -1,6 +1,7 @@
 [[convertBodyTo-eip]]
 == Convert Body To EIP
 
+The ConvertBodyTo EIP allows you to transform your body to a different type.
 
 // eip options: START
 The Convert Body To EIP supports 2 options which are listed below:
