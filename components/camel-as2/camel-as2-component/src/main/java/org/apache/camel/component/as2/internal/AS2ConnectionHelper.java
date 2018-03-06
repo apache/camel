@@ -62,7 +62,7 @@ public class AS2ConnectionHelper {
         synchronized(serverConnections) {
             AS2ServerConnection serverConnection = serverConnections.get(configuration.getServerPortNumber());
             if (serverConnection == null) {
-                serverConnection = new AS2ServerConnection(configuration.getServer(), configuration.getServerPortNumber());
+                serverConnection = new AS2ServerConnection(configuration.getAs2Version(), configuration.getServer(), configuration.getServerFqdn(), configuration.getServerPortNumber());
                 serverConnections.put(configuration.getServerPortNumber(), serverConnection);
             }
             return serverConnection;

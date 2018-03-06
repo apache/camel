@@ -20,7 +20,9 @@ public class DispositionNotificationOptionsParser {
     public static DispositionNotificationOptions parseDispositionNotificationOptions(final String value,
                                                                                      DispositionNotificationOptionsParser parser)
             throws ParseException {
-        Args.notNull(value, "Value");
+        if (value == null) {
+            return new DispositionNotificationOptions(null, null);
+        }
 
         final CharArrayBuffer buffer = new CharArrayBuffer(value.length());
         buffer.append(value);

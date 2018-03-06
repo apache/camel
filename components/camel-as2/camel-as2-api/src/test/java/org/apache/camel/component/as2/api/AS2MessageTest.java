@@ -267,7 +267,7 @@ public class AS2MessageTest {
     }
     
     @Test
-    public void testSignatureVerification() throws Exception {
+    public void signatureVerificationTest() throws Exception {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
         
@@ -287,6 +287,11 @@ public class AS2MessageTest {
         // Validate Signature
         assertTrue("Signature is invalid", signedEntity.isValid());
 
+    }
+    
+    @Test
+    public void mdnMessageTest() throws Exception {
+        
     }
         
 }

@@ -38,7 +38,6 @@ import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptions;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptionsParser;
 import org.apache.camel.component.as2.api.entity.EntityParser;
-import org.apache.camel.component.as2.api.entity.EntityUtils;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -137,7 +136,7 @@ public class MicUtils {
     
     private static String getMicJdkAlgorithmName(String[] micAs2AlgorithmNames) {
         if (micAs2AlgorithmNames == null) {
-            return null;
+            return AS2MicAlgorithm.SHA_1.getJdkAlgorithmName();
         }
         for(String micAs2AlgorithmName : micAs2AlgorithmNames) {
             String micAlgorithmName = AS2MicAlgorithm.getJdkAlgorithmName(micAs2AlgorithmName);
@@ -145,7 +144,7 @@ public class MicUtils {
                 return micAlgorithmName;
             }
         }    
-        return null;
+        return AS2MicAlgorithm.SHA_1.getJdkAlgorithmName();
     }
     
 }

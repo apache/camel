@@ -47,6 +47,9 @@ public class AS2Configuration {
     private String server = "Camel AS2 Server Endpoint";
     
     @UriParam
+    private String serverFqdn = "camel.apache.org";
+    
+    @UriParam
     private String targetHostname;
     
     @UriParam
@@ -194,6 +197,31 @@ public class AS2Configuration {
      */
     public void setServer(String server) {
         this.server = server;
+    }
+
+    /**
+     * The Server Fully Qualified Domain Name (FQDN). 
+     * 
+     * <p> Used in message ids sent by endpoint.
+     * 
+     * @return The FQDN of client.
+     */
+    public String getServerFqdn() {
+        return serverFqdn;
+    }
+
+    /**
+     * The Server Fully Qualified Domain Name (FQDN). 
+     * 
+     * <p> Used in message ids sent by endpoint.
+     * 
+     * @param clientFqdn - the FQDN of client.
+     */
+    public void setServerFqdn(String serverFqdn) {
+        if (clientFqdn == null) {
+            throw new RuntimeCamelException("Parameter 'serverFqdn' can not be null");
+        }
+        this.serverFqdn = serverFqdn;
     }
 
     /**

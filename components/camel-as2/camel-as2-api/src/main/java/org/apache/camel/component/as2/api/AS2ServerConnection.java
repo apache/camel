@@ -22,6 +22,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
+import org.apache.camel.component.as2.api.protocol.ResponseMDN;
 import org.apache.http.ConnectionClosedException;
 import org.apache.http.HttpException;
 import org.apache.http.HttpInetConnection;
@@ -39,6 +40,7 @@ import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
 import org.apache.http.protocol.ResponseServer;
 import org.apache.http.protocol.UriHttpRequestHandlerMapper;
+import org.apache.http.util.Args;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,14 +57,17 @@ public class AS2ServerConnection {
         private final HttpService httpService;
         private UriHttpRequestHandlerMapper reqistry;
 
-        public RequestListenerThread(String originServer, int port) throws IOException {
+        public RequestListenerThread(String as2Version, String originServer, String serverFqdn, int port) throws IOException {
             setName(REQUEST_LISTENER_THREAD_NAME_PREFIX + port);
             serversocket = new ServerSocket(port);
 
             // Set up HTTP protocol processor for incoming connections
             final HttpProcessor inhttpproc = new ImmutableHttpProcessor(
-                    new HttpResponseInterceptor[] { new ResponseContent(true), new ResponseServer(originServer),
-                            new ResponseDate(), new ResponseConnControl() });
+                    new HttpResponseInterceptor[] { new ResponseMDN(as2Version, serverFqdn),
+                                                    new ResponseContent(true), 
+                                                    new ResponseServer(originServer),
+                                                    new ResponseDate(), 
+                                                    new ResponseConnControl() });
 
             reqistry = new UriHttpRequestHandlerMapper();
 
@@ -151,9 +156,18 @@ public class AS2ServerConnection {
     }
     
     private RequestListenerThread listenerThread;
+    private String as2Version;
+    private String originServer;
+    private String serverFqdn;
+    private Integer serverPortNumber;
 
-    public AS2ServerConnection(String originServer, Integer serverPortNumber) throws IOException {
-        listenerThread = new RequestListenerThread(originServer, serverPortNumber);
+    public AS2ServerConnection(String as2Version, String originServer, String serverFqdn, Integer serverPortNumber) throws IOException {
+        this.as2Version = Args.notNull(as2Version, "as2Version");
+        this.originServer = Args.notNull(originServer, "userAgent");
+        this.serverFqdn = Args.notNull(serverFqdn, "serverFqdn");
+        this.serverPortNumber = Args.notNull(serverPortNumber, "serverPortNumber");
+
+        listenerThread = new RequestListenerThread(this.as2Version, this.originServer, this.serverFqdn, this.serverPortNumber);
         listenerThread.setDaemon(true);
         listenerThread.start();
     }

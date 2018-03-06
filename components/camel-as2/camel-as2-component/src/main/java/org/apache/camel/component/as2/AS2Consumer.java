@@ -22,16 +22,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Processor;
-import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.api.AS2ServerManager;
 import org.apache.camel.component.as2.api.entity.EntityParser;
-import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.util.component.AbstractApiConsumer;
 import org.apache.camel.util.component.ApiConsumerHelper;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodHelper;
+import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -100,7 +99,11 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
     public void handle(HttpRequest request, HttpResponse response, HttpContext context)
             throws HttpException, IOException {
         try {
-            EntityParser.parseAS2MessageEntity(request);
+            if (request instanceof HttpEntityEnclosingRequest) {
+                EntityParser.parseAS2MessageEntity(request);
+                // TODO derive last to parameters from configuration.
+                apiProxy.processMDNRequest((HttpEntityEnclosingRequest)request, response, context, "MDN Response", "Camel AS2 Server Endpoint");
+            }
             // Convert HTTP context to exchange and process
             log.debug("Processed {} event for {}", ApiConsumerHelper.getResultsProcessed(this, context, false),
                     as2ServerConnection);
@@ -110,10 +113,4 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
         
     }
     
-    protected void processMDNRequest(HttpRequest request, HttpResponse response, HttpContext context) {
-        String dispositionNotificationTo = HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_TO);
-        if (dispositionNotificationTo != null) {
-            
-        }
-    }
 }

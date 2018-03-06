@@ -149,7 +149,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
    }
    
    private static void receiveTestMessages() throws IOException {
-       serverConnection = new AS2ServerConnection("AS2ClientManagerIntegrationTest Server", 8888);
+       serverConnection = new AS2ServerConnection("1.1", "AS2ClientManagerIntegrationTest Server", "example.com", 8888);
        serverConnection.listen("/", new RequestHandler());
    }
 }

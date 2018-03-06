@@ -23,6 +23,7 @@ import org.apache.http.protocol.RequestDate;
 import org.apache.http.protocol.RequestExpectContinue;
 import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
+import org.apache.http.util.Args;
 
 public class AS2ClientConnection {
     
@@ -34,30 +35,11 @@ public class AS2ClientConnection {
     private String clientFqdn;
     
     public AS2ClientConnection(String as2Version, String userAgent, String clientFqdn, String targetHostName, Integer targetPortNumber) throws UnknownHostException, IOException {
-        if (as2Version == null) {
-            throw new IllegalArgumentException("Parameter 'as2Version' can not be null");
-        }
-        this.as2Version = as2Version;
 
-        if (userAgent == null) {
-            throw new IllegalArgumentException("Parameter 'userAgent' can not be null");
-        }
-        this.userAgent = userAgent;
-
-        if (clientFqdn == null) {
-            throw new IllegalArgumentException("Parameter 'clientFqdn' can not be null");
-        }
-        this.clientFqdn = clientFqdn;
-
-        if (targetHostName == null) {
-            throw new IllegalArgumentException("Parameter 'targetHostName' can not be null");
-        }
-                
-        if (targetPortNumber == null) {
-            throw new IllegalArgumentException("Parameter 'targetPortNumber' can not be null");
-        }
-        
-        targetHost = new HttpHost(targetHostName, targetPortNumber);
+        this.as2Version = Args.notNull(as2Version, "as2Version");
+        this.userAgent = Args.notNull(userAgent, "userAgent");
+        this.clientFqdn = Args.notNull(clientFqdn, "clientFqdn");
+        this.targetHost = new HttpHost(Args.notNull(targetHostName, "targetHostName"), Args.notNull(targetPortNumber, "targetPortNumber"));
                 
         // Build Processor
         httpProcessor = HttpProcessorBuilder.create()

@@ -23,8 +23,9 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
-import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
+import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
@@ -59,12 +60,22 @@ public class AS2ClientManager {
      * Prefix for all AS2 HTTP Context Attributes used by the Http Client
      * Manager.
      */
-    public static final String CAMEL_AS2_PREFIX = "camel-as2.";
+    public static final String CAMEL_AS2_CLIENT_PREFIX = "camel-as2.client";
 
     /**
      * The HTTP Context Attribute indicating the AS2 message structure to be sent.
      */
-    public static final String AS2_MESSAGE_STRUCTURE = CAMEL_AS2_PREFIX + "as1-message-structure";
+    public static final String AS2_MESSAGE_STRUCTURE = CAMEL_AS2_CLIENT_PREFIX + "as2-message-structure";
+    
+    /**
+     * The HTTP Context Attribute indicating the EDI message content type to be sent.
+     */
+    public static final String EDI_MESSAGE_CONTENT_TYPE = CAMEL_AS2_CLIENT_PREFIX + "edi-message-content-type";
+    
+    /**
+     * The HTTP Context Attribute indicating the EDI message transfer encoding to be sent.
+     */
+    public static final String EDI_MESSAGE_TRANSFER_ENCODING = CAMEL_AS2_CLIENT_PREFIX + "edi-message-transfer-encoding";
     
     /**
      * The HTTP Context Attribute containing the HTTP request message
@@ -82,7 +93,7 @@ public class AS2ClientManager {
      * The HTTP Context Attribute containing the AS2 Connection used to send
      * request message.
      */
-    public static final String AS2_CONNECTION = CAMEL_AS2_PREFIX + "as2-connection";
+    public static final String AS2_CONNECTION = CAMEL_AS2_CLIENT_PREFIX + "as2-connection";
 
     /**
      * The HTTP Context Attribute containing the request URI identifying the
@@ -90,61 +101,61 @@ public class AS2ClientManager {
      * message data and generating a reply for the sending system that contains
      * a Message Disposition Acknowledgement (MDN)
      */
-    public static final String REQUEST_URI = CAMEL_AS2_PREFIX + "request-uri";
+    public static final String REQUEST_URI = CAMEL_AS2_CLIENT_PREFIX + "request-uri";
 
     /**
      * The HTTP Context Attribute containing the subject header sent in an AS2
      * message.
      */
-    public static final String SUBJECT = CAMEL_AS2_PREFIX + "subject";
+    public static final String SUBJECT = CAMEL_AS2_CLIENT_PREFIX + "subject";
 
     /**
      * The HTTP Context Attribute containing the internet e-mail address of
      * sending system
      */
-    public static final String FROM = CAMEL_AS2_PREFIX + "from";
+    public static final String FROM = CAMEL_AS2_CLIENT_PREFIX + "from";
 
     /**
      * The HTTP Context Attribute containing the AS2 System Identifier of the
      * sending system
      */
-    public static final String AS2_FROM = CAMEL_AS2_PREFIX + "as2-from";
+    public static final String AS2_FROM = CAMEL_AS2_CLIENT_PREFIX + "as2-from";
 
     /**
      * The HTTP Context Attribute containing the AS2 System Identifier of the
      * receiving system
      */
-    public static final String AS2_TO = CAMEL_AS2_PREFIX + "as2-to";
+    public static final String AS2_TO = CAMEL_AS2_CLIENT_PREFIX + "as2-to";
 
     /**
      * The HTTP Context Attribute containing the algorithm name used to sign EDI
      * message
      */
-    public static final String SIGNING_ALGORITHM_NAME = CAMEL_AS2_PREFIX + "signing-algorithm-name";
+    public static final String SIGNING_ALGORITHM_NAME = CAMEL_AS2_CLIENT_PREFIX + "signing-algorithm-name";
 
     /**
      * The HTTP Context Attribute containing the certificate chain used to sign
      * EDI message
      */
-    public static final String SIGNING_CERTIFICATE_CHAIN = CAMEL_AS2_PREFIX + "signing-certificate-chain";
+    public static final String SIGNING_CERTIFICATE_CHAIN = CAMEL_AS2_CLIENT_PREFIX + "signing-certificate-chain";
 
     /**
      * The HTTP Context Attribute containing the private key used to sign EDI
      * message
      */
-    public static final String SIGNING_PRIVATE_KEY = CAMEL_AS2_PREFIX + "signing-private-key";
+    public static final String SIGNING_PRIVATE_KEY = CAMEL_AS2_CLIENT_PREFIX + "signing-private-key";
 
     /**
      * The HTTP Context Attribute containing the internet e-mail address of
      * sending system requesting a message disposition notification. 
      */
-    public static final String DISPOSITION_NOTIFICATION_TO = CAMEL_AS2_PREFIX + "disposition-notification-to";
+    public static final String DISPOSITION_NOTIFICATION_TO = CAMEL_AS2_CLIENT_PREFIX + "disposition-notification-to";
 
     /**
      * The HTTP Context Attribute containing the list of names of the requested MIC algorithms to be used 
      * by the receiving system to construct a message disposition notification. 
      */
-    public static final String SIGNED_RECEIPT_MIC_ALGORITHMS = CAMEL_AS2_PREFIX + "signed-receipt-mic-algorithms";
+    public static final String SIGNED_RECEIPT_MIC_ALGORITHMS = CAMEL_AS2_CLIENT_PREFIX + "signed-receipt-mic-algorithms";
 
     //
 
