@@ -372,7 +372,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         String name = "RabbitMQReplyManagerTimeoutChecker[" + getEndpoint().getExchangeName() + "]";
         ScheduledExecutorService replyManagerExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
         replyManager.setScheduledExecutorService(replyManagerExecutorService);
-        log.info("Starting reply manager service " + name);
+        log.debug("Staring ReplyManager: {}", name);
         ServiceHelper.startService(replyManager);
 
         return replyManager;

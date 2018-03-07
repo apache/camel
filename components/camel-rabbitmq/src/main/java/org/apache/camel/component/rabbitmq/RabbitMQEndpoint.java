@@ -223,19 +223,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         new RabbitMQMessagePublisher(camelExchange, channel, routingKey, this).publish();
     }
 
-    /**
-     * Extracts name of the rabbitmq exchange
-     */
-    protected String getExchangeName(Message msg) {
-        String exchangeName = msg.getHeader(RabbitMQConstants.EXCHANGE_NAME, String.class);
-        // If it is BridgeEndpoint we should ignore the message header of
-        // EXCHANGE_NAME
-        if (exchangeName == null || isBridgeEndpoint()) {
-            exchangeName = getExchangeName();
-        }
-        return exchangeName;
-    }
-
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         RabbitMQConsumer consumer = new RabbitMQConsumer(this, processor);

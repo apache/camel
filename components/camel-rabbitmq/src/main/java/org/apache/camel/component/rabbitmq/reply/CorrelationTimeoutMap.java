@@ -86,13 +86,13 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
         } else {
             result = super.put(key, value, timeoutMillis);
         }
-        log.info("Added correlationID: {} to timeout after: {} millis", key, timeoutMillis);
+        log.debug("Added correlationID: {} to timeout after: {} millis", key, timeoutMillis);
         return result;
     }
 
     @Override
     public ReplyHandler putIfAbsent(String key, ReplyHandler value, long timeoutMillis) {
-        log.info("in putIfAbsent with key {}", key);
+        log.trace("putIfAbsent with key {}", key);
 
         try {
             if (listener != null) {

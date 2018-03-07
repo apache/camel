@@ -76,10 +76,10 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     @Override
     protected Connection createListenerContainer() throws Exception {
 
-        log.debug("Creating connection");
+        log.trace("Creating connection");
         Connection conn = endpoint.connect(executorService);
 
-        log.debug("Creating channel");
+        log.trace("Creating channel");
         Channel channel = conn.createChannel();
         // setup the basicQos
         if (endpoint.isPrefetchEnabled()) {
@@ -89,7 +89,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
         //Let the server pick a random name for us
         DeclareOk result = channel.queueDeclare();
-        log.info("Using temporary queue name: {}", result.getQueue());
+        log.debug("Using temporary queue name: {}", result.getQueue());
         setReplyTo(result.getQueue());
 
         //TODO check for the RabbitMQConstants.EXCHANGE_NAME header
