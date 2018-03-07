@@ -176,7 +176,11 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     public void updateLastConnectionActivityTicks() {
-        lastConnectionActivityTicks = System.currentTimeMillis();
+        updateLastConnectionActivityTicks(System.currentTimeMillis());
+    }
+
+    public void updateLastConnectionActivityTicks(long epochTicks) {
+        lastConnectionActivityTicks = epochTicks;
     }
 
     public void updateLastConnectionEstablishedTicks() {

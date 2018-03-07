@@ -171,11 +171,11 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
 
     public void handleMessageTimeout(String message, byte[] payload, Throwable cause) {
-        super.handleException(new MllpInvalidMessageException(message, payload, cause));
+        getExceptionHandler().handleException(new MllpInvalidMessageException(message, payload, cause));
     }
 
     public void handleMessageException(String message, byte[] payload, Throwable cause) {
-        super.handleException(new MllpReceiveException(message, payload, cause));
+        getExceptionHandler().handleException(new MllpReceiveException(message, payload, cause));
     }
 
     public MllpConfiguration getConfiguration() {
@@ -213,6 +213,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         try {
             log.info("Starting consumer for Socket {}", clientSocket);
             consumerExecutor.submit(client);
+            getEndpoint().updateLastConnectionEstablishedTicks();
         } catch (RejectedExecutionException rejectedExecutionEx) {
             log.warn("Cannot start consumer - max consumers already active");
             mllpBuffer.resetSocket(clientSocket);
@@ -220,7 +221,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     }
 
     public void processMessage(byte[] hl7MessageBytes, TcpSocketConsumerRunnable consumerRunnable) {
-        getEndpoint().updateLastConnectionActivityTicks();
+        long now = System.currentTimeMillis();
+
+        getEndpoint().updateLastConnectionActivityTicks(now);
+        consumerRunnables.put(consumerRunnable, now);
 
         // Send the message on to Camel for processing and wait for the response
         log.debug("Populating the exchange with received message");
@@ -268,7 +272,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 getProcessor().process(exchange);
                 sendAcknowledgement(hl7MessageBytes, exchange, consumerRunnable);
             } catch (Exception unexpectedEx) {
-                getExceptionHandler().handleException("Unexpected exception processing exchange", exchange, unexpectedEx);
+                String resetMessage = "Unexpected exception processing exchange";
+                consumerRunnable.resetSocket(resetMessage);
+                getExceptionHandler().handleException(resetMessage, exchange, unexpectedEx);
             }
         } catch (Exception uowEx) {
             getExceptionHandler().handleException("Unexpected exception creating Unit of Work", exchange, uowEx);
@@ -408,7 +414,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         + MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING + "(type = " + acknowledgementBytesProperty.getClass().getSimpleName() + ") exchange properties can be converted to byte[]";
                 MllpInvalidAcknowledgementException invalidAckEx = new MllpInvalidAcknowledgementException(exceptionMessage, originalHl7MessageBytes, acknowledgementMessageBytes);
                 exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION, invalidAckEx);
-                handleException(invalidAckEx);
+                getExceptionHandler().handleException(invalidAckEx);
             } else {
                 String acknowledgmentTypeProperty = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, String.class);
                 String msa3 = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_MSA_TEXT, String.class);
@@ -451,7 +457,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
                 } catch (MllpAcknowledgementGenerationException ackGenerationException) {
                     exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION, ackGenerationException);
-                    handleException(ackGenerationException);
+                    getExceptionHandler().handleException(ackGenerationException);
                 }
             }
         } else {
