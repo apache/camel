@@ -274,7 +274,7 @@
     <google-truth-version>0.30</google-truth-version>
     <grizzly-websockets-version>2.3.25</grizzly-websockets-version>
     <grpc-version>1.10.0</grpc-version>
-    <grpc-google-auth-library-version>0.7.1</grpc-google-auth-library-version>
+    <grpc-google-auth-library-version>0.9.0</grpc-google-auth-library-version>
     <grpc-java-jwt-version>3.2.0</grpc-java-jwt-version>
     <grpc-netty-tcnative-boringssl-static-version>2.0.7.Final</grpc-netty-tcnative-boringssl-static-version>
     <grpc-bundle-version>1.10.0_1</grpc-bundle-version>
