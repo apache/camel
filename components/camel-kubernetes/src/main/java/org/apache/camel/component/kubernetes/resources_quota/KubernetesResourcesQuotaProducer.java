@@ -96,6 +96,8 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
     protected void doList(Exchange exchange, String operation) throws Exception {
         ResourceQuotaList resList = getEndpoint().getKubernetesClient()
                 .resourceQuotas().inAnyNamespace().list();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(resList.getItems());
     }
 
