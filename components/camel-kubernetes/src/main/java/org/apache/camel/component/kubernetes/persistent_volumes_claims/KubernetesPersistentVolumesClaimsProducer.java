@@ -98,6 +98,8 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
     protected void doList(Exchange exchange, String operation) throws Exception {
         PersistentVolumeClaimList persistentVolumeClaimList = getEndpoint()
                 .getKubernetesClient().persistentVolumeClaims().list();
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
+        
         exchange.getOut().setBody(persistentVolumeClaimList.getItems());
     }
 
