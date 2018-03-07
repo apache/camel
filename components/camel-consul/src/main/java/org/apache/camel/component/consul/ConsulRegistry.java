@@ -31,15 +31,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import com.google.common.base.Optional;
-import com.google.common.net.HostAndPort;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.ConsulException;
 import com.orbitz.consul.KeyValueClient;
 import com.orbitz.consul.SessionClient;
 import com.orbitz.consul.model.session.ImmutableSession;
 import com.orbitz.consul.model.session.SessionCreatedResponse;
-
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
 
@@ -64,16 +61,14 @@ public class ConsulRegistry implements Registry {
         super();
         this.hostname = hostname;
         this.port = port;
-        HostAndPort hostAndPort = HostAndPort.fromParts(hostname, port);
-        this.consul = Consul.builder().withHostAndPort(hostAndPort).build();
+        this.consul = Consul.builder().withUrl("http://" + this.hostname + ":" + this.port).build();
     }
 
     /* builder pattern */
     private ConsulRegistry(Builder builder) {
         this.hostname = builder.hostname;
         this.port = builder.port;
-        HostAndPort hostAndPort = HostAndPort.fromParts(hostname, port);
-        this.consul = Consul.builder().withHostAndPort(hostAndPort).build();
+        this.consul = Consul.builder().withUrl("http://" + this.hostname + ":" + this.port).build();
     }
 
     @Override
@@ -81,12 +76,13 @@ public class ConsulRegistry implements Registry {
         // Substitute $ character in key
         key = key.replaceAll("\\$", "/");
         kvClient = consul.keyValueClient();
-        Optional<String> result = kvClient.getValueAsString(key);
-        if (result.isPresent()) {
-            byte[] postDecodedValue = ConsulRegistryUtils.decodeBase64(result.get());
-            return ConsulRegistryUtils.deserialize(postDecodedValue);
-        }
-        return null;
+
+        return kvClient.getValueAsString(key).map(
+            result -> {
+                byte[] postDecodedValue = ConsulRegistryUtils.decodeBase64(result);
+                return ConsulRegistryUtils.deserialize(postDecodedValue);
+            }
+        ).orElse(null);
     }
 
     @Override
@@ -106,18 +102,21 @@ public class ConsulRegistry implements Registry {
 
     @Override
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
-        Object obj = null;
-        Map<String, T> result = new HashMap<String, T>();
+        Map<String, T> result = new HashMap<>();
         // encode $ signs as they occur in subclass types
         String keyPrefix = type.getName().replaceAll("\\$", "/");
         kvClient = consul.keyValueClient();
+
         List<String> keys;
         try {
             keys = kvClient.getKeys(keyPrefix);
         } catch (ConsulException e) {
             return result;
         }
+
         if (keys != null) {
+            Object obj;
+
             for (String key : keys) {
                 // change bookmark back into actual key
                 key = key.substring(key.lastIndexOf('/') + 1);
@@ -133,21 +132,24 @@ public class ConsulRegistry implements Registry {
     @Override
     public <T> Set<T> findByType(Class<T> type) {
         String keyPrefix = type.getName().replaceAll("\\$", "/");
-        Object object = null;
-        Set<T> result = new HashSet<T>();
-        List<String> keys = null;
+        Set<T> result = new HashSet<>();
+
+        List<String> keys;
         try {
             keys = kvClient.getKeys(keyPrefix);
         } catch (ConsulException e) {
             return result;
         }
+
         if (keys != null) {
+            Object obj;
+
             for (String key : keys) {
                 // change bookmark back into actual key
                 key = key.substring(key.lastIndexOf('/') + 1);
-                object = lookupByName(key.replaceAll("\\$", "/"));
-                if (type.isInstance(object)) {
-                    result.add(type.cast(object));
+                obj = lookupByName(key.replaceAll("\\$", "/"));
+                if (type.isInstance(obj)) {
+                    result.add(type.cast(obj));
                 }
             }
         }

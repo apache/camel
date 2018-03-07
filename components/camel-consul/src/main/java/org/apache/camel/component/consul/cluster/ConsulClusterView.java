@@ -68,11 +68,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             return Optional.empty();
         }
 
-        return Optional.ofNullable(
-            keyValueClient.getSession(configuration.getRootPath())
-                .transform(ConsulClusterMember::new)
-                .orNull()
-        );
+        return keyValueClient.getSession(configuration.getRootPath()).map(ConsulClusterMember::new);
     }
 
     @Override
@@ -137,7 +133,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             String sid = sessionId.get();
 
             return (sid != null)
-                ? sessionClient.getSessionInfo(sid).transform(si -> keyValueClient.acquireLock(path, sid)).or(Boolean.FALSE)
+                ? sessionClient.getSessionInfo(sid).map(si -> keyValueClient.acquireLock(path, sid)).orElse(Boolean.FALSE)
                 : false;
         }
     }
@@ -238,7 +234,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
     // Watch
     // *************************************************************************
 
-    private class Watcher implements ConsulResponseCallback<com.google.common.base.Optional<Value>> {
+    private class Watcher implements ConsulResponseCallback<Optional<Value>> {
         private final AtomicReference<BigInteger> index;
 
         public Watcher() {
@@ -246,11 +242,11 @@ final class ConsulClusterView extends AbstractCamelClusterView {
         }
 
         @Override
-        public void onComplete(ConsulResponse<com.google.common.base.Optional<Value>> consulResponse) {
+        public void onComplete(ConsulResponse<Optional<Value>> consulResponse) {
             if (isStarting() || isStarted()) {
-                com.google.common.base.Optional<Value> value = consulResponse.getResponse();
+                Optional<Value> value = consulResponse.getResponse();
                 if (value.isPresent()) {
-                    com.google.common.base.Optional<String> sid = value.get().getSession();
+                    Optional<String> sid = value.get().getSession();
                     if (!sid.isPresent()) {
                         // If the key is not held by any session, try acquire a
                         // lock (become leader)

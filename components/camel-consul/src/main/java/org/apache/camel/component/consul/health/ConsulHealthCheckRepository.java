@@ -151,8 +151,8 @@ public class ConsulHealthCheckRepository implements HealthCheckRepository, Camel
                     builder.down();
                 }
 
-                builder.detail("consul.service.name", check.getServiceName().orNull());
-                builder.detail("consul.service.id", check.getServiceId().orNull());
+                builder.detail("consul.service.name", check.getServiceName().orElse(null));
+                builder.detail("consul.service.id", check.getServiceId().orElse(null));
                 builder.detail("consul.check.status", check.getStatus());
                 builder.detail("consul.check.id", check.getCheckId());
             }
