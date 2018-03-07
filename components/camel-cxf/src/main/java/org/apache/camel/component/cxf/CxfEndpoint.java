@@ -1180,7 +1180,83 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         public Bus getBus() {
             return bus;
         }
+        
+        @Override
+        protected Object[] processResult(Message message, org.apache.cxf.message.Exchange exchange,
+                                         BindingOperationInfo oi, Map<String, Object> resContext)
+                                             throws Exception {
+            Exception ex = null;
+            // Check to see if there is a Fault from the outgoing chain if it's an out Message
+            if (!message.get(Message.INBOUND_MESSAGE).equals(Boolean.TRUE)) {
+                ex = message.getContent(Exception.class);
+            }
+            boolean mepCompleteCalled = false;
+            if (ex != null) {
+                completeExchange(exchange);
+                mepCompleteCalled = true;
+                if (message.getContent(Exception.class) != null) {
+                    throw ex;
+                }
+            }
+            ex = message.getExchange().get(Exception.class);
+            if (ex != null) {
+                if (!mepCompleteCalled) {
+                    completeExchange(exchange);
+                }
+                throw ex;
+            }
 
+            Integer responseCode = (Integer)exchange.get(Message.RESPONSE_CODE);
+            if (null != responseCode && 202 == responseCode) {
+                Endpoint ep = exchange.getEndpoint();
+                if (null != ep && null != ep.getEndpointInfo() && null == ep.getEndpointInfo()
+                    .getProperty("org.apache.cxf.ws.addressing.MAPAggregator.decoupledDestination")) {
+                    return null;
+                }
+            }
+
+            // Wait for a response if we need to
+            if (oi != null && !oi.getOperationInfo().isOneWay()) {
+                waitResponse(exchange);
+            }
+
+            // leave the input stream open for the caller
+            Boolean keepConduitAlive = (Boolean)exchange.get(Client.KEEP_CONDUIT_ALIVE);
+            if (keepConduitAlive == null || !keepConduitAlive) {
+                completeExchange(exchange);
+            }
+
+            // Grab the response objects if there are any
+            List<Object> resList = null;
+            Message inMsg = exchange.getInMessage();
+            if (inMsg != null) {
+                if (null != resContext) {
+                    resContext.putAll(inMsg);
+                    // remove the recursive reference if present
+                    resContext.remove(Message.INVOCATION_CONTEXT);
+                    responseContext.put(Thread.currentThread(), resContext);
+                }
+                resList = CastUtils.cast(inMsg.getContent(List.class));
+            }
+
+            // check for an incoming fault
+            ex = getException(exchange);
+
+            if (ex != null) {
+                throw ex;
+            }
+
+            if (resList != null) {
+                return resList.toArray();
+            }
+
+            return null;
+        }
+
+        private void completeExchange(org.apache.cxf.message.Exchange exchange) {
+            getConduitSelector().complete(exchange);
+        }
+        
         @SuppressWarnings("unchecked")
         @Override
         protected void setParameters(Object[] params, Message message) {
