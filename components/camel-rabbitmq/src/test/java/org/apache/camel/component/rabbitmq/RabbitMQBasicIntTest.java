@@ -22,10 +22,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-public class RabbitMQIntBasicTest extends AbstractRabbitMQIntTest {
+public class RabbitMQBasicIntTest extends AbstractRabbitMQIntTest {
 
-    // Startup RabbitMQ via Docker
-    // docker run -d -it -p 5672:5672 -e RABBITMQ_DEFAULT_USER=cameltest -e RABBITMQ_DEFAULT_PASS=cameltest --hostname my-rabbit --name some-rabbit rabbitmq:3
+    // Startup RabbitMQ via Docker (see readme.txt in camel-rabbitmq folder)
 
     @EndpointInject(uri = "rabbitmq:localhost:5672/foo?username=cameltest&password=cameltest")
     private Endpoint foo;
