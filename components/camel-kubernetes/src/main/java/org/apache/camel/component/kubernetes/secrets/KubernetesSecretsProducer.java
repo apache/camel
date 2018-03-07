@@ -96,6 +96,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
     protected void doList(Exchange exchange, String operation) throws Exception {
         SecretList secretsList = getEndpoint().getKubernetesClient().secrets().inAnyNamespace()
                 .list();
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(secretsList.getItems());
     }
 
