@@ -99,7 +99,7 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
                 message.setHeader(ConsulConstants.CONSUL_TAG_FILTER, event.getTagFilter().get());
             }
 
-            message.setBody(event.getPayload().orNull());
+            message.setBody(event.getPayload().orElse(null));
 
             try {
                 getProcessor().process(exchange);

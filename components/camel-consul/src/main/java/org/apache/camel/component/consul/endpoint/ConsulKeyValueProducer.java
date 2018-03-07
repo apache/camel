@@ -53,12 +53,12 @@ public final class ConsulKeyValueProducer extends AbstractConsulProducer<KeyValu
         if (asString) {
             result = getClient().getValueAsString(
                 getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class)
-            ).orNull();
+            ).orElse(null);
         } else {
             result = getClient().getValue(
                 getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class),
                 message.getHeader(ConsulConstants.CONSUL_OPTIONS, QueryOptions.BLANK, QueryOptions.class)
-            ).orNull();
+            ).orElse(null);
         }
 
         setBodyAndResult(message, result);
