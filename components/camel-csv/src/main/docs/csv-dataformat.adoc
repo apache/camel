@@ -12,7 +12,7 @@ exported/imported by Excel.
 ### Options
 
 // dataformat options: START
-The CSV dataformat supports 27 options which are listed below.
+The CSV dataformat supports 28 options which are listed below.
 
 
 
@@ -43,7 +43,8 @@ The CSV dataformat supports 27 options which are listed below.
 | trim | false | Boolean | Sets whether or not to trim leading and trailing blanks.
 | trailingDelimiter | false | Boolean | Sets whether or not to add a trailing delimiter.
 | lazyLoad | false | Boolean | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one.
-| useMaps | false | Boolean | Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected).
+| useMaps | false | Boolean | Whether the unmarshalling should produce maps (HashMap) for the lines values instead of lists. It requires to have header (either defined or collected).
+| useOrderedMaps | false | Boolean | Whether the unmarshalling should produce ordered maps (LinkedHashMap) for the lines values instead of lists. It requires to have header (either defined or collected).
 | recordConverterRef |  | String | Refers to a custom CsvRecordConverter to lookup from the registry to use.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===

@@ -17,6 +17,9 @@
 package org.apache.camel.dataformat.csv;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -92,6 +95,35 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         assertEquals(2, body.size());
         assertEquals(asMap("A", "1", "B", "2", "C", "3"), body.get(0));
         assertEquals(asMap("A", "one", "B", "two", "C", "three"), body.get(1));
+        // should be unordered map
+        Map map = (Map) body.get(0);
+        assertIsInstanceOf(HashMap.class, map);
+    }
+
+    @Test
+    public void shouldUseOrderedMaps() throws Exception {
+        output.expectedMessageCount(1);
+
+        template.sendBody("direct:orderedmap", CSV_SAMPLE);
+        output.assertIsSatisfied();
+
+        List<?> body = assertIsInstanceOf(List.class, output.getExchanges().get(0).getIn().getBody());
+        assertEquals(2, body.size());
+        assertEquals(asMap("A", "1", "B", "2", "C", "3"), body.get(0));
+        assertEquals(asMap("A", "one", "B", "two", "C", "three"), body.get(1));
+
+        Map map = (Map) body.get(0);
+        assertIsInstanceOf(LinkedHashMap.class, map);
+        Iterator<Map.Entry> it = map.entrySet().iterator();
+        Map.Entry e = it.next();
+        assertEquals("A", e.getKey());
+        assertEquals("1", e.getValue());
+        e = it.next();
+        assertEquals("B", e.getKey());
+        assertEquals("2", e.getValue());
+        e = it.next();
+        assertEquals("C", e.getKey());
+        assertEquals("3", e.getValue());
     }
 
     @Test
@@ -144,6 +176,11 @@ public class CsvUnmarshalTest extends CamelTestSupport {
                 // Use maps
                 from("direct:map")
                         .unmarshal(new CsvDataFormat().setUseMaps(true))
+                        .to("mock:output");
+
+                // Use ordered maps
+                from("direct:orderedmap")
+                        .unmarshal(new CsvDataFormat().setUseOrderedMaps(true))
                         .to("mock:output");
 
                 // Use lazy load and maps
