@@ -93,6 +93,8 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
     protected void doList(Exchange exchange, String operation) throws Exception {
         NamespaceList namespacesList = getEndpoint().getKubernetesClient()
                 .namespaces().list();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(namespacesList.getItems());
     }
 
