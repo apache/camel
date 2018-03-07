@@ -173,6 +173,8 @@ that will be used when producing a message
 
 |`rabbitmq.DELIVERY_TAG` |The rabbitmq delivery tag of the received message
 
+|`rabbitmq.REDELIVERY_TAG` |Whether the message is a redelivered
+
 |`rabbitmq.REQUEUE` |*Camel 2.14.2:* This is used by the consumer to control rejection of the
 message. When the consumer is complete processing the exchange, and if
 the exchange failed, then the consumer is going to reject the message
@@ -191,7 +193,9 @@ camel exchange then they will be set on the RabbitMQ message.
 
 |`rabbitmq.ROUTING_KEY` |The routing key that will be used when sending the message
 
-|`rabbitmq.EXCHANGE_NAME` |The exchange the message was received from, or sent to
+|`rabbitmq.EXCHANGE_NAME` |The exchange the message was received from
+
+|`rabbitmq.EXCHANGE_OVERRIDE_NAME` | *Camel 2.21:* Used for force sending the message to this exchange instead of the endpoint configured name on the producer
 
 |`rabbitmq.CONTENT_TYPE` |The contentType to set on the RabbitMQ message
 
@@ -276,7 +280,7 @@ public Map<String, Object> bindArgsBuilder() {
 }
 ----
 
-==== Routing between exchanges
+==== Issue when routing between exchanges (in Camel 2.20.x or older)
 
 If you for example want to route messages from one Rabbit exchange to another as shown
 in the example below with foo -> bar:
@@ -295,7 +299,7 @@ and instead send the message to `foo`.
 
 To avoid this you need to either:
 
-- remove the header
+- Remove the header:
 
 [source,java]
 ----
@@ -304,11 +308,23 @@ from("rabbitmq://localhost/foo")
   .to("rabbitmq://localhost/bar")
 ----
 
-- or turn on `bridgeEndpoint` mode on the producer.
+- Or turn on `bridgeEndpoint` mode on the producer:
 
 [source,java]
 ----
 from("rabbitmq://localhost/foo")
   .to("rabbitmq://localhost/bar?bridgeEndpoint=true")
+----
+
+From Camel 2.21 onwards this has been improved so you can easily route between exchanges.
+The header `rabbitmq.EXCHANGE_NAME` is not longer used by the producer to override the destination exchange.
+Instead a new header `rabbitmq.EXCHANGE_OVERRIDE_NAME` can be used to send to a different exchange.
+For example to send to cheese exchange you can do
+
+[source,java]
+----
+from("rabbitmq://localhost/foo")
+  .setHeader("rabbitmq.EXCHANGE_OVERRIDE_NAME", constant("cheese"))
+  .to("rabbitmq://localhost/bar")
 ----
 
