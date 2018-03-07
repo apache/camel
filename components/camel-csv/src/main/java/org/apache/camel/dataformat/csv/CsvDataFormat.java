@@ -64,6 +64,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     // Unmarshal options
     private boolean lazyLoad;
     private boolean useMaps;
+    private boolean useOrderedMaps;
     private CsvRecordConverter<?> recordConverter;
 
     private volatile CsvMarshaller marshaller;
@@ -670,6 +671,26 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
      */
     public CsvDataFormat setUseMaps(boolean useMaps) {
         this.useMaps = useMaps;
+        return this;
+    }
+
+    /**
+     * Indicates whether or not the unmarshalling should produce ordered maps instead of lists.
+     *
+     * @return {@code true} for maps, {@code false} for lists
+     */
+    public boolean isUseOrderedMaps() {
+        return useOrderedMaps;
+    }
+
+    /**
+     * Sets whether or not the unmarshalling should produce ordered maps instead of lists.
+     *
+     * @param useOrderedMaps {@code true} for maps, {@code false} for lists
+     * @return Current {@code CsvDataFormat}, fluent API
+     */
+    public CsvDataFormat setUseOrderedMaps(boolean useOrderedMaps) {
+        this.useOrderedMaps = useOrderedMaps;
         return this;
     }
 

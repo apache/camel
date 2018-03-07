@@ -132,11 +132,17 @@ public class CsvDataFormatConfiguration
      */
     private Boolean lazyLoad = false;
     /**
-     * Whether the unmarshalling should produce maps for the lines values
-     * instead of lists. It requires to have header (either defined or
+     * Whether the unmarshalling should produce maps (HashMap) for the lines
+     * values instead of lists. It requires to have header (either defined or
      * collected).
      */
     private Boolean useMaps = false;
+    /**
+     * Whether the unmarshalling should produce ordered maps (LinkedHashMap) for
+     * the lines values instead of lists. It requires to have header (either
+     * defined or collected).
+     */
+    private Boolean useOrderedMaps = false;
     /**
      * Refers to a custom CsvRecordConverter to lookup from the registry to use.
      */
@@ -347,6 +353,14 @@ public class CsvDataFormatConfiguration
 
     public void setUseMaps(Boolean useMaps) {
         this.useMaps = useMaps;
+    }
+
+    public Boolean getUseOrderedMaps() {
+        return useOrderedMaps;
+    }
+
+    public void setUseOrderedMaps(Boolean useOrderedMaps) {
+        this.useOrderedMaps = useOrderedMaps;
     }
 
     public String getRecordConverterRef() {
