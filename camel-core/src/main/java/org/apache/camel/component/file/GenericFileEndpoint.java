@@ -408,7 +408,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Sets case sensitive flag on ant fiter
+     * Sets case sensitive flag on ant filter
      */
     public void setAntFilterCaseSensitive(boolean antFilterCaseSensitive) {
         this.antFilterCaseSensitive = antFilterCaseSensitive;
