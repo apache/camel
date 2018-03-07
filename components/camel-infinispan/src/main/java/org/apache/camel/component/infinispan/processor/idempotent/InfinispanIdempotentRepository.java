@@ -65,6 +65,12 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
     @Override
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(Object key) {
+        // need to check first as put will update the entry lifetime so it can not expire its cache lifespan
+        if (getCache().containsKey(key)) {
+            // there is already an entry so return false
+            return false;
+        }
+        
         Boolean put = getCache().put(key, true);
         return put == null;
     }
