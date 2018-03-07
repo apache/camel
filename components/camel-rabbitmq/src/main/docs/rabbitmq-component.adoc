@@ -276,3 +276,39 @@ public Map<String, Object> bindArgsBuilder() {
 }
 ----
 
+==== Routing between exchanges
+
+If you for example want to route messages from one Rabbit exchange to another as shown
+in the example below with foo -> bar:
+
+[source,java]
+----
+from("rabbitmq://localhost/foo")
+  .to("rabbitmq://localhost/bar")
+----
+
+Then beware that Camel will route the message to itself, eg foo -> foo. So why is that?
+This is because the consumer that receives the message (eg from) provides the message header
+`rabbitmq.EXCHANGE_NAME` with the name of the exchange, eg `foo`. And when the Camel producer
+is sending the message to `bar` then the header `rabbitmq.EXCHANGE_NAME` will override this
+and instead send the message to `foo`.
+
+To avoid this you need to either:
+
+- remove the header
+
+[source,java]
+----
+from("rabbitmq://localhost/foo")
+  .removeHeader("rabbitmq.EXCHANGE_NAME")
+  .to("rabbitmq://localhost/bar")
+----
+
+- or turn on `bridgeEndpoint` mode on the producer.
+
+[source,java]
+----
+from("rabbitmq://localhost/foo")
+  .to("rabbitmq://localhost/bar?bridgeEndpoint=true")
+----
+
