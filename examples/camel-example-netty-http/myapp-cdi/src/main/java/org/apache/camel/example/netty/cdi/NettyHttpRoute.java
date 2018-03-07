@@ -23,13 +23,13 @@ import javax.inject.Named;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.component.netty.http.NettySharedHttpServer;
-import org.ops4j.pax.cdi.api.OsgiService;
+import org.ops4j.pax.cdi.api.Service;
 
 @ContextName("netty-myapp-cdi")
 public class NettyHttpRoute extends RouteBuilder {
 
     @Inject
-    @OsgiService
+    @Service
     private NettySharedHttpServer server;
 
     @Produces
