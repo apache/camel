@@ -105,12 +105,19 @@ public class RabbitMQMessagePublisher {
     }
 
     private void publishToRabbitMQ(final AMQP.BasicProperties properties, final byte[] body) throws IOException {
-        String rabbitExchange = endpoint.getExchangeName(message);
+        // remove the OVERRIDE header so it does not propagate
+        String exchangeName = (String) message.removeHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
+        // If it is BridgeEndpoint we should ignore the message header of EXCHANGE_OVERRIDE_NAME
+        if (exchangeName == null || endpoint.isBridgeEndpoint()) {
+            exchangeName = endpoint.getExchangeName();
+        } else {
+            LOG.debug("Overriding header: {} detected sending message to exchange: {}", RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, exchangeName);
+        }
 
         Boolean mandatory = camelExchange.getIn().getHeader(RabbitMQConstants.MANDATORY, endpoint.isMandatory(), Boolean.class);
         Boolean immediate = camelExchange.getIn().getHeader(RabbitMQConstants.IMMEDIATE, endpoint.isImmediate(), Boolean.class);
 
-        LOG.debug("Sending message to exchange: {} with CorrelationId: {}", rabbitExchange, properties.getCorrelationId());
+        LOG.debug("Sending message to exchange: {} with CorrelationId: {}", exchangeName, properties.getCorrelationId());
 
         if (isPublisherAcknowledgements()) {
             channel.confirmSelect();
@@ -121,7 +128,7 @@ public class RabbitMQMessagePublisher {
         }
 
         try {
-            channel.basicPublish(rabbitExchange, routingKey, mandatory, immediate, properties, body);
+            channel.basicPublish(exchangeName, routingKey, mandatory, immediate, properties, body);
             if (isPublisherAcknowledgements()) {
                 waitForConfirmation();
             }
