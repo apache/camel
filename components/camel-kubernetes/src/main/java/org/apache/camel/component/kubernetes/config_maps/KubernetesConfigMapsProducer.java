@@ -91,6 +91,8 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
 
     protected void doList(Exchange exchange, String operation) throws Exception {
         ConfigMapList configMapsList = getEndpoint().getKubernetesClient().configMaps().inAnyNamespace().list();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);       
         exchange.getOut().setBody(configMapsList.getItems());
     }
 
