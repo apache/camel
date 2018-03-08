@@ -28,26 +28,14 @@ import org.apache.camel.spi.Synchronization;
  */
 public class InOnlyMessageHandler extends AbstractMessageHandler {
 
-    /**
-     * @param endpoint
-     * @param executor
-     */
     public InOnlyMessageHandler(SjmsEndpoint endpoint, ExecutorService executor) {
         super(endpoint, executor);
     }
 
-    /**
-     * @param endpoint
-     * @param executor
-     * @param synchronization
-     */
     public InOnlyMessageHandler(SjmsEndpoint endpoint, ExecutorService executor, Synchronization synchronization) {
         super(endpoint, executor, synchronization);
     }
 
-    /**
-     * @param exchange
-     */
     @Override
     public void handleMessage(final Exchange exchange) {
         if (log.isDebugEnabled()) {
@@ -56,8 +44,7 @@ public class InOnlyMessageHandler extends AbstractMessageHandler {
         if (!exchange.isFailed()) {
             NoOpAsyncCallback callback = new NoOpAsyncCallback();
             if (isTransacted() || isSynchronous()) {
-                // must process synchronous if transacted or configured to
-                // do so
+                // must process synchronous if transacted or configured to do so
                 if (log.isDebugEnabled()) {
                     log.debug("Synchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
                 }
@@ -70,7 +57,9 @@ public class InOnlyMessageHandler extends AbstractMessageHandler {
                 }
             } else {
                 // process asynchronous using the async routing engine
-                log.debug("Asynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
+                if (log.isDebugEnabled()) {
+                    log.debug("Asynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
+                }
 
                 getProcessor().process(exchange, callback);
             }
