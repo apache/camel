@@ -37,7 +37,7 @@ exchange name determines which exchange the queue will bind to.
 === Options
 
 // component options: START
-The RabbitMQ component supports 3 options which are listed below.
+The RabbitMQ component supports 5 options which are listed below.
 
 
 
@@ -46,6 +46,8 @@ The RabbitMQ component supports 3 options which are listed below.
 | Name | Description | Default | Type
 | *hostname* (common) | The hostname of the running rabbitmq instance or cluster. |  | String
 | *portNumber* (common) | Port number for the host with the running rabbitmq instance or cluster. | 5672 | int
+| *username* (security) | Username in case of authenticated access | guest | String
+| *password* (security) | Password for authenticated access | guest | String
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -70,7 +72,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (58 parameters):
+==== Query Parameters (60 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -86,7 +88,9 @@ with the following path and query parameters:
 | *durable* (common) | If we are declaring a durable exchange (the exchange will survive a server restart) | true | boolean
 | *exchangeType* (common) | The exchange type such as direct or topic. | direct | String
 | *exclusive* (common) | Exclusive queues may only be accessed by the current connection, and are deleted when that connection closes. | false | boolean
+| *hostname* (common) | The hostname of the running rabbitmq instance or cluster. |  | String
 | *passive* (common) | Passive queues depend on the queue already to be available at RabbitMQ. | false | boolean
+| *portNumber* (common) | Port number for the host with the running rabbitmq instance or cluster. Default value is 5672. |  | int
 | *queue* (common) | The queue to receive messages from |  | String
 | *routingKey* (common) | The routing key to use when binding a consumer queue to the exchange. For producer routing keys, you set the header rabbitmq.ROUTING_KEY. |  | String
 | *skipExchangeDeclare* (common) | This can be used if we need to declare the queue but not the exchange | false | boolean
