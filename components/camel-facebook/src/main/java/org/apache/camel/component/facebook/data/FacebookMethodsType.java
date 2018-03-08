@@ -582,6 +582,8 @@ public enum FacebookMethodsType {
     GET_PAGE_TAGGED(ResponseList.class, "getPageTagged", String.class, "pageId"),
     GET_PAGE_TAGGED_WITH_READING(ResponseList.class, "getPageTagged", String.class, "pageId", Reading.class, FacebookConstants.READING_PROPERTY),
     GET_PAGE(Page.class, "getPage"),
+    GET_PAGE_LIKES(ResponseList.class, "getPageLikes", String.class, "pageId"),
+    GET_PAGE_LIKES_WITH_READING(ResponseList.class, "getPageLikes", String.class, "pageId", Reading.class, FacebookConstants.READING_PROPERTY),
     GET_PAGE_WITH_ID(Page.class, "getPage", String.class, "pageId"),
     GET_PAGE_WITH_READING(Page.class, "getPage", Reading.class, FacebookConstants.READING_PROPERTY),
     GET_PAGE_WITH_ID_AND_READING(Page.class, "getPage", String.class, "pageId", Reading.class, FacebookConstants.READING_PROPERTY),
