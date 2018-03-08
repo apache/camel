@@ -95,11 +95,8 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         RabbitMQEndpoint endpoint1 = context.getEndpoint("rabbitmq:localhost/", RabbitMQEndpoint.class);
         assertEquals("Get a wrong exchange name", "", endpoint1.getExchangeName());
 
-        RabbitMQEndpoint endpoint2 = context.getEndpoint("rabbitmq:localhost?autoAck=false", RabbitMQEndpoint.class);
-        assertEquals("Get a wrong exchange name", "", endpoint2.getExchangeName());
-
-        RabbitMQEndpoint endpoint3 = context.getEndpoint("rabbitmq:localhost/exchange", RabbitMQEndpoint.class);
-        assertEquals("Get a wrong exchange name", "exchange", endpoint3.getExchangeName());
+        RabbitMQEndpoint endpoint2 = context.getEndpoint("rabbitmq:localhost/exchange", RabbitMQEndpoint.class);
+        assertEquals("Get a wrong exchange name", "exchange", endpoint2.getExchangeName());
     }
 
     @Test

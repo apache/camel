@@ -22,9 +22,9 @@ import java.util.Map;
 import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +38,11 @@ public class RabbitMQComponent extends UriEndpointComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQComponent.class);
 
+    @Metadata(label = "common")
+    private String hostname;
+    @Metadata(label = "common", defaultValue = "5672")
+    private int portNumber;
+
     public RabbitMQComponent() {
         super(RabbitMQEndpoint.class);
     }
@@ -50,12 +55,25 @@ public class RabbitMQComponent extends UriEndpointComponent {
     protected RabbitMQEndpoint createEndpoint(String uri,
                                               String remaining,
                                               Map<String, Object> params) throws Exception {
-        URI host = new URI("http://" + remaining);
-        String hostname = host.getHost();
-        int portNumber = host.getPort();
-        String exchangeName = ""; // We need to support the exchange to be "" the path is empty
-        if (host.getPath().trim().length() > 1) {
-            exchangeName = host.getPath().substring(1);
+
+        String host = getHostname();
+        int port = getPortNumber();
+        String exchangeName = remaining;
+
+        if (remaining.contains(":") || remaining.contains("/")) {
+            LOG.warn("The old syntax rabbitmq://hostname:port/exchangeName is deprecated. You should configure the hostname on the component or ConnectionFactory");
+            try {
+                URI u = new URI("http://" + remaining);
+                host = u.getHost();
+                port = u.getPort();
+                if (u.getPath().trim().length() > 1) {
+                    exchangeName = u.getPath().substring(1);
+                } else {
+                    exchangeName = "";
+                }
+            } catch (Throwable e) {
+                // ignore
+            }
         }
 
         // ConnectionFactory reference
@@ -69,8 +87,8 @@ public class RabbitMQComponent extends UriEndpointComponent {
         } else {
             endpoint = new RabbitMQEndpoint(uri, this, connectionFactory);
         }
-        endpoint.setHostname(hostname);
-        endpoint.setPortNumber(portNumber);
+        endpoint.setHostname(host);
+        endpoint.setPortNumber(port);
         endpoint.setExchangeName(exchangeName);
         endpoint.setClientProperties(clientProperties);
         endpoint.setTrustManager(trustManager);
@@ -94,4 +112,27 @@ public class RabbitMQComponent extends UriEndpointComponent {
 
         return endpoint;
     }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    /**
+     * The hostname of the running rabbitmq instance or cluster.
+     */
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public int getPortNumber() {
+        return portNumber;
+    }
+
+    /**
+     * Port number for the host with the running rabbitmq instance or cluster.
+     */
+    public void setPortNumber(int portNumber) {
+        this.portNumber = portNumber;
+    }
+
 }
