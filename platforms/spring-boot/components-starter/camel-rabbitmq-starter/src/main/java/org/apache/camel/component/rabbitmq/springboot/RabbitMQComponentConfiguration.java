@@ -41,6 +41,14 @@ public class RabbitMQComponentConfiguration
      */
     private Integer portNumber = 5672;
     /**
+     * Username in case of authenticated access
+     */
+    private String username = "guest";
+    /**
+     * Password for authenticated access
+     */
+    private String password = "guest";
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -61,6 +69,22 @@ public class RabbitMQComponentConfiguration
 
     public void setPortNumber(Integer portNumber) {
         this.portNumber = portNumber;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Boolean getResolvePropertyPlaceholders() {

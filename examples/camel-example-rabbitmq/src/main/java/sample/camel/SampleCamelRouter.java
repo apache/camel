@@ -31,9 +31,9 @@ public class SampleCamelRouter extends RouteBuilder {
     public void configure() throws Exception {
         from("timer:hello?period=1000")
             .transform(simple("Random number ${random(0,100)}"))
-            .to("rabbitmq:{{rabbit-host}}:{{rabbit-port}}/foo?username={{rabbit-user}}&password={{rabbit-password}}");
+            .to("rabbitmq:foo");
 
-        from("rabbitmq:{{rabbit-host}}:{{rabbit-port}}/foo?username={{rabbit-user}}&password={{rabbit-password}}")
+        from("rabbitmq:foo")
             .log("From RabbitMQ: ${body}");
     }
 

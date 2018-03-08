@@ -53,12 +53,13 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     // header to indicate that the message body needs to be de-serialized
     public static final String SERIALIZE_HEADER = "CamelSerialize";
 
-    private String hostname;
-    private int portNumber;
-
     @UriPath
     @Metadata(required = "true")
     private String exchangeName;
+    @UriParam(label = "common")
+    private String hostname;
+    @UriParam(label = "common")
+    private int portNumber;
     @UriParam(label = "security", defaultValue = ConnectionFactory.DEFAULT_USER, secret = true)
     private String username = ConnectionFactory.DEFAULT_USER;
     @UriParam(label = "security", defaultValue = ConnectionFactory.DEFAULT_PASS, secret = true)

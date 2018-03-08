@@ -42,6 +42,10 @@ public class RabbitMQComponent extends UriEndpointComponent {
     private String hostname;
     @Metadata(label = "common", defaultValue = "5672")
     private int portNumber;
+    @Metadata(label = "security", defaultValue = ConnectionFactory.DEFAULT_USER, secret = true)
+    private String username = ConnectionFactory.DEFAULT_USER;
+    @Metadata(label = "security", defaultValue = ConnectionFactory.DEFAULT_PASS, secret = true)
+    private String password = ConnectionFactory.DEFAULT_PASS;
 
     public RabbitMQComponent() {
         super(RabbitMQEndpoint.class);
@@ -89,6 +93,8 @@ public class RabbitMQComponent extends UriEndpointComponent {
         }
         endpoint.setHostname(host);
         endpoint.setPortNumber(port);
+        endpoint.setUsername(getUsername());
+        endpoint.setPassword(getPassword());
         endpoint.setExchangeName(exchangeName);
         endpoint.setClientProperties(clientProperties);
         endpoint.setTrustManager(trustManager);
@@ -133,6 +139,28 @@ public class RabbitMQComponent extends UriEndpointComponent {
      */
     public void setPortNumber(int portNumber) {
         this.portNumber = portNumber;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Username in case of authenticated access
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Password for authenticated access
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 }
