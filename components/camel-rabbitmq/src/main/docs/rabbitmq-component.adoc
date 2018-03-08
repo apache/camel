@@ -37,7 +37,17 @@ exchange name determines which exchange the queue will bind to.
 === Options
 
 // component options: START
-The RabbitMQ component has no options.
+The RabbitMQ component supports 3 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *hostname* (common) | The hostname of the running rabbitmq instance or cluster. |  | String
+| *portNumber* (common) | Port number for the host with the running rabbitmq instance or cluster. | 5672 | int
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
@@ -45,19 +55,17 @@ The RabbitMQ component has no options.
 The RabbitMQ endpoint is configured using URI syntax:
 
 ----
-rabbitmq:hostname:portNumber/exchangeName
+rabbitmq:exchangeName
 ----
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+==== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *hostname* | *Required* The hostname of the running rabbitmq instance or cluster. |  | String
-| *portNumber* | *Required* Port number for the host with the running rabbitmq instance or cluster. Default value is 5672. | 5672 | int
 | *exchangeName* | *Required* The exchange name determines which exchange produced messages will sent to. In the case of consumers, the exchange name determines which exchange the queue will bind to. |  | String
 |===
 

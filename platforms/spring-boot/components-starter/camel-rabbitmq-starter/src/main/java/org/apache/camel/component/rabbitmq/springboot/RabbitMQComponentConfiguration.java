@@ -33,11 +33,35 @@ public class RabbitMQComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * The hostname of the running rabbitmq instance or cluster.
+     */
+    private String hostname;
+    /**
+     * Port number for the host with the running rabbitmq instance or cluster.
+     */
+    private Integer portNumber = 5672;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public Integer getPortNumber() {
+        return portNumber;
+    }
+
+    public void setPortNumber(Integer portNumber) {
+        this.portNumber = portNumber;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
