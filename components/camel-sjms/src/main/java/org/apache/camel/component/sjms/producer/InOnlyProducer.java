@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.jms.Message;
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.BatchMessage;
@@ -30,7 +31,7 @@ import org.apache.camel.component.sjms.TransactionCommitStrategy;
 import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
 
 /**
- * A Camel Producer that provides the InOnly Exchange pattern..
+ * A Camel Producer that provides the InOnly Exchange pattern.
  */
 public class InOnlyProducer extends SjmsProducer {
 
@@ -76,7 +77,7 @@ public class InOnlyProducer extends SjmsProducer {
                 producer.getMessageProducer().send(message);
             }
         } catch (Exception e) {
-            exchange.setException(new Exception("Unable to complete sending the message: ", e));
+            exchange.setException(new CamelExchangeException("Unable to complete sending the JMS message", exchange, e));
         } finally {
             releaseProducerCallback.release(producer);
             callback.done(isSynchronous());
