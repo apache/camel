@@ -1,7 +1,7 @@
 [[AWSXRay-AWSXRayComponent]]
 ## AWS XRay Component
 
-*Available as of Camel 2.20*
+*Available as of Camel 2.21*
 
 The camel-aws-xray component is used for tracing and timing incoming and outgoing Camel messages using https://aws.amazon.com/de/xray/[AWS XRay].
 
@@ -20,7 +20,7 @@ To include both, AWS XRay and Camel, dependencies use the following Maven import
       <dependency>
         <groupId>com.amazonaws</groupId>
         <artifactId>aws-xray-recorder-sdk-bom</artifactId>
-        <version>1.2.0</version>
+        <version>1.3.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -52,9 +52,10 @@ The configuration properties for the AWS XRay tracer are:
 |=======================================================================
 |Option |Default |Description
 
-|excludePatterns |  | Sets exclude pattern(s) that will disable tracing for Camel
+|addExcludePatterns | &nbsp; | Sets exclude pattern(s) that will disable tracing for Camel
 messages that matches the pattern. The content is a Set<String> where the key is a pattern matching routeId's. The pattern
 uses the rules from Intercept.
+|setTracingStrategy | NoopTracingStrategy | Allows a custom Camel `InterceptStrategy` to be provided in order to track invoked processor definitions like `BeanDefinition` or `ProcessDefinition`. `TraceAnnotatedTracingStrategy` will track any classes invoked via `.bean(...)` or `.process(...)` that contain a `@XRayTrace` annotation at class level.
 
 |=======================================================================
 
@@ -87,6 +88,27 @@ AWS XRay tracer bean. Camel will automatically discover and use it.
     <property name="tracer" ref="tracingStrategy"/>
   </bean>
 ---------------------------------------------------------------------------------------------------------
+
+In case of the default `NoopTracingStrategy` only the creation and deletion of exchanges is tracked but not the invocation of certain beans or EIP patterns.
+
+#### Tracking of comprehensive route execution
+
+In order to track the execution of an exchange among multiple routes, on exchange creation a unique trace ID is generated and stored in the headers if no corresponding value was yet available. This trace ID is copied over to new exchanges in order to keep a consistent view of the processed exchange.
+
+As AWS XRay traces work on a thread-local basis the current sub/segment should be copied over to the new thread and set as explained in https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-multithreading.html[in the AWS XRay documentation]. The Camel AWS XRay component therefore provides an additional header field that the component will use in order to set the passed AWS XRay `Entity` to the new thread and thus keep the tracked data to the route rather than exposing a new segment which seems uncorrelated with any of the executed routes.
+
+The component will use the following constants found in the headers of the exchange:
+
+[width="100%",cols="30%,70%",options="header",]
+|=======================================================================
+|Header |Description
+
+| Camel-AWS-XRay-Trace-ID | Contains a reference to the AWS XRay `TraceID` object to provide a comprehensive view of the invoked routes
+| Camel-AWS-XRay-Trace-Entity | Contains a reference to the actual AWS XRay `Segment` or `Subsegment` which is copied over to the new thread. This header should be set in case a new thread is spawned and the performed tasks should be exposed as part of the executed route instead of creating a new unrelated segment.
+
+|=======================================================================
+
+Note that the AWS XRay `Entity` (i.e., `Segment` and `Subsegment`) are not serializable and therefore should not get passed to other JVM processes.
 
 ### Example
 

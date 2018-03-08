@@ -21,6 +21,8 @@ import java.net.URI;
 import java.util.*;
 
 import com.amazonaws.xray.AWSXRay;
+import com.amazonaws.xray.AWSXRayRecorder;
+import com.amazonaws.xray.entities.Entity;
 import com.amazonaws.xray.entities.Segment;
 import com.amazonaws.xray.entities.Subsegment;
 import com.amazonaws.xray.entities.TraceID;
@@ -66,6 +68,8 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
 
     /** Header value kept in the message of the exchange **/
     public static final String XRAY_TRACE_ID = "Camel-AWS-XRay-Trace-ID";
+    // Note that the Entity itself is not serializable, so don't share this object among different VMs!
+    public static final String XRAY_TRACE_ENTITY = "Camel-AWS-XRay-Trace-Entity";
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -351,6 +355,25 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
             } else {
                 traceID = new TraceID();
                 exchange.getIn().setHeader(XRAY_TRACE_ID, traceID.toString());
+            }
+
+            // copy over any available trace entity (i.e. Segment) from the old thread to the new one
+            // according to AWS XRay documentation on multithreading:
+
+            // https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-multithreading.html
+            //
+            // > If you use multiple threads to handle incoming requests, you can pass the current segment or subsegment
+            // > to the new thread and provide it to the global recorder. This ensures that the information recorded
+            // > within the new thread is associated with the same segment as the rest of the information recorded about
+            // > that request.
+            Entity entity = null;
+            if (exchange.getIn().getHeaders().containsKey(XRAY_TRACE_ENTITY)) {
+                entity = exchange.getIn().getHeader(XRAY_TRACE_ENTITY, Entity.class);
+            }
+
+            if (null != entity) {
+                AWSXRayRecorder recorder = AWSXRay.getGlobalRecorder();
+                recorder.setTraceEntity(entity);
             }
 
             SegmentDecorator sd = getSegmentDecorator(route.getEndpoint());
