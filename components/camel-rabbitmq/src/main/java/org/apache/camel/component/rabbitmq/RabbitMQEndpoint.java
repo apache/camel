@@ -17,7 +17,6 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -37,7 +36,6 @@ import com.rabbitmq.client.Envelope;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -177,14 +175,11 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private long publisherAcknowledgementsTimeout;
     @UriParam(label = "producer")
     private boolean guaranteedDeliveries;
-    // camel-jms supports this setting but it is not currently configurable in
-    // camel-rabbitmq
+    // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
     private boolean useMessageIDAsCorrelationID = true;
-    // camel-jms supports this setting but it is not currently configurable in
-    // camel-rabbitmq
+    // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
     private String replyToType = ReplyToType.Temporary.name();
-    // camel-jms supports this setting but it is not currently configurable in
-    // camel-rabbitmq
+    // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
     private String replyTo;
 
     private final RabbitMQMessageConverter messageConverter = new RabbitMQMessageConverter();
@@ -194,11 +189,11 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     public RabbitMQEndpoint() {
     }
 
-    public RabbitMQEndpoint(String endpointUri, RabbitMQComponent component) throws URISyntaxException {
+    public RabbitMQEndpoint(String endpointUri, RabbitMQComponent component) {
         super(endpointUri, component);
     }
 
-    public RabbitMQEndpoint(String endpointUri, RabbitMQComponent component, ConnectionFactory connectionFactory) throws URISyntaxException {
+    public RabbitMQEndpoint(String endpointUri, RabbitMQComponent component, ConnectionFactory connectionFactory) {
         super(endpointUri, component);
         this.connectionFactory = connectionFactory;
     }
@@ -849,6 +844,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         return bindingArgs;
     }
 
+    @Deprecated
     public ArgsConfigurer getQueueArgsConfigurer() {
         return queueArgsConfigurer;
     }
@@ -856,12 +852,14 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     /**
      * Set the configurer for setting the queue args in Channel.queueDeclare
      *
-     * @Deprecated Use args instead e.g arg.queue.x-message-ttl=1000
+     * @deprecated Use args instead e.g arg.queue.x-message-ttl=1000
      */
+    @Deprecated
     public void setQueueArgsConfigurer(ArgsConfigurer queueArgsConfigurer) {
         this.queueArgsConfigurer = queueArgsConfigurer;
     }
 
+    @Deprecated
     public ArgsConfigurer getExchangeArgsConfigurer() {
         return exchangeArgsConfigurer;
     }
@@ -870,8 +868,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      * Set the configurer for setting the exchange args in
      * Channel.exchangeDeclare
      *
-     * @Deprecated Use args instead e.g arg.exchange.x-message-ttl=1000
+     * @deprecated Use args instead e.g arg.exchange.x-message-ttl=1000
      */
+    @Deprecated
     public void setExchangeArgsConfigurer(ArgsConfigurer exchangeArgsConfigurer) {
         this.exchangeArgsConfigurer = exchangeArgsConfigurer;
     }
