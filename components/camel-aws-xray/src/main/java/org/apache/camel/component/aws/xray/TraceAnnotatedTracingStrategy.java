@@ -50,15 +50,22 @@ public class TraceAnnotatedTracingStrategy implements InterceptStrategy {
 
         if (processorDefinition instanceof BeanDefinition) {
             BeanProcessor beanProcessor = (BeanProcessor) nextTarget;
-            processorClass = beanProcessor.getBean().getClass();
+            if (null != beanProcessor && null != beanProcessor.getBean()) {
+                processorClass = beanProcessor.getBean().getClass();
+            }
         } else if (processorDefinition instanceof ProcessDefinition) {
             DelegateSyncProcessor syncProcessor = (DelegateSyncProcessor) nextTarget;
-            processorClass = syncProcessor.getProcessor().getClass();
+            if (null != syncProcessor && null != syncProcessor.getProcessor()) {
+                processorClass = syncProcessor.getProcessor().getClass();
+            }
         }
 
-        if (!processorClass.isAnnotationPresent(XRayTrace.class)) {
-            LOG.trace("{} does not contain an @Trace annotation. Skipping interception",
-                processorClass.getSimpleName());
+        if (processorClass == null) {
+            LOG.trace("Could not identify processor class on target processor {}", target);
+            return new DelegateAsyncProcessor(target);
+        } else if (!processorClass.isAnnotationPresent(XRayTrace.class)) {
+            LOG.trace("{} does not contain an @XRayTrace annotation. Skipping interception",
+                    processorClass.getSimpleName());
             return new DelegateAsyncProcessor(target);
         }
 
