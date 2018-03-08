@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 101 (8 deprecated)
+Number of Examples: 102 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -139,7 +139,9 @@ Number of Examples: 101 (8 deprecated)
 
 | link:camel-example-activemq-tomcat/README.md[ActiveMQ Tomcat] (camel-example-activemq-tomcat) | Messaging | An example using ActiveMQ Broker and Camel with Apache Tomcat
 
-| link:camel-example-artemis-amqp-blueprint/README.md[Artemis Amqp Blueprint] (camel-example-artemis-amqp-blueprint) | Messaging | Demonstrates ActiveMQ Artemis using Camel's AMQP component. The example includes a JUnit showcasing how to embed for testing an AMQP enabled Artemis broker.
+| link:camel-example-artemis-amqp-blueprint/README.md[Artemis Amqp Blueprint] (camel-example-artemis-amqp-blueprint) | Messaging | Demonstrates ActiveMQ Artemis using Camel's AMQP component. The example includes a JUnit showcasing how
+    to embed for testing an AMQP enabled Artemis broker.
+  
 
 | link:camel-example-artemis-large-messages/README.md[Artemis Large Messages] (camel-example-artemis-large-messages) | Messaging | Demonstrates sending large messages (handles GBs in size) between Apache Camel and ActiveMQ Artemis in streaming mode
 
@@ -150,6 +152,8 @@ Number of Examples: 101 (8 deprecated)
 | link:camel-example-jms-file/README.md[JMS-File] (camel-example-jms-file) | Messaging | An example that persists messages from JMS to files
 
 | link:camel-example-kafka/README.adoc[Kafka] (camel-example-kafka) | Messaging | An example for Kafka
+
+| link:camel-example-rabbitmq/readme.adoc[Rabbitmq] (camel-example-rabbitmq) | Messaging | An example showing how to work with Camel and RabbitMQ
 
 | link:camel-example-spring-boot-activemq/readme.adoc[Spring Boot Activemq] (camel-example-spring-boot-activemq) | Messaging | An example showing how to work with Camel, ActiveMQ and Spring Boot
 
