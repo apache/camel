@@ -36,6 +36,45 @@ public class NotifyBuilderTest extends ContextTestSupport {
         }
     }
 
+    public void testDestroyUnregistersBuilder() throws Exception {
+        // Given:
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+        // When:
+        int withReg = context.getManagementStrategy().getEventNotifiers().size();
+        notify.destroy();
+        int afterDestroy = context.getManagementStrategy().getEventNotifiers().size();
+        // Then:
+        assertEquals(withReg - afterDestroy, 1);
+    }
+
+    public void testDestroyResetsBuilder() throws Exception {
+        // Given:
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+        // When:
+        notify.destroy();
+        // Then:
+        try {
+            notify.matches();
+            fail("Should have thrown an exception");
+        } catch (IllegalStateException e) {
+            assertEquals("NotifyBuilder has not been created. Invoke the create() method before matching.", e.getMessage());
+        }
+    }
+
+    public void testDestroyedBuilderCannotBeRecreated() throws Exception {
+        // Given:
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+        // When:
+        notify.destroy();
+        // Then:
+        try {
+            notify.create();
+            fail("Should have thrown an exception");
+        } catch (IllegalStateException e) {
+            assertEquals("A destroyed NotifyBuilder cannot be re-created.", e.getMessage());
+        }
+    }
+
     public void testDirectWhenExchangeDoneSimple() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context)
                 .from("direct:foo").whenDone(1)

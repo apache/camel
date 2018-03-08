@@ -19,6 +19,7 @@ package org.apache.camel.parser.helper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.parser.ParserResult;
 import org.apache.camel.parser.RouteBuilderParser;
@@ -167,16 +168,20 @@ public final class CamelJavaParserHelper {
         return null;
     }
 
+    public static List<ParserResult> parseCamelRouteIds(MethodSource<JavaClassSource> method) {
+        return doParseCamelUris(method, true, false, true, false, true);
+    }
+
     public static List<ParserResult> parseCamelConsumerUris(MethodSource<JavaClassSource> method, boolean strings, boolean fields) {
-        return doParseCamelUris(method, true, false, strings, fields);
+        return doParseCamelUris(method, true, false, strings, fields, false);
     }
 
     public static List<ParserResult> parseCamelProducerUris(MethodSource<JavaClassSource> method, boolean strings, boolean fields) {
-        return doParseCamelUris(method, false, true, strings, fields);
+        return doParseCamelUris(method, false, true, strings, fields, false);
     }
 
     private static List<ParserResult> doParseCamelUris(MethodSource<JavaClassSource> method, boolean consumers, boolean producers,
-                                                       boolean strings, boolean fields) {
+                                                       boolean strings, boolean fields, boolean routeIdsOnly) {
 
         List<ParserResult> answer = new ArrayList<ParserResult>();
 
@@ -191,7 +196,7 @@ public final class CamelJavaParserHelper {
                         Expression exp = es.getExpression();
 
                         List<ParserResult> uris = new ArrayList<ParserResult>();
-                        parseExpression(method.getOrigin(), block, exp, uris, consumers, producers, strings, fields);
+                        parseExpression(method.getOrigin(), block, exp, uris, consumers, producers, strings, fields, routeIdsOnly);
                         if (!uris.isEmpty()) {
                             // reverse the order as we will grab them from last->first
                             Collections.reverse(uris);
@@ -206,24 +211,24 @@ public final class CamelJavaParserHelper {
     }
 
     private static void parseExpression(JavaClassSource clazz, Block block, Expression exp, List<ParserResult> uris,
-                                        boolean consumers, boolean producers, boolean strings, boolean fields) {
+                                        boolean consumers, boolean producers, boolean strings, boolean fields, boolean routeIdsOnly) {
         if (exp == null) {
             return;
         }
         if (exp instanceof MethodInvocation) {
             MethodInvocation mi = (MethodInvocation) exp;
-            doParseCamelUris(clazz, block, mi, uris, consumers, producers, strings, fields);
+            doParseCamelUris(clazz, block, mi, uris, consumers, producers, strings, fields, routeIdsOnly);
             // if the method was called on another method, then recursive
             exp = mi.getExpression();
-            parseExpression(clazz, block, exp, uris, consumers, producers, strings, fields);
+            parseExpression(clazz, block, exp, uris, consumers, producers, strings, fields, routeIdsOnly);
         }
     }
 
     private static void doParseCamelUris(JavaClassSource clazz, Block block, MethodInvocation mi, List<ParserResult> uris,
-                                         boolean consumers, boolean producers, boolean strings, boolean fields) {
+                                         boolean consumers, boolean producers, boolean strings, boolean fields, boolean routeIdsOnly) {
         String name = mi.getName().getIdentifier();
 
-        if (consumers) {
+        if (routeIdsOnly) {
             // include route id for consumers
             if ("routeId".equals(name)) {
                 List args = mi.arguments();
@@ -239,6 +244,11 @@ public final class CamelJavaParserHelper {
                     }
                 }
             }
+            // we only want route ids so return here
+            return;
+        }
+
+        if (consumers) {
             if ("from".equals(name)) {
                 List args = mi.arguments();
                 if (args != null) {

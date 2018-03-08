@@ -115,6 +115,14 @@ public class RestConfigurationDefinitionProperties {
      */
     private Boolean apiContextListing = false;
     /**
+     * Whether vendor extension is enabled in the Rest APIs. If enabled then
+     * Camel will include additional information as vendor extension (eg keys
+     * starting with x-) such as route ids class names etc. Not all 3rd party
+     * API gateways and tools supports vendor-extensions when importing your API
+     * docs.
+     */
+    private Boolean apiVendorExtension = false;
+    /**
      * If no hostname has been explicit configured then this resolver is used to
      * compute the hostname the REST service will be using.
      */
@@ -284,6 +292,14 @@ public class RestConfigurationDefinitionProperties {
 
     public void setApiContextListing(Boolean apiContextListing) {
         this.apiContextListing = apiContextListing;
+    }
+
+    public Boolean getApiVendorExtension() {
+        return apiVendorExtension;
+    }
+
+    public void setApiVendorExtension(Boolean apiVendorExtension) {
+        this.apiVendorExtension = apiVendorExtension;
     }
 
     public RestHostNameResolver getHostNameResolver() {

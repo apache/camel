@@ -24,6 +24,7 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,7 @@ import org.springframework.context.annotation.Scope;
 
 @Configuration
 @AutoConfigureBefore({ ClusteredRouteControllerAutoConfiguration.class, CamelAutoConfiguration.class })
+@ConditionalOnProperty(prefix = "camel.component.jgroups.lock.cluster.service", name = "enabled")
 @EnableConfigurationProperties(JGroupsLockClusterServiceConfiguration.class)
 public class JGroupsLockClusterServiceAutoConfiguration {
     @Autowired

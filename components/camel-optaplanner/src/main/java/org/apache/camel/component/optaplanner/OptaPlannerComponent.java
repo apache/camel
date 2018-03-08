@@ -20,6 +20,8 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
+import org.kie.api.KieServices;
 
 /**
  * OptaPlanner component for Camel
@@ -30,6 +32,17 @@ public class OptaPlannerComponent extends DefaultComponent {
         OptaPlannerConfiguration configuration = new OptaPlannerConfiguration();
         configuration.setConfigFile(remaining);
         setProperties(configuration, parameters);
+        
+        // [CAMEL-11889] Kie assumes that the TCCL can load its services
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            KieServices kieServices = KieServices.Factory.get();
+            ObjectHelper.notNull(kieServices, "KieServices");
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
+        }
+        
         return new OptaPlannerEndpoint(uri, this, configuration);
     }
 

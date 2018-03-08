@@ -301,6 +301,16 @@
       </includes>
     </dependencySet>
 
+    <!-- this is needed for the jasypt tooling -->
+    <dependencySet>
+      <outputDirectory>/lib/optional</outputDirectory>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <includes>
+        <include>org.jasypt:jasypt</include>
+      </includes>
+    </dependencySet>
+
     <dependencySet>
       <outputDirectory>/lib/tooling</outputDirectory>
       <unpack>false</unpack>

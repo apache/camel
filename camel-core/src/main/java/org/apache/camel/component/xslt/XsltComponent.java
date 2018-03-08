@@ -173,15 +173,6 @@ public class XsltComponent extends UriEndpointComponent {
         endpoint.setSaxonConfigurationProperties(saxonConfigurationProperties);
         endpoint.setSaxonExtensionFunctions(saxonExtensionFunctions);
 
-        String resourceUri = remaining;
-
-        // if its a http uri, then append additional parameters as they are part of the uri
-        if (ResourceHelper.isHttpUri(resourceUri)) {
-            resourceUri = ResourceHelper.appendParameters(resourceUri, parameters);
-        }
-        LOG.debug("{} using schema resource: {}", this, resourceUri);
-        endpoint.setResourceUri(resourceUri);
-
         // lookup custom resolver to use
         URIResolver resolver = resolveAndRemoveReferenceParameter(parameters, "uriResolver", URIResolver.class);
         if (resolver == null) {
@@ -205,6 +196,15 @@ public class XsltComponent extends UriEndpointComponent {
         endpoint.setUriResolver(resolver);
 
         setProperties(endpoint, parameters);
+
+        String resourceUri = remaining;
+        if (ResourceHelper.isHttpUri(resourceUri)) {
+            // if its a http uri, then append additional parameters as they are part of the uri
+            resourceUri = ResourceHelper.appendParameters(resourceUri, parameters);
+        }
+        LOG.debug("{} using schema resource: {}", this, resourceUri);
+        endpoint.setResourceUri(resourceUri);
+
         if (!parameters.isEmpty()) {
             // additional parameters need to be stored on endpoint as they can be used to configure xslt builder additionally
             endpoint.setParameters(parameters);

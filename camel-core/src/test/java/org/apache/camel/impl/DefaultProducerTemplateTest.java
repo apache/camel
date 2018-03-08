@@ -84,11 +84,27 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testExceptionOnRequestBodyWithResponseType() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+
+        try {
+            template.requestBody("direct:exception", "Hello World", Integer.class);
+            fail("Should have thrown RuntimeCamelException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            assertEquals("Forced exception by unit test", e.getCause().getMessage());
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
     public void testExceptionUsingProcessor() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
         Exchange out = template.send("direct:exception", new Processor() {
+            @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Hello World");
             }
@@ -134,6 +150,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
 
         Exchange out = template.request("direct:exception", new Processor() {
+            @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Hello World");
             }
@@ -223,23 +240,27 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
                 // for faster unit test
                 errorHandler(noErrorHandler());
 
                 from("direct:in").process(new Processor() {
+                    @Override
                     public void process(Exchange exchange) throws Exception {
                         exchange.getIn().setBody("Bye World");
                     }
                 }).to("mock:result");
 
                 from("direct:out").process(new Processor() {
+                    @Override
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody("Bye Bye World");
                     }
                 }).to("mock:result");
 
                 from("direct:fault").process(new Processor() {
+                    @Override
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setFault(true);
                         exchange.getOut().setBody("Faulty World");
@@ -247,6 +268,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
                 }).to("mock:result");
 
                 from("direct:exception").process(new Processor() {
+                    @Override
                     public void process(Exchange exchange) throws Exception {
                         throw new IllegalArgumentException("Forced exception by unit test");
                     }

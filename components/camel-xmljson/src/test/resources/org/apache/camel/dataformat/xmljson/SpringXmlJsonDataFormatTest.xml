@@ -63,6 +63,12 @@
             <unmarshal ref="xmljsonWithOptions"/>
             <to uri="mock:xmlWithOptions"/>
         </route>
+        
+        <route streamCache="true">
+            <from uri="direct:emptyBody2Unmarshal"/>
+            <unmarshal ref="xmljson"/>
+            <to uri="mock:emptyBody2Xml"/>
+        </route>
 
     </camelContext>
     <!-- END SNIPPET: e1 -->

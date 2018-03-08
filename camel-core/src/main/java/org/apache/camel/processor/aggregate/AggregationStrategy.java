@@ -42,7 +42,11 @@ import org.apache.camel.Exchange;
  * If an implementation also implements {@link org.apache.camel.Service} then any <a href="http://camel.apache.org/eip">EIP</a>
  * that allowing configuring a {@link AggregationStrategy} will invoke the {@link org.apache.camel.Service#start()}
  * and {@link org.apache.camel.Service#stop()} to control the lifecycle aligned with the EIP itself.
- * 
+ * <p/>
+ * If an implementation also implements {@link org.apache.camel.CamelContextAware} then any <a href="http://camel.apache.org/eip">EIP</a>
+ * that allowing configuring a {@link AggregationStrategy} will inject the {@link org.apache.camel.CamelContext} prior
+ * to using the aggregation strategy.
+ *
  * @version 
  */
 public interface AggregationStrategy {

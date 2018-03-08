@@ -34,9 +34,17 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "2.1.0", label = "dataformat,transformation,xml", title = "Castor")
 @XmlRootElement(name = "castor")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class CastorDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String mappingFile;
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
+    private Boolean whitelistEnabled = true;
+    @XmlAttribute
+    private String allowedUnmarshallObjects;
+    @XmlAttribute
+    private String deniedUnmarshallObjects;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean validation;
     @XmlAttribute @Metadata(defaultValue = "UTF-8")
@@ -109,6 +117,49 @@ public class CastorDataFormat extends DataFormatDefinition {
         this.encoding = encoding;
     }
 
+    public Boolean getWhitelistEnabled() {
+        return whitelistEnabled;
+    }
+
+    /**
+     * Define if Whitelist feature is enabled or not
+     */
+    public void setWhitelistEnabled(Boolean whitelistEnabled) {
+        this.whitelistEnabled = whitelistEnabled;
+    }
+
+    public String getAllowedUnmarshallObjects() {
+        return allowedUnmarshallObjects;
+    }
+
+    /**
+     * Define the allowed objects to be unmarshalled.
+     *
+     * You can specify the FQN class name of allowed objects, and you can use comma to separate multiple entries.
+     * It is also possible to use wildcards and regular expression which is based on the pattern
+     * defined by {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)}.
+     * Denied objects takes precedence over allowed objects.
+     */
+    public void setAllowedUnmarshallObjects(String allowedUnmarshallObjects) {
+        this.allowedUnmarshallObjects = allowedUnmarshallObjects;
+    }
+
+    public String getDeniedUnmarshallObjects() {
+        return deniedUnmarshallObjects;
+    }
+
+    /**
+     * Define the denied objects to be unmarshalled.
+     *
+     * You can specify the FQN class name of deined objects, and you can use comma to separate multiple entries.
+     * It is also possible to use wildcards and regular expression which is based on the pattern
+     * defined by {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)}.
+     * Denied objects takes precedence over allowed objects.
+     */
+    public void setDeniedUnmarshallObjects(String deniedUnmarshallObjects) {
+        this.deniedUnmarshallObjects = deniedUnmarshallObjects;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (mappingFile != null) {
@@ -126,6 +177,15 @@ public class CastorDataFormat extends DataFormatDefinition {
         }
         if (classes != null) {
             setProperty(camelContext, dataFormat, "classes", classes);
+        }
+        if (whitelistEnabled != null) {
+            setProperty(camelContext, dataFormat, "whitelistEnabled", whitelistEnabled);
+        }
+        if (allowedUnmarshallObjects != null) {
+            setProperty(camelContext, dataFormat, "allowedUnmarshallObjects", allowedUnmarshallObjects);
+        }
+        if (deniedUnmarshallObjects != null) {
+            setProperty(camelContext, dataFormat, "deniedUnmarshallObjects", deniedUnmarshallObjects);
         }
     }
 

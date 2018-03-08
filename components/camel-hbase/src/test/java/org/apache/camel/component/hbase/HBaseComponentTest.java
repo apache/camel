@@ -34,7 +34,7 @@ public class HBaseComponentTest {
         CamelContext camelContext = new DefaultCamelContext();
         camelContext.setApplicationContextClassLoader(expectedClassLoader);
 
-        HBaseComponent component = new HBaseComponent();
+        HBaseComponent component = new HBaseComponent(new DefaultCamelContext());
         component.doStart();
         component.doStop();
 
@@ -49,7 +49,7 @@ public class HBaseComponentTest {
         Configuration configuration = HBaseConfiguration.create();
         configuration.setClassLoader(expectedClassLoader);
 
-        HBaseComponent component = new HBaseComponent();
+        HBaseComponent component = new HBaseComponent(new DefaultCamelContext());
         component.setConfiguration(configuration);
         try {
             component.doStart();
@@ -66,7 +66,7 @@ public class HBaseComponentTest {
     public void testHBaseConfigurationClassLoaderSetToDefault() throws Exception {
         ClassLoader expectedClassLoader = HBaseConfiguration.class.getClassLoader();
 
-        HBaseComponent component = new HBaseComponent();
+        HBaseComponent component = new HBaseComponent(new DefaultCamelContext());
         component.doStart();
         component.doStop();
 

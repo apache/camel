@@ -164,6 +164,12 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
         setupClientMatrix(client, exchange);
         setupClientQueryAndHeaders(client, exchange);
 
+        // ensure the CONTENT_TYPE header can be retrieved
+        if (ObjectHelper.isEmpty(inMessage.getHeader(Exchange.CONTENT_TYPE, String.class))
+                && ObjectHelper.isNotEmpty(client.getHeaders().get(Exchange.CONTENT_TYPE))) {
+            inMessage.setHeader(Exchange.CONTENT_TYPE, client.getHeaders().get(Exchange.CONTENT_TYPE).get(0));
+        }
+
         //Build message entity
         Entity<Object> entity = binding.bindCamelMessageToRequestEntity(body, inMessage, exchange);
 

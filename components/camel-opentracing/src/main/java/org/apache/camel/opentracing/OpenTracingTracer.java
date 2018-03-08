@@ -16,7 +16,6 @@
  */
 package org.apache.camel.opentracing;
 
-import java.net.URI;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,6 +52,7 @@ import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -189,10 +189,15 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     }
 
     protected SpanDecorator getSpanDecorator(Endpoint endpoint) {
-        SpanDecorator sd = decorators.get(URI.create(endpoint.getEndpointUri()).getScheme());
-        if (sd == null) {
-            return SpanDecorator.DEFAULT;
+        SpanDecorator sd = SpanDecorator.DEFAULT;
+
+        String uri = endpoint.getEndpointUri();
+        String splitURI[] = StringHelper.splitOnCharacter(uri, ":", 2);
+        if (splitURI[1] != null) {
+            String scheme = splitURI[0];
+            sd = decorators.getOrDefault(scheme, sd);
         }
+
         return sd;
     }
 

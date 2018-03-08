@@ -17,7 +17,7 @@
 package org.apache.camel.util.toolbox;
 
 import java.io.IOException;
-
+import java.util.concurrent.RejectedExecutionException;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -26,12 +26,14 @@ import javax.xml.transform.URIResolver;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.component.xslt.XsltEndpoint;
 import org.apache.camel.component.xslt.XsltOutput;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,15 +62,15 @@ import org.slf4j.LoggerFactory;
  * changed through {@link #setPropertyName(String)}.
  * <p>
  * Some code bits have been copied from the {@link org.apache.camel.component.xslt.XsltEndpoint}.
- *
  */
-public class XsltAggregationStrategy implements AggregationStrategy {
+public class XsltAggregationStrategy extends ServiceSupport implements AggregationStrategy, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltAggregationStrategy.class);
     private static final String DEFAULT_PROPERTY_NAME = "new-exchange";
 
     private volatile XsltBuilder xslt;
     private volatile URIResolver uriResolver;
+    private CamelContext camelContext;
 
     private String propertyName;
     private String xslFile;
@@ -85,6 +87,16 @@ public class XsltAggregationStrategy implements AggregationStrategy {
     }
 
     @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         // guard against unlikely NPE
         if (newExchange == null) {
@@ -97,17 +109,14 @@ public class XsltAggregationStrategy implements AggregationStrategy {
             return newExchange;
         }
 
-        try {
-            // initialize if this is the first call
-            if (xslt == null) {
-                initialize(oldExchange.getContext());
-            }
+        if (!isRunAllowed()) {
+            throw new RejectedExecutionException();
+        }
 
+        try {
             oldExchange.setProperty(propertyName, newExchange.getIn().getBody(Document.class));
             xslt.process(oldExchange);
-
             return oldExchange;
-
         } catch (Throwable e) {
             oldExchange.setException(e);
         }
@@ -139,31 +148,9 @@ public class XsltAggregationStrategy implements AggregationStrategy {
         this.propertyName = propertyName;
     }
 
+    @Deprecated
     protected void initialize(CamelContext context) throws Exception {
-        // set the default property name if not set
-        this.propertyName = ObjectHelper.isNotEmpty(propertyName) ? propertyName : DEFAULT_PROPERTY_NAME;
-
-        // initialize the XsltBuilder
-        this.xslt = context.getInjector().newInstance(XsltBuilder.class);
-
-        if (transformerFactoryClass != null) {
-            Class<?> factoryClass = context.getClassResolver().resolveMandatoryClass(transformerFactoryClass,
-                    XsltAggregationStrategy.class.getClassLoader());
-            TransformerFactory factory = (TransformerFactory) context.getInjector().newInstance(factoryClass);
-            xslt.getConverter().setTransformerFactory(factory);
-        }
-
-        if (uriResolver == null) {
-            uriResolver = new XsltUriResolver(context, xslFile);
-        }
-
-        xslt.setUriResolver(uriResolver);
-        xslt.setFailOnNullBody(true);
-        xslt.transformerCacheSize(0);
-        xslt.setAllowStAX(true);
-
-        configureOutput(xslt, output.name());
-        loadResource(xslFile);
+        this.camelContext = context;
     }
 
     protected void configureOutput(XsltBuilder xslt, String output) throws Exception {
@@ -231,4 +218,38 @@ public class XsltAggregationStrategy implements AggregationStrategy {
         return this;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
+
+        // set the default property name if not set
+        this.propertyName = ObjectHelper.isNotEmpty(propertyName) ? propertyName : DEFAULT_PROPERTY_NAME;
+
+        // initialize the XsltBuilder
+        this.xslt = camelContext.getInjector().newInstance(XsltBuilder.class);
+
+        if (transformerFactoryClass != null) {
+            Class<?> factoryClass = camelContext.getClassResolver().resolveMandatoryClass(transformerFactoryClass,
+                XsltAggregationStrategy.class.getClassLoader());
+            TransformerFactory factory = (TransformerFactory) camelContext.getInjector().newInstance(factoryClass);
+            xslt.getConverter().setTransformerFactory(factory);
+        }
+
+        if (uriResolver == null) {
+            uriResolver = new XsltUriResolver(camelContext, xslFile);
+        }
+
+        xslt.setUriResolver(uriResolver);
+        xslt.setFailOnNullBody(true);
+        xslt.transformerCacheSize(0);
+        xslt.setAllowStAX(true);
+
+        configureOutput(xslt, output.name());
+        loadResource(xslFile);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }

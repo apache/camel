@@ -125,7 +125,6 @@ public class SubscriptionHelper extends ServiceSupport {
                         handshakeError = (String) message.get(ERROR_FIELD);
                         handshakeException = getFailure(message);
 
-
                         if (handshakeError != null) {
                             // refresh oauth token, if it's a 401 error
                             if (handshakeError.startsWith("401::")) {
@@ -134,7 +133,15 @@ public class SubscriptionHelper extends ServiceSupport {
                                     session.login(session.getAccessToken());
                                     LOG.info("Refreshed OAuth token for re-handshake");
                                 } catch (SalesforceException e) {
-                                    LOG.error("Error renewing OAuth token on 401 error: " + e.getMessage(), e);
+                                    LOG.warn("Error renewing OAuth token on 401 error: " + e.getMessage(), e);
+                                }
+                            }
+                            if (handshakeError.startsWith("403::")) {
+                                try {
+                                    LOG.info("Cleaning session (logout) from SalesforceSession before restarting client");
+                                    session.logout();
+                                } catch (SalesforceException e) {
+                                    LOG.warn("Error while cleaning session: " + e.getMessage(), e);
                                 }
                             }
                         }

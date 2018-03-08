@@ -20,23 +20,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
+import com.caucho.hessian.io.HessianFactory;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * The <a href="http://camel.apache.org/data-format.html">data format</a>
- * using <a href="http://hessian.caucho.com/doc/hessian-serialization.html">Hessian Serialization</a>.
+ * The <a href="http://camel.apache.org/data-format.html">data format</a> using
+ * <a href="http://hessian.caucho.com/doc/hessian-serialization.html">Hessian
+ * Serialization</a>.
  *
  * @since 2.17
  */
 public class HessianDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private static final String FORMAT_NAME = "hessian";
+    private boolean whitelistEnabled = true;
+    private String allowedUnmarshallObjects;
+    private String deniedUnmarshallObjects;
 
     @Override
     public String getDataFormatName() {
@@ -62,7 +68,19 @@ public class HessianDataFormat extends ServiceSupport implements DataFormat, Dat
 
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
-        final Hessian2Input in = new Hessian2Input(inputStream);
+        final Hessian2Input in;
+        if (!whitelistEnabled) {
+            in = new Hessian2Input(inputStream);
+        } else {
+            HessianFactory factory = new HessianFactory();
+            if (ObjectHelper.isNotEmpty(allowedUnmarshallObjects)) {
+                factory.allow(allowedUnmarshallObjects);
+            }
+            if (ObjectHelper.isNotEmpty(deniedUnmarshallObjects)) {
+                factory.deny(deniedUnmarshallObjects);
+            }
+            in = factory.createHessian2Input(inputStream);
+        }
         try {
             in.startMessage();
             final Object obj = in.readObject();
@@ -86,4 +104,29 @@ public class HessianDataFormat extends ServiceSupport implements DataFormat, Dat
     protected void doStop() throws Exception {
         // noop
     }
+
+    public boolean isWhitelistEnabled() {
+        return whitelistEnabled;
+    }
+
+    public void setWhitelistEnabled(boolean whitelistEnabled) {
+        this.whitelistEnabled = whitelistEnabled;
+    }
+
+    public String getAllowedUnmarshallObjects() {
+        return allowedUnmarshallObjects;
+    }
+
+    public void setAllowedUnmarshallObjects(String allowedUnmarshallObjects) {
+        this.allowedUnmarshallObjects = allowedUnmarshallObjects;
+    }
+
+    public String getDeniedUnmarshallObjects() {
+        return deniedUnmarshallObjects;
+    }
+
+    public void setDeniedUnmarshallObjects(String deniedUnmarshallObjects) {
+        this.deniedUnmarshallObjects = deniedUnmarshallObjects;
+    }
+
 }

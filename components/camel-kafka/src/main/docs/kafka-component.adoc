@@ -69,7 +69,7 @@ with the following path and query parameters:
 | *topic* | *Required* Name of the topic to use. On the consumer you can use comma to separate multiple topics. A producer can only send a message to a single topic. |  | String
 |===
 
-==== Query Parameters (86 parameters):
+==== Query Parameters (87 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -93,6 +93,7 @@ with the following path and query parameters:
 | *heartbeatIntervalMs* (consumer) | The expected time between heartbeats to the consumer coordinator when using Kafka's group management facilities. Heartbeats are used to ensure that the consumer's session stays active and to facilitate rebalancing when new consumers join or leave the group. The value must be set lower than session.timeout.ms but typically should be set no higher than 1/3 of that value. It can be adjusted even lower to control the expected time for normal rebalances. | 3000 | Integer
 | *keyDeserializer* (consumer) | Deserializer class for key that implements the Deserializer interface. | org.apache.kafka.common.serialization.StringDeserializer | String
 | *maxPartitionFetchBytes* (consumer) | The maximum amount of data per-partition the server will return. The maximum total memory used for a request will be partitions max.partition.fetch.bytes. This size must be at least as large as the maximum message size the server allows or else it is possible for the producer to send messages larger than the consumer can fetch. If that happens the consumer can get stuck trying to fetch a large message on a certain partition. | 1048576 | Integer
+| *maxPollIntervalMs* (consumer) | The maximum delay between invocations of poll() when using consumer group management. This places an upper bound on the amount of time that the consumer can be idle before fetching more records. If poll() is not called before expiration of this timeout then the consumer is considered failed and the group will rebalance in order to reassign the partitions to another member. |  | Long
 | *maxPollRecords* (consumer) | The maximum number of records returned in a single call to poll() | 500 | Integer
 | *offsetRepository* (consumer) | The offset repository to use in order to locally store the offset of each partition of the topic. Defining one will disable the autocommit. |  | String>
 | *partitionAssignor* (consumer) | The class name of the partition assignment strategy that the client will use to distribute partition ownership amongst consumer instances when group management is used | org.apache.kafka.clients.consumer.RangeAssignor | String

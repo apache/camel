@@ -76,6 +76,9 @@ public class HystrixManagementTest extends CamelTestSupport {
         Long errorCount = (Long) mbeanServer.getAttribute(on, "HystrixErrorCount");
         assertEquals(0, errorCount.longValue());
 
+        Boolean open = (Boolean) mbeanServer.getAttribute(on, "CircuitBreakerOpen");
+        assertEquals(false, open.booleanValue());
+
         // let it gather for a while
         Thread.sleep(1000);
 

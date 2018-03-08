@@ -571,9 +571,15 @@ public class ProducerCache extends ServiceSupport {
             // create a new producer
             try {
                 answer = endpoint.createProducer();
-                // add as service which will also start the service
-                // (false => we and handling the lifecycle of the producer in this cache)
-                getCamelContext().addService(answer, false);
+                // add as service to CamelContext so its managed via JMX
+                boolean add = answer.isSingleton() || answer instanceof ServicePoolAware;
+                if (add) {
+                    // (false => we and handling the lifecycle of the producer in this cache)
+                    getCamelContext().addService(answer, false);
+                } else {
+                    // fallback and start producer manually
+                    ServiceHelper.startService(answer);
+                }
             } catch (Throwable e) {
                 throw new FailedToCreateProducerException(endpoint, e);
             }

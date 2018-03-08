@@ -21,6 +21,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "camel.component.jgroups.lock.cluster.service")
 public class JGroupsLockClusterServiceConfiguration {
     /**
+     * Sets if the jgroups lock cluster service should be enabled or not, default is false.
+     */
+    private boolean enabled;
+
+    /**
      * Cluster Service ID
      */
     private String id;
@@ -35,4 +40,36 @@ public class JGroupsLockClusterServiceConfiguration {
      */
     private String jgroupsClusterName;
 
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getJgroupsConfig() {
+        return jgroupsConfig;
+    }
+
+    public void setJgroupsConfig(String jgroupsConfig) {
+        this.jgroupsConfig = jgroupsConfig;
+    }
+
+    public String getJgroupsClusterName() {
+        return jgroupsClusterName;
+    }
+
+    public void setJgroupsClusterName(String jgroupsClusterName) {
+        this.jgroupsClusterName = jgroupsClusterName;
+    }
 }

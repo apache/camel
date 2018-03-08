@@ -16,10 +16,19 @@
  */
 package org.apache.camel.impl.ha;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.ha.CamelClusterEventListener;
 import org.apache.camel.ha.CamelClusterMember;
 import org.apache.camel.ha.CamelClusterService;
 import org.junit.Assert;
@@ -29,7 +38,7 @@ public class ClusterServiceViewTest {
 
     @Test
     public void testViewEquality() throws Exception {
-        TestClusterService service = new TestClusterService();
+        TestClusterService service = new TestClusterService(UUID.randomUUID().toString());
         TestClusterView view1 = service.getView("ns1").unwrap(TestClusterView.class);
         TestClusterView view2 = service.getView("ns1").unwrap(TestClusterView.class);
         TestClusterView view3 = service.getView("ns2").unwrap(TestClusterView.class);
@@ -40,7 +49,7 @@ public class ClusterServiceViewTest {
 
     @Test
     public void testViewReferences() throws Exception {
-        TestClusterService service = new TestClusterService();
+        TestClusterService service = new TestClusterService(UUID.randomUUID().toString());
         service.start();
 
         TestClusterView view1 = service.getView("ns1").unwrap(TestClusterView.class);
@@ -87,7 +96,7 @@ public class ClusterServiceViewTest {
 
     @Test
     public void testViewForceOperations() throws Exception {
-        TestClusterService service = new TestClusterService();
+        TestClusterService service = new TestClusterService(UUID.randomUUID().toString());
         TestClusterView view = service.getView("ns1").unwrap(TestClusterView.class);
 
         Assert.assertEquals(ServiceStatus.Stopped, view.getStatus());
@@ -112,11 +121,37 @@ public class ClusterServiceViewTest {
         Assert.assertEquals(ServiceStatus.Stopped, view.getStatus());
     }
 
+    @Test
+    public void testMultipleViewListeners() throws Exception {
+        final TestClusterService service = new TestClusterService(UUID.randomUUID().toString());
+        final TestClusterView view = service.getView("ns1").unwrap(TestClusterView.class);
+        final int events = 1 + new Random().nextInt(10);
+        final Set<Integer> results = new HashSet<>();
+        final CountDownLatch latch = new CountDownLatch(events);
+
+        IntStream.range(0, events).forEach(
+            i -> view.addEventListener((CamelClusterEventListener.Leadership) (v, l) -> {
+                results.add(i);
+                latch.countDown();
+            })
+        );
+
+        service.start();
+        view.setLeader(true);
+
+        latch.await(10, TimeUnit.SECONDS);
+
+        IntStream.range(0, events).forEach(
+            i -> Assert.assertTrue(results.contains(i))
+        );
+    }
+
     // *********************************
     // Helpers
     // *********************************
 
     private static class TestClusterView extends AbstractCamelClusterView {
+        private boolean leader;
 
         public TestClusterView(CamelClusterService cluster, String namespace) {
             super(cluster, namespace);
@@ -124,17 +159,34 @@ public class ClusterServiceViewTest {
 
         @Override
         public Optional<CamelClusterMember> getMaster() {
-            return null;
+            return leader
+                ? Optional.of(getLocalMember())
+                : Optional.empty();
         }
 
         @Override
         public CamelClusterMember getLocalMember() {
-            return null;
+            return new CamelClusterMember() {
+                @Override
+                public boolean isLeader() {
+                    return leader;
+                }
+
+                @Override
+                public boolean isLocal() {
+                    return true;
+                }
+
+                @Override
+                public String getId() {
+                    return getClusterService().getId();
+                }
+            };
         }
 
         @Override
         public List<CamelClusterMember> getMembers() {
-            return null;
+            return Collections.emptyList();
         }
 
         @Override
@@ -144,9 +196,25 @@ public class ClusterServiceViewTest {
         @Override
         protected void doStop() throws Exception {
         }
+
+        public boolean isLeader() {
+            return leader;
+        }
+
+        public void setLeader(boolean leader) {
+            this.leader = leader;
+
+            if (isRunAllowed()) {
+                fireLeadershipChangedEvent(getMaster());
+            }
+        }
     }
 
     private static class TestClusterService extends AbstractCamelClusterService<TestClusterView> {
+        public TestClusterService(String id) {
+            super(id);
+        }
+
         @Override
         protected TestClusterView createView(String namespace) throws Exception {
             return new TestClusterView(this, namespace);

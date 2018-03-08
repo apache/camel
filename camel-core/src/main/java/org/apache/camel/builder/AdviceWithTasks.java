@@ -27,6 +27,7 @@ import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.util.EndpointHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -430,10 +431,25 @@ public final class AdviceWithTasks {
         // first iterator and apply match by
         List<ProcessorDefinition<?>> matched = new ArrayList<ProcessorDefinition<?>>();
 
+        List<ProcessorDefinition<?>> outputs = new ArrayList<>();
+        // skip abstract nodes in the beginning as they are cross cutting functionality such as onException, onCompletion etc
+        for (ProcessorDefinition output : route.getOutputs()) {
+            // special for transacted, which we need to unwrap
+            if (output instanceof TransactedDefinition) {
+                outputs.addAll(output.getOutputs());
+            } else {
+                boolean invalid = outputs.isEmpty() && output.isAbstract();
+                if (!invalid) {
+                    outputs.add(output);
+                }
+            }
+        }
+
         @SuppressWarnings("rawtypes")
-        Iterator<ProcessorDefinition> itAll = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class, maxDeep);
+        Iterator<ProcessorDefinition> itAll = ProcessorDefinitionHelper.filterTypeInOutputs(outputs, ProcessorDefinition.class, maxDeep);
         while (itAll.hasNext()) {
             ProcessorDefinition<?> next = itAll.next();
+
             if (matchBy.match(next)) {
                 matched.add(next);
             }

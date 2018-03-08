@@ -24,4 +24,8 @@ public class BarComponent extends DefaultConnectorComponent {
         super("bar", "org.foo.connector.BarComponent");
     }
 
+    public BarComponent(String componentScheme) {
+        super("bar", componentScheme, "org.foo.connector.BarComponent");
+    }
+
 }

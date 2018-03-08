@@ -231,6 +231,12 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     protected void createConnection() {
+        if (connection != null) {
+            // In connect(), in the connection.connect() callback, onFailure() doesn't seem to ever be called, so forcing the disconnect here.
+            // Without this, the fusesource MQTT client seems to be holding the old connection object, and connection contention can ensue.
+            connection.disconnect(null);
+        }
+
         connection = configuration.callbackConnection();
 
         connection.listener(new Listener() {
@@ -331,7 +337,7 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
             }
 
-            public void onFailure(Throwable value) {
+            public void onFailure(Throwable value) {  // this doesn't appear to ever be called
                 LOG.warn("Failed to connect to " + configuration.getHost() + " due " + value.getMessage());
                 promise.onFailure(value);
                 connection.disconnect(null);

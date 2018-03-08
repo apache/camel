@@ -27,4 +27,8 @@ public class SalesforceUpsertContactComponent extends DefaultConnectorComponent 
         super("salesforce-upsert-contact", SalesforceUpsertContactComponent.class.getName());
     }
 
+    public SalesforceUpsertContactComponent(String componentScheme) {
+        super("salesforce-upsert-contact", componentScheme, SalesforceUpsertContactComponent.class.getName());
+    }
+
 }

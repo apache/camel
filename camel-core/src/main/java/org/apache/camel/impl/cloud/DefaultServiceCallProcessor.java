@@ -25,6 +25,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceLoadBalancer;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -154,11 +155,31 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         Message message = exchange.getIn();
-        message.setHeader(ServiceCallConstants.SERVICE_CALL_URI, uri);
-        message.setHeader(ServiceCallConstants.SERVICE_CALL_CONTEXT_PATH, contextPath);
-        message.setHeader(ServiceCallConstants.SERVICE_CALL_SCHEME, scheme);
 
-        String serviceName = message.getHeader(ServiceCallConstants.SERVICE_NAME, name, String.class);
+        // the values can be dynamic using simple language so compute those
+        String val = uri;
+        if (SimpleLanguage.hasSimpleFunction(val)) {
+            val = SimpleLanguage.simple(val).evaluate(exchange, String.class);
+        }
+        message.setHeader(ServiceCallConstants.SERVICE_CALL_URI, val);
+
+        val = contextPath;
+        if (SimpleLanguage.hasSimpleFunction(val)) {
+            val = SimpleLanguage.simple(val).evaluate(exchange, String.class);
+        }
+        message.setHeader(ServiceCallConstants.SERVICE_CALL_CONTEXT_PATH, val);
+
+        val = scheme;
+        if (SimpleLanguage.hasSimpleFunction(val)) {
+            val = SimpleLanguage.simple(val).evaluate(exchange, String.class);
+        }
+        message.setHeader(ServiceCallConstants.SERVICE_CALL_SCHEME, val);
+
+        String serviceName = name;
+        if (SimpleLanguage.hasSimpleFunction(serviceName)) {
+            serviceName = SimpleLanguage.simple(serviceName).evaluate(exchange, String.class);
+        }
+        message.setHeader(ServiceCallConstants.SERVICE_NAME, serviceName);
 
         try {
             return loadBalancer.process(serviceName, server -> execute(server, exchange, callback));

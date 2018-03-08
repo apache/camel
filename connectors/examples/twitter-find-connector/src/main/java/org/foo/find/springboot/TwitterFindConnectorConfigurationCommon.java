@@ -43,15 +43,14 @@ public class TwitterFindConnectorConfigurationCommon {
      */
     private String consumerSecret;
     /**
+     * The search keywords. Multiple values can be separated with comma.
+     */
+    private String keywords;
+    /**
      * Filter out old tweets that has previously been polled. This state is
      * stored in memory only and based on last tweet id.
      */
     private boolean filterOld = true;
-    /**
-     * Can be used for search and streaming/filter. Multiple values can be
-     * separated with comma.
-     */
-    private String keywords;
     /**
      * Milliseconds before the next poll.
      */
@@ -93,20 +92,20 @@ public class TwitterFindConnectorConfigurationCommon {
         this.consumerSecret = consumerSecret;
     }
 
-    public boolean isFilterOld() {
-        return filterOld;
-    }
-
-    public void setFilterOld(boolean filterOld) {
-        this.filterOld = filterOld;
-    }
-
     public String getKeywords() {
         return keywords;
     }
 
     public void setKeywords(String keywords) {
         this.keywords = keywords;
+    }
+
+    public boolean isFilterOld() {
+        return filterOld;
+    }
+
+    public void setFilterOld(boolean filterOld) {
+        this.filterOld = filterOld;
     }
 
     public long getDelay() {

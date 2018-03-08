@@ -48,7 +48,7 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
                             .to("log:hi")
                         .get("/bye/{name}").description("Saying bye")
                             .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
-                            .responseMessage().code(200).message("A reply message").endResponseMessage()
+                            .responseMessage().code(200).message("A reply number").responseModel(float.class).endResponseMessage()
                             .to("log:bye")
                         .post("/bye").description("To update the greeting message").consumes("application/xml").produces("application/xml")
                             .param().name("greeting").type(RestParamType.body).dataType("string").description("Message to use as greeting").endParam()
@@ -74,6 +74,7 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         String json = mapper.writeValueAsString(swagger);
 
         log.info(json);
+        System.out.println(json);
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
         assertTrue(json.contains("\"basePath\" : \"/api\""));
@@ -81,6 +82,8 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         assertTrue(json.contains("\"summary\" : \"To update the greeting message\""));
         assertTrue(json.contains("\"/hello/bye/{name}\""));
         assertTrue(json.contains("\"/hello/hi/{name}\""));
+        assertTrue(json.contains("\"type\" : \"number\""));
+        assertTrue(json.contains("\"format\" : \"float\""));
 
         context.stop();
     }

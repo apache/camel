@@ -33,12 +33,48 @@ public class HessianDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Define if Whitelist feature is enabled or not
+     */
+    private Boolean whitelistEnabled = true;
+    /**
+     * Define the allowed objects to be unmarshalled
+     */
+    private String allowedUnmarshallObjects;
+    /**
+     * Define the denied objects to be unmarshalled
+     */
+    private String deniedUnmarshallObjects;
+    /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
      * example application/xml for data formats marshalling to XML or
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;
+
+    public Boolean getWhitelistEnabled() {
+        return whitelistEnabled;
+    }
+
+    public void setWhitelistEnabled(Boolean whitelistEnabled) {
+        this.whitelistEnabled = whitelistEnabled;
+    }
+
+    public String getAllowedUnmarshallObjects() {
+        return allowedUnmarshallObjects;
+    }
+
+    public void setAllowedUnmarshallObjects(String allowedUnmarshallObjects) {
+        this.allowedUnmarshallObjects = allowedUnmarshallObjects;
+    }
+
+    public String getDeniedUnmarshallObjects() {
+        return deniedUnmarshallObjects;
+    }
+
+    public void setDeniedUnmarshallObjects(String deniedUnmarshallObjects) {
+        this.deniedUnmarshallObjects = deniedUnmarshallObjects;
+    }
 
     public Boolean getContentTypeHeader() {
         return contentTypeHeader;

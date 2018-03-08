@@ -120,7 +120,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             ComponentModel model = generateComponentModel(json);
 
             // resolvePropertyPlaceholders is an option which only make sense to use if the component has other options
-            boolean hasOptions = model.getComponentOptions().stream().anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
+            boolean hasComponentOptions = model.getComponentOptions().stream().anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
+            boolean hasConnectorOptions = !model.getConnectorOptions().isEmpty();
 
             // use springboot as sub package name so the code is not in normal
             // package so the Spring Boot JARs can be optional at runtime
@@ -128,11 +129,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             String pkg = javaType.substring(0, pos) + ".springboot";
 
             // we only create spring boot auto configuration if there is options to configure
-            if (hasOptions) {
+            if (hasComponentOptions || hasConnectorOptions) {
                 getLog().info("Generating Spring Boot AutoConfiguration for Connector: " + model.getScheme());
 
                 createConnectorConfigurationSource(pkg, model, javaType, connectorScheme, componentOptions, endpointOptions);
-                createConnectorAutoConfigurationSource(pkg, hasOptions, javaType, connectorScheme);
+                createConnectorAutoConfigurationSource(pkg, hasComponentOptions || hasConnectorOptions, javaType, connectorScheme);
                 createConnectorSpringFactorySource(pkg, javaType);
             }
         }
@@ -444,7 +445,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("for (Map.Entry<String, " + commonConfigurationName + "> entry : configuration.getConfigurations().entrySet()) {\n");
         sb.append("parameters.clear();\n");
         sb.append("\n");
-        sb.append(shortJavaType).append(" connector = new ").append(shortJavaType).append("();\n");
+        sb.append(shortJavaType).append(" connector = new ").append(shortJavaType).append("(").append("entry.getKey()").append(");\n");
         sb.append("connector.setCamelContext(camelContext);\n");
         sb.append("\n");
         sb.append("try {\n");

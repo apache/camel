@@ -107,7 +107,8 @@ public class SalesforceUpsertContactConnectorAutoConfiguration {
         for (Map.Entry<String, SalesforceUpsertContactConnectorConfigurationCommon> entry : configuration
                 .getConfigurations().entrySet()) {
             parameters.clear();
-            SalesforceUpsertContactComponent connector = new SalesforceUpsertContactComponent();
+            SalesforceUpsertContactComponent connector = new SalesforceUpsertContactComponent(
+                    entry.getKey());
             connector.setCamelContext(camelContext);
             try {
                 IntrospectionSupport.getProperties(entry.getValue(),

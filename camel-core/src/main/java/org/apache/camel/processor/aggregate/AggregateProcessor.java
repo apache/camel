@@ -36,6 +36,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -1305,6 +1306,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         AggregationStrategy strategy = aggregationStrategy;
         if (strategy instanceof DelegateAggregationStrategy) {
             strategy = ((DelegateAggregationStrategy) strategy).getDelegate();
+        }
+        if (strategy instanceof CamelContextAware) {
+            ((CamelContextAware) strategy).setCamelContext(camelContext);
         }
         if (strategy instanceof PreCompletionAwareAggregationStrategy) {
             preCompletion = true;

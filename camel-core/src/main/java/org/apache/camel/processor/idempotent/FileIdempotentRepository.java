@@ -51,7 +51,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     private Map<String, Object> cache;
     private File fileStore;
     private long maxFileStoreSize = 1024 * 1000L; // 1mb store file
-    private AtomicBoolean init = new AtomicBoolean();
+    private final AtomicBoolean init = new AtomicBoolean();
 
     public FileIdempotentRepository() {
     }
@@ -334,8 +334,10 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     protected void doStart() throws Exception {
         ObjectHelper.notNull(fileStore, "fileStore", this);
 
-        // default use a 1st level cache
-        this.cache = LRUCacheFactory.newLRUCache(1000);
+        if (this.cache == null) {
+            // default use a 1st level cache
+            this.cache = LRUCacheFactory.newLRUCache(1000);
+        }
 
         // init store if not loaded before
         if (init.compareAndSet(false, true)) {

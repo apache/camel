@@ -60,7 +60,7 @@ public class SchedulerTimerConnectorEndpoint extends DefaultConnectorEndpoint {
         Processor pipeline = Pipeline.newInstance(getCamelContext(), children);
 
         // create a timer consumer which wraps calling the producer and then the intended processor
-        String name = getComponent().getComponentName();
+        String name = getComponent().getComponentScheme();
         String uri = "timer:" + name + "?period=" + period;
 
         Consumer consumer = getCamelContext().getEndpoint(uri).createConsumer(pipeline);

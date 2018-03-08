@@ -561,6 +561,9 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 // Get carriage return parameter
                 crlf = record.crlf();
                 LOG.debug("Carriage return defined for the CSV: {}", crlf);
+                
+                eol = record.eol();
+                LOG.debug("EOL(end-of-line) defined for the CSV: {}", eol);
 
                 // Get header parameter
                 header =  record.header();
@@ -623,8 +626,10 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     }
 
     /**
+     * Gets the type of the header record.
      *
-     * @return
+     * @return The type of the header record if any, otherwise
+     *         <code>void.class</code>.
      */
     public Class<?> header() {
         return header;
@@ -638,8 +643,10 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     }
 
     /**
+     * Gets the type of the footer record.
      *
-     * @return
+     * @return The type of the footer record if any, otherwise
+     *         <code>void.class</code>.
      */
     public Class<?> footer() {
         return footer;

@@ -16,7 +16,11 @@
  */
 package org.apache.camel.processor.aggregate;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ServiceHelper;
 
 import static org.apache.camel.util.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
 
@@ -28,7 +32,7 @@ import static org.apache.camel.util.ExchangeHelper.hasExceptionBeenHandledByErro
  * <p/>
  * This strategy is <b>not</b> intended for end users to use.
  */
-public final class ShareUnitOfWorkAggregationStrategy implements AggregationStrategy, DelegateAggregationStrategy {
+public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport implements AggregationStrategy, DelegateAggregationStrategy {
 
     private final AggregationStrategy strategy;
 
@@ -77,5 +81,15 @@ public final class ShareUnitOfWorkAggregationStrategy implements AggregationStra
     @Override
     public String toString() {
         return "ShareUnitOfWorkAggregationStrategy";
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(strategy);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopAndShutdownServices(strategy);
     }
 }

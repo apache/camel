@@ -27,4 +27,8 @@ public class TwitterFindComponent extends DefaultConnectorComponent {
         super("twitter-find", "org.foo.find.TwitterFindComponent");
     }
 
+    public TwitterFindComponent(String componentScheme) {
+        super("twitter-find", componentScheme, "org.foo.find.TwitterFindComponent");
+    }
+
 }

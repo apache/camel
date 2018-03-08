@@ -211,10 +211,6 @@ public class RestletProducer extends DefaultAsyncProducer {
         if (uri == null) {
             uri = endpoint.getProtocol() + "://" + endpoint.getHost() + ":" + endpoint.getPort() + endpoint.getUriPattern();
         }
-        // include any query parameters if needed
-        if (endpoint.getQueryParameters() != null) {
-            uri = URISupport.appendParametersToURI(uri, endpoint.getQueryParameters());
-        }
 
         // substitute { } placeholders in uri and use mandatory headers
         LOG.trace("Substituting '{value}' placeholders in uri: {}", uri);
@@ -234,6 +230,11 @@ public class RestletProducer extends DefaultAsyncProducer {
             uri = matcher.replaceFirst(header);
             // we replaced uri so reset and go again
             matcher.reset(uri);
+        }
+        
+        // include any query parameters if needed
+        if (endpoint.getQueryParameters() != null) {
+            uri = URISupport.appendParametersToURI(uri, endpoint.getQueryParameters());
         }
 
         // rest producer may provide an override query string to be used which we should discard if using (hence the remove)

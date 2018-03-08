@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
@@ -38,6 +39,49 @@ public class ServiceCallConfigurationTest {
     // ****************************************
     // test default resolution
     // ****************************************
+
+    @Test
+    public void testDynamicUri() throws Exception {
+        StaticServiceDiscovery sd = new StaticServiceDiscovery();
+        sd.addServer("scall", "127.0.0.1", 8080);
+        sd.addServer("scall", "127.0.0.1", 8081);
+
+        ServiceCallConfigurationDefinition conf = new ServiceCallConfigurationDefinition();
+        conf.setServiceDiscovery(sd);
+        conf.setComponent("mock");
+
+        CamelContext context = new DefaultCamelContext();
+        context.setServiceCallConfiguration(conf);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .routeId("default")
+                    .serviceCall("scall", "scall/api/${header.customerId}");
+            }
+        });
+
+        context.start();
+
+        MockEndpoint mock = context.getEndpoint("mock:127.0.0.1:8080/api/123", MockEndpoint.class);
+        mock.expectedMessageCount(1);
+
+        DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
+
+        Assert.assertNotNull(proc);
+        Assert.assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+
+        DefaultServiceLoadBalancer loadBalancer = (DefaultServiceLoadBalancer)proc.getLoadBalancer();
+        Assert.assertEquals(sd, loadBalancer.getServiceDiscovery());
+
+        // call the route
+        context.createFluentProducerTemplate().to("direct:start").withHeader("customerId", "123").send();
+
+        // the service should call the mock
+        mock.assertIsSatisfied();
+
+        context.stop();
+    }
 
     @Test
     public void testDefaultConfigurationFromCamelContext() throws Exception {

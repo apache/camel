@@ -711,3 +711,44 @@ And in Java DSL
     .to("bean:userService?method=updateUser")
 ----
 
+==== Vendor Extensions
+
+The generated API documentation can be configured to include vendor extensions (https://swagger.io/specification/#specificationExtensions)
+which document the operations and definitions with additional information, such as class name of model classes, camel context id and route id's.
+This information can aid developers and during trouble shooting. However at production usage you may wish to not have this turned
+on to avoid leaking implementation details into your API docs.
+
+The vendor extension information is stored in the API documentation with keys starting with `x-`.
+
+NOTE: Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs.
+
+The vendor extensions can be turned on `RestConfiguration` via the `apiVendorExtension` option:
+
+[source,java]
+----
+restConfiguration()
+    .component("servlet")
+    .bindingMode(RestBindingMode.json)
+    .dataFormatProperty("prettyPrint", "true")
+    .apiContextPath("api-doc")
+    .apiVendorExtension(true)
+        .apiProperty("api.title", "User API").apiProperty("api.version", "1.0.0")
+        .apiProperty("cors", "true");
+----
+
+And in XML DSL:
+[source,xml]
+----
+ <restConfiguration component="servlet" bindingMode="json"
+                       apiContextPath="api-docs"
+                       apiVendorExtension="true">
+
+      <!-- we want json output in pretty mode -->
+      <dataFormatProperty key="prettyPrint" value="true"/>
+
+      <!-- setup swagger api descriptions -->
+      <apiProperty key="api.version" value="1.0.0"/>
+      <apiProperty key="api.title" value="User API"/>
+
+</restConfiguration>
+----

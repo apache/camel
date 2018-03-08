@@ -19,6 +19,7 @@ package org.apache.camel.component.hbase;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
@@ -44,13 +45,15 @@ public class HBaseComponent extends UriEndpointComponent {
         super(HBaseEndpoint.class);
     }
 
+    public HBaseComponent(CamelContext context) {
+        super(context, HBaseEndpoint.class);
+    }
+
     @Override
     protected void doStart() throws Exception {
         if (configuration == null) {
             configuration = HBaseConfiguration.create();
-        }
 
-        if (configuration.getClassLoader() == null) {
             ClassLoader applicationContextClassLoader = getCamelContext().getApplicationContextClassLoader();
             if (applicationContextClassLoader != null) {
                 configuration.setClassLoader(applicationContextClassLoader);

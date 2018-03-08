@@ -46,9 +46,10 @@ public class RestSwaggerReaderModelTest extends CamelTestSupport {
                 rest("/user").tag("dude").description("User rest service")
                     .consumes("application/json").produces("application/json")
 
-                    .get("/{id}").description("Find user by id").outType(User.class)
+                    .get("/{id}/{date}").description("Find user by id and date").outType(User.class)
                         .responseMessage().message("The user returned").endResponseMessage()
-                        .param().name("id").type(RestParamType.path).description("The id of the user to get").dataType("integer").endParam()
+                        .param().name("id").type(RestParamType.path).description("The id of the user to get").endParam()
+                        .param().name("date").type(RestParamType.path).description("The date").dataFormat("date").endParam()
                         .to("bean:userService?method=getUser(${header.id})")
 
                     .put().description("Updates or create a user").type(User.class)
@@ -88,6 +89,8 @@ public class RestSwaggerReaderModelTest extends CamelTestSupport {
         assertTrue(json.contains("\"$ref\" : \"#/definitions/User\""));
         assertTrue(json.contains("\"x-className\""));
         assertTrue(json.contains("\"format\" : \"org.apache.camel.swagger.User\""));
+        assertTrue(json.contains("\"type\" : \"string\""));
+        assertTrue(json.contains("\"format\" : \"date\""));
         assertFalse(json.contains("\"enum\""));
         context.stop();
     }

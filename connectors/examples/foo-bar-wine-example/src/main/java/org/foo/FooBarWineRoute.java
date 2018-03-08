@@ -26,10 +26,12 @@ public class FooBarWineRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("foo:ThirstyBear?period=2000")
+            .log("Who is this: ${header.whoami}")
             .to("wine:Wine?amount=2")
             .log("ThirstyBear ordered ${body}");
 
         from("foo:Moes?period=5000")
+            .log("Who is this: ${header.whoami}")
             .to("bar:Beer?amount=5&celebrity=true")
             .log("Moes ordered ${body}");
     }

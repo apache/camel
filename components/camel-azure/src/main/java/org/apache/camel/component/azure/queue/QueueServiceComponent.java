@@ -20,12 +20,13 @@ import java.util.Map;
 
 import com.microsoft.azure.storage.StorageCredentials;
 import com.microsoft.azure.storage.queue.CloudQueue;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 public class QueueServiceComponent extends UriEndpointComponent {
-    
+
     public QueueServiceComponent() {
         super(QueueServiceEndpoint.class);
     }
@@ -40,29 +41,37 @@ public class QueueServiceComponent extends UriEndpointComponent {
 
         String[] parts = null;
         if (remaining != null) {
-            parts = remaining.split("/"); 
+            parts = remaining.split("/");
         }
-        if (parts == null || parts.length < 2) {
-            throw new IllegalArgumentException("The account and queue names must be specified.");
+        if (parts == null || parts.length < 1) {
+            throw new IllegalArgumentException("The account name must be specified.");
         }
+
+        QueueServiceOperations operation = configuration.getOperation();
+        if (operation != null && operation != QueueServiceOperations.listQueues && parts.length < 2) {
+            throw new IllegalArgumentException("The queue name must be specified.");
+        }
+
         if (parts.length > 2) {
             throw new IllegalArgumentException("Only the account and queue names must be specified.");
         }
-        
+
         configuration.setAccountName(parts[0]);
-        configuration.setQueueName(parts[1]);
-        
+
+        if (parts.length > 1) {
+            configuration.setQueueName(parts[1]);
+        }
+
         checkCredentials(configuration);
-        
+
         QueueServiceEndpoint endpoint = new QueueServiceEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         return endpoint;
     }
-    
+
     private void checkCredentials(QueueServiceConfiguration cfg) {
         CloudQueue client = cfg.getAzureQueueClient();
-        StorageCredentials creds = client == null ? cfg.getCredentials() 
-            : client.getServiceClient().getCredentials(); 
+        StorageCredentials creds = client == null ? cfg.getCredentials() : client.getServiceClient().getCredentials();
         if (creds == null) {
             throw new IllegalArgumentException("Credentials must be specified.");
         }

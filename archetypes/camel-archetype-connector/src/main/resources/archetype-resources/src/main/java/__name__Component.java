@@ -27,4 +27,8 @@ public class ${name}Component extends DefaultConnectorComponent {
         super("${name}", "${package}.${name}Component");
     }
 
+    public ${name}Component(String componentScheme) {
+        super("${name}", componentScheme, "${package}.${name}Component");
+    }
+
 }

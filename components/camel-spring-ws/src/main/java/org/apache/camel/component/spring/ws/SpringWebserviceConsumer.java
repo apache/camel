@@ -18,6 +18,8 @@ package org.apache.camel.component.spring.ws;
 
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
@@ -82,7 +84,15 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
     }
     
     private void populateExchangeWithBreadcrumbFromMessageContext(MessageContext messageContext, Exchange exchange) {
-        SaajSoapMessage saajSoap = (SaajSoapMessage) messageContext.getRequest();
+        if (messageContext.getRequest() instanceof SaajSoapMessage) {
+            SaajSoapMessage saajSoap = (SaajSoapMessage) messageContext.getRequest();
+            populateExchangeWithBreadcrumbFromSaajMessage(exchange, saajSoap);
+        } else {
+            populateExchangeWithBreadcrumbFromMessageContext(exchange, messageContext);
+        }
+    }
+
+    private void populateExchangeWithBreadcrumbFromSaajMessage(Exchange exchange, SaajSoapMessage saajSoap) {
         SOAPMessage soapMessageRequest = null;
         if (saajSoap != null) {
             soapMessageRequest = saajSoap.getSaajMessage();
@@ -99,6 +109,14 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
                     }
                 }
             }
+        }
+    }
+
+    private void populateExchangeWithBreadcrumbFromMessageContext(Exchange exchange, MessageContext messageContext) {
+        if (messageContext != null) {
+            HttpServletRequest obj = (HttpServletRequest) messageContext.getProperty("transport.http.servletRequest");
+            String breadcrumbId = (String) obj.getHeader(Exchange.BREADCRUMB_ID);
+            exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbId);
         }
     }
 

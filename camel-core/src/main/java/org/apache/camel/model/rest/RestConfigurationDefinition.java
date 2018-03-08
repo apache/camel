@@ -79,6 +79,9 @@ public class RestConfigurationDefinition {
     private Boolean apiContextListing;
 
     @XmlAttribute @Metadata(label = "consumer")
+    private Boolean apiVendorExtension;
+
+    @XmlAttribute @Metadata(label = "consumer")
     private RestHostNameResolver hostNameResolver;
 
     @XmlAttribute @Metadata(defaultValue = "off")
@@ -293,6 +296,19 @@ public class RestConfigurationDefinition {
      */
     public void setApiContextListing(Boolean apiContextListing) {
         this.apiContextListing = apiContextListing;
+    }
+
+    public Boolean getApiVendorExtension() {
+        return apiVendorExtension;
+    }
+
+    /**
+     * Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information
+     * as vendor extension (eg keys starting with x-) such as route ids, class names etc.
+     * Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs.
+     */
+    public void setApiVendorExtension(Boolean apiVendorExtension) {
+        this.apiVendorExtension = apiVendorExtension;
     }
 
     public RestHostNameResolver getHostNameResolver() {
@@ -570,6 +586,16 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information
+     * as vendor extension (eg keys starting with x-) such as route ids, class names etc.
+     * Some API tooling may not support vendor extensions and this option can then be turned off.
+     */
+    public RestConfigurationDefinition apiVendorExtension(boolean vendorExtension) {
+        setApiVendorExtension(vendorExtension);
+        return this;
+    }
+
+    /**
      * Sets a leading context-path the REST services will be using.
      * <p/>
      * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
@@ -770,6 +796,9 @@ public class RestConfigurationDefinition {
         }
         if (apiContextListing != null) {
             answer.setApiContextListing(apiContextListing);
+        }
+        if (apiVendorExtension != null) {
+            answer.setApiVendorExtension(apiVendorExtension);
         }
         if (contextPath != null) {
             answer.setContextPath(CamelContextHelper.parseText(context, contextPath));

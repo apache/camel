@@ -17,35 +17,35 @@
 package org.apache.camel.component.azure.queue;
 
 import com.microsoft.azure.storage.queue.CloudQueue;
+
 import org.apache.camel.component.azure.common.AbstractConfiguration;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-
 @UriParams
 public class QueueServiceConfiguration extends AbstractConfiguration {
 
     private String queueName;
     @UriParam
     private CloudQueue azureQueueClient;
-    
+
     @UriParam(label = "producer", defaultValue = "listQueues")
     private QueueServiceOperations operation = QueueServiceOperations.listQueues;
-    
+
     @UriParam(label = "producer")
     private int messageTimeToLive;
-    
+
     @UriParam(label = "producer")
     private int messageVisibilityDelay;
-    
+
     @UriParam(label = "producer")
     private String queuePrefix;
-    
+
     public String getQueueName() {
         return queueName;
     }
-    
+
     /**
-     * The queue resource name 
+     * The queue resource name
      */
     public void setQueueName(String queueName) {
         this.queueName = queueName;
@@ -56,7 +56,7 @@ public class QueueServiceConfiguration extends AbstractConfiguration {
     }
 
     /**
-     * The queue service client 
+     * The queue service client
      */
     public void setAzureQueueClient(CloudQueue azureQueueClient) {
         this.azureQueueClient = azureQueueClient;
@@ -67,7 +67,7 @@ public class QueueServiceConfiguration extends AbstractConfiguration {
     }
 
     /**
-     * Queue service operation hint to the producer 
+     * Queue service operation hint to the producer
      */
     public void setOperation(QueueServiceOperations operation) {
         this.operation = operation;
@@ -78,7 +78,7 @@ public class QueueServiceConfiguration extends AbstractConfiguration {
     }
 
     /**
-     * Message Time To Live in seconds 
+     * Message Time To Live in seconds
      */
     public void setMessageTimeToLive(int messageTimeToLive) {
         this.messageTimeToLive = messageTimeToLive;
@@ -89,7 +89,7 @@ public class QueueServiceConfiguration extends AbstractConfiguration {
     }
 
     /**
-     * Message Visibility Delay in seconds 
+     * Message Visibility Delay in seconds
      */
     public void setMessageVisibilityDelay(int messageVisibilityDelay) {
         this.messageVisibilityDelay = messageVisibilityDelay;
@@ -100,7 +100,7 @@ public class QueueServiceConfiguration extends AbstractConfiguration {
     }
 
     /**
-     * Set a prefix which can be used for listing the queues 
+     * Set a prefix which can be used for listing the queues
      */
     public void setQueuePrefix(String queuePrefix) {
         this.queuePrefix = queuePrefix;

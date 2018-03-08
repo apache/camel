@@ -11,7 +11,7 @@ updates to user accounts and even changes to enterprise accounts, etc.
 Box.com requires the use of OAuth2.0 for all client application
 authentication. In order to use camel-box with your account, you'll need
 to create a new application within Box.com at
-https://app.box.com/developers/services/edit/[https://app.box.com/developers/services/edit/].
+https://developer.box.com/[https://developer.box.com].
 The Box application's client id and secret will allow access to Box APIs
 which require a current user. A user access token is generated and
 managed by the API for an end user. 
@@ -157,7 +157,7 @@ cause.
 ==== Endpoint Prefix _collaborations_
 
 For more information on Box collaborations see
-https://docs.box.com/reference#collaboration-object[https://docs.box.com/reference#collaboration-object]. The
+https://developer.box.com/reference#collaboration-object[https://developer.box.com/reference#collaboration-object]. The
 following endpoints can be invoked with the prefix *`collaborations`* as
 follows:
 
@@ -208,7 +208,7 @@ URI Options for _collaborations_
 ==== Endpoint Prefix _comments_
 
 For more information on Box comments see
-https://docs.box.com/reference#comment-object[https://docs.box.com/reference#comment-object]. The
+https://developer.box.com/reference#comment-object[https://developer.box.com/reference#comment-object]. The
 following endpoints can be invoked with the prefix *`comments`* as
 follows:
 
@@ -252,7 +252,7 @@ URI Options for _collaborations_
 ==== Endpoint Prefix _events-logs_
 
 For more information on Box event logs see
-https://docs.box.com/reference#events[https://docs.box.com/reference#events].
+https://developer.box.com/reference#events[https://developer.box.com/reference#events].
 The following endpoints can be invoked with the prefix *`events`* as follows:
 
 [source]
@@ -285,7 +285,7 @@ URI Options for _event-logs_
 ==== Endpoint Prefix _files_
 
 For more information on Box files see
-https://docs.box.com/reference#file-object[https://docs.box.com/reference#file-object].
+https://developer.box.com/reference#file-object[https://developer.box.com/reference#file-object].
 The following endpoints can be invoked with the
 prefix *`files`* as follows. 
 
@@ -405,7 +405,7 @@ URI Options for _files_
 ==== Endpoint Prefix _folders_
 
 For more information on Box folders see
-https://docs.box.com/reference#folder-object[https://docs.box.com/reference#folder-object].
+https://developer.box.com/reference#folder-object[https://developer.box.com/reference#folder-object].
 The following endpoints can be invoked with the prefix
 *`folders`* as follows. 
 
@@ -479,7 +479,7 @@ URI Options for _folders_
 ==== Endpoint Prefix _groups_
 
 For more information on Box groups see
-https://docs.box.com/reference#group-object[https://docs.box.com/reference#group-object].
+https://developer.box.com/reference#group-object[https://developer.box.com/reference#group-object].
 The following endpoints can be invoked with the prefix *`groups`* as
 follows:
 
@@ -538,7 +538,7 @@ URI Options for _groups_
 ==== Endpoint Prefix _search_
 
 For more information on Box search API see
-https://docs.box.com/reference#searching-for-content[https://docs.box.com/reference#searching-for-content]. The
+https://developer.box.com/reference#searching-for-content[https://developer.box.com/reference#searching-for-content]. The
 following endpoints can be invoked with the prefix *`search`* as
 follows:
 
@@ -568,7 +568,7 @@ URI Options for _search_
 ==== Endpoint Prefix _tasks_
 
 For information on Box tasks see
-https://docs.box.com/reference#task-object-1[https://docs.box.com/reference#task-object-1].
+https://developer.box.com/reference#task-object-1[https://developer.box.com/reference#task-object-1].
 The following endpoints can be invoked with the prefix *`tasks`* as
 follows:
 
@@ -626,7 +626,7 @@ URI Options for _tasks_
 ==== Endpoint Prefix _users_
 
 For information on Box users see
-https://docs.box.com/reference#user-object[https://docs.box.com/reference#user-object].
+https://developer.box.com/reference#user-object[https://developer.box.com/reference#user-object].
 The following endpoints can be invoked with the prefix *`users`* as
 follows:
 
@@ -690,7 +690,7 @@ URI Options for _users_
 === Consumer Endpoints:
 
 For more information on Box events see
-https://docs.box.com/reference#events[https://docs.box.com/reference#events].
+https://developer.box.com/reference#events[https://developer.box.com/reference#events].
 Consumer endpoints can only use the endpoint prefix *events* as
 shown in the example next.
 

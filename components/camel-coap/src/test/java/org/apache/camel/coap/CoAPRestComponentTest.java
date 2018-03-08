@@ -23,6 +23,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.junit.Test;
@@ -39,17 +40,39 @@ public class CoAPRestComponentTest extends CamelTestSupport {
         client = new CoapClient("coap://localhost:" + coapport + "/TestResource/Ducky");
         client.setTimeout(1000000);
         rsp = client.get();
+        assertEquals(ResponseCode.CONTENT, rsp.getCode());
         assertEquals("Hello Ducky", rsp.getResponseText());
         rsp = client.post("data", MediaTypeRegistry.TEXT_PLAIN);
+        assertEquals(ResponseCode.CONTENT, rsp.getCode());
         assertEquals("Hello Ducky: data", rsp.getResponseText());
 
         client = new CoapClient("coap://localhost:" + coapport + "/TestParams?id=Ducky");
         client.setTimeout(1000000);
         rsp = client.get();
+        assertEquals(ResponseCode.CONTENT, rsp.getCode());
         assertEquals("Hello Ducky", rsp.getResponseText());
         rsp = client.post("data", MediaTypeRegistry.TEXT_PLAIN);
+        assertEquals(ResponseCode.CONTENT, rsp.getCode());
         assertEquals("Hello Ducky: data", rsp.getResponseText());
         assertEquals(MediaTypeRegistry.TEXT_PLAIN, rsp.getOptions().getContentFormat());
+    }
+
+    @Test
+    public void testCoAPMethodNotAllowedResponse() throws Exception {
+        NetworkConfig.createStandardWithoutFile();
+        CoapClient client = new CoapClient("coap://localhost:" + coapport + "/TestResource/Ducky");
+        client.setTimeout(1000000);
+        CoapResponse rsp = client.delete();
+        assertEquals(ResponseCode.METHOD_NOT_ALLOWED, rsp.getCode());
+    }
+
+    @Test
+    public void testCoAPNotFoundResponse() throws Exception {
+        NetworkConfig.createStandardWithoutFile();
+        CoapClient client = new CoapClient("coap://localhost:" + coapport + "/foo/bar/cheese");
+        client.setTimeout(1000000);
+        CoapResponse rsp = client.get();
+        assertEquals(ResponseCode.NOT_FOUND, rsp.getCode());
     }
 
     @Override
