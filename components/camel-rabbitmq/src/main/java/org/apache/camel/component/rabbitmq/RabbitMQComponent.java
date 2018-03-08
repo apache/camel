@@ -18,7 +18,9 @@ package org.apache.camel.component.rabbitmq;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.ConnectionFactory;
@@ -46,6 +48,10 @@ public class RabbitMQComponent extends UriEndpointComponent {
     private String username = ConnectionFactory.DEFAULT_USER;
     @Metadata(label = "security", defaultValue = ConnectionFactory.DEFAULT_PASS, secret = true)
     private String password = ConnectionFactory.DEFAULT_PASS;
+    @Metadata(label = "common")
+    private ConnectionFactory connectionFactory;
+    @Metadata(label = "common", defaultValue = "true")
+    private boolean autoDetectConnectionFactory = true;
 
     public RabbitMQComponent() {
         super(RabbitMQEndpoint.class);
@@ -81,7 +87,22 @@ public class RabbitMQComponent extends UriEndpointComponent {
         }
 
         // ConnectionFactory reference
-        ConnectionFactory connectionFactory = resolveAndRemoveReferenceParameter(params, "connectionFactory", ConnectionFactory.class);
+        ConnectionFactory connectionFactory = resolveAndRemoveReferenceParameter(params, "connectionFactory", ConnectionFactory.class, getConnectionFactory());
+
+        // try to lookup if there is a single instance in the registry of the ConnectionFactory
+        if (connectionFactory == null && isAutoDetectConnectionFactory()) {
+            Map<String, ConnectionFactory> map = getCamelContext().getRegistry().findByTypeWithName(ConnectionFactory.class);
+            if (map != null && map.size() == 1) {
+                Map.Entry<String, ConnectionFactory> entry = map.entrySet().iterator().next();
+                connectionFactory = entry.getValue();
+                String name = entry.getKey();
+                if (name == null) {
+                    name = "anonymous";
+                }
+                LOG.info("Auto-detected single instance: {} of type ConnectionFactory in Registry to be used as ConnectionFactory when creating endpoint: {}", name, uri);
+            }
+        }
+
         @SuppressWarnings("unchecked")
         Map<String, Object> clientProperties = resolveAndRemoveReferenceParameter(params, "clientProperties", Map.class);
         TrustManager trustManager = resolveAndRemoveReferenceParameter(params, "trustManager", TrustManager.class);
@@ -163,4 +184,29 @@ public class RabbitMQComponent extends UriEndpointComponent {
         this.password = password;
     }
 
+    public ConnectionFactory getConnectionFactory() {
+        return connectionFactory;
+    }
+
+    /**
+     * To use a custom RabbitMQ connection factory. When this option is set, all
+     * connection options (connectionTimeout, requestedChannelMax...) set on URI
+     * are not used
+     */
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
+
+    public boolean isAutoDetectConnectionFactory() {
+        return autoDetectConnectionFactory;
+    }
+
+    /**
+     * Whether to auto-detect looking up RabbitMQ connection factory from the registry.
+     * When enabled and a single instance of the connection factory is found then it will be used.
+     * An explicit connection factory can be configured on the component or endpoint level which takes precedence.
+     */
+    public void setAutoDetectConnectionFactory(boolean autoDetectConnectionFactory) {
+        this.autoDetectConnectionFactory = autoDetectConnectionFactory;
+    }
 }
