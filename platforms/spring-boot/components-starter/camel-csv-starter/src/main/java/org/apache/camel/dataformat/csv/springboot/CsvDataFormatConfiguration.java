@@ -132,7 +132,7 @@ public class CsvDataFormatConfiguration
      */
     private Boolean lazyLoad = false;
     /**
-     * Whether the unmarshalling should produce maps (HashMap) for the lines
+     * Whether the unmarshalling should produce maps (HashMap)for the lines
      * values instead of lists. It requires to have header (either defined or
      * collected).
      */
