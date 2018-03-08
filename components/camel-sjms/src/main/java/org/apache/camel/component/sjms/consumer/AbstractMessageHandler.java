@@ -47,12 +47,11 @@ public abstract class AbstractMessageHandler implements MessageListener {
     private boolean transacted;
     private boolean sharedJMSSession;
     private boolean synchronous = true;
-    private Synchronization synchronization;
+    private final Synchronization synchronization;
     private boolean topic;
 
     public AbstractMessageHandler(SjmsEndpoint endpoint, ExecutorService executor) {
-        this.endpoint = endpoint;
-        this.executor = executor;
+        this(endpoint, executor, null);
     }
 
     public AbstractMessageHandler(SjmsEndpoint endpoint, ExecutorService executor, Synchronization synchronization) {
@@ -61,18 +60,13 @@ public abstract class AbstractMessageHandler implements MessageListener {
         this.executor = executor;
     }
 
-    /*
-     * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
-     *
-     * @param message
-     */
     @Override
     public void onMessage(Message message) {
         RuntimeCamelException rce = null;
         try {
             final Exchange exchange = getEndpoint().createExchange(message, getSession());
 
-            log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
+            log.debug("Processing ExchangeId: {}", exchange.getExchangeId());
 
             if (isTransacted()) {
                 if (isSharedJMSSession()) {

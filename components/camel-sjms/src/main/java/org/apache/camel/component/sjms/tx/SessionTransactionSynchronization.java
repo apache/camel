@@ -44,18 +44,17 @@ public class SessionTransactionSynchronization extends SynchronizationAdapter {
         }
     }
 
-
     @Override
     public void onFailure(Exchange exchange) {
         try {
             if (commitStrategy.rollback(exchange)) {
-                LOG.debug("Processing failure of Exchange id: {}", exchange.getExchangeId());
+                LOG.debug("Processing failure of ExchangeId: {}", exchange.getExchangeId());
                 if (session != null && session.getTransacted()) {
                     session.rollback();
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Failed to rollback the session: {}", e.getMessage());
+            LOG.warn("Failed to rollback the JMS session: {}", e.getMessage());
         }
     }
 
@@ -63,13 +62,13 @@ public class SessionTransactionSynchronization extends SynchronizationAdapter {
     public void onComplete(Exchange exchange) {
         try {
             if (commitStrategy.commit(exchange)) {
-                LOG.debug("Processing completion of Exchange id: {}", exchange.getExchangeId());
+                LOG.debug("Processing completion of ExchangeId: {}", exchange.getExchangeId());
                 if (session != null && session.getTransacted()) {
                     session.commit();
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Failed to commit the session: {}", e.getMessage());
+            LOG.warn("Failed to commit the JMS session: {}", e.getMessage());
             exchange.setException(e);
         }
     }
