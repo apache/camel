@@ -23,9 +23,19 @@ for this component:
 
 === URI format
 
+The old syntax is *deprecated*:
 [source,text]
 ----
 rabbitmq://hostname[:port]/exchangeName?[options]
+----
+
+Instead the hostname and port is configured on the component level, or
+can be provided as uri query parameters instead.
+
+The new syntax is:
+[source,text]
+----
+rabbitmq:exchangeName?[options]
 ----
 
 Where *hostname* is the hostname of the running rabbitmq instance or
@@ -37,7 +47,7 @@ exchange name determines which exchange the queue will bind to.
 === Options
 
 // component options: START
-The RabbitMQ component supports 5 options which are listed below.
+The RabbitMQ component supports 7 options which are listed below.
 
 
 
@@ -48,6 +58,8 @@ The RabbitMQ component supports 5 options which are listed below.
 | *portNumber* (common) | Port number for the host with the running rabbitmq instance or cluster. | 5672 | int
 | *username* (security) | Username in case of authenticated access | guest | String
 | *password* (security) | Password for authenticated access | guest | String
+| *connectionFactory* (common) | To use a custom RabbitMQ connection factory. When this option is set, all connection options (connectionTimeout, requestedChannelMax...) set on URI are not used |  | ConnectionFactory
+| *autoDetectConnection Factory* (common) | Whether to auto-detect looking up RabbitMQ connection factory from the registry. When enabled and a single instance of the connection factory is found then it will be used. An explicit connection factory can be configured on the component or endpoint level which takes precedence. | true | boolean
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -79,6 +91,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *autoDelete* (common) | If it is true, the exchange will be deleted when it is no longer in use | true | boolean
+| *connectionFactory* (common) | To use a custom RabbitMQ connection factory. When this option is set, all connection options (connectionTimeout, requestedChannelMax...) set on URI are not used |  | ConnectionFactory
 | *connectionTimeout* (common) | Connection timeout | 60000 | int
 | *deadLetterExchange* (common) | The name of the dead letter exchange |  | String
 | *deadLetterExchangeType* (common) | The type of the dead letter exchange | direct | String
@@ -120,7 +133,6 @@ with the following path and query parameters:
 | *automaticRecoveryEnabled* (advanced) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
 | *bindingArgs* (advanced) | *Deprecated* Key/value args for configuring the queue binding parameters when declare=true |  | Map
 | *clientProperties* (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
-| *connectionFactory* (advanced) | To use a custom RabbitMQ connection factory. When this option is set, all connection options (connectionTimeout, requestedChannelMax...) set on URI are not used |  | ConnectionFactory
 | *exchangeArgs* (advanced) | *Deprecated* Key/value args for configuring the exchange parameters when declare=true |  | Map
 | *exchangeArgsConfigurer* (advanced) | *Deprecated* Set the configurer for setting the exchange args in Channel.exchangeDeclare |  | ArgsConfigurer
 | *networkRecoveryInterval* (advanced) | Network recovery interval in milliseconds (interval used when recovering from network failure) | 5000 | Integer
@@ -164,7 +176,19 @@ And then refer to the connection factory in the endpoint uri as shown below:
 <camelContext>
   <route>
     <from uri="direct:rabbitMQEx2"/>
-    <to uri="rabbitmq://localhost:5672/ex2?connectionFactory=#rabbitConnectionFactory"/>
+    <to uri="rabbitmq:ex2?connectionFactory=#rabbitConnectionFactory"/>
+  </route>
+</camelContext>
+----
+
+From Camel 2.21 onwards the `ConnectionFactory` is auto-detected by default, so you can just do
+
+[source,xml]
+----
+<camelContext>
+  <route>
+    <from uri="direct:rabbitMQEx2"/>
+    <to uri="rabbitmq:ex2"/>
   </route>
 </camelContext>
 ----
@@ -255,7 +279,7 @@ routing key B,
 
 [source,java]
 ----
-from("rabbitmq://localhost/A?routingKey=B")
+from("rabbitmq:A?routingKey=B")
 ----
 
 To receive messages from a queue with a single thread with auto
@@ -263,21 +287,21 @@ acknowledge disabled.
 
 [source,java]
 ----
-from("rabbitmq://localhost/A?routingKey=B&threadPoolSize=1&autoAck=false")
+from("rabbitmq:A?routingKey=B&threadPoolSize=1&autoAck=false")
 ----
 
 To send messages to an exchange called C
 
 [source,java]
 ----
-to("rabbitmq://localhost/C")
+to("rabbitmq:C")
 ----
 
 Declaring a headers exchange and queue
 
 [source,java]
 ----
-from("rabbitmq://localhost/ex?exchangeType=headers&queue=q&bindingArgs=#bindArgs")
+from("rabbitmq:ex?exchangeType=headers&queue=q&bindingArgs=#bindArgs")
 ----
 
 and place corresponding `Map<String, Object>` with the id of "bindArgs" in the Registry.
@@ -299,8 +323,8 @@ in the example below with foo -> bar:
 
 [source,java]
 ----
-from("rabbitmq://localhost/foo")
-  .to("rabbitmq://localhost/bar")
+from("rabbitmq:foo")
+  .to("rabbitmq:bar")
 ----
 
 Then beware that Camel will route the message to itself, eg foo -> foo. So why is that?
@@ -315,17 +339,17 @@ To avoid this you need to either:
 
 [source,java]
 ----
-from("rabbitmq://localhost/foo")
+from("rabbitmq:foo")
   .removeHeader("rabbitmq.EXCHANGE_NAME")
-  .to("rabbitmq://localhost/bar")
+  .to("rabbitmq:bar")
 ----
 
 - Or turn on `bridgeEndpoint` mode on the producer:
 
 [source,java]
 ----
-from("rabbitmq://localhost/foo")
-  .to("rabbitmq://localhost/bar?bridgeEndpoint=true")
+from("rabbitmq:foo")
+  .to("rabbitmq:bar?bridgeEndpoint=true")
 ----
 
 From Camel 2.21 onwards this has been improved so you can easily route between exchanges.
@@ -335,8 +359,8 @@ For example to send to cheese exchange you can do
 
 [source,java]
 ----
-from("rabbitmq://localhost/foo")
+from("rabbitmq:foo")
   .setHeader("rabbitmq.EXCHANGE_OVERRIDE_NAME", constant("cheese"))
-  .to("rabbitmq://localhost/bar")
+  .to("rabbitmq:bar")
 ----
 

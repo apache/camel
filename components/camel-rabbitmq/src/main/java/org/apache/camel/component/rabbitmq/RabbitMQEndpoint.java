@@ -66,6 +66,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private String password = ConnectionFactory.DEFAULT_PASS;
     @UriParam(defaultValue = ConnectionFactory.DEFAULT_VHOST)
     private String vhost = ConnectionFactory.DEFAULT_VHOST;
+    @UriParam(label = "common")
+    private ConnectionFactory connectionFactory;
     @UriParam(label = "consumer,advanced", defaultValue = "10")
     private int threadPoolSize = 10;
     @UriParam(label = "consumer", defaultValue = "true")
@@ -108,8 +110,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private TrustManager trustManager;
     @UriParam(label = "advanced")
     private Map<String, Object> clientProperties;
-    @UriParam(label = "advanced")
-    private ConnectionFactory connectionFactory;
     @UriParam(label = "advanced")
     private Boolean automaticRecoveryEnabled;
     @UriParam(label = "advanced", defaultValue = "5000")

@@ -16,8 +16,10 @@
  */
 package sample.camel;
 
+import com.rabbitmq.client.ConnectionFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 //CHECKSTYLE:OFF
 /**
@@ -33,5 +35,16 @@ public class SampleCamelApplication {
         SpringApplication.run(SampleCamelApplication.class, args);
     }
 
+    /* You can also configure the RabbitMQ ConnectionFactory using Java code style
+    @Bean
+    public ConnectionFactory rabbitConnectionFactory() {
+        ConnectionFactory cf = new ConnectionFactory();
+        cf.setHost("localhost");
+        cf.setPort(5672);
+        cf.setUsername("cameltest");
+        cf.setPassword("cameltest");
+        return cf;
+    }
+    */
 }
 //CHECKSTYLE:ON
