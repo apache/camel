@@ -2368,6 +2368,12 @@
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-wordpress/${project.version}</bundle>
   </feature>
+  <feature name='camel-xchange' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:org.knowm.xchange/xchange-core/${xchange-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.github.mmazi/rescu/${rescu-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-xchange/${project.version}</bundle>
+  </feature>
   <feature name='camel-xmlbeans' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>
