@@ -663,7 +663,7 @@ Number of Components: 291 in 199 JAR artifacts (19 deprecated)
 `quickfix:configurationName` | 2.1 | The quickfix component allows to send Financial Interchange (FIX) messages to the QuickFix engine.
 
 | link:camel-rabbitmq/src/main/docs/rabbitmq-component.adoc[RabbitMQ] (camel-rabbitmq) +
-`rabbitmq:hostname:portNumber/exchangeName` | 2.12 | The rabbitmq component allows you produce and consume messages from RabbitMQ instances.
+`rabbitmq:exchangeName` | 2.12 | The rabbitmq component allows you produce and consume messages from RabbitMQ instances.
 
 | link:camel-reactive-streams/src/main/docs/reactive-streams-component.adoc[Reactive Streams] (camel-reactive-streams) +
 `reactive-streams:stream` | 2.19 | Reactive Camel using reactive streams
