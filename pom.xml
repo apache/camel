@@ -292,6 +292,8 @@
                 <exclude>**/Tasks__c.java</exclude>
                 <exclude>**/additional-spring-configuration-metadata.json</exclude>
                 <exclude>**/*.proto</exclude>
+                <!-- Maven Wrapper -->
+                <exclude>.mvn/**/*</exclude>
               </excludes>
             </configuration>
           </plugin>
