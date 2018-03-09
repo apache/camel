@@ -12,7 +12,6 @@ the endpoint.
 // eip options: START
 The To D EIP supports 4 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
