@@ -446,8 +446,16 @@ public class CamelConfigurationProperties {
     
     /**
      * To turn on MDC logging
+     *
+     * @deprecated use useMdcLogging instead
      */
+    @Deprecated
     private boolean useMDCLogging;
+
+    /**
+     * To turn on MDC logging
+     */
+    private boolean useMdcLogging;
 
     /**
      * Sets the thread name pattern used for creating the full thread name.
@@ -952,13 +960,23 @@ public class CamelConfigurationProperties {
     public void setIncludeNonSingletons(boolean includeNonSingletons) {
         this.includeNonSingletons = includeNonSingletons;
     }
-    
+
+    @Deprecated
     public boolean isUseMDCLogging() {
-        return useMDCLogging;
+        return isUseMdcLogging();
     }
-    
+
+    @Deprecated
     public void setUseMDCLogging(boolean useMDCLogging) {
-        this.useMDCLogging = useMDCLogging;
+        setUseMdcLogging(useMDCLogging);
+    }
+
+    public boolean isUseMdcLogging() {
+        return useMdcLogging;
+    }
+
+    public void setUseMdcLogging(boolean useMdcLogging) {
+        this.useMdcLogging = useMdcLogging;
     }
 
     public String getThreadNamePattern() {
