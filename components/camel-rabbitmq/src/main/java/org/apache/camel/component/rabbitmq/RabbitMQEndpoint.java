@@ -64,7 +64,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private String username = ConnectionFactory.DEFAULT_USER;
     @UriParam(label = "security", defaultValue = ConnectionFactory.DEFAULT_PASS, secret = true)
     private String password = ConnectionFactory.DEFAULT_PASS;
-    @UriParam(defaultValue = ConnectionFactory.DEFAULT_VHOST)
+    @UriParam(label = "common", defaultValue = ConnectionFactory.DEFAULT_VHOST)
     private String vhost = ConnectionFactory.DEFAULT_VHOST;
     @UriParam(label = "common")
     private ConnectionFactory connectionFactory;
@@ -94,9 +94,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean skipQueueBind;
     @UriParam(label = "common")
     private boolean skipExchangeDeclare;
-    @UriParam(label = "advanced")
+    @UriParam(label = "common")
     private Address[] addresses;
-    @UriParam(defaultValue = "" + ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT)
+    @UriParam(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT;
     @UriParam(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_CHANNEL_MAX)
     private int requestedChannelMax = ConnectionFactory.DEFAULT_CHANNEL_MAX;
@@ -426,8 +426,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     /**
      * If true the queue will not be bound to the exchange after declaring it
-     * 
-     * @return
      */
     public boolean isSkipQueueBind() {
         return skipQueueBind;
@@ -470,6 +468,15 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         if (addressArray.length > 0) {
             this.addresses = addressArray;
         }
+    }
+
+    /**
+     * If this option is set, camel-rabbitmq will try to create connection based
+     * on the setting of option addresses. The addresses value is a string which
+     * looks like "server1:12345, server2:12345"
+     */
+    public void setAddresses(Address[] addresses) {
+        this.addresses = addresses;
     }
 
     public Address[] getAddresses() {
@@ -549,8 +556,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Configure SSL trust manager, SSL should be enabled for this option to be
-     * effective
+     * Configure SSL trust manager, SSL should be enabled for this option to be effective
      */
     public void setTrustManager(TrustManager trustManager) {
         this.trustManager = trustManager;
@@ -561,8 +567,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Connection client properties (client info used in negotiating with the
-     * server)
+     * Connection client properties (client info used in negotiating with the server)
      */
     public void setClientProperties(Map<String, Object> clientProperties) {
         this.clientProperties = clientProperties;
@@ -917,8 +922,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     /**
      * When true, the message will be published with
-     * <a href="https://www.rabbitmq.com/confirms.html">publisher
-     * acknowledgements</a> turned on
+     * <a href="https://www.rabbitmq.com/confirms.html">publisher acknowledgements</a> turned on
      */
     public boolean isPublisherAcknowledgements() {
         return publisherAcknowledgements;
@@ -943,9 +947,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     /**
      * When true, an exception will be thrown when the message cannot be
      * delivered (basic.return) and the message is marked as mandatory.
-     * PublisherAcknowledgement will also be activated in this case See also <a
-     * href=https://www.rabbitmq.com/confirms.html">publisher
-     * acknowledgements</a> - When will messages be confirmed?
+     * PublisherAcknowledgement will also be activated in this case.
+     * See also <a href=https://www.rabbitmq.com/confirms.html">publisher acknowledgements</a>
+     * - When will messages be confirmed.
      */
     public boolean isGuaranteedDeliveries() {
         return guaranteedDeliveries;

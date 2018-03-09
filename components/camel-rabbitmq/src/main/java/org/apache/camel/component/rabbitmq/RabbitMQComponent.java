@@ -18,15 +18,15 @@ package org.apache.camel.component.rabbitmq;
 
 import java.net.URI;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import javax.net.ssl.TrustManager;
 
+import com.rabbitmq.client.Address;
 import com.rabbitmq.client.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,10 +48,66 @@ public class RabbitMQComponent extends UriEndpointComponent {
     private String username = ConnectionFactory.DEFAULT_USER;
     @Metadata(label = "security", defaultValue = ConnectionFactory.DEFAULT_PASS, secret = true)
     private String password = ConnectionFactory.DEFAULT_PASS;
+    @Metadata(label = "common", defaultValue = ConnectionFactory.DEFAULT_VHOST)
+    private String vhost = ConnectionFactory.DEFAULT_VHOST;
+    @Metadata(label = "common")
+    private Address[] addresses;
     @Metadata(label = "common")
     private ConnectionFactory connectionFactory;
-    @Metadata(label = "common", defaultValue = "true")
+    @UriParam(label = "security")
+    private String sslProtocol;
+    @UriParam(label = "security")
+    private TrustManager trustManager;
+    @Metadata(label = "consumer,advanced", defaultValue = "10")
+    private int threadPoolSize = 10;
+    @Metadata(label = "advanced", defaultValue = "true")
     private boolean autoDetectConnectionFactory = true;
+    @Metadata(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT)
+    private int connectionTimeout = ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT;
+    @Metadata(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_CHANNEL_MAX)
+    private int requestedChannelMax = ConnectionFactory.DEFAULT_CHANNEL_MAX;
+    @Metadata(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_FRAME_MAX)
+    private int requestedFrameMax = ConnectionFactory.DEFAULT_FRAME_MAX;
+    @Metadata(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_HEARTBEAT)
+    private int requestedHeartbeat = ConnectionFactory.DEFAULT_HEARTBEAT;
+    @Metadata(label = "advanced")
+    private Boolean automaticRecoveryEnabled;
+    @Metadata(label = "advanced", defaultValue = "5000")
+    private Integer networkRecoveryInterval = 5000;
+    @Metadata(label = "advanced")
+    private Boolean topologyRecoveryEnabled;
+    @Metadata(label = "consumer")
+    private boolean prefetchEnabled;
+    @Metadata(label = "consumer")
+    private int prefetchSize;
+    @Metadata(label = "consumer")
+    private int prefetchCount;
+    @Metadata(label = "consumer")
+    private boolean prefetchGlobal;
+    @Metadata(label = "producer", defaultValue = "10")
+    private int channelPoolMaxSize = 10;
+    @Metadata(label = "producer", defaultValue = "1000")
+    private long channelPoolMaxWait = 1000;
+    @Metadata(label = "advanced", defaultValue = "20000")
+    private long requestTimeout = 20000;
+    @Metadata(label = "advanced", defaultValue = "1000")
+    private long requestTimeoutCheckerInterval = 1000;
+    @Metadata(label = "advanced")
+    private boolean transferException;
+    @Metadata(label = "producer")
+    private boolean mandatory;
+    @Metadata(label = "producer")
+    private boolean immediate;
+    @Metadata(label = "producer")
+    private boolean publisherAcknowledgements;
+    @Metadata(label = "producer")
+    private long publisherAcknowledgementsTimeout;
+    @Metadata(label = "producer")
+    private boolean guaranteedDeliveries;
+    @Metadata(label = "advanced")
+    private Map<String, Object> args;
+    @Metadata(label = "advanced")
+    private Map<String, Object> clientProperties;
 
     public RabbitMQComponent() {
         super(RabbitMQEndpoint.class);
@@ -104,8 +160,8 @@ public class RabbitMQComponent extends UriEndpointComponent {
         }
 
         @SuppressWarnings("unchecked")
-        Map<String, Object> clientProperties = resolveAndRemoveReferenceParameter(params, "clientProperties", Map.class);
-        TrustManager trustManager = resolveAndRemoveReferenceParameter(params, "trustManager", TrustManager.class);
+        Map<String, Object> clientProperties = resolveAndRemoveReferenceParameter(params, "clientProperties", Map.class, getClientProperties());
+        TrustManager trustManager = resolveAndRemoveReferenceParameter(params, "trustManager", TrustManager.class, getTrustManager());
         RabbitMQEndpoint endpoint;
         if (connectionFactory == null) {
             endpoint = new RabbitMQEndpoint(uri, this);
@@ -116,9 +172,34 @@ public class RabbitMQComponent extends UriEndpointComponent {
         endpoint.setPortNumber(port);
         endpoint.setUsername(getUsername());
         endpoint.setPassword(getPassword());
+        endpoint.setVhost(getVhost());
+        endpoint.setAddresses(getAddresses());
+        endpoint.setThreadPoolSize(getThreadPoolSize());
         endpoint.setExchangeName(exchangeName);
         endpoint.setClientProperties(clientProperties);
+        endpoint.setSslProtocol(getSslProtocol());
         endpoint.setTrustManager(trustManager);
+        endpoint.setConnectionTimeout(getConnectionTimeout());
+        endpoint.setRequestedChannelMax(getRequestedChannelMax());
+        endpoint.setRequestedFrameMax(getRequestedFrameMax());
+        endpoint.setRequestedHeartbeat(getRequestedHeartbeat());
+        endpoint.setAutomaticRecoveryEnabled(getAutomaticRecoveryEnabled());
+        endpoint.setNetworkRecoveryInterval(getNetworkRecoveryInterval());
+        endpoint.setTopologyRecoveryEnabled(getTopologyRecoveryEnabled());
+        endpoint.setPrefetchEnabled(isPrefetchEnabled());
+        endpoint.setPrefetchSize(getPrefetchSize());
+        endpoint.setPrefetchCount(getPrefetchCount());
+        endpoint.setPrefetchGlobal(isPrefetchGlobal());
+        endpoint.setChannelPoolMaxSize(getChannelPoolMaxSize());
+        endpoint.setChannelPoolMaxWait(getChannelPoolMaxWait());
+        endpoint.setRequestTimeout(getRequestTimeout());
+        endpoint.setRequestTimeoutCheckerInterval(getRequestTimeoutCheckerInterval());
+        endpoint.setTransferException(isTransferException());
+        endpoint.setPublisherAcknowledgements(isPublisherAcknowledgements());
+        endpoint.setPublisherAcknowledgementsTimeout(getPublisherAcknowledgementsTimeout());
+        endpoint.setGuaranteedDeliveries(isGuaranteedDeliveries());
+        endpoint.setMandatory(isMandatory());
+        endpoint.setImmediate(isImmediate());
         setProperties(endpoint, params);
 
         if (LOG.isDebugEnabled()) {
@@ -126,11 +207,15 @@ public class RabbitMQComponent extends UriEndpointComponent {
                     new Object[]{endpoint.getHostname(), endpoint.getPortNumber(), endpoint.getExchangeName()});
         }
 
-        HashMap<String, Object> args = new HashMap<>();
-        args.putAll(IntrospectionSupport.extractProperties(params, ARG_PREFIX));
-        endpoint.setArgs(args);
+        Map<String, Object> localArgs = new HashMap<>();
+        if (getArgs() != null) {
+            // copy over the component configured args
+            localArgs.putAll(getArgs());
+        }
+        localArgs.putAll(IntrospectionSupport.extractProperties(params, ARG_PREFIX));
+        endpoint.setArgs(localArgs);
 
-        HashMap<String, Object> argsCopy = new HashMap<>(args);
+        Map<String, Object> argsCopy = new HashMap<>(localArgs);
         
         // Combine the three types of rabbit arguments with their individual endpoint properties
         endpoint.getExchangeArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, EXCHANGE_ARG_PREFIX));
@@ -184,6 +269,42 @@ public class RabbitMQComponent extends UriEndpointComponent {
         this.password = password;
     }
 
+    public String getVhost() {
+        return vhost;
+    }
+
+    /**
+     * The vhost for the channel
+     */
+    public void setVhost(String vhost) {
+        this.vhost = vhost;
+    }
+
+    /**
+     * If this option is set, camel-rabbitmq will try to create connection based
+     * on the setting of option addresses. The addresses value is a string which
+     * looks like "server1:12345, server2:12345"
+     */
+    public void setAddresses(String addresses) {
+        Address[] addressArray = Address.parseAddresses(addresses);
+        if (addressArray.length > 0) {
+            this.addresses = addressArray;
+        }
+    }
+
+    /**
+     * If this option is set, camel-rabbitmq will try to create connection based
+     * on the setting of option addresses. The addresses value is a string which
+     * looks like "server1:12345, server2:12345"
+     */
+    public void setAddresses(Address[] addresses) {
+        this.addresses = addresses;
+    }
+
+    public Address[] getAddresses() {
+        return addresses;
+    }
+
     public ConnectionFactory getConnectionFactory() {
         return connectionFactory;
     }
@@ -195,6 +316,18 @@ public class RabbitMQComponent extends UriEndpointComponent {
      */
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
+    }
+
+    public int getThreadPoolSize() {
+        return threadPoolSize;
+    }
+
+    /**
+     * The consumer uses a Thread Pool Executor with a fixed number of threads.
+     * This setting allows you to set that number of threads.
+     */
+    public void setThreadPoolSize(int threadPoolSize) {
+        this.threadPoolSize = threadPoolSize;
     }
 
     public boolean isAutoDetectConnectionFactory() {
@@ -209,4 +342,320 @@ public class RabbitMQComponent extends UriEndpointComponent {
     public void setAutoDetectConnectionFactory(boolean autoDetectConnectionFactory) {
         this.autoDetectConnectionFactory = autoDetectConnectionFactory;
     }
+
+    public int getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    /**
+     * Connection timeout
+     */
+    public void setConnectionTimeout(int connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public int getRequestedChannelMax() {
+        return requestedChannelMax;
+    }
+
+    /**
+     * Connection requested channel max (max number of channels offered)
+     */
+    public void setRequestedChannelMax(int requestedChannelMax) {
+        this.requestedChannelMax = requestedChannelMax;
+    }
+
+    public int getRequestedFrameMax() {
+        return requestedFrameMax;
+    }
+
+    /**
+     * Connection requested frame max (max size of frame offered)
+     */
+    public void setRequestedFrameMax(int requestedFrameMax) {
+        this.requestedFrameMax = requestedFrameMax;
+    }
+
+    public int getRequestedHeartbeat() {
+        return requestedHeartbeat;
+    }
+
+    /**
+     * Connection requested heartbeat (heart-beat in seconds offered)
+     */
+    public void setRequestedHeartbeat(int requestedHeartbeat) {
+        this.requestedHeartbeat = requestedHeartbeat;
+    }
+
+    public Boolean getAutomaticRecoveryEnabled() {
+        return automaticRecoveryEnabled;
+    }
+
+    /**
+     * Enables connection automatic recovery (uses connection implementation
+     * that performs automatic recovery when connection shutdown is not
+     * initiated by the application)
+     */
+    public void setAutomaticRecoveryEnabled(Boolean automaticRecoveryEnabled) {
+        this.automaticRecoveryEnabled = automaticRecoveryEnabled;
+    }
+
+    public Integer getNetworkRecoveryInterval() {
+        return networkRecoveryInterval;
+    }
+
+    /**
+     * Network recovery interval in milliseconds (interval used when recovering
+     * from network failure)
+     */
+    public void setNetworkRecoveryInterval(Integer networkRecoveryInterval) {
+        this.networkRecoveryInterval = networkRecoveryInterval;
+    }
+
+    public Boolean getTopologyRecoveryEnabled() {
+        return topologyRecoveryEnabled;
+    }
+
+    /**
+     * Enables connection topology recovery (should topology recovery be
+     * performed?)
+     */
+    public void setTopologyRecoveryEnabled(Boolean topologyRecoveryEnabled) {
+        this.topologyRecoveryEnabled = topologyRecoveryEnabled;
+    }
+
+    public boolean isPrefetchEnabled() {
+        return prefetchEnabled;
+    }
+
+    /**
+     * Enables the quality of service on the RabbitMQConsumer side. You need to
+     * specify the option of prefetchSize, prefetchCount, prefetchGlobal at the
+     * same time
+     */
+    public void setPrefetchEnabled(boolean prefetchEnabled) {
+        this.prefetchEnabled = prefetchEnabled;
+    }
+
+    /**
+     * The maximum amount of content (measured in octets) that the server will
+     * deliver, 0 if unlimited. You need to specify the option of prefetchSize,
+     * prefetchCount, prefetchGlobal at the same time
+     */
+    public void setPrefetchSize(int prefetchSize) {
+        this.prefetchSize = prefetchSize;
+    }
+
+    public int getPrefetchSize() {
+        return prefetchSize;
+    }
+
+    /**
+     * The maximum number of messages that the server will deliver, 0 if
+     * unlimited. You need to specify the option of prefetchSize, prefetchCount,
+     * prefetchGlobal at the same time
+     */
+    public void setPrefetchCount(int prefetchCount) {
+        this.prefetchCount = prefetchCount;
+    }
+
+    public int getPrefetchCount() {
+        return prefetchCount;
+    }
+
+    /**
+     * If the settings should be applied to the entire channel rather than each
+     * consumer You need to specify the option of prefetchSize, prefetchCount,
+     * prefetchGlobal at the same time
+     */
+    public void setPrefetchGlobal(boolean prefetchGlobal) {
+        this.prefetchGlobal = prefetchGlobal;
+    }
+
+    public boolean isPrefetchGlobal() {
+        return prefetchGlobal;
+    }
+
+    /**
+     * Get maximum number of opened channel in pool
+     */
+    public int getChannelPoolMaxSize() {
+        return channelPoolMaxSize;
+    }
+
+    public void setChannelPoolMaxSize(int channelPoolMaxSize) {
+        this.channelPoolMaxSize = channelPoolMaxSize;
+    }
+
+    public long getChannelPoolMaxWait() {
+        return channelPoolMaxWait;
+    }
+
+    /**
+     * Set the maximum number of milliseconds to wait for a channel from the
+     * pool
+     */
+    public void setChannelPoolMaxWait(long channelPoolMaxWait) {
+        this.channelPoolMaxWait = channelPoolMaxWait;
+    }
+
+    /**
+     * Set timeout for waiting for a reply when using the InOut Exchange Pattern
+     * (in milliseconds)
+     */
+    public void setRequestTimeout(long requestTimeout) {
+        this.requestTimeout = requestTimeout;
+    }
+
+    public long getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    /**
+     * Set requestTimeoutCheckerInterval for inOut exchange
+     */
+    public void setRequestTimeoutCheckerInterval(long requestTimeoutCheckerInterval) {
+        this.requestTimeoutCheckerInterval = requestTimeoutCheckerInterval;
+    }
+
+    public long getRequestTimeoutCheckerInterval() {
+        return requestTimeoutCheckerInterval;
+    }
+
+    /**
+     * When true and an inOut Exchange failed on the consumer side send the
+     * caused Exception back in the response
+     */
+    public void setTransferException(boolean transferException) {
+        this.transferException = transferException;
+    }
+
+    public boolean isTransferException() {
+        return transferException;
+    }
+
+    /**
+     * When true, the message will be published with
+     * <a href="https://www.rabbitmq.com/confirms.html">publisher acknowledgements</a> turned on
+     */
+    public boolean isPublisherAcknowledgements() {
+        return publisherAcknowledgements;
+    }
+
+    public void setPublisherAcknowledgements(final boolean publisherAcknowledgements) {
+        this.publisherAcknowledgements = publisherAcknowledgements;
+    }
+
+    /**
+     * The amount of time in milliseconds to wait for a basic.ack response from
+     * RabbitMQ server
+     */
+    public long getPublisherAcknowledgementsTimeout() {
+        return publisherAcknowledgementsTimeout;
+    }
+
+    public void setPublisherAcknowledgementsTimeout(final long publisherAcknowledgementsTimeout) {
+        this.publisherAcknowledgementsTimeout = publisherAcknowledgementsTimeout;
+    }
+
+    /**
+     * When true, an exception will be thrown when the message cannot be
+     * delivered (basic.return) and the message is marked as mandatory.
+     * PublisherAcknowledgement will also be activated in this case.
+     * See also <a href=https://www.rabbitmq.com/confirms.html">publisher acknowledgements</a>
+     * - When will messages be confirmed.
+     */
+    public boolean isGuaranteedDeliveries() {
+        return guaranteedDeliveries;
+    }
+
+    public void setGuaranteedDeliveries(boolean guaranteedDeliveries) {
+        this.guaranteedDeliveries = guaranteedDeliveries;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    /**
+     * This flag tells the server how to react if the message cannot be routed
+     * to a queue. If this flag is set, the server will return an unroutable
+     * message with a Return method. If this flag is zero, the server silently
+     * drops the message.
+     * <p/>
+     * If the header is present rabbitmq.MANDATORY it will override this option.
+     */
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
+    }
+
+    public boolean isImmediate() {
+        return immediate;
+    }
+
+    /**
+     * This flag tells the server how to react if the message cannot be routed
+     * to a queue consumer immediately. If this flag is set, the server will
+     * return an undeliverable message with a Return method. If this flag is
+     * zero, the server will queue the message, but with no guarantee that it
+     * will ever be consumed.
+     * <p/>
+     * If the header is present rabbitmq.IMMEDIATE it will override this option.
+     */
+    public void setImmediate(boolean immediate) {
+        this.immediate = immediate;
+    }
+
+    /**
+     * Specify arguments for configuring the different RabbitMQ concepts, a
+     * different prefix is required for each:
+     * <ul>
+     * <li>Exchange: arg.exchange.</li>
+     * <li>Queue: arg.queue.</li>
+     * <li>Binding: arg.binding.</li>
+     * </ul>
+     * For example to declare a queue with message ttl argument:
+     * http://localhost:5672/exchange/queue?args=arg.queue.x-message-ttl=60000
+     */
+    public void setArgs(Map<String, Object> args) {
+        this.args = args;
+    }
+
+    public Map<String, Object> getArgs() {
+        return args;
+    }
+
+    public Map<String, Object> getClientProperties() {
+        return clientProperties;
+    }
+
+    /**
+     * Connection client properties (client info used in negotiating with the server)
+     */
+    public void setClientProperties(Map<String, Object> clientProperties) {
+        this.clientProperties = clientProperties;
+    }
+
+    public String getSslProtocol() {
+        return sslProtocol;
+    }
+
+    /**
+     * Enables SSL on connection, accepted value are `true`, `TLS` and 'SSLv3`
+     */
+    public void setSslProtocol(String sslProtocol) {
+        this.sslProtocol = sslProtocol;
+    }
+
+    public TrustManager getTrustManager() {
+        return trustManager;
+    }
+
+    /**
+     * Configure SSL trust manager, SSL should be enabled for this option to be effective
+     */
+    public void setTrustManager(TrustManager trustManager) {
+        this.trustManager = trustManager;
+    }
+
 }
