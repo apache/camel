@@ -181,7 +181,7 @@ public class CamelAutoConfiguration {
         camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
         camelContext.setUseBreadcrumb(config.isUseBreadcrumb());
         camelContext.setUseDataType(config.isUseDataType());
-        camelContext.setUseMDCLogging(config.isUseMDCLogging());
+        camelContext.setUseMDCLogging(config.isUseMdcLogging());
         camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
 
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
