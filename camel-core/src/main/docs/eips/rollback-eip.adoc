@@ -1,3 +1,4 @@
+[[rollback-eip]]
 == Rollback EIP
 Rollback might be needed if there is a transaction or transactional pieces in your design.
 
@@ -52,6 +53,19 @@ JmsComponent component = JmsComponent.jmsComponentTransacted(connectionFactory, 
 component.getConfiguration().setConcurrentConsumers(1);
 ctx.addComponent("activemq", component);
 ----
+
+=== Options
+// eip options: START
+The Rollback EIP supports 3 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *markRollbackOnly* | Mark the transaction for rollback only (cannot be overruled to commit) | false | Boolean
+| *markRollbackOnlyLast* | Mark only last sub transaction for rollback only. When using sub transactions (if the transaction manager support this) | false | Boolean
+| *message* | Message to use in rollback exception |  | String
+|===
+// eip options: END
 
 ==== Transaction Policies
 
