@@ -271,7 +271,7 @@
                 <!-- examples -->
                 <exclude>**/fabric8/*.yaml</exclude>
                 <exclude>**/src/main/resources/consul/services.json</exclude>
-                <exclude>examples/**/src/main/resources/data/*.json</exclude>
+                <exclude>**/src/main/resources/data/*.json</exclude>
                 <!-- generated files -->
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
