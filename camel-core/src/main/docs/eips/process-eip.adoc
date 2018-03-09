@@ -8,7 +8,6 @@ The http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Pr
 // eip options: START
 The Process EIP supports 1 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

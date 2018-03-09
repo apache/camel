@@ -8,5 +8,5 @@ See below for details
 === Options
 
 // eip options: START
-The Transform EIP supports 0 options which are listed below:
+The Transform EIP has no options.
 // eip options: END
