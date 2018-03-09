@@ -78,4 +78,12 @@ public class CamelRoutesMvcEndpointTest extends Assert {
         assertEquals(200, ent.getStatusCodeValue());
     }
 
+    @Test
+    public void testMvcRouteDump() throws Exception {
+        Object result = endpoint.dump("foo-route");
+
+        assertTrue(result instanceof String);
+        assertTrue(result.toString().contains("<from uri=\"timer:foo\"/>"));
+    }
+
 }

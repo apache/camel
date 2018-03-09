@@ -48,6 +48,31 @@ public class CamelRoutesMvcEndpoint extends AbstractCamelMvcEndpoint<CamelRoutes
 
     @ResponseBody
     @GetMapping(
+        value = "/{id}/dump",
+        produces = {
+            MediaType.APPLICATION_XML_VALUE,
+            MediaType.APPLICATION_XML_VALUE
+        }
+    )
+    public Object dump(
+        @PathVariable String id) {
+
+        return doIfEnabledAndNotReadOnly(() -> {
+            try {
+                Object result = delegate().getRouteDump(id);
+                if (result == null) {
+                    throw new NoSuchRouteException("No such route " + id);
+                }
+
+                return result;
+            } catch (Exception e) {
+                throw new GenericException("Error dumping route " + id, e);
+            }
+        });
+    }
+
+    @ResponseBody
+    @GetMapping(
             value = "/{id}/detail",
             produces = {
                     ActuatorMediaTypes.APPLICATION_ACTUATOR_V1_JSON_VALUE,
