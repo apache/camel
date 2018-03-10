@@ -108,7 +108,7 @@ if $cygwin ; then
     CLASSPATH=`cygpath --path --unix "$CLASSPATH"`
 fi
 
-# For Mingw, ensure paths are in UNIX format before anything is touched
+# For Migwn, ensure paths are in UNIX format before anything is touched
 if $mingw ; then
   [ -n "$M2_HOME" ] &&
     M2_HOME="`(cd "$M2_HOME"; pwd)`"
@@ -201,9 +201,7 @@ if [ -z "$BASE_DIR" ]; then
 fi
 
 export MAVEN_PROJECTBASEDIR=${MAVEN_BASEDIR:-"$BASE_DIR"}
-if [ "$MVNW_VERBOSE" = true ]; then
-  echo $MAVEN_PROJECTBASEDIR
-fi
+echo $MAVEN_PROJECTBASEDIR
 MAVEN_OPTS="$(concat_lines "$MAVEN_PROJECTBASEDIR/.mvn/jvm.config") $MAVEN_OPTS"
 
 # For Cygwin, switch paths to Windows format before running java
