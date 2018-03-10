@@ -35,7 +35,7 @@ public class MySpringBootRouter extends RouteBuilder {
             .filter(simple("${body} contains 'foo'"))
                 .to("log:foo")
             .end()
-            .log("${body}");
+            .to("stream:out");
     }
 
 }
