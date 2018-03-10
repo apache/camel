@@ -76,8 +76,11 @@ mvn clean install
 -----------------
 
 [[Building-Anormalbuildwithoutrunningtests]]
-A normal build without running tests
+A quick build without running tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following skips building the manual, the distro and does not execute
+the unit tests.
 
 [source,text]
 -------------------------------
@@ -92,20 +95,6 @@ A normal build without running tests but checkstyle verification enabled
 -------------------------------------------
 mvn clean install -Pfastinstall,sourcecheck
 -------------------------------------------
-
-[[Building-DoingaQuickBuild]]
-Doing a Quick Build
-^^^^^^^^^^^^^^^^^^^
-
-*Available as of Camel 2.6*
-
-The following skips building the manual, the distro and does not execute
-the unit tests.
-
-[source,text]
--------------------------
-mvn install -Pfastinstall
--------------------------
 
 [[Building-UsinganIDE]]
 Using an IDE
