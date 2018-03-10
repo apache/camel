@@ -36,7 +36,7 @@ public class ArtemisAmqpTest extends CamelBlueprintTestSupport {
     @Override
     protected String useOverridePropertiesWithConfigAdmin(Dictionary props) { 
         //obtain an available port
-        int port = AvailablePortFinder.getNextAvailable();
+        int port = AvailablePortFinder.getNextAvailable(8080);
 
         //override the netty port to use
         props.put("netty.port", "" + port);
