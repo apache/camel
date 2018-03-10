@@ -44,7 +44,10 @@ import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.knowm.xchange.service.trade.params.TradeHistoryParams;
 import org.knowm.xchange.utils.Assert;
 
-@UriEndpoint(firstVersion = "2.21.0", scheme = "xchange", title = "XChange", syntax = "xchange:name", producerOnly = true, label = "blockchain")
+/**
+ * The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.
+ */
+@UriEndpoint(firstVersion = "2.21.0", scheme = "xchange", title = "XChange", syntax = "xchange:name", producerOnly = true, label = "bitcoin,blockchain")
 public class XChangeEndpoint extends DefaultEndpoint {
 
     @UriParam

@@ -849,7 +849,7 @@ Number of Components: 291 in 199 JAR artifacts (19 deprecated)
 `wordpress:operation` | 2.21 | Integrates Camel with Wordpress.
 
 | link:camel-xchange/src/main/docs/xchange-component.adoc[XChange] (camel-xchange) +
-`xchange:name` | 2.21 | Camel XChange support
+`xchange:name` | 2.21 | The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.
 
 | link:camel-xmlrpc/src/main/docs/xmlrpc-component.adoc[XML RPC] (camel-xmlrpc) +
 `xmlrpc:address` | 2.11 | The xmlrpc component is used for sending messages to a XML RPC service.
