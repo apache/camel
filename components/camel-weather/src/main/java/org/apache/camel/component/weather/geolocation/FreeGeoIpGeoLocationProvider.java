@@ -37,7 +37,7 @@ public class FreeGeoIpGeoLocationProvider implements GeoLocationProvider {
     @Override
     public GeoLocation getCurrentGeoLocation() throws Exception {
         HttpClient httpClient = component.getHttpClient();
-        GetMethod getMethod = new GetMethod("https://freegeoip.io/json/");
+        GetMethod getMethod = new GetMethod("https://freegeoip.net/json/");
         try {
             int statusCode = httpClient.executeMethod(getMethod);
             if (statusCode != HttpStatus.SC_OK) {
