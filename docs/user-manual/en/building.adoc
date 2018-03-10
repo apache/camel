@@ -12,14 +12,18 @@ Prequisites
 
 *Required:*
 
-* Download and http://maven.apache.org/download.html[install Maven] +
- (Maven 3.1.1 or newer is required to build Camel 2.14 onwards) +
-(Maven 3.2.5 or newer is required to build Camel 2.18 onwards) +
-(Maven 3.3.3 or newer is required to build Camel 2.20 onwards)
-* Get the latest Source
-* Java 
-(1.7 or 1.8 to build Camel 2.14 onwards) 
-(1.8 to build Camel 2.18 onwards) 
+* Java
+** 1.7 or 1.8 to build Camel 2.14 onwards
+** 1.8 to build Camel 2.18 onwards
+
+* https://github.com/takari/maven-wrapper[Maven Wrapper] is used amd bundled with Camel 2.21 onwards.
+
+* Otherwise, http://maven.apache.org/download.html[download and install Maven]
+** Maven 3.1.1 or newer is required to build Camel 2.14 onwards
+** Maven 3.2.5 or newer is required to build Camel 2.18 onwards
+** Maven 3.3.3 or newer is required to build Camel 2.20 onwards
+
+* Get the latest source from https://github.com/apache/camel/[Github]
 
 *Optional:*
 
