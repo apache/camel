@@ -369,9 +369,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     }
 
     /**
-     * Whether to ignore when trying to download a file which does not exist or due to permission error.
+     * Whether to ignore when (trying to list files in directories or when downloading a file), which does not exist or due to permission error.
      * <p/>
-     * By default when a file does not exists or insufficient permission, then an exception is thrown.
+     * By default when a directory or file does not exists or insufficient permission, then an exception is thrown.
      * Setting this option to <tt>true</tt> allows to ignore that instead.
      */
     public void setIgnoreFileNotFoundOrPermissionError(boolean ignoreFileNotFoundOrPermissionError) {
