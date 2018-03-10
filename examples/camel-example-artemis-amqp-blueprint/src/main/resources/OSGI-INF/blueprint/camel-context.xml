@@ -18,9 +18,9 @@
 
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
-       xsi:schemaLocation="
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xsi:schemaLocation="
          http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
          http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd
          http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd">
@@ -28,27 +28,25 @@
   <!-- blueprint property placeholders -->
   <cm:property-placeholder persistent-id="my-placeholders" update-strategy="reload">
     <cm:default-properties>
-      <cm:property name="netty.port" value="8080" />
+      <cm:property name="netty.port" value="9090"/>
     </cm:default-properties>
   </cm:property-placeholder>
 
-
   <!-- JMS QPid Proton Configuration -->
   <bean id="jmsConnectionFactory" class="org.apache.qpid.jms.JmsConnectionFactory">
-    <property name="remoteURI" value="amqp://localhost:5672" />
-  </bean>
-   
-  <!-- Camel AMQP Component configuration -->
-  <bean id="amqp" class="org.apache.camel.component.amqp.AMQPComponent">
-      <property name="connectionFactory" ref="jmsConnectionFactory" />
+    <property name="remoteURI" value="amqp://localhost:5672"/>
   </bean>
 
+  <!-- Camel AMQP Component configuration -->
+  <bean id="amqp" class="org.apache.camel.component.amqp.AMQPComponent">
+    <property name="connectionFactory" ref="jmsConnectionFactory"/>
+  </bean>
 
   <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/blueprint">
 
     <!-- AMQP producer example (HTTP triggered) -->
     <route id="amqp-producer">
-      <from uri="netty4-http:localhost:{{netty.port}}/message"/>
+      <from uri="netty4-http:http:localhost:{{netty.port}}/message"/>
       <log message="got Netty request, about to send AMQP message."/>
       <to uri="amqp:queue:myqueue"/>
     </route>
