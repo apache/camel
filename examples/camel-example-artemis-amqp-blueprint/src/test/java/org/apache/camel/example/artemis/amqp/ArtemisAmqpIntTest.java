@@ -20,10 +20,9 @@ import java.util.Dictionary;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class ArtemisAmqpTest extends CamelBlueprintTestSupport {
+public class ArtemisAmqpIntTest extends CamelBlueprintTestSupport {
 
     @Override
     protected String getBlueprintDescriptor() {
@@ -36,19 +35,24 @@ public class ArtemisAmqpTest extends CamelBlueprintTestSupport {
     @Override
     protected String useOverridePropertiesWithConfigAdmin(Dictionary props) { 
         //obtain an available port
-        int port = AvailablePortFinder.getNextAvailable(8080);
+        int port = AvailablePortFinder.getNextAvailable(9090);
 
-        //override the netty port to use
-        props.put("netty.port", "" + port);
+        if (port != 9090) {
+            //override the netty port to use
+            props.put("netty.port", "" + port);
 
-        //return the PID of the config-admin we are using in the blueprint xml file
-        return "my-placeholders";
+            //return the PID of the config-admin we are using in the blueprint xml file
+            return "my-placeholders";
+        } else {
+            // no update needed
+            return null;
+        }
     }
 
     @Test
     public void testEmbeddedBroker() throws Exception {
         //trigger
-        String response = template.requestBody("netty4-http:localhost:{{netty.port}}/message", null, String.class);
+        String response = template.requestBody("netty4-http:http://localhost:{{netty.port}}/message", null, String.class);
 
         //response validation
         assertEquals("not expected", "Hello from Camel's AMQP example", response);
