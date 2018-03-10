@@ -126,7 +126,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean prefetchGlobal;
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true")
     private boolean declare = true;
     @UriParam(label = "common")
     private String deadLetterExchange;

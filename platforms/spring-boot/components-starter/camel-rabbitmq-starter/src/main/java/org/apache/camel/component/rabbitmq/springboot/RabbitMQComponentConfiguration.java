@@ -217,6 +217,63 @@ public class RabbitMQComponentConfiguration
      */
     private TrustManager trustManager;
     /**
+     * If messages should be auto acknowledged
+     */
+    private Boolean autoAck = true;
+    /**
+     * If it is true, the exchange will be deleted when it is no longer in use
+     */
+    private Boolean autoDelete = true;
+    /**
+     * If we are declaring a durable exchange (the exchange will survive a
+     * server restart)
+     */
+    private Boolean durable = true;
+    /**
+     * Exclusive queues may only be accessed by the current connection, and are
+     * deleted when that connection closes.
+     */
+    private Boolean exclusive = false;
+    /**
+     * Passive queues depend on the queue already to be available at RabbitMQ.
+     */
+    private Boolean passive = false;
+    /**
+     * If true the producer will not declare and bind a queue. This can be used
+     * for directing messages via an existing routing key.
+     */
+    private Boolean skipQueueDeclare = false;
+    /**
+     * If true the queue will not be bound to the exchange after declaring it
+     */
+    private Boolean skipQueueBind = false;
+    /**
+     * This can be used if we need to declare the queue but not the exchange
+     */
+    private Boolean skipExchangeDeclare = false;
+    /**
+     * If the option is true, camel declare the exchange and queue name and bind
+     * them together. If the option is false, camel won't declare the exchange
+     * and queue name on the server.
+     */
+    private Boolean declare = true;
+    /**
+     * The name of the dead letter exchange
+     */
+    private String deadLetterExchange;
+    /**
+     * The name of the dead letter queue
+     */
+    private String deadLetterQueue;
+    /**
+     * The routing key for the dead letter exchange
+     */
+    private String deadLetterRoutingKey;
+    /**
+     * The type of the dead letter exchange
+     */
+    private String deadLetterExchangeType = "direct";
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -496,6 +553,110 @@ public class RabbitMQComponentConfiguration
 
     public void setTrustManager(TrustManager trustManager) {
         this.trustManager = trustManager;
+    }
+
+    public Boolean getAutoAck() {
+        return autoAck;
+    }
+
+    public void setAutoAck(Boolean autoAck) {
+        this.autoAck = autoAck;
+    }
+
+    public Boolean getAutoDelete() {
+        return autoDelete;
+    }
+
+    public void setAutoDelete(Boolean autoDelete) {
+        this.autoDelete = autoDelete;
+    }
+
+    public Boolean getDurable() {
+        return durable;
+    }
+
+    public void setDurable(Boolean durable) {
+        this.durable = durable;
+    }
+
+    public Boolean getExclusive() {
+        return exclusive;
+    }
+
+    public void setExclusive(Boolean exclusive) {
+        this.exclusive = exclusive;
+    }
+
+    public Boolean getPassive() {
+        return passive;
+    }
+
+    public void setPassive(Boolean passive) {
+        this.passive = passive;
+    }
+
+    public Boolean getSkipQueueDeclare() {
+        return skipQueueDeclare;
+    }
+
+    public void setSkipQueueDeclare(Boolean skipQueueDeclare) {
+        this.skipQueueDeclare = skipQueueDeclare;
+    }
+
+    public Boolean getSkipQueueBind() {
+        return skipQueueBind;
+    }
+
+    public void setSkipQueueBind(Boolean skipQueueBind) {
+        this.skipQueueBind = skipQueueBind;
+    }
+
+    public Boolean getSkipExchangeDeclare() {
+        return skipExchangeDeclare;
+    }
+
+    public void setSkipExchangeDeclare(Boolean skipExchangeDeclare) {
+        this.skipExchangeDeclare = skipExchangeDeclare;
+    }
+
+    public Boolean getDeclare() {
+        return declare;
+    }
+
+    public void setDeclare(Boolean declare) {
+        this.declare = declare;
+    }
+
+    public String getDeadLetterExchange() {
+        return deadLetterExchange;
+    }
+
+    public void setDeadLetterExchange(String deadLetterExchange) {
+        this.deadLetterExchange = deadLetterExchange;
+    }
+
+    public String getDeadLetterQueue() {
+        return deadLetterQueue;
+    }
+
+    public void setDeadLetterQueue(String deadLetterQueue) {
+        this.deadLetterQueue = deadLetterQueue;
+    }
+
+    public String getDeadLetterRoutingKey() {
+        return deadLetterRoutingKey;
+    }
+
+    public void setDeadLetterRoutingKey(String deadLetterRoutingKey) {
+        this.deadLetterRoutingKey = deadLetterRoutingKey;
+    }
+
+    public String getDeadLetterExchangeType() {
+        return deadLetterExchangeType;
+    }
+
+    public void setDeadLetterExchangeType(String deadLetterExchangeType) {
+        this.deadLetterExchangeType = deadLetterExchangeType;
     }
 
     public Boolean getResolvePropertyPlaceholders() {
