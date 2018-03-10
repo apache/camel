@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.test.spring.CamelSpringBootRunner;
 import org.apache.camel.test.spring.EnableRouteCoverage;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(CamelSpringBootRunner.class)
-@SpringBootTest(classes = SampleCamelApplication.class,
+@SpringBootTest(classes = MyCamelApplication.class,
     properties = "greeting = Hello foo")
 @EnableRouteCoverage
 //@Ignore // enable me to run this test as well so we can cover testing the route completely
