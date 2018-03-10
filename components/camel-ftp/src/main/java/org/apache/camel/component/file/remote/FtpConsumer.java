@@ -117,10 +117,18 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         log.trace("Polling directory: {}", dir);
         List<FTPFile> files = null;
         if (isUseList()) {
-            if (isStepwise()) {
-                files = operations.listFiles();
-            } else {
-                files = operations.listFiles(dir);
+            try {
+                if (isStepwise()) {
+                    files = operations.listFiles();
+                } else {
+                    files = operations.listFiles(dir);
+                }
+            } catch (GenericFileOperationFailedException e) {
+                if (ignoreCannotRetrieveFile(null, null, e)) {
+                    log.debug("Cannot list files in directory {} due directory does not exists or file permission error.", dir);
+                } else {
+                    throw e;
+                }
             }
         } else {
             // we cannot use the LIST command(s) so we can only poll a named file

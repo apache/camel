@@ -111,12 +111,21 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         }
 
         log.trace("Polling directory: {}", dir);
-        List<ChannelSftp.LsEntry> files;
-        if (isStepwise()) {
-            files = operations.listFiles();
-        } else {
-            files = operations.listFiles(dir);
+        List<ChannelSftp.LsEntry> files = null;
+        try {
+            if (isStepwise()) {
+                files = operations.listFiles();
+            } else {
+                files = operations.listFiles(dir);
+            }
+        } catch (GenericFileOperationFailedException e) {
+            if (ignoreCannotRetrieveFile(null, null, e)) {
+                log.debug("Cannot list files in directory {} due directory does not exists or file permission error.", dir);
+            } else {
+                throw e;
+            }
         }
+
         if (files == null || files.isEmpty()) {
             // no files in this directory to poll
             log.trace("No files found in directory: {}", dir);
