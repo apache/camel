@@ -26,7 +26,6 @@ import com.rabbitmq.client.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,9 +53,35 @@ public class RabbitMQComponent extends UriEndpointComponent {
     private Address[] addresses;
     @Metadata(label = "common")
     private ConnectionFactory connectionFactory;
-    @UriParam(label = "security")
+    @Metadata(label = "consumer", defaultValue = "true")
+    private boolean autoAck = true;
+    @Metadata(label = "common", defaultValue = "true")
+    private boolean autoDelete = true;
+    @Metadata(label = "common", defaultValue = "true")
+    private boolean durable = true;
+    @Metadata(label = "common")
+    private boolean exclusive;
+    @Metadata(label = "common")
+    private boolean passive;
+    @Metadata(label = "common", defaultValue = "true")
+    private boolean declare = true;
+    @Metadata(label = "common")
+    private boolean skipQueueDeclare;
+    @Metadata(label = "common")
+    private boolean skipQueueBind;
+    @Metadata(label = "common")
+    private boolean skipExchangeDeclare;
+    @Metadata(label = "common")
+    private String deadLetterExchange;
+    @Metadata(label = "common")
+    private String deadLetterRoutingKey;
+    @Metadata(label = "common")
+    private String deadLetterQueue;
+    @Metadata(label = "common", defaultValue = "direct", enums = "direct,fanout,headers,topic")
+    private String deadLetterExchangeType = "direct";
+    @Metadata(label = "security")
     private String sslProtocol;
-    @UriParam(label = "security")
+    @Metadata(label = "security")
     private TrustManager trustManager;
     @Metadata(label = "consumer,advanced", defaultValue = "10")
     private int threadPoolSize = 10;
@@ -200,6 +225,19 @@ public class RabbitMQComponent extends UriEndpointComponent {
         endpoint.setGuaranteedDeliveries(isGuaranteedDeliveries());
         endpoint.setMandatory(isMandatory());
         endpoint.setImmediate(isImmediate());
+        endpoint.setAutoAck(isAutoAck());
+        endpoint.setAutoDelete(isAutoDelete());
+        endpoint.setDurable(isDurable());
+        endpoint.setExclusive(isExclusive());
+        endpoint.setPassive(isPassive());
+        endpoint.setSkipExchangeDeclare(isSkipExchangeDeclare());
+        endpoint.setSkipQueueBind(isSkipQueueBind());
+        endpoint.setSkipQueueDeclare(isSkipQueueDeclare());
+        endpoint.setDeclare(isDeclare());
+        endpoint.setDeadLetterExchange(getDeadLetterExchange());
+        endpoint.setDeadLetterExchangeType(getDeadLetterExchangeType());
+        endpoint.setDeadLetterQueue(getDeadLetterQueue());
+        endpoint.setDeadLetterRoutingKey(getDeadLetterRoutingKey());
         setProperties(endpoint, params);
 
         if (LOG.isDebugEnabled()) {
@@ -656,6 +694,154 @@ public class RabbitMQComponent extends UriEndpointComponent {
      */
     public void setTrustManager(TrustManager trustManager) {
         this.trustManager = trustManager;
+    }
+
+    public boolean isAutoAck() {
+        return autoAck;
+    }
+
+    /**
+     * If messages should be auto acknowledged
+     */
+    public void setAutoAck(boolean autoAck) {
+        this.autoAck = autoAck;
+    }
+
+    public boolean isAutoDelete() {
+        return autoDelete;
+    }
+
+    /**
+     * If it is true, the exchange will be deleted when it is no longer in use
+     */
+    public void setAutoDelete(boolean autoDelete) {
+        this.autoDelete = autoDelete;
+    }
+
+    public boolean isDurable() {
+        return durable;
+    }
+
+    /**
+     * If we are declaring a durable exchange (the exchange will survive a
+     * server restart)
+     */
+    public void setDurable(boolean durable) {
+        this.durable = durable;
+    }
+
+    public boolean isExclusive() {
+        return exclusive;
+    }
+
+    /**
+     * Exclusive queues may only be accessed by the current connection, and are
+     * deleted when that connection closes.
+     */
+    public void setExclusive(boolean exclusive) {
+        this.exclusive = exclusive;
+    }
+
+    public boolean isPassive() {
+        return passive;
+    }
+
+    /**
+     * Passive queues depend on the queue already to be available at RabbitMQ.
+     */
+    public void setPassive(boolean passive) {
+        this.passive = passive;
+    }
+
+    /**
+     * If true the producer will not declare and bind a queue. This can be used
+     * for directing messages via an existing routing key.
+     */
+    public void setSkipQueueDeclare(boolean skipQueueDeclare) {
+        this.skipQueueDeclare = skipQueueDeclare;
+    }
+
+    public boolean isSkipQueueDeclare() {
+        return skipQueueDeclare;
+    }
+
+    /**
+     * If true the queue will not be bound to the exchange after declaring it
+     */
+    public boolean isSkipQueueBind() {
+        return skipQueueBind;
+    }
+
+    public void setSkipQueueBind(boolean skipQueueBind) {
+        this.skipQueueBind = skipQueueBind;
+    }
+
+    /**
+     * This can be used if we need to declare the queue but not the exchange
+     */
+    public void setSkipExchangeDeclare(boolean skipExchangeDeclare) {
+        this.skipExchangeDeclare = skipExchangeDeclare;
+    }
+
+    public boolean isSkipExchangeDeclare() {
+        return skipExchangeDeclare;
+    }
+
+    public boolean isDeclare() {
+        return declare;
+    }
+
+    /**
+     * If the option is true, camel declare the exchange and queue name and bind
+     * them together. If the option is false, camel won't declare the exchange
+     * and queue name on the server.
+     */
+    public void setDeclare(boolean declare) {
+        this.declare = declare;
+    }
+
+    public String getDeadLetterExchange() {
+        return deadLetterExchange;
+    }
+
+    /**
+     * The name of the dead letter exchange
+     */
+    public void setDeadLetterExchange(String deadLetterExchange) {
+        this.deadLetterExchange = deadLetterExchange;
+    }
+
+    public String getDeadLetterQueue() {
+        return deadLetterQueue;
+    }
+
+    /**
+     * The name of the dead letter queue
+     */
+    public void setDeadLetterQueue(String deadLetterQueue) {
+        this.deadLetterQueue = deadLetterQueue;
+    }
+
+    public String getDeadLetterRoutingKey() {
+        return deadLetterRoutingKey;
+    }
+
+    /**
+     * The routing key for the dead letter exchange
+     */
+    public void setDeadLetterRoutingKey(String deadLetterRoutingKey) {
+        this.deadLetterRoutingKey = deadLetterRoutingKey;
+    }
+
+    public String getDeadLetterExchangeType() {
+        return deadLetterExchangeType;
+    }
+
+    /**
+     * The type of the dead letter exchange
+     */
+    public void setDeadLetterExchangeType(String deadLetterExchangeType) {
+        this.deadLetterExchangeType = deadLetterExchangeType;
     }
 
 }

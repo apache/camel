@@ -47,7 +47,7 @@ exchange name determines which exchange the queue will bind to.
 === Options
 
 // component options: START
-The RabbitMQ component supports 35 options which are listed below.
+The RabbitMQ component supports 48 options which are listed below.
 
 
 
@@ -86,8 +86,21 @@ The RabbitMQ component supports 35 options which are listed below.
 | *immediate* (producer) | This flag tells the server how to react if the message cannot be routed to a queue consumer immediately. If this flag is set, the server will return an undeliverable message with a Return method. If this flag is zero, the server will queue the message, but with no guarantee that it will ever be consumed. If the header is present rabbitmq.IMMEDIATE it will override this option. | false | boolean
 | *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
 | *clientProperties* (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
-| *sslProtocol* (common) | Enables SSL on connection, accepted value are true, TLS and 'SSLv3 |  | String
-| *trustManager* (common) | Configure SSL trust manager, SSL should be enabled for this option to be effective |  | TrustManager
+| *sslProtocol* (security) | Enables SSL on connection, accepted value are true, TLS and 'SSLv3 |  | String
+| *trustManager* (security) | Configure SSL trust manager, SSL should be enabled for this option to be effective |  | TrustManager
+| *autoAck* (consumer) | If messages should be auto acknowledged | true | boolean
+| *autoDelete* (common) | If it is true, the exchange will be deleted when it is no longer in use | true | boolean
+| *durable* (common) | If we are declaring a durable exchange (the exchange will survive a server restart) | true | boolean
+| *exclusive* (common) | Exclusive queues may only be accessed by the current connection, and are deleted when that connection closes. | false | boolean
+| *passive* (common) | Passive queues depend on the queue already to be available at RabbitMQ. | false | boolean
+| *skipQueueDeclare* (common) | If true the producer will not declare and bind a queue. This can be used for directing messages via an existing routing key. | false | boolean
+| *skipQueueBind* (common) | If true the queue will not be bound to the exchange after declaring it | false | boolean
+| *skipExchangeDeclare* (common) | This can be used if we need to declare the queue but not the exchange | false | boolean
+| *declare* (common) | If the option is true, camel declare the exchange and queue name and bind them together. If the option is false, camel won't declare the exchange and queue name on the server. | true | boolean
+| *deadLetterExchange* (common) | The name of the dead letter exchange |  | String
+| *deadLetterQueue* (common) | The name of the dead letter queue |  | String
+| *deadLetterRoutingKey* (common) | The routing key for the dead letter exchange |  | String
+| *deadLetterExchangeType* (common) | The type of the dead letter exchange | direct | String
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
