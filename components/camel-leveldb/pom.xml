@@ -46,7 +46,7 @@
             org.iq80.leveldb;resolution:=optional,
             org.iq80.leveldb.impl;resolution:=optional
         </camel.osgi.import.pkg>
-        <leveldb-version>0.9</leveldb-version>
+        <leveldb-version>0.10</leveldb-version>
     </properties>
 
     <dependencies>
