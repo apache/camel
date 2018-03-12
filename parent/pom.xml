@@ -451,8 +451,8 @@
     <kubernetes-model-version>2.0.4</kubernetes-model-version>
     <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
     <leveldbjni-version>1.8</leveldbjni-version>
-    <leveldb-api-version>0.9</leveldb-api-version>
-    <leveldb-version>0.9</leveldb-version>
+    <leveldb-api-version>0.10</leveldb-api-version>
+    <leveldb-version>0.10</leveldb-version>
     <libphonenumber-version>8.8.11</libphonenumber-version>
     <libphonenumber-bundle-version>8.8.11_1</libphonenumber-bundle-version>
     <!-- virtual dependency only used by Eclipse m2e -->
