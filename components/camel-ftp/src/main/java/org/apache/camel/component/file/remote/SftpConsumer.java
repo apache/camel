@@ -101,18 +101,19 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 
         // remove trailing /
         dirName = FileUtil.stripTrailingSeparator(dirName);
-        // compute dir depending on stepwise is enabled or not
-        String dir;
-        if (isStepwise()) {
-            dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
-            operations.changeCurrentDirectory(dir);
-        } else {
-            dir = absolutePath;
-        }
 
-        log.trace("Polling directory: {}", dir);
+        // compute dir depending on stepwise is enabled or not
+        String dir = null;
         List<ChannelSftp.LsEntry> files = null;
         try {
+            if (isStepwise()) {
+                dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
+                operations.changeCurrentDirectory(dir);
+            } else {
+                dir = absolutePath;
+            }
+
+            log.trace("Polling directory: {}", dir);
             if (isStepwise()) {
                 files = operations.listFiles();
             } else {
