@@ -177,9 +177,15 @@ public class ExchangeHelperTest extends ContextTestSupport {
         assertEquals("text/xml", ExchangeHelper.getContentType(exchange));
     }
 
-    public void testGetContentEncpding() throws Exception {
+    public void testGetContentEncoding() throws Exception {
         exchange.getIn().setHeader(Exchange.CONTENT_ENCODING, "iso-8859-1");
         assertEquals("iso-8859-1", ExchangeHelper.getContentEncoding(exchange));
+    }
+
+    public void testIsStreamCaching() throws Exception {
+        assertFalse(ExchangeHelper.isStreamCachingEnabled(exchange));
+        exchange.getContext().getStreamCachingStrategy().setEnabled(true);
+        assertTrue(ExchangeHelper.isStreamCachingEnabled(exchange));
     }
 
     @Override
