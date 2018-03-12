@@ -54,6 +54,7 @@ public class DefaultMessage extends MessageSupport {
      */
     @Deprecated
     public DefaultMessage() {
+        this(new DefaultCamelContext());
     }
 
     public DefaultMessage(CamelContext camelContext) {

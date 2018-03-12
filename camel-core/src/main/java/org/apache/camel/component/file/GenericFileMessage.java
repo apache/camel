@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
@@ -31,6 +32,7 @@ public class GenericFileMessage<T> extends DefaultMessage {
      */
     @Deprecated
     public GenericFileMessage() {
+        this(new DefaultCamelContext());
     }
 
     public GenericFileMessage(CamelContext camelContext) {
@@ -42,7 +44,7 @@ public class GenericFileMessage<T> extends DefaultMessage {
      */
     @Deprecated
     public GenericFileMessage(GenericFile<T> file) {
-        this.file = file;
+        this(new DefaultCamelContext(), file);
     }
 
     public GenericFileMessage(CamelContext camelContext, GenericFile<T> file) {
