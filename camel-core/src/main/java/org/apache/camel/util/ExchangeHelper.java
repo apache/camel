@@ -40,6 +40,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.Route;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultExchange;
@@ -687,10 +688,11 @@ public final class ExchangeHelper {
      * @return <tt>true</tt> if enabled, <tt>false</tt> otherwise
      */
     public static boolean isStreamCachingEnabled(final Exchange exchange) {
-        if (exchange.getFromRouteId() == null) {
-            return exchange.getContext().getStreamCachingStrategy().isEnabled();
+        Route route = exchange.getContext().getRoute(exchange.getFromRouteId());
+        if (route != null) {
+            return route.getRouteContext().isStreamCaching();
         } else {
-            return exchange.getContext().getRoute(exchange.getFromRouteId()).getRouteContext().isStreamCaching();
+            return exchange.getContext().getStreamCachingStrategy().isEnabled();
         }
     }
 
