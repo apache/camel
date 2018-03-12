@@ -899,9 +899,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public Route getRoute(String id) {
-        for (Route route : getRoutes()) {
-            if (route.getId().equals(id)) {
-                return route;
+        if (id != null) {
+            for (Route route : getRoutes()) {
+                if (route.getId().equals(id)) {
+                    return route;
+                }
             }
         }
         return null;
