@@ -475,8 +475,8 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             {"unsignedInt", "Long"}, //
             {"unsignedShort", "Integer"}, //
             {"unsignedByte", "Short"}, //
-            {"time", "java.time.ZonedDateTime"}, //
-            {"date", "java.time.ZonedDateTime"}, //
+            {"time", "java.time.LocalTime"}, //
+            {"date", "java.time.LocalDate"}, //
             {"g", "java.time.ZonedDateTime"}, //
             // Salesforce maps any types like string, picklist, reference, etc.
             // to string

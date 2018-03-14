@@ -76,7 +76,9 @@ public abstract class JsonUtils {
         // enable date time support including Java 1.8 ZonedDateTime
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        objectMapper.registerModule(new DateModule());
         objectMapper.registerModule(new DateTimeModule());
+        objectMapper.registerModule(new TimeModule());
         return objectMapper;
     }
 
@@ -190,12 +192,18 @@ public abstract class JsonUtils {
                 fieldSchema = new BooleanSchema();
                 break;
 
-            case "dateTime":
-            case "time":
             case "date":
+                fieldSchema = new StringSchema();
+                ((StringSchema) fieldSchema).setFormat(JsonValueFormat.DATE);
+                break;
+            case "dateTime": 
             case "g":
                 fieldSchema = new StringSchema();
                 ((StringSchema) fieldSchema).setFormat(JsonValueFormat.DATE_TIME);
+                break;
+            case "time":
+                fieldSchema = new StringSchema();
+                ((StringSchema) fieldSchema).setFormat(JsonValueFormat.TIME);
                 break;
 
             case "address":
