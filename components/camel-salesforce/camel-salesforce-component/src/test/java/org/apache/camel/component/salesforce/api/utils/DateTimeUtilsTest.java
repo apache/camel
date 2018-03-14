@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -43,5 +45,34 @@ public class DateTimeUtilsTest {
         assertEquals(ZonedDateTime.of(1991, 12, 10, 12, 13, 14, 7000000, ZoneId.of("Z")), DateTimeUtils.parseDateTime("1991-12-10T12:13:14.007Z"));
         assertEquals(ZonedDateTime.of(1700, 1, 1, 1, 13, 14, 7000000, ZoneId.of("+00:19")), DateTimeUtils.parseDateTime("1700-01-01T01:13:14.007+00:19"));
         assertEquals(ZonedDateTime.of(1700, 2, 3, 2, 13, 14, 7000000, ZoneId.of("Z")), DateTimeUtils.parseDateTime("1700-02-03T02:13:14.007Z"));
+    }
+
+    @Test
+    public void testFormatDate() {
+        assertEquals("1991-12-10", DateTimeUtils.formatDate(LocalDate.of(1991, 12, 10)));
+        assertEquals("2100-12-10", DateTimeUtils.formatDate(LocalDate.of(2100, 12, 10)));
+        assertEquals("1700-01-01", DateTimeUtils.formatDate(LocalDate.of(1700,  1,  1)));
+        }
+
+    @Test
+    public void testParseDate() {
+        assertEquals(LocalDate.of(1700, 01, 01), DateTimeUtils.parseDate("1700-01-01"));
+        assertEquals(LocalDate.of(2100, 12, 10), DateTimeUtils.parseDate("2100-12-10"));
+        assertEquals(LocalDate.of(1700,  1,  1), DateTimeUtils.parseDate("1700-01-01"));
+    }
+
+    @Test
+    public void testFormatTime() {
+        assertEquals("12:13:14.007", DateTimeUtils.formatTime(LocalTime.of(12, 13, 14, 7000000)));
+        assertEquals("01:00:00", DateTimeUtils.formatTime(LocalTime.of(1, 0, 0, 0)));
+        assertEquals("00:00:00", DateTimeUtils.formatTime(LocalTime.of(0, 0, 0)));
+    }
+
+    @Test
+    public void testParseTime() {
+        assertEquals(LocalTime.of(0,0,0), DateTimeUtils.parseTime("00:00:00.000"));
+        assertEquals(LocalTime.of(1,0,0,100), DateTimeUtils.parseTime("01:00:00.0000001"));
+        assertEquals(LocalTime.of(12,13,14,7000000), DateTimeUtils.parseTime("12:13:14.007"));
+        assertEquals(LocalTime.of(12,13,0), DateTimeUtils.parseTime("12:13"));
     }
 }
