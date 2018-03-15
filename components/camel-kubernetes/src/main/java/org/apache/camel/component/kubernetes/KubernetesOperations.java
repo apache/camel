@@ -91,6 +91,7 @@ public interface KubernetesOperations {
     String GET_DEPLOYMENT = "getDeployment";
     String DELETE_DEPLOYMENT = "deleteDeployment";
     String CREATE_DEPLOYMENT = "createDeployment";
+    String SCALE_DEPLOYMENT = "scaleDeployment";
     
     // Config Maps
     String LIST_CONFIGMAPS = "listConfigMaps";
