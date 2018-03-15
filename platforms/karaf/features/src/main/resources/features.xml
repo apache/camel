@@ -414,6 +414,7 @@
     <bundle>mvn:org.apache.camel/camel-cometd/${project.version}</bundle>
   </feature>
   <feature name='camel-consul' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-consul currently do not work in OSGi</details>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
