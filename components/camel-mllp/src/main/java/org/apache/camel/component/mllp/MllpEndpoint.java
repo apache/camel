@@ -53,7 +53,8 @@ import org.slf4j.LoggerFactory;
  * <p/>
  */
 @ManagedResource(description = "MLLP Endpoint")
-@UriEndpoint(scheme = "mllp", firstVersion = "2.17.0", title = "MLLP", syntax = "mllp:hostname:port", consumerClass = MllpTcpServerConsumer.class, label = "mllp")
+// @UriEndpoint(scheme = "mllp", firstVersion = "2.17.0", title = "MLLP", syntax = "mllp:hostname:port", consumerClass = MllpTcpServerConsumer.class, label = "mllp")
+@UriEndpoint(scheme = "mllp", title = "MLLP", syntax = "mllp:hostname:port", consumerClass = MllpTcpServerConsumer.class, label = "mllp")
 public class MllpEndpoint extends DefaultEndpoint {
     // Use constants from MllpProtocolConstants
     @Deprecated()
@@ -173,6 +174,14 @@ public class MllpEndpoint extends DefaultEndpoint {
     @ManagedAttribute(description = "Last connection terminated time")
     public Date getLastConnectionTerminatedTime() {
         return lastConnectionTerminatedTicks != null ? new Date(lastConnectionTerminatedTicks) : null;
+    }
+
+    public boolean hasLastConnectionActivityTicks() {
+        return lastConnectionActivityTicks != null && lastConnectionActivityTicks > 0;
+    }
+
+    public Long getLastConnectionActivityTicks() {
+        return lastConnectionActivityTicks;
     }
 
     public void updateLastConnectionActivityTicks() {
