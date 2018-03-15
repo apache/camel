@@ -263,7 +263,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         }
         ReplicationController rcScaled = getEndpoint().getKubernetesClient()
                 .replicationControllers().inNamespace(namespaceName)
-                .withName(rcName).scale(replicasNumber, true);
+                .withName(rcName).scale(replicasNumber, false);
         
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rcScaled.getStatus().getReplicas());
