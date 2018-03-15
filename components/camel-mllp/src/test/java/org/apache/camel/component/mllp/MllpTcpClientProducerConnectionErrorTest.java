@@ -45,6 +45,9 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
     @EndpointInject(uri = "direct://source")
     ProducerTemplate source;
 
+    @EndpointInject(uri = "mock://target")
+    MockEndpoint target;
+
     @EndpointInject(uri = "mock://complete")
     MockEndpoint complete;
 
@@ -54,8 +57,8 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
     @EndpointInject(uri = "mock://connect-ex")
     MockEndpoint connectEx;
 
-    @EndpointInject(uri = "mock://receive-ex")
-    MockEndpoint receiveEx;
+    @EndpointInject(uri = "mock://acknowledgement-ex")
+    MockEndpoint acknowledgementEx;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -74,6 +77,9 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
             String routeId = "mllp-sender";
 
             public void configure() {
+                onCompletion()
+                    .to(complete);
+
                 onException(ConnectException.class)
                     .handled(true)
                     .to(connectEx)
@@ -86,17 +92,17 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
                     .log(LoggingLevel.ERROR, routeId, "Write Error")
                     .stop();
 
-                onException(MllpAcknowledgementReceiveException.class)
+                onException(MllpAcknowledgementException.class)
                     .handled(true)
-                    .to(receiveEx)
-                    .log(LoggingLevel.ERROR, routeId, "Receive Error")
+                    .to(acknowledgementEx)
+                    .log(LoggingLevel.ERROR, routeId, "Acknowledgement Error")
                     .stop();
 
                 from(source.getDefaultEndpoint()).routeId(routeId)
                     .log(LoggingLevel.INFO, routeId, "Sending Message")
                     .toF("mllp://%s:%d", mllpServer.getListenHost(), mllpServer.getListenPort())
                     .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")
-                    .to(complete);
+                    .to(target);
             }
         };
     }
@@ -108,10 +114,11 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
      */
     @Test
     public void testConnectionClosedBeforeSendingHL7Message() throws Exception {
+        target.expectedMessageCount(2);
         complete.expectedMessageCount(2);
         connectEx.expectedMessageCount(0);
         writeEx.expectedMessageCount(0);
-        receiveEx.expectedMessageCount(0);
+        acknowledgementEx.expectedMessageCount(0);
 
         NotifyBuilder oneDone = new NotifyBuilder(context).whenCompleted(1).create();
         NotifyBuilder twoDone = new NotifyBuilder(context).whenCompleted(2).create();
@@ -136,10 +143,11 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
      */
     @Test()
     public void testConnectionResetBeforeSendingHL7Message() throws Exception {
+        target.expectedMessageCount(2);
         complete.expectedMessageCount(2);
         connectEx.expectedMessageCount(0);
         writeEx.expectedMessageCount(0);
-        receiveEx.expectedMessageCount(0);
+        acknowledgementEx.expectedMessageCount(0);
 
         NotifyBuilder oneDone = new NotifyBuilder(context).whenCompleted(1).create();
         NotifyBuilder twoDone = new NotifyBuilder(context).whenCompleted(2).create();
@@ -158,10 +166,11 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
     @Test()
     public void testConnectionClosedBeforeReadingAcknowledgement() throws Exception {
-        complete.expectedMessageCount(0);
+        target.expectedMessageCount(0);
+        complete.expectedMessageCount(1);
         connectEx.expectedMessageCount(0);
         writeEx.expectedMessageCount(0);
-        receiveEx.expectedMessageCount(1);
+        acknowledgementEx.expectedMessageCount(1);
 
         mllpServer.setCloseSocketBeforeAcknowledgementModulus(1);
 
@@ -176,10 +185,11 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
     @Test()
     public void testConnectionResetBeforeReadingAcknowledgement() throws Exception {
-        complete.expectedMessageCount(0);
+        target.expectedMessageCount(0);
+        complete.expectedMessageCount(1);
         connectEx.expectedMessageCount(0);
         writeEx.expectedMessageCount(0);
-        receiveEx.expectedMessageCount(1);
+        acknowledgementEx.expectedMessageCount(1);
 
         mllpServer.setResetSocketBeforeAcknowledgementModulus(1);
 
@@ -195,7 +205,8 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
     @Test()
     public void testServerShutdownBeforeSendingHL7Message() throws Exception {
-        complete.expectedMessageCount(1);
+        target.expectedMessageCount(1);
+        complete.expectedMessageCount(2);
         connectEx.expectedMessageCount(0);
 
         NotifyBuilder done = new NotifyBuilder(context).whenCompleted(2).create();
@@ -212,12 +223,13 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
 
         // Depending on the timing, either a write or a receive exception will be thrown
-        assertEquals("Either a write or a receive exception should have been be thrown", 1, writeEx.getExchanges().size() + receiveEx.getExchanges().size());
+        assertEquals("Either a write or a receive exception should have been be thrown", 1, writeEx.getExchanges().size() + acknowledgementEx.getExchanges().size());
     }
 
     @Test()
     public void testConnectionCloseAndServerShutdownBeforeSendingHL7Message() throws Exception {
-        complete.expectedMessageCount(1);
+        target.expectedMessageCount(1);
+        complete.expectedMessageCount(2);
         connectEx.expectedMessageCount(0);
 
         NotifyBuilder done = new NotifyBuilder(context).whenCompleted(2).create();
@@ -235,15 +247,16 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
 
         // Depending on the timing, either a write or a receive exception will be thrown
-        assertEquals("Either a write or a receive exception should have been be thrown", 1, writeEx.getExchanges().size() + receiveEx.getExchanges().size());
+        assertEquals("Either a write or a receive exception should have been be thrown", 1, writeEx.getExchanges().size() + acknowledgementEx.getExchanges().size());
     }
 
     @Test()
     public void testConnectionResetAndServerShutdownBeforeSendingHL7Message() throws Exception {
-        complete.expectedMessageCount(1);
-        connectEx.expectedMessageCount(1);
-        writeEx.expectedMessageCount(0);
-        receiveEx.expectedMessageCount(0);
+        target.expectedMessageCount(1);
+        complete.expectedMessageCount(2);
+        connectEx.expectedMessageCount(0);
+        writeEx.expectedMessageCount(1);
+        acknowledgementEx.expectedMessageCount(0);
 
         NotifyBuilder done = new NotifyBuilder(context).whenCompleted(2).create();
 

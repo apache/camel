@@ -175,8 +175,8 @@ public class MllpSocketBuffer {
     }
 
     public synchronized void readFrom(Socket socket, int receiveTimeout, int readTimeout) throws MllpSocketException, SocketTimeoutException {
-        log.trace("Entering readFrom ...");
         if (socket != null && socket.isConnected() && !socket.isClosed()) {
+            log.trace("Entering readFrom for {} ...", socket);
             ensureCapacity(MIN_BUFFER_SIZE);
 
             try {
@@ -203,7 +203,7 @@ public class MllpSocketBuffer {
             } finally {
                 if (size() > 0 && !hasCompleteEnvelope()) {
                     if (!hasEndOfData() && hasEndOfBlock() && endOfBlockIndex < size() - 1) {
-                        log.warn("readFrom exiting with partial payload ", Hl7Util.convertToPrintFriendlyString(buffer, 0, size() - 1));
+                        log.warn("readFrom {} exiting with partial payload {}", socket, Hl7Util.convertToPrintFriendlyString(buffer, 0, size() - 1));
                     }
                 }
             }
@@ -216,8 +216,8 @@ public class MllpSocketBuffer {
     }
 
     public synchronized void writeTo(Socket socket) throws MllpSocketException {
-        log.trace("Entering writeTo ...");
         if (socket != null && socket.isConnected() && !socket.isClosed()) {
+            log.trace("Entering writeTo for {} ...", socket);
             if (!isEmpty()) {
                 try {
                     OutputStream socketOutputStream = socket.getOutputStream();
@@ -243,7 +243,7 @@ public class MllpSocketBuffer {
                     throw new MllpSocketException(exceptionMessage, ioEx);
                 }
             } else {
-                log.warn("Ignoring call to writeTo(byte[] payload) - MLLP payload is null or empty");
+                log.warn("Ignoring call to writeTo(byte[] payload) for {} - MLLP payload is null or empty", socket);
             }
         } else {
             log.warn("Socket is invalid - no data written");
@@ -617,7 +617,7 @@ public class MllpSocketBuffer {
             int readCount = socketInputStream.read(buffer, availableByteCount, buffer.length - availableByteCount);
             if (readCount == MllpProtocolConstants.END_OF_STREAM) {
                 resetSocket(socket);
-                throw new SocketException("END_OF_STREAM returned from SocketInputStream.read(byte[], off, len)");
+                throw new MllpSocketException("END_OF_STREAM returned from SocketInputStream.read(byte[], off, len)");
             }
             if (readCount > 0) {
                 for (int i = 0; (startOfBlockIndex == -1 || endOfBlockIndex == -1) && i < readCount; ++i) {
