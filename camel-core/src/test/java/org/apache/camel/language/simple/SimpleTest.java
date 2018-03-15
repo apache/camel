@@ -239,6 +239,13 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("sysenv.PATH", path);
         }
     }
+    
+    public void testSimpleSystemEnvironmentExpressionsIfLowercase() throws Exception {
+        String path = System.getenv("PATH");
+        if (path != null) {
+            assertExpression("sysenv.path", path);
+        }
+    }
 
     public void testSimpleCamelId() throws Exception {
         assertExpression("camelId", context.getName());
