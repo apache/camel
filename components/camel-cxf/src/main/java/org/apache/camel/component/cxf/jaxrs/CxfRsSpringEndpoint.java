@@ -18,25 +18,31 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.Component;
+import org.apache.camel.component.cxf.spring.SpringJAXRSClientFactoryBean;
+import org.apache.camel.spring.SpringCamelContext;
+import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
+import org.springframework.context.ApplicationContext;
 
 public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
     private AbstractJAXRSFactoryBean bean;
+    private ConfigurerImpl configurer;
     private String beanId;
-    
-    @Deprecated 
+
+    @Deprecated
     /**
      * It will be removed in Camel 3.0
+     * 
      * @param comp
      * @param bean
      */
     public CxfRsSpringEndpoint(Component component, AbstractJAXRSFactoryBean bean) throws Exception {
-        super(bean.getAddress(), component);        
+        super(bean.getAddress(), component);
         init(bean);
     }
-    
+
     public CxfRsSpringEndpoint(Component component, String uri, AbstractJAXRSFactoryBean bean) throws Exception {
         super(uri, component);
         setAddress(bean.getAddress());
@@ -44,31 +50,40 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
         bean.setAddress(getAddress());
         init(bean);
     }
-    
+
     private void init(AbstractJAXRSFactoryBean bean) {
         this.bean = bean;
         if (bean instanceof BeanIdAware) {
             setBeanId(((BeanIdAware)bean).getBeanId());
         }
+
+        ApplicationContext applicationContext = ((SpringCamelContext)getCamelContext()).getApplicationContext();
+        configurer = new ConfigurerImpl(applicationContext);
     }
-    
+
     @Override
     protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {
         checkBeanType(bean, JAXRSServerFactoryBean.class);
         return (JAXRSServerFactoryBean)bean;
     }
-    
+
     @Override
     protected JAXRSClientFactoryBean newJAXRSClientFactoryBean() {
-        checkBeanType(bean, JAXRSClientFactoryBean.class);
-        return (JAXRSClientFactoryBean)bean;
+        return new SpringJAXRSClientFactoryBean();
     }
-    
+
+    @Override
+    protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb, String address) {
+        configurer.configureBean(beanId, cfb);
+        cfb.setAddress(address);
+        cfb.setThreadSafe(true);
+    }
+
     public String getBeanId() {
         return beanId;
     }
-    
-    public void setBeanId(String id) {        
+
+    public void setBeanId(String id) {
         this.beanId = id;
     }
 }
