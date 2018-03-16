@@ -68,12 +68,6 @@
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpasyncclient</artifactId>
     </dependency>
-    
-    <dependency>
-      <groupId>net.sf.jsignature.io-tools</groupId>
-      <artifactId>easystream</artifactId>
-      <version>1.2.15</version>
-    </dependency>
 
     <!-- logging -->
     <dependency>
