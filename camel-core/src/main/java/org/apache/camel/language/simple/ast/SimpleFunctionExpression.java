@@ -306,7 +306,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
             remainder = ifStartsWithReturnRemainder("in.body", function);
         }
         if (remainder != null) {
-            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            // OGNL must start with a . ? or [
+            boolean ognlStart = remainder.startsWith(".") || remainder.startsWith("?") || remainder.startsWith("[");
+            boolean invalid = !ognlStart || OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${body.OGNL} was: " + function, token.getIndex());
             }
