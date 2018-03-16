@@ -40,6 +40,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Language;
+
 /**
  * @version
  */
@@ -152,6 +153,19 @@ public class SimpleTest extends LanguageTestSupport {
     public void testBodyExpression() throws Exception {
         Expression exp = SimpleLanguage.simple("${body}");
         assertNotNull(exp);
+    }
+
+    public void testBodyOgnlExpression() throws Exception {
+        Expression exp = SimpleLanguage.simple("${body.xxx}");
+        assertNotNull(exp);
+        
+        // must start with a dot
+        try {
+            SimpleLanguage.simple("${bodyxxx}");
+            fail("Should throw exception");
+        } catch (SimpleIllegalSyntaxException e) {
+            // expected
+        }
     }
 
     public void testBodyExpressionUsingAlternativeStartToken() throws Exception {
