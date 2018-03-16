@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import java.util.Map;
@@ -90,10 +91,14 @@ public final class SmppConnectionFactory implements ConnectionFactory {
                 .getDefault() : SocketFactory.getDefault();
             if (config.getHttpProxyHost() != null) {
                 // setup the proxy tunnel
-                socket = socketFactory.createSocket(config.getHttpProxyHost(), config.getHttpProxyPort());
+                socket = socketFactory.createSocket();
+                // jsmpp uses enquire link timer as socket read timeout, so also use it to establish the initial connection
+                socket.connect(new InetSocketAddress(config.getHttpProxyHost(), config.getHttpProxyPort()), config.getEnquireLinkTimer());
                 connectProxy(host, port, socket);
             } else {
-                socket = socketFactory.createSocket(host, port);
+                socket = socketFactory.createSocket();
+                // jsmpp uses enquire link timer as socket read timeout, so also use it to establish the initial connection
+                socket.connect(new InetSocketAddress(host, port), config.getEnquireLinkTimer());
             }
 
             if (config.getUsingSSL() && config.getHttpProxyHost() != null) {
