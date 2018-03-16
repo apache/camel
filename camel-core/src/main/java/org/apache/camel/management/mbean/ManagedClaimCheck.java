@@ -19,7 +19,6 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedClaimCheckMBean;
-import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.ClaimCheckProcessor;
 
@@ -33,11 +32,6 @@ public class ManagedClaimCheck extends ManagedProcessor implements ManagedClaimC
     public ManagedClaimCheck(CamelContext context, ClaimCheckProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
-    }
-
-    @Override
-    public ExpressionNode getDefinition() {
-        return (ExpressionNode) super.getDefinition();
     }
 
     @Override
