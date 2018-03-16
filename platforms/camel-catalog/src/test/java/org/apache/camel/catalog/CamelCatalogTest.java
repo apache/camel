@@ -983,6 +983,13 @@ public class CamelCatalogTest {
         assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol at location 5"));
         assertEquals("expected symbol functionEnd but was eol", result.getShortError());
         assertEquals(5, result.getIndex());
+
+        result = catalog.validateSimpleExpression(null, "${bodyxxx}");
+        assertFalse(result.isSuccess());
+        assertEquals("${bodyxxx}", result.getSimple());
+        LOG.info(result.getError());
+        assertEquals("Valid syntax: ${body.OGNL} was: bodyxxx", result.getShortError());
+        assertEquals(0, result.getIndex());
     }
 
     @Test
