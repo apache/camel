@@ -257,7 +257,7 @@ URI Options for _collaborations_
 
 For more information on Box event logs see
 https://developer.box.com/reference#events[https://developer.box.com/reference#events].
-The following endpoints can be invoked with the prefix *`events`* as follows:
+The following endpoints can be invoked with the prefix *`event-logs`* as follows:
 
 [source]
 ----
@@ -442,7 +442,7 @@ box:folders/endpoint?[options]
 
 |getFolderInfo |info |folderId, fields |com.box.sdk.BoxFolder.Info
 
-|getFolderItems |items |folderId, offset, limit, fields |com.box.sdk.BoxFolder
+|getFolderItems |items |folderId, offset, limit, fields |java.util.List
 
 |updateFolderInfo |updateInfo |folderId, info |com.box.sdk.BoxFolder
 |===
