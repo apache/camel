@@ -25,7 +25,8 @@ import org.springframework.boot.actuate.health.HealthIndicator;
  * Camel {@link HealthIndicator}.
  */
 public class CamelHealthIndicator extends AbstractHealthIndicator {
-    private final CamelContext camelContext;
+
+    private CamelContext camelContext;
 
     public CamelHealthIndicator(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -39,7 +40,6 @@ public class CamelHealthIndicator extends AbstractHealthIndicator {
             builder.withDetail("name", camelContext.getName());
             builder.withDetail("version", camelContext.getVersion());
             builder.withDetail("contextStatus", camelContext.getStatus().name());
-
             if (camelContext.getStatus().isStarted()) {
                 builder.up();
             } else if (camelContext.getStatus().isStopped()) {

@@ -19,13 +19,13 @@ package org.apache.camel.spring.boot.security;
 import java.util.Map;
 
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
+import org.apache.camel.spring.boot.util.RelaxedPropertyResolver;
 import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;

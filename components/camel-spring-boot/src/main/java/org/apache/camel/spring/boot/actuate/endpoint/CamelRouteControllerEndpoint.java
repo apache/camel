@@ -23,23 +23,25 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.spi.RouteController;
-import org.springframework.boot.actuate.endpoint.Endpoint;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
 /**
  * {@link Endpoint} to expose {@link RouteController} information.
  */
-@ConfigurationProperties(prefix = "endpoints." + CamelRouteControllerEndpoint.ENDPOINT_ID)
-public class CamelRouteControllerEndpoint extends AbstractCamelEndpoint<List<String>> {
-    public static final String ENDPOINT_ID = "camelroutecontroller";
+@Endpoint(id = "camelroutecontroller", enableByDefault = true)
+public class CamelRouteControllerEndpoint {
+
+    private CamelContext camelContext;
 
     public CamelRouteControllerEndpoint(CamelContext camelContext) {
-        super(ENDPOINT_ID, camelContext);
+        this.camelContext = camelContext;
     }
 
-    @Override
-    public List<String> invoke() {
-        RouteController controller = getCamelContext().getRouteController();
+    @ReadOperation
+    public List<String> getControlledRoutes() {
+        RouteController controller = camelContext.getRouteController();
+
         if (controller != null) {
             return controller.getControlledRoutes().stream()
                 .map(Route::getId)
