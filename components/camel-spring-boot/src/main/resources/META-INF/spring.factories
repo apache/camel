@@ -20,15 +20,12 @@ org.apache.camel.spring.boot.CamelAutoConfiguration,\
 org.apache.camel.spring.boot.SupervisingRouteControllerAutoConfiguration,\
 org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpointAutoConfiguration,\
 org.apache.camel.spring.boot.actuate.endpoint.CamelRouteControllerEndpointAutoConfiguration,\
-org.apache.camel.spring.boot.actuate.endpoint.CamelHealthCheckEndpointAutoConfiguration,\
 org.apache.camel.spring.boot.actuate.health.CamelHealthAutoConfiguration,\
-org.apache.camel.spring.boot.actuate.health.CamelHealthCheckIndicatorAutoConfiguration,\
 org.apache.camel.spring.boot.cloud.CamelCloudAutoConfiguration,\
 org.apache.camel.spring.boot.cloud.CamelCloudServiceCallConfigurationAutoConfiguration,\
 org.apache.camel.spring.boot.cloud.CamelCloudServiceDiscoveryAutoConfiguration,\
 org.apache.camel.spring.boot.cloud.CamelCloudServiceFilterAutoConfiguration,\
 org.apache.camel.spring.boot.cloud.CamelCloudServiceChooserAutoConfiguration,\
 org.apache.camel.spring.boot.cluster.ClusteredRouteControllerAutoConfiguration,\
-org.apache.camel.spring.boot.health.HealthCheckRoutesAutoConfiguration,\
-org.apache.camel.spring.boot.health.HealthCheckServiceAutoConfiguration,\
 org.apache.camel.spring.boot.security.CamelSSLAutoConfiguration
+
