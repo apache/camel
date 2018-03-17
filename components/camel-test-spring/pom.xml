@@ -38,7 +38,7 @@
     <label>testing,java,spring</label>
 
     <camel.osgi.export.pkg>org.apache.camel.test.spring.*</camel.osgi.export.pkg>
-    <spring-version>${spring4-version}</spring-version>
+    <spring-version>${spring5-version}</spring-version>
   </properties>
 
   <dependencies>
