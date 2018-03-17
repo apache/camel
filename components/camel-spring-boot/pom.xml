@@ -37,8 +37,6 @@
     <label>spring,microservice</label>
 
     <camel.osgi.export.pkg/>
-    <!-- spring boot 1 uses spring 4 -->     
-    <spring-version>${spring4-version}</spring-version>
   </properties>
 
   <dependencies>
@@ -56,7 +54,7 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-actuator</artifactId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
       <optional>true</optional>
       <version>${spring-boot-version}</version>
     </dependency>
