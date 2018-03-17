@@ -40,6 +40,10 @@ public class JacksonDataFormatConfiguration
      */
     private String objectMapper;
     /**
+     * Whether to lookup and use default Jackson ObjectMapper from the registry.
+     */
+    private Boolean useDefaultObjectMapper = true;
+    /**
      * To enable pretty printing output nicely formatted. Is by default false.
      */
     private Boolean prettyPrint = false;
@@ -154,6 +158,14 @@ public class JacksonDataFormatConfiguration
 
     public void setObjectMapper(String objectMapper) {
         this.objectMapper = objectMapper;
+    }
+
+    public Boolean getUseDefaultObjectMapper() {
+        return useDefaultObjectMapper;
+    }
+
+    public void setUseDefaultObjectMapper(Boolean useDefaultObjectMapper) {
+        this.useDefaultObjectMapper = useDefaultObjectMapper;
     }
 
     public Boolean getPrettyPrint() {

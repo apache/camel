@@ -16,9 +16,6 @@
  */
 package org.apache.camel.model.dataformat;
 
-import java.text.DateFormat;
-import java.util.TimeZone;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -45,6 +42,9 @@ import org.apache.camel.util.ObjectHelper;
 public class JsonDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String objectMapper;
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
+    private Boolean useDefaultObjectMapper;
     @XmlAttribute
     private Boolean prettyPrint;
     @XmlAttribute
@@ -82,7 +82,7 @@ public class JsonDataFormat extends DataFormatDefinition {
     private Boolean allowUnmarshallType;
     @XmlAttribute
     private String timezone;
-    
+
     public JsonDataFormat() {
         super("json");
     }
@@ -101,6 +101,17 @@ public class JsonDataFormat extends DataFormatDefinition {
      */
     public void setObjectMapper(String objectMapper) {
         this.objectMapper = objectMapper;
+    }
+
+    public Boolean getUseDefaultObjectMapper() {
+        return useDefaultObjectMapper;
+    }
+
+    /**
+     * Whether to lookup and use default Jackson ObjectMapper from the registry.
+     */
+    public void setUseDefaultObjectMapper(Boolean useDefaultObjectMapper) {
+        this.useDefaultObjectMapper = useDefaultObjectMapper;
     }
 
     public Boolean getPrettyPrint() {
@@ -397,6 +408,9 @@ public class JsonDataFormat extends DataFormatDefinition {
             // must be a reference value
             String ref = objectMapper.startsWith("#") ? objectMapper : "#" + objectMapper;
             setProperty(camelContext, dataFormat, "objectMapper", ref);
+        }
+        if (useDefaultObjectMapper != null) {
+            setProperty(camelContext, dataFormat, "useDefaultObjectMapper", useDefaultObjectMapper);
         }
         if (unmarshalType != null) {
             setProperty(camelContext, dataFormat, "unmarshalType", unmarshalType);
