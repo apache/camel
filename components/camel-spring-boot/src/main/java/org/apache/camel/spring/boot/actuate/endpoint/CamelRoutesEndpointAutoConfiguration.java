@@ -18,14 +18,11 @@ package org.apache.camel.spring.boot.actuate.endpoint;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
-import org.apache.camel.spring.boot.util.GroupCondition;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -35,7 +32,6 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass({CamelRoutesEndpoint.class})
 @ConditionalOnBean(CamelAutoConfiguration.class)
 @AutoConfigureAfter(CamelAutoConfiguration.class)
-@Conditional(CamelRoutesEndpointAutoConfiguration.Condition.class)
 public class CamelRoutesEndpointAutoConfiguration {
     @Bean
     @ConditionalOnClass(CamelContext.class)
@@ -44,24 +40,4 @@ public class CamelRoutesEndpointAutoConfiguration {
         return new CamelRoutesEndpoint(camelContext);
     }
 
-    @Bean
-    @ConditionalOnClass(CamelContext.class)
-    @ConditionalOnMissingBean
-    @ConditionalOnWebApplication
-    public CamelRoutesMvcEndpoint camelMvcEndpoint(CamelRoutesEndpoint delegate) {
-        return new CamelRoutesMvcEndpoint(delegate);
-    }
-
-    // ***************************************
-    // Condition
-    // ***************************************
-
-    public static class Condition extends GroupCondition {
-        public Condition() {
-            super(
-                    "endpoints",
-                    "endpoints." + CamelRoutesEndpoint.ENDPOINT_ID
-            );
-        }
-    }
 }

@@ -18,47 +18,29 @@ package org.apache.camel.spring.boot.actuate.health;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
-import org.apache.camel.spring.boot.health.HealthConstants;
-import org.apache.camel.spring.boot.util.GroupCondition;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnClass(HealthIndicator.class)
-@Conditional(CamelHealthAutoConfiguration.Condition.class)
+@ConditionalOnClass({HealthIndicator.class})
 @ConditionalOnBean(CamelAutoConfiguration.class)
 @AutoConfigureAfter(CamelAutoConfiguration.class)
-@EnableConfigurationProperties(CamelHealthConfiguration.class)
 public class CamelHealthAutoConfiguration {
-    @Autowired
-    private CamelHealthConfiguration configuration;
 
-    @Bean
-    @ConditionalOnBean(CamelContext.class)
+    @ConditionalOnClass({CamelContext.class})
     @ConditionalOnMissingBean(CamelHealthIndicator.class)
-    public HealthIndicator camelHealthIndicator(CamelContext camelContext) {
-        return new CamelHealthIndicator(camelContext);
-    }
+    protected static class CamelHealthIndicatorInitializer {
 
-    // ***************************************
-    // Condition
-    // ***************************************
-
-    public static class Condition extends GroupCondition {
-        public Condition() {
-            super(
-                HealthConstants.HEALTH_PREFIX,
-                HealthConstants.HEALTH_INDICATOR_PREFIX
-            );
+        @Bean
+        public HealthIndicator camelHealthIndicator(CamelContext camelContext) {
+            return new CamelHealthIndicator(camelContext);
         }
+
     }
 
 }
