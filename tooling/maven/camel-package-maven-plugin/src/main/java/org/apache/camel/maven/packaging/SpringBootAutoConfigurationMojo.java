@@ -78,7 +78,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -2242,7 +2241,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         parentClass.addImport(ConditionMessage.class);
         parentClass.addImport(ConditionContext.class);
         parentClass.addImport(ConditionOutcome.class);
-        parentClass.addImport(RelaxedPropertyResolver.class);
+        parentClass.addImport("org.apache.camel.spring.boot.util.RelaxedPropertyResolver");
         parentClass.addImport(AnnotatedTypeMetadata.class);
         parentClass.addImport(SpringBootCondition.class);
 

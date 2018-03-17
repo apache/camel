@@ -46,7 +46,7 @@
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=quartz</camel.osgi.export.service>
     <!-- Spring 4.1.x only Compatible with Quartz 2.1.4 and higher -->
     <!-- Here we just override the spring-version to spring 4.0.x -->
-    <spring-version>${spring40-version}</spring-version>
+    <spring-version>4.0.9.RELEASE</spring-version>
   </properties>
 
   <dependencies>
