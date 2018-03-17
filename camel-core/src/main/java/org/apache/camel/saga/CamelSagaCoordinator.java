@@ -21,9 +21,9 @@ import java.util.concurrent.CompletableFuture;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.HasId;
 
-
 /**
- * A saga coordinator can be used to register compensators and take the final decision on the saga: compensate or complete (successfully).
+ * A saga coordinator can be used to register compensator's and
+ * take the final decision on the saga: compensate or complete (successfully).
  */
 public interface CamelSagaCoordinator extends HasId {
 
