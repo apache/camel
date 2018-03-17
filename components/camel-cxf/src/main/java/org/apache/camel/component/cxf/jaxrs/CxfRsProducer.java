@@ -865,6 +865,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
                     LOG.trace("Created client factory bean and add to cache for address '{}'", address);
                     
                 } else {
+                    retVal.setAddress(address);
                     LOG.trace("Retrieved client factory bean from cache for address '{}'", address);
                 }
             }
