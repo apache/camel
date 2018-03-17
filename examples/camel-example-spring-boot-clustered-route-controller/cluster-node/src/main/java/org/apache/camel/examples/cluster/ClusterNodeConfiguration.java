@@ -16,19 +16,12 @@
  */
 package org.apache.camel.examples.cluster;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-
 import org.apache.camel.builder.RouteBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ClusterNodeConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClusterNodeConfiguration.class);
 
     @Bean
     public RouteBuilder routeBuilder() {
@@ -51,18 +44,4 @@ public class ClusterNodeConfiguration {
         };
     }
 
-    /**
-     * A small hack to find out the a free port so you can run multiple instances
-     * of the example without having to manually set the property: server.port
-     */
-    @Bean
-    public EmbeddedServletContainerCustomizer containerCustomizer() {
-        return container -> {
-            try (ServerSocket socket = new ServerSocket(0)) {
-                LOGGER.debug("server.port: {}", socket.getLocalPort());
-                container.setPort(socket.getLocalPort());
-            } catch (IOException ignored) {
-            }
-        };
-    }
 }

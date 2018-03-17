@@ -5503,15 +5503,6 @@
       </build>
     </profile>
 
-    <!-- profiles for choosing default spring version -->
-    <profile>
-      <id>spring4</id>
-      <properties>
-        <spring-version>${spring4-version}</spring-version>
-        <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
-      </properties>
-    </profile>
-
     <profile>
       <id>jdk1.8</id>
       <activation>

@@ -33,6 +33,6 @@ public class Database {
     }
 
     public Order findOrder(Integer id) {
-        return orders.findOne(id);
+        return orders.findById(id).get();
     }
 }
