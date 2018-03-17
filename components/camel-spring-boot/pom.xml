@@ -37,6 +37,8 @@
     <label>spring,microservice</label>
 
     <camel.osgi.export.pkg/>
+    <!-- spring boot 1 uses spring 4 -->     
+    <spring-version>${spring4-version}</spring-version>
   </properties>
 
   <dependencies>
