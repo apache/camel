@@ -41,10 +41,10 @@ The Saga EIP supports 6 options which are listed below:
 The following properties are set on each Exchange that is participating to a Saga (normal actions, compensating actions and completions):
 
 [width="100%",cols="4m,2m,5",options="header"]
-|=======================================================================
+|===
 | Property | Type | Description
 | `Long-Running-Action` | `String` | A globally unique identifier for the Saga that can be propagated to remote systems using transport-level headers (e.g. HTTP).
-|=======================================================================
+|===
 
 === Saga Service Configuration
 The Saga EIP requires that a service implementing the interface `org.apache.camel.saga.CamelSagaService` is added to the Camel context.
@@ -120,9 +120,9 @@ sagaService.setLocalParticipantUrl("http://my-host-as-seen-by-lra-service:8080/c
 context.addService(sagaService);
 ----
 
-===== Using the LRA Saga Service in Spring-Boot
+===== Using the LRA Saga Service in Spring Boot
 
-Spring-Boot users can use a simplified configuration model for the LRA Saga Service. Maven users can
+Spring Boot users can use a simplified configuration model for the LRA Saga Service. Maven users can
 include the *camel-lra-starter* module in their project:
 
 [source,xml]
@@ -142,7 +142,7 @@ include the *camel-lra-starter* module in their project:
 </dependency>
 ----
 
-Configuration can be done in the Spring-Boot `application.yaml` file:
+Configuration can be done in the Spring Boot `application.yaml` file:
 
 .application.yaml
 [source,yaml]
@@ -333,7 +333,7 @@ Since the _direct:creditReservation_ endpoint can be now called also from outsid
 Sagas are long running actions, but this does not mean that they should not have a bounded timeframe to execute.
 *Setting timeouts on Sagas is always a good practice* as it guarantees that a Saga does not remain stuck forever in the case of machine failure.
 
-NOTE: the Saga EIP implementation may have a default timeout set on all Sagas that don't specify it explicitly
+NOTE: The Saga EIP implementation may have a default timeout set on all Sagas that don't specify it explicitly
 
 When the timeout expires, the Saga EIP will decide to *cancel the Saga* (and compensate all participants), unless a different decision has been taken before.
 
@@ -371,7 +371,7 @@ that is the default propagation used when nothing else is specified.
 These propagation modes map 1:1 the equivalent modes used in transactional contexts. Here's a summary of their meaning:
 
 [width="100%",cols="2m,8",options="header"]
-|=======================================================================
+|===
 | Propagation | Description
 | `REQUIRED` | Join the existing saga or create a new one if it does not exist.
 | `REQUIRES_NEW` | Always create a new saga. Suspend the old saga and resume it when the new one terminates.
@@ -379,7 +379,7 @@ These propagation modes map 1:1 the equivalent modes used in transactional conte
 | `SUPPORTS` | If a saga already exists, then join it.
 | `NOT_SUPPORTED` | If a saga already exists, it is suspended and resumed when the current block completes.
 | `NEVER` | The current block must never be invoked within a saga.
-|=======================================================================
+|===
 
 ==== Using Manual Completion (Advanced)
 When a Saga cannot be all executed in a synchronous way, but it requires e.g. communication with external services using asynchronous communication channels,

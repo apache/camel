@@ -36,7 +36,8 @@ public class CamelSagaStep {
 
     private Optional<Long> timeoutInMilliseconds;
 
-    public CamelSagaStep(Optional<Endpoint> compensation, Optional<Endpoint> completion, Map<String, Expression> options, Optional<Long> timeoutInMilliseconds) {
+    public CamelSagaStep(Optional<Endpoint> compensation, Optional<Endpoint> completion,
+                         Map<String, Expression> options, Optional<Long> timeoutInMilliseconds) {
         this.compensation = ObjectHelper.notNull(compensation, "compensation");
         this.completion = ObjectHelper.notNull(completion, "completionCallbacks");
         this.options = ObjectHelper.notNull(options, "options");
