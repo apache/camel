@@ -3750,7 +3750,7 @@
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
-        <version>6.8.21</version>
+        <version>6.14.2</version>
       </dependency>
       <dependency>
         <groupId>rhino</groupId>
