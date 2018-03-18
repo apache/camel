@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.soap.security.wss4j.Wss4jSecurityInterceptor;
+import org.springframework.ws.soap.security.wss4j2.Wss4jSecurityInterceptor;
 
 public class ProducerWss4JSecurityHeaderTestInterceptor extends Wss4jSecurityInterceptor {
 
