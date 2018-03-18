@@ -19,7 +19,7 @@ const rename = require('gulp-rename');
 const chmod = require('gulp-chmod');
 const replace = require('gulp-replace');
 
-const version = process.env.npm_package_version.replace(/-.*/, '');
+const version = (process.env.npm_package_version || require('./package.json').version).replace(/-.*/, '');
 
 gulp.task('docs', ['components-readme', 'components']);
 
