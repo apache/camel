@@ -69,7 +69,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Pdeploy -Dnoassembly -Dmaven.test.skip.exec=true install"
+                sh "./mvnw $MAVEN_PARAMS -Pdeploy -Dnoassembly -Dmaven.test.skip.exec=true deploy:deploy"
             }
         }
     }
