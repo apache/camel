@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.interceptor.Fault;
-import org.apache.cxf.interceptor.OutFaultChainInitiatorObserver;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
