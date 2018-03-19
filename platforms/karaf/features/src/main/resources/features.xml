@@ -21,6 +21,7 @@
   <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf-version}/xml/features</repository>
   <repository>mvn:org.apache.jclouds.karaf/jclouds-karaf/${jclouds-version}/xml/features</repository>
   <repository>mvn:org.ops4j.pax.cdi/pax-cdi-features/${pax-cdi-version}/xml/features</repository>
+  <repository>mvn:org.hibernate.validator/hibernate-validator-osgi-karaf-features/${hibernate-validator-version}/xml/features</repository>
 
   <feature name='xml-specs-api' version='${servicemix-specs-version}' resolver='(obr)' start-level='10'>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/${servicemix-specs-version}</bundle>
@@ -223,12 +224,7 @@
   </feature>
   <feature name='camel-bean-validator' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-api-version}</bundle>
-    <bundle dependency='true'>mvn:javax.el/javax.el-api/${javax.el-api-version}</bundle>
-    <bundle dependency='true'>mvn:org.glassfish.web/javax.el/${javax.el-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml/classmate/${classmate-version}</bundle>
-    <bundle dependency='true'>mvn:org.hibernate/hibernate-validator/${hibernate-validator-version}</bundle>
-    <bundle dependency='true'>mvn:org.jboss.logging/jboss-logging/${jboss-logging-version}</bundle>
+    <feature version='${hibernate-validator-version}'>hibernate-validator</feature>
     <bundle>mvn:org.apache.camel/camel-bean-validator/${project.version}</bundle>
   </feature>
   <feature name='camel-beanio' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -379,17 +375,11 @@
   <feature name='camel-cm-sms' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${cxf-version-range}'>cxf-specs</feature>
+    <feature version='${hibernate-validator-version}'>hibernate-validator</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.libphonenumber/${libphonenumber-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
-    <bundle dependency='true'>mvn:org.jsoup/jsoup/${jsoup-version}</bundle>
-    <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-api-version}</bundle>
-    <bundle dependency='true'>mvn:javax.el/javax.el-api/${javax.el-api-version}</bundle>
-    <bundle dependency='true'>mvn:org.glassfish.web/javax.el/${javax.el-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml/classmate/${classmate-version}</bundle>
-    <bundle dependency='true'>mvn:org.hibernate/hibernate-validator/${hibernate-validator-version}</bundle>
-    <bundle dependency='true'>mvn:org.jboss.logging/jboss-logging/${jboss-logging-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cm-sms/${project.version}</bundle>
   </feature>
   <feature name='camel-cmis' version='${project.version}' resolver='(obr)' start-level='50'>
