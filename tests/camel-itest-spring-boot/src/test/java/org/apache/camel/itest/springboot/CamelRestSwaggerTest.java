@@ -35,6 +35,8 @@ public class CamelRestSwaggerTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelRestSwaggerTest.class))
+                .unitTestsEnabled(false)
+                .includeTestDependencies(false)
                 .build();
     }
 

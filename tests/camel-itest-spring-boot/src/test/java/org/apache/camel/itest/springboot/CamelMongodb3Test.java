@@ -35,6 +35,8 @@ public class CamelMongodb3Test extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelMongodb3Test.class))
+                .includeTestDependencies(false)
+                .unitTestsEnabled(false)
                 .build();
     }
 
