@@ -152,7 +152,6 @@ public final class ArquillianPackager {
         commonExclusions.add(MavenDependencies.createExclusion("log4j", "log4j"));
         commonExclusions.add(MavenDependencies.createExclusion("log4j", "log4j-slf4j-impl"));
         commonExclusions.add(MavenDependencies.createExclusion("org.apache.logging.log4j", "log4j"));
-        commonExclusions.add(MavenDependencies.createExclusion("org.apache.logging.log4j", "log4j-jcl"));
         commonExclusions.add(MavenDependencies.createExclusion("org.apache.logging.log4j", "log4j-core"));
         commonExclusions.add(MavenDependencies.createExclusion("org.apache.logging.log4j", "log4j-slf4j-impl"));
         commonExclusions.add(MavenDependencies.createExclusion("log4j", "apache-log4j-extras"));
@@ -301,6 +300,8 @@ public final class ArquillianPackager {
         ignore.add("com.github.jnr");
         ignore.add("com.sun.xml.bind:jaxb-xjc");
         ignore.add("commons-beanutils:commons-beanutils");
+        ignore.add("io.dropwizard.metrics:metrics-json"); // PR to spring-boot
+        ignore.add("io.dropwizard.metrics:metrics-jvm"); // PR to spring-boot
         ignore.add("io.fabric8:kubernetes-");
         ignore.add("io.netty:netty:jar"); // an old version
         ignore.add("io.netty:netty-tcnative-boringssl-static");
@@ -317,17 +318,24 @@ public final class ArquillianPackager {
         ignore.add("org.apache.logging.log4j:log4j-jcl");
         ignore.add("org.apache.maven");
         ignore.add("org.apache.parquet");
+        ignore.add("org.apache.solr:solr-solrj"); // PR to spring-boot
         ignore.add("org.apache.velocity");
         ignore.add("org.apache.qpid:qpid-jms-client");
         ignore.add("org.opensaml");
         ignore.add("org.ow2.asm"); // No problem
         ignore.add("org.codehaus.plexus");
+        ignore.add("org.eclipse.jetty.websocket:websocket-api"); // PR to spring-boot
+        ignore.add("org.infinispan");
         ignore.add("org.jboss.arquillian.container");
+        ignore.add("org.jboss.logging");
+        ignore.add("org.jboss.marshalling");
         ignore.add("org.jboss:");
         ignore.add("org.hibernate:hibernate-validator"); // does not match with hibernate-core
         ignore.add("org.mortbay.jetty:servlet-api-2.5");
         ignore.add("org.scala-lang:scala-compiler");
+        ignore.add("org.slf4j:slf4j-ext"); // PR to spring-boot
         ignore.add("org.easytesting");
+        ignore.add("net.java.dev.jna:jna-platform"); // PR to spring-boot
         ignore.add("net.openhft");
         ignore.add("org.scala-lang.modules:scala-java8-compat_2.11");
         ignore.add("net.sourceforge.htmlunit:htmlunit-core-js"); // v 2.21 does not exist
@@ -550,10 +558,6 @@ public final class ArquillianPackager {
     }
 
     private static String enforceExclusions(ITestConfig config, String dependencyXml, List<MavenDependencyExclusion> exclusions) {
-
-        if (dependencyXml.contains("<groupId>org.springframework.boot</groupId>") && dependencyXml.contains("<artifactId>spring-boot-starter")) {
-            return dependencyXml;
-        }
 
         if (!dependencyXml.contains("<exclusions>")) {
             dependencyXml = dependencyXml.replace("</dependency>", "<exclusions></exclusions></dependency>");
