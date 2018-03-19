@@ -45,7 +45,7 @@ public class CamelSpringCloudDiscoveryClient implements DiscoveryClient {
         return description;
     }
 
-    @Override
+    @Deprecated
     public ServiceInstance getLocalServiceInstance() {
         return this.localInstance;
     }
