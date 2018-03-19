@@ -37,7 +37,22 @@
     <label>spring,microservice</label>
 
     <camel.osgi.export.pkg/>
+
+    <spring-cloud-commons-version>2.0.0.M7</spring-cloud-commons-version>
+    <spring-cloud-ribbon-version>2.0.0.M2</spring-cloud-ribbon-version>
   </properties>
+
+  <!-- spring-cloud with support for spring boot 2 is not in maven central yet -->
+  <repositories>
+    <repository>
+      <id>spring-milestones</id>
+      <name>Spring Milestones</name>
+      <url>https://repo.spring.io/libs-milestone</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <dependencies>
     <dependency>
@@ -108,7 +123,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-ribbon</artifactId>
-      <version>${spring-cloud-netflix-version}</version>
+      <version>${spring-cloud-ribbon-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
