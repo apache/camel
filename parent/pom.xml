@@ -297,8 +297,8 @@
     <hazelcast-version>3.9.3</hazelcast-version>
     <hbase-version>1.2.6</hbase-version>
     <hessian-version>4.0.51</hessian-version>
-    <hibernate-validator-version>6.0.8.Final</hibernate-validator-version>
-    <hibernate-version>5.2.14.Final</hibernate-version>
+    <hibernate-validator-version>6.0.2.Final</hibernate-validator-version>
+    <hibernate-version>5.0.12.Final</hibernate-version>
     <hikaricp-version>2.3.13</hikaricp-version>
     <hk2-version>2.3.0</hk2-version>
     <hk2-osgi-resource-version>1.0.1</hk2-osgi-resource-version>
@@ -356,6 +356,8 @@
     <javassist-version>3.20.0-GA</javassist-version>
     <javax.el-api-version>2.2.5</javax.el-api-version>
     <javax.el-version>2.2.5</javax.el-version>
+    <javax.el-api-hibernate-validator-version>3.0.1-b04</javax.el-api-hibernate-validator-version>
+    <javax.el-hibernate-validator-version>3.0.1-b10</javax.el-hibernate-validator-version>
     <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
     <javax-mail-version>1.6.1</javax-mail-version>
     <javax.servlet-api-version>3.1.0</javax.servlet-api-version>
