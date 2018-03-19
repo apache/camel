@@ -37,6 +37,8 @@ public class CamelCassandraqlTest extends AbstractSpringBootTestSupport {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelCassandraqlTest.class))
                 .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|CassandraComponentProducerTest$|CassandraComponentBeanRefTest$|CassandraComponentConsumerTest$)")
+                .includeTestDependencies(false)
+                .unitTestsEnabled(false)
                 .build();
     }
 

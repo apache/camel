@@ -35,6 +35,8 @@ public class CamelMongodbGridfsTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelMongodbGridfsTest.class))
+                .includeTestDependencies(false)
+                .unitTestsEnabled(false)
                 .build();
     }
 
