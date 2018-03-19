@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.Response;
 
@@ -28,7 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfOperationException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
