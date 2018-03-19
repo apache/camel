@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class ITestConfig implements Serializable {
 
-    private static final int DEFAULT_SPRING_BOOT_MAJOR_VERSION = 1;
+    private static final int DEFAULT_SPRING_BOOT_MAJOR_VERSION = 2;
 
     private static final long serialVersionUID = -3641997669166217595L;
 
