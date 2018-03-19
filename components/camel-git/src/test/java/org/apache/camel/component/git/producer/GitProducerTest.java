@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.CamelExecutionException;
@@ -719,6 +720,32 @@ public class GitProducerTest extends GitTestSupport {
         assertTrue(cleaned.contains(filenameToAdd));
         git.close();
     }
+    
+    @Test
+    public void gcTest() throws Exception {
+        Git git = getGitTestRepository();
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        fileToAdd.createNewFile();
+        git.add().addFilepattern(filenameToAdd).call();
+        Status status = git.status().call();
+        assertTrue(status.getAdded().contains(filenameToAdd));
+        git.commit().setMessage(commitMessage).call();
+
+        // Test camel-git commit (with no changes)
+        template.requestBodyAndHeader("direct:commit", "", GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
+
+        // Check that it has been commited twice
+        validateGitLogs(git, commitMessage, commitMessage);
+
+        // Test camel-git add
+        Properties gcResult = template.requestBodyAndHeader("direct:gc", "", GitConstants.GIT_FILE_NAME, filenameToAdd, Properties.class);
+
+
+        assertNotNull(gcResult);
+        git.close();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -752,6 +779,7 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:cherrypick-master").to("git://" + gitLocalRepo + "?operation=cherryPick&branchName=refs/heads/master");
                 from("direct:pull").to("git://" + gitLocalRepo + "?remoteName=origin&operation=pull");
                 from("direct:clean").to("git://" + gitLocalRepo + "?operation=clean");
+                from("direct:gc").to("git://" + gitLocalRepo + "?operation=gc");
                 from("direct:remoteAdd").to("git://" + gitLocalRepo + "?operation=remoteAdd&remotePath=https://github.com/oscerd/json-webserver-example.git&remoteName=origin");
                 from("direct:remoteList").to("git://" + gitLocalRepo + "?operation=remoteList");
             }
