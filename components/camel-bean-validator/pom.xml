@@ -63,12 +63,12 @@
     <dependency>
       <groupId>javax.el</groupId>
       <artifactId>javax.el-api</artifactId>
-      <version>${javax.el-api-version}</version>
+      <version>${javax.el-api-hibernate-validator-version}</version>
     </dependency>
     <dependency>
-      <groupId>org.glassfish.web</groupId>
+      <groupId>org.glassfish</groupId>
       <artifactId>javax.el</artifactId>
-      <version>${javax.el-version}</version>
+      <version>${javax.el-hibernate-validator-version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
