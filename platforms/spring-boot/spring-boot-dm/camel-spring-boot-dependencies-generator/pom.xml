@@ -106,7 +106,7 @@
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot-version}</version>
               </bom>
-              <!-- Other BOMs used by SB are transitively imported now -->
+              <!-- Other BOMs imported by SB are now checked transitively -->
             </boms>
           </checkConflicts>
           <dependencies>
@@ -126,6 +126,7 @@
               <exclude>org.apache.httpcomponents:httpclient-cache</exclude>
               <exclude>org.apache.httpcomponents:httpclient-osgi</exclude>
               <exclude>org.apache.httpcomponents:httpcore</exclude>
+              <exclude>org.apache.httpcomponents:httpcore-nio</exclude>
               <exclude>org.apache.httpcomponents:httpmime</exclude>
               <exclude>org.apache.derby:derby</exclude>
               <exclude>org.apache.logging.log4j:*</exclude>
@@ -135,7 +136,11 @@
               <exclude>org.hsqldb:*</exclude>
               <exclude>org.mockito:*</exclude>
 
-              <exclude>org.slf4j:*</exclude>
+              <exclude>org.slf4j:jul-to-slf4j</exclude>
+              <exclude>org.slf4j:log4j-over-slf4j</exclude>
+              <exclude>org.slf4j:slf4j-api</exclude>
+              <exclude>org.slf4j:slf4j-log4j12</exclude>
+              <exclude>org.slf4j:slf4j-simple</exclude>
 
               <exclude>org.springframework*:*</exclude>
 
@@ -164,7 +169,9 @@
               <exclude>org.scala-lang:*</exclude>
               <exclude>org.apache.lucene:*</exclude>
 
-
+              <!-- Jetty -->
+              <exclude>org.eclipse.jetty:jetty-rewrite</exclude>
+              <exclude>org.eclipse.jetty:jetty-util-ajax</exclude>
 
               <!-- Unrelated -->
               <exclude>org.apache.servicemix.bundles:*</exclude>
