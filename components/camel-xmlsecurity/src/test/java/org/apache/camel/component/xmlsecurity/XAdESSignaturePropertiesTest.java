@@ -838,7 +838,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         checkXpath(doc, xpathString, prefix2Namespace, expectedResult, false);
     }
         
-   static void checkXpath(Document doc, String xpathString, final Map<String, String> prefix2Namespace, String expectedResult, boolean startsWith)
+    static void checkXpath(Document doc, String xpathString, final Map<String, String> prefix2Namespace, String expectedResult, boolean startsWith)
             throws XPathExpressionException {
 
         XPathExpression expr = getXpath(xpathString, prefix2Namespace);
