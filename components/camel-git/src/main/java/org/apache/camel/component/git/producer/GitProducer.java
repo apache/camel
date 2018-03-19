@@ -19,6 +19,7 @@ package org.apache.camel.component.git.producer;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.git.GitConstants;
@@ -150,6 +151,10 @@ public class GitProducer extends DefaultProducer {
 
         case GitOperation.SHOW_BRANCHES:
             doShowBranches(exchange, operation);
+            break;
+           
+        case GitOperation.CLEAN_OPERATION:
+            doClean(exchange, operation);
             break;
 
         case GitOperation.REMOTE_ADD_OPERATION:
@@ -461,6 +466,20 @@ public class GitProducer extends DefaultProducer {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             result = git.cherryPick().include(commit).call();
+        } catch (Exception e) {
+            LOG.error("There was an error in Git " + operation + " operation");
+            throw e;
+        }
+        updateExchange(exchange, result);
+    }
+    
+    protected void doClean(Exchange exchange, String operation) throws Exception {
+        Set<String> result = null;
+        try {
+            if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
+                git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
+            }
+            result = git.clean().setCleanDirectories(true).call();
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -703,6 +704,21 @@ public class GitProducerTest extends GitTestSupport {
         assertEquals(gitRemoteConfigs.get(0).getURIs(), remoteConfigs.get(0).getURIs());
         git.close();
     }
+    
+    @Test
+    public void cleanTest() throws Exception {
+        Git git = getGitTestRepository();
+        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        fileToAdd.createNewFile();
+
+        // Test camel-git add
+        Set<String> cleaned = template.requestBodyAndHeader("direct:clean", "", GitConstants.GIT_FILE_NAME, filenameToAdd, Set.class);
+
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        assertTrue(cleaned.contains(filenameToAdd));
+        git.close();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -735,6 +751,7 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:cherrypick").to("git://" + gitLocalRepo + "?operation=cherryPick&branchName=" + branchTest);
                 from("direct:cherrypick-master").to("git://" + gitLocalRepo + "?operation=cherryPick&branchName=refs/heads/master");
                 from("direct:pull").to("git://" + gitLocalRepo + "?remoteName=origin&operation=pull");
+                from("direct:clean").to("git://" + gitLocalRepo + "?operation=clean");
                 from("direct:remoteAdd").to("git://" + gitLocalRepo + "?operation=remoteAdd&remotePath=https://github.com/oscerd/json-webserver-example.git&remoteName=origin");
                 from("direct:remoteList").to("git://" + gitLocalRepo + "?operation=remoteList");
             }
