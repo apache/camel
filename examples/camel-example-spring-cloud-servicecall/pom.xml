@@ -34,9 +34,21 @@
   <description>An example showing how to work with Camel ServiceCall EIP and Spring Cloud</description>
   <packaging>pom</packaging>
 
-    <properties>
+  <properties>
     <category>Cloud</category>
   </properties>
+
+  <!-- spring-cloud with support for spring boot 2 is not in maven central yet -->
+  <repositories>
+    <repository>
+      <id>spring-milestones</id>
+      <name>Spring Milestones</name>
+      <url>https://repo.spring.io/libs-milestone</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <modules>
     <module>consumer</module>
