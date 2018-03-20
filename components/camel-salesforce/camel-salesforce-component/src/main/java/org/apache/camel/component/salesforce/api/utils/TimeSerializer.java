@@ -17,7 +17,7 @@
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.io.IOException;
-import java.time.LocalTime;
+import java.time.OffsetTime;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JavaType;
@@ -27,20 +27,20 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 
 
-public class TimeSerializer extends JsonSerializer<LocalTime> {
+public class TimeSerializer extends JsonSerializer<OffsetTime> {
 
     public TimeSerializer() {
         super();
     }
 
     @Override
-    public void serialize(LocalTime time, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+    public void serialize(OffsetTime time, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeString(DateTimeUtils.formatTime(time));
     }
 
     @Override
-    public Class<LocalTime> handledType() {
-        return LocalTime.class;
+    public Class<OffsetTime> handledType() {
+        return OffsetTime.class;
     }
 
     @Override
