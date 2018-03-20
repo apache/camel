@@ -69,8 +69,10 @@ public class KinesisFirehoseEndpoint extends DefaultEndpoint {
     
     @Override
     public void doStop() throws Exception {
-        if (kinesisFirehoseClient != null) {
-            kinesisFirehoseClient.shutdown();
+        if (ObjectHelper.isEmpty(configuration.getAmazonKinesisFirehoseClient())) {
+            if (kinesisFirehoseClient != null) {
+                kinesisFirehoseClient.shutdown();
+            }
         }
         super.doStop();
     }
