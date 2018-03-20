@@ -155,8 +155,10 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     
     @Override
     public void doStop() throws Exception {
-        if (snsClient != null) {
-            snsClient.shutdown();
+        if (ObjectHelper.isEmpty(configuration.getAmazonSNSClient())) {
+            if (snsClient != null) {
+                snsClient.shutdown();
+            }
         }
         super.doStop();
     }
