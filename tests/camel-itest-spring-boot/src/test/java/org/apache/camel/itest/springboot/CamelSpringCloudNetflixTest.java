@@ -20,11 +20,13 @@ import org.apache.camel.itest.springboot.util.ArquillianPackager;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 
 @RunWith(Arquillian.class)
+@Ignore("Spring-Cloud referenced in Spring-Boot 2.0.0.RELEASE is not GA")
 public class CamelSpringCloudNetflixTest extends AbstractSpringBootTestSupport {
 
     @Deployment
