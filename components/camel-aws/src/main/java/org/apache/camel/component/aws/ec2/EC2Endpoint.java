@@ -72,8 +72,10 @@ public class EC2Endpoint extends ScheduledPollEndpoint {
     
     @Override
     public void doStop() throws Exception {
-        if (ec2Client != null) {
-            ec2Client.shutdown();
+        if (ObjectHelper.isEmpty(configuration.getAmazonEc2Client())) {
+            if (ec2Client != null) {
+                ec2Client.shutdown();
+            }
         }
         super.doStop();
     }
