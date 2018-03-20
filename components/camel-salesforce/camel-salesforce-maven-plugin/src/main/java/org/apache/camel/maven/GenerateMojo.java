@@ -116,8 +116,11 @@ public class GenerateMojo extends AbstractSalesforceMojo {
                 return description.getName() + "_" + enumTypeName(field.getName()) + "[]";
             } else {
                 // map field to Java type
-                final String soapType = field.getSoapType();
-                final String type = LOOKUP_MAP.get(soapType.substring(soapType.indexOf(':') + 1));
+                final String soapType = field.getSoapType().split(":",2)[1];
+                final String type = (
+                        (soapType.equals("date")&&useZonedTimeDateForDate) ||
+                        (soapType.equals("time")&&useZonedTimeDateForTime) )
+                        ? "java.time.ZonedDateTime" : LOOKUP_MAP.get(soapType);
                 if (type == null) {
                     getLog().warn(String.format("Unsupported field type %s in field %s of object %s", soapType,
                         field.getName(), description.getName()));
@@ -316,6 +319,18 @@ public class GenerateMojo extends AbstractSalesforceMojo {
     @Parameter(property = "camelSalesforce.useStringsForPicklists", defaultValue = "false")
     private Boolean useStringsForPicklists;
 
+    /**
+     * Generator will use java.time.ZonedTimeDate for Date if set to true, else it will default to java.time.LocalDate
+     */
+    @Parameter(property = "camelSalesforce.useZonedTimeDateForDate", defaultValue = "false")
+    private boolean useZonedTimeDateForDate;
+ 
+    /**
+     * Generator will use java.time.ZonedTimeDate for Time if set to true, else it will default to java.time.OffsetTime
+     */
+    @Parameter(property = "camelSalesforce.useZonedTimeDateForTime", defaultValue = "false")
+    private boolean useZonedTimeDateForTime;
+    
     void processDescription(final File pkgDir, final SObjectDescription description, final GeneratorUtility utility,
         final String generatedDate) throws IOException {
         // generate a source file for SObject
@@ -475,7 +490,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             {"unsignedInt", "Long"}, //
             {"unsignedShort", "Integer"}, //
             {"unsignedByte", "Short"}, //
-            {"time", "java.time.LocalTime"}, //
+            {"time", "java.time.OffsetTime"}, //
             {"date", "java.time.LocalDate"}, //
             {"g", "java.time.ZonedDateTime"}, //
             // Salesforce maps any types like string, picklist, reference, etc.

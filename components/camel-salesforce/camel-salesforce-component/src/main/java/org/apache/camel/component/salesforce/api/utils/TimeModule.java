@@ -17,7 +17,7 @@
 package org.apache.camel.component.salesforce.api.utils;
 
 
-import java.time.LocalTime;
+import java.time.OffsetTime;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
@@ -25,7 +25,7 @@ public class TimeModule extends SimpleModule {
 
     public TimeModule() {
         super();
-        addSerializer(LocalTime.class, new TimeSerializer());
-        addDeserializer(LocalTime.class, new TimeDeserializer());
+        addSerializer(OffsetTime.class, new TimeSerializer());
+        addDeserializer(OffsetTime.class, new TimeDeserializer());
     }
 }

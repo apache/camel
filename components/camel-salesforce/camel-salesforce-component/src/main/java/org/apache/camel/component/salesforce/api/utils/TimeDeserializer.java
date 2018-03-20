@@ -17,7 +17,7 @@
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.io.IOException;
-import java.time.LocalTime;
+import java.time.OffsetTime;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -26,14 +26,14 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 
-public class TimeDeserializer extends JsonDeserializer<LocalTime> {
+public class TimeDeserializer extends JsonDeserializer<OffsetTime> {
 
     public TimeDeserializer() {
         super();
     }
 
     @Override
-    public LocalTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+    public OffsetTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         JsonToken currentToken = jsonParser.getCurrentToken();
         if (currentToken == JsonToken.VALUE_STRING) {
             return DateTimeUtils.parseTime(jsonParser.getText().trim());
@@ -43,6 +43,6 @@ public class TimeDeserializer extends JsonDeserializer<LocalTime> {
 
     @Override
     public Class<?> handledType() {
-        return LocalTime.class;
+        return OffsetTime.class;
     }
 }
