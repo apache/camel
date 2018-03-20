@@ -1,8 +1,9 @@
+[[ignite-compute-component]]
 == Ignite Compute Component
 
 *Available as of Camel version 2.17*
 
-The Ignite Compute endpoint is one of link:ignite.html[camel-ignite endpoints] which allows you to run https://apacheignite.readme.io/docs/compute-grid[compute operations] on the cluster by passing in an IgniteCallable, an IgniteRunnable, an IgniteClosure, or collections of them, along with their parameters if necessary.
+The Ignite Compute endpoint is one of camel-ignite endpoints which allows you to run https://apacheignite.readme.io/docs/compute-grid[compute operations] on the cluster by passing in an IgniteCallable, an IgniteRunnable, an IgniteClosure, or collections of them, along with their parameters if necessary.
 
 This endpoint only supports producers.
 
@@ -21,7 +22,7 @@ The Ignite Compute component supports 4 options which are listed below.
 |===
 | Name | Description | Default | Type
 | *ignite* (producer) | Sets the Ignite instance. |  | Ignite
-| *configurationResource* (producer) | Sets the resource from where to load the configuration. It can be a: URI String (URI) or an InputStream. |  | Object
+| *configurationResource* (producer) | Sets the resource from where to load the configuration. It can be a: URI, String (URI) or an InputStream. |  | Object
 | *igniteConfiguration* (producer) | Allows the user to set a programmatic IgniteConfiguration. |  | IgniteConfiguration
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
@@ -38,25 +39,28 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *endpointId* | *Required* The endpoint ID (not used). |  | String
 |===
 
+
 ==== Query Parameters (8 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *clusterGroupExpression* (producer) | An expression that returns the Cluster Group for the IgniteCompute instance. |  | ClusterGroupExpression
-| *computeName* (producer) | The name of the compute job which will be set via link IgniteComputewithName(String). |  | String
-| *executionType* (producer) | *Required* The compute operation to perform. Possible values: CALL BROADCAST APPLY EXECUTE RUN AFFINITY_CALL AFFINITY_RUN. The component expects different payload types depending on the operation. |  | IgniteComputeExecution Type
+| *computeName* (producer) | The name of the compute job, which will be set via link IgniteComputewithName(String). |  | String
+| *executionType* (producer) | *Required* The compute operation to perform. Possible values: CALL, BROADCAST, APPLY, EXECUTE, RUN, AFFINITY_CALL, AFFINITY_RUN. The component expects different payload types depending on the operation. |  | IgniteComputeExecution Type
 | *propagateIncomingBodyIfNo ReturnValue* (producer) | Sets whether to propagate the incoming body if the return type of the underlying Ignite operation is void. | true | boolean
-| *taskName* (producer) | The task name only applicable if using the link IgniteComputeExecutionTypeEXECUTE execution type. |  | String
-| *timeoutMillis* (producer) | The timeout interval for triggered jobs in milliseconds which will be set via link IgniteComputewithTimeout(long). |  | Long
-| *treatCollectionsAsCache Objects* (producer) | Sets whether to treat Collections as cache objects or as Collections of items to insert/update/compute etc. | false | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *taskName* (producer) | The task name, only applicable if using the link IgniteComputeExecutionTypeEXECUTE execution type. |  | String
+| *timeoutMillis* (producer) | The timeout interval for triggered jobs, in milliseconds, which will be set via link IgniteComputewithTimeout(long). |  | Long
+| *treatCollectionsAsCache Objects* (producer) | Sets whether to treat Collections as cache objects or as Collections of items to insert/update/compute, etc. | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

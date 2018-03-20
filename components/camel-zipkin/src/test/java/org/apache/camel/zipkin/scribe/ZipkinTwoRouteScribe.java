@@ -17,69 +17,20 @@
 package org.apache.camel.zipkin.scribe;
 
 import com.github.kristofa.brave.scribe.ScribeSpanCollector;
-import org.apache.camel.CamelContext;
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.zipkin.ZipkinTracer;
-import org.junit.Test;
+import org.apache.camel.zipkin.ZipkinTwoRouteTest;
 
 /**
  * Integration test requires running Zipkin/Scribe running
  *
- * The easiest way is to run using zipkin-docker: https://github.com/openzipkin/docker-zipkin
- *
- * Adjust the IP address to what IP docker-machines have assigned, you can use
- * <tt>docker-machines ls</tt>
+ * <p>The easiest way to run is locally:
+ * <pre>{@code
+ * curl -sSL https://zipkin.io/quickstart.sh | bash -s
+ * SCRIBE_ENABLED=true java -jar zipkin.jar
+ * }</pre>
  */
-public class ZipkinTwoRouteScribe extends CamelTestSupport {
-
-    private String ip = "192.168.99.100";
-    private ZipkinTracer zipkin;
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-
-        zipkin = new ZipkinTracer();
-        // we have 2 routes as services
-        zipkin.addClientServiceMapping("seda:cat", "cat");
-        zipkin.addServerServiceMapping("seda:cat", "cat");
-        zipkin.addClientServiceMapping("seda:dog", "dog");
-        zipkin.addServerServiceMapping("seda:dog", "dog");
-        // capture message body as well
-        zipkin.setIncludeMessageBody(true);
-        zipkin.setSpanCollector(new ScribeSpanCollector(ip, 9410));
-
-        // attaching ourself to CamelContext
-        zipkin.init(context);
-
-        return context;
-    }
-
-    @Test
-    public void testZipkinRoute() throws Exception {
-        template.requestBody("direct:start", "Camel say hello Cat");
-    }
-
-    @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("seda:cat");
-
-                from("seda:cat").routeId("cat")
-                        .log("routing at ${routeId}")
-                        .delay(simple("${random(1000,2000)}"))
-                        .setBody().constant("Cat says hello Dog")
-                        .to("seda:dog");
-
-                from("seda:dog").routeId("dog")
-                        .log("routing at ${routeId}")
-                        .delay(simple("${random(0,500)}"))
-                        .setBody().constant("Dog say hello Cat and Camel");
-            }
-        };
+public class ZipkinTwoRouteScribe extends ZipkinTwoRouteTest {
+    @Override protected void setSpanReporter(ZipkinTracer zipkin) {
+        zipkin.setSpanCollector(new ScribeSpanCollector("127.0.0.1", 9410));
     }
 }

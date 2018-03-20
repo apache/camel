@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.box.sdk.BoxAPIConnection;
-import com.box.sdk.BoxFile;
 import com.box.sdk.BoxFolder;
 
 import org.apache.camel.Exchange;

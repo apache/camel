@@ -1,8 +1,9 @@
+[[yaml-snakeyaml-dataformat]]
 == YAML SnakeYAML DataFormat
 
 *Available as of Camel version 2.17*
 
-YAML is a link:data-format.html[Data Format] to marshal and unmarshal
+YAML is a Data Format to marshal and unmarshal
 Java objects to and from http://www.yaml.org/[YAML].
 
 For YAML to object marshalling, Camel provides integration with three
@@ -34,7 +35,7 @@ The YAML SnakeYAML dataformat supports 11 options which are listed below.
 | prettyFlow | false | Boolean | Force the emitter to produce a pretty YAML document when using the flow style.
 | allowAnyType | false | Boolean | Allow any class to be un-marshaled
 | typeFilter |  | List | Set the types SnakeYAML is allowed to un-marshall
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
 
@@ -75,7 +76,7 @@ from("activemq:My.Queue")
 
 ### Using YAML in Spring DSL
 
-When using link:data-format.html[Data Format] in Spring DSL you need to
+When using Data Format in Spring DSL you need to
 declare the data formats first. This is done in the *DataFormats* XML
 tag.
 
@@ -132,7 +133,7 @@ on *camel-snakeyaml* which implements this data format.
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release
-(see link:download.html[the download page for the latest versions]).
+(see the download page for the latest versions).
 
 [source,xml]
 ------------------------------------------

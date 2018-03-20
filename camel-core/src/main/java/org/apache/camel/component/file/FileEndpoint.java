@@ -20,12 +20,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.Metadata;
@@ -111,11 +113,38 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
 
+        if (ObjectHelper.isNotEmpty(getReadLock())) {
+            // check if its a valid
+            String valid = "none,markerFile,fileLock,rename,changed,idempotent,idempotent-changed,idempotent-rename";
+            String[] arr = valid.split(",");
+            boolean matched = Arrays.stream(arr).anyMatch(n -> n.equals(getReadLock()));
+            if (!matched) {
+                throw new IllegalArgumentException("ReadLock invalid: " + getReadLock() + ", must be one of: " + valid);
+            }
+        }
+
         // set max messages per poll
         result.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         result.setEagerLimitMaxMessagesPerPoll(isEagerMaxMessagesPerPoll());
 
         configureConsumer(result);
+        return result;
+    }
+
+    @Override
+    public PollingConsumer createPollingConsumer() throws Exception {
+        ObjectHelper.notNull(operations, "operations");
+        ObjectHelper.notNull(file, "file");
+
+        if (log.isDebugEnabled()) {
+            log.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+                getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout());
+        }
+        GenericFilePollingConsumer result = new GenericFilePollingConsumer(this);
+        // should not call configurePollingConsumer when its GenericFilePollingConsumer
+        result.setBlockWhenFull(isPollingConsumerBlockWhenFull());
+        result.setBlockTimeout(getPollingConsumerBlockTimeout());
+
         return result;
     }
 

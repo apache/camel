@@ -61,7 +61,7 @@ public class LambdaComponentVerifierExtensionTest extends CamelTestSupport {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
         parameters.put("accessKey", "k");
-        parameters.put("region", "us-east-1");
+        parameters.put("region", "US_EAST_1");
         parameters.put("function", "myfunction");
         parameters.put("operation", "invokeFunction");
 

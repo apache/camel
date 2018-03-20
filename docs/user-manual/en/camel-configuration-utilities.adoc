@@ -15,21 +15,21 @@ Supported Components
 The following Camel components directly support the use of this
 configuration utility:
 
-* link:http4.html[HTTP4]
-* link:jetty.html[Jetty]
-* link:ahc.html[AHC]
-* link:netty.html[Netty]
-* link:cometd.html[Cometd]
-* link:ftp2.html[FTP2]
-* link:irc.html[IRC]
-* link:mail.html[Mail]
+* <<http4-component,HTTP4>>
+* <<jetty-component,Jetty>>
+* <<ahc-component,AHC>>
+* <<netty-component,Netty>>
+* <<cometd-component,Cometd>>
+* FTP2
+* <<irc-component,IRC>>
+* <<mail-component,Mail>>
 * MINA 2
 
 The following Camel components indirectly support the use of this
 configuration utility:
 
-* link:cxf.html[CXF]
-* link:http.html[HTTP]
+* <<cxf-component,CXF>>
+* <<http-component,HTTP>>
 
 [[CamelConfigurationUtilities-Configuration]]
 Configuration

@@ -1,6 +1,7 @@
+[[random-eip]]
 == Random EIP
 
 
 // eip options: START
-The Random EIP supports 0 options which are listed below:
+The Random EIP has no options.
 // eip options: END

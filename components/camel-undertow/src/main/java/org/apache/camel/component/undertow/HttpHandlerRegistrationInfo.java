@@ -20,31 +20,32 @@ import java.net.URI;
 
 public class HttpHandlerRegistrationInfo {
 
-    private Boolean matchOnUriPrefix;
-    private String methodRestrict;
-    private URI uri;
+    private final Boolean matchOnUriPrefix;
+    private final String methodRestrict;
+    private final URI uri;
+
+    public HttpHandlerRegistrationInfo(URI uri, String methodRestrict, Boolean matchOnUriPrefix) {
+        super();
+        this.matchOnUriPrefix = matchOnUriPrefix;
+        this.methodRestrict = methodRestrict;
+        this.uri = uri;
+    }
 
     public String getMethodRestrict() {
         return methodRestrict;
-    }
-
-    public void setMethodRestrict(String methodRestrict) {
-        this.methodRestrict = methodRestrict;
     }
 
     public URI getUri() {
         return uri;
     }
 
-    public void setUri(URI uri) {
-        this.uri = uri;
-    }
-
     public Boolean isMatchOnUriPrefix() {
         return matchOnUriPrefix;
     }
 
-    public void setMatchOnUriPrefix(Boolean matchOnUriPrefix) {
-        this.matchOnUriPrefix = matchOnUriPrefix;
+    @Override
+    public String toString() {
+        return uri + "?matchOnUriPrefix=" + matchOnUriPrefix + "&methodRestrict=" + methodRestrict;
     }
+
 }

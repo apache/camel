@@ -18,7 +18,7 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * With the passthrough option
@@ -57,7 +57,7 @@ public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefault
         }
 
         public String decodeKey(String key) {
-            return ObjectHelper.between(key, "FOO", "BAR");
+            return StringHelper.between(key, "FOO", "BAR");
         }
     }
 }

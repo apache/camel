@@ -180,7 +180,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                 AbstractDTOBase dto = in.getBody(AbstractDTOBase.class);
                 if (dto != null) {
                     // marshall the DTO
-                    request = getRequestStream(dto);
+                    request = getRequestStream(in, dto);
                 } else {
                     // if all else fails, get body as String
                     final String body = in.getBody(String.class);
@@ -204,7 +204,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
     }
 
     @Override
-    protected InputStream getRequestStream(final Object object) throws SalesforceException {
+    protected InputStream getRequestStream(final Message in, final Object object) throws SalesforceException {
         final XStream localXStream = xStream.get();
         // first process annotations on the class, for things like alias, etc.
         localXStream.processAnnotations(object.getClass());

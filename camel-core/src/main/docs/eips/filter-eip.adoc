@@ -1,3 +1,4 @@
+[[filter-eip]]
 == Filter EIP
 
 The http://www.enterpriseintegrationpatterns.com/Filter.html[Message
@@ -13,7 +14,7 @@ link:predicate.html[Predicate] is true will be dispatched to *queue:b*
 === EIP options
 
 // eip options: START
-The Filter EIP supports 0 options which are listed below:
+The Filter EIP has no options.
 // eip options: END
 
 === Samples

@@ -53,8 +53,8 @@ public class PrinterProducer extends DefaultProducer {
     
     private void print(InputStream body, String jobName) throws PrintException { 
         if (printerOperations.getPrintService().isDocFlavorSupported(printerOperations.getFlavor())) {
-            PrintDocument printDoc = new PrintDocument(body, printerOperations.getFlavor());        
-            printerOperations.print(printDoc, config.getCopies(), config.isSendToPrinter(), config.getMimeType(), jobName); 
+            PrintDocument printDoc = new PrintDocument(body, printerOperations.getFlavor());
+            printerOperations.print(printDoc, config.isSendToPrinter(), config.getMimeType(), jobName); 
         }
     }
 

@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -30,9 +30,6 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 
-/**
- *
- */
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultWebsocketTest {
 
@@ -64,15 +61,12 @@ public class DefaultWebsocketTest {
     }
 
     @Test
-    public void testOnOpen() {
+    public void testOnConnect() {
         defaultWebsocket.onConnect(session);
 
-        /*
-         * keyCaptor not functional anymore, because addSocket cannot be called with connectionKey
-         * 
-         * InOrder inOrder = inOrder(connection, consumer, sync); ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class); inOrder.verify(sync,
-         * times(1)).addSocket((eq(defaultWebsocket))); inOrder.verifyNoMoreInteractions();
-         */
+        InOrder inOrder = inOrder(session, consumer, sync);
+        inOrder.verify(sync, times(1)).addSocket(defaultWebsocket);
+        inOrder.verifyNoMoreInteractions();
 
         assertEquals(session, defaultWebsocket.getSession());
     }

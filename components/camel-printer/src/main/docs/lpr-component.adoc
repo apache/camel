@@ -1,3 +1,4 @@
+[[lpr-component]]
 == Printer Component
 
 *Available as of Camel version 2.1*
@@ -62,6 +63,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (3 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -70,7 +72,9 @@ with the following path and query parameters:
 | *printername* | Name of the printer |  | String
 |===
 
+
 ==== Query Parameters (11 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -78,14 +82,14 @@ with the following path and query parameters:
 | *copies* (producer) | Number of copies to print | 1 | int
 | *docFlavor* (producer) | Sets DocFlavor to use. |  | DocFlavor
 | *flavor* (producer) | Sets DocFlavor to use. |  | String
-| *mediaSize* (producer) | Sets the stationary as defined by enumeration names in the javax.print.attribute.standard.MediaSizeName API. The default setting is to use North American Letter sized stationary. The value's case is ignored e.g. values of iso_a4 and ISO_A4 may be used. | na-letter | String
-| *mediaTray* (producer) | Sets MediaTray supported by the javax.print.DocFlavor API for example uppermiddle etc. |  | String
+| *mediaSize* (producer) | Sets the stationary as defined by enumeration names in the javax.print.attribute.standard.MediaSizeName API. The default setting is to use North American Letter sized stationary. The value's case is ignored, e.g. values of iso_a4 and ISO_A4 may be used. | na-letter | String
+| *mediaTray* (producer) | Sets MediaTray supported by the javax.print.DocFlavor API, for example upper,middle etc. |  | String
 | *mimeType* (producer) | Sets mimeTypes supported by the javax.print.DocFlavor API |  | String
 | *orientation* (producer) | Sets the page orientation. | portrait | String
-| *printerPrefix* (producer) | Sets the prefix name of the printer it is useful when the printer name does not start with //hostname/printer |  | String
+| *printerPrefix* (producer) | Sets the prefix name of the printer, it is useful when the printer name does not start with //hostname/printer |  | String
 | *sendToPrinter* (producer) | etting this option to false prevents sending of the print data to the printer | true | boolean
 | *sides* (producer) | Sets one sided or two sided printing based on the javax.print.attribute.standard.Sides API | one-sided | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

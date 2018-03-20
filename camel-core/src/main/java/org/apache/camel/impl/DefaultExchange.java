@@ -317,7 +317,7 @@ public final class DefaultExchange implements Exchange {
     public Message getOut() {
         // lazy create
         if (out == null) {
-            out = (in != null && in instanceof MessageSupport)
+            out = (in instanceof MessageSupport)
                 ? ((MessageSupport)in).newInstance() : new DefaultMessage(getContext());
             configureMessage(out);
         }
@@ -349,6 +349,23 @@ public final class DefaultExchange implements Exchange {
         this.out = out;
         configureMessage(out);
     }
+
+    public Message getMessage() {
+        return hasOut() ? getOut() : getIn();
+    }
+
+    public <T> T getMessage(Class<T> type) {
+        return hasOut() ? getOut(type) : getIn(type);
+    }
+
+    public void setMessage(Message message) {
+        if (hasOut()) {
+            setOut(message);
+        } else {
+            setIn(message);
+        }
+    }
+
 
     public Exception getException() {
         return exception;

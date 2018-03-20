@@ -43,7 +43,7 @@ public class RibbonServiceCallServiceLoadBalancerConfigurationCommon {
     private String clientName;
     /**
      * Set client properties to use. These properties are specific to what
-     * service call implementation are in use. For example if using ribbon then
+     * service call implementation are in use. For example if using ribbon, then
      * the client properties are define in
      * com.netflix.client.config.CommonClientConfigKey.
      */

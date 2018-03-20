@@ -20,6 +20,7 @@ import java.util.Date;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -32,11 +33,9 @@ public class CwConfiguration implements Cloneable {
     private String namespace;
     @UriParam
     private AmazonCloudWatch amazonCwClient;
-    @UriParam
-    private String amazonCwEndpoint;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam
     private String name;
@@ -52,18 +51,6 @@ public class CwConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
-    
-
-    /**
-     * The endpoint with which the AWS-CW client wants to work with.
-     */
-    public void setAmazonCwEndpoint(String amazonCwEndpoint) {
-        this.amazonCwEndpoint = amazonCwEndpoint;
-    }
-
-    public String getAmazonCwEndpoint() {
-        return amazonCwEndpoint;
-    }
 
     public String getAccessKey() {
         return accessKey;
@@ -187,4 +174,15 @@ public class CwConfiguration implements Cloneable {
         this.region = region;
     }
 
+    // *************************************************
+    //
+    // *************************************************
+
+    public CwConfiguration copy() {
+        try {
+            return (CwConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
 }

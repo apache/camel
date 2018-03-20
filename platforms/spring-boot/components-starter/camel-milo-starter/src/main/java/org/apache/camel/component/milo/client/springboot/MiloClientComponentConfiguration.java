@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.milo.client.springboot;
 
+import java.util.Set;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -154,10 +155,6 @@ public class MiloClientComponentConfiguration
          */
         private Long maxResponseMessageSize;
         /**
-         * Whether secure channel re-authentication is enabled
-         */
-        private Boolean secureChannelReauthenticationEnabled;
-        /**
          * The key store type
          */
         private String keyStoreType;
@@ -173,6 +170,16 @@ public class MiloClientComponentConfiguration
          * The key password
          */
         private String keyPassword;
+        /**
+         * A set of allowed security policy URIs. Default is to accept all and
+         * use the highest.
+         */
+        private Set allowedSecurityPolicies;
+        /**
+         * Override the server reported endpoint host with the host from the
+         * endpoint URI.
+         */
+        private Boolean overrideHost = false;
 
         public String getEndpointUri() {
             return endpointUri;
@@ -262,15 +269,6 @@ public class MiloClientComponentConfiguration
             this.maxResponseMessageSize = maxResponseMessageSize;
         }
 
-        public Boolean getSecureChannelReauthenticationEnabled() {
-            return secureChannelReauthenticationEnabled;
-        }
-
-        public void setSecureChannelReauthenticationEnabled(
-                Boolean secureChannelReauthenticationEnabled) {
-            this.secureChannelReauthenticationEnabled = secureChannelReauthenticationEnabled;
-        }
-
         public String getKeyStoreType() {
             return keyStoreType;
         }
@@ -301,6 +299,22 @@ public class MiloClientComponentConfiguration
 
         public void setKeyPassword(String keyPassword) {
             this.keyPassword = keyPassword;
+        }
+
+        public Set getAllowedSecurityPolicies() {
+            return allowedSecurityPolicies;
+        }
+
+        public void setAllowedSecurityPolicies(Set allowedSecurityPolicies) {
+            this.allowedSecurityPolicies = allowedSecurityPolicies;
+        }
+
+        public Boolean getOverrideHost() {
+            return overrideHost;
+        }
+
+        public void setOverrideHost(Boolean overrideHost) {
+            this.overrideHost = overrideHost;
         }
     }
 }

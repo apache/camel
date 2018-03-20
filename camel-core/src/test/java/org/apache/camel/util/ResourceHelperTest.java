@@ -16,13 +16,11 @@
  */
 package org.apache.camel.util;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
@@ -96,6 +94,60 @@ public class ResourceHelperTest extends TestSupport {
         String text = context.getTypeConverter().convertTo(String.class, is);
         assertNotNull(text);
         assertTrue(text.contains("log4j"));
+        is.close();
+
+        context.stop();
+    }
+
+    public void testLoadBeanDoubleColon() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
+        registry.put("myBean", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
+
+        CamelContext context = new DefaultCamelContext(registry);
+        context.start();
+
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "bean:myBean::get");
+        assertNotNull(is);
+
+        String text = context.getTypeConverter().convertTo(String.class, is);
+        assertNotNull(text);
+        assertEquals(text, "a");
+        is.close();
+
+        context.stop();
+    }
+
+    public void testLoadBeanDoubleColonLong() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
+        registry.put("my.company.MyClass", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
+
+        CamelContext context = new DefaultCamelContext(registry);
+        context.start();
+
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "bean:my.company.MyClass::get");
+        assertNotNull(is);
+
+        String text = context.getTypeConverter().convertTo(String.class, is);
+        assertNotNull(text);
+        assertEquals(text, "a");
+        is.close();
+
+        context.stop();
+    }
+
+    public void testLoadBeanDot() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
+        registry.put("myBean", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
+
+        CamelContext context = new DefaultCamelContext(registry);
+        context.start();
+
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "bean:myBean.get");
+        assertNotNull(is);
+
+        String text = context.getTypeConverter().convertTo(String.class, is);
+        assertNotNull(text);
+        assertEquals(text, "a");
         is.close();
 
         context.stop();

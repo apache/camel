@@ -85,6 +85,9 @@ public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
             return;
         }
 
+        // moved file after its processed
+        String movedFile = FTP_ROOT_DIR + "/.camel/" + SAMPLE_FILE_NAME_2;
+
         // prepare sample file to be consumed by SFTP consumer
         createSampleFile(SAMPLE_FILE_NAME_2);
 
@@ -92,20 +95,13 @@ public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(SAMPLE_FILE_PAYLOAD);
+        // use mock to assert that the file will be moved there eventually
+        mock.expectedFileExists(movedFile);
 
         context.startRoute("bar");
 
         // Check that expectations are satisfied
         assertMockEndpointsSatisfied();
-
-        // give it a second to move the file
-        Thread.sleep(1000);
-
-        // File is moved
-        assertTrue(fileRemovedEventually(FTP_ROOT_DIR + "/" + SAMPLE_FILE_NAME_2));
-        File file = new File(FTP_ROOT_DIR + "/.camel/" + SAMPLE_FILE_NAME_2);
-        assertTrue(file.exists());
-        file.delete();
     }
 
     @Override

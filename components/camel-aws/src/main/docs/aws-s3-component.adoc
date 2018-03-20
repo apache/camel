@@ -1,3 +1,4 @@
+[[aws-s3-component]]
 == AWS S3 Storage Service Component
 
 *Available as of Camel version 2.8*
@@ -35,7 +36,19 @@ from("aws-s3:helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=
 
 
 // component options: START
-The AWS S3 Storage Service component has no options.
+The AWS S3 Storage Service component supports 5 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The AWS S3 default configuration |  | S3Configuration
+| *accessKey* (common) | Amazon AWS Access Key |  | String
+| *secretKey* (common) | Amazon AWS Secret Key |  | String
+| *region* (common) | The region where the bucket is located. This option is used in the com.amazonaws.services.s3.model.CreateBucketRequest. |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
@@ -59,60 +72,70 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *bucketNameOrArn* | *Required* Bucket name or ARN |  | String
 |===
 
-==== Query Parameters (43 parameters):
+
+==== Query Parameters (50 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *accessKey* (common) | Amazon AWS Access Key |  | String
 | *amazonS3Client* (common) | Reference to a com.amazonaws.services.sqs.AmazonS3 in the link:registry.htmlRegistry. |  | AmazonS3
-| *amazonS3Endpoint* (common) | The region with which the AWS-S3 client wants to work with. |  | String
-| *encryptionMaterials* (common) | The encryption materials to use in case of Symmetric/Asymmetric client usage |  | EncryptionMaterials
 | *pathStyleAccess* (common) | Whether or not the S3 client should use path style access | false | boolean
 | *policy* (common) | The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3setBucketPolicy() method. |  | String
 | *proxyHost* (common) | To define a proxy host when instantiating the SQS client |  | String
 | *proxyPort* (common) | Specify a proxy port to be used inside the client definition. |  | Integer
-| *secretKey* (common) | Amazon AWS Secret Key |  | String
+| *region* (common) | The region in which S3 client needs to work |  | String
+| *useIAMCredentials* (common) | Set whether the S3 client should expect to load credentials on an EC2 instance or to expect static credentials to be passed in. | false | boolean
+| *encryptionMaterials* (common) | The encryption materials to use in case of Symmetric/Asymmetric client usage |  | EncryptionMaterials
 | *useEncryption* (common) | Define if encryption must be used or not | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *deleteAfterRead* (consumer) | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs the object is not deleted. If this option is false then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the link S3ConstantsBUCKET_NAME and link S3ConstantsKEY headers or only the link S3ConstantsKEY header. | true | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *deleteAfterRead* (consumer) | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the link S3ConstantsBUCKET_NAME and link S3ConstantsKEY headers, or only the link S3ConstantsKEY header. | true | boolean
 | *fileName* (consumer) | To get the object from the bucket with the given file name |  | String
-| *includeBody* (consumer) | If it is true the exchange body will be set to a stream to the contents of the file. If false the headers will be set with the S3 object metadata but the body will be null. This option is strongly related to autocloseBody option. In case of setting includeBody to true and autocloseBody to false it will be up to the caller to close the S3Object stream. Setting autocloseBody to true will close the S3Object stream automatically. | true | boolean
+| *includeBody* (consumer) | If it is true, the exchange body will be set to a stream to the contents of the file. If false, the headers will be set with the S3 object metadata, but the body will be null. This option is strongly related to autocloseBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically. | true | boolean
 | *maxConnections* (consumer) | Set the maxConnections parameter in the S3 client configuration | 60 | int
-| *maxMessagesPerPoll* (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited but use 0 or negative number to disable it as unlimited. | 10 | int
+| *maxMessagesPerPoll* (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited, but use 0 or negative number to disable it as unlimited. | 10 | int
 | *prefix* (consumer) | The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
-| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
-| *autocloseBody* (consumer) | If this option is true and includeBody is true then the S3Object.close() method will be called on exchange completion. This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false it will be up to the caller to close the S3Object stream. Setting autocloseBody to true will close the S3Object stream automatically. | true | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *autocloseBody* (consumer) | If this option is true and includeBody is true, then the S3Object.close() method will be called on exchange completion. This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically. | true | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
 | *deleteAfterWrite* (producer) | Delete file object after the S3 file has been uploaded | false | boolean
-| *multiPartUpload* (producer) | If it is true camel will upload the file with multi part format the part size is decided by the option of partSize | false | boolean
+| *multiPartUpload* (producer) | If it is true, camel will upload the file with multi part format, the part size is decided by the option of partSize | false | boolean
 | *operation* (producer) | The operation to do in case the user don't want to do only an upload |  | S3Operations
-| *partSize* (producer) | Setup the partSize which is used in multi part upload the default size is 25M. | 26214400 | long
-| *region* (producer) | The region where the bucket is located. This option is used in the com.amazonaws.services.s3.model.CreateBucketRequest. |  | String
+| *partSize* (producer) | Setup the partSize which is used in multi part upload, the default size is 25M. | 26214400 | long
 | *serverSideEncryption* (producer) | Sets the server-side encryption algorithm when encrypting the object using AWS-managed keys. For example use AES256. |  | String
 | *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *awsKMSKeyId* (producer) | Define the id of KMS key to use in case KMS is enabled |  | String
+| *useAwsKMS* (producer) | Define if KMS must be used or not | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accelerateModeEnabled* ( advanced) | Define if Accelerate Mode enabled is true or false | false | boolean
+| *chunkedEncodingDisabled* ( advanced) | Define if disabled Chunked Encoding is true or false | false | boolean
+| *dualstackEnabled* ( advanced) | Define if Dualstack enabled is true or false | false | boolean
+| *forceGlobalBucketAccess Enabled* ( advanced) | Define if Force Global Bucket Access enabled is true or false | false | boolean
+| *payloadSigningEnabled* ( advanced) | Define if Payload Signing enabled is true or false | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
-| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 500 | long
-| *greedy* (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
-| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
 | *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
 | *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
 
@@ -127,15 +150,15 @@ with the following path and query parameters:
 Required S3 component options
 
 You have to provide the amazonS3Client in the
-link:registry.html[Registry] or your accessKey and secretKey to access
+Registry or your accessKey and secretKey to access
 the http://aws.amazon.com/s3[Amazon's S3].
 
 ### Batch Consumer
 
-This component implements the link:batch-consumer.html[Batch Consumer].
+This component implements the Batch Consumer.
 
 This allows you for instance to know how many messages exists in this
-batch and for instance let the link:aggregator.html[Aggregator]
+batch and for instance let the Aggregator
 aggregate this number of messages.
 
 ### Usage
@@ -168,7 +191,7 @@ aggregate this number of messages.
 
 |`CamelAwsS3LastModified` |`java.util.Date` |*Camel 2.8.2:* The last modified timestamp of this object.
 
-|`CamelAwsS3Operation` |`String` |*Camel 2.18*: The operation to perform
+|`CamelAwsS3Operation` |`String` |*Camel 2.18*: The operation to perform. Permitted values are copyObject, listBuckets, deleteBucket, downloadLink
 
 |`CamelAwsS3StorageClass` |`String` |*Camel 2.8.4:* The storage class of this object.
 
@@ -195,6 +218,8 @@ the object using AWS-managed keys. For example use AES256.
 |`CamelAwsS3ETag` |`String` |The ETag value for the newly uploaded object.
 
 |`CamelAwsS3VersionId` |`String` |The *optional* version ID of the newly uploaded object.
+
+|`CamelAwsS3DownloadLinkExpiration` | `String` | The expiration (millis) of URL download link. The link will be stored into *CamelAwsS3DownloadLink* response header.
 
 |=======================================================================
 
@@ -274,6 +299,29 @@ from("aws-s3://MyBucket?amazonS3Client=#client&delay=5000&maxMessagesPerPoll=5")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
+#### Use KMS with the S3 component
+
+To use AWS KMS to encrypt/decrypt data by using AWS infrastructure you can use the options introduced in 2.21.x like in the following example
+
+[source,java]
+--------------------------------------------------------------------------------
+from("file:tmp/test?fileName=test.txt")
+     .setHeader(S3Constants.KEY, constant("testFile"))
+     .to("aws-s3://mybucket?amazonS3Client=#client&useAwsKMS=true&awsKMSKeyId=3f0637ad-296a-3dfe-a796-e60654fb128c");
+--------------------------------------------------------------------------------
+
+In this way you'll ask to S3, to use the KMS key 3f0637ad-296a-3dfe-a796-e60654fb128c, to encrypt the file test.txt. When you'll ask to download this file, the decryption will be done directly before the download.
+
+#### Use "useIAMCredentials" with the s3 component
+
+To use AWS IAM credentials, you must first verify that the EC2 in which you are launching the Camel application on has an IAM role associated with it containing the appropriate policies attached to run effectively.
+Keep in mind that this feature should only be set to "true" on remote instances. To clarify even further, you must still use static credentials locally since IAM is an AWS specific component,
+but AWS environments should now be easier to manage. After this is implemented and understood, you can set the query parameter "useIAMCredentials" to "true" for AWS environments! To effectively toggle this
+on and off based on local and remote environments, you can consider enabling this query parameter with system environment variables. For example, your code could set the "useIAMCredentials" query parameter to "true",
+when the system environment variable called "isRemote" is set to true (there are many other ways to do this and this should act as a simple example). Although it doesn't take away the need for static credentials completely,
+using IAM credentials on AWS environments takes away the need to refresh on remote environments and adds a major security boost (IAM credentials are refreshed automatically every 6 hours and update when their
+policies are updated). This is the AWS recommended way to manage credentials and therefore should be used as often as possible.
+
 ### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
@@ -294,9 +342,9 @@ where `${camel-version`} must be replaced by the actual version of Camel
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:aws.html[AWS Component]
+* AWS Component

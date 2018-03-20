@@ -26,7 +26,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.21.0-SNAPSHOT</version>
+    <version>2.22.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-mllp</artifactId>
@@ -95,5 +95,20 @@
     </dependency>
 
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <childDelegation>false</childDelegation>
+          <useFile>true</useFile>
+          <forkCount>1</forkCount>
+          <reuseForks>true</reuseForks>
+          <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

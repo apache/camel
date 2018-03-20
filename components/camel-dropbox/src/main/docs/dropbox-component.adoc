@@ -1,3 +1,4 @@
+[[dropbox-component]]
 == Dropbox Component
 
 *Available as of Camel version 2.14*
@@ -17,14 +18,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-dropbox</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 === URI format
 
@@ -39,7 +40,7 @@ perform on Dropbox remote folder.
 === Operations
 
 [width="100%",cols="40%,60%",options="header",]
-|=======================================================================
+|===
 |Operation |Description
 
 |`del` |deletes files or directories on Dropbox
@@ -51,7 +52,7 @@ perform on Dropbox remote folder.
 |`put` |upload files on Dropbox
 
 |`search` |search files on Dropbox based on string queries
-|=======================================================================
+|===
 
 *Operations* require additional options to work, some are mandatory for
 the specific operation.
@@ -79,13 +80,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *operation* | *Required* The specific action (typically is a CRUD action) to perform on Dropbox remote folder. |  | DropboxOperation
 |===
 
+
 ==== Query Parameters (12 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -95,13 +99,13 @@ with the following path and query parameters:
 | *clientIdentifier* (common) | Name of the app registered to make API requests |  | String
 | *localPath* (common) | Optional folder or file to upload on Dropbox from the local filesystem. If this option has not been configured then the message body is used as the content to upload. |  | String
 | *newRemotePath* (common) | Destination file or folder |  | String
-| *query* (common) | A space-separated list of sub-strings to search for. A file matches only if it contains all the sub-strings. If this option is not set all files will be matched. |  | String
+| *query* (common) | A space-separated list of sub-strings to search for. A file matches only if it contains all the sub-strings. If this option is not set, all files will be matched. |  | String
 | *remotePath* (common) | Original file or folder to move |  | String
-| *uploadMode* (common) | Which mode to upload. in case of add the new file will be renamed if a file with the same name already exists on dropbox. in case of force if a file with the same name already exists on dropbox this will be overwritten. |  | DropboxUploadMode
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *uploadMode* (common) | Which mode to upload. in case of add the new file will be renamed if a file with the same name already exists on dropbox. in case of force if a file with the same name already exists on dropbox, this will be overwritten. |  | DropboxUploadMode
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -360,9 +364,10 @@ Below are listed the options for this operation:
 
 |`remotePath` |`true` |Folder on Dropbox where to search in.
 
-|`query` |`false` |A space-separated list of sub-strings to search for. A file matches only
+|`query` |`true` |A space-separated list of sub-strings to search for. A file matches only
 if it contains all the sub-strings. If this option is not set, all files
-will be matched.
+will be matched. The query is required to be provided in either the endpoint configuration
+or as a header `CamelDropboxQuery` on the Camel message.
 |===
 
 ==== Samples
@@ -373,6 +378,7 @@ from("dropbox://search?accessToken=XXX&clientIdentifier=XXX&remotePath=/XXX&quer
   .to("mock:result");
 
 from("direct:start")
+  .setHeader("CamelDropboxQuery", constant("XXX"))
   .to("dropbox://search?accessToken=XXX&clientIdentifier=XXX&remotePath=/XXX")
   .to("mock:result");
 ----

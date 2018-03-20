@@ -1,3 +1,4 @@
+[[wireTap-eip]]
 == Wire Tap EIP
 
 http://www.enterpriseintegrationpatterns.com/WireTap.html[Wire Tap]
@@ -19,7 +20,6 @@ at link:stream-caching.html[Stream caching].
 // eip options: START
 The Wire Tap EIP supports 10 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -27,8 +27,8 @@ The Wire Tap EIP supports 10 options which are listed below:
 | *body* | Uses the expression for creating a new body as the message to use for wire tapping |  | NamespaceAware Expression
 | *executorServiceRef* | Uses a custom thread pool |  | String
 | *copy* | Uses a copy of the original exchange | true | Boolean
-| *dynamicUri* | Whether the uri is dynamic or static. If the uri is dynamic then the simple language is used to evaluate a dynamic uri to use as the wire-tap destination for each incoming message. This works similar to how the toD EIP pattern works. If static then the uri is used as-is as the wire-tap destination. | true | Boolean
-| *onPrepareRef* | Uses the Processor when preparing the org.apache.camel.Exchange to be send. This can be used to deep-clone messages that should be send or any custom logic needed before the exchange is send. |  | String
+| *dynamicUri* | Whether the uri is dynamic or static. If the uri is dynamic then the simple language is used to evaluate a dynamic uri to use as the wire-tap destination, for each incoming message. This works similar to how the toD EIP pattern works. If static then the uri is used as-is as the wire-tap destination. | true | Boolean
+| *onPrepareRef* | Uses the Processor when preparing the org.apache.camel.Exchange to be send. This can be used to deep-clone messages that should be send, or any custom logic needed before the exchange is send. |  | String
 | *uri* | *Required* The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression. |  | String
 | *pattern* | Sets the optional ExchangePattern used to invoke this endpoint |  | ExchangePattern
 | *cacheSize* | Sets the maximum size used by the org.apache.camel.impl.ConsumerCache which is used to cache and reuse producers. |  | Integer

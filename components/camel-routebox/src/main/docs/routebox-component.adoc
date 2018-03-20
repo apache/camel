@@ -1,3 +1,4 @@
+[[routebox-component]]
 == RouteBox Component (deprecated)
 
 *Available as of Camel version 2.6*
@@ -6,9 +7,9 @@
 
 The Routebox component will be revisited in upcoming releases to see if
 it can be further simplified, be more intuitive and user friendly. The
-related link:context.html[Context] component may be regardes as the
+related <<context-component,Context>> component may be regardes as the
 simpler component. This component may be @deprecated in favor of
-link:context.html[Context].
+<<context-component,Context>>.
 
 The *routebox* component enables the creation of specialized endpoints
 that offer encapsulation and a strategy based indirection service to a
@@ -115,13 +116,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *routeboxName* | *Required* Logical name for the routebox (eg like a queue name) |  | String
 |===
 
+
 ==== Query Parameters (17 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -131,18 +135,18 @@ with the following path and query parameters:
 | *forkContext* (common) | Whether to fork and create a new inner CamelContext instead of reusing the same CamelContext. | true | boolean
 | *innerProtocol* (common) | The Protocol used internally by the Routebox component. Can be Direct or SEDA. The Routebox component currently offers protocols that are JVM bound. | direct | String
 | *queueSize* (common) | Create a fixed size queue to receive requests. |  | int
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *pollInterval* (consumer) | The timeout used when polling from seda. When a timeout occurs the consumer can check whether it is allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown. | 1000 | long
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *pollInterval* (consumer) | The timeout used when polling from seda. When a timeout occurs, the consumer can check whether it is allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown. | 1000 | long
 | *threads* (consumer) | Number of threads to be used by the routebox to receive requests. | 20 | int
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *connectionTimeout* (producer) | Timeout in millis used by the producer when sending a message. | 20000 | long
-| *sendToConsumer* (producer) | Dictates whether a Producer endpoint sends a request to an external routebox consumer. If the setting is false the Producer creates an embedded inner context and processes requests internally. | true | boolean
+| *sendToConsumer* (producer) | Dictates whether a Producer endpoint sends a request to an external routebox consumer. If the setting is false, the Producer creates an embedded inner context and processes requests internally. | true | boolean
 | *innerContext* (advanced) | A string representing a key in the Camel Registry matching an object value of the type org.apache.camel.CamelContext. If a CamelContext is not provided by the user a CamelContext is automatically created for deployment of inner routes. |  | CamelContext
 | *innerProducerTemplate* (advanced) | The ProducerTemplate to use by the internal embeded CamelContext |  | ProducerTemplate
 | *innerRegistry* (advanced) | To use a custom registry for the internal embedded CamelContext. |  | Registry
-| *routeBuilders* (advanced) | A string representing a key in the Camel Registry matching an object value of the type List. If the user does not supply an innerContext pre-primed with inner routes the routeBuilders option must be provided as a non-empty list of RouteBuilders containing inner routes |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *routeBuilders* (advanced) | A string representing a key in the Camel Registry matching an object value of the type List. If the user does not supply an innerContext pre-primed with inner routes, the routeBuilders option must be provided as a non-empty list of RouteBuilders containing inner routes |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

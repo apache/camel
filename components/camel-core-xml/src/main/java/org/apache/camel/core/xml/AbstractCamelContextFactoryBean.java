@@ -84,6 +84,7 @@ import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.runtimecatalog.JSonSchemaResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Debugger;
@@ -96,6 +97,7 @@ import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
@@ -268,6 +270,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             LOG.info("Using custom HeadersMapFactory: {}", headersMapFactory);
             getContext().setHeadersMapFactory(headersMapFactory);
         }
+        JSonSchemaResolver jsonSchemaResolver = getBeanForType(JSonSchemaResolver.class);
+        if (jsonSchemaResolver != null) {
+            LOG.info("Using custom JSonSchemaResolver: {}", jsonSchemaResolver);
+            getContext().getRuntimeCamelCatalog().setJSonSchemaResolver(jsonSchemaResolver);
+        }
         // custom type converters defined as <bean>s
         Map<String, TypeConverters> typeConverters = getContext().getRegistry().findByTypeWithName(TypeConverters.class);
         if (typeConverters != null && !typeConverters.isEmpty()) {
@@ -374,6 +381,23 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (routeController != null) {
             LOG.info("Using RouteController: " + routeController);
             getContext().setRouteController(routeController);
+        }
+        // UuidGenerator
+        UuidGenerator uuidGenerator = getBeanForType(UuidGenerator.class);
+        if (uuidGenerator != null) {
+            LOG.info("Using custom UuidGenerator: {}", uuidGenerator);
+            getContext().setUuidGenerator(uuidGenerator);
+        }
+        // LogListener
+        Map<String, LogListener> logListeners = getContext().getRegistry().findByTypeWithName(LogListener.class);
+        if (logListeners != null && !logListeners.isEmpty()) {
+            for (Map.Entry<String, LogListener> entry : logListeners.entrySet()) {
+                LogListener logListener = entry.getValue();
+                if (!getContext().getLogListeners().contains(logListener)) {
+                    LOG.info("Using custom LogListener with id: {} and implementation: {}", entry.getKey(), logListener);
+                    getContext().addLogListener(logListener);
+                }
+            }
         }
 
         // set the default thread pool profile if defined

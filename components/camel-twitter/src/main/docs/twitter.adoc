@@ -4,10 +4,10 @@
 
 The camel-twitter consists of 4 components:
 
-* link:twitter-directmessage-component.html[Twitter Direct Message]
-* link:twitter-search-component.html[Twitter Search]
-* link:twitter-streaming-component.html[Twitter Streaming]
-* link:twitter-timeline-component.html[Twitter Timeline]
+* <<twitter-directmessage-component,Twitter Direct Message>>
+* <<twitter-search-component,Twitter Search>>
+* <<twitter-streaming-component,Twitter Streaming>>
+* <<twitter-timeline-component,Twitter Timeline>>
 
 The Twitter components enable the most useful features of the Twitter
 API by encapsulating http://twitter4j.org/[Twitter4J]. It allows direct,
@@ -43,13 +43,13 @@ will be executed five times (one for each Status).
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
 |Endpoint |Context |Body Type |Notice
-|link:twitter-directmessage-component.html[twitter-directmessage] |direct, polling |twitter4j.DirectMessage | 
+|<<twitter-directmessage-component,twitter-directmessage>> |direct, polling |twitter4j.DirectMessage | 
 
-|link:twitter-search-component.html[twitter-search] |direct, polling |twitter4j.Status | 
+|<<twitter-search-component,twitter-search>> |direct, polling |twitter4j.Status | 
 
-|link:twitter-streaming-component.html[twitter-streaming] |event, polling |twitter4j.Status | 
+|<<twitter-streaming-component,twitter-streaming>> |event, polling |twitter4j.Status | 
 
-|link:twitter-timeline-component.html[twitter-timeline] |direct, polling |twitter4j.Status | 
+|<<twitter-timeline-component,twitter-timeline>> |direct, polling |twitter4j.Status | 
 |=======================================================================
 
 ### Producer endpoints
@@ -57,9 +57,9 @@ will be executed five times (one for each Status).
 [width="100%",cols="10%,10%,80%",options="header",]
 |==============================
 |Endpoint |Body Type |Notice
-|link:twitter-directmessage-component.html[twitter-directmessage] |String |
-|link:twitter-search-component.html[twitter-search] |List<twitter4j.Status> |
-|link:twitter-timeline-component.html[twitter-timeline] |String |Only 'user' timelineType is supported for producer
+|<<twitter-directmessage-component,twitter-directmessage>> |String |
+|<<twitter-search-component,twitter-search>> |List<twitter4j.Status> |
+|<<twitter-timeline-component,twitter-timeline>> |String |Only 'user' timelineType is supported for producer
 |==============================
 
 ### Message headers
@@ -146,9 +146,9 @@ Example].
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:twitter-websocket-example.html[Twitter Websocket Example]
+* Twitter Websocket Example

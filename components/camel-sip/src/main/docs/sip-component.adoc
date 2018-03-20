@@ -1,3 +1,4 @@
+[[sip-component]]
 == SIP Component
 
 *Available as of Camel version 2.5*
@@ -85,13 +86,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *uri* | *Required* URI of the SIP server to connect to (the username and password can be included such as: john:secretmyserver:9999) |  | URI
 |===
 
+
 ==== Query Parameters (44 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -111,14 +115,14 @@ with the following path and query parameters:
 | *toPort* (common) | Portname of the message receiver. Mandatory setting unless a registry based ToHeader is specified |  | int
 | *toUser* (common) | Username of the message receiver. Mandatory setting unless a registry based custom ToHeader is specified. |  | String
 | *transport* (common) | Setting for choice of transport protocol. Valid choices are tcp or udp. | tcp | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *consumer* (consumer) | This setting is used to determine whether the kind of header (FromHeaderToHeader etc) that needs to be created for this endpoint | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *consumer* (consumer) | This setting is used to determine whether the kind of header (FromHeader,ToHeader etc) that needs to be created for this endpoint | false | boolean
 | *presenceAgent* (consumer) | This setting is used to distinguish between a Presence Agent & a consumer. This is due to the fact that the SIP Camel component ships with a basic Presence Agent (for testing purposes only). Consumers have to set this flag to true. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *addressFactory* (advanced) | To use a custom AddressFactory |  | AddressFactory
 | *callIdHeader* (advanced) | A custom Header object containing call details. Must implement the type javax.sip.header.CallIdHeader |  | CallIdHeader
-| *contactHeader* (advanced) | An optional custom Header object containing verbose contact details (email phone number etc). Must implement the type javax.sip.header.ContactHeader |  | ContactHeader
+| *contactHeader* (advanced) | An optional custom Header object containing verbose contact details (email, phone number etc). Must implement the type javax.sip.header.ContactHeader |  | ContactHeader
 | *contentTypeHeader* (advanced) | A custom Header object containing message content details. Must implement the type javax.sip.header.ContentTypeHeader |  | ContentTypeHeader
 | *eventHeader* (advanced) | A custom Header object containing event details. Must implement the type javax.sip.header.EventHeader |  | EventHeader
 | *expiresHeader* (advanced) | A custom Header object containing message expiration details. Must implement the type javax.sip.header.ExpiresHeader |  | ExpiresHeader
@@ -131,8 +135,8 @@ with the following path and query parameters:
 | *messageFactory* (advanced) | To use a custom MessageFactory |  | MessageFactory
 | *sipFactory* (advanced) | To use a custom SipFactory to create the SipStack to be used |  | SipFactory
 | *sipStack* (advanced) | To use a custom SipStack |  | SipStack
-| *sipUri* (advanced) | To use a custom SipURI. If none configured then the SipUri fallback to use the options toUser toHost:toPort |  | SipURI
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *sipUri* (advanced) | To use a custom SipURI. If none configured, then the SipUri fallback to use the options toUser toHost:toPort |  | SipURI
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *toHeader* (advanced) | A custom Header object containing message receiver settings. Must implement the type javax.sip.header.ToHeader |  | ToHeader
 | *viaHeaders* (advanced) | List of custom Header objects of the type javax.sip.header.ViaHeader. Each ViaHeader containing a proxy address for request forwarding. (Note this header is automatically updated by each proxy when the request arrives at its listener) |  | List
 | *implementationDebugLogFile* (logging) | Name of client debug log file to use for logging |  | String

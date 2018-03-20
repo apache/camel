@@ -1,0 +1,116 @@
+[[toD-eip]]
+== To D EIP
+
+There is a new `.toD` / `<toD>` that allows to send a message to a dynamic
+computed link:endpoint.html[Endpoint] using one or
+more link:expression.html[Expression] that are concat together. By
+default the <<simple-language,Simple>> language is used to compute
+the endpoint.
+
+=== Options
+
+// eip options: START
+The To D EIP supports 4 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *uri* | *Required* The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression. |  | String
+| *pattern* | Sets the optional ExchangePattern used to invoke this endpoint |  | ExchangePattern
+| *cacheSize* | Sets the maximum size used by the org.apache.camel.impl.ConsumerCache which is used to cache and reuse producers. |  | Integer
+| *ignoreInvalidEndpoint* | Ignore the invalidate endpoint exception when try to create a producer with that endpoint | false | Boolean
+|===
+// eip options: END
+
+=== Samples
+
+For example to send a message to a endpoint defined by a
+header you can do as shown below:
+
+[source,java]
+----
+from("direct:start")
+  .toD("${header.foo}");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <toD uri="${header.foo}"/>
+</route>
+----
+
+You can also prefix the uri with a value because by default the uri is
+evaluated using the <<simple-language,Simple>> language
+
+[source,java]
+----
+from("direct:start")
+  .toD("mock:${header.foo}");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <toD uri="mock:${header.foo"/>
+</route>
+----
+
+In the example above we compute an endpoint that has prefix "mock:" and
+then the header foo is appended. So for example if the header foo has
+value order, then the endpoint is computed as "mock:order".
+
+You can also use other languages than <<simple-language,Simple>> such
+as <<xpath-language,XPath>> - this requires to prefix with language: as
+shown below (simple language is the default language). If you do not
+specify language: then the endpoint is a component name. And in some
+cases there is both a component and language with the same name such as
+xquery.
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <toD uri="language:xpath:/order/@uri"/>
+</route>
+----
+
+This is done by specifying the name of the language followed by a colon.
+
+[source,java]
+----
+from("direct:start")
+  .toD("language:xpath:/order/@uri");
+----
+
+You can also concat multiple <<language-component,Language>>(s) together
+using the plus sign `+` such as shown below:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <toD uri="jms:${header.base}+language:xpath:/order/@id"/>
+</route>
+----
+
+In the example above the uri is a combination
+of <<simple-language,Simple>> language and <<simple-language,XPath>> where
+the first part is simple (simple is default language). And then the plus
+sign separate to another language, where we specify the language name
+followed by a colon
+
+[source,java]
+----
+from("direct:start")
+  .toD("jms:${header.base}+language:xpath:/order/@id");
+----
+
+You can concat as many languages as you want, just separate them with
+the plus sign

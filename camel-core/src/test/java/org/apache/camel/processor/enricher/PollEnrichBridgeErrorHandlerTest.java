@@ -50,7 +50,8 @@ public class PollEnrichBridgeErrorHandlerTest extends ContextTestSupport {
 
         Exception caught = getMockEndpoint("mock:dead").getExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertNotNull(caught);
-        assertEquals("Something went wrong", caught.getMessage());
+        assertTrue(caught.getMessage().startsWith("Error during poll"));
+        assertEquals("Something went wrong", caught.getCause().getCause().getMessage());
     }
 
     @Override

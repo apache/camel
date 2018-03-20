@@ -1,8 +1,9 @@
+[[tarfile-dataformat]]
 == Tar File DataFormat
 
 *Available as of Camel version 2.16*
 
-The Tar File link:data-format.html[Data Format] is a message compression
+The Tar File Data Format is a message compression
 and de-compression format. Messages can be marshalled (compressed) to
 Tar Files containing a single entry, and Tar Files containing a single
 entry can be unmarshalled (decompressed) to the original file contents.
@@ -21,10 +22,10 @@ The Tar File dataformat supports 4 options which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| usingIterator | false | Boolean | If the tar file has more then one entry the setting this option to true allows to work with the splitter EIP to split the data using an iterator in a streaming mode.
-| allowEmptyDirectory | false | Boolean | If the tar file has more then one entry setting this option to true allows to get the iterator even if the directory is empty
-| preservePathElements | false | Boolean | If the file name contains path elements setting this option to true allows the path to be maintained in the tar file.
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
+| usingIterator | false | Boolean | If the tar file has more then one entry, the setting this option to true, allows to work with the splitter EIP, to split the data using an iterator in a streaming mode.
+| allowEmptyDirectory | false | Boolean | If the tar file has more then one entry, setting this option to true, allows to get the iterator even if the directory is empty
+| preservePathElements | false | Boolean | If the file name contains path elements, setting this option to true, allows the path to be maintained in the tar file.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
 
@@ -42,7 +43,7 @@ from("direct:start").marshal().tarFile().to("activemq:queue:MY_QUEUE");
 
 The name of the Tar entry inside the created Tar File is based on the
 incoming `CamelFileName` message header, which is the standard message
-header used by the link:file2.html[file component]. Additionally, the
+header used by the file component. Additionally, the
 outgoing `CamelFileName` message header is automatically set to the
 value of the incoming `CamelFileName` message header, with the ".tar"
 suffix. So for example, if the following route finds a file named
@@ -55,7 +56,7 @@ from("file:input/directory?antInclude=*/.txt").marshal().tarFile().to("file:outp
 -----------------------------------------------------------------------------------------------
 
 If there is no incoming `CamelFileName` message header (for example, if
-the link:file2.html[file component] is not the consumer), then the
+the file component is not the consumer), then the
 message ID is used by default, and since the message ID is normally a
 unique generated ID, you will end up with filenames like
 `ID-MACHINENAME-2443-1211718892437-1-0.tar`. If you want to override
@@ -151,7 +152,7 @@ To use Tar Files in your camel routes you need to add a dependency on
 
 If you use Maven you can just add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,xml]
 ----------------------------------------------------------

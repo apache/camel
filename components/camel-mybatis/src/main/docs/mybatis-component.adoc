@@ -1,3 +1,4 @@
+[[mybatis-component]]
 == MyBatis Component
 
 *Available as of Camel version 2.7*
@@ -73,43 +74,46 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *statement* | *Required* The statement name in the MyBatis XML mapping file which maps to the query insert update or delete operation you wish to evaluate. |  | String
+| *statement* | *Required* The statement name in the MyBatis XML mapping file which maps to the query, insert, update or delete operation you wish to evaluate. |  | String
 |===
+
 
 ==== Query Parameters (29 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *outputHeader* (common) | Store the query result in a header instead of the message body. By default outputHeader == null and the query result is stored in the message body any existing content in the message body is discarded. If outputHeader is set the value is used as the name of the header to store the query result and the original message body is preserved. Setting outputHeader will also omit populating the default CamelMyBatisResult header since it would be the same as outputHeader all the time. |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *inputHeader* (consumer) | User the header value for input parameters instead of the message body. By default inputHeader == null and the input parameters are taken from the message body. If outputHeader is set the value is used and query parameters will be taken from the header instead of the body. |  | String
-| *maxMessagesPerPoll* (consumer) | This option is intended to split results returned by the database pool into the batches and deliver them in multiple exchanges. This integer defines the maximum messages to deliver in single exchange. By default no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files. Set a value of 0 or negative to disable it. | 0 | int
+| *outputHeader* (common) | Store the query result in a header instead of the message body. By default, outputHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. Setting outputHeader will also omit populating the default CamelMyBatisResult header since it would be the same as outputHeader all the time. |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *inputHeader* (consumer) | User the header value for input parameters instead of the message body. By default, inputHeader == null and the input parameters are taken from the message body. If outputHeader is set, the value is used and query parameters will be taken from the header instead of the body. |  | String
+| *maxMessagesPerPoll* (consumer) | This option is intended to split results returned by the database pool into the batches and deliver them in multiple exchanges. This integer defines the maximum messages to deliver in single exchange. By default, no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files. Set a value of 0 or negative to disable it. | 0 | int
 | *onConsume* (consumer) | Statement to run after data has been processed in the route |  | String
 | *routeEmptyResultSet* (consumer) | Whether allow empty resultset to be routed to the next hop | false | boolean
-| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *transacted* (consumer) | Enables or disables transaction. If enabled then if processing an exchange failed then the consumer break out processing any further exchanges to cause a rollback eager | false | boolean
 | *useIterator* (consumer) | Process resultset individually or as a list | true | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
 | *processingStrategy* (consumer) | To use a custom MyBatisProcessingStrategy |  | MyBatisProcessing Strategy
 | *executorType* (producer) | The executor type to be used while executing statements. simple - executor does nothing special. reuse - executor reuses prepared statements. batch - executor reuses statements and batches updates. | SIMPLE | ExecutorType
 | *statementType* (producer) | Mandatory to specify for the producer to control which kind of operation to invoke. |  | StatementType
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
-| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 500 | long
-| *greedy* (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
-| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
 | *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
 | *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
@@ -277,7 +281,7 @@ dynamic queries] capabilities.
 #### Scheduled polling example
 
 This component supports scheduled polling and can therefore be used as
-a link:polling-consumer.html[Polling Consumer]. For example to poll the
+a Polling Consumer. For example to poll the
 database every minute:
 
 [source,java]
@@ -286,12 +290,12 @@ from("mybatis:selectAllAccounts?delay=60000").to("activemq:queue:allAccounts");
 -------------------------------------------------------------------------------
 
 See "ScheduledPollConsumer Options"
-on link:polling-consumer.html[Polling Consumer] for more options.
+on Polling Consumer for more options.
 
 Alternatively you can use another mechanism for triggering the scheduled
-polls, such as the link:timer.html[Timer] or link:quartz.html[Quartz]
+polls, such as the <<timer-component,Timer>> or <<timer-component,Quartz>>
 components. In the sample below we poll the database, every 30 seconds
-using the link:timer.html[Timer] component and send the data to the JMS
+using the <<timer-component,Timer>> component and send the data to the JMS
 queue:
 
 [source,java]
@@ -386,7 +390,7 @@ The camel-mybatis component is then configured with that factory:
     </bean>
 -----------------------------------------------------------------------------------
 
-Finally, a link:transactional-client.html[transaction policy] is defined
+Finally, a transaction policy is defined
 over the top of the transaction manager, which can then be used as
 usual:
 
@@ -408,7 +412,7 @@ usual:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

@@ -37,6 +37,9 @@ import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.util.StringHelper.notEmpty;
 
+/**
+ * Generates Java source code
+ */
 public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<RestDslSourceCodeGenerator<T>> {
     static final String DEFAULT_CLASS_NAME = "RestDslRoute";
 
@@ -98,7 +101,7 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
 
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(configure);
 
-        final PathVisitor<MethodSpec> restDslStatement = new PathVisitor<>(emitter, destinationGenerator());
+        final PathVisitor<MethodSpec> restDslStatement = new PathVisitor<>(emitter, filter, destinationGenerator());
         swagger.getPaths().forEach(restDslStatement::visit);
 
         return emitter.result();

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.aws.ses.springboot;
 
+import java.util.List;
 import javax.annotation.Generated;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -32,11 +34,60 @@ public class SesComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * The AWS SES default configuration
+     */
+    private SesConfigurationNestedConfiguration configuration;
+    /**
+     * Amazon AWS Access Key
+     */
+    private String accessKey;
+    /**
+     * Amazon AWS Secret Key
+     */
+    private String secretKey;
+    /**
+     * The region in which SES client needs to work
+     */
+    private String region;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public SesConfigurationNestedConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(
+            SesConfigurationNestedConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
@@ -45,5 +96,136 @@ public class SesComponentConfiguration
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    public static class SesConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.aws.ses.SesConfiguration.class;
+        /**
+         * Amazon AWS Access Key
+         */
+        private String accessKey;
+        /**
+         * To use the AmazonSimpleEmailService as the client
+         */
+        private AmazonSimpleEmailService amazonSESClient;
+        /**
+         * The sender's email address.
+         */
+        private String from;
+        /**
+         * List of destination email address. Can be overriden with
+         * 'CamelAwsSesTo' header.
+         */
+        private List to;
+        /**
+         * Amazon AWS Secret Key
+         */
+        private String secretKey;
+        /**
+         * The subject which is used if the message header 'CamelAwsSesSubject'
+         * is not present.
+         */
+        private String subject;
+        /**
+         * The email address to which bounce notifications are to be forwarded,
+         * override it using 'CamelAwsSesReturnPath' header.
+         */
+        private String returnPath;
+        /**
+         * List of reply-to email address(es) for the message, override it using
+         * 'CamelAwsSesReplyToAddresses' header.
+         */
+        private List replyToAddresses;
+        private String proxyHost;
+        private Integer proxyPort;
+        private String region;
+
+        public String getAccessKey() {
+            return accessKey;
+        }
+
+        public void setAccessKey(String accessKey) {
+            this.accessKey = accessKey;
+        }
+
+        public AmazonSimpleEmailService getAmazonSESClient() {
+            return amazonSESClient;
+        }
+
+        public void setAmazonSESClient(AmazonSimpleEmailService amazonSESClient) {
+            this.amazonSESClient = amazonSESClient;
+        }
+
+        public String getFrom() {
+            return from;
+        }
+
+        public void setFrom(String from) {
+            this.from = from;
+        }
+
+        public List getTo() {
+            return to;
+        }
+
+        public void setTo(List to) {
+            this.to = to;
+        }
+
+        public String getSecretKey() {
+            return secretKey;
+        }
+
+        public void setSecretKey(String secretKey) {
+            this.secretKey = secretKey;
+        }
+
+        public String getSubject() {
+            return subject;
+        }
+
+        public void setSubject(String subject) {
+            this.subject = subject;
+        }
+
+        public String getReturnPath() {
+            return returnPath;
+        }
+
+        public void setReturnPath(String returnPath) {
+            this.returnPath = returnPath;
+        }
+
+        public List getReplyToAddresses() {
+            return replyToAddresses;
+        }
+
+        public void setReplyToAddresses(List replyToAddresses) {
+            this.replyToAddresses = replyToAddresses;
+        }
+
+        public String getProxyHost() {
+            return proxyHost;
+        }
+
+        public void setProxyHost(String proxyHost) {
+            this.proxyHost = proxyHost;
+        }
+
+        public Integer getProxyPort() {
+            return proxyPort;
+        }
+
+        public void setProxyPort(Integer proxyPort) {
+            this.proxyPort = proxyPort;
+        }
+
+        public String getRegion() {
+            return region;
+        }
+
+        public void setRegion(String region) {
+            this.region = region;
+        }
     }
 }

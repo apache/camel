@@ -1,3 +1,4 @@
+[[javaspace-component]]
 == JavaSpace Component (deprecated)
 
 *Available as of Camel version 2.1*
@@ -65,27 +66,30 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *url* | *Required* The URL to the JavaSpace server |  | String
 |===
 
+
 ==== Query Parameters (10 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *spaceName* (common) | *Required* Specifies the JavaSpace name. |  | String
-| *transactional* (common) | If true sending and receiving entries is performed within a transaction. | false | boolean
+| *transactional* (common) | If true, sending and receiving entries is performed within a transaction. | false | boolean
 | *transactionTimeout* (common) | Specifies the transaction timeout in millis. By default there is no timeout. |  | long
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *concurrentConsumers* (consumer) | Specifies the number of concurrent consumers getting entries from the JavaSpace. | 1 | int
-| *templateId* (consumer) | If present this option specifies the Spring bean ID of the template to use for reading/taking entries. |  | String
+| *templateId* (consumer) | If present, this option specifies the Spring bean ID of the template to use for reading/taking entries. |  | String
 | *verb* (consumer) | Specifies the verb for getting JavaSpace entries. | take | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -141,7 +145,7 @@ requests/replies with the proper correlation.
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

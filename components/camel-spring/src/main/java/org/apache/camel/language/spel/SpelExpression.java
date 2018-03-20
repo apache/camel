@@ -20,8 +20,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.impl.ExpressionSupport;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.spring.util.RegistryBeanResolver;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.expression.BeanFactoryResolver;
+import org.springframework.expression.BeanResolver;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ParserContext;
@@ -30,22 +32,27 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 /**
- * Class responsible for evaluating <a href="http://static.springsource.org
- * /spring/docs/current/spring-framework-reference/html/expressions.html">
- * Spring Expression Language</a> in the context of Camel.
+ * Class responsible for evaluating <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions">
+ * Spring Expression Language (SpEL)</a> in the context of Camel.
  */
 @SuppressWarnings("deprecation")
 public class SpelExpression extends ExpressionSupport {
 
     private final String expressionString;
     private final Class<?> type;
+    private final BeanResolver beanResolver;
 
     // SpelExpressionParser is thread-safe according to the docs
     private final SpelExpressionParser expressionParser;
 
     public SpelExpression(String expressionString, Class<?> type) {
+        this(expressionString, type, null);
+    }
+
+    public SpelExpression(String expressionString, Class<?> type, BeanResolver beanResolver) {
         this.expressionString = expressionString;
         this.type = type;
+        this.beanResolver = beanResolver;
         this.expressionParser = new SpelExpressionParser();
     }
 
@@ -67,10 +74,14 @@ public class SpelExpression extends ExpressionSupport {
 
     private EvaluationContext createEvaluationContext(Exchange exchange) {
         StandardEvaluationContext evaluationContext = new StandardEvaluationContext(new RootObject(exchange));
-        if (exchange.getContext() instanceof SpringCamelContext) {
+        if (beanResolver != null) {
+            evaluationContext.setBeanResolver(beanResolver);
+        } else if (exchange.getContext() instanceof SpringCamelContext) {
             // Support references (like @foo) in expressions to beans defined in the Registry/ApplicationContext
             ApplicationContext applicationContext = ((SpringCamelContext) exchange.getContext()).getApplicationContext();
             evaluationContext.setBeanResolver(new BeanFactoryResolver(applicationContext));
+        } else {
+            evaluationContext.setBeanResolver(new RegistryBeanResolver(exchange.getContext().getRegistry()));
         }
         return evaluationContext;
     }

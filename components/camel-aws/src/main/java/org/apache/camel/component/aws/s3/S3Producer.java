@@ -22,11 +22,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.cloudfront.model.InvalidArgumentException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AbortMultipartUploadRequest;
@@ -39,14 +41,17 @@ import com.amazonaws.services.s3.model.CopyObjectRequest;
 import com.amazonaws.services.s3.model.CopyObjectResult;
 import com.amazonaws.services.s3.model.DeleteBucketRequest;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PartETag;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.s3.model.SSEAwsKeyManagementParams;
 import com.amazonaws.services.s3.model.StorageClass;
 import com.amazonaws.services.s3.model.UploadPartRequest;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -99,6 +104,9 @@ public class S3Producer extends DefaultProducer {
             case deleteBucket:
                 deleteBucket(getEndpoint().getS3Client(), exchange);
                 break;
+            case downloadLink:
+                createDownloadLink(getEndpoint().getS3Client(), exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
             }
@@ -143,6 +151,16 @@ public class S3Producer extends DefaultProducer {
             // be used. refer to
             // PutObjectRequest#setAccessControlList for more details
             initRequest.setAccessControlList(acl);
+        }
+        
+        if (getConfiguration().isUseAwsKMS()) {
+            SSEAwsKeyManagementParams keyManagementParams;
+            if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
+                keyManagementParams = new SSEAwsKeyManagementParams(getConfiguration().getAwsKMSKeyId());
+            } else {
+                keyManagementParams = new SSEAwsKeyManagementParams();
+            }
+            initRequest.setSSEAwsKeyManagementParams(keyManagementParams);
         }
 
         LOG.trace("Initiating multipart upload [{}] from exchange [{}]...", initRequest, exchange);
@@ -230,6 +248,17 @@ public class S3Producer extends DefaultProducer {
             // PutObjectRequest#setAccessControlList for more details
             putObjectRequest.setAccessControlList(acl);
         }
+        
+        if (getConfiguration().isUseAwsKMS()) {
+            SSEAwsKeyManagementParams keyManagementParams;
+            if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
+                keyManagementParams = new SSEAwsKeyManagementParams(getConfiguration().getAwsKMSKeyId());
+            } else {
+                keyManagementParams = new SSEAwsKeyManagementParams();
+            }
+            putObjectRequest.setSSEAwsKeyManagementParams(keyManagementParams);
+        }
+        
         LOG.trace("Put object [{}] from exchange [{}]...", putObjectRequest, exchange);
 
         PutObjectResult putObjectResult = getEndpoint().getS3Client().putObject(putObjectRequest);
@@ -284,6 +313,17 @@ public class S3Producer extends DefaultProducer {
         } else {
             copyObjectRequest = new CopyObjectRequest(bucketName, sourceKey, versionId, bucketNameDestination, destinationKey);
         }
+
+        if (getConfiguration().isUseAwsKMS()) {
+            SSEAwsKeyManagementParams keyManagementParams;
+            if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
+                keyManagementParams = new SSEAwsKeyManagementParams(getConfiguration().getAwsKMSKeyId());
+            } else {
+                keyManagementParams = new SSEAwsKeyManagementParams();
+            }
+            copyObjectRequest.setSSEAwsKeyManagementParams(keyManagementParams);
+        }
+        
         CopyObjectResult copyObjectResult = s3Client.copyObject(copyObjectRequest);
 
         Message message = getMessageForResponse(exchange);
@@ -429,6 +469,43 @@ public class S3Producer extends DefaultProducer {
         return out;
     }
 
+    private void createDownloadLink(AmazonS3 s3Client, Exchange exchange) {
+        String bucketName = exchange.getIn().getHeader(S3Constants.BUCKET_NAME, String.class);
+        if (ObjectHelper.isEmpty(bucketName)) {
+            bucketName = getConfiguration().getBucketName();
+        }
+        
+        if (bucketName == null) {
+            throw new IllegalArgumentException("AWS S3 Bucket name header is missing.");
+        }
+        
+        String key = exchange.getIn().getHeader(S3Constants.KEY, String.class);
+        if (key == null) {
+            throw new IllegalArgumentException("AWS S3 Key header is missing.");
+        }
+        
+        Date expiration = new Date();
+        long milliSeconds = expiration.getTime();
+        
+        Long expirationMillis = exchange.getIn().getHeader(S3Constants.DOWNLOAD_LINK_EXPIRATION, Long.class);
+        if (expirationMillis != null) {
+            milliSeconds += expirationMillis;
+        } else {
+            milliSeconds += 1000 * 60 * 60; // Default: Add 1 hour.
+        }
+        
+        expiration.setTime(milliSeconds);
+        
+        GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, key);
+        generatePresignedUrlRequest.setMethod(HttpMethod.GET); 
+        generatePresignedUrlRequest.setExpiration(expiration);
+
+        URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest); 
+        
+        Message message = getMessageForResponse(exchange);
+        message.setHeader(S3Constants.DOWNLOAD_LINK, url.toString());
+    }
+            
     protected S3Configuration getConfiguration() {
         return getEndpoint().getConfiguration();
     }

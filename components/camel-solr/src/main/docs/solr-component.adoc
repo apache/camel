@@ -1,3 +1,4 @@
+[[solr-component]]
 == Solr Component
 
 *Available as of Camel version 2.9*
@@ -50,13 +51,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *url* | *Required* Hostname and port for the solr server |  | String
 |===
 
+
 ==== Query Parameters (13 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -68,12 +72,12 @@ with the following path and query parameters:
 | *maxRetries* (producer) | Maximum number of retries to attempt in the event of transient errors |  | Integer
 | *maxTotalConnections* (producer) | maxTotalConnection on the underlying HttpConnectionManager |  | Integer
 | *requestHandler* (producer) | Set the request handler to be used |  | String
-| *soTimeout* (producer) | Read timeout on the underlying HttpConnectionManager. This is desirable for queries but probably not for indexing |  | Integer
+| *soTimeout* (producer) | Read timeout on the underlying HttpConnectionManager. This is desirable for queries, but probably not for indexing |  | Integer
 | *streamingQueueSize* (producer) | Set the queue size for the StreamingUpdateSolrServer | 10 | int
 | *streamingThreadCount* (producer) | Set the number of threads for the StreamingUpdateSolrServer | 2 | int
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *collection* (solrCloud) | Set the collection name which the solrCloud server could use |  | String
-| *zkHost* (solrCloud) | Set the ZooKeeper host information which the solrCloud could use such as zkhost=localhost:8123. |  | String
+| *zkHost* (solrCloud) | Set the ZooKeeper host information which the solrCloud could use, such as zkhost=localhost:8123. |  | String
 |===
 // endpoint options: END
 
@@ -185,7 +189,7 @@ delete routes and then call the commit route.
 ### Querying Solr
 
 Currently, this component doesn't support querying data natively (may be
-added later). For now, you can query Solr using link:http.html[HTTP] as
+added later). For now, you can query Solr using <<http-component,HTTP>> as
 follows:
 
 [source,java]
@@ -208,7 +212,7 @@ http://wiki.apache.org/solr/SolrQuerySyntax[Solr Query Syntax]
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

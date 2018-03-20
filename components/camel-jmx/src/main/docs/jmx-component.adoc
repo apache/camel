@@ -1,3 +1,4 @@
+[[jmx-component]]
 == JMX Component
 ifdef::env-github[]
 *Available as of Camel version 2.6.0*
@@ -9,17 +10,17 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-### Camel JMX
+=== Camel JMX
 
 Apache Camel has extensive support for JMX to allow you to monitor and
 control the Camel managed objects with a JMX client.
 
-Camel also provides a link:jmx.html[JMX] component that allows you to
+Camel also provides a <<jmx-component,JMX>> component that allows you to
 subscribe to MBean notifications. This page is about how to manage and
 monitor Camel using JMX.
 
 
-### Options
+=== Options
 
 // component options: START
 The JMX component has no options.
@@ -36,50 +37,53 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *serverURL* | server url comes from the remaining endpoint |  | String
 |===
 
+
 ==== Query Parameters (29 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *format* (consumer) | URI Property: Format for the message body. Either xml or raw. If xml the notification is serialized to xml. If raw then the raw java object is set as the body. | xml | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *format* (consumer) | URI Property: Format for the message body. Either xml or raw. If xml, the notification is serialized to xml. If raw, then the raw java object is set as the body. | xml | String
 | *granularityPeriod* (consumer) | URI Property: monitor types only The frequency to poll the bean to check the monitor. | 10000 | long
-| *monitorType* (consumer) | URI Property: monitor types only The type of monitor to create. One of string gauge counter. |  | String
+| *monitorType* (consumer) | URI Property: monitor types only The type of monitor to create. One of string, gauge, counter. |  | String
 | *objectDomain* (consumer) | *Required* URI Property: The domain for the mbean you're connecting to |  | String
 | *objectName* (consumer) | URI Property: The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that get passed. |  | String
 | *observedAttribute* (consumer) | URI Property: monitor types only The attribute to observe for the monitor bean. |  | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *handback* (advanced) | URI Property: Value to handback to the listener when a notification is received. This value will be put in the message header with the key jmx.handback |  | Object
 | *notificationFilter* (advanced) | URI Property: Reference to a bean that implements the NotificationFilter. |  | NotificationFilter
 | *objectProperties* (advanced) | URI Property: properties for the object name. These values will be used if the objectName param is not set |  | Map
 | *reconnectDelay* (advanced) | URI Property: The number of seconds to wait before attempting to retry establishment of the initial connection or attempt to reconnect a lost connection | 10 | int
 | *reconnectOnConnection Failure* (advanced) | URI Property: If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs. The consumer will attempt to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the configured reconnectionDelay | false | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *testConnectionOnStartup* (advanced) | URI Property: If true the consumer will throw an exception if unable to establish the JMX connection upon startup. If false the consumer will attempt to establish the JMX connection every 'x' seconds until the connection is made -- where 'x' is the configured reconnectionDelay | true | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *testConnectionOnStartup* (advanced) | URI Property: If true the consumer will throw an exception if unable to establish the JMX connection upon startup. If false, the consumer will attempt to establish the JMX connection every 'x' seconds until the connection is made -- where 'x' is the configured reconnectionDelay | true | boolean
 | *initThreshold* (counter) | URI Property: counter monitor only Initial threshold for the monitor. The value must exceed this before notifications are fired. |  | int
 | *modulus* (counter) | URI Property: counter monitor only The value at which the counter is reset to zero |  | int
 | *offset* (counter) | URI Property: counter monitor only The amount to increment the threshold after it's been exceeded. |  | int
-| *differenceMode* (gauge) | URI Property: counter gauge monitor only If true then the value reported in the notification is the difference from the threshold as opposed to the value itself. | false | boolean
-| *notifyHigh* (gauge) | URI Property: gauge monitor only If true the gauge will fire a notification when the high threshold is exceeded | false | boolean
-| *notifyLow* (gauge) | URI Property: gauge monitor only If true the gauge will fire a notification when the low threshold is exceeded | false | boolean
+| *differenceMode* (gauge) | URI Property: counter gauge monitor only If true, then the value reported in the notification is the difference from the threshold as opposed to the value itself. | false | boolean
+| *notifyHigh* (gauge) | URI Property: gauge monitor only If true, the gauge will fire a notification when the high threshold is exceeded | false | boolean
+| *notifyLow* (gauge) | URI Property: gauge monitor only If true, the gauge will fire a notification when the low threshold is exceeded | false | boolean
 | *thresholdHigh* (gauge) | URI Property: gauge monitor only Value for the gauge's high threshold |  | Double
 | *thresholdLow* (gauge) | URI Property: gauge monitor only Value for the gauge's low threshold |  | Double
 | *password* (security) | URI Property: credentials for making a remote connection |  | String
 | *user* (security) | URI Property: credentials for making a remote connection |  | String
-| *notifyDiffer* (string) | URI Property: string monitor only If true the string monitor will fire a notification when the string attribute differs from the string to compare. | false | boolean
-| *notifyMatch* (string) | URI Property: string monitor only If true the string monitor will fire a notification when the string attribute matches the string to compare. | false | boolean
+| *notifyDiffer* (string) | URI Property: string monitor only If true, the string monitor will fire a notification when the string attribute differs from the string to compare. | false | boolean
+| *notifyMatch* (string) | URI Property: string monitor only If true, the string monitor will fire a notification when the string attribute matches the string to compare. | false | boolean
 | *stringToCompare* (string) | URI Property: string monitor only Value for the string monitor's string to compare. |  | String
 |===
 // endpoint options: END
 
-### Activating JMX in Camel
+=== Activating JMX in Camel
 
 [NOTE]
 ====
@@ -95,7 +99,7 @@ From *Camel 2.9* onwards, the Spring JARs are *no* longer required to
 run Camel in JMX mode.
 ====
 
-#### Using JMX to manage Apache Camel
+==== Using JMX to manage Apache Camel
 
 By default, JMX instrumentation agent is enabled in Camel, which means
 that Camel runtime creates and registers MBean management objects with a
@@ -138,7 +142,7 @@ Spring configuration:
 Spring configuration always takes precedence over system properties when
 they both present. It is true for all JMX related configurations.
 
-#### Disabling JMX instrumentation agent in Camel
+==== Disabling JMX instrumentation agent in Camel
 
 You can disable JMX instrumentation agent by setting the Java VM system
 property as follow:
@@ -170,7 +174,7 @@ CamelContext camel = new DefaultCamelContext();
 camel.disableJMX();
 ----
 
-#### Locating a MBeanServer in the Java VM
+==== Locating a MBeanServer in the Java VM
 
 Each CamelContext can have an instance of
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/spi/InstrumentationAgent.html[`InstrumentationAgent`]
@@ -238,7 +242,7 @@ Spring configuration:
 </camelContext>
 ----
 
-#### Creating JMX RMI Connector Server
+==== Creating JMX RMI Connector Server
 
 JMX connector server enables MBeans to be remotely managed by a JMX
 client such as JConsole; Camel JMX RMI connector server can be
@@ -261,7 +265,7 @@ Spring configuration:
 </camelContext>
 ----
 
-#### JMX Service URL
+==== JMX Service URL
 
 The default JMX Service URL has the format:
 
@@ -356,7 +360,7 @@ When the connector port option is set, the JMX service URL will become:
 service:jmx:rmi://localhost:<connectorPort>/jndi/rmi://localhost:<registryPort>/<serviceUrlPath>
 ----
 
-#### The System Properties for Camel JMX support
+==== The System Properties for Camel JMX support
 
 [width="100%",cols="1m,1,3",options="header",]
 |=======================================================================
@@ -368,7 +372,7 @@ feature in Camel
 See more system properties in this section below: _jmxAgent Properties
 Reference_.
 
-#### How to use authentication with JMX
+==== How to use authentication with JMX
 
 JMX in the JDK have features for authentication and also for using
 secure connections over SSL. You have to refer to the SUN documentation
@@ -377,9 +381,9 @@ how to use this:
 * http://java.sun.com/j2se/1.5.0/docs/guide/management/agent.html
 * http://java.sun.com/javase/6/docs/technotes/guides/management/agent.html
 
-#### JMX inside an Application Server
+==== JMX inside an Application Server
 
-#### Tomcat 6
+===== Tomcat 6
 
 See http://tomcat.apache.org/tomcat-6.0-doc/monitoring.html[this page]
 for details about enabling JMX in Tomcat.
@@ -395,7 +399,7 @@ set the following options...
     -Dcom.sun.management.jmxremote.authenticate=false
 ----
 
-#### JBoss AS 4
+===== JBoss AS 4
 
 By default JBoss creates its own `MBeanServer`. To allow Camel to expose
 to the same server follow these steps:
@@ -415,7 +419,7 @@ Add the following property to your `JAVA_OPTS` by editing `run.sh` or
 `run.conf` `-Djboss.platform.mbeanserver`. See
 http://wiki.jboss.org/wiki/JBossMBeansInJConsole
 
-#### WebSphere
+===== WebSphere
 
 Alter the `mbeanServerDefaultDomain` to be `WebSphere`:
 
@@ -424,7 +428,7 @@ Alter the `mbeanServerDefaultDomain` to be `WebSphere`:
 <camel:jmxAgent id="agent" createConnector="true" mbeanObjectDomainName="org.yourname" usePlatformMBeanServer="false" mbeanServerDefaultDomain="WebSphere"/>
 ----
 
-#### Oracle OC4j
+===== Oracle OC4j
 
 The Oracle OC4J J2EE application server will not allow Camel to access
 the platform `MBeanServer`. You can identify this in the log as Camel
@@ -441,13 +445,13 @@ java.lang.SecurityException: Unauthorized access from application: xx to MBean: 
 To resolve this you should disable the JMX agent in Camel, see section
 _Disabling JMX instrumentation agent in Camel_.
 
-#### Advanced JMX Configuration
+==== Advanced JMX Configuration
 
 The Spring configuration file allows you to configure how Camel is
 exposed to JMX for management. In some cases, you could specify more
 information here, like the connector's port or the path name.
 
-#### Example:
+==== Example:
 
 [source,xml]
 ----
@@ -480,7 +484,7 @@ SUNJMX=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=1
 for Camel, as additional startup parameters for the JVM. If you start
 Camel directly, you'll have to pass these parameters yourself.)
 
-#### `jmxAgent` Properties Reference
+==== `jmxAgent` Properties Reference
 
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
@@ -546,7 +550,7 @@ usage of each incoming and outgoing endpoints).
 |=======================================================================
 
 
-#### Configuring whether to register MBeans always, for new routes or just by default
+==== Configuring whether to register MBeans always, for new routes or just by default
 
 
 *Available as of Camel 2.7*
@@ -559,7 +563,7 @@ Camel now offers 2 settings to control whether or not to register mbeans
 |`registerAlways` |`false` |If enabled then MBeans is always registered.
 
 |`registerNewRoutes` |`true` |If enabled then adding new routes after
-link:camelcontext.html[CamelContext] has been started will also register
+CamelContext has been started will also register
 MBeans from that given route.
 |=======================================================================
 
@@ -570,16 +574,16 @@ you for example add and remove temporary routes where management is not
 needed.
 
 Be a bit caution to use the `registerAlways` option when using dynamic
-link:eip.html[EIP] patterns such as the
-link:recipient-list.html[Recipient List] having unique endpoints. If so
+EIP patterns such as the
+Recipient List having unique endpoints. If so
 then each unique endpoint and its associated services/producers would
 also be registered. This could potential lead to system degration due
 the rising number of mbeans in the registry. A MBean is not a
 light-weight object and thus consumes memory.
 
-### Monitoring Camel using JMX
+=== Monitoring Camel using JMX
 
-#### Using JConsole to monitor Camel
+==== Using JConsole to monitor Camel
 
 The `CamelContext` should appear in the list of local connections, if
 you are running JConsole on the same host as Camel.
@@ -592,19 +596,19 @@ Using the Apache Camel with JConsole:
 
 image:camel-jmx.png[image]
 
-#### Which endpoints are registered
+==== Which endpoints are registered
 
 In *Camel 2.1* onwards *only* `singleton` endpoints are registered as
 the overhead for non singleton will be substantial in cases where
 thousands or millions of endpoints are used. This can happens when using
-a link:recipient-list.html[Recipient List] EIP or from a
+a Recipient List EIP or from a
 `ProducerTemplate` that sends a lot of messages.
 
-#### Which processors are registered
+==== Which processors are registered
 
-See link:why-is-my-processor-not-showing-up-in-jconsole.html[this FAQ].
+See this FAQ.
 
-#### How to use the JMX NotificationListener to listen the camel events?
+==== How to use the JMX NotificationListener to listen the camel events?
 
 The Camel notification events give a coarse grained overview what is
 happening. You can see lifecycle event from context and endpoints and
@@ -647,7 +651,7 @@ context.getManagementStrategy().getManagementAgent().getMBeanServer().addNotific
     }, null);
 ----
 
-#### Using the Tracer MBean to get fine grained tracing
+==== Using the Tracer MBean to get fine grained tracing
 
 Additionally to the coarse grained notifications above *Camel 2.9.0*
 support JMX Notification for fine grained trace events.
@@ -668,9 +672,9 @@ route with all exchange and message details:
 
 image:jconsole_trace_notifications.png[image]
 
-### Using JMX for your own Camel Code
+=== Using JMX for your own Camel Code
 
-#### Registering your own Managed Endpoints
+==== Registering your own Managed Endpoints
 
 *Available as of Camel 2.0* +
 You can decorate your own endpoints with Spring managed annotations
@@ -725,7 +729,7 @@ Notice from *Camel 2.9* onwards its encouraged to use the
 the `org.apache.camel.api.management` package. This allows your custom
 code to not depend on Spring JARs.
 
-#### Programming your own Managed Services
+==== Programming your own Managed Services
 
 *Available as of Camel 2.1*
 
@@ -779,7 +783,7 @@ types such as:
 
 And in the future we will add additional wrappers for more EIP patterns.
 
-#### ManagementNamingStrategy
+==== ManagementNamingStrategy
 
 *Available as of Camel 2.1*
 
@@ -788,7 +792,7 @@ Camel provides a pluggable API for naming strategy by
 implementation is used to compute the MBean names that all MBeans are
 registered with.
 
-#### Management naming pattern
+==== Management naming pattern
 
 *Available as of Camel 2.10*
 
@@ -867,7 +871,7 @@ If you set an explicit naming pattern, then that pattern is always used,
 and the default patterns above is *not* used.
 
 This allows us to have full control, very easily, of the naming for both
-the `CamelContext` id in the link:registry.html[Registry] as well the
+the `CamelContext` id in the Registry as well the
 JMX MBeans in the `JMXMBeanRegistry`.
 
 From *Camel 2.15* onwards you can configure the default management
@@ -930,7 +934,7 @@ install a 2nd Camel application that has the same `CamelContext` id and
 `managementNamePattern` then Camel will fail upon starting, and report a
 MBean already exists exception.
 
-#### ManagementStrategy
+==== ManagementStrategy
 
 *Available as of Camel 2.1*
 
@@ -943,7 +947,7 @@ does, for example, is make it easier to provide an adapter for other
 management products. In addition, it also allows you to provide more
 details and features that are provided out of the box at Apache.
 
-#### Configuring level of granularity for performance statistics
+==== Configuring level of granularity for performance statistics
 
 *Available as of Camel 2.1*
 
@@ -1004,12 +1008,12 @@ And from Spring DSL you do:
 </camelContext>
 ----
 
-### Hiding sensitive information
+=== Hiding sensitive information
 
 *Available as of Camel 2.12*
 
 By default, Camel enlists MBeans in JMX such as endpoints configured
-using link:uris.html[URIs]. In this configuration, there may be
+using URIs. In this configuration, there may be
 sensitive information such as passwords.
 
 This information can be hidden by enabling the `mask` option as shown
@@ -1033,10 +1037,10 @@ And from Spring DSL you do:
     </camelContext>
 ----
 
-This will mask link:uris.html[URIs] having options such as password and
+This will mask URIs having options such as password and
 passphrase, and use `xxxxxx` as the replacement value.
 
-#### Declaring which JMX attributes and operations to mask
+==== Declaring which JMX attributes and operations to mask
 
 On the `org.apache.camel.api.management.ManagedAttribute` and
 `org.apache.camel.api.management.ManagedOperation`, the attribute `mask`
@@ -1054,8 +1058,8 @@ declared that the `EndpointUri` JMX attribute is masked:
 String getEndpointUri();
 ----
 
-### See Also
+=== See Also
 
-* link:management-example.html[Management Example]
+* Management Example
 * link:why-is-my-processor-not-showing-up-in-jconsole.html[Why is my
 processor not showing up in JConsole]

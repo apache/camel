@@ -1,3 +1,4 @@
+[[jing-component]]
 == Jing Component
 
 *Available as of Camel version 1.1*
@@ -23,7 +24,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-Note that the link:msv.html[MSV] component can also support RelaxNG XML
+Note that the <<msv-component,MSV>> component can also support RelaxNG XML
 syntax.
 
 ### URI format Camel 2.16
@@ -57,19 +58,22 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *resourceUri* | *Required* URL to a local resource on the classpath or a full URL to a remote resource or resource on the file system which contains the schema to validate against. |  | String
 |===
 
+
 ==== Query Parameters (2 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *compactSyntax* (producer) | Whether to validate using RelaxNG compact syntax or not. By default this is false for using RelaxNG XML Syntax (rng) And true is for using RelaxNG Compact Syntax (rnc) | false | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -87,7 +91,7 @@ Syntax] schema (which is supplied on the classpath).
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -69,6 +70,8 @@ public class RouteDirectSuspendResumeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.getComponent("direct", DirectComponent.class).setBlock(false);
+                
                 from("direct:foo").routeId("foo").to("log:foo").to("mock:result");
             }
         };

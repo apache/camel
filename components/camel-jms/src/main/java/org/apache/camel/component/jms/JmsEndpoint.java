@@ -49,7 +49,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -265,10 +265,10 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
      * @return the destination name resolved from the endpoint uri
      */
     public String getEndpointConfiguredDestinationName() {
-        String remainder = ObjectHelper.after(getEndpointKey(), "//");
+        String remainder = StringHelper.after(getEndpointKey(), "//");
         if (remainder != null && remainder.contains("?")) {
             // remove parameters
-            remainder = ObjectHelper.before(remainder, "?");
+            remainder = StringHelper.before(remainder, "?");
         }
         return JmsMessageHelper.normalizeDestinationName(remainder);
     }
@@ -1330,6 +1330,16 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @ManagedAttribute
     public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(long sleepingTime) {
         configuration.setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(sleepingTime);
+    }
+
+    @ManagedAttribute
+    public boolean isFormatDateHeadersToIso8601() {
+        return configuration.isFormatDateHeadersToIso8601();
+    }
+
+    @ManagedAttribute
+    public void setFormatDateHeadersToIso8601(boolean formatDateHeadersToIso8601) {
+        configuration.setFormatDateHeadersToIso8601(formatDateHeadersToIso8601);
     }
 
     // Implementation methods

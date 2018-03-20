@@ -19,6 +19,8 @@ AOPDefinition
 BeanDefinition
 CatchDefinition
 ChoiceDefinition
+ClaimCheckDefinition
+ClaimCheckOperation
 ConvertBodyDefinition
 ContextScanDefinition
 DataFormatDefinition
@@ -76,6 +78,7 @@ RouteDefinition
 RouteContextRefDefinition
 RoutesDefinition
 RoutingSlipDefinition
+SagaDefinition
 SamplingDefinition
 ScriptDefinition
 SetBodyDefinition

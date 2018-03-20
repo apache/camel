@@ -88,7 +88,7 @@ authorization is not specified by this component. You can write your own
 processors or components which get authentication information from the
 exchange depending on your needs. For example, you might create a
 processor that gets credentials from an HTTP request header originating
-in the link:jetty.html[Jetty] component. No matter how the credentials
+in the <<jetty-component,Jetty>> component. No matter how the credentials
 are collected, they need to be placed in the In message or the
 `SecurityContextHolder` so the Camel link:spring-security.html[Spring
 Security] component can access them:
@@ -147,7 +147,7 @@ implementation of the
 `org.apache.camel.component.spring.security.AuthenticationAdapter` to
 your `<authorizationPolicy>` bean. This can be useful if you are working
 with components that do not use Spring Security but do provide a
-`Subject`. At this time, only the link:cxf.html[CXF] component populates
+`Subject`. At this time, only the <<cxf-component,CXF>> component populates
 the `Exchange.AUTHENTICATION` header.
 
 [[SpringSecurity-Handlingauthenticationandauthorizationerrors]]
@@ -157,7 +157,7 @@ Handling authentication and authorization errors
 If authentication or authorization fails in the
 `SpringSecurityAuthorizationPolicy`, a `CamelAuthorizationException`
 will be thrown. This can be handled using Camel's standard exception
-handling methods, like the link:exception-clause.html[Exception Clause].
+handling methods, like the Exception Clause.
 The `CamelAuthorizationException` will have a reference to the ID of the
 policy which threw the exception so you can handle errors based on the
 policy as well as the type of exception:
@@ -208,10 +208,10 @@ This dependency will also pull in
 See Also
 ^^^^^^^^
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:components.html[Components]
+* Components
 

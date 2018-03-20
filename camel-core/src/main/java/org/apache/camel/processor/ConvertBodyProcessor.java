@@ -75,7 +75,7 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
         Message old = out ? exchange.getOut() : exchange.getIn();
 
         if (old.getBody() == null) {
-            // only convert if the is a body
+            // only convert if there is a body
             callback.done(true);
             return true;
         }
@@ -87,7 +87,9 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
             return true;
         }
 
+        String originalCharsetName = null;
         if (charset != null) {
+            originalCharsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
             // override existing charset with configured charset as that is what the user
             // have explicit configured and expects to be used
             exchange.setProperty(Exchange.CHARSET_NAME, charset);
@@ -117,10 +119,14 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
             old.setBody(value);
         }
 
-        // remove charset when we are done as we should not propagate that,
+        // remove or restore charset when we are done as we should not propagate that,
         // as that can lead to double converting later on
         if (charset != null) {
-            exchange.removeProperty(Exchange.CHARSET_NAME);
+            if (originalCharsetName != null && !originalCharsetName.isEmpty()) {
+                exchange.setProperty(Exchange.CHARSET_NAME, originalCharsetName);
+            } else {
+                exchange.removeProperty(Exchange.CHARSET_NAME);
+            }
         }
 
         callback.done(true);

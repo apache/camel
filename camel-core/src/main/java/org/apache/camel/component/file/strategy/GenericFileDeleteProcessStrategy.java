@@ -61,7 +61,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
 
         try {
             deleteLocalWorkFile(exchange);
-            operations.releaseRetreivedFileResources(exchange);
+            operations.releaseRetrievedFileResources(exchange);
 
             int retries = 3;
             boolean deleted = false;
@@ -101,7 +101,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
     public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         try {
             deleteLocalWorkFile(exchange);
-            operations.releaseRetreivedFileResources(exchange);
+            operations.releaseRetrievedFileResources(exchange);
 
             // moved the failed file if specifying the moveFailed option
             if (failureRenamer != null) {

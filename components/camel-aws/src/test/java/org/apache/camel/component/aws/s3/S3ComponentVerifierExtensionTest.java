@@ -19,8 +19,6 @@ package org.apache.camel.component.aws.s3;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.amazonaws.regions.Regions;
-
 import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -62,7 +60,7 @@ public class S3ComponentVerifierExtensionTest extends CamelTestSupport {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
         parameters.put("accessKey", "k");
-        parameters.put("region", "us-east-1");
+        parameters.put("region", "US_EAST_1");
         parameters.put("bucketNameOrArn", "test12");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);

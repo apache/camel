@@ -258,7 +258,7 @@ public class ValidateMojo extends AbstractExecMojo {
                     String baseDir = ".";
                     JavaType out = Roaster.parse(file);
                     // we should only parse java classes (not interfaces and enums etc)
-                    if (out != null && out instanceof JavaClassSource) {
+                    if (out instanceof JavaClassSource) {
                         JavaClassSource clazz = (JavaClassSource) out;
                         RouteBuilderParser.parseRouteBuilderEndpoints(clazz, baseDir, fqn, fileEndpoints, unparsable, includeTest);
                         RouteBuilderParser.parseRouteBuilderSimpleExpressions(clazz, baseDir, fqn, fileSimpleExpressions);

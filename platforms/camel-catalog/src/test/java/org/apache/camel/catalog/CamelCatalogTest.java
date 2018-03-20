@@ -983,6 +983,13 @@ public class CamelCatalogTest {
         assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol at location 5"));
         assertEquals("expected symbol functionEnd but was eol", result.getShortError());
         assertEquals(5, result.getIndex());
+
+        result = catalog.validateSimpleExpression(null, "${bodyxxx}");
+        assertFalse(result.isSuccess());
+        assertEquals("${bodyxxx}", result.getSimple());
+        LOG.info(result.getError());
+        assertEquals("Valid syntax: ${body.OGNL} was: bodyxxx", result.getShortError());
+        assertEquals(0, result.getIndex());
     }
 
     @Test
@@ -1037,6 +1044,18 @@ public class CamelCatalogTest {
         result = catalog.validateLanguagePredicate(null, "foobar", "bar");
         assertFalse(result.isSuccess());
         assertEquals("Unknown language foobar", result.getError());
+    }
+
+    @Test
+    public void testValidateJSonPathLanguage() throws Exception {
+        LanguageValidationResult result = catalog.validateLanguageExpression(null, "jsonpath", "$.store.book[?(@.price < 10)]");
+        assertTrue(result.isSuccess());
+        assertEquals("$.store.book[?(@.price < 10)]", result.getText());
+
+        result = catalog.validateLanguageExpression(null, "jsonpath", "$.store.book[?(@.price ^^^ 10)]");
+        assertFalse(result.isSuccess());
+        assertEquals("$.store.book[?(@.price ^^^ 10)]", result.getText());
+        assertEquals("Illegal syntax: $.store.book[?(@.price ^^^ 10)]", result.getError());
     }
 
     @Test

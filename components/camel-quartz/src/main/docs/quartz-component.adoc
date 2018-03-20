@@ -1,3 +1,4 @@
+[[quartz-component]]
 == Quartz Component (deprecated)
 
 *Available as of Camel version 1.0*
@@ -8,7 +9,7 @@ the http://www.quartz-scheduler.org/[Quartz Scheduler 1.x].  +
 and JobDetail).
 
 TIP: If you are using Quartz 2.x then from Camel 2.12 onwards there is a
-link:quartz2.html[Quartz2] component you should use
+<<quartz2-component,Quartz2>> component you should use
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -54,7 +55,7 @@ The Quartz component supports 8 options which are listed below.
 |===
 | Name | Description | Default | Type
 | *factory* (advanced) | To use the custom SchedulerFactory which is used to create the Scheduler. |  | SchedulerFactory
-| *scheduler* (advanced) | To use the custom configured Quartz scheduler instead of creating a new Scheduler. |  | Scheduler
+| *scheduler* (advanced) | To use the custom configured Quartz scheduler, instead of creating a new Scheduler. |  | Scheduler
 | *properties* (consumer) | Properties to configure the Quartz scheduler. |  | Properties
 | *propertiesFile* (consumer) | File name of the properties to load from the classpath |  | String
 | *startDelayedSeconds* (scheduler) | Seconds to wait before starting the quartz scheduler. |  | int
@@ -78,6 +79,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -85,23 +87,25 @@ with the following path and query parameters:
 | *timerName* | *Required* The quartz timer name to use. The combination of group name and timer name should be unique. |  | String
 |===
 
+
 ==== Query Parameters (13 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *cron* (consumer) | Specifies a cron expression to define when to trigger. |  | String
-| *deleteJob* (consumer) | If set to true then the trigger automatically delete when route stop. Else if set to false it will remain in scheduler. When set to false it will also mean user may reuse pre-configured trigger with camel Uri. Just ensure the names match. Notice you cannot have both deleteJob and pauseJob set to true. | true | boolean
+| *deleteJob* (consumer) | If set to true, then the trigger automatically delete when route stop. Else if set to false, it will remain in scheduler. When set to false, it will also mean user may reuse pre-configured trigger with camel Uri. Just ensure the names match. Notice you cannot have both deleteJob and pauseJob set to true. | true | boolean
 | *fireNow* (consumer) | Whether to fire the scheduler asap when its started using the simple trigger (this option does not support cron) | false | boolean
-| *pauseJob* (consumer) | If set to true then the trigger automatically pauses when route stop. Else if set to false it will remain in scheduler. When set to false it will also mean user may reuse pre-configured trigger with camel Uri. Just ensure the names match. Notice you cannot have both deleteJob and pauseJob set to true. | false | boolean
+| *pauseJob* (consumer) | If set to true, then the trigger automatically pauses when route stop. Else if set to false, it will remain in scheduler. When set to false, it will also mean user may reuse pre-configured trigger with camel Uri. Just ensure the names match. Notice you cannot have both deleteJob and pauseJob set to true. | false | boolean
 | *startDelayedSeconds* (consumer) | Seconds to wait before starting the quartz scheduler. |  | int
 | *stateful* (consumer) | Uses a Quartz StatefulJob instead of the default job. | false | boolean
-| *usingFixedCamelContextName* (consumer) | If it is true JobDataMap uses the CamelContext name directly to reference the CamelContext if it is false JobDataMap uses use the CamelContext management name which could be changed during the deploy time. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *usingFixedCamelContextName* (consumer) | If it is true, JobDataMap uses the CamelContext name directly to reference the CamelContext, if it is false, JobDataMap uses use the CamelContext management name which could be changed during the deploy time. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *jobParameters* (advanced) | To configure additional options on the job. |  | Map
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *triggerParameters* (advanced) | To configure additional options on the trigger. |  | Map
 |===
 // endpoint options: END
@@ -119,7 +123,7 @@ INFO: *Running in OSGi and having multiple bundles with quartz
 routes*
 If you run in OSGi such as Apache ServiceMix, or Apache Karaf, and have
 multiple bundles with Camel routes that start from
-link:quartz.html[Quartz] endpoints, then make sure if you assign +
+<<quartz-component,Quartz>> endpoints, then make sure if you assign +
  an `id` to the <camelContext> that this id is unique, as this is
 required by the `QuartzScheduler` in the OSGi container. If you do not
 set any `id` on <camelContext> then +
@@ -132,7 +136,7 @@ By default Quartz will look for a `quartz.properties` file in the
 deployments this means just drop the quartz.properties in
 `WEB-INF/classes/org/quartz`.
 
-However the Camel link:quartz.html[Quartz] component also allows you to
+However the Camel <<quartz-component,Quartz>> component also allows you to
 configure properties:
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
@@ -179,7 +183,7 @@ This is an example:
 *Available as of Camel 2.4*
 
 If you use Quartz in clustered mode, e.g. the `JobStore` is clustered.
-Then from Camel 2.4 onwards the link:quartz.html[Quartz] component will
+Then from Camel 2.4 onwards the <<quartz-component,Quartz>> component will
 *not* pause/remove triggers when a node is being stopped/shutdown. This
 allows the trigger to keep running on the other nodes in the cluster.
 
@@ -250,14 +254,14 @@ In Camel 2.8.0 or older versions you would have to provide your custom
 `String` to `java.util.TimeZone` link:type-converter.html[Type
 Converter] to be able configure this from the endpoint uri. +
  From Camel 2.8.1 onwards we have included such a
-link:type-converter.html[Type Converter] in the camel-core.
+Type Converter in the camel-core.
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:quartz2.html[Quartz2]
-* link:timer.html[Timer]
+* <<quartz2-component,Quartz2>>
+* <<timer-component,Timer>>

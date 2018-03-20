@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.infinispan;
 
-import org.infinispan.cache.impl.DecoratedCache;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.configuration.cache.ConfigurationBuilder;

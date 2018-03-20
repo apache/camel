@@ -29,6 +29,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.cookie.CookieHandler;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IOHelper;
@@ -70,6 +71,23 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @UriParam(label = "advanced", defaultValue = "false", description = "To use System Properties as fallback for configuration")
     private boolean useSystemProperties;
 
+    // timeout
+    @Metadata(label = "timeout", defaultValue = "-1", description = "The timeout in milliseconds used when requesting a connection"
+        + " from the connection manager. A timeout value of zero is interpreted as an infinite timeout."
+        + " A timeout value of zero is interpreted as an infinite timeout."
+        + " A negative value is interpreted as undefined (system default).")
+    private int connectionRequestTimeout = -1;
+    @Metadata(label = "timeout", defaultValue = "-1", description = "Determines the timeout in milliseconds until a connection is established."
+        + " A timeout value of zero is interpreted as an infinite timeout."
+        + " A timeout value of zero is interpreted as an infinite timeout."
+        + " A negative value is interpreted as undefined (system default).")
+    private int connectTimeout = -1;
+    @Metadata(label = "timeout", defaultValue = "-1", description = "Defines the socket timeout in milliseconds,"
+        + " which is the timeout for waiting for data  or, put differently,"
+        + " a maximum period inactivity between two consecutive data packets)."
+        + " A timeout value of zero is interpreted as an infinite timeout."
+        + " A negative value is interpreted as undefined (system default).")
+    private int socketTimeout = -1;
     @UriParam(label = "producer", description = "To use a custom CookieStore."
         + " By default the BasicCookieStore is used which is an in-memory only cookie store."
         + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy)."
@@ -209,7 +227,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
             // need to shutdown the ConnectionManager
             clientConnectionManager.shutdown();
         }
-        if (httpClient != null && httpClient instanceof Closeable) {
+        if (httpClient instanceof Closeable) {
             IOHelper.close((Closeable)httpClient);
         }
     }
@@ -377,4 +395,64 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
     }
+
+    public int getConnectionRequestTimeout() {
+        return connectionRequestTimeout;
+    }
+
+    /**
+     * The timeout in milliseconds used when requesting a connection
+     * from the connection manager. A timeout value of zero is interpreted
+     * as an infinite timeout.
+     * <p>
+     * A timeout value of zero is interpreted as an infinite timeout.
+     * A negative value is interpreted as undefined (system default).
+     * </p>
+     * <p>
+     * Default: {@code -1}
+     * </p>
+     */
+    public void setConnectionRequestTimeout(int connectionRequestTimeout) {
+        this.connectionRequestTimeout = connectionRequestTimeout;
+    }
+
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    /**
+     * Determines the timeout in milliseconds until a connection is established.
+     * A timeout value of zero is interpreted as an infinite timeout.
+     * <p>
+     * A timeout value of zero is interpreted as an infinite timeout.
+     * A negative value is interpreted as undefined (system default).
+     * </p>
+     * <p>
+     * Default: {@code -1}
+     * </p>
+     */
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public int getSocketTimeout() {
+        return socketTimeout;
+    }
+
+    /**
+     * Defines the socket timeout ({@code SO_TIMEOUT}) in milliseconds,
+     * which is the timeout for waiting for data  or, put differently,
+     * a maximum period inactivity between two consecutive data packets).
+     * <p>
+     * A timeout value of zero is interpreted as an infinite timeout.
+     * A negative value is interpreted as undefined (system default).
+     * </p>
+     * <p>
+     * Default: {@code -1}
+     * </p>
+     */
+    public void setSocketTimeout(int socketTimeout) {
+        this.socketTimeout = socketTimeout;
+    }
+
 }

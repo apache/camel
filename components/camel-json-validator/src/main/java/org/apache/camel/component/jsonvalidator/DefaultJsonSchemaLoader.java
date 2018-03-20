@@ -16,25 +16,18 @@
  */
 package org.apache.camel.component.jsonvalidator;
 
-import java.io.IOException;
 import java.io.InputStream;
 
+import com.networknt.schema.JsonSchema;
+import com.networknt.schema.JsonSchemaFactory;
 import org.apache.camel.CamelContext;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.everit.json.schema.loader.SchemaLoader.SchemaLoaderBuilder;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 public class DefaultJsonSchemaLoader implements JsonSchemaLoader {
 
     @Override
-    public Schema createSchema(CamelContext camelContext, InputStream schemaInputStream) throws IOException {
-        SchemaLoaderBuilder schemaLoaderBuilder = SchemaLoader.builder().draftV6Support();
-        try (InputStream inputStream = schemaInputStream) {
-            JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
-            return schemaLoaderBuilder.schemaJson(rawSchema).build().load().build();
-        }
+    public JsonSchema createSchema(CamelContext camelContext, InputStream inputStream) throws Exception {
+        JsonSchemaFactory factory = JsonSchemaFactory.getInstance();
+        return factory.getSchema(inputStream);
     }
 
 }

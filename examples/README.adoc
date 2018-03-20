@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 100 (8 deprecated)
+Number of Examples: 102 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -139,7 +139,9 @@ Number of Examples: 100 (8 deprecated)
 
 | link:camel-example-activemq-tomcat/README.md[ActiveMQ Tomcat] (camel-example-activemq-tomcat) | Messaging | An example using ActiveMQ Broker and Camel with Apache Tomcat
 
-| link:camel-example-artemis-amqp-blueprint/README.md[Artemis Amqp Blueprint] (camel-example-artemis-amqp-blueprint) | Messaging | Demonstrates ActiveMQ Artemis using Camel's AMQP component. The example includes a JUnit showcasing how to embed for testing an AMQP enabled Artemis broker.
+| link:camel-example-artemis-amqp-blueprint/README.md[Artemis Amqp Blueprint] (camel-example-artemis-amqp-blueprint) | Messaging | Demonstrates ActiveMQ Artemis using Camel's AMQP component. The example includes a JUnit showcasing how
+    to embed for testing an AMQP enabled Artemis broker.
+  
 
 | link:camel-example-artemis-large-messages/README.md[Artemis Large Messages] (camel-example-artemis-large-messages) | Messaging | Demonstrates sending large messages (handles GBs in size) between Apache Camel and ActiveMQ Artemis in streaming mode
 
@@ -151,6 +153,8 @@ Number of Examples: 100 (8 deprecated)
 
 | link:camel-example-kafka/README.adoc[Kafka] (camel-example-kafka) | Messaging | An example for Kafka
 
+| link:camel-example-rabbitmq/readme.adoc[Rabbitmq] (camel-example-rabbitmq) | Messaging | An example showing how to work with Camel and RabbitMQ
+
 | link:camel-example-spring-boot-activemq/readme.adoc[Spring Boot Activemq] (camel-example-spring-boot-activemq) | Messaging | An example showing how to work with Camel, ActiveMQ and Spring Boot
 
 | link:camel-example-spring-jms/README.md[Spring JMS] (camel-example-spring-jms) | Messaging | An example using Spring XML to talk to the JMS server from different kind of client techniques
@@ -160,6 +164,8 @@ Number of Examples: 100 (8 deprecated)
 | link:camel-example-cxf-blueprint/README.md[CXF Blueprint] (camel-example-cxf-blueprint) | OSGi | An example which use a CXF consumer and the OSGI HTTP Service
 
 | link:camel-example-netty-http/README.md[Netty HTTP] (camel-example-netty-http) | OSGi | An example showing how to use a shared Netty HTTP server with multiple Camel applications in OSGi container
+
+| link:camel-example-olingo4-blueprint/README.md[Olingo4 Blueprint] (camel-example-olingo4-blueprint) | OSGi | An example which use the Olingo4 component in Blueprint
 
 | link:camel-example-servlet-rest-blueprint/README.md[Servlet REST Blueprint] (camel-example-servlet-rest-blueprint) | OSGi | An example using Servlet REST with OSGi Blueprint
 

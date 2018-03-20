@@ -92,7 +92,9 @@ public class RabbitMQComponentTest {
         String uri = "rabbitmq:special.host:14/queuey";
         String remaining = "special.host:14/queuey";
 
-        return new RabbitMQComponent(context).createEndpoint(uri, remaining, params);
+        RabbitMQComponent comp = new RabbitMQComponent(context);
+        comp.setAutoDetectConnectionFactory(false);
+        return comp.createEndpoint(uri, remaining, params);
     }
 
     @Test

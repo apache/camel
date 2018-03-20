@@ -1,3 +1,4 @@
+[[coap-component]]
 == CoAP Component
 
 *Available as of Camel version 2.16*
@@ -41,22 +42,25 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *uri* | The URI for the CoAP endpoint |  | URI
 |===
 
+
 ==== Query Parameters (5 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *coapMethodRestrict* (consumer) | Comma separated list of methods that the CoAP consumer will bind to. The default is to bind to all methods (DELETE GET POST PUT). |  | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *coapMethodRestrict* (consumer) | Comma separated list of methods that the CoAP consumer will bind to. The default is to bind to all methods (DELETE, GET, POST, PUT). |  | String
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -68,6 +72,9 @@ with the following path and query parameters:
 
 |`CamelCoapMethod` |`String` |The request method that the CoAP producer should use when calling the target CoAP
 server URI. Valid options are DELETE, GET, PING, POST & PUT.
+
+|`CamelCoapResponseCode` |`String` |The CoAP response code sent by the external server. See RFC 7252 for details
+of what each code means.
 
 |`CamelCoapUri` |`String` |The URI of a CoAP server to call. Will override any existing URI configured directly on the endpoint.
 |=======================================================================

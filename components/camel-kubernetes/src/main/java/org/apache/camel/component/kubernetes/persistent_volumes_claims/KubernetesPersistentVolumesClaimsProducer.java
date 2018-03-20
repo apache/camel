@@ -26,7 +26,6 @@ import io.fabric8.kubernetes.api.model.PersistentVolumeClaimSpec;
 import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
-import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
 
@@ -98,6 +97,8 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
     protected void doList(Exchange exchange, String operation) throws Exception {
         PersistentVolumeClaimList persistentVolumeClaimList = getEndpoint()
                 .getKubernetesClient().persistentVolumeClaims().list();
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
+        
         exchange.getOut().setBody(persistentVolumeClaimList.getItems());
     }
 

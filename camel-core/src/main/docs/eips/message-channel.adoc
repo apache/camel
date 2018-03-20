@@ -23,7 +23,7 @@ jms:queue:foo
 -------------
 
 This message channel can be then used within the
-link:jms.html[JMS] component
+<<jms-component,JMS>> component
 
 And the following shows a little Java route snippet:
 

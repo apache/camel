@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.aws.lambda;
 
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.AWSLambdaClient;
+
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -65,6 +67,32 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
         LambdaComponent component = new LambdaComponent(context);
         component.createEndpoint("aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient");
+    }
+    
+    @Test
+    public void createEndpointWithComponentElements() throws Exception {
+        LambdaComponent component = new LambdaComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        LambdaEndpoint endpoint = (LambdaEndpoint)component.createEndpoint("aws-lambda://myFunction");
+        
+        assertEquals("myFunction", endpoint.getConfiguration().getFunction());
+        assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
+        assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
+    }
+    
+    @Test
+    public void createEndpointWithComponentAndEndpointElements() throws Exception {
+        LambdaComponent component = new LambdaComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        component.setRegion(Regions.US_WEST_1.toString());
+        LambdaEndpoint endpoint = (LambdaEndpoint)component.createEndpoint("aws-lambda://myFunction?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        
+        assertEquals("myFunction", endpoint.getConfiguration().getFunction());
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
 
     @Override

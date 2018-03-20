@@ -17,6 +17,7 @@
 package org.apache.camel.component.mongodb;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +27,15 @@ import java.util.stream.Collectors;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.DistinctIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.BulkWriteOptions;
 import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.WriteModel;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 
@@ -68,6 +72,7 @@ public class MongoDbProducer extends DefaultProducer {
         bind(MongoDbOperation.remove, createDoRemove());
         bind(MongoDbOperation.save, createDoSave());
         bind(MongoDbOperation.update, createDoUpdate());
+        bind(MongoDbOperation.bulkWrite, createDoBulkWrite());
     }
 
     public MongoDbProducer(MongoDbEndpoint endpoint) {
@@ -339,13 +344,13 @@ public class MongoDbProducer extends DefaultProducer {
             BasicDBObject sortBy = exchange.getIn().getHeader(MongoDbConstants.SORT_BY, BasicDBObject.class);
             FindIterable<BasicDBObject> ret;
             if (query == null && fieldFilter == null) {
-                ret = dbCol.find(new BasicDBObject());
+                ret = dbCol.find();
             } else if (fieldFilter == null) {
                 ret = dbCol.find(query);
             } else if (query != null) {
                 ret = dbCol.find(query).projection(fieldFilter);
             } else {
-                ret = dbCol.find(new BasicDBObject()).projection(fieldFilter);
+                ret = dbCol.find().projection(fieldFilter);
             }
 
             if (sortBy != null) {
@@ -490,23 +495,43 @@ public class MongoDbProducer extends DefaultProducer {
             try {
                 MongoCollection<BasicDBObject> dbCol = calculateCollection(exchange);
                 DBObject query = exchange.getIn().getMandatoryBody(DBObject.class);
-
-                // Impossible with java driver to get the batch size and number to skip
-                List<BasicDBObject> dbIterator = new ArrayList<>();
-                AggregateIterable<BasicDBObject> aggregationResult;
-
+                
                 // Allow body to be a pipeline
                 // @see http://docs.mongodb.org/manual/core/aggregation/
+                List<Bson> queryList;
                 if (query instanceof BasicDBList) {
-                    List<Bson> queryList = ((BasicDBList) query).stream().map(o -> (Bson) o).collect(Collectors.toList());
-                    aggregationResult = dbCol.aggregate(queryList);
+                    queryList = ((BasicDBList) query).stream().map(o -> (Bson) o).collect(Collectors.toList());
                 } else {
-                    List<Bson> queryList = new ArrayList<>();
-                    queryList.add((Bson) query);
-                    aggregationResult = dbCol.aggregate(queryList);
+                    queryList = Arrays.asList((Bson) query);
                 }
-                aggregationResult.iterator().forEachRemaining(dbIterator::add);
-                return dbIterator;
+                
+                // the number to skip must be in body query
+                AggregateIterable<BasicDBObject> aggregationResult = dbCol.aggregate(queryList);
+
+                // get the batch size
+                Integer batchSize = exchange.getIn().getHeader(MongoDbConstants.BATCH_SIZE, Integer.class);
+                
+                if (batchSize != null) {
+                    aggregationResult.batchSize(batchSize);
+                }
+
+                Boolean allowDiskUse  = exchange.getIn().getHeader(MongoDbConstants.ALLOW_DISK_USE, Boolean.FALSE, Boolean.class);
+                aggregationResult.allowDiskUse(allowDiskUse);
+
+                Iterable<BasicDBObject> result;
+                if (!MongoDbOutputType.DBCursor.equals(endpoint.getOutputType())) {
+                    try {
+                        result = new ArrayList<>();
+                        aggregationResult.iterator().forEachRemaining(((List<BasicDBObject>) result)::add);
+                        exchange.getOut().setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ((List<BasicDBObject>) result).size());
+                    } finally {
+                        aggregationResult.iterator().close();
+                    }
+                } else {
+                    result = aggregationResult;
+                }
+                
+                return result;
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Invalid payload for aggregate", e);
             }
@@ -563,6 +588,26 @@ public class MongoDbProducer extends DefaultProducer {
                 return result;
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Body incorrect type for save", e);
+            }
+        };
+    }
+
+    private Function<Exchange, Object> createDoBulkWrite() {
+        return exchange -> {
+            try {
+                MongoCollection<BasicDBObject> dbCol = calculateCollection(exchange);
+
+                Boolean ordered = exchange.getIn().getHeader(MongoDbConstants.BULK_ORDERED, Boolean.TRUE, Boolean.class);
+                BulkWriteOptions options = new BulkWriteOptions().ordered(ordered);
+
+                @SuppressWarnings("unchecked")
+                List<WriteModel<BasicDBObject>> requests = exchange.getIn().getMandatoryBody((Class<List<WriteModel<BasicDBObject>>>)(Class<?>)List.class);
+
+                BulkWriteResult result = dbCol.bulkWrite(requests, options);
+                return result;
+
+            } catch (InvalidPayloadException e) {
+                throw new CamelMongoDbException("Invalid payload for bulk write", e);
             }
         };
     }

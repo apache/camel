@@ -1,3 +1,4 @@
+[[ldap-component]]
 == LDAP Component
 
 *Available as of Camel version 1.5*
@@ -57,13 +58,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *dirContextName* | *Required* Name of either a javax.naming.directory.DirContext or java.util.Hashtable or Map bean to lookup in the registry. If the bean is either a Hashtable or Map then a new javax.naming.directory.DirContext instance is created for each use. If the bean is a javax.naming.directory.DirContext then the bean is used as given. The latter may not be possible in all situations where the javax.naming.directory.DirContext must not be shared and in those situations it can be better to use java.util.Hashtable or Map instead. |  | String
+| *dirContextName* | *Required* Name of either a javax.naming.directory.DirContext, or java.util.Hashtable, or Map bean to lookup in the registry. If the bean is either a Hashtable or Map then a new javax.naming.directory.DirContext instance is created for each use. If the bean is a javax.naming.directory.DirContext then the bean is used as given. The latter may not be possible in all situations where the javax.naming.directory.DirContext must not be shared, and in those situations it can be better to use java.util.Hashtable or Map instead. |  | String
 |===
 
+
 ==== Query Parameters (5 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -71,8 +75,8 @@ with the following path and query parameters:
 | *base* (producer) | The base DN for searches. | ou=system | String
 | *pageSize* (producer) | When specified the ldap module uses paging to retrieve all results (most LDAP Servers throw an exception when trying to retrieve more than 1000 entries in one query). To be able to use this a LdapContext (subclass of DirContext) has to be passed in as ldapServerBean (otherwise an exception is thrown) |  | Integer
 | *returnedAttributes* (producer) | Comma-separated list of attributes that should be set in each entry of the result |  | String
-| *scope* (producer) | Specifies how deeply to search the tree of entries starting at the base DN. | subtree | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *scope* (producer) | Specifies how deeply to search the tree of entries, starting at the base DN. | subtree | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -338,7 +342,7 @@ public class CustomSocketFactory extends SSLSocketFactory {
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

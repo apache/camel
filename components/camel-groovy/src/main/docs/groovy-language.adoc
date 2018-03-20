@@ -1,11 +1,12 @@
+[[groovy-language]]
 == Groovy Language
 
 *Available as of Camel version 1.3*
 
 Camel supports http://groovy.codehaus.org/[Groovy] among other
-link:scripting-languages.html[Scripting Languages] to allow an
-link:expression.html[Expression] or link:predicate.html[Predicate] to be
-used in the link:dsl.html[DSL] or link:xml-configuration.html[Xml
+Scripting Languages to allow an
+Expression or Predicate to be
+used in the DSL or link:xml-configuration.html[Xml
 Configuration].
 
 To use a Groovy expression use the following Java code
@@ -16,9 +17,9 @@ To use a Groovy expression use the following Java code
 ---------------------------------------
 
 For example you could use the *groovy* function to create an
-link:predicate.html[Predicate] in a link:message-filter.html[Message
-Filter] or as an link:expression.html[Expression] for a
-link:recipient-list.html[Recipient List]
+Predicate in a link:message-filter.html[Message
+Filter] or as an Expression for a
+Recipient List
 
 ### Groovy Options
 
@@ -106,11 +107,11 @@ following attributes all set at `ENGINE_SCOPE`:
 IN message instead.
 
 |properties |`org.apache.camel.builder.script.PropertiesFunction` |*Camel 2.9:* Function with a `resolve` method to make it easier to use
-Camels link:properties.html[Properties] component from scripts. See
+Camels <<properties-component,Properties>> component from scripts. See
 further below for example.
 |=======================================================================
 
-See link:scripting-languages.html[Scripting Languages] for the list of
+See Scripting Languages for the list of
 languages with explicit DSL support.
 
 ### Additional arguments to ScriptingEngine
@@ -125,7 +126,7 @@ header on the Camel message with the key `CamelScriptArguments`. +
 
 *Available as of Camel 2.9*
 
-If you need to use the link:properties.html[Properties] component from a
+If you need to use the <<properties-component,Properties>> component from a
 script to lookup property placeholders, then its a bit cumbersome to do
 so. 
 For example to set a header name myHeader with a value from a property
@@ -184,7 +185,7 @@ engine.
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,xml]
 ---------------------------------------

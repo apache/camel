@@ -34,8 +34,8 @@ public class RabbitMQRequeueHandledExceptionIntTest extends CamelTestSupport {
     @Produce(uri = "direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject(uri = "rabbitmq:localhost:5672/ex4?"
-            + "autoAck=false&queue=q4&routingKey=" + ROUTING_KEY)
+    @EndpointInject(uri = "rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest"
+            + "&autoAck=false&queue=q4&routingKey=" + ROUTING_KEY)
     private Endpoint rabbitMQEndpoint;
 
     @EndpointInject(uri = "mock:producing")

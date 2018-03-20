@@ -3,8 +3,8 @@ Architecture
 ~~~~~~~~~~~~
 
 Camel uses a Java based link:dsl.html[Routing Domain Specific Language
-(DSL)] or an link:xml-configuration.html[Xml Configuration] to configure
-link:routes.html[routing and mediation rules] which are added to a
+(DSL)] or an Xml Configuration to configure
+routing and mediation rules which are added to a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContext.html[CamelContext]
 to implement the various
 link:enterprise-integration-patterns.html[Enterprise Integration
@@ -12,27 +12,27 @@ Patterns].
 
 At a high level Camel consists of a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContext.html[CamelContext]
-which contains a collection of link:component.html[Component] instances.
-A link:component.html[Component] is essentially a factory of
-link:endpoint.html[Endpoint] instances. You can explicitly configure
-link:component.html[Component] instances in Java code or an IoC
+which contains a collection of Component instances.
+A Component is essentially a factory of
+Endpoint instances. You can explicitly configure
+Component instances in Java code or an IoC
 container like Spring or Guice, or they can be auto-discovered using
-link:uris.html[URIs].
+URIs.
 
-An link:endpoint.html[Endpoint] acts rather like a URI or URL in a web
+An Endpoint acts rather like a URI or URL in a web
 application or a Destination in a JMS system; you can communicate with
 an endpoint; either sending messages to it or consuming messages from
 it. You can then create a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
 or
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Consumer.html[Consumer]
-on an link:endpoint.html[Endpoint] to exchange messages with it.
+on an Endpoint to exchange messages with it.
 
-The link:dsl.html[DSL] makes heavy use of pluggable
-link:languages.html[Languages] to create an
-link:expression.html[Expression] or link:predicate.html[Predicate] to
+The DSL makes heavy use of pluggable
+Languages to create an
+Expression or Predicate to
 make a truly powerful DSL which is extensible to the most suitable
-language depending on your needs. Many of the link:languages.html[Languages] 
+language depending on your needs. Many of the Languages 
 are also supported as
 link:annotation-based-expression-language.html[Annotation Based
 Expression Language].

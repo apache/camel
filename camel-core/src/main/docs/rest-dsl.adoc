@@ -8,10 +8,10 @@ REST style with verbs such as get, post, delete etc.
 
 === How it works
 
-The Rest DSL is a facade that builds link:rest.html[Rest] endpoints as
+The Rest DSL is a facade that builds <<rest-component,Rest>> endpoints as
 consumers for Camel routes. The actual REST transport is leveraged by
 using Camel REST components such
-as link:restlet.html[Restlet], link:spark-rest.html[Spark-rest], and
+as <<restlet-component,Restlet>>, <<restlet-component,Spark-rest>>, and
 others that has native REST integration.
 
 === Components supporting Rest DSL
@@ -19,20 +19,20 @@ others that has native REST integration.
 The following Camel components supports the Rest DSL. See the bottom of
 this page for how to integrate a component with the Rest DSL.
 
-* link:netty-http.html[camel-netty-http] (also
-supports link:swagger-java.html[Swagger Java])
-* link:netty4-http.html[camel-netty4-http] (also
-supports link:swagger-java.html[Swagger Java])
-* link:jetty.html[camel-jetty] (also
-supports link:swagger-java.html[Swagger Java])
-* link:restlet.html[camel-restlet] (also
-supports link:swagger-java.html[Swagger Java])
-* link:servlet.html[camel-servlet] (also
-supports link:swagger-java.html[Swagger Java])
-* link:spark-rest.html[camel-spark-rest] (also
-supports link:swagger-java.html[Swagger Java] from Camel 2.17 onwards)
-* link:undertow.html[camel-undertow] (also
-supports link:swagger-java.html[Swagger Java] from Camel 2.17 onwards)
+* <<netty-http-component,camel-netty-http>> (also
+supports Swagger Java)
+* <<netty4-http-component,camel-netty4-http>> (also
+supports Swagger Java)
+* <<jetty-component,camel-jetty>> (also
+supports Swagger Java)
+* <<restlet-component,camel-restlet>> (also
+supports Swagger Java)
+* <<servlet-component,camel-servlet>> (also
+supports Swagger Java)
+* <<spark-rest-component,camel-spark-rest>> (also
+supports Swagger Java from Camel 2.17 onwards)
+* <<undertow-component,camel-undertow>> (also
+supports Swagger Java from Camel 2.17 onwards)
 
 === Rest DSL with Java
 
@@ -178,9 +178,9 @@ only. The example above can be defined as:
 
 *Available as of Camel 2.16*
 
-The link:rest-dsl.html[Rest DSL] supports the new .toD <toD> as dynamic
+The Rest DSL supports the new .toD <toD> as dynamic
 to in the rest-dsl. For example to do a request/reply
-over link:jms.html[JMS] where the queue name is dynamic defined
+over <<jms-component,JMS>> where the queue name is dynamic defined
 
 [source,java]
 ----
@@ -201,9 +201,9 @@ over link:jms.html[JMS] where the queue name is dynamic defined
 <rest>
 ----
 
-See more details at link:message-endpoint.html[Message Endpoint] about
+See more details at Message Endpoint about
 the dynamic to, and what syntax it supports. By default it uses
-the link:simple.html[Simple] language, but it has more power than so.
+the <<simple-language,Simple>> language, but it has more power than so.
 
 === Embedding Camel routes
 
@@ -274,7 +274,7 @@ REST services which has been defined. 
 === Binding to POJOs using
 
 The Rest DSL supports automatic binding json/xml contents to/from POJOs
-using Camels link:data-format.html[Data Format]. By default the binding
+using Camels Data Format. By default the binding
 mode is off, meaning there is no automatic binding happening for
 incoming and outgoing messages.
 
@@ -660,9 +660,9 @@ source code for camel-restlet, camel-spark-rest.
 
 === Swagger API
 
-The Rest DSL supports link:swagger-java.html[Swagger Java] by
+The Rest DSL supports Swagger Java by
 the `camel-swagger-java` module. See more details at
- link:swagger-java.html[Swagger] and the `camel-swagger-java` example
+ Swagger and the `camel-swagger-java` example
 from the Apache Camel distribution.
 
 From *Camel 2.16* onwards you can define each parameter fine grained

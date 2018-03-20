@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.swagger.RestApiResponseAdapter;
 
+@Deprecated
 public class ServletRestApiResponseAdapter implements RestApiResponseAdapter {
 
     private final HttpServletResponse response;

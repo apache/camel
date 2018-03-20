@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.google.calendar;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.google.api.services.calendar.CalendarScopes;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
 import org.apache.camel.spi.Metadata;

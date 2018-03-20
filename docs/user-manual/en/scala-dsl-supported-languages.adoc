@@ -1,17 +1,17 @@
 Scala DSL - Supported languages
 ===============================
 
-Support for link:languages.html[other languages] inside the Scala DSL
+Support for other languages inside the Scala DSL
 routes is delivered through traits. The
 `org.apache.camel.scala.dsl.languages` package currently offers traits
 to support XPath. To use any given language, you can mix-in the trait
 when creating your `RouteBuilder`.
 
-You can use any of the supported Camel link:languages.html[Languages] in
-the link:scala-dsl.html[Scala DSL]; see below for a couple of examples:
+You can use any of the supported Camel Languages in
+the Scala DSL; see below for a couple of examples:
 
 [[ScalaDSL-Supportedlanguages-Using]]
-Using link:xpath.html[XPath]
+Using <<xpath-language,XPath>>
 ----------------------------
 
 With the XPath trait, you have an additional method available on an
@@ -31,7 +31,7 @@ Splitter example, where the `xpath` method is used in a
 ----------------------------------------------------------
 
 [[ScalaDSL-Supportedlanguages-Using.1]]
-Using link:jxpath.html[JXPath]
+Using <<jxpath-language,JXPath>>
 ------------------------------
 
 With the `org.apache.camel.scala.dsl.languages.JXPath` trait, you can an

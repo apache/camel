@@ -7,7 +7,7 @@ BacklogDebugger
 Camel supports a backlog debugger that is used for live debugging of
 message they are routed in Camel. 
 The backlog debugger has additional functionality for easier debugging
-aimed at tooling, than the link:debugger.html[Debugger]. The backlog
+aimed at tooling, than the Debugger. The backlog
 debugger is exposed in JMX in the tracer node with the name
 `BacklogDebugger`. The JMX API is defined in the
 `org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean`
@@ -27,14 +27,14 @@ Options
 |`enabled` |`false` |Whether the debugger is enabled or not.
 
 |`singleStepMode` |`false` |Whether currently in single step mode of a single
-link:exchange.html[Exchange].
+Exchange.
 
 |`bodyMaxChars` |`128kb` |To limit the message body to a maximum size in the traced message. Use 0
 or negative value to use unlimited size.
 
 |`bodyIncludeStreams` |`false` |Whether to include the message body of stream based messages. If enabled
 then beware the stream may not be re-readable later. See more about
-link:stream-caching.html[Stream Caching].
+Stream Caching.
 
 |`bodyIncludeFiles` |`true` |Whether to include the message body of file based messages. The overhead
 is that the file content has to be read from the file.
@@ -61,17 +61,17 @@ Operations
 |`addBreakpoint(nodeId)` |`void` |To add a breakpoint at the given node.
 
 |`addConditionalBreakpoint(nodeId, language, predicate)` |`void` |To add a conditional breakpoint at the given node. The predicate is
-created from the link:languages.html[language] parameter.
+created from the language parameter.
 
 |`removeBreakpoint(nodeId)` |`void` |To remove the breakpoint from the given node id.
 
 |`resumeBreakpoint(nodeId)` |`void` |To resume a suspend breakpoint, which will then continue routing the
-link:exchange.html[Exchange].
+Exchange.
 
 |`resumeAll` |`void` |To resume all suspended breakpoints.
 
 |`getSuspendedBreakpointNodeIds` |`Set<String>` |To get a set of all the nodes which has suspended breakpoints (eg an
-link:exchange.html[Exchange] at the breakpoint which is suspended).
+Exchange at the breakpoint which is suspended).
 
 |`stepBreakpoint(nodeId)` |`void` |To start single step mode from a suspended breakpoint at the given node.
 Then invoke `step` to step to next node in the route.
@@ -84,11 +84,11 @@ Then invoke `step` to step to next node in the route.
 
 |`disableBreakpoint(nodeId)` |`void` |To disable a breakpoint temporary.
 
-|`setMessageBodyOnBreakpoint(nodeId,body)` |`void` |To update the message body on the suspended link:exchange.html[Exchange]
+|`setMessageBodyOnBreakpoint(nodeId,body)` |`void` |To update the message body on the suspended Exchange
 at the node.
 
 |`setMessageHeaderOnBreakpoint(nodeId,headerName,value)` |`void` |To update/add the message header on the suspended
-link:exchange.html[Exchange] at the node.
+Exchange at the node.
 |=======================================================================
 
 [[BacklogDebugger-Enabling]]
@@ -101,7 +101,7 @@ You would need to enable this using the JMX API.
 See Also
 ^^^^^^^^
 
-* link:backlogtracer.html[BacklogTracer]
-* link:debugger.html[Debugger]
-* link:log.html[Log]
+* BacklogTracer
+* Debugger
+* <<log-component,Log>>
 

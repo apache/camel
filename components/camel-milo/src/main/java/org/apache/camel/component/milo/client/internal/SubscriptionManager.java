@@ -17,12 +17,14 @@
 package org.apache.camel.component.milo.client.internal;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -31,6 +33,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.apache.camel.component.milo.NamespaceId;
 import org.apache.camel.component.milo.PartialNodeId;
@@ -414,7 +417,11 @@ public class SubscriptionManager {
                 }
             }
 
-            return findEndpoint(endpoints);
+            try {
+                return findEndpoint(endpoints);
+            } catch (final URISyntaxException e) {
+                throw new RuntimeException("Failed to find endpoints", e);
+            }
         }).get();
 
         LOG.debug("Selected endpoint: {}", endpoint);
@@ -445,6 +452,7 @@ public class SubscriptionManager {
         cfg.setEndpoint(endpoint);
 
         final OpcUaClient client = new OpcUaClient(cfg.build());
+        client.connect().get();
 
         try {
             final UaSubscription manager = client.getSubscriptionManager().createSubscription(1_000.0).get();
@@ -492,14 +500,77 @@ public class SubscriptionManager {
         }
     }
 
-    private EndpointDescription findEndpoint(final EndpointDescription[] endpoints) {
+    private EndpointDescription findEndpoint(final EndpointDescription[] endpoints) throws URISyntaxException {
+
+        final Predicate<String> allowed;
+        final Set<String> uris = this.configuration.getAllowedSecurityPolicies();
+
+        if (this.configuration.getAllowedSecurityPolicies() == null || this.configuration.getAllowedSecurityPolicies().isEmpty()) {
+            allowed = uri -> true;
+        } else {
+            allowed = uris::contains;
+        }
+
         EndpointDescription best = null;
         for (final EndpointDescription ep : endpoints) {
+
+            if (!allowed.test(ep.getSecurityPolicyUri())) {
+                continue;
+            }
+
             if (best == null || ep.getSecurityLevel().compareTo(best.getSecurityLevel()) > 0) {
                 best = ep;
             }
         }
-        return best;
+
+        // return result, might override the host part
+
+        return overrideHost(best);
+    }
+
+    /**
+     * Optionally override the host of the endpoint URL with the configured one.
+     * <br>
+     * The method will call {@link #overrideHost(String)} if the endpoint is not
+     * {@code null} and {@link MiloClientConfiguration#isOverrideHost()} returns
+     * {@code true}.
+     * 
+     * @param desc The endpoint descriptor to work on
+     * @return Either the provided or updated endpoint descriptor. Only returns
+     *         {@code null} when the input was {@code null}.
+     * @throws URISyntaxException on case the URI is malformed
+     */
+    private EndpointDescription overrideHost(final EndpointDescription desc) throws URISyntaxException {
+        if (desc == null) {
+            return null;
+        }
+
+        if (!this.configuration.isOverrideHost()) {
+            return desc;
+        }
+
+        return new EndpointDescription(overrideHost(desc.getEndpointUrl()), desc.getServer(), desc.getServerCertificate(), desc.getSecurityMode(), desc.getSecurityPolicyUri(),
+                                       desc.getUserIdentityTokens(), desc.getTransportProfileUri(), desc.getSecurityLevel());
+    }
+
+    /**
+     * Override host part of the endpoint URL with the configured one.
+     * 
+     * @param endpointUrl the server provided endpoint URL
+     * @return A new endpoint URL with the host part exchanged by the configured
+     *         host. Will be {@code null} when the input is {@code null}.
+     * @throws URISyntaxException on case the URI is malformed
+     */
+    private String overrideHost(final String endpointUrl) throws URISyntaxException {
+
+        if (endpointUrl == null) {
+            return null;
+        }
+
+        final URI uri = URI.create(endpointUrl);
+        final URI originalUri = URI.create(configuration.getEndpointUri());
+
+        return new URI(uri.getScheme(), uri.getUserInfo(), originalUri.getHost(), uri.getPort(), uri.getPath(), uri.getQuery(), uri.getFragment()).toString();
     }
 
     protected synchronized void whenConnected(final Worker<Connected> worker) {

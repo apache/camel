@@ -49,9 +49,9 @@ public class RefLanguage implements Language, IsSingleton {
                 Object lookup = exp.evaluate(exchange, Object.class);
 
                 // must favor expression over predicate
-                if (lookup != null && lookup instanceof Expression) {
+                if (lookup instanceof Expression) {
                     target = (Expression) lookup;
-                } else if (lookup != null && lookup instanceof Predicate) {
+                } else if (lookup instanceof Predicate) {
                     target = PredicateToExpressionAdapter.toExpression((Predicate) lookup);
                 }
 

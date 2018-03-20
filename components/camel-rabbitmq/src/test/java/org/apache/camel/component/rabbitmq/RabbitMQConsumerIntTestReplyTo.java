@@ -37,25 +37,24 @@ import org.junit.Test;
  * Integration test to check if requested direct reply messages are received
  */
 public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
-
+    protected static final String QUEUE = "amq.rabbitmq.reply-to";
+    
     private static final String EXCHANGE = "ex_reply";
     private static final String ROUTING_KEY = "testreply";
     private static final String REQUEST = "Knock! Knock!";
     private static final String REPLY = "Hello world";
-    private static final String QUEUE = "amq.rabbitmq.reply-to";
 
-    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?routingKey=" + ROUTING_KEY)
+    protected Channel channel;
+    
+    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest&routingKey=" + ROUTING_KEY)
     private Endpoint from;
 
     private Connection connection;
-    private Channel channel;
-
+    
     @Before
     public void setUpRabbitMQ() throws Exception {
         connection = connection();
         channel = connection.createChannel();
-//        channel.queueDeclare("sammyq", false, false, true, null);
-//        channel.queueBind("sammyq", EXCHANGE, ROUTE);
     }
     
     @Override
@@ -112,6 +111,4 @@ public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
             received.add(new String(body));
         }
     }
-
 }
-

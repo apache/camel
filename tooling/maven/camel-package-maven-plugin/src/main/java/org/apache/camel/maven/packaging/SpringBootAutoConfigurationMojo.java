@@ -420,6 +420,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 type = "java.util.Map<java.lang.String, java.lang.Object>";
             }
 
+            // to avoid ugly names such as c-o-r-s
             if ("enableCORS".equalsIgnoreCase(name)) {
                 name = "enableCors";
             }

@@ -79,6 +79,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      *  
      * @param root
      */
+    @SuppressWarnings("rawtypes")
     private void loadModels(Class<?> root) {
         models.add(root);
         modelClassNames.add(root.getName());
@@ -231,6 +232,8 @@ public abstract class BindyAbstractFactory implements BindyFactory {
             return Character.MIN_VALUE;
         } else if (clazz == boolean.class) {
             return false;
+        } else if (clazz == String.class) {
+            return ""; 
         } else {
             return null;
         }

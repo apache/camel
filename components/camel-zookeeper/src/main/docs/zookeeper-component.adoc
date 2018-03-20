@@ -1,3 +1,4 @@
+[[zookeeper-component]]
 == ZooKeeper Component
 
 *Available as of Camel version 2.9*
@@ -11,7 +12,7 @@ following features to Camel:
 being set must be convertible to `byte[]`).
 3.  Create and retrieve the list the child nodes attached to a
 particular node.
-4.  A Distributed link:routepolicy.html[`RoutePolicy`] that leverages a
+4.  A Distributed `RoutePolicy` that leverages a
 Leader election coordinated by ZooKeeper to determine if exchanges
 should get processed.
 
@@ -64,6 +65,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -71,7 +73,9 @@ with the following path and query parameters:
 | *path* | *Required* The node in the ZooKeeper server (aka znode) |  | String
 |===
 
+
 ==== Query Parameters (12 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -80,14 +84,14 @@ with the following path and query parameters:
 | *listChildren* (common) | Whether the children of the node should be listed | false | boolean
 | *timeout* (common) | The time interval to wait on connection before timing out. | 5000 | int
 | *backoff* (consumer) | The time interval to backoff for after an error before retrying. | 5000 | long
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *repeat* (consumer) | Should changes to the znode be 'watched' and repeatedly processed. | false | boolean
-| *sendEmptyMessageOnDelete* (consumer) | Upon the delete of a znode should an empty message be send to the consumer | true | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *sendEmptyMessageOnDelete* (consumer) | Upon the delete of a znode, should an empty message be send to the consumer | true | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *create* (producer) | Should the endpoint create the node if it does not currently exist. | false | boolean
 | *createMode* (producer) | The create mode that should be used for the newly created node | EPHEMERAL | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -220,7 +224,7 @@ template.sendBodyAndHeader("direct:create-and-write-to-persistent-znode", testPa
 
 ZooKeeper allows for very simple and effective leader election out of
 the box. This component exploits this election capability in a
-link:routepolicy.html[`RoutePolicy`] to control when and how routes are
+`RoutePolicy` to control when and how routes are
 enabled. This policy would typically be used in fail-over scenarios, to
 control identical instances of a route across a cluster of Camel based
 servers. A very common scenario is a simple 'Master-Slave' setup where
@@ -276,7 +280,7 @@ There are currently 3 policies defined in the component, with different SLAs:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

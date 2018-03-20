@@ -1,8 +1,9 @@
+[[flatpack-dataformat]]
 == Flatpack DataFormat
 
 *Available as of Camel version 2.1*
 
-The link:flatpack.html[Flatpack] component ships with the Flatpack data
+The <<flatpack-component,Flatpack>> component ships with the Flatpack data
 format that can be used to format between fixed width or delimited text
 messages to a `List` of rows as `Map`.
 
@@ -13,7 +14,7 @@ to a `java.util.List` as an
 `org.apache.camel.component.flatpack.DataSetList` instance. +
  The result of the operation will contain all the data. If you need to
 process each row one by one you can split the exchange, using
-link:splitter.html[Splitter].
+Splitter.
 
 *Notice:* The Flatpack library does currently not support header and
 trailers for the marshal operation.
@@ -28,15 +29,15 @@ The Flatpack dataformat supports 9 options which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| definition |  | String | The flatpack pzmap configuration file. Can be omitted in simpler situations but its preferred to use the pzmap.
+| definition |  | String | The flatpack pzmap configuration file. Can be omitted in simpler situations, but its preferred to use the pzmap.
 | fixed | false | Boolean | Delimited or fixed. Is by default false = delimited
 | ignoreFirstRecord | true | Boolean | Whether the first line is ignored for delimited files (for the column headers). Is by default true.
 | textQualifier |  | String | If the text is qualified with a character. Uses quote character by default.
-| delimiter | , | String | The delimiter char (could be ; or similar)
+| delimiter | , | String | The delimiter char (could be ; , or similar)
 | allowShortLines | false | Boolean | Allows for lines to be shorter than expected and ignores the extra characters
 | ignoreExtraColumns | false | Boolean | Allows for lines to be longer than expected and ignores the extra characters.
 | parserFactoryRef |  | String | References to a custom parser factory to lookup in the registry
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
 
@@ -82,7 +83,7 @@ To use Flatpack in your camel routes you need to add the a dependency on
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,java]
 -----------------------------------------

@@ -1,3 +1,4 @@
+[[sap-netweaver-component]]
 == SAP NetWeaver Component
 
 *Available as of Camel version 2.12*
@@ -63,23 +64,26 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *url* | *Required* Url to the SAP net-weaver gateway server. |  | String
 |===
 
+
 ==== Query Parameters (6 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *flatternMap* (producer) | If the JSON Map contains only a single entry then flattern by storing that single entry value as the message body. | true | boolean
-| *json* (producer) | Whether to return data in JSON format. If this option is false then XML is returned in Atom format. | true | boolean
+| *flatternMap* (producer) | If the JSON Map contains only a single entry, then flattern by storing that single entry value as the message body. | true | boolean
+| *json* (producer) | Whether to return data in JSON format. If this option is false, then XML is returned in Atom format. | true | boolean
 | *jsonAsMap* (producer) | To transform the JSON from a String to a Map in the message body. | true | boolean
 | *password* (producer) | *Required* Password for account. |  | String
 | *username* (producer) | *Required* Username for account. |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -127,12 +131,13 @@ We have the following Camel route
 [source,java]
 -----------------------------------------------------------------------------
 from("direct:start")
+    .setHeader(NetWeaverConstants.COMMAND, constant(command))
     .toF("sap-netweaver:%s?username=%s&password=%s", url, username, password)
     .to("log:response")
     .to("velocity:flight-info.vm")
 -----------------------------------------------------------------------------
 
-Where url, username, and password is defined as:
+Where url, username, password and command is defined as:
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------
@@ -181,9 +186,9 @@ Destination airport: SFO
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:http.html[HTTP]
+* <<http-component,HTTP>>

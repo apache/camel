@@ -46,64 +46,51 @@ import org.jxmpp.jid.impl.JidCreate;
 
 public final class EmbeddedXmppTestServer {
 
-    private static EmbeddedXmppTestServer instance;
-
     private XMPPServer xmppServer;
     private TCPEndpoint endpoint;
     private int port;
-    
-    // restricted to singleton
-    private EmbeddedXmppTestServer()  { }
 
-    public static EmbeddedXmppTestServer instance()  {
-        if (instance == null) {
-            instance = new EmbeddedXmppTestServer();
-            instance.initializeXmppServer();
-        }
-        return instance;
+    public EmbeddedXmppTestServer() { 
+        initializeXmppServer();
     }
 
     private void initializeXmppServer() {
         try {
-            if (xmppServer == null) {
-                xmppServer = new XMPPServer("apache.camel");
+            xmppServer = new XMPPServer("apache.camel");
 
-                StorageProviderRegistry providerRegistry = new MemoryStorageProviderRegistry();
-                AccountManagement accountManagement = (AccountManagement) providerRegistry.retrieve(AccountManagement.class);
+            StorageProviderRegistry providerRegistry = new MemoryStorageProviderRegistry();
+            AccountManagement accountManagement = (AccountManagement) providerRegistry.retrieve(AccountManagement.class);
 
-                Entity user = EntityImpl.parseUnchecked("camel_consumer@apache.camel");
-                accountManagement.addUser(user, "secret");
+            Entity user = EntityImpl.parseUnchecked("camel_consumer@apache.camel");
+            accountManagement.addUser(user, "secret");
 
-                Entity user2 = EntityImpl.parseUnchecked("camel_producer@apache.camel");
-                accountManagement.addUser(user2, "secret");
-                
-                Entity user3 = EntityImpl.parseUnchecked("camel_producer1@apache.camel");
-                accountManagement.addUser(user3, "secret");
+            Entity user2 = EntityImpl.parseUnchecked("camel_producer@apache.camel");
+            accountManagement.addUser(user2, "secret");
+            
+            Entity user3 = EntityImpl.parseUnchecked("camel_producer1@apache.camel");
+            accountManagement.addUser(user3, "secret");
 
-                xmppServer.setStorageProviderRegistry(providerRegistry);
+            xmppServer.setStorageProviderRegistry(providerRegistry);
 
-                if (endpoint == null) {
-                    endpoint = new TCPEndpoint();
-                    this.port = AvailablePortFinder.getNextAvailable(5222);
-                    endpoint.setPort(port);
-                }
+            endpoint = new TCPEndpoint();
+            this.port = AvailablePortFinder.getNextAvailable(5222);
+            endpoint.setPort(port);
 
-                xmppServer.addEndpoint(endpoint);
+            xmppServer.addEndpoint(endpoint);
 
-                InputStream stream = ObjectHelper.loadResourceAsStream("xmppServer.jks");
-                xmppServer.setTLSCertificateInfo(stream, "secret");
+            InputStream stream = ObjectHelper.loadResourceAsStream("xmppServer.jks");
+            xmppServer.setTLSCertificateInfo(stream, "secret");
 
-                // allow anonymous logins
-                xmppServer.setSASLMechanisms(Arrays.asList(new SASLMechanism[]{new Anonymous()}));
+            // allow anonymous logins
+            xmppServer.setSASLMechanisms(Arrays.asList(new SASLMechanism[]{new Anonymous()}));
 
-                xmppServer.start();
+            xmppServer.start();
 
-                // add the multi-user chat module and create a few test rooms
-                Conference conference = new Conference("test conference");
-                conference.createRoom(EntityImpl.parseUnchecked("camel-anon@apache.camel"), "camel-anon", RoomType.FullyAnonymous);
-                conference.createRoom(EntityImpl.parseUnchecked("camel-test@apache.camel"), "camel-test", RoomType.Public);
-                xmppServer.addModule(new MUCModule("conference", conference));
-            }
+            // add the multi-user chat module and create a few test rooms
+            Conference conference = new Conference("test conference");
+            conference.createRoom(EntityImpl.parseUnchecked("camel-anon@apache.camel"), "camel-anon", RoomType.FullyAnonymous);
+            conference.createRoom(EntityImpl.parseUnchecked("camel-test@apache.camel"), "camel-test", RoomType.Public);
+            xmppServer.addModule(new MUCModule("conference", conference));
         } catch (Exception e) {
             throw new RuntimeException("An error occurred when initializing the XMPP Test Server.", e);
         }
@@ -140,5 +127,9 @@ public final class EmbeddedXmppTestServer {
                 .build();
 
         registry.bind("customConnectionConfig", connectionConfig);
+    }
+
+    public void stop() {
+        xmppServer.stop();
     }
 }

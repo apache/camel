@@ -22,12 +22,12 @@ for this component:
 [width="100%", options="header"]
 |=======================================================================
 | OpenStack service | Camel Component| Description
-| https://wiki.openstack.org/wiki/Cinder[OpenStack Cinder] | link:openstack-cinder-component.html[openstack-cinder] | Component to maintain OpenStack cinder.
-| https://wiki.openstack.org/wiki/Glance[OpenStack Glance] | link:openstack-glance-component.html[openstack-glance] | Component to maintain OpenStack glance.
-| https://wiki.openstack.org/wiki/Keystone[OpenStack Keystone] | link:openstack-keystone-component.html[openstack-keystone] | Component to maintain OpenStack keystone.
-| https://wiki.openstack.org/wiki/Neutron[OpenStack Neutron] | link:openstack-neutron-component.html[openstack-neutron] | Component to maintain OpenStack neutron.
-| https://wiki.openstack.org/wiki/Nova[OpenStack Nova] | link:openstack-nova-component.html[openstack-nova] | Component to maintain OpenStack nova.
-| https://wiki.openstack.org/wiki/Swift[OpenStack Swift] | link:openstack-swift-component.html[openstack-swift] | Component to maintain OpenStack swift.
+| https://wiki.openstack.org/wiki/Cinder[OpenStack Cinder] | <<openstack-cinder-component,openstack-cinder>> | Component to maintain OpenStack cinder.
+| https://wiki.openstack.org/wiki/Glance[OpenStack Glance] | <<openstack-glance-component,openstack-glance>> | Component to maintain OpenStack glance.
+| https://wiki.openstack.org/wiki/Keystone[OpenStack Keystone] | <<openstack-keystone-component,openstack-keystone>> | Component to maintain OpenStack keystone.
+| https://wiki.openstack.org/wiki/Neutron[OpenStack Neutron] | <<openstack-neutron-component,openstack-neutron>> | Component to maintain OpenStack neutron.
+| https://wiki.openstack.org/wiki/Nova[OpenStack Nova] | <<openstack-nova-component,openstack-nova>> | Component to maintain OpenStack nova.
+| https://wiki.openstack.org/wiki/Swift[OpenStack Swift] | <<openstack-swift-component,openstack-swift>> | Component to maintain OpenStack swift.
 |=======================================================================
 
 

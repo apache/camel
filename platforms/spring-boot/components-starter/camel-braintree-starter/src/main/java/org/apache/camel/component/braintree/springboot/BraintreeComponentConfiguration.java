@@ -90,6 +90,12 @@ public class BraintreeComponentConfiguration
          */
         private String privateKey;
         /**
+         * The access token granted by a merchant to another in order to process
+         * transactions on their behalf. Used in place of environment, merchant
+         * id, public key and private key fields.
+         */
+        private String accessToken;
+        /**
          * The proxy host
          */
         private String proxyHost;
@@ -156,6 +162,14 @@ public class BraintreeComponentConfiguration
 
         public void setPrivateKey(String privateKey) {
             this.privateKey = privateKey;
+        }
+
+        public String getAccessToken() {
+            return accessToken;
+        }
+
+        public void setAccessToken(String accessToken) {
+            this.accessToken = accessToken;
         }
 
         public String getProxyHost() {

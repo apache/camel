@@ -17,24 +17,21 @@
 package org.apache.camel.component.hipchat;
 
 import java.io.IOException;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +43,6 @@ import static org.apache.camel.util.UnsafeUriCharactersEncoder.encodeHttpURI;
 public class HipchatProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(HipchatProducer.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final CloseableHttpClient HTTP_CLIENT = HttpClients.createDefault();
     
     private transient String hipchatProducerToString;
 
@@ -103,7 +99,7 @@ public class HipchatProducer extends DefaultProducer {
     protected StatusLine post(String urlPath, Map<String, String> postParam) throws IOException {
         HttpPost httpPost = new HttpPost(getConfig().hipChatUrl() + urlPath);
         httpPost.setEntity(new StringEntity(MAPPER.writeValueAsString(postParam), ContentType.APPLICATION_JSON));
-        CloseableHttpResponse closeableHttpResponse = HTTP_CLIENT.execute(httpPost);
+        CloseableHttpResponse closeableHttpResponse = getConfig().getHttpClient().execute(httpPost);
         try {
             return closeableHttpResponse.getStatusLine();
         } finally {

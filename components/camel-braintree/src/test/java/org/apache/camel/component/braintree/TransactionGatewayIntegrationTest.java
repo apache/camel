@@ -26,7 +26,9 @@ import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionCloneRequest;
+import com.braintreegateway.TransactionRefundRequest;
 import com.braintreegateway.TransactionRequest;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.TransactionGatewayApiMethod;
@@ -63,9 +65,8 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
             for (String token : this.transactionIds) {
                 // TODO: cleanup
             }
-
-            this.transactionIds.clear();
         }
+        this.transactionIds.clear();
     }
 
     // *************************************************************************
@@ -259,6 +260,120 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
         LOG.debug("Transaction submitted for settlement - id={}" + result.getTarget().getId());
     }
 
+    @Test
+    public void testRefund() throws Exception {
+        assertNotNull("BraintreeGateway can't be null", this.gateway);
+
+        final Result<Transaction> createResult = requestBody(
+                "direct://SALE",
+                new TransactionRequest()
+                        .amount(new BigDecimal("100.00"))
+                        .paymentMethodNonce("fake-valid-nonce")
+                        .options()
+                            .submitForSettlement(true)
+                        .done(),
+                Result.class
+        );
+
+        assertNotNull("sale result", createResult);
+        assertTrue(createResult.isSuccess());
+
+        String createId = createResult.getTarget().getId();
+
+        final Result<Transaction> settleResult = this.gateway.testing().settle(createId);
+        assertNotNull("settle result", settleResult);
+        assertTrue(settleResult.isSuccess());
+
+        final Result<Transaction> result = requestBody(
+                "direct://REFUND_WITH_ID",
+                createId,
+                Result.class
+        );
+
+        assertNotNull("Request Refund result", result);
+        assertTrue(result.isSuccess());
+        LOG.info(String.format("Refund id(%s) created for transaction id(%s)", result.getTarget().getId(), createId));
+    }
+
+    @Test
+    public void testRefundWithAmount() throws Exception {
+        assertNotNull("BraintreeGateway can't be null", this.gateway);
+
+        final Result<Transaction> createResult = requestBody(
+                "direct://SALE",
+                new TransactionRequest()
+                        .amount(new BigDecimal("100.00"))
+                        .paymentMethodNonce("fake-valid-nonce")
+                        .options()
+                        .submitForSettlement(true)
+                        .done(),
+                Result.class
+        );
+
+        assertNotNull("sale result", createResult);
+        assertTrue(createResult.isSuccess());
+
+        String createId = createResult.getTarget().getId();
+
+        final Result<Transaction> settleResult = this.gateway.testing().settle(createId);
+        assertNotNull("settle result", settleResult);
+        assertTrue(settleResult.isSuccess());
+
+        final Result<Transaction> result = requestBodyAndHeaders(
+                "direct://REFUND",
+                null,
+                new BraintreeHeaderBuilder()
+                        .add("id", createId)
+                        .add("amount", new BigDecimal("99.00"))
+                        .build(),
+                Result.class
+        );
+
+        assertNotNull("Request Refund result", result);
+        assertTrue(result.isSuccess());
+        LOG.info(String.format("Refund id(%s) created for transaction id(%s)", result.getTarget().getId(), createId));
+    }
+
+    @Test
+    public void testRefundWithRequest() throws Exception {
+        assertNotNull("BraintreeGateway can't be null", this.gateway);
+
+        final Result<Transaction> createResult = requestBody(
+                "direct://SALE",
+                new TransactionRequest()
+                        .amount(new BigDecimal("100.00"))
+                        .paymentMethodNonce("fake-valid-nonce")
+                        .options()
+                        .submitForSettlement(true)
+                        .done(),
+                Result.class
+        );
+
+        assertNotNull("sale result", createResult);
+        assertTrue(createResult.isSuccess());
+
+        String createId = createResult.getTarget().getId();
+
+        final Result<Transaction> settleResult = this.gateway.testing().settle(createId);
+        assertNotNull("settle result", settleResult);
+        assertTrue(settleResult.isSuccess());
+
+        final Result<Transaction> result = requestBodyAndHeaders(
+                "direct://REFUND",
+                null,
+                new BraintreeHeaderBuilder()
+                        .add("id", createId)
+                        .add("refundRequest", new TransactionRefundRequest()
+                                .amount(new BigDecimal("100.00")))
+                        .build(),
+                Result.class
+        );
+
+        assertNotNull("Request Refund result", result);
+        assertTrue(result.isSuccess());
+        LOG.info(String.format("Refund id(%s) created for transaction id(%s)", result.getTarget().getId(), createId));
+    }
+
     // *************************************************************************
     // Auto generated tests
     // *************************************************************************
@@ -294,33 +409,6 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
 
         assertNotNull("holdInEscrow result", result);
         LOG.debug("holdInEscrow: " + result);
-    }
-
-    // TODO provide parameter values for refund
-    @Ignore
-    @Test
-    public void testRefund() throws Exception {
-        // using String message body for single parameter "id"
-        final com.braintreegateway.Result result = requestBody("direct://REFUND", null);
-
-        assertNotNull("refund result", result);
-        LOG.debug("refund: " + result);
-    }
-
-    // TODO provide parameter values for refund
-    @Ignore
-    @Test
-    public void testRefundWithAmount() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is String
-        headers.put("CamelBraintree.id", null);
-        // parameter type is java.math.BigDecimal
-        headers.put("CamelBraintree.amount", null);
-
-        final com.braintreegateway.Result result = requestBodyAndHeaders("direct://REFUND_1", null, headers);
-
-        assertNotNull("refund result", result);
-        LOG.debug("refund: " + result);
     }
 
     // TODO provide parameter values for releaseFromEscrow
@@ -397,10 +485,10 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                     .to("braintree://" + PATH_PREFIX + "/holdInEscrow?inBody=id");
                 // test route for refund
                 from("direct://REFUND")
-                    .to("braintree://" + PATH_PREFIX + "/refund?inBody=id");
-                // test route for refund
-                from("direct://REFUND_1")
                     .to("braintree://" + PATH_PREFIX + "/refund");
+                // test route for refund
+                from("direct://REFUND_WITH_ID")
+                        .to("braintree://" + PATH_PREFIX + "/refund?inBody=id");
                 // test route for releaseFromEscrow
                 from("direct://RELEASEFROMESCROW")
                     .to("braintree://" + PATH_PREFIX + "/releaseFromEscrow?inBody=id");
@@ -409,7 +497,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                     .to("braintree://" + PATH_PREFIX + "/sale?inBody=request");
                 // test route for search
                 from("direct://SEARCH")
-                    .to("braintree://" + PATH_PREFIX + "/search?inBody=query");
+                        .to("braintree://" + PATH_PREFIX + "/search?inBody=query");
                 // test route for submitForPartialSettlement
                 from("direct://SUBMITFORPARTIALSETTLEMENT")
                     .to("braintree://" + PATH_PREFIX + "/submitForPartialSettlement");

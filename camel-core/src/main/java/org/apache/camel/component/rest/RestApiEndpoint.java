@@ -175,11 +175,11 @@ public class RestApiEndpoint extends DefaultEndpoint {
 
             // if no explicit hostname set then resolve the hostname
             if (ObjectHelper.isEmpty(host)) {
-                if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
                     host = "0.0.0.0";
-                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                     host = HostUtils.getLocalHostName();
-                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                     host = HostUtils.getLocalIp();
                 }
 
@@ -214,11 +214,11 @@ public class RestApiEndpoint extends DefaultEndpoint {
         // the API then uses the api component (eg usually camel-swagger-java) to build the API
         if (getComponentName() != null) {
             Object comp = getCamelContext().getRegistry().lookupByName(getComponentName());
-            if (comp != null && comp instanceof RestApiConsumerFactory) {
+            if (comp instanceof RestApiConsumerFactory) {
                 factory = (RestApiConsumerFactory) comp;
             } else {
                 comp = getCamelContext().getComponent(getComponentName());
-                if (comp != null && comp instanceof RestApiConsumerFactory) {
+                if (comp instanceof RestApiConsumerFactory) {
                     factory = (RestApiConsumerFactory) comp;
                 }
             }
@@ -237,7 +237,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
         if (factory == null) {
             for (String name : getCamelContext().getComponentNames()) {
                 Component comp = getCamelContext().getComponent(name);
-                if (comp != null && comp instanceof RestApiConsumerFactory) {
+                if (comp instanceof RestApiConsumerFactory) {
                     factory = (RestApiConsumerFactory) comp;
                     cname = name;
                     break;

@@ -17,11 +17,9 @@
 package org.apache.camel.generator.swagger;
 
 import java.nio.file.Path;
-
 import javax.annotation.processing.Filer;
 
 import io.swagger.models.Swagger;
-
 import org.apache.camel.model.rest.RestsDefinition;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -34,7 +32,8 @@ public abstract class RestDslGenerator<G> {
 
     final Swagger swagger;
 
-    private DestinationGenerator destinationGenerator = new DirectToOperationId();
+    DestinationGenerator destinationGenerator = new DirectToOperationId();
+    OperationFilter filter = new OperationFilter();
 
     RestDslGenerator(final Swagger swagger) {
         this.swagger = notNull(swagger, "swagger");
@@ -54,12 +53,34 @@ public abstract class RestDslGenerator<G> {
         return destinationGenerator;
     }
 
+    public G withOperationFilter(OperationFilter filter) {
+        this.filter = filter;
+
+        @SuppressWarnings("unchecked")
+        final G that = (G) this;
+
+        return that;
+    }
+
+    public G withOperationFilter(String include) {
+        this.filter.setIncludes(include);
+
+        @SuppressWarnings("unchecked")
+        final G that = (G) this;
+
+        return that;
+    }
+
     public static RestDslSourceCodeGenerator<Appendable> toAppendable(final Swagger swagger) {
         return new AppendableGenerator(swagger);
     }
 
     public static RestDslDefinitionGenerator toDefinition(final Swagger swagger) {
         return new RestDslDefinitionGenerator(swagger);
+    }
+
+    public static RestDslXmlGenerator toXml(final Swagger swagger) {
+        return new RestDslXmlGenerator(swagger);
     }
 
     public static RestDslSourceCodeGenerator<Filer> toFiler(final Swagger swagger) {

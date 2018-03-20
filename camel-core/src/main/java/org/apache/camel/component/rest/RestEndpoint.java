@@ -298,11 +298,11 @@ public class RestEndpoint extends DefaultEndpoint {
         String cname = getComponentName();
         if (cname != null) {
             Object comp = getCamelContext().getRegistry().lookupByName(getComponentName());
-            if (comp != null && comp instanceof RestProducerFactory) {
+            if (comp instanceof RestProducerFactory) {
                 factory = (RestProducerFactory) comp;
             } else {
                 comp = getCamelContext().getComponent(getComponentName());
-                if (comp != null && comp instanceof RestProducerFactory) {
+                if (comp instanceof RestProducerFactory) {
                     factory = (RestProducerFactory) comp;
                 }
             }
@@ -321,7 +321,7 @@ public class RestEndpoint extends DefaultEndpoint {
         if (factory == null) {
             for (String name : getCamelContext().getComponentNames()) {
                 Component comp = getCamelContext().getComponent(name);
-                if (comp != null && comp instanceof RestProducerFactory) {
+                if (comp instanceof RestProducerFactory) {
                     factory = (RestProducerFactory) comp;
                     cname = name;
                     break;
@@ -346,7 +346,7 @@ public class RestEndpoint extends DefaultEndpoint {
             String foundName = null;
             for (String name : DEFAULT_REST_PRODUCER_COMPONENTS) {
                 Object comp = getCamelContext().getComponent(name, true);
-                if (comp != null && comp instanceof RestProducerFactory) {
+                if (comp instanceof RestProducerFactory) {
                     if (found == null) {
                         found = (RestProducerFactory) comp;
                         foundName = name;
@@ -390,11 +390,11 @@ public class RestEndpoint extends DefaultEndpoint {
         String cname = null;
         if (getComponentName() != null) {
             Object comp = getCamelContext().getRegistry().lookupByName(getComponentName());
-            if (comp != null && comp instanceof RestConsumerFactory) {
+            if (comp instanceof RestConsumerFactory) {
                 factory = (RestConsumerFactory) comp;
             } else {
                 comp = getCamelContext().getComponent(getComponentName());
-                if (comp != null && comp instanceof RestConsumerFactory) {
+                if (comp instanceof RestConsumerFactory) {
                     factory = (RestConsumerFactory) comp;
                 }
             }
@@ -413,7 +413,7 @@ public class RestEndpoint extends DefaultEndpoint {
         if (factory == null) {
             for (String name : getCamelContext().getComponentNames()) {
                 Component comp = getCamelContext().getComponent(name);
-                if (comp != null && comp instanceof RestConsumerFactory) {
+                if (comp instanceof RestConsumerFactory) {
                     factory = (RestConsumerFactory) comp;
                     cname = name;
                     break;
@@ -436,7 +436,7 @@ public class RestEndpoint extends DefaultEndpoint {
             String foundName = null;
             for (String name : DEFAULT_REST_CONSUMER_COMPONENTS) {
                 Object comp = getCamelContext().getComponent(name, true);
-                if (comp != null && comp instanceof RestConsumerFactory) {
+                if (comp instanceof RestConsumerFactory) {
                     if (found == null) {
                         found = (RestConsumerFactory) comp;
                         foundName = name;
@@ -471,11 +471,11 @@ public class RestEndpoint extends DefaultEndpoint {
 
             // if no explicit hostname set then resolve the hostname
             if (ObjectHelper.isEmpty(host)) {
-                if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
                     host = "0.0.0.0";
-                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                     host = HostUtils.getLocalHostName();
-                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                     host = HostUtils.getLocalIp();
                 }
             }

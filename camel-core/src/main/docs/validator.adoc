@@ -29,9 +29,9 @@ data type name.
 |===
 | Validator | Description
 
-| Predicate Validator | Validate with using link:expression.html[Expression] or link:predicate.html[Predicate]
+| Predicate Validator | Validate with using Expression or Predicate
 
-| Endpoint Transformer | Validate by forwarding to the link:endpoint.html[Endpoint] to be used with validation component such as link:validator-component.adoc[Validation Component] or link:bean-validation.html[Bean Validation Component].
+| Endpoint Transformer | Validate by forwarding to the Endpoint to be used with validation component such as Validation Component or Bean Validation Component.
 
 | Custom Transformer | Validate with using custom validator class. Validator must be a subclass of `org.apache.camel.spi.Validator`
 |===
@@ -56,7 +56,7 @@ All validators have following common options to specify which data type is suppo
 |===
 | Name | Description
 
-| expression | link:expression.html[Expression] or link:predicate.html[Predicate] to be used for validation
+| expression | Expression or Predicate to be used for validation
 |===
 
 Here is an example to specify a validation predicate:
@@ -84,9 +84,9 @@ XML DSL:
 |===
 | Name | Description
 
-| ref | Reference to the link:endpoint.html[Endpoint] ID
+| ref | Reference to the Endpoint ID
 
-| uri | link:endpoint.html[Endpoint] URI
+| uri | Endpoint URI
 |===
 
 Here is an example to specify endpoint URI in Java DSL:
@@ -105,8 +105,8 @@ And here is an example to specify endpoint ref in XML DSL:
 
 Note that the Endpoint Validator just forwards the message to the specified endpoint. In above example,
 camel forwards the message to the `validator:` endpoint, which actually is a
-link:validator-component.adoc[Validation Component]. You can also use any other validation component like
-link:bean-validation.html[Bean Validation Component].
+<<validator-component,Validation Component>>. You can also use any other validation component like
+Bean Validation Component.
 
 [[Validator-Custom]]
 === Custom Validator Options

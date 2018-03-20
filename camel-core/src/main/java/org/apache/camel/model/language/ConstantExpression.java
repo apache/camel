@@ -24,6 +24,9 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * To use a constant value in Camel expressions or predicates.
+ *
+ * <b>Important:</b> this is a fixed constant value that is only set once during starting up the route,
+ * do not use this if you want dynamic values during routing.
  */
 @Metadata(firstVersion = "1.5.0", label = "language,core", title = "Constant")
 @XmlRootElement(name = "constant")

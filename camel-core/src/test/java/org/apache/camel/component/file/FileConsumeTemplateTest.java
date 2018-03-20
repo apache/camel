@@ -43,6 +43,7 @@ public class FileConsumeTemplateTest extends ContextTestSupport {
         String body = out.getIn().getBody(String.class);
         String body2 = out2.getIn().getBody(String.class);
 
+        // bye should come before hello (eg sorted a..z by file name)
         assertEquals("Bye World", body);
         assertEquals("Hello World", body2);
     }

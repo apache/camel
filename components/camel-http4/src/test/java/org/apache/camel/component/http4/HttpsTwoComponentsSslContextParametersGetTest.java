@@ -83,10 +83,10 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
                 port2 = AvailablePortFinder.getNextAvailable(localServer.getLocalPort());
 
                 from("direct:foo")
-                        .to("http4s-foo://127.0.0.1:" + localServer.getLocalPort() + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters");
+                        .to("http4s-foo://127.0.0.1:" + localServer.getLocalPort() + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters");
 
                 from("direct:bar")
-                        .to("http4s-bar://127.0.0.1:" + port2 + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters2");
+                        .to("http4s-bar://127.0.0.1:" + port2 + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters2");
             }
         });
 

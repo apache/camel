@@ -189,10 +189,10 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
     private ObjectName getObjectName(Object managedObject, Object preferedName) throws Exception {
         ObjectName objectName;
 
-        if (preferedName != null && preferedName instanceof String) {
+        if (preferedName instanceof String) {
             String customName = (String) preferedName;
             objectName = getManagedObjectName(managedObject, customName, ObjectName.class);
-        } else if (preferedName != null && preferedName instanceof ObjectName) {
+        } else if (preferedName instanceof ObjectName) {
             objectName = (ObjectName) preferedName;
         } else {
             objectName = getManagedObjectName(managedObject, null, ObjectName.class);

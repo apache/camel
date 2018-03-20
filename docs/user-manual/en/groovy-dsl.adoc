@@ -3,14 +3,14 @@ About the Groovy DSL
 ^^^^^^^^^^^^^^^^^^^^
 
 The Groovy DSL implementation is built on top of the existing Java-based
-link:dsl.html[DSL], but it additionally allows to use Groovy language
+DSL, but it additionally allows to use Groovy language
 features in your routes, particularly
 http://www.groovy-lang.org/closures.html[Closures] acting as
-link:processor.html[Processor], link:expression.html[Expression],
-link:predicate.html[Predicate], or link:aggregator.html[Aggregation
+Processor, Expression,
+Predicate, or link:aggregator.html[Aggregation
 Strategy]. +
  With the Groovy DSL you write your RouteBuilder classes entirely in
-Groovy, while the link:scripting-languages.html[scripting component]
+Groovy, while the scripting component
 allows to embed small scripts into Java routes. The Groovy DSL requires
 Groovy 2.0 or newer and is available as of *Camel 2.11*.
 
@@ -257,7 +257,7 @@ Using Groovy XML processing
 Groovy provides special http://groovy-lang.org/processing-xml.html[XML
 processing support] through its `XmlParser`, `XmlNodePrinter` and
 `XmlSlurper` classes. camel-groovy provides two
-link:data-format.html[data formats] to use these classes directly in
+data formats to use these classes directly in
 your routes.
 
 *Unmarshal XML with XmlParser*
@@ -313,7 +313,7 @@ def x = "It is currently ${ new Date() }"
 -----------------------------------------
 
 Because GStrings aren't Strings, camel-groovy adds the necessary
-link:type-converter.html[TypeConverter] to automatically turn them into
+TypeConverter to automatically turn them into
 the required type.
 
 [[GroovyDSL-CustomDSLextensions]]

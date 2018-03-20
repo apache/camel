@@ -187,6 +187,7 @@ public class CxfConsumer extends DefaultConsumer {
         // NOTE this code cannot work with CXF 2.2.x and JMSContinuation
         // as it doesn't break out the interceptor chain when we call it
         private Object asyncInvoke(Exchange cxfExchange, final Continuation continuation) {
+            log.trace("asyncInvoke continuation: {}", continuation);
             synchronized (continuation) {
                 if (continuation.isNew()) {
                     final org.apache.camel.Exchange camelExchange = prepareCamelExchange(cxfExchange);
@@ -211,7 +212,7 @@ public class CxfConsumer extends DefaultConsumer {
                         }
                     });
 
-                } else if (continuation.isResumed()) {
+                } else if (!continuation.isTimeout() && continuation.isResumed()) {
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
                     try {
                         setResponseBack(cxfExchange, camelExchange);
@@ -220,7 +221,8 @@ public class CxfConsumer extends DefaultConsumer {
                         throw ex;
                     }
 
-                } else if (!continuation.isResumed() && !continuation.isPending()) {
+                } else if (continuation.isTimeout() || 
+                    (!continuation.isResumed() && !continuation.isPending())) {
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
                     try {
                         if (!continuation.isPending()) {
@@ -233,6 +235,7 @@ public class CxfConsumer extends DefaultConsumer {
                     }
                 }
             }
+            
             return null;
         }
 

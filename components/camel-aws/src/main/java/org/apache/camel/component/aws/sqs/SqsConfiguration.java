@@ -17,11 +17,13 @@
 package org.apache.camel.component.aws.sqs;
 
 import com.amazonaws.services.sqs.AmazonSQS;
+
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 @UriParams
-public class SqsConfiguration {
+public class SqsConfiguration implements Cloneable {
 
     // common properties
     private String queueName;
@@ -33,8 +35,6 @@ public class SqsConfiguration {
     private String secretKey;
     @UriParam(defaultValue = "amazonaws.com")
     private String amazonAWSHost = "amazonaws.com";
-    @UriParam
-    private String amazonSQSEndpoint;
     @UriParam(secret = true)
     private String queueOwnerAWSAccountId;
     @UriParam
@@ -96,19 +96,6 @@ public class SqsConfiguration {
             return true;
         }
         return false;
-    }
-
-     /**
-     * The region with which the AWS-SQS client wants to work with.
-     * Only works if Camel creates the AWS-SQS client, i.e., if you explicitly set amazonSQSClient,
-     * then this setting will have no effect. You would have to set it on the client you create directly
-     */
-    public void setAmazonSQSEndpoint(String amazonSQSEndpoint) {
-        this.amazonSQSEndpoint = amazonSQSEndpoint;
-    }
-
-    public String getAmazonSQSEndpoint() {
-        return amazonSQSEndpoint;
     }
 
     public String getAmazonAWSHost() {
@@ -418,6 +405,18 @@ public class SqsConfiguration {
             messageDeduplicationIdStrategy = new NullMessageDeduplicationIdStrategy();
         } else {
             throw new IllegalArgumentException("Unrecognised MessageDeduplicationIdStrategy: " + strategy);
+        }
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public SqsConfiguration copy() {
+        try {
+            return (SqsConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
         }
     }
 }

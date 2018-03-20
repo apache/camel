@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.s3;
 
+import com.amazonaws.regions.Regions;
+
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -39,7 +41,6 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getRegion());
         assertTrue(endpoint.getConfiguration().isDeleteAfterRead());
         assertEquals(10, endpoint.getMaxMessagesPerPoll());
-        assertNull(endpoint.getConfiguration().getAmazonS3Endpoint());
         assertNull(endpoint.getConfiguration().getPolicy());
         assertNull(endpoint.getConfiguration().getPrefix());
         assertTrue(endpoint.getConfiguration().isIncludeBody());
@@ -57,7 +58,6 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getRegion());
         assertTrue(endpoint.getConfiguration().isDeleteAfterRead());
         assertEquals(10, endpoint.getMaxMessagesPerPoll());
-        assertNull(endpoint.getConfiguration().getAmazonS3Endpoint());
         assertNull(endpoint.getConfiguration().getPolicy());
         assertNull(endpoint.getConfiguration().getPrefix());
         assertTrue(endpoint.getConfiguration().isIncludeBody());
@@ -91,7 +91,6 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getRegion());
         assertTrue(endpoint.getConfiguration().isDeleteAfterRead());
         assertEquals(10, endpoint.getMaxMessagesPerPoll());
-        assertNull(endpoint.getConfiguration().getAmazonS3Endpoint());
         assertNull(endpoint.getConfiguration().getPolicy());
         assertNull(endpoint.getConfiguration().getPrefix());
         assertTrue(endpoint.getConfiguration().isIncludeBody());
@@ -104,7 +103,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonS3Client", mock);
     
         S3Component component = new S3Component(context);
-        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?amazonS3Client=#amazonS3Client&amazonS3Endpoint=sns.eu-west-1.amazonaws.com"
+        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?amazonS3Client=#amazonS3Client"
                 + "&accessKey=xxx&secretKey=yyy&region=us-west-1&deleteAfterRead=false&maxMessagesPerPoll=1&policy=%7B%22Version%22%3A%222008-10-17%22,%22Id%22%3A%22Policy4324355464%22,"
                 + "%22Statement%22%3A%5B%7B%22Sid%22%3A%22Stmt456464646477%22,%22Action%22%3A%5B%22s3%3AGetObject%22%5D,%22Effect%22%3A%22Allow%22,"
                 + "%22Resource%22%3A%5B%22arn%3Aaws%3As3%3A%3A%3Amybucket/some/path/*%22%5D,%22Principal%22%3A%7B%22AWS%22%3A%5B%22*%22%5D%7D%7D%5D%7D&storageClass=REDUCED_REDUNDANCY"
@@ -117,7 +116,6 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertEquals("us-west-1", endpoint.getConfiguration().getRegion());
         assertFalse(endpoint.getConfiguration().isDeleteAfterRead());
         assertEquals(1, endpoint.getMaxMessagesPerPoll());
-        assertEquals("sns.eu-west-1.amazonaws.com", endpoint.getConfiguration().getAmazonS3Endpoint());
         assertEquals("{\"Version\":\"2008-10-17\",\"Id\":\"Policy4324355464\",\"Statement\":[{\"Sid\":\"Stmt456464646477\",\"Action\":[\"s3:GetObject\"],\"Effect\":\"Allow\",\"Resource\":"
                 + "[\"arn:aws:s3:::mybucket/some/path/*\"],\"Principal\":{\"AWS\":[\"*\"]}}]}", endpoint.getConfiguration().getPolicy());
         assertEquals("REDUCED_REDUNDANCY", endpoint.getConfiguration().getStorageClass());
@@ -141,6 +139,92 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         S3Component component = new S3Component(context);
         component.createEndpoint("aws-s3://MyTopic?accessKey=xxx");
+    }
+    
+    @Test
+    public void createEndpointWithComponentElements() throws Exception {
+        S3Component component = new S3Component(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket");
+        
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
+        assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
+    }
+    
+    @Test
+    public void createEndpointWithComponentAndEndpointElements() throws Exception {
+        S3Component component = new S3Component(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        component.setRegion(Regions.US_WEST_1.toString());
+        S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
+    }
+    
+    @Test
+    public void createEndpointWithChunkedEncoding() throws Exception {
+        
+        S3Component component = new S3Component(context);
+        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?chunkedEncodingDisabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1");
+
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertTrue(endpoint.getConfiguration().isChunkedEncodingDisabled());
+    }
+    
+    @Test
+    public void createEndpointWithAccelerateMode() throws Exception {
+        
+        S3Component component = new S3Component(context);
+        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?accelerateModeEnabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1");
+
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertTrue(endpoint.getConfiguration().isAccelerateModeEnabled());
+    }
+    
+    @Test
+    public void createEndpointWithDualstack() throws Exception {
+        
+        S3Component component = new S3Component(context);
+        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?dualstackEnabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1");
+
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertTrue(endpoint.getConfiguration().isDualstackEnabled());
+    }
+    
+    @Test
+    public void createEndpointWithPayloadSigning() throws Exception {
+        
+        S3Component component = new S3Component(context);
+        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?payloadSigningEnabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1");
+
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertTrue(endpoint.getConfiguration().isPayloadSigningEnabled());
+    }
+    
+    @Test
+    public void createEndpointWithForceGlobalBucketAccess() throws Exception {
+        
+        S3Component component = new S3Component(context);
+        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?forceGlobalBucketAccessEnabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1");
+
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertTrue(endpoint.getConfiguration().isForceGlobalBucketAccessEnabled());
     }
     
     @Test

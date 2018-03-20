@@ -1,10 +1,11 @@
+[[sql-stored-component]]
 == SQL Stored Procedure Component
 
 *Available as of Camel version 2.17*
 
 The *sql-stored:* component allows you to work with databases using JDBC
 Stored Procedure queries. This component is an extension to
-the link:sql-component.html[SQL Component] but specialized for calling
+the <<sql-component,SQL Component>> but specialized for calling
 stored procedures.
 
 This component uses `spring-jdbc` behind the scenes for the actual SQL
@@ -33,7 +34,7 @@ sql-stored:template[?options]
 -----------------------------
 
 Where template is the stored procedure template, where you declare the
-name of the stored procedure and the IN and OUT arguments. 
+name of the stored procedure and the IN, INOUT, and OUT arguments. 
 
 You can also refer to the template in a external file on the file system
 or classpath such as:
@@ -51,7 +52,8 @@ template, as show:
 SUBNUMBERS(
   INTEGER ${headers.num1},
   INTEGER ${headers.num2},
-  OUT INTEGER resultofsub
+  INOUT INTEGER ${headers.num3} out1,
+  OUT INTEGER out2
 )
 --------------------------
 
@@ -89,13 +91,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *template* | *Required* Sets the StoredProcedure template to perform |  | String
 |===
 
+
 ==== Query Parameters (7 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -103,10 +108,10 @@ with the following path and query parameters:
 | *batch* (producer) | Enables or disables batch mode | false | boolean
 | *dataSource* (producer) | Sets the DataSource to use to communicate with the database. |  | DataSource
 | *function* (producer) | Whether this call is for a function. | false | boolean
-| *noop* (producer) | If set will ignore the results of the template and use the existing IN message as the OUT message for the continuation of processing | false | boolean
-| *outputHeader* (producer) | Store the template result in a header instead of the message body. By default outputHeader == null and the template result is stored in the message body any existing content in the message body is discarded. If outputHeader is set the value is used as the name of the header to store the template result and the original message body is preserved. |  | String
+| *noop* (producer) | If set, will ignore the results of the template and use the existing IN message as the OUT message for the continuation of processing | false | boolean
+| *outputHeader* (producer) | Store the template result in a header instead of the message body. By default, outputHeader == null and the template result is stored in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header to store the template result and the original message body is preserved. |  | String
 | *useMessageBodyForTemplate* (producer) | Whether to use the message body as the template and then headers for parameters. If this option is enabled then the template in the uri is not used. | false | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -118,27 +123,31 @@ method signature. The name of the stored procedure, and then the
 arguments enclosed in parenthesis. An example explains this well:
 
 [source,java]
-----------------------------------------------------------------------------------------------------------
-<to uri="sql-stored:SUBNUMBERS(INTEGER ${headers.num1},INTEGER ${headers.num2},OUT INTEGER resultofsub)"/>
-----------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------
+<to uri="sql-stored:STOREDSAMPLE(INTEGER ${headers.num1},INTEGER ${headers.num2},INOUT INTEGER ${headers.num3} result1,OUT INTEGER result2)"/>
+----------------------------------------------------------------------------------------------------------------------------------------------
 
-The arguments is declared by a type and then the mapping to the Camel
-message using simple expression. So in this example the first two
-parameters are IN values that are INTEGER type, that maps to the message
-headers. The last parameter is the OUT value, also an INTEGER type.
+The arguments are declared by a type and then a mapping to the Camel
+message using simple expression. So, in this example the first two
+parameters are IN values of INTEGER type, mapped to the message
+headers. The third parameter is INOUT, meaning it accepts an INTEGER
+and then returns a different INTEGER result. The last parameter is
+the OUT value, also an INTEGER type.
 
 In SQL term the stored procedure could be declared as:
 
 [source,java]
-------------------------------------------------------------------------------
-CREATE PROCEDURE SUBNUMBERS(VALUE1 INTEGER, VALUE2 INTEGER,OUT RESULT INTEGER)
-------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE STOREDSAMPLE(VALUE1 INTEGER, VALUE2 INTEGER, INOUT RESULT1 INTEGER, OUT RESULT2 INTEGER)
+---------------------------------------------------------------------------------------------------------
 
-IN parameters take four parts separated by a space: parameter name, SQL type(with scale), type name and value source.
+#### IN Parameters
+
+IN parameters take four parts separated by a space: parameter name, SQL type (with scale), type name and value source.
 
 Parameter name is optional and will be auto generated if not provided. It must be given between quotes(').
 
-SQL type is required and can be a integer(positive or negative) or reference to integer field in some class.
+SQL type is required and can be an integer (positive or negative) or reference to integer field in some class.
 If SQL type contains a dot then component tries resolve that class and read the given field. For example
 SQL type com.Foo.INTEGER is read from the field INTEGER of class com.Foo. If the type doesn't
 contain comma then class to resolve the integer value will be java.sql.Types.
@@ -146,7 +155,7 @@ Type can be postfixed by scale for example DECIMAL(10) would mean java.sql.Types
 
 Type name is optional and must be given between quotes(').
 
-Value source is required. Value source populates parameter value from the Exchange.
+Value source is required. Value source populates the parameter value from the Exchange.
 It can be either a Simple expression or header location i.e. :#<header name>. For example
 Simple expression ${header.val} would mean that parameter value will be read from the header "val".
 Header location expression :#val would have identical effect.
@@ -167,13 +176,15 @@ URI is identical to previous on except SQL-type is 100 and type name is "mytypen
 
 Actual call will be done using org.springframework.jdbc.core.SqlParameter.
 
-OUT parameters work same way as IN parameters and they they contain three parts: SQL type(with scale), type name and output parameter name.
+#### OUT Parameters
 
-SQL type works as in IN parameters.
+OUT parameters work similarly IN parameters and contain three parts: SQL type(with scale), type name and output parameter name.
 
-Type name is optional and work as in IN parameters.
+SQL type works the same as IN parameters.
 
-Output parameter name is used for the e OUT parameter name and header where the result will be stored there also.
+Type name is optional and also works the same as IN parameters.
+
+Output parameter name is used for the OUT parameter name, as well as the header name where the result will be stored.
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------
@@ -189,6 +200,18 @@ This is identical to previous one but type name will be "mytype".
 
 Actual call will be done using org.springframework.jdbc.core.SqlOutParameter.
 
+#### INOUT Parameters
+
+INOUT parameters are a combination of all of the above.  They receive a value from the exchange, as well as store a
+result as a message header.  The only caveat is that the IN parameter's "name" is skipped.  Instead, the OUT
+parameter's "name" defines both the SQL parameter name, as well as the result header name.
+
+[source,java]
+----------------------------------------------------------------------------------------------------------
+<to uri="sql-stored:MYFUNC(INOUT DECIMAL(10) ${headers.inheader} outheader)"/>
+----------------------------------------------------------------------------------------------------------
+
+Actual call will be done using org.springframework.jdbc.core.SqlInOutParameter.
 
 ### Camel Sql Starter
 
@@ -225,9 +248,9 @@ You should also include the specific database driver, if needed.
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:sql-component.html[SQL Component]
+* <<sql-component,SQL Component>>

@@ -21,7 +21,7 @@ import java.util.List;
 import com.orbitz.consul.model.EventResponse;
 import com.orbitz.consul.model.event.Event;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.consul.enpoint.ConsulEventActions;
+import org.apache.camel.component.consul.endpoint.ConsulEventActions;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 

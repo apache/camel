@@ -1,3 +1,4 @@
+[[dozer-component]]
 == Dozer Component
 
 *Available as of Camel version 2.15*
@@ -70,24 +71,27 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *name* | *Required* A human readable name of the mapping. |  | String
 |===
 
+
 ==== Query Parameters (7 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *mappingConfiguration* (producer) | The name of a DozerBeanMapperConfiguration bean in the Camel registry which should be used for configuring the Dozer mapping. This is an alternative to the mappingFile option that can be used for fine-grained control over how Dozer is configured. Remember to use a prefix in the value to indicate that the bean is in the Camel registry (e.g. myDozerConfig). |  | DozerBeanMapper Configuration
-| *mappingFile* (producer) | The location of a Dozer configuration file. The file is loaded from the classpath by default but you can use file: classpath: or http: to load the configuration from a specific location. | dozerBeanMapping.xml | String
+| *mappingFile* (producer) | The location of a Dozer configuration file. The file is loaded from the classpath by default, but you can use file:, classpath:, or http: to load the configuration from a specific location. | dozerBeanMapping.xml | String
 | *marshalId* (producer) | The id of a dataFormat defined within the Camel Context to use for marshalling the mapping output to a non-Java type. |  | String
-| *sourceModel* (producer) | Fully-qualified class name for the source type used in the mapping. If specified the input to the mapping is converted to the specified type before being mapped with Dozer. |  | String
+| *sourceModel* (producer) | Fully-qualified class name for the source type used in the mapping. If specified, the input to the mapping is converted to the specified type before being mapped with Dozer. |  | String
 | *targetModel* (producer) | *Required* Fully-qualified class name for the target type used in the mapping. |  | String
 | *unmarshalId* (producer) | The id of a dataFormat defined within the Camel Context to use for unmarshalling the mapping input from a non-Java type. |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

@@ -3,29 +3,29 @@ Intercept
 ~~~~~~~~~
 
 The intercept feature in Camel supports intercepting
-link:exchange.html[Exchange]s while they are _on route_.  +
- We have overhauled the link:intercept.html[Intercept] in Camel 2.0 so
+Exchanges while they are _on route_.  +
+ We have overhauled the Intercept in Camel 2.0 so
 the following information is based on Camel 2.0.
 
 Camel supports three kinds of interceptors:
 
 * `intercept` that intercepts each and every processing step while
-routing an link:exchange.html[Exchange] in the route.
-* `interceptFrom` that intercepts incoming link:exchange.html[Exchange]
+routing an Exchange in the route.
+* `interceptFrom` that intercepts incoming Exchange
 in the route.
 * `interceptSendToEndpoint` that intercepts when an
-link:exchange.html[Exchange] is about to be sent to the given
-link:endpoint.html[Endpoint].
+Exchange is about to be sent to the given
+Endpoint.
 
 These interceptors supports the following features:
 
-* link:predicate.html[Predicate] using `when` to only trigger the
+* Predicate using `when` to only trigger the
 interceptor in certain conditions
 * `stop` forces to stop continue routing the
-link:exchange.html[Exchange] and mark it as completed successful. Camel
+Exchange and mark it as completed successful. Camel
 will by default *not stop*.
 * `skip` when used with `interceptSendToEndpoint` will *skip* sending
-the link:exchange.html[Exchange] to the original intended endpoint.
+the Exchange to the original intended endpoint.
 Camel will by default *not skip*.
 * `interceptFrom` and `interceptSendToEndpoint` supports endpoint URI
 matching by: exact uri, wildcard, regular expression. See advanced
@@ -34,21 +34,21 @@ section.
 `Exchange.INTERCEPTED_ENDPOINT`.
 
 `stop` can be used in general, it does not have to be used with an
-link:intercept.html[Intercept] you can use it in regular routing as
+Intercept you can use it in regular routing as
 well.
 
 You can also instruct Camel to `stop` continue routing your message if
 you set the `Exchange.ROUTE_STOP` property to `"true"` or `Boolean.TRUE`
-on the link:exchange.html[Exchange]. You can for instance do this from
-regular Java code in a link:pojo.html[POJO] or
-link:processor.html[Processor].
+on the Exchange. You can for instance do this from
+regular Java code in a POJO or
+Processor.
 
 [[Intercept-Intercept.1]]
 Intercept
 ^^^^^^^^^
 
 `Intercept` is like a regular interceptor that is applied on each
-processing step the link:exchange.html[Exchange] undergo while its being
+processing step the Exchange undergo while its being
 routed. You can think of it as a _AOP before_ that is applied at each
 DSL keyword you have defined in your route.
 
@@ -61,17 +61,17 @@ intercept().to("log:hello");
 from("jms:queue:order").to("bean:validateOrder").to("bean:processOrder");
 -------------------------------------------------------------------------
 
-What happens is that the link:exchange.html[Exchange] is intercepted
+What happens is that the Exchange is intercepted
 before each processing step, that means that it will be intercepted
 before
 
 * `.to("bean:validateOrder")`
 * `.to("bean:processOrder")`
 
-So in this sample we intercept the link:exchange.html[Exchange] twice.
+So in this sample we intercept the Exchange twice.
 
 The `when` predicate is also support on the `intercept` so we can attach
-a link:predicate.html[Predicate] to only trigger the interception under
+a Predicate to only trigger the interception under
 certain conditions. +
  For instance in the sample below we only intercept if the message body
 contains the string word *Hello*:
@@ -109,26 +109,26 @@ InterceptFrom
 ^^^^^^^^^^^^^
 
 `InterceptFrom` is for intercepting any incoming
-link:exchange.html[Exchange], in any route (it intercepts all the `from`
+Exchange, in any route (it intercepts all the `from`
 DSLs). This allows you to do some custom behavior for received
-link:exchange.html[Exchange]s. You can provide a specific uri for a
-given link:endpoint.html[Endpoint] then it only applies for that
+Exchanges. You can provide a specific uri for a
+given Endpoint then it only applies for that
 particular route.
 
 So lets start with the logging example. We want to log all the
 *incoming* requests so we use `interceptFrom` to route to the
-link:log.html[Log] component. As `proceed` is default then the
-link:exchange.html[Exchange] will continue its route, and thus it will
+<<log-component,Log>> component. As `proceed` is default then the
+Exchange will continue its route, and thus it will
 continue to `mock:first`.
 
-You can also attach a link:predicate.html[Predicate] to only trigger if
+You can also attach a Predicate to only trigger if
 certain conditions is meet. For instance in the route below we intercept
 when a test message is send to us, so we can do some custom processing
 before we continue routing:
 
 And if we want to filter out certain messages we can use the `stop()` to
 instruct Camel to stop continue routing the
-link:exchange.html[Exchange]:
+Exchange:
 
 And if want to only apply a specific endpoint, as the *seda:bar*
 endpoint in the sample below, we can do it like this:
@@ -151,22 +151,22 @@ InterceptSendToEndpoint
 *Available as of Camel 2.0*
 
 Intercept send to endpoint is triggered when an
-link:exchange.html[Exchange] is being sent to the intercepted endpoint.
-This allows you to route the link:exchange.html[Exchange] to a
-link:detour.html[Detour] or do some custom processing before the
-link:exchange.html[Exchange] is sent to the original intended
+Exchange is being sent to the intercepted endpoint.
+This allows you to route the Exchange to a
+Detour or do some custom processing before the
+Exchange is sent to the original intended
 destination. You can also skip sending to the intended destination. By
 default Camel will send to the original intended destination after the
 intercepted route completes. And as the regular intercept you can also
-define an `when` link:predicate.html[Predicate] so we only intercept if
-the link:predicate.html[Predicate] evaluates to *true*. This allows you
+define an `when` Predicate so we only intercept if
+the Predicate evaluates to *true*. This allows you
 do do a bit of filtering, to only intercept when certain criteria is
 meet.
 
 Let start with a simple example, where we want to intercept when an
-link:exchange.html[Exchange] is being sent to `mock:foo`:
+Exchange is being sent to `mock:foo`:
 
-And this time we add the link:predicate.html[Predicate] so its only when
+And this time we add the Predicate so its only when
 the message body is `Hello World` we intercept.
 
 And to skip sending to the `mock:foo` endpoint we use the *`skip()` DSL
@@ -193,8 +193,8 @@ Intercept endpoint is of course also available using Spring DSL.
 
 We start with the first example from above in Spring DSL:
 
-And the 2nd. Notice how we can leverage the link:simple.html[Simple]
-language for the link:predicate.html[Predicate]:
+And the 2nd. Notice how we can leverage the <<simple-language,Simple>>
+language for the Predicate:
 
 And the 3rd with the `skip`, notice skip is set with the
 `skipSendToOriginalEndpoint` attribute on the *interceptSendToEndpoint*
@@ -223,7 +223,7 @@ Match by wildcard
 
 Match by wildcard allows you to match a range of endpoint or all of a
 given type. For instance use `uri="file:*"` will match all
-link:file2.html[File] based endpoints.
+File based endpoints.
 
 [source,java]
 -------------------------------------
@@ -263,12 +263,12 @@ time. +
  The `interceptFrom` is not dynamic as it only intercepts input to
 routes registered as routes in `CamelContext`. So if you dynamic
 construct a `Consumer` using the Camel API and consumes an
-link:endpoint.html[Endpoint] then the `interceptFrom` is not triggered.
+Endpoint then the `interceptFrom` is not triggered.
 
 [[Intercept-SeeAlso]]
 See Also
 ^^^^^^^^
 
-* link:architecture.html[Architecture]
-* link:aop.html[AOP]
+* Architecture
+* AOP
 

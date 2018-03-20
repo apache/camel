@@ -1,3 +1,4 @@
+[[resequence-eip]]
 == Resequence EIP
 
 The link:http://www.enterpriseintegrationpatterns.com/Resequencer.html[Resequencer] from the link:https://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] allows you to reorganise messages based on some comparator. +
@@ -9,7 +10,6 @@ image:http://www.enterpriseintegrationpatterns.com/img/Resequencer.gif[image]
 
 // eip options: START
 The Resequence EIP supports 1 options which are listed below:
-
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -241,4 +241,3 @@ And an example in XML
   </route>
 </camelContext>
 ----
-

@@ -31,7 +31,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
-import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.component.kubernetes.consumer.common.NodeEvent;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;

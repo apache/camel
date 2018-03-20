@@ -1,3 +1,4 @@
+[[slack-component]]
 == Slack Component
 
 *Available as of Camel version 2.16*
@@ -68,13 +69,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *channel* | *Required* The channel name (syntax name) or slackuser (syntax userName) to send a message directly to an user. |  | String
 |===
 
+
 ==== Query Parameters (5 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -83,7 +87,7 @@ with the following path and query parameters:
 | *iconUrl* (producer) | The avatar that the component will use when sending message to a channel or user. |  | String
 | *username* (producer) | This is the username that the bot will have when sending messages to a channel or user. |  | String
 | *webhookUrl* (producer) | The incoming webhook URL |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -128,7 +132,7 @@ A CamelContext with Blueprint could be as:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

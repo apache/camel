@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.sns.springboot;
 
 import javax.annotation.Generated;
+import com.amazonaws.services.sns.AmazonSNS;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -33,11 +34,60 @@ public class SnsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * The AWS SNS default configuration
+     */
+    private SnsConfigurationNestedConfiguration configuration;
+    /**
+     * Amazon AWS Access Key
+     */
+    private String accessKey;
+    /**
+     * Amazon AWS Secret Key
+     */
+    private String secretKey;
+    /**
+     * The region in which SNS client needs to work
+     */
+    private String region;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public SnsConfigurationNestedConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(
+            SnsConfigurationNestedConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
@@ -46,5 +96,133 @@ public class SnsComponentConfiguration
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    public static class SnsConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.aws.sns.SnsConfiguration.class;
+        /**
+         * The subject which is used if the message header 'CamelAwsSnsSubject'
+         * is not present.
+         */
+        private String subject;
+        /**
+         * The Amazon Resource Name (ARN) assigned to the created topic.
+         */
+        private String topicArn;
+        /**
+         * Amazon AWS Access Key
+         */
+        private String accessKey;
+        /**
+         * Amazon AWS Secret Key
+         */
+        private String secretKey;
+        /**
+         * To use the AmazonSNS as the client
+         */
+        private AmazonSNS amazonSNSClient;
+        /**
+         * The name of the topic
+         */
+        private String topicName;
+        /**
+         * The policy for this queue
+         */
+        private String policy;
+        /**
+         * The message structure to use such as json
+         */
+        private String messageStructure;
+        private String proxyHost;
+        private Integer proxyPort;
+        private String region;
+
+        public String getSubject() {
+            return subject;
+        }
+
+        public void setSubject(String subject) {
+            this.subject = subject;
+        }
+
+        public String getTopicArn() {
+            return topicArn;
+        }
+
+        public void setTopicArn(String topicArn) {
+            this.topicArn = topicArn;
+        }
+
+        public String getAccessKey() {
+            return accessKey;
+        }
+
+        public void setAccessKey(String accessKey) {
+            this.accessKey = accessKey;
+        }
+
+        public String getSecretKey() {
+            return secretKey;
+        }
+
+        public void setSecretKey(String secretKey) {
+            this.secretKey = secretKey;
+        }
+
+        public AmazonSNS getAmazonSNSClient() {
+            return amazonSNSClient;
+        }
+
+        public void setAmazonSNSClient(AmazonSNS amazonSNSClient) {
+            this.amazonSNSClient = amazonSNSClient;
+        }
+
+        public String getTopicName() {
+            return topicName;
+        }
+
+        public void setTopicName(String topicName) {
+            this.topicName = topicName;
+        }
+
+        public String getPolicy() {
+            return policy;
+        }
+
+        public void setPolicy(String policy) {
+            this.policy = policy;
+        }
+
+        public String getMessageStructure() {
+            return messageStructure;
+        }
+
+        public void setMessageStructure(String messageStructure) {
+            this.messageStructure = messageStructure;
+        }
+
+        public String getProxyHost() {
+            return proxyHost;
+        }
+
+        public void setProxyHost(String proxyHost) {
+            this.proxyHost = proxyHost;
+        }
+
+        public Integer getProxyPort() {
+            return proxyPort;
+        }
+
+        public void setProxyPort(Integer proxyPort) {
+            this.proxyPort = proxyPort;
+        }
+
+        public String getRegion() {
+            return region;
+        }
+
+        public void setRegion(String region) {
+            this.region = region;
+        }
     }
 }

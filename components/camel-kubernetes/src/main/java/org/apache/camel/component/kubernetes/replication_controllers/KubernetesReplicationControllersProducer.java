@@ -26,7 +26,6 @@ import io.fabric8.kubernetes.api.model.ReplicationControllerSpec;
 import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
-import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.RollableScalableResource;
 
@@ -263,7 +262,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         }
         ReplicationController rcScaled = getEndpoint().getKubernetesClient()
                 .replicationControllers().inNamespace(namespaceName)
-                .withName(rcName).scale(replicasNumber, true);
+                .withName(rcName).scale(replicasNumber, false);
         
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rcScaled.getStatus().getReplicas());

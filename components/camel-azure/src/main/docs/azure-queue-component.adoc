@@ -1,3 +1,4 @@
+[[azure-queue-component]]
 == Azure Storage Queue Service Component
 
 *Available as of Camel version 2.19*
@@ -58,27 +59,30 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *containerAndQueueUri* | *Required* Container Queue compact Uri |  | String
 |===
 
+
 ==== Query Parameters (10 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *azureQueueClient* (common) | The queue service client |  | CloudQueue
-| *credentials* (common) | Set the storage credentials required in most cases |  | StorageCredentials
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *credentials* (common) | Set the storage credentials, required in most cases |  | StorageCredentials
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *messageTimeToLive* (producer) | Message Time To Live in seconds |  | int
 | *messageVisibilityDelay* (producer) | Message Visibility Delay in seconds |  | int
 | *operation* (producer) | Queue service operation hint to the producer | listQueues | QueueServiceOperations
 | *queuePrefix* (producer) | Set a prefix which can be used for listing the queues |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -95,7 +99,7 @@ You have to provide the containerAndQueue URI  and the credentials.
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Header |Type |Description
-
+| | |
 |=======================================================================
 
 #### Message headers set by the Azure Storage Queue Service producer
@@ -103,6 +107,7 @@ You have to provide the containerAndQueue URI  and the credentials.
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Header |Type |Description
+| | |
 |=======================================================================
 
 #### Message headers set by the Azure Storage Queue Service producer consumer
@@ -110,6 +115,7 @@ You have to provide the containerAndQueue URI  and the credentials.
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Header |Type |Description
+| | |
 |=======================================================================
 
 #### Azure Queue Client configuration
@@ -155,9 +161,9 @@ where `${camel-version`} must be replaced by the actual version of Camel
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:azure.html[Azure Component]
+* Azure Component

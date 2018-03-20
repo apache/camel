@@ -1,3 +1,4 @@
+[[geocoder-component]]
 == Geocoder Component
 
 *Available as of Camel version 2.12*
@@ -49,6 +50,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -56,21 +58,23 @@ with the following path and query parameters:
 | *latlng* | The geo latitude and longitude which should be prefixed with latlng: |  | String
 |===
 
+
 ==== Query Parameters (14 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *clientId* (producer) | To use google premium with this client id |  | String
 | *clientKey* (producer) | To use google premium with this client key |  | String
-| *headersOnly* (producer) | Whether to only enrich the Exchange with headers and leave the body as-is. | false | boolean
+| *headersOnly* (producer) | Whether to only enrich the Exchange with headers, and leave the body as-is. | false | boolean
 | *language* (producer) | The language to use. | en | String
 | *httpClientConfigurer* (advanced) | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc |  | HttpClientConfigurer
 | *httpConnectionManager* (advanced) | To use a custom HttpConnectionManager to manage connections |  | HttpConnectionManager
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *proxyAuthDomain* (proxy) | Domain for proxy NTML authentication |  | String
 | *proxyAuthHost* (proxy) | Optional host for proxy NTML authentication |  | String
-| *proxyAuthMethod* (proxy) | Authentication method for proxy either as Basic Digest or NTLM. |  | String
+| *proxyAuthMethod* (proxy) | Authentication method for proxy, either as Basic, Digest or NTLM. |  | String
 | *proxyAuthPassword* (proxy) | Password for proxy authentication |  | String
 | *proxyAuthUsername* (proxy) | Username for proxy authentication |  | String
 | *proxyHost* (proxy) | The proxy host name |  | String
@@ -89,7 +93,7 @@ with a JSON representation of the current location.
 
 If the option `headersOnly` is set to `true` then the message body is
 left as-is, and only headers will be added to the
-link:exchange.html[Exchange].
+Exchange.
 
 ### Message Headers
 

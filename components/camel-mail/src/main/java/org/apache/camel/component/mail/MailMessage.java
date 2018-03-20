@@ -116,9 +116,7 @@ public class MailMessage extends DefaultMessage {
                 if (binding != null) {
                     map.putAll(binding.extractHeadersFromMail(mailMessage, getExchange()));
                 }
-            } catch (MessagingException e) {
-                throw new RuntimeCamelException("Error accessing headers due to: " + e.getMessage(), e);
-            } catch (IOException e) {
+            } catch (MessagingException | IOException e) {
                 throw new RuntimeCamelException("Error accessing headers due to: " + e.getMessage(), e);
             }
         }

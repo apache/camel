@@ -1,3 +1,4 @@
+[[aggregate-eip]]
 == Aggregate EIP
 
 The
@@ -16,35 +17,35 @@ single correlation key into a single message exchange.
 === Aggregator options
 
 // eip options: START
-The Aggregate EIP supports 24 options which are listed below:
-
+The Aggregate EIP supports 25 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *correlationExpression* | *Required* The expression used to calculate the correlation key to use for aggregation. The Exchange which has the same correlation key is aggregated together. If the correlation key could not be evaluated an Exception is thrown. You can disable this by using the ignoreBadCorrelationKeys option. |  | NamespaceAware Expression
-| *completionPredicate* | A Predicate to indicate when an aggregated exchange is complete. If this is not specified and the AggregationStrategy object implements Predicate the aggregationStrategy object will be used as the completionPredicate. |  | NamespaceAware Expression
-| *completionTimeout* | Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. You cannot use this option together with completionInterval only one of the two can be used. By default the timeout checker runs every second you can use the completionTimeoutCheckerInterval option to configure how frequently to run the checker. The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or checker intervals. |  | Long
+| *completionPredicate* | A Predicate to indicate when an aggregated exchange is complete. If this is not specified and the AggregationStrategy object implements Predicate, the aggregationStrategy object will be used as the completionPredicate. |  | NamespaceAware Expression
+| *completionTimeout* | Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. You cannot use this option together with completionInterval, only one of the two can be used. By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option to configure how frequently to run the checker. The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or checker intervals. |  | Long
 | *completionSize* | Number of messages aggregated before the aggregation is complete. This option can be set as either a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. |  | Integer
 | *optimisticLockRetryPolicy* | Allows to configure retry settings when using optimistic locking. |  | OptimisticLockRetry PolicyDefinition
 | *parallelProcessing* | When aggregated are completed they are being send out of the aggregator. This option indicates whether or not Camel should use a thread pool with multiple threads for concurrency. If no custom thread pool has been specified then Camel creates a default pool with 10 concurrent threads. | false | Boolean
-| *optimisticLocking* | Turns on using optimistic locking which requires the aggregationRepository being used is supporting this by implementing org.apache.camel.spi.OptimisticLockingAggregationRepository. | false | Boolean
+| *optimisticLocking* | Turns on using optimistic locking, which requires the aggregationRepository being used, is supporting this by implementing org.apache.camel.spi.OptimisticLockingAggregationRepository. | false | Boolean
 | *executorServiceRef* | If using parallelProcessing you can specify a custom thread pool to be used. In fact also if you are not using parallelProcessing this custom thread pool is used to send out aggregated exchanges as well. |  | String
-| *timeoutCheckerExecutor ServiceRef* | If using either of the completionTimeout completionTimeoutExpression or completionInterval options a background thread is created to check for the completion for every aggregator. Set this option to provide a custom thread pool to be used rather than creating a new thread for every aggregator. |  | String
+| *timeoutCheckerExecutor ServiceRef* | If using either of the completionTimeout, completionTimeoutExpression, or completionInterval options a background thread is created to check for the completion for every aggregator. Set this option to provide a custom thread pool to be used rather than creating a new thread for every aggregator. |  | String
 | *aggregationRepositoryRef* | Sets the custom aggregate repository to use Will by default use org.apache.camel.processor.aggregate.MemoryAggregationRepository |  | String
-| *strategyRef* | A reference to lookup the AggregationStrategy in the Registry. Configuring an AggregationStrategy is required and is used to merge the incoming Exchange with the existing already merged exchanges. At first call the oldExchange parameter is null. On subsequent invocations the oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange. |  | String
-| *strategyMethodName* | This option can be used to explicit declare the method name to use when using POJOs as the AggregationStrategy. |  | String
-| *strategyMethodAllowNull* | If this option is false then the aggregate method is not used for the very first aggregation. If this option is true then null values is used as the oldExchange (at the very first aggregation) when using POJOs as the AggregationStrategy. | false | Boolean
-| *completionInterval* | A repeating period in millis by which the aggregator will complete all current aggregated exchanges. Camel has a background task which is triggered every period. You cannot use this option together with completionTimeout only one of them can be used. |  | Long
+| *strategyRef* | A reference to lookup the AggregationStrategy in the Registry. Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing already merged exchanges. At first call the oldExchange parameter is null. On subsequent invocations the oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange. |  | String
+| *strategyMethodName* | This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy. |  | String
+| *strategyMethodAllowNull* | If this option is false then the aggregate method is not used for the very first aggregation. If this option is true then null values is used as the oldExchange (at the very first aggregation), when using POJOs as the AggregationStrategy. | false | Boolean
+| *completionInterval* | A repeating period in millis by which the aggregator will complete all current aggregated exchanges. Camel has a background task which is triggered every period. You cannot use this option together with completionTimeout, only one of them can be used. |  | Long
 | *completionTimeoutChecker Interval* | Interval in millis that is used by the background task that checks for timeouts (org.apache.camel.TimeoutMap). By default the timeout checker runs every second. The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or checker intervals. | 1000 | Long
 | *completionFromBatchConsumer* | Enables the batch completion mode where we aggregate from a org.apache.camel.BatchConsumer and aggregate the total number of exchanges the org.apache.camel.BatchConsumer has reported as total by checking the exchange property link org.apache.camel.ExchangeBATCH_COMPLETE when its complete. | false | Boolean
-| *groupExchanges* | *Deprecated* Enables grouped exchanges so the aggregator will group all aggregated exchanges into a single combined Exchange holding all the aggregated exchanges in a java.util.List. | false | Boolean
+| *completionOnNewCorrelation Group* | Enables completion on all previous groups when a new incoming correlation group. This can for example be used to complete groups with same correlation keys when they are in consecutive order. Notice when this is enabled then only 1 correlation group can be in progress as when a new correlation group starts, then the previous groups is forced completed. | false | Boolean
+| *groupExchanges* | *Deprecated* Enables grouped exchanges, so the aggregator will group all aggregated exchanges into a single combined Exchange holding all the aggregated exchanges in a java.util.List. | false | Boolean
 | *eagerCheckCompletion* | Use eager completion checking which means that the completionPredicate will use the incoming Exchange. As opposed to without eager completion checking the completionPredicate will use the aggregated Exchange. | false | Boolean
 | *ignoreInvalidCorrelation Keys* | If a correlation key cannot be successfully evaluated it will be ignored by logging a DEBUG and then just ignore the incoming Exchange. | false | Boolean
-| *closeCorrelationKeyOn Completion* | Closes a correlation key when its complete. Any late received exchanges which has a correlation key that has been closed it will be defined and a ClosedCorrelationKeyException is thrown. |  | Integer
+| *closeCorrelationKeyOn Completion* | Closes a correlation key when its complete. Any late received exchanges which has a correlation key that has been closed, it will be defined and a ClosedCorrelationKeyException is thrown. |  | Integer
 | *discardOnCompletionTimeout* | Discards the aggregated message on completion timeout. This means on timeout the aggregated message is dropped and not sent out of the aggregator. | false | Boolean
 | *forceCompletionOnStop* | Indicates to complete all current aggregated exchanges when the context is stopped | false | Boolean
-| *completeAllOnStop* | Indicates to wait to complete all current and partial (pending) aggregated exchanges when the context is stopped. This also means that we will wait for all pending exchanges which are stored in the aggregation repository to complete so the repository is empty before we can stop. You may want to enable this when using the memory based aggregation repository that is memory based only and do not store data on disk. When this option is enabled then the aggregator is waiting to complete all those exchanges before its stopped when stopping CamelContext or the route using it. | false | Boolean
+| *completeAllOnStop* | Indicates to wait to complete all current and partial (pending) aggregated exchanges when the context is stopped. This also means that we will wait for all pending exchanges which are stored in the aggregation repository to complete so the repository is empty before we can stop. You may want to enable this when using the memory based aggregation repository that is memory based only, and do not store data on disk. When this option is enabled, then the aggregator is waiting to complete all those exchanges before its stopped, when stopping CamelContext or the route using it. | false | Boolean
 | *aggregateControllerRef* | To use a org.apache.camel.processor.aggregate.AggregateController to allow external sources to control this aggregator. |  | String
 |===
 // eip options: END
@@ -188,8 +189,7 @@ consumer etc)
 The aggregator provides a pluggable repository which you can implement
 your own `org.apache.camel.spi.AggregationRepository`. +
  If you need persistent repository then you can use either Camel
-link:hawtdb.html[HawtDB], link:leveldb.html[LevelDB], or
-link:sql-component.html[SQL Component] components.
+link:leveldb.html[LevelDB], or <<sql-component,SQL Component>> components.
 
 === Using TimeoutAwareAggregationStrategy
 
@@ -224,7 +224,7 @@ completion predicates / sizes / timeouts etc, and complete the group.
 
 For example the following logic (from an unit test) will complete the
 group if the message body size is larger than 5. This is done by setting
-the property Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP to true.
+the property `Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP` to `true`.
 
 [source,java]
 ----
@@ -245,34 +245,71 @@ the property Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP to true.
     }
 ----
 
+
+=== Completing all previous group decided from the AggregationStrategy
+
+*Available as of Camel 2.21*
+
+The `AggregationStrategy` can now included a property on the
+returned `Exchange` that contains a boolean to indicate if all previous
+groups should be completed. This allows to overrule any existing
+completion predicates / sizes / timeouts etc, and complete all the existing
+previous group.
+
+For example the following logic (from an unit test) will complete all the
+previous group when a new aggregation group is started. This is done by
+setting the property `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS` to `true`.
+
+[source,java]
+----
+    public final class MyCompletionStrategy implements AggregationStrategy {
+        @Override
+        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+            if (oldExchange == null) {
+                // we start a new correlation group, so complete all previous groups
+                newExchange.setProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, true);
+                return newExchange;
+            }
+
+            String body1 = oldExchange.getIn().getBody(String.class);
+            String body2 = newExchange.getIn().getBody(String.class);
+
+            oldExchange.getIn().setBody(body1 + body2);
+            return oldExchange;
+        }
+    }
+----
+
  
 
 === Manually Force the Completion of All Aggregated Exchanges Immediately
 
-*Available as of Camel 2.9* +
- You can manually trigger completion of all current aggregated exchanges
+*Available as of Camel 2.9*
+
+You can manually trigger completion of all current aggregated exchanges
 by sending a message containing the header
-Exchange.AGGREGATION_COMPLETE_ALL_GROUPS set to true. The message is
+`Exchange.AGGREGATION_COMPLETE_ALL_GROUPS` set to `true`. The message is
 considered a signal message only, the message headers/contents will not
 be processed otherwise.
 
-*Available as of Camel 2.11* +
- You can alternatively set the header
-Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE to true to trigger
+*Available as of Camel 2.11*
+
+You can alternatively set the header
+`Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE` to `true` to trigger
 completion of all groups after processing the current message.
 
 === Using a List<V> in AggregationStrategy
 
 *Available as of Camel 2.11*
 
-If you want to aggregate some value from the messages <V> into a List<V>
+If you want to aggregate some value from the messages `<V>` into a `List<V>`
 then we have added a
 `org.apache.camel.processor.aggregate.AbstractListAggregationStrategy`
 abstract class in *Camel 2.11* that makes this easier. The completed
-Exchange that is sent out of the aggregator will contain the List<V> in
+Exchange that is sent out of the aggregator will contain the `List<V>` in
 the message body.
 
-For example to aggregate a List<Integer> you can extend this class as
+For example to aggregate a `List<Integer>` you can extend this class as
 shown below, and implement the `getValue` method:
 
 === Using AggregateController
@@ -359,10 +396,10 @@ from("direct:start")
     .to("mock:result");
 ----
 
-As a result we have one outgoing link:exchange.html[Exchange] being
-routed the the "mock:result" endpoint. The exchange is a holder
-containing all the incoming Exchanges. +
- To get access to these exchanges you need to access them from a
+As a result we have one outgoing `Exchange` being
+routed the the `"mock:result"` endpoint. The exchange is a holder
+containing all the incoming Exchanges.
+To get access to these exchanges you need to access them from a
 property on the outgoing exchange as shown:
 
 [source,java]
@@ -418,7 +455,7 @@ public String append(String existing, String next) {
 
 In the method below, we have only 4 parameters, so the 1st parameter is
 the body of the `oldExchange`, and the 2nd is the Map of the
-`oldExchange} headers, and the 3rd is paired to the body of the {{newExchange`,
+`oldExchange` headers, and the 3rd is paired to the body of the `newExchange`,
 and the 4th parameter is the Map of the `newExchange` headers:
 
 [source,java]
@@ -429,7 +466,7 @@ public String append(String existing, Map existingHeaders, String next, Map next
 ----
 
 And finally if we have 6 parameters the we also have the properties of
-the link:exchange.html[Exchange]s:
+the Exchanges:
 
 [source,java]
 ----
@@ -439,7 +476,7 @@ public String append(String existing, Map existingHeaders, Map existingPropertie
 }
 ----
 
-To use this with the link:aggregator2.html[Aggregate] EIP we can use a
+To use this with the Aggregate EIP we can use a
 POJO with the aggregate logic as follows:
 
 [source,java]
@@ -542,21 +579,21 @@ By default when using POJOs as AggregationStrategy, then the method is
 use the option `strategyMethodAllowNull` to configure this. Where as
 without using POJOs then you may have `null` as `oldExchange` or
 `newExchange` parameters. For example the
-link:aggregator2.html[Aggregate] EIP will invoke the
+Aggregate EIP will invoke the
 `AggregationStrategy` with `oldExchange` as null, for the first
-link:exchange.html[Exchange] incoming to the aggregator. And then for
+Exchange incoming to the aggregator. And then for
 subsequent link:exchange.html[Exchange]s then `oldExchange` and
 `newExchange` parameters are both not null.
 
-Example with link:content-enricher.html[Content Enricher] and no data
+Example with Content Enricher EIP and no data
 
-Though with POJOs as AggregationStrategy we made this simpler and only
+Though with POJOs as `AggregationStrategy` we made this simpler and only
 call the method when `oldExchange` and `newExchange` is not null, as
 that would be the most common use-case. If you need to allow
 `oldExchange` or `newExchange` to be null, then you can configure this
 with the POJO using the `AggregationStrategyBeanAdapter` as shown below.
 On the bean adapter we call `setAllowNullNewExchange` to allow the new
-exchange to be null.
+exchange to be `null`.
 
 [source,java]
 ----
@@ -657,5 +694,3 @@ public static final class MyUserAppender {
 Notice that the return type is a List which we want to contain the user
 names. The 1st parameter is the list of names, and then notice the 2nd
 parameter is the incoming `com.foo.User` type.
-
-

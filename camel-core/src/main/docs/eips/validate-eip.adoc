@@ -1,3 +1,4 @@
+[[validate-eip]]
 == Validate EIP
 *Available as of Camel 2.3* +
 
@@ -10,7 +11,7 @@ If it is true message processing continues.
 === Options
 
 // eip options: START
-The Validate EIP supports 0 options which are listed below:
+The Validate EIP has no options.
 // eip options: END
 
 === Samples

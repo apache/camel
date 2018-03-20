@@ -70,8 +70,8 @@ public class XsltComponentConfiguration
     /**
      * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
      * You would need to add camel-saxon to the classpath. The function is
-     * looked up in the registry where you can comma to separate multiple values
-     * to lookup.
+     * looked up in the registry, where you can comma to separate multiple
+     * values to lookup.
      */
     private String saxonExtensionFunctions;
     /**

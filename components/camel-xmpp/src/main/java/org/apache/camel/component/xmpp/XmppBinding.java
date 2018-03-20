@@ -135,10 +135,10 @@ public class XmppBinding {
         Map<String, Object> answer = new HashMap<String, Object>();
 
         ExtensionElement jpe = stanza.getExtension(JivePropertiesExtension.NAMESPACE);
-        if (jpe != null && jpe instanceof JivePropertiesExtension) {
+        if (jpe instanceof JivePropertiesExtension) {
             extractHeadersFrom((JivePropertiesExtension)jpe, exchange, answer);
         }
-        if (jpe != null && jpe instanceof DefaultExtensionElement) {
+        if (jpe instanceof DefaultExtensionElement) {
             extractHeadersFrom((DefaultExtensionElement)jpe, exchange, answer);
         }
 

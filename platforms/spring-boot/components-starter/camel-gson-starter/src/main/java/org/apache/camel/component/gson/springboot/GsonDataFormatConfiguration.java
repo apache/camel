@@ -40,6 +40,10 @@ public class GsonDataFormatConfiguration
      */
     private String objectMapper;
     /**
+     * Whether to lookup and use default Jackson ObjectMapper from the registry.
+     */
+    private Boolean useDefaultObjectMapper = true;
+    /**
      * To enable pretty printing output nicely formatted. Is by default false.
      */
     private Boolean prettyPrint = false;
@@ -58,8 +62,8 @@ public class GsonDataFormatConfiguration
      */
     private Class jsonView;
     /**
-     * If you want to marshal a pojo to JSON and the pojo has some fields with
-     * null values. And you want to skip these null values you can set this
+     * If you want to marshal a pojo to JSON, and the pojo has some fields with
+     * null values. And you want to skip these null values, you can set this
      * option to NOT_NULL
      */
     private String include;
@@ -70,8 +74,8 @@ public class GsonDataFormatConfiguration
     private Boolean allowJmsType = false;
     /**
      * Refers to a custom collection type to lookup in the registry to use. This
-     * option should rarely be used but allows to use different collection types
-     * than java.util.Collection based as default.
+     * option should rarely be used, but allows to use different collection
+     * types than java.util.Collection based as default.
      */
     private String collectionTypeName;
     /**
@@ -98,8 +102,8 @@ public class GsonDataFormatConfiguration
      * Set of features to enable on the Jackson
      * com.fasterxml.jackson.databind.ObjectMapper. The features should be a
      * name that matches a enum from
-     * com.fasterxml.jackson.databind.SerializationFeature
-     * com.fasterxml.jackson.databind.DeserializationFeature or
+     * com.fasterxml.jackson.databind.SerializationFeature,
+     * com.fasterxml.jackson.databind.DeserializationFeature, or
      * com.fasterxml.jackson.databind.MapperFeature Multiple features can be
      * separated by comma
      */
@@ -108,8 +112,8 @@ public class GsonDataFormatConfiguration
      * Set of features to disable on the Jackson
      * com.fasterxml.jackson.databind.ObjectMapper. The features should be a
      * name that matches a enum from
-     * com.fasterxml.jackson.databind.SerializationFeature
-     * com.fasterxml.jackson.databind.DeserializationFeature or
+     * com.fasterxml.jackson.databind.SerializationFeature,
+     * com.fasterxml.jackson.databind.DeserializationFeature, or
      * com.fasterxml.jackson.databind.MapperFeature Multiple features can be
      * separated by comma
      */
@@ -118,12 +122,12 @@ public class GsonDataFormatConfiguration
      * Adds permissions that controls which Java packages and classes XStream is
      * allowed to use during unmarshal from xml/json to Java beans. A permission
      * must be configured either here or globally using a JVM system property.
-     * The permission can be specified in a syntax where a plus sign is allow
+     * The permission can be specified in a syntax where a plus sign is allow,
      * and minus sign is deny. Wildcards is supported by using . as prefix. For
      * example to allow com.foo and all subpackages then specfy com.foo..
-     * Multiple permissions can be configured separated by comma such as
-     * com.foo.-com.foo.bar.MySecretBean. The following default permission is
-     * always included: -java.lang.java.util. unless its overridden by
+     * Multiple permissions can be configured separated by comma, such as
+     * com.foo.,-com.foo.bar.MySecretBean. The following default permission is
+     * always included: -,java.lang.,java.util. unless its overridden by
      * specifying a JVM system property with they key
      * org.apache.camel.xstream.permissions.
      */
@@ -136,14 +140,14 @@ public class GsonDataFormatConfiguration
     private Boolean allowUnmarshallType = false;
     /**
      * If set then Jackson will use the Timezone when marshalling/unmarshalling.
-     * This option will have no effect on the others Json DataFormat like gson
+     * This option will have no effect on the others Json DataFormat, like gson,
      * fastjson and xstream.
      */
     private String timezone;
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
-     * example application/xml for data formats marshalling to XML or
+     * example application/xml for data formats marshalling to XML, or
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;
@@ -154,6 +158,14 @@ public class GsonDataFormatConfiguration
 
     public void setObjectMapper(String objectMapper) {
         this.objectMapper = objectMapper;
+    }
+
+    public Boolean getUseDefaultObjectMapper() {
+        return useDefaultObjectMapper;
+    }
+
+    public void setUseDefaultObjectMapper(Boolean useDefaultObjectMapper) {
+        this.useDefaultObjectMapper = useDefaultObjectMapper;
     }
 
     public Boolean getPrettyPrint() {

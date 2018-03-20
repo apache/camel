@@ -1,12 +1,13 @@
+[[binding-component]]
 == Binding Component (deprecated)
 
 *Available as of Camel version 2.11*
 
 In Camel terms a _binding_ is a way of wrapping an
-link:endpoint.html[Endpoint] in a contract; such as a
-link:data-format.html[Data Format], a link:content-enricher.html[Content
+Endpoint in a contract; such as a
+Data Format, a link:content-enricher.html[Content
 Enricher] or validation step. Bindings are completely optional and you
-can choose to use them on any link:components.html[camel endpoint].
+can choose to use them on any camel endpoint.
 
 Bindings are inspired by the work of
 http://www.jboss.org/switchyard[SwitchYard project] adding service
@@ -36,6 +37,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -43,15 +45,17 @@ with the following path and query parameters:
 | *delegateUri* | *Required* Uri of the delegate endpoint. |  | String
 |===
 
+
 ==== Query Parameters (4 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored. |  | ExceptionHandler
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN/ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN/ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the default exchange pattern when creating an exchange. |  | ExchangePattern
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -75,13 +79,13 @@ from("binding:jaxb:activemq:myQueue").to("binding:jaxb:activemq:anotherQueue")
 ----
 
 Here we are using the "jaxb" binding which may, for example, use the
-JAXB link:data-format.html[Data Format] to marshal and unmarshal
+JAXB Data Format to marshal and unmarshal
 messages.
 
 === Using a BindingComponent
 
-There is a link:component.html[Component] called BindingComponent which
-can be configured in your link:registry.html[Registry] by dependency
+There is a Component called BindingComponent which
+can be configured in your Registry by dependency
 injection which allows the creation of endpoints which are already bound
 to some binding.
 
@@ -102,7 +106,7 @@ from("jsonmq:myQueue").to("jsonmq:anotherQueue")
 ----
 
 which would be using the queueus "foo.myQueue" and "foo.anotherQueue"
-and would use the given Jackson link:data-format.html[Data Format] to
+and would use the given Jackson Data Format to
 marshal on and off the queue.
 
 === When to use Bindings

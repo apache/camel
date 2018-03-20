@@ -45,6 +45,9 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.elasticsearch5.ElasticsearchConstants.ES_QUERY_FROM;
+import static org.apache.camel.component.elasticsearch5.ElasticsearchConstants.ES_QUERY_SIZE;
+
 @Converter
 public final class ElasticsearchActionRequestConverter {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchActionRequestConverter.class);
@@ -187,9 +190,18 @@ public final class ElasticsearchActionRequestConverter {
         
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         String queryText = null;
-        
+
+        Integer size = null;
+        Integer from = null;
+
         if (queryObject instanceof Map<?, ?>) {
             Map<String, Object> mapQuery = (Map<String, Object>)queryObject;
+            if (mapQuery.containsKey(ES_QUERY_SIZE)) {
+                size = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, mapQuery.get(ES_QUERY_SIZE));
+            }
+            if (mapQuery.containsKey(ES_QUERY_FROM)) {
+                from = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, mapQuery.get(ES_QUERY_FROM));
+            }
             // Remove 'query' prefix from the query object for backward compatibility
             if (mapQuery.containsKey(ElasticsearchConstants.ES_QUERY_DSL_PREFIX)) {
                 mapQuery = (Map<String, Object>)mapQuery.get(ElasticsearchConstants.ES_QUERY_DSL_PREFIX);
@@ -209,6 +221,14 @@ public final class ElasticsearchActionRequestConverter {
                 if (parentJsonNode != null) {
                     queryText = parentJsonNode.toString();
                 }
+                JsonNode sizeNode = jsonTextObject.get(ES_QUERY_SIZE);
+                if (sizeNode != null) {
+                    size = sizeNode.asInt();
+                }
+                JsonNode fromNode = jsonTextObject.get(ES_QUERY_FROM);
+                if (fromNode != null) {
+                    from = fromNode.asInt();
+                }
             } catch (IOException e) {
                 LOG.error(e.getMessage());
             }
@@ -216,8 +236,14 @@ public final class ElasticsearchActionRequestConverter {
             // Cannot convert the queryObject into SearchRequest
             return null;
         }
-        
+
         searchSourceBuilder.query(QueryBuilders.wrapperQuery(queryText));
+        if (size != null) {
+            searchSourceBuilder.size(size);
+        }
+        if (from != null) {
+            searchSourceBuilder.from(from);
+        }
         searchRequest.source(searchSourceBuilder);
 
         return searchRequest;

@@ -42,19 +42,19 @@ public class CastorDataFormatConfiguration
     private Boolean whitelistEnabled = true;
     /**
      * Define the allowed objects to be unmarshalled. You can specify the FQN
-     * class name of allowed objects and you can use comma to separate multiple
+     * class name of allowed objects, and you can use comma to separate multiple
      * entries. It is also possible to use wildcards and regular expression
      * which is based on the pattern defined by link
-     * org.apache.camel.util.EndpointHelpermatchPattern(String String). Denied
+     * org.apache.camel.util.EndpointHelpermatchPattern(String, String). Denied
      * objects takes precedence over allowed objects.
      */
     private String allowedUnmarshallObjects;
     /**
      * Define the denied objects to be unmarshalled. You can specify the FQN
-     * class name of deined objects and you can use comma to separate multiple
+     * class name of deined objects, and you can use comma to separate multiple
      * entries. It is also possible to use wildcards and regular expression
      * which is based on the pattern defined by link
-     * org.apache.camel.util.EndpointHelpermatchPattern(String String). Denied
+     * org.apache.camel.util.EndpointHelpermatchPattern(String, String). Denied
      * objects takes precedence over allowed objects.
      */
     private String deniedUnmarshallObjects;
@@ -77,7 +77,7 @@ public class CastorDataFormatConfiguration
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
-     * example application/xml for data formats marshalling to XML or
+     * example application/xml for data formats marshalling to XML, or
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;

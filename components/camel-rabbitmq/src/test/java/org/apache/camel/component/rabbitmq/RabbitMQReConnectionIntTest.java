@@ -28,7 +28,6 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
@@ -43,7 +42,7 @@ import org.junit.Test;
  * <li>Kill all connections from the broker: the producer sends messages, and the consumer receives messages</li>
  * </ul>
  */
-public class RabbitMQReConnectionIntTest extends CamelTestSupport {
+public class RabbitMQReConnectionIntTest extends AbstractRabbitMQIntTest {
     private static final String EXCHANGE = "ex3";
 
     @Produce(uri = "direct:rabbitMQ")
@@ -65,6 +64,7 @@ public class RabbitMQReConnectionIntTest extends CamelTestSupport {
         return new RouteBuilder() {
 
             @Override
+            @SuppressWarnings("unchecked")
             public void configure() throws Exception {
                 from("direct:rabbitMQ")
                         .id("producingRoute")

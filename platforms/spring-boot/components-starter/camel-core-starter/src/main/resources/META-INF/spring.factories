@@ -55,5 +55,7 @@ org.apache.camel.component.binding.springboot.BindingNameComponentAutoConfigurat
 org.apache.camel.component.bean.springboot.BeanComponentAutoConfiguration,\
 org.apache.camel.component.dataformat.springboot.DataFormatComponentAutoConfiguration,\
 org.apache.camel.component.rest.springboot.RestApiComponentAutoConfiguration,\
-org.apache.camel.model.rest.springboot.RestConfigurationDefinitionAutoConfiguration
+org.apache.camel.model.rest.springboot.RestConfigurationDefinitionAutoConfiguration,\
+org.apache.camel.component.saga.springboot.SagaComponentAutoConfiguration
+
 

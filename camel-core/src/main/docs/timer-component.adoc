@@ -1,3 +1,4 @@
+[[timer-component]]
 == Timer Component
 
 *Available as of Camel version 1.0*
@@ -23,7 +24,7 @@ You can append query options to the URI in the following format,
 `exchange.getIn().getBody()` returns `null`.
 
 TIP:*Advanced Scheduler*
-See also the link:quartz.html[Quartz] component that supports much more
+See also the <<quartz-component,Quartz>> component that supports much more
 advanced scheduling.
 
 TIP:*Specify time in human friendly format*
@@ -50,28 +51,31 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *timerName* | *Required* The name of the timer |  | String
 |===
 
+
 ==== Query Parameters (12 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored. | false | boolean
-| *delay* (consumer) | The number of milliseconds to wait before the first event is generated. Should not be used in conjunction with the time option. The default value is 1000. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
-| *fixedRate* (consumer) | Events take place at approximately regular intervals separated by the specified period. | false | boolean
-| *period* (consumer) | If greater than 0 generate periodic events every period milliseconds. The default value is 1000. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
-| *repeatCount* (consumer) | Specifies a maximum limit of number of fires. So if you set it to 1 the timer will only fire once. If you set it to 5 it will only fire five times. A value of zero or negative means fire forever. | 0 | long
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored. |  | ExceptionHandler
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN/ERROR level and ignored. | false | boolean
+| *delay* (consumer) | The number of milliseconds to wait before the first event is generated. Should not be used in conjunction with the time option. The default value is 1000. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *fixedRate* (consumer) | Events take place at approximately regular intervals, separated by the specified period. | false | boolean
+| *period* (consumer) | If greater than 0, generate periodic events every period milliseconds. The default value is 1000. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (consumer) | Specifies a maximum limit of number of fires. So if you set it to 1, the timer will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN/ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the default exchange pattern when creating an exchange. |  | ExchangePattern
 | *daemon* (advanced) | Specifies whether or not the thread associated with the timer endpoint runs as a daemon. The default value is true. | true | boolean
 | *pattern* (advanced) | Allows you to specify a custom Date pattern to use for setting the time option using URI syntax. |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *time* (advanced) | A java.util.Date the first event should be generated. If using the URI the pattern expected is: yyyy-MM-dd HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss. |  | Date
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *time* (advanced) | A java.util.Date the first event should be generated. If using the URI, the pattern expected is: yyyy-MM-dd HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss. |  | Date
 | *timer* (advanced) | To use a custom Timer |  | Timer
 |===
 // endpoint options: END
@@ -110,7 +114,7 @@ TIP: Instead of 60000 you can use period=60s which is more friendly to read.
 
 The above route will generate an event and then invoke the
 `someMethodName` method on the bean called `myBean` in the
-link:registry.html[Registry] such as JNDI or link:spring.html[Spring].
+Registry such as JNDI or Spring.
 
 And the route in Spring DSL:
 
@@ -163,5 +167,5 @@ starting the route. To do that you use the repeatCount option as shown:
 
 === See Also
 
-* link:scheduler.html[Scheduler]
-* link:quartz.html[Quartz]
+* <<scheduler-component,Scheduler>>
+* <<quartz-component,Quartz>>

@@ -16,114 +16,71 @@
  */
 package org.apache.camel.maven;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
+import javax.tools.JavaFileObject;
+
+import com.google.testing.compile.Compilation;
+import com.google.testing.compile.Compilation.Status;
+import com.google.testing.compile.Compiler;
+import com.google.testing.compile.JavaFileObjects;
 
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
-import org.apache.camel.component.salesforce.SalesforceLoginConfig;
-import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import static org.apache.camel.maven.AbstractSalesforceMojoIntegrationTest.setup;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CamelSalesforceMojoIntegrationTest {
 
-    private static final String TEST_LOGIN_PROPERTIES = "../test-salesforce-login.properties";
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
 
     @Test
     public void testExecute() throws Exception {
-        CamelSalesforceMojo mojo = createMojo();
+        final GenerateMojo mojo = createMojo();
 
         // generate code
         mojo.execute();
 
-        // validate generated code
-        // check that it was generated
-        Assert.assertTrue("Output directory was not created", mojo.outputDirectory.exists());
+        // validate generated code check that it was generated
+        final Path packagePath = temp.getRoot().toPath().resolve("test").resolve("dto");
+        assertThat(packagePath).as("Package directory was not created").exists();
 
-        // TODO check that the generated code compiles
+        // test that the generated sources can be compiled
+        final List<JavaFileObject> sources = Files.list(packagePath).map(p -> {
+            try {
+                return JavaFileObjects.forResource(p.toUri().toURL());
+            } catch (final MalformedURLException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }).collect(Collectors.toList());
+        final Compilation compilation = Compiler.javac().compile(sources);
+        assertThat(compilation.status()).isEqualTo(Status.SUCCESS);
     }
 
-    @Test
-    public void testExecuteJsonSchema() throws Exception {
-        CamelSalesforceMojo mojo = createMojo();
-        mojo.jsonSchema = true;
-        mojo.jsonSchemaFilename = "test-schema.json";
-        mojo.jsonSchemaId = JsonUtils.DEFAULT_ID_PREFIX;
-
-        // generate code
-        mojo.execute();
-
-        // validate generated schema
-        File schemaFile = mojo.outputDirectory.toPath().resolve("test-schema.json").toFile();
-        Assert.assertTrue("Output file was not created",
-                schemaFile.exists());
-        ObjectMapper objectMapper = JsonUtils.createObjectMapper();
-        JsonSchema jsonSchema = objectMapper.readValue(schemaFile, JsonSchema.class);
-        Assert.assertTrue("Expected root JSON schema with oneOf element",
-                jsonSchema.isObjectSchema() && !((ObjectSchema)jsonSchema).getOneOf().isEmpty());
-    }
-
-    protected CamelSalesforceMojo createMojo() throws IOException {
-        CamelSalesforceMojo mojo = new CamelSalesforceMojo();
-
-        mojo.setLog(new SystemStreamLog());
+    GenerateMojo createMojo() throws IOException {
+        final GenerateMojo mojo = new GenerateMojo();
 
         // set login properties
-        setLoginProperties(mojo);
+        setup(mojo);
 
         // set defaults
-        mojo.version = System.getProperty("apiVersion", SalesforceEndpointConfig.DEFAULT_VERSION);
-        mojo.loginUrl = System.getProperty("loginUrl", SalesforceLoginConfig.DEFAULT_LOGIN_URL);
-        mojo.outputDirectory = new File("target/generated-sources/camel-salesforce");
-        mojo.packageName = "org.apache.camel.salesforce.dto";
+        mojo.version = SalesforceEndpointConfig.DEFAULT_VERSION;
+        mojo.outputDirectory = temp.getRoot();
+        mojo.packageName = "test.dto";
 
         // set code generation properties
         mojo.includePattern = "(.*__c)|(PushTopic)|(Document)|(Account)";
 
-        // remove generated code directory
-        if (mojo.outputDirectory.exists()) {
-            // remove old files
-            for (File file : mojo.outputDirectory.listFiles()) {
-                file.delete();
-            }
-            mojo.outputDirectory.delete();
-        }
         return mojo;
-    }
-
-    private void setLoginProperties(CamelSalesforceMojo mojo) throws IOException {
-        // load test-salesforce-login properties
-        Properties properties = new Properties();
-        InputStream stream = null;
-        try {
-            stream = new FileInputStream(TEST_LOGIN_PROPERTIES);
-            properties.load(stream);
-            mojo.clientId = properties.getProperty("salesforce.client.id");
-            mojo.clientSecret = properties.getProperty("salesforce.client.secret");
-            mojo.userName = properties.getProperty("salesforce.username");
-            mojo.password = properties.getProperty("salesforce.password");
-        } catch (FileNotFoundException e) {
-            throw new FileNotFoundException("Create a properties file named "
-                    + TEST_LOGIN_PROPERTIES + " with clientId, clientSecret, userName, password"
-                    + " for a Salesforce account with Merchandise and Invoice objects from Salesforce Guides.");
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException ignore) {
-                    // noop
-                }
-            }
-        }
     }
 
 }

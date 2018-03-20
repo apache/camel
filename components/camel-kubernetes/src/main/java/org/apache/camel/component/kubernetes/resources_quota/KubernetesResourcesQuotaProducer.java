@@ -30,7 +30,6 @@ import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
-import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.MessageHelper;
@@ -96,6 +95,8 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
     protected void doList(Exchange exchange, String operation) throws Exception {
         ResourceQuotaList resList = getEndpoint().getKubernetesClient()
                 .resourceQuotas().inAnyNamespace().list();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(resList.getItems());
     }
 

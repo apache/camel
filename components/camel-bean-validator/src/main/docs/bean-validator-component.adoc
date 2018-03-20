@@ -1,3 +1,4 @@
+[[bean-validator-component]]
 == Bean Validator Component
 
 *Available as of Camel version 2.3*
@@ -60,13 +61,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *label* | *Required* Where label is an arbitrary text value describing the endpoint |  | String
 |===
 
+
 ==== Query Parameters (6 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -76,7 +80,7 @@ with the following path and query parameters:
 | *messageInterpolator* (producer) | To use a custom MessageInterpolator |  | MessageInterpolator
 | *traversableResolver* (producer) | To use a custom TraversableResolver |  | TraversableResolver
 | *validationProviderResolver* (producer) | To use a a custom ValidationProviderResolver |  | ValidationProvider Resolver
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -249,9 +253,33 @@ and the `constraints-car.xml` file
 </constraint-mappings>
 ----------------------------------------------------------------------------------------------------
 
+Here is the XML syntax for the example route definition where **OrderedChecks** can be https://github.com/apache/camel/blob/master/components/camel-bean-validator/src/test/java/org/apache/camel/component/bean/validator/OrderedChecks.java 
+
+Note that the body should include an instance of a class to validate.
+
+[source,java]
+----------------------------------------------------------------------------------------------------
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+  
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:start"/>
+            <to uri="bean-validator://x?group=org.apache.camel.component.bean.validator.OrderedChecks"/>
+        </route>
+    </camelContext>
+</beans>
+----------------------------------------------------------------------------------------------------
+
+
+
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.consul;
 
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -66,7 +67,7 @@ public class ConsulClientConfiguration implements Cloneable {
     @UriParam(label = "consumer,watch", defaultValue = "10")
     private Integer blockSeconds = 10;
     @UriParam(label = "consumer,watch", defaultValue = "0")
-    private long firstIndex;
+    private BigInteger firstIndex = BigInteger.valueOf(0L);
     @UriParam(label = "consumer,watch", defaultValue = "false")
     private boolean recursive;
 
@@ -269,14 +270,14 @@ public class ConsulClientConfiguration implements Cloneable {
         this.blockSeconds = blockSeconds;
     }
 
-    public long getFirstIndex() {
+    public BigInteger getFirstIndex() {
         return firstIndex;
     }
 
     /**
      * The first index for watch for, default 0
      */
-    public void setFirstIndex(long firstIndex) {
+    public void setFirstIndex(BigInteger firstIndex) {
         this.firstIndex = firstIndex;
     }
 

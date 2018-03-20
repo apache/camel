@@ -1,3 +1,4 @@
+[[pdf-component]]
 == PDF Component
 
 *Available as of Camel version 2.16*
@@ -50,13 +51,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *operation* | *Required* Operation type |  | PdfOperation
 |===
 
+
 ==== Query Parameters (9 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -67,9 +71,9 @@ with the following path and query parameters:
 | *marginLeft* (producer) | Margin left in pixels | 20 | int
 | *marginRight* (producer) | Margin right in pixels | 40 | int
 | *marginTop* (producer) | Margin top in pixels | 20 | int
-| *pageSize* (producer) | Page size | PAGE_SIZE_A4 | PDRectangle
-| *textProcessingFactory* (producer) | Text processing to use. autoFormatting: Text is getting sliced by words then max amount of words that fits in the line will be written into pdf document. With this strategy all words that doesn't fit in the line will be moved to the new line. lineTermination: Builds set of classes for line-termination writing strategy. Text getting sliced by line termination symbol and then it will be written regardless it fits in the line or not. | lineTermination | TextProcessingFactory
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *pageSize* (producer) | Page size | A4 | PDRectangle
+| *textProcessingFactory* (producer) | Text processing to use. autoFormatting: Text is getting sliced by words, then max amount of words that fits in the line will be written into pdf document. With this strategy all words that doesn't fit in the line will be moved to the new line. lineTermination: Builds set of classes for line-termination writing strategy. Text getting sliced by line termination symbol and then it will be written regardless it fits in the line or not. | lineTermination | TextProcessingFactory
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -95,10 +99,10 @@ ishttps://pdfbox.apache.org/docs/1.8.10/javadocs/org/apache/pdfbox/pdmodel/encry
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
 -
  

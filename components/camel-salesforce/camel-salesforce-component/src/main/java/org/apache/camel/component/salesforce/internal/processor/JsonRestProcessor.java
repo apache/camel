@@ -30,6 +30,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
+import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
@@ -56,7 +57,11 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         if (endpoint.getConfiguration().getObjectMapper() != null) {
             this.objectMapper = endpoint.getConfiguration().getObjectMapper();
         } else {
-            this.objectMapper = JsonUtils.createObjectMapper();
+            if (endpoint.getConfiguration().isSerializeNulls()) {
+                this.objectMapper = JsonUtils.withNullSerialization(JsonUtils.createObjectMapper());
+            } else {
+                this.objectMapper = JsonUtils.createObjectMapper();
+            }
         }
     }
 
@@ -138,7 +143,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
             AbstractDTOBase dto = in.getBody(AbstractDTOBase.class);
             if (dto != null) {
                 // marshall the DTO
-                request = getRequestStream(dto);
+                request = getRequestStream(in, dto);
             } else {
                 // if all else fails, get body as String
                 final String body = in.getBody(String.class);
@@ -156,10 +161,10 @@ public class JsonRestProcessor extends AbstractRestProcessor {
     }
 
     @Override
-    protected InputStream getRequestStream(final Object object) throws SalesforceException {
+    protected InputStream getRequestStream(final Message in, final Object object) throws SalesforceException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-            objectMapper.writeValue(out, object);
+            prepareMapper(in).writeValue(out, object);
         } catch (IOException e) {
             final String msg = "Error marshaling request: " + e.getMessage();
             throw new SalesforceException(msg, e);
@@ -189,11 +194,11 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                 final Object response;
                 Class<?> responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
                 if (!rawPayload && responseClass != null) {
-                    response = objectMapper.readValue(responseEntity, responseClass);
+                    response = prepareMapper(in).readValue(responseEntity, responseClass);
                 } else {
                     TypeReference<?> responseType = exchange.getProperty(RESPONSE_TYPE, TypeReference.class);
                     if (!rawPayload && responseType != null) {
-                        response = objectMapper.readValue(responseEntity, responseType);
+                        response = prepareMapper(in).readValue(responseEntity, responseType);
                     } else {
                         // return the response as a stream, for getBlobField
                         response = responseEntity;
@@ -222,4 +227,14 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         }
 
     }
+
+    private ObjectMapper prepareMapper(final Message in) {
+        final Object serializeNulls = in.getHeader(SalesforceEndpointConfig.SERIALIZE_NULLS);
+        if (Boolean.TRUE.equals(serializeNulls)) {
+            return JsonUtils.withNullSerialization(objectMapper);
+        }
+
+        return objectMapper;
+    }
+
 }

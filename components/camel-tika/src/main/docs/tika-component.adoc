@@ -1,3 +1,4 @@
+[[tika-component]]
 == Tika Component
 
 *Available as of Camel version 2.19*
@@ -13,23 +14,17 @@ following dependency to their `pom.xml`:
 *pom.xml*
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-tika</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
-
-### URI format
+----
 
 The TIKA component only supports producer endpoints.
 
-[source,java]
------------------------
-tika:operation[?options]
------------------------
 
 ### Options
 
@@ -50,13 +45,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *operation* | *Required* Tika Operation. parse or detect |  | TikaOperation
 |===
 
+
 ==== Query Parameters (5 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -65,40 +63,28 @@ with the following path and query parameters:
 | *tikaConfigUri* (producer) | Tika Config Uri: The URI of tika-config.xml |  | String
 | *tikaParseOutputEncoding* (producer) | Tika Parse Output Encoding - Used to specify the character encoding of the parsed output. Defaults to Charset.defaultCharset() . |  | String
 | *tikaParseOutputFormat* (producer) | Tika Output Format. Supported output formats. xml: Returns Parsed Content as XML. html: Returns Parsed Content as HTML. text: Returns Parsed Content as Text. textMain: Uses the boilerpipe library to automatically extract the main content from a web page. | xml | TikaParseOutputFormat
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
 
-### Headers
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Header |Description
-|=======================================================================
 
 ### To Detect a file's MIME Type
 
 The file should be placed in the Body.
 
 [source,java]
--------------------------------
+----
 from("direct:start")
         .to("tika:detect");
--------------------------------
+----
 
 ### To Parse a File
 
 The file should be placed in the Body.
 
 [source,java]
--------------------------------
+----
 from("direct:start")
         .to("tika:parse");
--------------------------------
-
-### See Also
-
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+----

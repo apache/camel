@@ -5,10 +5,10 @@ Scala DSL - EIP
 ====
 *DSL supported*
 
-The link:scala-dsl.html[Scala DSL] supports *every* DSL from the
-link:dsl.html[Java DSL].
+The Scala DSL supports *every* DSL from the
+Java DSL.
 
-On this page we have examples for a number of the link:eip.html[EIP]s. +
+On this page we have examples for a number of the EIPs. +
  You can check the
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-scala/src/test/scala/[unit
 test source code] for the Scala Component to find more examples.
@@ -147,7 +147,7 @@ the message body are the same.
 Content based router
 ++++++++++++++++++++
 
-Similar to the link:scala-dsl-eip.html[Filter], the content based router
+Similar to the Filter, the content based router
 uses `when` methods with `Exchange ⇒ Boolean` function literals and an
 optional `otherwise`. The function literal can contain plain Scala code
 as well as any of the link:scala-dsl-supported-languages.html[supported
@@ -234,7 +234,7 @@ Recipient list
 ++++++++++++++
 
 You can handle a static recipient list with a multicast or
-link:scala-dsl-eip.html[pipeline], but this EIP is usually applied when
+pipeline, but this EIP is usually applied when
 you want to dynamically determine the name(s) of the next endpoint(s) to
 route to. Use the `recipients()` method with a function literal
 (`Exchange => Any`) that returns the endpoint name(s). In the example
@@ -261,7 +261,7 @@ figure out where to send the message:
 
 Again, we can also use the same thing in a more block-like syntax. For
 this example, we use the Scala DSL's
-link:scala-dsl-supported-languages.html[support for JXPath] to determine
+support for JXPath to determine
 the target.
 
 [source,java]
@@ -337,7 +337,7 @@ well as a more elaborate block based one.
 ----------------------------------------------------------------------------------------------------------------
 
 The above examples also show you how
-link:scala-dsl-supported-languages.html[other languages] like XPath can
+other languages like XPath can
 be within the Scala DSL.
 
 [[ScalaDSL-EIP-Throttler]]
@@ -403,7 +403,7 @@ val myProcessor = (exchange: Exchange) => {
 ----------------------------------------------------------------------------------------------------------------
 
 Off course, you can also use any other Camel component (e.g.
-link:velocity.html[Velocity]) to enrich the content and add it to a
+<<velocity-component,Velocity>>) to enrich the content and add it to a
 pipeline
 
 

@@ -1,3 +1,4 @@
+[[grape-component]]
 == Grape Component
 
 *Available as of Camel version 2.16*
@@ -27,13 +28,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *defaultCoordinates* | *Required* Maven coordinates to use as default to grab if the message body is empty. |  | String
 |===
 
+
 ==== Query Parameters (2 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -232,7 +236,7 @@ command:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

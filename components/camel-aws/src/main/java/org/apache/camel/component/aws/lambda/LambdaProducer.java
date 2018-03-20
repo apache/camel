@@ -38,6 +38,8 @@ import com.amazonaws.services.lambda.model.InvokeRequest;
 import com.amazonaws.services.lambda.model.InvokeResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
 import com.amazonaws.services.lambda.model.TracingConfig;
+import com.amazonaws.services.lambda.model.UpdateFunctionCodeRequest;
+import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
 import com.amazonaws.services.lambda.model.VpcConfig;
 import com.amazonaws.util.IOUtils;
 import org.apache.camel.Endpoint;
@@ -80,6 +82,9 @@ public class LambdaProducer extends DefaultProducer {
             break;
         case listFunctions:
             listFunctions(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case updateFunction:
+            updateFunction(getEndpoint().getAwsLambdaClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -264,7 +269,7 @@ public class LambdaProducer extends DefaultProducer {
             result = lambdaClient.createFunction(request);
 
         } catch (AmazonServiceException ase) {
-            LOG.trace("invokeFunction command returned the error code {}", ase.getErrorCode());
+            LOG.trace("createFunction command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
 
@@ -272,6 +277,70 @@ public class LambdaProducer extends DefaultProducer {
         message.setBody(result);
     }
 
+    private void updateFunction(AWSLambda lambdaClient, Exchange exchange) throws Exception {
+        UpdateFunctionCodeResult result;
+
+        try {
+            UpdateFunctionCodeRequest request = new UpdateFunctionCodeRequest()
+                .withFunctionName(getConfiguration().getFunction());
+
+            FunctionCode functionCode = new FunctionCode();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.S3_BUCKET))) {
+                String s3Bucket = exchange.getIn().getHeader(LambdaConstants.S3_BUCKET, String.class);
+                functionCode.withS3Bucket(s3Bucket);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.S3_KEY))) {
+                String s3Key = exchange.getIn().getHeader(LambdaConstants.S3_KEY, String.class);
+                functionCode.withS3Key(s3Key);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.S3_OBJECT_VERSION))) {
+                String s3ObjectVersion = exchange.getIn().getHeader(LambdaConstants.S3_OBJECT_VERSION, String.class);
+                functionCode.withS3ObjectVersion(s3ObjectVersion);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.ZIP_FILE))) {
+                String zipFile = exchange.getIn().getHeader(LambdaConstants.ZIP_FILE, String.class);
+                File fileLocalPath = new File(zipFile);
+                FileInputStream inputStream = new FileInputStream(fileLocalPath);
+                functionCode.withZipFile(ByteBuffer.wrap(IOUtils.toByteArray(inputStream)));
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                functionCode.withZipFile(exchange.getIn().getBody(ByteBuffer.class));
+            }
+
+            if (ObjectHelper.isEmpty(exchange.getIn().getBody())
+                && (ObjectHelper.isEmpty(exchange.getIn().getHeader(LambdaConstants.S3_BUCKET)) && ObjectHelper.isEmpty(exchange.getIn().getHeader(LambdaConstants.S3_KEY)))) {
+                throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.PUBLISH))) {
+                Boolean publish = exchange.getIn().getHeader(LambdaConstants.PUBLISH, Boolean.class);
+                request.withPublish(publish);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.SDK_CLIENT_EXECUTION_TIMEOUT))) {
+                Integer timeout = exchange.getIn().getHeader(LambdaConstants.SDK_CLIENT_EXECUTION_TIMEOUT, Integer.class);
+                request.withSdkClientExecutionTimeout(timeout);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.SDK_REQUEST_TIMEOUT))) {
+                Integer timeout = exchange.getIn().getHeader(LambdaConstants.SDK_REQUEST_TIMEOUT, Integer.class);
+                request.withSdkRequestTimeout(timeout);
+            }
+            
+            result = lambdaClient.updateFunctionCode(request);
+
+        } catch (AmazonServiceException ase) {
+            LOG.trace("updateFunction command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
     private LambdaOperations determineOperation(Exchange exchange) {
         LambdaOperations operation = exchange.getIn().getHeader(LambdaConstants.OPERATION, LambdaOperations.class);
         if (operation == null) {

@@ -3,14 +3,14 @@
 
 The
 http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic
-Router] from the link:enterprise-integration-patterns.html[EIP patterns]
+Router] from the EIP patterns
 allows you to route messages while avoiding the dependency of the router
 on all possible destinations while maintaining its efficiency.
 
 image:http://www.enterpriseintegrationpatterns.com/img/DynamicRouter.gif[image]
 
 In *Camel 2.5* we introduced a `dynamicRouter` in the DSL which is like
-a dynamic link:routing-slip.html[Routing Slip] which evaluates the slip
+a dynamic Routing Slip which evaluates the slip
 _on-the-fly_.
 
 WARNING: *Beware*
@@ -25,7 +25,7 @@ bean, will return `null` to indicate the end. Otherwise the
 |=======================================================================
 |Name |Default Value |Description
 
-|`uriDelimiter` |`,` |Delimiter used if the link:expression.html[Expression] returned multiple
+|`uriDelimiter` |`,` |Delimiter used if the Expression returned multiple
 endpoints.
 
 |`ignoreInvalidEndpoints` |`false` |If an endpoint uri could not be resolved, should it be ignored.
@@ -41,12 +41,12 @@ value to -1 allows to turn off the cache all together.
 [[DynamicRouter-DynamicRouterinCamel2.5onwards]]
 === Dynamic Router in Camel 2.5 onwards
 
-From Camel 2.5 the link:dynamic-router.html[Dynamic Router] will set a
-property (Exchange.SLIP_ENDPOINT) on the link:exchange.html[Exchange]
+From Camel 2.5 the Dynamic Router will set a
+property (Exchange.SLIP_ENDPOINT) on the Exchange
 which contains the current endpoint as it advanced though the slip. This
 allows you to know how far we have processed in the slip. (It's a slip
-because the link:dynamic-router.html[Dynamic Router] implementation is
-based on top of link:routing-slip.html[Routing Slip]).
+because the Dynamic Router implementation is
+based on top of Routing Slip).
 
 [[DynamicRouter-JavaDSL]]
 === Java DSL
@@ -60,7 +60,7 @@ from("direct:start")
     .dynamicRouter(method(DynamicRouterTest.class, "slip"));
 ----
 
-Which will leverage a link:bean.html[Bean] to compute the slip
+Which will leverage a <<bean-component,Bean>> to compute the slip
 _on-the-fly_, which could be implemented as follows:
 
 [source,java]
@@ -92,7 +92,7 @@ public String slip(String body) {
 
 Mind that this example is only for show and tell. The current
 implementation is not thread safe. You would have to store the state on
-the link:exchange.html[Exchange], to ensure thread safety, as shown
+the Exchange, to ensure thread safety, as shown
 below:
 
 [source,java]
@@ -135,13 +135,13 @@ public String slip(String body, @Properties Map<String, Object> properties) {
 
 You could also store state as message headers, but they are not
 guaranteed to be preserved during routing, where as properties on the
-link:exchange.html[Exchange] are. Although there was a bug in the method
+Exchange are. Although there was a bug in the method
 call expression, see the warning below.
 
 WARNING:*Using beans to store state*
-Mind that in Camel 2.9.2 or older, when using a link:bean.html[Bean] the
+Mind that in Camel 2.9.2 or older, when using a <<bean-component,Bean>> the
 state is not propagated, so you will have to use a
-link:processor.html[Processor] instead. This is fixed in Camel 2.9.3
+Processor instead. This is fixed in Camel 2.9.3
 onwards.
 
 [[DynamicRouter-SpringXML]]
@@ -178,7 +178,7 @@ You can also use the `@DynamicRouter` annotation, for example the Camel
 then be invoked repeatedly as the message is processed dynamically. The
 idea is to return the next endpoint uri where to go. Return `null` to
 indicate the end. You can return multiple endpoints if you like, just as
-the link:routing-slip.html[Routing Slip], where each endpoint is
+the Routing Slip, where each endpoint is
 separated by a delimiter.
 
 [source,java]
@@ -195,15 +195,15 @@ public class MyDynamicRouter {
 ----
 
 In the above we can use the
-link:parameter-binding-annotations.html[Parameter Binding Annotations]
-to bind different parts of the link:message.html[Message] to method
-parameters or use an link:expression.html[Expression] such as using
-link:xpath.html[XPath] or link:xquery.html[XQuery].
+Parameter Binding Annotations
+to bind different parts of the Message to method
+parameters or use an Expression such as using
+<<xpath-language,XPath>> or <<xpath-language,XQuery>>.
 
 The method can be invoked in a number of ways as described in the
-link:bean-integration.html[Bean Integration] such as
+Bean Integration such as
 
-* link:pojo-producing.html[POJO Producing]
-* link:spring-remoting.html[Spring Remoting]
-* link:bean.html[Bean] component
+* POJO Producing
+* Spring Remoting
+* <<bean-component,Bean>> component
 

@@ -93,7 +93,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     /**
      * Poll for files
      */
-    protected int poll() throws Exception {
+    public int poll() throws Exception {
         // must prepare on startup the very first time
         if (!prepareOnStartup) {
             // prepare on startup
@@ -406,7 +406,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                 boolean retrieved;
                 Exception cause = null;
                 try {
-                    retrieved = operations.retrieveFile(name, exchange);
+                    retrieved = operations.retrieveFile(name, exchange, target.getFileLength());
                 } catch (Exception e) {
                     retrieved = false;
                     cause = e;
@@ -422,7 +422,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                         // throw exception to handle the problem with retrieving the file
                         // then if the method return false or throws an exception is handled the same in here
                         // as in both cases an exception is being thrown
-                        if (cause != null && cause instanceof GenericFileOperationFailedException) {
+                        if (cause instanceof GenericFileOperationFailedException) {
                             throw cause;
                         } else {
                             throw new GenericFileOperationFailedException("Cannot retrieve file: " + file + " from: " + endpoint, cause);
@@ -720,4 +720,21 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         prepareOnStartup = false;
         super.doStop();
     }
+
+    @Override
+    public void onInit() throws Exception {
+        // noop as we do a manual on-demand poll with GenericFilePolllingConsumer
+    }
+
+    @Override
+    public long beforePoll(long timeout) throws Exception {
+        // noop as we do a manual on-demand poll with GenericFilePolllingConsumer
+        return timeout;
+    }
+
+    @Override
+    public void afterPoll() throws Exception {
+        // noop as we do a manual on-demand poll with GenericFilePolllingConsumer
+    }
+
 }

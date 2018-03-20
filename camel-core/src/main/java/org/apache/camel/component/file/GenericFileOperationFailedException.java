@@ -42,13 +42,13 @@ public class GenericFileOperationFailedException extends RuntimeCamelException {
     }
 
     public GenericFileOperationFailedException(int code, String reason) {
-        super("File operation failed: " + reason + ". Code: " + code);
+        super("File operation failed" + (reason != null ? ": " + reason : "") + ". Code: " + code);
         this.code = code;
         this.reason = reason;
     }
 
     public GenericFileOperationFailedException(int code, String reason, Throwable cause) {
-        super("File operation failed: " + reason + ". Code: " + code, cause);
+        super("File operation failed" + (reason != null ? ": " + reason : "") + ". Code: " + code, cause);
         this.code = code;
         this.reason = reason;
     }

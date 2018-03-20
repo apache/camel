@@ -1,9 +1,13 @@
+[[constant-language]]
 == Constant Language
 
 *Available as of Camel version 1.5*
 
 The Constant Expression Language is really just a way to specify
 constant strings as a type of expression.
+
+NOTE: This is a fixed constant value that is only set once during starting up the route,
+      do not use this if you want dynamic values during routing.
 
 === Constant Options
 
@@ -31,21 +35,23 @@ expression like:
 <route>
   <from uri="seda:a"/>
   <setHeader headerName="theHeader">
-    <constant>the value</constant>        
+    <constant>the value</constant>
   </setHeader>
-  <to uri="mock:b"/>     
+  <to uri="mock:b"/>
 </route>
 ----
 
-in this case, the link:message.html[Message] coming from the seda:a
-link:endpoint.html[Endpoint] will have 'theHeader' header set to the
+in this case, the Message coming from the seda:a
+Endpoint will have 'theHeader' header set to the
 constant value 'the value'.
 
 And the same example using Java DSL:
 
 [source,java]
 ----
-from("seda:a").setHeader("theHeader", constant("the value")).to("mock:b");
+from("seda:a")
+  .setHeader("theHeader", constant("the value"))
+  .to("mock:b");
 ----
 
 === Dependencies

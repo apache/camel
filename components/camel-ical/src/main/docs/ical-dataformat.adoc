@@ -1,3 +1,4 @@
+[[ical-dataformat]]
 == iCal DataFormat
 
 *Available as of Camel version 2.12*
@@ -37,7 +38,7 @@ The iCal dataformat supports 2 options which are listed below.
 |===
 | Name | Default | Java Type | Description
 | validating | false | Boolean | Whether to validate.
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
 
@@ -70,7 +71,7 @@ for this component:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

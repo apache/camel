@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 /**
  * Raised when a MLLP Producer receives a HL7 Commit Reject Acknowledgement
  */
 public class MllpCommitRejectAcknowledgementException extends MllpNegativeAcknowledgementException {
-
     static final String EXCEPTION_MESSAGE = "HL7 Commit Reject Acknowledgment Received";
 
     public MllpCommitRejectAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement) {

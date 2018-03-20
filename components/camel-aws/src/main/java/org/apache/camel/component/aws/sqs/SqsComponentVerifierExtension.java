@@ -23,6 +23,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 
@@ -70,7 +71,7 @@ public class SqsComponentVerifierExtension extends DefaultComponentVerifierExten
             SqsConfiguration configuration = setProperties(new SqsConfiguration(), parameters);
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
-            AmazonSQS client = AmazonSQSClientBuilder.standard().withCredentials(credentialsProvider).withRegion(configuration.getRegion()).build();
+            AmazonSQS client = AmazonSQSClientBuilder.standard().withCredentials(credentialsProvider).withRegion(Regions.valueOf(configuration.getRegion())).build();
             client.listQueues();
         } catch (SdkClientException e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())

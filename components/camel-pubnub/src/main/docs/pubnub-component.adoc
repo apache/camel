@@ -1,3 +1,4 @@
+[[pubnub-component]]
 == PubNub Component
 
 *Available as of Camel version 2.19*
@@ -58,27 +59,30 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *channel* | *Required* The channel used for subscribing/publishing events |  | String
 |===
 
+
 ==== Query Parameters (14 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *uuid* (common) | UUID to be used as a device identifier a default UUID is generated if not passed. |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *uuid* (common) | UUID to be used as a device identifier, a default UUID is generated if not passed. |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *withPresence* (consumer) | Also subscribe to related presence information | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *operation* (producer) | The operation to perform. PUBLISH: Default. Send a message to all subscribers of a channel. FIRE: allows the client to send a message to BLOCKS Event Handlers. These messages will go directly to any Event Handlers registered on the channel. HERENOW: Obtain information about the current state of a channel including a list of unique user-ids currently subscribed to the channel and the total occupancy count. WHERENOW: Obtain information about the current list of channels to which a uuid is subscribed to. GETSTATE: Used to get key/value pairs specific to a subscriber uuid. State information is supplied as a JSON object of key/value pairs SETSTATE: Used to set key/value pairs specific to a subscriber uuid GETHISTORY: Fetches historical messages of a channel. |  | String
 | *pubnub* (advanced) | Reference to a Pubnub client in the registry. |  | PubNub
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *authKey* (security) | If Access Manager is utilized client will use this authKey in all restricted requests. |  | String
-| *cipherKey* (security) | If cipher is passed all communicatons to/from PubNub will be encrypted. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *authKey* (security) | If Access Manager is utilized, client will use this authKey in all restricted requests. |  | String
+| *cipherKey* (security) | If cipher is passed, all communicatons to/from PubNub will be encrypted. |  | String
 | *publishKey* (security) | The publish key obtained from your PubNub account. Required when publishing messages. |  | String
 | *secretKey* (security) | The secret key used for message signing. |  | String
 | *secure* (security) | Use SSL for secure transmission. | true | boolean
@@ -195,9 +199,9 @@ The example illustrates the PubNub component subscribing to a infinite stream of
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:rss.html[RSS]
+* <<rss-component,RSS>>

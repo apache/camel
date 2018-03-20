@@ -23,6 +23,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
@@ -70,7 +71,7 @@ public class S3ComponentVerifierExtension extends DefaultComponentVerifierExtens
             S3Configuration configuration = setProperties(new S3Configuration(), parameters);
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
-            AmazonS3 client = AmazonS3ClientBuilder.standard().withCredentials(credentialsProvider).withRegion(configuration.getRegion()).build();
+            AmazonS3 client = AmazonS3ClientBuilder.standard().withCredentials(credentialsProvider).withRegion(Regions.valueOf(configuration.getRegion())).build();
             client.listBuckets();
         } catch (SdkClientException e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())

@@ -1,9 +1,10 @@
+[[log-eip]]
 == Log EIP
 
 How can I log the processing of a link:message.html[Message]?
 
 Camel provides many ways to log the fact that you are processing a message. Here are just a few examples:
-* You can use the link:log.html[Log] component which logs the Message content.
+* You can use the <<log-component,Log>> component which logs the Message content.
 * You can use the link:tracer.html[Tracer] which trace logs message flow.
 * You can also use a link:processor.html[Processor] or link:bean.html[Bean] and log from Java code.
 * You can use the log DSL.
@@ -12,7 +13,6 @@ Camel provides many ways to log the fact that you are processing a message. Here
 
 // eip options: START
 The Log EIP supports 5 options which are listed below:
-
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -31,7 +31,7 @@ The log DSL is much lighter and meant for logging human logs such as Starting to
 
 === Samples
 
-In *Camel 2.2* you can use the log DSL which allows you to use link:simple.html[Simple] language to construct a dynamic message which gets logged.
+In *Camel 2.2* you can use the log DSL which allows you to use <<simple-language,Simple>> language to construct a dynamic message which gets logged.
 
 For example you can do
 
@@ -166,7 +166,7 @@ In some scenarios it is required that the bundle associated with logger should b
 *Available as of Camel 2.19*
 
 You can enable security masking for logging by setting `logMask` flag to `true`.
-Note that this option also affects link:log.html[Log] component.
+Note that this option also affects <<log-component,Log>> component.
 
 To enable mask in Java DSL at CamelContext level:
 [source,java]
@@ -201,4 +201,3 @@ And in XML:
 `org.apache.camel.processor.DefaultMaskingFormatter` is used for the masking by default.
 If you want to use a custom masking formatter, put it into registry with the name `CamelCustomLogMask`.
 Note that the masking formatter must implement `org.apache.camel.spi.MaskingFormatter`.
-

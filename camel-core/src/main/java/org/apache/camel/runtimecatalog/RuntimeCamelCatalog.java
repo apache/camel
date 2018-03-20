@@ -26,6 +26,20 @@ import org.apache.camel.StaticService;
  */
 public interface RuntimeCamelCatalog extends StaticService {
 
+    // configuration
+
+    /**
+     * Gets the {@link JSonSchemaResolver}.
+     */
+    JSonSchemaResolver getJSonSchemaResolver();
+
+    /**
+     * To use a custom {@link JSonSchemaResolver}
+     */
+    void setJSonSchemaResolver(JSonSchemaResolver resolver);
+
+    // functions
+
     /**
      * Returns the component information as JSon format.
      *

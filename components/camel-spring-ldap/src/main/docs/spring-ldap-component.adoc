@@ -1,3 +1,4 @@
+[[spring-ldap-component]]
 == Spring LDAP Component
 
 *Available as of Camel version 2.11*
@@ -50,20 +51,23 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *templateName* | *Required* Name of the Spring LDAP Template bean |  | String
 |===
 
+
 ==== Query Parameters (3 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *operation* (producer) | *Required* The LDAP operation to be performed. |  | LdapOperation
 | *scope* (producer) | The scope of the search operation. | subtree | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

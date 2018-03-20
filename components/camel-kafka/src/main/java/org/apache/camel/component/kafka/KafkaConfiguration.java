@@ -1582,17 +1582,18 @@ public class KafkaConfiguration implements Cloneable {
         this.enableIdempotence = enableIdempotence;
     }
 
-	public Integer getReconnectBackoffMaxMs() {
-		return reconnectBackoffMaxMs;
-	}
+    public Integer getReconnectBackoffMaxMs() {
+        return reconnectBackoffMaxMs;
+    }
 
-	/**
-	 * 
-     * The maximum amount of time in milliseconds to wait when reconnecting to a broker that has repeatedly failed to connect. 
-     * If provided, the backoff per host will increase exponentially for each consecutive connection failure, up to this maximum. 
-     * After calculating the backoff increase, 20% random jitter is added to avoid connection storms.
-	 */
-	public void setReconnectBackoffMaxMs(Integer reconnectBackoffMaxMs) {
-		this.reconnectBackoffMaxMs = reconnectBackoffMaxMs;
-	}
+    /**
+     * The maximum amount of time in milliseconds to wait when reconnecting to a
+     * broker that has repeatedly failed to connect. If provided, the backoff
+     * per host will increase exponentially for each consecutive connection
+     * failure, up to this maximum. After calculating the backoff increase, 20%
+     * random jitter is added to avoid connection storms.
+     */
+    public void setReconnectBackoffMaxMs(Integer reconnectBackoffMaxMs) {
+        this.reconnectBackoffMaxMs = reconnectBackoffMaxMs;
+    }
 }

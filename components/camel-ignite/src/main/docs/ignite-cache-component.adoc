@@ -1,8 +1,9 @@
+[[ignite-cache-component]]
 == Ignite Cache Component
 
 *Available as of Camel version 2.17*
 
-The Ignite Cache endpoint is one of link:ignite.html[camel-ignite endpoints] which allows you to interact with an https://apacheignite.readme.io/docs/data-grid[Ignite Cache].
+The Ignite Cache endpoint is one of camel-ignite endpoints which allows you to interact with an https://apacheignite.readme.io/docs/data-grid[Ignite Cache].
 This offers both a Producer (to invoke cache operations on an Ignite cache) and a Consumer (to consume changes from a continuous query).
 
 The cache value is always the body of the message, whereas the cache key is always stored in the `IgniteConstants.IGNITE_CACHE_KEY` message header.
@@ -20,7 +21,7 @@ The Ignite Cache component supports 4 options which are listed below.
 |===
 | Name | Description | Default | Type
 | *ignite* (common) | Sets the Ignite instance. |  | Ignite
-| *configurationResource* (common) | Sets the resource from where to load the configuration. It can be a: URI String (URI) or an InputStream. |  | Object
+| *configurationResource* (common) | Sets the resource from where to load the configuration. It can be a: URI, String (URI) or an InputStream. |  | Object
 | *igniteConfiguration* (common) | Allows the user to set a programmatic IgniteConfiguration. |  | IgniteConfiguration
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
@@ -37,33 +38,36 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *cacheName* | *Required* The cache name. |  | String
 |===
 
+
 ==== Query Parameters (16 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *propagateIncomingBodyIfNo ReturnValue* (common) | Sets whether to propagate the incoming body if the return type of the underlying Ignite operation is void. | true | boolean
-| *treatCollectionsAsCache Objects* (common) | Sets whether to treat Collections as cache objects or as Collections of items to insert/update/compute etc. | false | boolean
+| *treatCollectionsAsCache Objects* (common) | Sets whether to treat Collections as cache objects or as Collections of items to insert/update/compute, etc. | false | boolean
 | *autoUnsubscribe* (consumer) | Whether auto unsubscribe is enabled in the Continuous Query Consumer. | true | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *fireExistingQueryResults* (consumer) | Whether to process existing results that match the query. Used on initialization of the Continuous Query Consumer. | false | boolean
-| *oneExchangePerUpdate* (consumer) | Whether to pack each update in an individual Exchange even if multiple updates are received in one batch. Only used by the Continuous Query Consumer. | true | boolean
+| *oneExchangePerUpdate* (consumer) | Whether to pack each update in an individual Exchange, even if multiple updates are received in one batch. Only used by the Continuous Query Consumer. | true | boolean
 | *pageSize* (consumer) | The page size. Only used by the Continuous Query Consumer. | 1 | int
-| *query* (consumer) | The Query to execute only needed for operations that require it and for the Continuous Query Consumer. |  | Object>>
-| *remoteFilter* (consumer) | The remote filter only used by the Continuous Query Consumer. |  | Object>
+| *query* (consumer) | The Query to execute, only needed for operations that require it, and for the Continuous Query Consumer. |  | Object>>
+| *remoteFilter* (consumer) | The remote filter, only used by the Continuous Query Consumer. |  | Object>
 | *timeInterval* (consumer) | The time interval for the Continuous Query Consumer. | 0 | long
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *cachePeekMode* (producer) | The CachePeekMode only needed for operations that require it (link IgniteCacheOperationSIZE). | ALL | CachePeekMode
+| *cachePeekMode* (producer) | The CachePeekMode, only needed for operations that require it (link IgniteCacheOperationSIZE). | ALL | CachePeekMode
 | *failIfInexistentCache* (producer) | Whether to fail the initialization if the cache doesn't exist. | false | boolean
-| *operation* (producer) | The cache operation to invoke. Possible values: GET PUT REMOVE SIZE REBALANCE QUERY CLEAR. |  | IgniteCacheOperation
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *operation* (producer) | The cache operation to invoke. Possible values: GET, PUT, REMOVE, SIZE, REBALANCE, QUERY, CLEAR. |  | IgniteCacheOperation
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

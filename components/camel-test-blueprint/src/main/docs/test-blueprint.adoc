@@ -6,9 +6,9 @@ camel-test-blueprint does only support testing _one_ CamelContext. So
 if you have two or more CamelContexts in your blueprint XML files, then
 only the CamelContext first found is used during testing.
 
-link:testing.html[Testing] is a crucial part of any development or
+Testing is a crucial part of any development or
 integration work. Camel supports the definition of
-link:using-osgi-blueprint-with-camel.html[Blueprint routes], but given
+Blueprint routes, but given
 that Blueprint is an OSGi specific technology, writing unit tests is
 quite difficult. This library leverages
 http://code.google.com/p/pojosr/[PojoSR] (now Felix Connect) which
@@ -113,7 +113,7 @@ services.put("myService", asService(myService, null));
 ------------------------------------------------------
 
 This allows us to use the service by calling a method on it from a Camel
-link:bean.html[Bean] component in a route as shown:
+<<bean-component,Bean>> component in a route as shown:
 
 [source,xml]
 --------------------------------

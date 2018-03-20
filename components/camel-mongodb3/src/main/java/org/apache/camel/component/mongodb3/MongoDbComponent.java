@@ -21,11 +21,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.mongodb.MongoClient;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.CamelContextHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

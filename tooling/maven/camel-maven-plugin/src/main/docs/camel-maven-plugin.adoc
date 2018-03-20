@@ -24,6 +24,19 @@ then boot up a Spring ApplicationContext using the XML configuration files on th
 
 If you want to boot up your Camel routes a little faster, you could try the `camel:embedded` instead.
 
+=== Options
+
+The maven plugin *run* goal supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
+
+|===
+| Parameter | Default Value | Description
+| duration | -1 | Sets the time duration (seconds) that the application will run for before terminating. A value <= 0 will run forever.
+| durationIdle | -1 | Sets the idle time duration (seconds) duration that the application can be idle before terminating. A value <= 0 will run forever.
+| durationMaxMessages | -1 | Sets the duration of maximum number of messages that the application will process before terminating.
+| logClasspath | false | Whether to log the classpath when starting
+|===
+
+
 === Running OSGi Blueprint
 
 The `camel:run` plugin also supports running a Blueprint application, and by default it scans for OSGi blueprint files in
@@ -250,7 +263,7 @@ And when running the validate goal again reports the following:
 
 === Options
 
-The maven plugin supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
+The maven plugin *validate* goal supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
 
 |===
 | Parameter | Default Value | Description
@@ -407,7 +420,7 @@ We can also see that this is one line 34 in the source code file, which is in th
 
 === Options
 
-The maven plugin supports the following options which can be configured from the command line (use `-D` syntax),
+The maven plugin *coverage* goal supports the following options which can be configured from the command line (use `-D` syntax),
  or defined in the `pom.xml` file in the `<configuration>` tag.
 
 |===

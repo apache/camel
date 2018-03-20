@@ -152,6 +152,7 @@ public final class ArquillianPackager {
         commonExclusions.add(MavenDependencies.createExclusion("log4j", "log4j"));
         commonExclusions.add(MavenDependencies.createExclusion("log4j", "log4j-slf4j-impl"));
         commonExclusions.add(MavenDependencies.createExclusion("org.apache.logging.log4j", "log4j"));
+        commonExclusions.add(MavenDependencies.createExclusion("org.apache.logging.log4j", "log4j-jcl"));
         commonExclusions.add(MavenDependencies.createExclusion("org.apache.logging.log4j", "log4j-core"));
         commonExclusions.add(MavenDependencies.createExclusion("org.apache.logging.log4j", "log4j-slf4j-impl"));
         commonExclusions.add(MavenDependencies.createExclusion("log4j", "apache-log4j-extras"));
@@ -304,10 +305,16 @@ public final class ArquillianPackager {
         ignore.add("io.netty:netty:jar"); // an old version
         ignore.add("io.netty:netty-tcnative-boringssl-static");
         ignore.add("io.swagger:swagger-parser");
+        ignore.add("io.opentracing.contrib:opentracing-");
         ignore.add("org.apache.commons");
         ignore.add("org.apache.curator");
         ignore.add("org.apache.cxf:cxf-api");
         ignore.add("org.apache.geronimo.specs");
+        ignore.add("org.apache.flink:flink-shaded-asm");
+        ignore.add("org.apache.flink:flink-shaded-guava");
+        ignore.add("org.apache.flink:flink-shaded-jackson");
+        ignore.add("org.apache.flink:flink-shaded-netty");
+        ignore.add("org.apache.logging.log4j:log4j-jcl");
         ignore.add("org.apache.maven");
         ignore.add("org.apache.parquet");
         ignore.add("org.apache.velocity");
@@ -322,6 +329,7 @@ public final class ArquillianPackager {
         ignore.add("org.scala-lang:scala-compiler");
         ignore.add("org.easytesting");
         ignore.add("net.openhft");
+        ignore.add("org.scala-lang.modules:scala-java8-compat_2.11");
         ignore.add("net.sourceforge.htmlunit:htmlunit-core-js"); // v 2.21 does not exist
         ignore.add("org.springframework.cloud"); // too many different versions
         ignore.add("org.springframework.data");

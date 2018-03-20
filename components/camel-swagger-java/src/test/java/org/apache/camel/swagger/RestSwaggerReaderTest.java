@@ -88,6 +88,7 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         assertTrue(json.contains("\"x-example\" : \"Donald Duck\""));
         assertTrue(json.contains("\"success\" : \"123\""));
         assertTrue(json.contains("\"error\" : \"-1\""));
+        assertTrue(json.contains("\"type\" : \"string\""));
 
         context.stop();
     }

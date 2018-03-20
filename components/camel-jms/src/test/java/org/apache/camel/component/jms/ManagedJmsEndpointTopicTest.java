@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.Set;
+
 import javax.jms.ConnectionFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -27,8 +29,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-
-import java.util.Set;
 
 /**
  *

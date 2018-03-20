@@ -4,7 +4,7 @@ Enterprise Integration Patterns
 Camel supports most of the link:http://www.eaipatterns.com/toc.html[Enterprise Integration Patterns] from the excellent book by link:http://www.amazon.com/exec/obidos/search-handle-url/105-9796798-8100401?%5Fencoding=UTF8&search-type=ss&index=books&field-author=Gregor%20Hohpe[Gregor Hohpe] and link:http://www.amazon.com/exec/obidos/search-handle-url/105-9796798-8100401?%5Fencoding=UTF8&search-type=ss&index=books&field-author=Bobby%20Woolf[Bobby Woolf].
 
 // eips: START
-Number of EIPs: 62 (2 deprecated)
+Number of EIPs: 64 (2 deprecated)
 
 [width="100%",cols="4,6",options="header"]
 |===
@@ -24,6 +24,9 @@ Number of EIPs: 62 (2 deprecated)
 
 | link:src/main/docs/eips/circuitBreaker-eip.adoc[Circuit Breaker] +
 `<circuitBreaker>` | *deprecated* Circuit break load balancer
+
+| link:src/main/docs/eips/claimCheck-eip.adoc[Claim Check] +
+`<claimCheck>` | The Claim Check EIP allows you to replace message content with a claim check (a unique key), which can be used to retrieve the message content at a later time.
 
 | link:src/main/docs/eips/convertBodyTo-eip.adoc[Convert Body To] +
 `<convertBodyTo>` | Converts the message body to another type
@@ -123,6 +126,9 @@ Number of EIPs: 62 (2 deprecated)
 
 | link:src/main/docs/eips/routingSlip-eip.adoc[Routing Slip] +
 `<routingSlip>` | Routes a message through a series of steps that are pre-determined (the slip)
+
+| link:src/main/docs/eips/saga-eip.adoc[Saga] +
+`<saga>` | Enables sagas on the route
 
 | link:src/main/docs/eips/sample-eip.adoc[Sample] +
 `<sample>` | Extract a sample of the messages passing through a route

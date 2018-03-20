@@ -1,3 +1,4 @@
+[[serviceCall-eip]]
 == Service Call EIP
 *Available as of Camel 2.18*
 
@@ -31,7 +32,7 @@ Camel will then:
 * lookup a service with the name ```foo``` from an external service registry
 * filter the servers
 * select the server to use
-* build a Camel URI using the choosen server info
+* build a Camel URI using the chosen server info
 
 By default the Service Call EIP uses camel-http4 so assuming that the selected service instance runs on host ```myhost.com``` on port ```80```, the computed Camel URI will be:
 
@@ -62,13 +63,13 @@ from("direct:start")
     .to("mock:result");
 ----
 
-If you wan to have more control over the uri construction, you can use the *uri* directive:
+If you want to have more control over the uri construction, you can use the *uri* directive:
 
 [width="100%",cols="25%a,40%a,35%a",options="header"]
 |===
 |Name | URI | Resolution
 
-|foo | undertow:http://foo/hellp | undertow:http://host:port/hello
+|foo | undertow:http://foo/hello | undertow:http://host:port/hello
 |foo | undertow:http://foo.host:foo.port/hello | undertow:http://host:port/hello
 |===
 
@@ -93,7 +94,6 @@ from("direct:start")
 === Options
 // eip options: START
 The Service Call EIP supports 14 options which are listed below:
-
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -126,7 +126,7 @@ This service discovery implementation does not query any external services to fi
 [service@]host:port
 ----
 
-TIP: The ``service`` part is used to discrimintate aginst the services but if not provided it acks like a wildcard so each non named service will be returned whatever the service name is. This is useful if you ahve a single service so the service name is redundant.
+TIP: The ``service`` part is used to discriminate against the services but if not provided it acts like a wildcard so each non named service will be returned whatever the service name is. This is useful if you have a single service so the service name is redundant.
 
 NOTE: this implementation is provided by ``camel-core`` artifact.
 
@@ -167,7 +167,7 @@ from("direct:start")
 
 === Consul Service Discovery
 
-To leverage Consul for Service Discover, maven users will need to add the following dependency to their pom.xml
+To leverage Consul for Service Discovery, maven users will need to add the following dependency to their pom.xml
 
 [source,xml]
 ----
@@ -209,7 +209,7 @@ from("direct:start")
 
 === DNS Service Discovery
 
-To leverage DNS for Service Discover, maven users will need to add the following dependency to their pom.xml
+To leverage DNS for Service Discovery, maven users will need to add the following dependency to their pom.xml
 
 [source,xml]
 ----
@@ -257,7 +257,7 @@ And in XML:
 
 === Etcd Service Discovery
 
-To leverage Etcd for Service Discover, maven users will need to add the following dependency to their pom.xml
+To leverage Etcd for Service Discovery, maven users will need to add the following dependency to their pom.xml
 
 [source,xml]
 ----
@@ -279,7 +279,7 @@ Available options:
 | password | String | The password to use for basic authentication
 | timeout | Long | To set the maximum time an action could take to complete
 | servicePath | String | The path to look for for service discovery, default "/services"
-| type | String | To set the discovery type, valid values are on-demand and watch.
+| type | String | To set the discovery type, valid values are "on-demand" and "watch"
 |===
 
 Example in Java
@@ -309,7 +309,7 @@ And in XML
 
 === Kubernetes Service Discovery
 
-To leverage Kubernetes for Service Discover, maven users will need to add the following dependency to their pom.xml
+To leverage Kubernetes for Service Discovery, maven users will need to add the following dependency to their pom.xml
 
 [source,xml]
 ----
@@ -382,7 +382,7 @@ Each service should be provided in the following form:
 ----
 
 [NOTE]
-The services are removed if they fully match.
+The services are removed if they fully match
 
 Available options:
 
@@ -431,7 +431,7 @@ And in XML
 === Load Balancer
 
 The Service Call EIP comes with its own Load Balancer which is istantiated by default if a custom is not configured and
-glues Service Discovery, Service Filer, Service Chooser and Service Expression togetherr to load balance requests among the available services.
+glues Service Discovery, Service Filer, Service Chooser and Service Expression together to load balance requests among the available services.
 
 If you need a more sophisticate load balancer you can use Ribbon by adding camel-ribbon to the mix,
 maven users will need to add the following dependency to their pom.xml
@@ -452,7 +452,7 @@ Available options:
 |===
 | Name | Java Type | Description
 | clientName | String | The Ribbon client name
-| roperties | List<PropertyDefinition> | Custom client config properties
+| properties | List<PropertyDefinition> | Custom client config properties
 |===
 
 To leverage Ribbon, it is required to explicit enable it:
@@ -513,7 +513,7 @@ Or leveraging XML specific configuration:
 
 === Shared configurations
 
-The Service CAll EIP can be configured straight on the route definition or through shared configurations,
+The Service Call EIP can be configured straight on the route definition or through shared configurations,
 here an example with two configurations registered in the Camel Context:
 
 [source,java]
@@ -537,12 +537,12 @@ getContext().setServiceCallConfiguration(globalConf);
 getContext().addServiceCallConfiguration("https", httpsConf);
 ----
 
-Each Service Call definition and configuration will inherits from the `globalConf` which can be see as default configuration,
+Each Service Call definition and configuration will inherit from the `globalConf` which can be seen as default configuration,
 then you can reference the `httpsConf` in your route as follow:
 
 [source,java]
 ----
-rom("direct_:start")
+from("direct:start")
     .serviceCall()
         .name("foo")
         .serviceCallConfiguration("https")
@@ -555,7 +555,7 @@ but you can override any of them if needed straight on the route:
 
 [source,java]
 ----
-rom("direc_:start")
+from("direct:start")
     .serviceCall()
         .name("foo")
         .serviceCallConfiguration("https")

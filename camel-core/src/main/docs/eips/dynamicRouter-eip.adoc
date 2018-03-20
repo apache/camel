@@ -1,3 +1,4 @@
+[[dynamicRouter-eip]]
 == Dynamic Router EIP
 
 The link:http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic Router] from the link:../../../../readme-eip.adoc[EIP patterns] allows you to route messages while avoiding the dependency of the router on all possible destinations while maintaining its efficiency.
@@ -17,13 +18,12 @@ You must ensure the expression used for the `dynamicRouter` such as a bean, will
 // eip options: START
 The Dynamic Router EIP supports 3 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *uriDelimiter* | Sets the uri delimiter to use | , | String
 | *ignoreInvalidEndpoints* | Ignore the invalidate endpoint exception when try to create a producer with that endpoint | false | Boolean
-| *cacheSize* | Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producers when using this recipient list when uris are reused. |  | Integer
+| *cacheSize* | Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producers when using this dynamic router, when uris are reused. |  | Integer
 |===
 // eip options: END
 
@@ -158,4 +158,3 @@ public class MyDynamicRouter {
     }
 }
 ----
-

@@ -363,7 +363,7 @@ public class JmsProducer extends DefaultAsyncProducer {
 
                 // the reply to is a String, so we need to look up its Destination instance
                 // and if needed create the destination using the session if needed to
-                if (jmsReplyTo != null && jmsReplyTo instanceof String) {
+                if (jmsReplyTo instanceof String) {
                     String replyTo = (String) jmsReplyTo;
                     // we need to null it as we use the String to resolve it as a Destination instance
                     jmsReplyTo = resolveOrCreateDestination(replyTo, session);

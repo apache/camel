@@ -1,8 +1,9 @@
+[[crypto-dataformat]]
 == Crypto (Java Cryptographic Extension) DataFormat
 
 *Available as of Camel version 2.3*
 
-The Crypto link:data-format.html[Data Format] integrates the Java
+The Crypto Data Format integrates the Java
 Cryptographic Extension into Camel, allowing simple and flexible
 encryption and decryption of messages using Camel's familiar marshall
 and unmarshal formatting mechanism. It assumes marshalling to mean
@@ -29,7 +30,7 @@ The Crypto (Java Cryptographic Extension) dataformat supports 10 options which a
 | macAlgorithm | HmacSHA1 | String | The JCE algorithm name indicating the Message Authentication algorithm.
 | shouldAppendHMAC | false | Boolean | Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data.
 | inline | false | Boolean | Flag indicating that the configured IV should be inlined into the encrypted data stream. Is by default false.
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
 
@@ -261,7 +262,7 @@ or with spring.
 
 ### Dependencies
 
-To use the link:crypto.html[Crypto] dataformat in your camel routes you
+To use the <<crypto-component,Crypto>> dataformat in your camel routes you
 need to add the following dependency to your pom.
 
 [source,xml]
@@ -276,6 +277,6 @@ need to add the following dependency to your pom.
 
 ### See Also
 
-* link:data-format.html[Data Format]
-* link:crypto-digital-signatures.html[Crypto (Digital Signatures)]
+* Data Format
+* Crypto (Digital Signatures)
 * http://www.bouncycastle.org/java.html[http://www.bouncycastle.org/java.html]

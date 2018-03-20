@@ -4,7 +4,7 @@ Building Camel from Source
 
 Camel uses http://maven.apache.org/[Maven] as its build and management
 tool. If you don't fancy using Maven you can use your IDE directly or
-link:download.html[Download] a distribution or JAR.
+Download a distribution or JAR.
 
 [[Building-Prequisites]]
 Prequisites
@@ -12,13 +12,18 @@ Prequisites
 
 *Required:*
 
-* Download and http://maven.apache.org/download.html[install Maven] +
- (Maven 3.1.1 or newer is required to build Camel 2.14 onwards) +
-(Maven 3.2.5 or newer is required to build Camel 2.18 onwards) 
-* Get the latest link:source.html[Source]
-* Java 
-(1.7 or 1.8 to build Camel 2.14 onwards) 
-(1.8 to build Camel 2.18 onwards) 
+* Java
+** 1.7 or 1.8 to build Camel 2.14 onwards
+** 1.8 to build Camel 2.18 onwards
+
+* https://github.com/takari/maven-wrapper[Maven Wrapper] is used and bundled with Camel 2.21 onwards.
+
+* Otherwise, http://maven.apache.org/download.html[download and install Maven]
+** Maven 3.1.1 or newer is required to build Camel 2.14 onwards
+** Maven 3.2.5 or newer is required to build Camel 2.18 onwards
+** Maven 3.3.3 or newer is required to build Camel 2.20 onwards
+
+* Get the latest source from https://github.com/apache/camel/[Github]
 
 *Optional:*
 
@@ -71,8 +76,11 @@ mvn clean install
 -----------------
 
 [[Building-Anormalbuildwithoutrunningtests]]
-A normal build without running tests
+A quick build without running tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following skips building the manual, the distro and does not execute
+the unit tests.
 
 [source,text]
 -------------------------------
@@ -87,20 +95,6 @@ A normal build without running tests but checkstyle verification enabled
 -------------------------------------------
 mvn clean install -Pfastinstall,sourcecheck
 -------------------------------------------
-
-[[Building-DoingaQuickBuild]]
-Doing a Quick Build
-^^^^^^^^^^^^^^^^^^^
-
-*Available as of Camel 2.6*
-
-The following skips building the manual, the distro and does not execute
-the unit tests.
-
-[source,text]
--------------------------
-mvn install -Pfastinstall
--------------------------
 
 [[Building-UsinganIDE]]
 Using an IDE
@@ -147,7 +141,7 @@ follows:
 Cloning the Git Repository 
 
 Either follow instructions about getting the latest
-link:source.html[source], or clone the Git repository with Eclipse by
+source, or clone the Git repository with Eclipse by
 selecting "File -> Import -> Git / Projects from Git" and "Clone URI".
 Provide all repository details in the import wizard and clone the
 repository into a directory outside of the Eclipse workspace. Once
@@ -293,7 +287,7 @@ mvn test -Pekstazi
 See Also
 ^^^^^^^^
 
-* link:running-unit-tests.html[Running Unit Tests]
-* link:source.html[Source]
-* link:examples.html[Examples]
+* Running Unit Tests
+* Source
+* Examples
 

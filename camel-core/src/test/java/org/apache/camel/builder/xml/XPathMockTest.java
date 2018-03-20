@@ -39,11 +39,20 @@ public class XPathMockTest extends ContextTestSupport {
 
     public void testXPathMock2() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.message(0).body().matches().xpath("/foo/text() = 'Hello World'");
+        mock.message(0).predicate().xpath("/foo/text() = 'Hello World'");
 
         template.sendBody("direct:start", "<foo>Hello World</foo>");
 
         assertMockEndpointsSatisfied();
+    }
+
+    public void testXPathMock2Fail() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.message(0).predicate().xpath("/foo/text() = 'Bye World'");
+
+        template.sendBody("direct:start", "<foo>Hello World</foo>");
+
+        mock.assertIsNotSatisfied();
     }
 
     public void testXPathMock3() throws Exception {

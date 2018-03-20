@@ -1,15 +1,16 @@
+[[dataset-component]]
 == Dataset Component
 
 *Available as of Camel version 1.3*
 
-link:testing.html[Testing] of distributed and asynchronous processing is
-notoriously difficult. The link:mock.html[Mock], link:test.html[Test]
-and link:dataset.html[DataSet] endpoints work great with the
-link:testing.html[Camel Testing Framework] to simplify your unit and
+Testing of distributed and asynchronous processing is
+notoriously difficult. The <<mock-component,Mock>>, <<mock-component,Test>>
+and <<dataset-component,DataSet>> endpoints work great with the
+Camel Testing Framework to simplify your unit and
 integration testing using
 link:enterprise-integration-patterns.html[Enterprise Integration
-Patterns] and Camel's large range of link:components.html[Components]
-together with the powerful link:bean-integration.html[Bean Integration].
+Patterns] and Camel's large range of Components
+together with the powerful Bean Integration.
 
 The DataSet component provides a mechanism to easily perform load & soak
 testing of your system. It works by allowing you to create
@@ -17,7 +18,7 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/compon
 instances] both as a source of messages and as a way to assert that the
 data set is received.
 
-Camel will use the link:log.html[throughput logger] when sending
+Camel will use the <<log-component,throughput logger>> when sending
 dataset's.
 
 === URI format
@@ -29,7 +30,7 @@ dataset:name[?options]
 
 Where *name* is used to find the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/dataset/DataSet.html[DataSet
-instance] in the link:registry.html[Registry]
+instance] in the Registry
 
 Camel ships with a support implementation of
 `org.apache.camel.component.dataset.DataSet`, the
@@ -60,36 +61,39 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *name* | *Required* Name of DataSet to lookup in the registry |  | DataSet
 |===
 
+
 ==== Query Parameters (19 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *dataSetIndex* (common) | Controls the behaviour of the CamelDataSetIndex header. For Consumers: - off = the header will not be set - strict/lenient = the header will be set For Producers: - off = the header value will not be verified and will not be set if it is not present = strict = the header value must be present and will be verified = lenient = the header value will be verified if it is present and will be set if it is not present | lenient | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored. | false | boolean
+| *dataSetIndex* (common) | Controls the behaviour of the CamelDataSetIndex header. For Consumers: - off = the header will not be set - strict/lenient = the header will be set For Producers: - off = the header value will not be verified, and will not be set if it is not present = strict = the header value must be present and will be verified = lenient = the header value will be verified if it is present, and will be set if it is not present | lenient | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN/ERROR level and ignored. | false | boolean
 | *initialDelay* (consumer) | Time period in millis to wait before starting sending messages. | 1000 | long
 | *minRate* (consumer) | Wait until the DataSet contains at least this number of messages | 0 | int
 | *preloadSize* (consumer) | Sets how many messages should be preloaded (sent) before the route completes its initialization | 0 | long
 | *produceDelay* (consumer) | Allows a delay to be specified which causes a delay when a message is sent by the consumer (to simulate slow processing) | 3 | long
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN/ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the default exchange pattern when creating an exchange. |  | ExchangePattern
-| *assertPeriod* (producer) | Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary assertion is still valid. This is used for example to assert that exactly a number of messages arrives. For example if link expectedMessageCount(int) was set to 5 then the assertion is satisfied when 5 or more message arrives. To ensure that exactly 5 messages arrives then you would need to wait a little period to ensure no further message arrives. This is what you can use this link setAssertPeriod(long) method for. By default this period is disabled. | 0 | long
+| *assertPeriod* (producer) | Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary assertion is still valid. This is used for example to assert that exactly a number of messages arrives. For example if link expectedMessageCount(int) was set to 5, then the assertion is satisfied when 5 or more message arrives. To ensure that exactly 5 messages arrives, then you would need to wait a little period to ensure no further message arrives. This is what you can use this link setAssertPeriod(long) method for. By default this period is disabled. | 0 | long
 | *consumeDelay* (producer) | Allows a delay to be specified which causes a delay when a message is consumed by the producer (to simulate slow processing) | 0 | long
-| *expectedCount* (producer) | Specifies the expected number of message exchanges that should be received by this endpoint. Beware: If you want to expect that 0 messages then take extra care as 0 matches when the tests starts so you need to set a assert period time to let the test run for a while to make sure there are still no messages arrived; for that use link setAssertPeriod(long). An alternative is to use NotifyBuilder and use the notifier to know when Camel is done routing some messages before you call the link assertIsSatisfied() method on the mocks. This allows you to not use a fixed assert period to speedup testing times. If you want to assert that exactly n'th message arrives to this mock endpoint then see also the link setAssertPeriod(long) method for further details. | -1 | int
+| *expectedCount* (producer) | Specifies the expected number of message exchanges that should be received by this endpoint. Beware: If you want to expect that 0 messages, then take extra care, as 0 matches when the tests starts, so you need to set a assert period time to let the test run for a while to make sure there are still no messages arrived; for that use link setAssertPeriod(long). An alternative is to use NotifyBuilder, and use the notifier to know when Camel is done routing some messages, before you call the link assertIsSatisfied() method on the mocks. This allows you to not use a fixed assert period, to speedup testing times. If you want to assert that exactly n'th message arrives to this mock endpoint, then see also the link setAssertPeriod(long) method for further details. | -1 | int
 | *reportGroup* (producer) | A number that is used to turn on throughput logging based on groups of the size. |  | int
 | *resultMinimumWaitTime* (producer) | Sets the minimum expected amount of time (in millis) the link assertIsSatisfied() will wait on a latch until it is satisfied | 0 | long
 | *resultWaitTime* (producer) | Sets the maximum amount of time (in millis) the link assertIsSatisfied() will wait on a latch until it is satisfied | 0 | long
-| *retainFirst* (producer) | Specifies to only retain the first n'th number of received Exchanges. This is used when testing with big data to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation then the link getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges and have configured to only retain the first 10 Exchanges then the link getReceivedCounter() will still return 5000 but there is only the first 10 Exchanges in the link getExchanges() and link getReceivedExchanges() methods. When using this method then some of the other expectation methods is not supported for example the link expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both link setRetainFirst(int) and link setRetainLast(int) methods to limit both the first and last received. | -1 | int
-| *retainLast* (producer) | Specifies to only retain the last n'th number of received Exchanges. This is used when testing with big data to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation then the link getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges and have configured to only retain the last 20 Exchanges then the link getReceivedCounter() will still return 5000 but there is only the last 20 Exchanges in the link getExchanges() and link getReceivedExchanges() methods. When using this method then some of the other expectation methods is not supported for example the link expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both link setRetainFirst(int) and link setRetainLast(int) methods to limit both the first and last received. | -1 | int
+| *retainFirst* (producer) | Specifies to only retain the first n'th number of received Exchanges. This is used when testing with big data, to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation, then the link getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges, and have configured to only retain the first 10 Exchanges, then the link getReceivedCounter() will still return 5000 but there is only the first 10 Exchanges in the link getExchanges() and link getReceivedExchanges() methods. When using this method, then some of the other expectation methods is not supported, for example the link expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both link setRetainFirst(int) and link setRetainLast(int) methods, to limit both the first and last received. | -1 | int
+| *retainLast* (producer) | Specifies to only retain the last n'th number of received Exchanges. This is used when testing with big data, to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation, then the link getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges, and have configured to only retain the last 20 Exchanges, then the link getReceivedCounter() will still return 5000 but there is only the last 20 Exchanges in the link getExchanges() and link getReceivedExchanges() methods. When using this method, then some of the other expectation methods is not supported, for example the link expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both link setRetainFirst(int) and link setRetainLast(int) methods, to limit both the first and last received. | -1 | int
 | *sleepForEmptyTest* (producer) | Allows a sleep to be specified to wait to check that this endpoint really is empty when link expectedMessageCount(int) is called with zero | 0 | long
 | *copyOnExchange* (producer) | Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint. Is by default true. | true | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -99,7 +103,7 @@ You can append query options to the URI in the following format,
 
 === Configuring DataSet
 
-Camel will lookup in the link:registry.html[Registry] for a bean
+Camel will lookup in the Registry for a bean
 implementing the DataSet interface. So you can register your own DataSet
 as:
 
@@ -124,7 +128,7 @@ from("dataset:foo").to("activemq:SomeQueue");
 from("activemq:SomeQueue").to("dataset:foo");
 ----
 
-The above would look in the link:registry.html[Registry] to find the
+The above would look in the Registry to find the
 *foo* DataSet instance which is used to create the messages.
 
 Then you create a DataSet implementation, such as using the
@@ -219,4 +223,3 @@ the bodies from a file.
 |`delimiter` |`String` |\z |Specifies the delimiter pattern used by a `java.util.Scanner` to split
 the file into multiple payloads.
 |===
-

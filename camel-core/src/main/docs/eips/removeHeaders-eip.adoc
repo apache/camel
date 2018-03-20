@@ -1,0 +1,25 @@
+[[removeHeaders-eip]]
+== Remove Headers EIP
+The Remove Headers EIP allows you to remove headers from your exchange.
+
+== Options
+
+// eip options: START
+The Remove Headers EIP supports 2 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pattern* | *Required* Name or pattern of headers to remove |  | String
+| *excludePattern* | Name or patter of headers to not remove |  | String
+|===
+// eip options: END
+
+=== Samples
+
+[source,java]
+----
+from("seda:b")
+  .removeHeaders(map)
+  .to("mock:result");
+----

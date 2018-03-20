@@ -1,10 +1,10 @@
+[[customLoadBalancer-eip]]
 == Custom Load Balancer EIP
 
-You can use a custom load balancer (eg your own implementation) also.
+This EIP allows you to use your own Load Balancer implementation
 
 // eip options: START
 The Custom Load Balancer EIP supports 1 options which are listed below:
-
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

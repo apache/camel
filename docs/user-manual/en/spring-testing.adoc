@@ -2,13 +2,13 @@
 Spring Testing
 ~~~~~~~~~~~~~~
 
-link:testing.html[Testing] is a crucial part of any development or
+Testing is a crucial part of any development or
 integration work. The Spring Framework offers a number of features that
 makes it easy to test while using Spring for Inversion of Control which
 works with JUnit 3.x, JUnit 4.x, and http://testng.org[TestNG].
 
-We can use Spring for IoC and the Camel link:mock.html[Mock] and
-link:test.html[Test] endpoints to create sophisticated integration/unit
+We can use Spring for IoC and the Camel <<mock-component,Mock>> and
+<<test-component,Test>> endpoints to create sophisticated integration/unit
 tests that are easy to run and debug inside your IDE.  There are three
 supported approaches for testing with Spring in Camel.
 
@@ -21,8 +21,8 @@ supported approaches for testing with Spring in Camel.
 * TestNG - *Camel 2.8* |Provided by org.apache.camel.test.CamelSpringTestSupport,
 org.apache.camel.test.junit4.CamelSpringTestSupport, and
 org.apache.camel.testng.CamelSpringTestSupport.  These base classes
-provide link:camel-test.html[feature parity] with the simple
-CamelTestSupport classes from link:camel-test.html[Camel Test] but do
+provide feature parity with the simple
+CamelTestSupport classes from Camel Test but do
 not support Spring annotations on the test class such as
 *@Autowired*, *@DirtiesContext*, and *@ContextConfiguration*. |* JUnit 3.x (deprecated) - camel-test-spring
 * JUnit 4.x - camel-test-spring
@@ -34,7 +34,7 @@ not support Spring annotations on the test class such as
 (org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests, org.springframework.test.context.junit38.AbstractJUnit4SpringContextTests,
 etc.) provided in Spring Test or use the Spring Test JUnit4 runner.
  These approaches support both the Camel annotations and Spring
-annotations, but do not have link:camel-test.html[feature parity]
+annotations, but do not have feature parity
 with org.apache.camel.test.CamelTestSupport,
 org.apache.camel.test.junit4.CamelTestSupport, and
 org.apache.camel.testng.CamelSpringTestSupport. |* JUnit 3.x (deprecated) - None
@@ -45,7 +45,7 @@ org.apache.camel.testng.CamelSpringTestSupport. |* JUnit 3.x (deprecated) - None
 * TestNG - *Camel 2.10* |Use the org.apache.camel.test.junit4.CamelSpringJUnit4ClassRunner runner
 with the *@RunWith* annotation or extend
 org.apache.camel.testng.AbstractCamelTestNGSpringContextTests to enable
-link:camel-test.html[feature parity] with
+feature parity with
 org.apache.camel.test.CamelTestSupport and
 org.apache.camel.test.junit4.CamelTestSupport and also support the full
 suite of Spring Test annotations such
@@ -77,7 +77,7 @@ protected abstract AbstractApplicationContext createApplicationContext();
 
 You are responsible for the instantiation of the Spring context in the
 method implementation.  All of the features available in the non-Spring
-aware counterparts from link:camel-test.html[Camel Test] are available
+aware counterparts from Camel Test are available
 in your test.
 
 [[SpringTesting-PlainSpringTest]]
@@ -99,8 +99,8 @@ using http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/t
 Config].
 
 Notice that we use *@DirtiesContext* on the test methods to
-force link:spring-testing.html[Spring Testing] to automatically reload
-the link:camelcontext.html[CamelContext] after each test method - this
+force Spring Testing to automatically reload
+the CamelContext after each test method - this
 ensures that the tests don't clash with each other (e.g. one test method
 sending to an endpoint that is then reused in another test method).
 
@@ -128,7 +128,7 @@ Plain Spring Test using JUnit 4.x with Java Config Example
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 You can completely avoid using an XML configuration file by using
-link:spring-java-config.html[Spring Java Config].  Here is a unit test
+Spring Java Config.  Here is a unit test
 using JUnit 4.x support from Spring Test
 using http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[Java
 Config].
@@ -336,7 +336,7 @@ Adding more Mock expectations
 
 If you wish to programmatically add any new assertions to your test you
 can easily do so with the following. Notice how we use @EndpointInject
-to inject a Camel endpoint into our code then the link:mock.html[Mock]
+to inject a Camel endpoint into our code then the <<mock-component,Mock>>
 API to add an expectation on a specific message.
 
 [source,java]
@@ -363,7 +363,7 @@ public class MyCamelTest extends AbstractJUnit38SpringContextTests {
 Further processing the received messages
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Sometimes once a link:mock.html[Mock] endpoint has received some
+Sometimes once a <<mock-component,Mock>> endpoint has received some
 messages you want to then process them further to add further assertions
 that your test case worked as you expect.
 
@@ -401,14 +401,14 @@ Sending and receiving messages
 
 It might be that the
 link:enterprise-integration-patterns.html[Enterprise Integration
-Patterns] you have defined in either link:spring.html[Spring] XML or
-using the Java link:dsl.html[DSL] do all of the sending and receiving
-and you might just work with the link:mock.html[Mock] endpoints as
+Patterns] you have defined in either Spring XML or
+using the Java DSL do all of the sending and receiving
+and you might just work with the <<mock-component,Mock>> endpoints as
 described above. However sometimes in a test case its useful to
 explicitly send or receive messages directly.
 
 To send or receive messages you should use the
-link:bean-integration.html[Bean Integration] mechanism. For example to
+Bean Integration mechanism. For example to
 send messages inject a ProducerTemplate using the @EndpointInject
 annotation then call the various send methods on this object to send a
 message to an endpoint. To consume messages use the @MessageDriven
@@ -443,7 +443,7 @@ https://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/ja
 example test case using Mock and Spring] along with its
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/resources/org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.xml[Spring
 XML]
-* link:bean-integration.html[Bean Integration]
-* link:mock.html[Mock] endpoint
-* link:test.html[Test] endpoint
+* Bean Integration
+* <<mock-component,Mock>> endpoint
+* <<test-component,Test>> endpoint
 

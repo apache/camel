@@ -24,6 +24,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -488,7 +490,11 @@ public class JmsBinding {
         } else if (headerValue instanceof Boolean) {
             return headerValue;
         } else if (headerValue instanceof Date) {
-            return headerValue.toString();
+            if (this.endpoint.getConfiguration().isFormatDateHeadersToIso8601()) {
+                return ZonedDateTime.ofInstant(((Date)headerValue).toInstant(), ZoneOffset.UTC).toString();
+            } else {
+                return headerValue.toString();
+            }
         }
         return null;
     }
@@ -518,7 +524,7 @@ public class JmsBinding {
         // special for transferExchange
         if (endpoint != null && endpoint.isTransferExchange()) {
             LOG.trace("Option transferExchange=true so we use JmsMessageType: Object");
-            Serializable holder = DefaultExchangeHolder.marshal(exchange, false, endpoint.isAllowSerializedHeaders());
+            Serializable holder = DefaultExchangeHolder.marshal(exchange, true, endpoint.isAllowSerializedHeaders());
             Message answer = session.createObjectMessage(holder);
             // ensure default delivery mode is used by default
             answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);

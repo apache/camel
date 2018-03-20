@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.firehose;
 
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -49,8 +50,21 @@ public class KinesisFirehoseEndpointTest {
         KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint) camelContext.getEndpoint("aws-kinesis-firehose://some_stream_name"
                 + "?amazonKinesisFirehoseClient=#firehoseClient"
         );
+        endpoint.start();
 
         assertThat(endpoint.getClient(), is(amazonKinesisFirehoseClient));
-        assertThat(endpoint.getStreamName(), is("some_stream_name"));
+        assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
+    }
+    
+    @Test
+    public void allClientCreationParams() throws Exception {
+        KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint) camelContext.getEndpoint("aws-kinesis-firehose://some_stream_name"
+                + "?accessKey=xxx&secretKey=yyy&region=us-east-1"
+        );
+
+        assertThat(endpoint.getConfiguration().getRegion(), is(Regions.US_EAST_1.getName()));
+        assertThat(endpoint.getConfiguration().getAccessKey(), is("xxx"));
+        assertThat(endpoint.getConfiguration().getSecretKey(), is("yyy"));
+        assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
     }
 }

@@ -19,8 +19,6 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 
-import javax.ws.rs.core.Response;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
@@ -49,8 +47,6 @@ public class CxfRsConsumerClientDisconnectedTest extends CamelTestSupport {
                 getContext().setStreamCaching(true);
                 getContext().getStreamCachingStrategy().setSpoolThreshold(1L);
                 errorHandler(noErrorHandler());
-
-                Response ok = Response.ok().build();
 
                 from(cxfRsEndpointUri)
                     // should be able to convert to Customer

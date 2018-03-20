@@ -86,6 +86,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
 
             final Exchange exchange = createExchange(message, session, replyDestination);
             if (eagerLoadingOfProperties) {
+                exchange.getIn().getBody();
                 exchange.getIn().getHeaders();
             }
             String correlationId = message.getJMSCorrelationID();

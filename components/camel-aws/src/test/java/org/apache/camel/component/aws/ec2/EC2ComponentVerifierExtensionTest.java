@@ -61,7 +61,7 @@ public class EC2ComponentVerifierExtensionTest extends CamelTestSupport {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
         parameters.put("accessKey", "k");
-        parameters.put("region", "us-east-1");
+        parameters.put("region", "US_EAST_1");
         parameters.put("label", "test");
         parameters.put("operation", EC2Operations.describeInstances.toString());
 

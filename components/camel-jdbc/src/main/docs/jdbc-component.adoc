@@ -1,3 +1,4 @@
+[[jdbc-component]]
 == JDBC Component
 
 *Available as of Camel version 1.2*
@@ -5,7 +6,7 @@
 The *jdbc* component enables you to access databases through JDBC, where
 SQL queries (SELECT) and operations (INSERT, UPDATE, etc) are sent in
 the message body. This component uses the standard JDBC API, unlike the
-link:sql-component.html[SQL Component] component, which uses
+<<sql-component,SQL Component>> component, which uses
 spring-jdbc.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -70,13 +71,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *dataSourceName* | *Required* Name of DataSource to lookup in the Registry. |  | String
 |===
 
+
 ==== Query Parameters (13 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -84,16 +88,16 @@ with the following path and query parameters:
 | *allowNamedParameters* (producer) | Whether to allow using named parameters in the queries. | true | boolean
 | *outputClass* (producer) | Specify the full package and class name to use as conversion when outputType=SelectOne or SelectList. |  | String
 | *outputType* (producer) | Determines the output the producer should use. | SelectList | JdbcOutputType
-| *parameters* (producer) | Optional parameters to the java.sql.Statement. For example to set maxRows fetchSize etc. |  | Map
+| *parameters* (producer) | Optional parameters to the java.sql.Statement. For example to set maxRows, fetchSize etc. |  | Map
 | *readSize* (producer) | The default maximum number of rows that can be read by a polling query. The default value is 0. |  | int
-| *resetAutoCommit* (producer) | Camel will set the autoCommit on the JDBC connection to be false commit the change after executed the statement and reset the autoCommit flag of the connection at the end if the resetAutoCommit is true. If the JDBC connection doesn't support to reset the autoCommit flag you can set the resetAutoCommit flag to be false and Camel will not try to reset the autoCommit flag. When used with XA transactions you most likely need to set it to false so that the transaction manager is in charge of committing this tx. | true | boolean
+| *resetAutoCommit* (producer) | Camel will set the autoCommit on the JDBC connection to be false, commit the change after executed the statement and reset the autoCommit flag of the connection at the end, if the resetAutoCommit is true. If the JDBC connection doesn't support to reset the autoCommit flag, you can set the resetAutoCommit flag to be false, and Camel will not try to reset the autoCommit flag. When used with XA transactions you most likely need to set it to false so that the transaction manager is in charge of committing this tx. | true | boolean
 | *transacted* (producer) | Whether transactions are in use. | false | boolean
 | *useGetBytesForBlob* (producer) | To read BLOB columns as bytes instead of string data. This may be needed for certain databases such as Oracle where you must read BLOB columns as bytes. | false | boolean
-| *useHeadersAsParameters* (producer) | Set this option to true to use the prepareStatementStrategy with named parameters. This allows to define queries with named placeholders and use headers with the dynamic values for the query placeholders. | false | boolean
+| *useHeadersAsParameters* (producer) | Set this option to true to use the prepareStatementStrategy with named parameters. This allows to define queries with named placeholders, and use headers with the dynamic values for the query placeholders. | false | boolean
 | *useJDBC4ColumnNameAnd LabelSemantics* (producer) | Sets whether to use JDBC 4 or JDBC 3.0 or older semantic when retrieving column name. JDBC 4.0 uses columnLabel to get the column name where as JDBC 3.0 uses both columnName or columnLabel. Unfortunately JDBC drivers behave differently so you can use this option to work out issues around your JDBC driver if you get problem using this component This option is default true. | true | boolean
-| *beanRowMapper* (advanced) | To use a custom org.apache.camel.component.jdbc.BeanRowMapper when using outputClass. The default implementation will lower case the row names and skip underscores and dashes. For example CUST_ID is mapped as custId. |  | BeanRowMapper
+| *beanRowMapper* (advanced) | To use a custom org.apache.camel.component.jdbc.BeanRowMapper when using outputClass. The default implementation will lower case the row names and skip underscores, and dashes. For example CUST_ID is mapped as custId. |  | BeanRowMapper
 | *prepareStatementStrategy* (advanced) | Allows to plugin to use a custom org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to control preparation of the query and prepared statement. |  | JdbcPrepareStatement Strategy
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -139,7 +143,7 @@ type.
 *Available as of Camel 2.10*
 
 If you insert data using SQL INSERT, then the RDBMS may support auto
-generated keys. You can instruct the link:jdbc.html[JDBC] producer to
+generated keys. You can instruct the <<jdbc-component,JDBC>> producer to
 return the generated keys in headers. +
  To do that set the header `CamelRetrieveGeneratedKeys=true`. Then the
 generated keys will be provided as headers with the keys listed in the
@@ -191,7 +195,7 @@ and then send the exchange. The result of the query is returned in the
 OUT body:
 
 If you want to work on the rows one by one instead of the entire
-ResultSet at once you need to use the link:splitter.html[Splitter] EIP
+ResultSet at once you need to use the Splitter EIP
 such as:
 
 In Camel 2.13.x or older
@@ -213,8 +217,8 @@ from("direct:hello")
 ### Sample - Polling the database every minute
 
 If we want to poll a database using the JDBC component, we need to
-combine it with a polling scheduler such as the link:timer.html[Timer]
-or link:quartz.html[Quartz] etc. In the following example, we retrieve
+combine it with a polling scheduler such as the <<timer-component,Timer>>
+or <<quartz-component,Quartz>> etc. In the following example, we retrieve
 data from the database every 60 seconds:
 
 [source,java]
@@ -244,9 +248,9 @@ from("timer://MoveNewCustomersEveryHour?period=3600000")
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:sql.html[SQL]
+* <<sql-component,SQL>>

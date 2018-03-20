@@ -25,10 +25,10 @@ package org.apache.camel.util;
  * when it wants to reclaim objects when it's running out of memory. Therefore this implementation does
  * not support <b>all</b> the {@link java.util.Map} methods.
  * <p/>
- * The following methods is <b>only</b> be be used:
+ * <b>Only</b> methods below should be used:
  * <ul>
  *   <li>containsKey - To determine if the key is in the cache and refers to a value</li>
- *   <li>entrySet - To return a set of all the entries (as key/value paris)</li>
+ *   <li>entrySet - To return a set of all the entries (as key/value pairs)</li>
  *   <li>get - To get a value from the cache</li>
  *   <li>isEmpty - To determine if the cache contains any values</li>
  *   <li>keySet - To return a set of the current keys which refers to a value</li>
@@ -42,7 +42,7 @@ package org.apache.camel.util;
  * The {@link #containsValue(Object)} method should <b>not</b> be used as it's not adjusted to check
  * for the existence of a value without catering for the soft references.
  * <p/>
- * Notice that if the JVM reclaim memory the content of this cache may be garbage collected, without any
+ * Notice that if the JVM reclaims memory, the content of this cache may be garbage collected without any
  * eviction notifications.
  * <p/>
  * Use {@link LRUCacheFactory} to create a new instance (do not use the constructor).

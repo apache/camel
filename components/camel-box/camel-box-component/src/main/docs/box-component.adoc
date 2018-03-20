@@ -1,3 +1,4 @@
+[[box-component]]
 == Box Component
 
 *Available as of Camel version 2.14*
@@ -70,6 +71,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -77,7 +79,9 @@ with the following path and query parameters:
 | *methodName* | *Required* What sub operation to use for the selected operation |  | String
 |===
 
+
 ==== Query Parameters (20 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -86,11 +90,11 @@ with the following path and query parameters:
 | *enterpriseId* (common) | The enterprise ID to use for an App Enterprise. |  | String
 | *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
 | *userId* (common) | The user ID to use for an App User. |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *httpParams* (advanced) | Custom HTTP params for settings like proxy host |  | Map
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *accessTokenCache* (security) | Custom Access Token Cache for storing and retrieving access tokens. |  | IAccessTokenCache
 | *clientSecret* (security) | Box application client secret |  | String
 | *encryptionAlgorithm* (security) | The type of encryption algorithm for JWT. Supported Algorithms: RSA_SHA_256 RSA_SHA_384 RSA_SHA_512 | RSA_SHA_256 | EncryptionAlgorithm
@@ -100,8 +104,8 @@ with the following path and query parameters:
 | *privateKeyPassword* (security) | The password for the private key. |  | String
 | *publicKeyId* (security) | The ID for public key for validating the JWT signature. |  | String
 | *sslContextParameters* (security) | To configure security using SSLContextParameters. |  | SSLContextParameters
-| *userName* (security) | Box user name MUST be provided |  | String
-| *userPassword* (security) | Box user password MUST be provided if authSecureStorage is not set or returns null on first call |  | String
+| *userName* (security) | Box user name, MUST be provided |  | String
+| *userPassword* (security) | Box user password, MUST be provided if authSecureStorage is not set, or returns null on first call |  | String
 |===
 // endpoint options: END
 
@@ -253,7 +257,7 @@ URI Options for _collaborations_
 
 For more information on Box event logs see
 https://developer.box.com/reference#events[https://developer.box.com/reference#events].
-The following endpoints can be invoked with the prefix *`events`* as follows:
+The following endpoints can be invoked with the prefix *`event-logs`* as follows:
 
 [source]
 ----
@@ -422,6 +426,8 @@ box:folders/endpoint?[options]
 
 |createFolder |create |parentFolderId, folderName |com.box.sdk.BoxFolder
 
+|createFolder |create |parentFolderId, path |com.box.sdk.BoxFolder
+
 |copyFolder |copy |folderId, destinationfolderId, [newName] |com.box.sdk.BoxFolder 
 
 |moveFolder |move |folderId, destinationFolderId, newName |com.box.sdk.BoxFolder
@@ -436,7 +442,7 @@ box:folders/endpoint?[options]
 
 |getFolderInfo |info |folderId, fields |com.box.sdk.BoxFolder.Info
 
-|getFolderItems |items |folderId, offset, limit, fields |com.box.sdk.BoxFolder
+|getFolderItems |items |folderId, offset, limit, fields |java.util.List
 
 |updateFolderInfo |updateInfo |folderId, info |com.box.sdk.BoxFolder
 |===

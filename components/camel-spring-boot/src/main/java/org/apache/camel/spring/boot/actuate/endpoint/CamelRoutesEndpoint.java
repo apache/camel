@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.model.ModelHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spring.boot.model.RouteDetailsInfo;
 import org.apache.camel.spring.boot.model.RouteInfo;
 import org.springframework.boot.actuate.endpoint.Endpoint;
@@ -64,6 +66,15 @@ public class CamelRoutesEndpoint extends AbstractCamelEndpoint<List<RouteInfo>> 
         Route route = getCamelContext().getRoute(id);
         if (route != null) {
             return new RouteDetailsInfo(getCamelContext(), route);
+        }
+
+        return null;
+    }
+
+    public String getRouteDump(String id) throws Exception {
+        RouteDefinition route = getCamelContext().getRouteDefinition(id);
+        if (route != null) {
+            return ModelHelper.dumpModelAsXml(getCamelContext(), route);
         }
 
         return null;

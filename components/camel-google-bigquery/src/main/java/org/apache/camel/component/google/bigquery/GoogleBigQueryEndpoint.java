@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.google.bigquery;
 
-import java.util.concurrent.ExecutorService;
-
 import com.google.api.services.bigquery.Bigquery;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;

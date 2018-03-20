@@ -1,8 +1,9 @@
+[[csv-dataformat]]
 == CSV DataFormat
 
 *Available as of Camel version 1.3*
 
-The CSV link:data-format.html[Data Format] uses
+The CSV Data Format uses
 http://commons.apache.org/proper/commons-csv/[Apache Commons CSV] to
 handle CSV payloads (Comma Separated Values) such as those
 exported/imported by Excel.
@@ -11,18 +12,18 @@ exported/imported by Excel.
 ### Options
 
 // dataformat options: START
-The CSV dataformat supports 27 options which are listed below.
+The CSV dataformat supports 28 options which are listed below.
 
 
 
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| formatRef |  | String | The reference format to use it will be updated with the other format options the default value is CSVFormat.DEFAULT
-| formatName |  | String | The name of the format to use the default value is CSVFormat.DEFAULT
+| formatRef |  | String | The reference format to use, it will be updated with the other format options, the default value is CSVFormat.DEFAULT
+| formatName |  | String | The name of the format to use, the default value is CSVFormat.DEFAULT
 | commentMarkerDisabled | false | Boolean | Disables the comment marker of the reference format.
 | commentMarker |  | String | Sets the comment marker of the reference format.
-| delimiter |  | String | Sets the delimiter to use. The default value is (comma)
+| delimiter |  | String | Sets the delimiter to use. The default value is , (comma)
 | escapeDisabled | false | Boolean | Use for disabling using escape character
 | escape |  | String | Sets the escape character to use
 | headerDisabled | false | Boolean | Use for disabling headers
@@ -42,9 +43,10 @@ The CSV dataformat supports 27 options which are listed below.
 | trim | false | Boolean | Sets whether or not to trim leading and trailing blanks.
 | trailingDelimiter | false | Boolean | Sets whether or not to add a trailing delimiter.
 | lazyLoad | false | Boolean | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one.
-| useMaps | false | Boolean | Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected).
+| useMaps | false | Boolean | Whether the unmarshalling should produce maps (HashMap)for the lines values instead of lists. It requires to have header (either defined or collected).
+| useOrderedMaps | false | Boolean | Whether the unmarshalling should produce ordered maps (LinkedHashMap) for the lines values instead of lists. It requires to have header (either defined or collected).
 | recordConverterRef |  | String | Refers to a custom CsvRecordConverter to lookup from the registry to use.
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
 
@@ -53,7 +55,7 @@ The CSV dataformat supports 27 options which are listed below.
 ### Marshalling a Map to CSV
 
 The component allows you to marshal a Java Map (or any other message
-type that can be link:type-converter.html[converted] in a Map) into a
+type that can be converted in a Map) into a
 CSV payload.
 
 Considering the following body 
@@ -219,7 +221,7 @@ Using autogenColumns, configRef and strategyRef attributes inside XML
 
 *Available as of Camel 2.9.2 / 2.10 and deleted for Camel 2.15*
 
-You can customize the CSV link:data-format.html[Data Format] to make use
+You can customize the CSV Data Format to make use
 of your own `CSVConfig` and/or `CSVStrategy`. Also note that the default
 value of the `autogenColumns` option is true. The following example
 should illustrate this customization.
@@ -258,7 +260,7 @@ should illustrate this customization.
 
 *Available as of Camel 2.10 and deleted for Camel 2.15*
 
-You can instruct the CSV link:data-format.html[Data Format] to skip the
+You can instruct the CSV Data Format to skip the
 first line which contains the CSV headers. Using the Spring/XML DSL:
 
 [source,xml]
@@ -354,7 +356,7 @@ To use CSV in your Camel routes you need to add a dependency on
 
 If you use Maven you can just add the following to your pom.xml,
 substituting the version number for the latest and greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,java]
 -------------------------------------

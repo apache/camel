@@ -48,7 +48,10 @@ import org.apache.camel.spi.RestConfiguration;
  *     <li>{@link RestConfiguration#CORS_ACCESS_CONTROL_ALLOW_HEADERS}</li>
  *     <li>{@link RestConfiguration#CORS_ACCESS_CONTROL_MAX_AGE}</li>
  * </ul>
+ *
+ * @deprecated do not use this directly but use rest-dsl the regular way with rest-dsl configuration.
  */
+@Deprecated
 public class RestSwaggerCorsFilter implements Filter {
 
     private final Map<String, String> corsHeaders = new HashMap<String, String>();

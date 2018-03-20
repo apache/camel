@@ -26,11 +26,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
+
+import io.netty.handler.codec.http.HttpHeaders;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -43,12 +43,10 @@ import org.apache.camel.util.GZIPHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.asynchttpclient.HttpResponseHeaders;
 import org.asynchttpclient.HttpResponseStatus;
 import org.asynchttpclient.Request;
 import org.asynchttpclient.RequestBuilder;
 import org.asynchttpclient.request.body.generator.BodyGenerator;
-import org.asynchttpclient.request.body.generator.ByteArrayBodyGenerator;
 import org.asynchttpclient.request.body.generator.FileBodyGenerator;
 import org.asynchttpclient.request.body.generator.InputStreamBodyGenerator;
 import org.slf4j.Logger;
@@ -167,7 +165,7 @@ public class DefaultAhcBinding implements AhcBinding {
                         ByteArrayOutputStream bos = new ByteArrayOutputStream(endpoint.getBufferSize());
                         AhcHelper.writeObjectToStream(bos, obj);
                         byte[] bytes = bos.toByteArray();
-                        body = new ByteArrayBodyGenerator(bytes);
+                        body = new InputStreamBodyGenerator(new ByteArrayInputStream(bytes));
                         IOHelper.close(bos);
                     } else if (data instanceof File || data instanceof GenericFile) {
                         // file based (could potentially also be a FTP file etc)
@@ -181,9 +179,9 @@ public class DefaultAhcBinding implements AhcBinding {
                         // do not fallback to use the default charset as it can influence the request
                         // (for example application/x-www-form-urlencoded forms being sent)
                         if (charset != null) {
-                            body = new ByteArrayBodyGenerator(((String) data).getBytes(charset));
+                            body = new InputStreamBodyGenerator(new ByteArrayInputStream(((String) data).getBytes(charset)));
                         } else {
-                            body = new ByteArrayBodyGenerator(((String) data).getBytes());
+                            body = new InputStreamBodyGenerator(new ByteArrayInputStream(((String) data).getBytes()));
                         }
                     }
                     // fallback as input stream
@@ -232,16 +230,16 @@ public class DefaultAhcBinding implements AhcBinding {
     }
 
     @Override
-    public void onHeadersReceived(AhcEndpoint endpoint, Exchange exchange, HttpResponseHeaders headers) throws Exception {
+    public void onHeadersReceived(AhcEndpoint endpoint, Exchange exchange, HttpHeaders headers) throws Exception {
         Map<String, List<String>> m = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
-        for (Entry<String, String> entry : headers.getHeaders().entries()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            if (!m.containsKey(key)) {
-                m.put(key, new LinkedList<String>());
-                exchange.getOut().getHeaders().put(key, value);
+        for (String name:headers.names()) {
+            List<String> values = headers.getAll(name);
+            if (values.size() == 1) {
+                exchange.getOut().getHeaders().put(name, values.get(0));
+            } else {
+                exchange.getOut().getHeaders().put(name, values);
             }
-            m.get(key).add(value);
+            m.put(name, values);
         }
         // handle cookies
         if (endpoint.getCookieHandler() != null) {

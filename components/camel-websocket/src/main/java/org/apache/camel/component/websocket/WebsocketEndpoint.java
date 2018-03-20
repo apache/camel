@@ -34,7 +34,7 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.server.Handler;
 
 /**
- * The websocket component provides websocket endpoints for communicating with clients using websocket.
+ * The websocket component provides websocket endpoints with Jetty for communicating with clients using websocket.
  *
  * This component uses Jetty as the websocket implementation.
  */

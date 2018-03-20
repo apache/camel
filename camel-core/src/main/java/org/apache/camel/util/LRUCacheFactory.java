@@ -37,7 +37,6 @@ public final class LRUCacheFactory {
     /**
      * Warm-up the LRUCache to startup Apache Camel faster.
      */
-    @SuppressWarnings("unchecked")
     public static void warmUp() {
         // create a dummy map in a separate thread to warm-up the Caffeine cache concurrently
         // while Camel is starting up. This allows us to overall startup Camel a bit faster

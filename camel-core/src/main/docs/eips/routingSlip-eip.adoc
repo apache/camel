@@ -1,3 +1,4 @@
+[[routingSlip-eip]]
 == Routing Slip EIP
 The Routing Slip from the link:https://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] allows you to route a message consecutively through a series of processing steps where the sequence of steps is not known at design time and can vary for each message.
 
@@ -9,13 +10,12 @@ image:http://www.enterpriseintegrationpatterns.com/img/RoutingTableSimple.gif[im
 // eip options: START
 The Routing Slip EIP supports 3 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *uriDelimiter* | Sets the uri delimiter to use | , | String
 | *ignoreInvalidEndpoints* | Ignore the invalidate endpoint exception when try to create a producer with that endpoint | false | Boolean
-| *cacheSize* | Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producers when using this recipient list when uris are reused. |  | Integer
+| *cacheSize* | Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producers when using this routing slip, when uris are reused. |  | Integer
 |===
 // eip options: END
 

@@ -25,18 +25,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-/**
- *
- */
 @RunWith(MockitoJUnitRunner.class)
 public class WebsocketConsumerTest {
 
@@ -98,7 +95,7 @@ public class WebsocketConsumerTest {
         inOrder.verify(outMessage, times(1)).setBody(MESSAGE);
         inOrder.verify(processor, times(1)).process(exchange);
         inOrder.verify(exchange, times(2)).getException();
-        inOrder.verify(exceptionHandler, times(1)).handleException(any(String.class), eq(exchange), eq(exception));
+        inOrder.verify(exceptionHandler, times(1)).handleException(any(), eq(exchange), eq(exception));
         inOrder.verifyNoMoreInteractions();
     }
 

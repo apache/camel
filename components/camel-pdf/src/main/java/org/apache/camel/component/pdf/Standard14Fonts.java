@@ -26,10 +26,9 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
  *
  * @author <a href="https://github.com/ppalaga">Peter Palaga</a>
  */
-public class Standard14Fonts {
+public final class Standard14Fonts {
     private static final Map<String, PDType1Font> FONTS_BY_NAME = new HashMap<>();
-    static
-    {
+    static {
         FONTS_BY_NAME.put(PDType1Font.TIMES_ROMAN.getBaseFont(), PDType1Font.TIMES_ROMAN);
         FONTS_BY_NAME.put(PDType1Font.TIMES_BOLD.getBaseFont(), PDType1Font.TIMES_BOLD);
         FONTS_BY_NAME.put(PDType1Font.TIMES_ITALIC.getBaseFont(), PDType1Font.TIMES_ITALIC);
@@ -44,6 +43,9 @@ public class Standard14Fonts {
         FONTS_BY_NAME.put(PDType1Font.COURIER_BOLD_OBLIQUE.getBaseFont(), PDType1Font.COURIER_BOLD_OBLIQUE);
         FONTS_BY_NAME.put(PDType1Font.SYMBOL.getBaseFont(), PDType1Font.SYMBOL);
         FONTS_BY_NAME.put(PDType1Font.ZAPF_DINGBATS.getBaseFont(), PDType1Font.ZAPF_DINGBATS);
+    }
+
+    private Standard14Fonts() {
     }
 
     /**

@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-starter-parent</artifactId>
-    <version>2.21.0-SNAPSHOT</version>
+    <version>2.22.0-SNAPSHOT</version>
     <relativePath>../../../platforms/spring-boot/spring-boot-dm/camel-starter-parent</relativePath>
   </parent>
   <artifactId>components-starter</artifactId>
@@ -87,6 +87,7 @@
     <module>camel-atomix-starter</module>
     <module>camel-avro-starter</module>
     <module>camel-aws-starter</module>
+    <module>camel-aws-xray-starter</module>
     <module>camel-azure-starter</module>
     <module>camel-bam-starter</module>
     <module>camel-barcode-starter</module>
@@ -128,14 +129,15 @@
     <module>camel-dropbox-starter</module>
     <module>camel-eclipse-starter</module>
     <module>camel-ehcache-starter</module>
+    <module>camel-elasticsearch-rest-starter</module>
     <module>camel-elasticsearch-starter</module>
-    <module>camel-elasticsearch5-rest-starter</module>
     <module>camel-elasticsearch5-starter</module>
     <module>camel-elsql-starter</module>
     <module>camel-etcd-starter</module>
     <module>camel-exec-starter</module>
     <module>camel-facebook-starter</module>
     <module>camel-fastjson-starter</module>
+    <module>camel-fhir-starter</module>
     <module>camel-flatpack-starter</module>
     <module>camel-flink-starter</module>
     <module>camel-fop-starter</module>
@@ -214,6 +216,7 @@
     <module>camel-ldif-starter</module>
     <module>camel-leveldb-starter</module>
     <module>camel-linkedin-starter</module>
+    <module>camel-lra-starter</module>
     <module>camel-lucene-starter</module>
     <module>camel-lumberjack-starter</module>
     <module>camel-lzf-starter</module>
@@ -316,6 +319,8 @@
     <module>camel-vertx-starter</module>
     <module>camel-weather-starter</module>
     <module>camel-websocket-starter</module>
+    <module>camel-wordpress-starter</module>
+    <module>camel-xchange-starter</module>
     <module>camel-xmlbeans-starter</module>
     <module>camel-xmljson-starter</module>
     <module>camel-xmlrpc-starter</module>

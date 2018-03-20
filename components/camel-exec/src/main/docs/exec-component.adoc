@@ -1,3 +1,4 @@
+[[exec-component]]
 == Exec Component
 
 *Available as of Camel version 2.3*
@@ -48,25 +49,28 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *executable* | *Required* Sets the executable to be executed. The executable must not be empty or null. |  | String
 |===
 
+
 ==== Query Parameters (8 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *args* (producer) | The arguments may be one or many whitespace-separated tokens. |  | String
 | *binding* (producer) | A reference to a org.apache.commons.exec.ExecBinding in the Registry. |  | ExecBinding
-| *commandExecutor* (producer) | A reference to a org.apache.commons.exec.ExecCommandExecutor in the Registry that customizes the command execution. The default command executor utilizes the commons-exec library which adds a shutdown hook for every executed command. |  | ExecCommandExecutor
-| *outFile* (producer) | The name of a file created by the executable that should be considered as its output. If no outFile is set the standard output (stdout) of the executable will be used instead. |  | String
-| *timeout* (producer) | The timeout in milliseconds after which the executable should be terminated. If execution has not completed within the timeout the component will send a termination request. |  | long
-| *useStderrOnEmptyStdout* (producer) | A boolean indicating that when stdout is empty this component will populate the Camel Message Body with stderr. This behavior is disabled (false) by default. | false | boolean
-| *workingDir* (producer) | The directory in which the command should be executed. If null the working directory of the current process will be used. |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *commandExecutor* (producer) | A reference to a org.apache.commons.exec.ExecCommandExecutor in the Registry that customizes the command execution. The default command executor utilizes the commons-exec library, which adds a shutdown hook for every executed command. |  | ExecCommandExecutor
+| *outFile* (producer) | The name of a file, created by the executable, that should be considered as its output. If no outFile is set, the standard output (stdout) of the executable will be used instead. |  | String
+| *timeout* (producer) | The timeout, in milliseconds, after which the executable should be terminated. If execution has not completed within the timeout, the component will send a termination request. |  | long
+| *useStderrOnEmptyStdout* (producer) | A boolean indicating that when stdout is empty, this component will populate the Camel Message Body with stderr. This behavior is disabled (false) by default. | false | boolean
+| *workingDir* (producer) | The directory in which the command should be executed. If null, the working directory of the current process will be used. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -141,8 +145,7 @@ If an out file is specified (in the endpoint via `outFile` or the
 message headers via `ExecBinding.EXEC_COMMAND_OUT_FILE`), converters
 will return the content of the out file. If no out file is used, then
 this component will convert the stdout of the process to the target
-type. For more details, please refer to the link:exec.html[usage
-examples] below.
+type. For more details, please refer to the <<exec-component,usage examples>> below.
 
 ### Usage examples
 
@@ -233,7 +236,7 @@ from("direct:exec").to("exec:cmd?args=/C echo echoString")
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

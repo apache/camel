@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -91,6 +93,14 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
         if (getCacheSize() != null) {
             routingSlip.setCacheSize(getCacheSize());
         }
+
+        // and wrap this in an error handler
+        ErrorHandlerFactory builder = routeContext.getRoute().getErrorHandlerBuilder();
+        // create error handler (create error handler directly to keep it light weight,
+        // instead of using ProcessorDefinition.wrapInErrorHandler)
+        AsyncProcessor errorHandler = (AsyncProcessor) builder.createErrorHandler(routeContext, routingSlip.newRoutingSlipProcessorForErrorHandler());
+        routingSlip.setErrorHandler(errorHandler);
+
         return routingSlip;
     }
 
@@ -166,7 +176,7 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
 
     /**
      * Sets the maximum size used by the {@link org.apache.camel.impl.ProducerCache} which is used
-     * to cache and reuse producers when using this recipient list, when uris are reused.
+     * to cache and reuse producers when using this routing slip, when uris are reused.
      *
      * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
      * @return the builder

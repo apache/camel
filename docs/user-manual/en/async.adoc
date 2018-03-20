@@ -7,17 +7,17 @@ Async
 The asynchronous API in Camel have been rewritten for Camel 2.0, and the
 information on this page applies for Camel 2.0 and later.
 
-The link:async.html[Async] API in Camel is primarily divided in two
+The Async API in Camel is primarily divided in two
 areas +
- 1. Initiating an link:async.html[Async] messaging from the client +
- 2. Turning a route into link:async.html[Async] using the *threads*
-link:dsl.html[DSL]
+ 1. Initiating an Async messaging from the client +
+ 2. Turning a route into Async using the *threads*
+DSL
 
 Before we look at these two areas we start with a bit of background
 information and looks at the concept from at a higher level using
 diagrams. +
  Then we check out the first area how a client can initiate an
-link:async.html[Async] message exchange and we also throw in the
+Async message exchange and we also throw in the
 synchronous message exchange in the mix as well so we can compare and
 distill the difference. +
  And finally we turn our attention towards the last area the new
@@ -27,10 +27,10 @@ distill the difference. +
 Background
 ~~~~~~~~~~
 
-The new link:async.html[Async] API in Camel 2.0 leverages in much
+The new Async API in Camel 2.0 leverages in much
 greater detail the Java Concurrency API and its support for executing
 tasks asynchronous. +
- Therefore the Camel link:async.html[Async] API should be familiar for
+ Therefore the Camel Async API should be familiar for
 users with knowledge of the Java Concurrency API.
 
 [[Async-Afewconceptstomaster]]
@@ -41,22 +41,22 @@ When doing messaging there are a few aspects to keep in mind.
 
 First of all a caller can initiate a message exchange as either:
 
-* link:event-message.html[Request only]
-* link:request-reply.html[Request Reply]
+* Request only
+* Request Reply
 
-link:event-message.html[Request only] is when the caller sends a message
+Request only is when the caller sends a message
 but do *not* expect any reply. This is also known as fire and forget or
 event message.
 
-The link:request-reply.html[Request Reply] is when the caller sends a
+The Request Reply is when the caller sends a
 message and then *waits for a reply*. This is like the
-link:http.html[HTTP] protocol that we use every day when we surf the
+<<http-component,HTTP>> protocol that we use every day when we surf the
 web. We send a request to fetch a web page and wait until the reply message
 comes with the web content.
 
 In Camel a message is labeled with a Message
-link:exchange-pattern.html[Exchange Pattern] that labels whether its a
-request only or request reply message. Camel uses the link:jbi.html[JBI]
+Exchange Pattern that labels whether its a
+request only or request reply message. Camel uses the JBI
 term for this an uses `InOnly` for the request only, and `InOut` for the
 request reply.
 
@@ -75,11 +75,11 @@ diagram below:
 
 image:async.data/camel_sync_request_reply.png[image]
 
-\1. The client sends a sync link:request-reply.html[Request Reply]
-message over link:http.html[HTTP] to Camel. The client application will
+\1. The client sends a sync Request Reply
+message over <<http-component,HTTP>> to Camel. The client application will
 wait for the response that Camel routes and processes. +
- 2. The message invokes an external link:mina.html[TCP] service using
-synchronous link:request-reply.html[Request Reply]. The client
+ 2. The message invokes an external <<mina-component,TCP>> service using
+synchronous Request Reply. The client
 application still waits for the response. +
  3. The response is send back to the client.
 
@@ -88,7 +88,7 @@ Asynchronous Request Reply
 ++++++++++++++++++++++++++
 
 On the other hand the asynchronous version is where the caller sends a
-message to an link:endpoint.html[Endpoint] and then returns immediately
+message to an Endpoint and then returns immediately
 back to the caller. The message however is processed in another thread,
 the asynchronous thread. Then the caller can continue doing other work
 and at the same time the asynchronous thread is processing the message.
@@ -96,12 +96,12 @@ This is illustrated in the diagram below:
 
 image:async.data/camel_async_request_reply.png[image]
 
- 1. The client sends an link:async.html[Async]
-link:request-reply.html[Request Reply] message over link:http.html[HTTP]
+ 1. The client sends an Async
+Request Reply message over HTTP
 to Camel. The control is immediately returned to the client application,
 that can continue and do other work while Camel routes the message. +
- 2. Camel invokes an external link:mina.html[TCP] service using
-synchronous link:request-reply.html[Request Reply]. The client
+ 2. Camel invokes an external <<mina-component,TCP>> service using
+synchronous Request Reply. The client
 application can do other work simultaneously. +
  3. The client wants to get the reply so it uses the Future handle it
 got as _response_ from step 1. With this handle it retrieves the reply,
@@ -111,18 +111,18 @@ wait if nessasary if the reply is not ready.
 Synchronous Request Only
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can also do synchronous link:event-message.html[Request only] with
+You can also do synchronous Request only with
 Camel. The client sends a message to Camel in which a reply is not
 expected. However the client still waits until the message is processed
 completely. This is illustrated in the diagram below:
 
 image:async.data/camel_sync_request_only.png[image]
 
-\1. The client sends a link:event-message.html[Request only] and we can
-still use link:http.html[HTTP] despite http being
-link:request-reply.html[Request Reply] by nature. +
- 2. Camel invokes an external link:mina.html[TCP] service using
-synchronous link:request-reply.html[Request Reply]. The client
+\1. The client sends a Request only and we can
+still use <<http-component,HTTP>> despite http being
+Request Reply by nature. +
+ 2. Camel invokes an external <<mina-component,TCP>> service using
+synchronous Request Reply. The client
 application is still waiting. +
  3. The message is processed completely and the control is returned to
 the client.
@@ -139,33 +139,33 @@ In case of failure the client can detect this as an exception is thrown.
 Asynchronous Request Only
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As opposed to the synchronous link:event-message.html[Request Only] the
-link:async.html[Async] counter part will *not* wait for the processing
+As opposed to the synchronous Request Only the
+Async counter part will *not* wait for the processing
 of the message to complete. In this case the client can immediately
 continue doing other work while the message is being routed and
 processed in Camel. This is illustrated in the diagram below:
 
 image:async.data/camel_async_request_only.png[image]
 
-\1. The client sends a link:event-message.html[Request only] and we can
-still use link:http.html[HTTP] despite http being
-link:request-reply.html[Request Reply] by nature. The control is
+\1. The client sends a Request only and we can
+still use <<http-component,HTTP>> despite http being
+Request Reply by nature. The control is
 immediately returned to the client application, that can continue and do
 other work while Camel routes the message. +
- 2. Camel invokes an external link:mina.html[TCP] service using
-synchronous link:request-reply.html[Request Reply]. The client
+ 2. Camel invokes an external <<mina-component,TCP>> service using
+synchronous Request Reply. The client
 application can do other work simultaneously. +
  3. The message completes but no result is returned to the client.
 
 *Notice:* As Camel always returns a `Future` handle for
-link:async.html[Async] messaging to the client. The client can use this
+Async messaging to the client. The client can use this
 handler to get hold of the status of the processing whether the task is
 complete or an Exception occured during processing. Note that the client
 is not required to do so, its perfect valid to just ignore the Future
 handle.
 
-TIP: In case you want to know whether the link:async.html[Async]
-link:event-message.html[Request Only] failed, then you can use the
+TIP: In case you want to know whether the Async
+Request Only failed, then you can use the
 `Future` handle and invoke `get()` and if it throws a
 `ExecutionException` then the processing failed. The caused exception is
 wrapped. You can invoke `isDone()` first to test whether the task is
@@ -173,13 +173,13 @@ done or still in progress. Otherwise invoking `get()` will wait until
 the task is done.
 
 With these diagrams in mind lets turn out attention to the
-link:async.html[Async] API and how to use it with Camel.
+Async API and how to use it with Camel.
 
 [[Async1TheClientAPI]]
 The Async Client API
 ~~~~~~~~~~~~~~~~~~~~
 
-Camel provides the link:async.html[Async] Client API in the
+Camel provides the Async Client API in the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/ProducerTemplate.html[ProducerTemplate]
 where we have added about 10 new methods to Camel 2.0. We have listed
 the most important in the table below:
@@ -192,7 +192,7 @@ the most important in the table below:
 ScheduledExecutorService with 5 thread in the pool.
 
 |asyncSend |Future<Exchange> |Is used to send an async exchange to a Camel
-link:endpoint.html[Endpoint]. Camel will imeddiately return control to
+Endpoint. Camel will imeddiately return control to
 the caller thread after the task has been submitted to the executor
 service. This allows you to do other work while Camel processes the
 exchange in the other async thread.
@@ -201,7 +201,7 @@ exchange in the other async thread.
 style so no reply is expected. Uses the `InOnly` exchange pattern.
 
 |asyncRequestBody |Future<Object> |As above but for sending body only. This is a
-link:request-reply.html[Request Reply] messaging style so a reply is
+Request Reply messaging style so a reply is
 expected. Uses the `InOut` exchange pattern.
 
 |extractFutureBody |T |Is used to get the result from the asynchronous thread using the Java
@@ -214,12 +214,12 @@ response. You can do this by using the `extractFutureBody` method, or
 just use plain Java but invoke `get()` on the `Future` handle.
 
 [[Async-TheClientAPIwithcallbacks]]
-The link:async.html[Async] Client API with callbacks
+The Async Client API with callbacks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In addition to the Client API from above Camel provides a variation that
-uses link:oncompletion.html[callbacks] when the message
-link:exchange.html[Exchange] is done.
+uses callbacks when the message
+Exchange is done.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -233,13 +233,13 @@ when the message exchange is done.
 style so no reply is expected. Uses the `InOnly` exchange pattern.
 
 |asyncCallbackRequestBody |Future<Object> |As above but for sending body only. This is a
-link:request-reply.html[Request Reply] messaging style so a reply is
+Request Reply messaging style so a reply is
 expected. Uses the `InOut` exchange pattern.
 |=======================================================================
 
 These methods also returns the Future handle in case you need them. The
 difference is that they invokes the callback as well when the
-link:exchange.html[Exchange] is done being routed.
+Exchange is done being routed.
 
 [[Async-TheFutureAPI]]
 The Future API
@@ -264,19 +264,19 @@ exception.
 Example: Asynchronous Request Reply
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Suppose we want to call a link:http.html[HTTP] service but it is usually
+Suppose we want to call a <<http-component,HTTP>> service but it is usually
 slow and thus we do not want to block and wait for the response, as we
 can do other important computation. So we can initiate an
-link:async.html[Async] exchange to the link:http.html[HTTP] endpoint and
-then do other stuff while the slow link:http.html[HTTP] service is
+Async exchange to the HTTP endpoint and
+then do other stuff while the slow <<http-component,HTTP>> service is
 processing our request. And then a bit later we can use the `Future`
-handle to get the response from the link:http.html[HTTP] service. Yeah
+handle to get the response from the <<http-component,HTTP>> service. Yeah
 nice so lets do it:
 
-First we define some routes in Camel. One for the link:http.html[HTTP]
+First we define some routes in Camel. One for the <<http-component,HTTP>>
 service where we simulate a slow server as it takes at least 1 second to
 reply. And then other route that we want to invoke while the
-link:http.html[HTTP] service is on route. This allows you to be able to
+<<http-component,HTTP>> service is on route. This allows you to be able to
 process the two routes simultaneously:
 
 And then we have the client API where we call the two routes and we can
@@ -284,29 +284,29 @@ get the responses from both of them. As the code is based on unit test
 there is a bit of mock in there as well:
 
 All together it should give you the basic idea how to use this
-link:async.html[Async] API and what it can do.
+Async API and what it can do.
 
 [[Async-Example:SynchronousRequestReply]]
 Example: Synchronous Request Reply
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This example is just to a pure synchronous version of the example from
-above that was link:async.html[Async] based.
+above that was Async based.
 
 The route is the same, so its just how the client initiate and send the
 messages that differs:
 
 [[Async-UsingtheAPIwithcallbacks]]
-Using the link:async.html[Async] API with callbacks
+Using the Async API with callbacks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Suppose we want to call a link:http.html[HTTP] service but it is usually
+Suppose we want to call a <<http-component,HTTP>> service but it is usually
 slow and thus we do not want to block and wait for the response, but
 instead let a callback gather the response. This allows us to send
 multiple requests without waiting for the replies before we can send the
 next request.
 
-First we define a route in Camel for the link:http.html[HTTP] service
+First we define a route in Camel for the <<http-component,HTTP>> service
 where we simulate a slow server as it takes at least 1 second to reply.
 
 Then we define our callback where we gather the responses. As this is
@@ -314,23 +314,23 @@ based on an unit test it just gathers the responses in a list. This is a
 shared callback we use for every request we send in, but you can use
 your own individual or use an anonymous callback. The callback supports
 different methods, but we use `onDone` that is invoked regardless if the
-link:exchange.html[Exchange] was processed successfully or failed. The
+Exchange was processed successfully or failed. The
 `org.apache.camel.spi.Synchronization` API provides fine grained methods
 for `onCompletion` and `onFailure` for the two situations.
 
-And then we have the client API where we call the link:http.html[HTTP]
+And then we have the client API where we call the <<http-component,HTTP>>
 service using `asyncCallback` 3 times with different input. As the
-invocation is link:async.html[Async] the client will send 3 requests
+invocation is Async the client will send 3 requests
 right after each other, so we have 3 concurrent exchanges in progress.
 The response is gathered by our callback so we do not have to care how
 to get the response.
 
 [[Async-UsingtheAPIwiththeCamelclassicAPI]]
-Using the link:async.html[Async] API with the Camel classic API
+Using the Async API with the Camel classic API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 When using the Camel API to create a producer and send an
-link:exchange.html[Exchange] we do it like this:
+Exchange we do it like this:
 
 [source,java]
 ---------------------------------------------------------------------------
@@ -343,7 +343,7 @@ Producer producer = endpoint.createProducer();
 producer.process(exchange);
 ---------------------------------------------------------------------------
 
-But to do the same with link:async.html[Async] we need a little help
+But to do the same with Async we need a little help
 from a helper class, so the code is:
 
 [source,java]
@@ -375,12 +375,12 @@ Camel 2.0 to 2.3 behavior
 
 The `threads` DSL leverages the JDK concurrency framework for multi
 threading. It can be used to turn a synchronous route into
-link:async.html[Async]. What happens is that from the point forwards
+Async. What happens is that from the point forwards
 from `threads` the messages is routed asynchronous in a new thread. The
 caller will either wait for a reply if a reply is expected, such as when
-we use link:request-reply.html[Request Reply] messaging. Or the caller
+we use Request Reply messaging. Or the caller
 will complete as well if no reply was expected such as
-link:event-message.html[Request Only] messaging.
+Request Only messaging.
 
 [[Async-Camel2.4onwardsbehavior]]
 Camel 2.4 onwards behavior
@@ -388,11 +388,11 @@ Camel 2.4 onwards behavior
 
 The `threads` DSL leverages the JDK concurrency framework for multi
 threading. It can be used to turn a synchronous route into
-link:async.html[Async]. What happens is that from the point forwards
+Async. What happens is that from the point forwards
 from `threads` the messages is routed asynchronous in a new thread.
 Camel leverages the link:asynchronous-processing.html[asynchronous
 routing engine], which was re-introduced in Camel 2.4, to continue
-routing the link:exchange.html[Exchange] asynchronously.
+routing the Exchange asynchronously.
 
 The `threads` DSL supports the following options:
 
@@ -402,7 +402,7 @@ The `threads` DSL supports the following options:
 
 |poolSize |A number to indicate the core pool size of the underlying Java
 `ExecutorService` that is actually doing all the heavy lifting of
-handling link:async.html[Async] tasks and correlate replies etc. By
+handling Async tasks and correlate replies etc. By
 default a pool size of 10 is used.
 
 |maxPoolSize |A number to indicate the maximum pool size of the of the underlying Java
@@ -416,7 +416,7 @@ default a pool size of 10 is used.
 queue for the underlying Java `ExecutorService`
 
 |threadName |To use a custom thread name pattern. See
-link:threading-model.html[Threading Model] for more details.
+Threading Model for more details.
 
 |rejectedPolicy |How to handle rejected tasks. Can be either `Abort`, `CallerRuns`,
 `Discard`, or `DiscardOldest`. See below for more details.
@@ -440,7 +440,7 @@ configured already.
 should wait for the async task to be complete or not before continuing.
 The following 3 options is supported: *Always*, *Never* or
 *IfReplyExpected*. The first two options is self explained. The last
-will only wait if the message is link:request-reply.html[Request Reply]
+will only wait if the message is Request Reply
 based. The default option is *IfReplyExpected*.
 |=======================================================================
 
@@ -458,16 +458,16 @@ but also give time for the thread pool to process its current tasks,
 without adding more tasks - sort of self throttling. This is the default
 behavior. If setting `callerRunsWhenRejected` you use the `Abort`
 policy, which mean the task is rejected, and a
-`RejectedExecutionException` is set on the link:exchange.html[Exchange],
-and the link:exchange.html[Exchange] will stop continue being routed,
+`RejectedExecutionException` is set on the Exchange,
+and the Exchange will stop continue being routed,
 and its `UnitOfWork` will be regarded as failed.
 
 The other options `Discard` and `DiscardOldest` works a bit like
 `Abort`, however they do *not* set any Exception on the
-link:exchange.html[Exchange], which mean the
-link:exchange.html[Exchange] will *not* be regarded as failed, but the
-link:exchange.html[Exchange] will be successful. When using `Discard`
-and `DiscardOldest` then the link:exchange.html[Exchange] will not
+Exchange, which mean the
+Exchange will *not* be regarded as failed, but the
+Exchange will be successful. When using `Discard`
+and `DiscardOldest` then the Exchange will not
 continue being routed. *Notice:* There is a issue with these two options
 in Camel 2.9 or below, that cause the `UnitOfWork` not to be triggered,
 so we discourage you from using these options in those Camel releases.
@@ -489,32 +489,32 @@ have to wait anyway. So this can be accomplished like the route below:
 
 WARNING: *Transactions and threads DSL*
 Mind that when using transactions its often required that the
-link:exchange.html[Exchange] is processed entirely in the same thread,
+Exchange is processed entirely in the same thread,
 as the transaction manager often uses `ThreadLocal` to store the
 intermediate transaction status. For instance Spring Transaction does
-this. So when using `threads` DSL the link:exchange.html[Exchange] that
+this. So when using `threads` DSL the Exchange that
 is processed in the async thread cannot participate in the same
 transaction as the caller thread.
 *Notice:* This does not apply to the `ProducerTemplate` Async API as
 such as the client usually does not participate in a transaction. So you
 can still use the Camel Client Async API and do async messaging where
-the processing of the link:exchange.html[Exchange] is still handled
+the processing of the Exchange is still handled
 within transaction. Its only the client that submitted the
-link:exchange.html[Exchange] that does not participate in the same
+Exchange that does not participate in the same
 transaction.
 
 [[Async-SeeAlso]]
 See Also
 ^^^^^^^^
 
-* link:asynchronous-processing.html[Asynchronous Processing]
-* link:request-reply.html[Request Reply]
-* link:event-message.html[Request Only]
+* Asynchronous Processing
+* Request Reply
+* Request Only
 *
 http://davsclaus.blogspot.com/2009/05/on-road-to-camel-20-concurrency-with.html[Blog
 entry on using async for concurrent file processing]
-* link:seda.html[SEDA]
-* link:direct.html[Direct]
-* link:toasync.html[ToAsync] for non blocking
-link:request-reply.html[Request Reply]
+* <<seda-component,SEDA>>
+* <<direct-component,Direct>>
+* ToAsync for non blocking
+Request Reply
 

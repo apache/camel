@@ -36,6 +36,7 @@
         <include>org.apache.camel:camel-atom</include>
         <include>org.apache.camel:camel-atomix</include>
         <include>org.apache.camel:camel-aws</include>
+        <include>org.apache.camel:camel-aws-xray</include>
         <include>org.apache.camel:camel-azure</include>
         <include>org.apache.camel:camel-avro</include>
         <include>org.apache.camel:camel-bam</include>
@@ -85,12 +86,14 @@
         <include>org.apache.camel:camel-ejb</include>
         <include>org.apache.camel:camel-elasticsearch</include>
         <include>org.apache.camel:camel-elasticsearch5</include>
+        <include>org.apache.camel:camel-elasticsearch-rest</include>
         <include>org.apache.camel:camel-elsql</include>
         <include>org.apache.camel:camel-etcd</include>
         <include>org.apache.camel:camel-eventadmin</include>
         <include>org.apache.camel:camel-exec</include>
         <include>org.apache.camel:camel-facebook</include>
         <include>org.apache.camel:camel-fastjson</include>
+        <include>org.apache.camel:camel-fhir</include>
         <include>org.apache.camel:camel-flatpack</include>
         <include>org.apache.camel:camel-flink</include>
         <include>org.apache.camel:camel-fop</include>
@@ -171,6 +174,7 @@
         <include>org.apache.camel:camel-leveldb</include>
         <include>org.apache.camel:camel-linkedin-api</include>
         <include>org.apache.camel:camel-linkedin</include>
+        <include>org.apache.camel:camel-lra</include>
         <include>org.apache.camel:camel-lucene</include>
         <include>org.apache.camel:camel-lumberjack</include>
         <include>org.apache.camel:camel-lzf</include>
@@ -286,7 +290,9 @@
         <include>org.apache.camel:camel-vertx</include>
         <include>org.apache.camel:camel-weather</include>
         <include>org.apache.camel:camel-websocket</include>
+        <include>org.apache.camel:camel-wordpress</include>
         <include>org.apache.camel:camel-xmlbeans</include>
+        <include>org.apache.camel:camel-xchange</include>
         <include>org.apache.camel:camel-xmljson</include>
         <include>org.apache.camel:camel-xmlrpc</include>
         <include>org.apache.camel:camel-xmlsecurity</include>
@@ -351,6 +357,7 @@
         <include>org.apache.camel:camel-atomix-starter</include>
         <include>org.apache.camel:camel-avro-starter</include>
         <include>org.apache.camel:camel-aws-starter</include>
+        <include>org.apache.camel:camel-aws-xray-starter</include>
         <include>org.apache.camel:camel-bam-starter</include>
         <include>org.apache.camel:camel-barcode-starter</include>
         <include>org.apache.camel:camel-base64-starter</include>
@@ -393,11 +400,13 @@
         <include>org.apache.camel:camel-ehcache-starter</include>
         <include>org.apache.camel:camel-elasticsearch-starter</include>
         <include>org.apache.camel:camel-elasticsearch5-starter</include>
+        <include>org.apache.camel:camel-elasticsearch-rest-starter</include>
         <include>org.apache.camel:camel-elsql-starter</include>
         <include>org.apache.camel:camel-etcd-starter</include>
         <include>org.apache.camel:camel-exec-starter</include>
         <include>org.apache.camel:camel-facebook-starter</include>
         <include>org.apache.camel:camel-fastjson-starter</include>
+        <include>org.apache.camel:camel-fhir-starter</include>
         <include>org.apache.camel:camel-flatpack-starter</include>
         <include>org.apache.camel:camel-flink-starter</include>
         <include>org.apache.camel:camel-fop-starter</include>
@@ -476,6 +485,7 @@
         <include>org.apache.camel:camel-ldif-starter</include>
         <include>org.apache.camel:camel-leveldb-starter</include>
         <include>org.apache.camel:camel-linkedin-starter</include>
+        <include>org.apache.camel:camel-lra-starter</include>
         <include>org.apache.camel:camel-lucene-starter</include>
         <include>org.apache.camel:camel-lumberjack-starter</include>
         <include>org.apache.camel:camel-lzf-starter</include>
@@ -579,7 +589,9 @@
         <include>org.apache.camel:camel-vertx-starter</include>
         <include>org.apache.camel:camel-weather-starter</include>
         <include>org.apache.camel:camel-websocket-starter</include>
+        <include>org.apache.camel:camel-wordpress-starter</include>
         <include>org.apache.camel:camel-xmlbeans-starter</include>
+        <include>org.apache.camel:camel-xchange-starter</include>
         <include>org.apache.camel:camel-xmljson-starter</include>
         <include>org.apache.camel:camel-xmlrpc-starter</include>
         <include>org.apache.camel:camel-xmlsecurity-starter</include>

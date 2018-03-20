@@ -1,3 +1,4 @@
+[[bonita-component]]
 == Bonita Component
 
 *Available as of Camel version 2.19*
@@ -31,24 +32,27 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *operation* | *Required* Operation to use |  | BonitaOperation
 |===
 
+
 ==== Query Parameters (9 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *hostname* (consumer) | Hostname where Bonita engine runs | localhost | String
 | *port* (consumer) | Port of the server hosting Bonita engine | 8080 | String
 | *processName* (consumer) | Name of the process involved in the operation |  | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *password* (security) | Password to authenticate to Bonita engine. |  | String
 | *username* (security) | Username to authenticate to Bonita engine. |  | String
 |===
@@ -75,7 +79,7 @@ To use Bonita in your Camel routes you need to add a dependency on
 
 If you use Maven you can just add the following to your pom.xml,
 substituting the version number for the latest and greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,java]
 -------------------------------------

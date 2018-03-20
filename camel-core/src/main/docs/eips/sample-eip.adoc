@@ -1,3 +1,4 @@
+[[sample-eip]]
 == Sample EIP
 *Available as of Camel 2.1*
 
@@ -9,13 +10,12 @@ Will by default use a sample period of 1 seconds.
 // eip options: START
 The Sample EIP supports 3 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *samplePeriod* | Sets the sample period during which only a single Exchange will pass through. | 1 | Long
 | *messageFrequency* | Sets the sample message count which only a single Exchange will pass through after this many received. |  | Long
-| *units* | Sets the time units for the sample period defaulting to seconds. | SECONDS | TimeUnit
+| *units* | Sets the time units for the sample period, defaulting to seconds. | SECONDS | TimeUnit
 |===
 // eip options: END
 
@@ -83,4 +83,3 @@ And since it uses a default of 1 second you can omit this configuration in case 
     </sample>
 </route>
 ----
-

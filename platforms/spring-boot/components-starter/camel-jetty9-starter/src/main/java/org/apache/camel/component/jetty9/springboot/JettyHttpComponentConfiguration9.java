@@ -44,20 +44,20 @@ public class JettyHttpComponentConfiguration9
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * The key password which is used to access the certificate's key entry in
+     * The key password, which is used to access the certificate's key entry in
      * the keystore (this is the same password that is supplied to the keystore
      * command's -keypass option).
      */
     private String sslKeyPassword;
     /**
-     * The ssl password which is required to access the keystore file (this is
+     * The ssl password, which is required to access the keystore file (this is
      * the same password that is supplied to the keystore command's -storepass
      * option).
      */
     private String sslPassword;
     /**
-     * Specifies the location of the Java keystore file which contains the Jetty
-     * server's own X.509 certificate in a key entry.
+     * Specifies the location of the Java keystore file, which contains the
+     * Jetty server's own X.509 certificate in a key entry.
      */
     private String keystore;
     /**
@@ -101,12 +101,12 @@ public class JettyHttpComponentConfiguration9
     @NestedConfigurationProperty
     private ThreadPool threadPool;
     /**
-     * If this option is true Jetty JMX support will be enabled for this
+     * If this option is true, Jetty JMX support will be enabled for this
      * endpoint.
      */
     private Boolean enableJmx = false;
     /**
-     * To use a custom org.apache.camel.component.jetty.JettyHttpBinding which
+     * To use a custom org.apache.camel.component.jetty.JettyHttpBinding, which
      * are used to customize how a response should be written for the producer.
      */
     @NestedConfigurationProperty
@@ -190,9 +190,9 @@ public class JettyHttpComponentConfiguration9
      */
     private Boolean useXForwardedForHeader = false;
     /**
-     * If the option is true jetty server will send the date header to the
+     * If the option is true, jetty server will send the date header to the
      * client which sends the request. NOTE please make sure there is no any
-     * other camel-jetty endpoint is share the same port otherwise this option
+     * other camel-jetty endpoint is share the same port, otherwise this option
      * may not work as expected.
      */
     private Boolean sendServerVersion = true;

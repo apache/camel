@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,11 +29,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelException;
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.util.URISupport;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -41,6 +41,7 @@ import org.apache.kafka.common.utils.Bytes;
 
 public class KafkaProducer extends DefaultAsyncProducer {
 
+    @SuppressWarnings("rawtypes")
     private org.apache.kafka.clients.producer.KafkaProducer kafkaProducer;
     private final KafkaEndpoint endpoint;
     private ExecutorService workerPool;
@@ -60,11 +61,15 @@ public class KafkaProducer extends DefaultAsyncProducer {
         if (brokers == null) {
             brokers = endpoint.getComponent().getBrokers();
         }
+        if (brokers == null) {
+            throw new IllegalArgumentException("URL to the Kafka brokers must be configured with the brokers option on either the component or endpoint.");
+        }
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
 
         return props;
     }
 
+    @SuppressWarnings("rawtypes")
     public org.apache.kafka.clients.producer.KafkaProducer getKafkaProducer() {
         return kafkaProducer;
     }
@@ -72,6 +77,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
     /**
      * To use a custom {@link org.apache.kafka.clients.producer.KafkaProducer} instance.
      */
+    @SuppressWarnings("rawtypes")
     public void setKafkaProducer(org.apache.kafka.clients.producer.KafkaProducer kafkaProducer) {
         this.kafkaProducer = kafkaProducer;
     }
@@ -85,6 +91,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     protected void doStart() throws Exception {
         Properties props = getProps();
         if (kafkaProducer == null) {
@@ -118,8 +125,8 @@ public class KafkaProducer extends DefaultAsyncProducer {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected Iterator<ProducerRecord> createRecorder(Exchange exchange) throws CamelException {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected Iterator<ProducerRecord> createRecorder(Exchange exchange) throws Exception {
         String topic = endpoint.getConfiguration().getTopic();
 
         if (!endpoint.getConfiguration().isBridgeEndpoint()) {
@@ -146,7 +153,8 @@ public class KafkaProducer extends DefaultAsyncProducer {
         }
 
         if (topic == null) {
-            throw new CamelExchangeException("No topic key set", exchange);
+            // if topic property was not received from configuration or header parameters take it from the remaining URI
+            topic = URISupport.extractRemainderPath(new URI(endpoint.getEndpointUri()), true);
         }
 
         // endpoint take precedence over header configuration
@@ -216,7 +224,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     // Camel calls this method if the endpoint isSynchronous(), as the KafkaEndpoint creates a SynchronousDelegateProducer for it
     public void process(Exchange exchange) throws Exception {
         Iterator<ProducerRecord> c = createRecorder(exchange);
@@ -245,7 +253,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             Iterator<ProducerRecord> c = createRecorder(exchange);

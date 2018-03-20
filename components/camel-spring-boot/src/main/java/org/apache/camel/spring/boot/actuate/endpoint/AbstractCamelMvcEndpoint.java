@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.boot.actuate.endpoint;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -23,13 +25,22 @@ import org.springframework.boot.actuate.endpoint.Endpoint;
 import org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter;
 import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Adapter to expose {@link T} as an {@link MvcEndpoint}.
  */
 abstract class AbstractCamelMvcEndpoint<T extends Endpoint> extends EndpointMvcAdapter {
+    /**
+     * A {@link ResponseEntity} returned for forbidden operations (such as trying to stop a route).
+     */
+    private static final ResponseEntity<Map<String, String>> FORBIDDEN_RESPONSE = new ResponseEntity<Map<String, String>>(
+        Collections.singletonMap("message", "This operation is forbidden"),
+        HttpStatus.FORBIDDEN);
+
     private final T delegate;
+    private boolean readOnly = true;
 
     protected AbstractCamelMvcEndpoint(String path, T delegate) {
         super(delegate);
@@ -38,9 +49,26 @@ abstract class AbstractCamelMvcEndpoint<T extends Endpoint> extends EndpointMvcA
         setPath(path);
     }
 
+    /**
+     * Returns the response that should be returned when the operation is forbidden.
+     * @return The response to be returned when the operation is disabled
+     */
+    protected ResponseEntity<?> getForbiddenResponse() {
+        return FORBIDDEN_RESPONSE;
+    }
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
     // ********************************************
     // Helpers
     // ********************************************
+
 
     protected T delegate() {
         return this.delegate;
@@ -60,6 +88,17 @@ abstract class AbstractCamelMvcEndpoint<T extends Endpoint> extends EndpointMvcA
         }
 
         return supplier.apply(delegate);
+    }
+
+    protected Object doIfEnabledAndNotReadOnly(Supplier<Object> supplier) {
+        if (!delegate.isEnabled()) {
+            return getDisabledResponse();
+        }
+        if (isReadOnly()) {
+            return getForbiddenResponse();
+        }
+
+        return supplier.get();
     }
 
     @SuppressWarnings("serial")

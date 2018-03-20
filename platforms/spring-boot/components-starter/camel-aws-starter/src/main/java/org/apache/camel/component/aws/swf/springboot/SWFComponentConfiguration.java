@@ -16,9 +16,17 @@
  */
 package org.apache.camel.component.aws.swf.springboot;
 
+import java.util.Map;
 import javax.annotation.Generated;
+import com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient;
+import com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions;
+import com.amazonaws.services.simpleworkflow.flow.DataConverter;
+import com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions;
+import com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions;
+import com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The aws-swf component is used for managing workflows from Amazon Simple
@@ -33,11 +41,60 @@ public class SWFComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * The AWS SWF default configuration
+     */
+    private SWFConfigurationNestedConfiguration configuration;
+    /**
+     * Amazon AWS Access Key.
+     */
+    private String accessKey;
+    /**
+     * Amazon AWS Secret Key.
+     */
+    private String secretKey;
+    /**
+     * Amazon AWS Region.
+     */
+    private String region;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public SWFConfigurationNestedConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(
+            SWFConfigurationNestedConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
@@ -46,5 +103,346 @@ public class SWFComponentConfiguration
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    public static class SWFConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.aws.swf.SWFConfiguration.class;
+        /**
+         * Amazon AWS Access Key.
+         */
+        private String accessKey;
+        /**
+         * Amazon AWS Secret Key.
+         */
+        private String secretKey;
+        /**
+         * Amazon AWS Region.
+         */
+        private String region;
+        /**
+         * The workflow domain to use.
+         */
+        private String domainName;
+        /**
+         * The list name to consume activities from.
+         */
+        private String activityList;
+        /**
+         * The list name to consume workflows from.
+         */
+        private String workflowList;
+        /**
+         * The workflow or activity event name to use.
+         */
+        private String eventName;
+        /**
+         * The workflow or activity event version to use.
+         */
+        private String version;
+        /**
+         * Activity or workflow
+         */
+        private String type;
+        /**
+         * To configure the ClientConfiguration using the key/values from the
+         * Map.
+         */
+        private Map clientConfigurationParameters;
+        /**
+         * To configure the AmazonSimpleWorkflowClient using the key/values from
+         * the Map.
+         */
+        private Map sWClientParameters;
+        /**
+         * To use the given AmazonSimpleWorkflowClient as client
+         */
+        @NestedConfigurationProperty
+        private AmazonSimpleWorkflowClient amazonSWClient;
+        /**
+         * To configure the StartWorkflowOptions using the key/values from the
+         * Map.
+         * 
+         * @param startWorkflowOptionsParameters
+         */
+        private Map startWorkflowOptionsParameters;
+        /**
+         * Workflow operation
+         */
+        private String operation = "START";
+        /**
+         * The name of the signal to send to the workflow.
+         */
+        private String signalName;
+        /**
+         * The policy to use on child workflows when terminating a workflow.
+         */
+        private String childPolicy;
+        /**
+         * The reason for terminating a workflow.
+         */
+        private String terminationReason;
+        /**
+         * The type of the result when a workflow state is queried.
+         */
+        private String stateResultType;
+        /**
+         * Details for terminating a workflow.
+         */
+        private String terminationDetails;
+        /**
+         * Activity execution options
+         */
+        @NestedConfigurationProperty
+        private ActivityTypeExecutionOptions activityTypeExecutionOptions;
+        /**
+         * Activity registration options
+         */
+        @NestedConfigurationProperty
+        private ActivityTypeRegistrationOptions activityTypeRegistrationOptions;
+        /**
+         * An instance of
+         * com.amazonaws.services.simpleworkflow.flow.DataConverter to use for
+         * serializing/deserializing the data.
+         */
+        private DataConverter dataConverter;
+        /**
+         * Workflow registration options
+         */
+        @NestedConfigurationProperty
+        private WorkflowTypeRegistrationOptions workflowTypeRegistrationOptions;
+        /**
+         * Activity scheduling options
+         */
+        @NestedConfigurationProperty
+        private ActivitySchedulingOptions activitySchedulingOptions;
+        /**
+         * Maximum number of threads in work pool for activity.
+         */
+        private Integer activityThreadPoolSize = 100;
+        private String executionStartToCloseTimeout = "3600";
+        private String taskStartToCloseTimeout = "600";
+
+        public String getAccessKey() {
+            return accessKey;
+        }
+
+        public void setAccessKey(String accessKey) {
+            this.accessKey = accessKey;
+        }
+
+        public String getSecretKey() {
+            return secretKey;
+        }
+
+        public void setSecretKey(String secretKey) {
+            this.secretKey = secretKey;
+        }
+
+        public String getRegion() {
+            return region;
+        }
+
+        public void setRegion(String region) {
+            this.region = region;
+        }
+
+        public String getDomainName() {
+            return domainName;
+        }
+
+        public void setDomainName(String domainName) {
+            this.domainName = domainName;
+        }
+
+        public String getActivityList() {
+            return activityList;
+        }
+
+        public void setActivityList(String activityList) {
+            this.activityList = activityList;
+        }
+
+        public String getWorkflowList() {
+            return workflowList;
+        }
+
+        public void setWorkflowList(String workflowList) {
+            this.workflowList = workflowList;
+        }
+
+        public String getEventName() {
+            return eventName;
+        }
+
+        public void setEventName(String eventName) {
+            this.eventName = eventName;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public Map getClientConfigurationParameters() {
+            return clientConfigurationParameters;
+        }
+
+        public void setClientConfigurationParameters(
+                Map clientConfigurationParameters) {
+            this.clientConfigurationParameters = clientConfigurationParameters;
+        }
+
+        public Map getSWClientParameters() {
+            return sWClientParameters;
+        }
+
+        public void setSWClientParameters(Map sWClientParameters) {
+            this.sWClientParameters = sWClientParameters;
+        }
+
+        public AmazonSimpleWorkflowClient getAmazonSWClient() {
+            return amazonSWClient;
+        }
+
+        public void setAmazonSWClient(AmazonSimpleWorkflowClient amazonSWClient) {
+            this.amazonSWClient = amazonSWClient;
+        }
+
+        public Map getStartWorkflowOptionsParameters() {
+            return startWorkflowOptionsParameters;
+        }
+
+        public void setStartWorkflowOptionsParameters(
+                Map startWorkflowOptionsParameters) {
+            this.startWorkflowOptionsParameters = startWorkflowOptionsParameters;
+        }
+
+        public String getOperation() {
+            return operation;
+        }
+
+        public void setOperation(String operation) {
+            this.operation = operation;
+        }
+
+        public String getSignalName() {
+            return signalName;
+        }
+
+        public void setSignalName(String signalName) {
+            this.signalName = signalName;
+        }
+
+        public String getChildPolicy() {
+            return childPolicy;
+        }
+
+        public void setChildPolicy(String childPolicy) {
+            this.childPolicy = childPolicy;
+        }
+
+        public String getTerminationReason() {
+            return terminationReason;
+        }
+
+        public void setTerminationReason(String terminationReason) {
+            this.terminationReason = terminationReason;
+        }
+
+        public String getStateResultType() {
+            return stateResultType;
+        }
+
+        public void setStateResultType(String stateResultType) {
+            this.stateResultType = stateResultType;
+        }
+
+        public String getTerminationDetails() {
+            return terminationDetails;
+        }
+
+        public void setTerminationDetails(String terminationDetails) {
+            this.terminationDetails = terminationDetails;
+        }
+
+        public ActivityTypeExecutionOptions getActivityTypeExecutionOptions() {
+            return activityTypeExecutionOptions;
+        }
+
+        public void setActivityTypeExecutionOptions(
+                ActivityTypeExecutionOptions activityTypeExecutionOptions) {
+            this.activityTypeExecutionOptions = activityTypeExecutionOptions;
+        }
+
+        public ActivityTypeRegistrationOptions getActivityTypeRegistrationOptions() {
+            return activityTypeRegistrationOptions;
+        }
+
+        public void setActivityTypeRegistrationOptions(
+                ActivityTypeRegistrationOptions activityTypeRegistrationOptions) {
+            this.activityTypeRegistrationOptions = activityTypeRegistrationOptions;
+        }
+
+        public DataConverter getDataConverter() {
+            return dataConverter;
+        }
+
+        public void setDataConverter(DataConverter dataConverter) {
+            this.dataConverter = dataConverter;
+        }
+
+        public WorkflowTypeRegistrationOptions getWorkflowTypeRegistrationOptions() {
+            return workflowTypeRegistrationOptions;
+        }
+
+        public void setWorkflowTypeRegistrationOptions(
+                WorkflowTypeRegistrationOptions workflowTypeRegistrationOptions) {
+            this.workflowTypeRegistrationOptions = workflowTypeRegistrationOptions;
+        }
+
+        public ActivitySchedulingOptions getActivitySchedulingOptions() {
+            return activitySchedulingOptions;
+        }
+
+        public void setActivitySchedulingOptions(
+                ActivitySchedulingOptions activitySchedulingOptions) {
+            this.activitySchedulingOptions = activitySchedulingOptions;
+        }
+
+        public Integer getActivityThreadPoolSize() {
+            return activityThreadPoolSize;
+        }
+
+        public void setActivityThreadPoolSize(Integer activityThreadPoolSize) {
+            this.activityThreadPoolSize = activityThreadPoolSize;
+        }
+
+        public String getExecutionStartToCloseTimeout() {
+            return executionStartToCloseTimeout;
+        }
+
+        public void setExecutionStartToCloseTimeout(
+                String executionStartToCloseTimeout) {
+            this.executionStartToCloseTimeout = executionStartToCloseTimeout;
+        }
+
+        public String getTaskStartToCloseTimeout() {
+            return taskStartToCloseTimeout;
+        }
+
+        public void setTaskStartToCloseTimeout(String taskStartToCloseTimeout) {
+            this.taskStartToCloseTimeout = taskStartToCloseTimeout;
+        }
     }
 }

@@ -39,7 +39,7 @@ public class HystrixConfigurationDefinitionCommon {
      * Whether to use a HystrixCircuitBreaker or not. If false no
      * circuit-breaker logic will be used and all requests permitted. This is
      * similar in effect to circuitBreakerForceClosed() except that continues
-     * tracking metrics and knowing whether it should be open/closed this
+     * tracking metrics and knowing whether it should be open/closed, this
      * property results in not even instantiating a circuit-breaker.
      */
     private Boolean circuitBreakerEnabled = true;
@@ -60,9 +60,9 @@ public class HystrixConfigurationDefinitionCommon {
      */
     private Boolean circuitBreakerForceClosed = false;
     /**
-     * If true the HystrixCircuitBreaker.allowRequest() will always return false
-     * causing the circuit to be open (tripped) and reject all requests. This
-     * property takes precedence over circuitBreakerForceClosed();
+     * If true the HystrixCircuitBreaker.allowRequest() will always return
+     * false, causing the circuit to be open (tripped) and reject all requests.
+     * This property takes precedence over circuitBreakerForceClosed();
      */
     private Boolean circuitBreakerForceOpen = false;
     /**
@@ -100,8 +100,8 @@ public class HystrixConfigurationDefinitionCommon {
     /**
      * Time in milliseconds at which point the command will timeout and halt
      * execution. If link executionIsolationThreadInterruptOnTimeout == true and
-     * the command is thread-isolated the executing thread will be interrupted.
-     * If the command is semaphore-isolated and a HystrixObservableCommand that
+     * the command is thread-isolated, the executing thread will be interrupted.
+     * If the command is semaphore-isolated and a HystrixObservableCommand, that
      * command will get unsubscribed.
      */
     private Integer executionTimeoutInMilliseconds = 1000;
@@ -150,7 +150,7 @@ public class HystrixConfigurationDefinitionCommon {
      */
     private Integer metricsRollingPercentileWindowBuckets = 6;
     /**
-     * This property sets the duration of the statistical rolling window in
+     * This property sets the duration of the statistical rolling window, in
      * milliseconds. This is how long metrics are kept for the thread pool. The
      * window is divided into buckets and rolls by those increments.
      */
@@ -180,14 +180,14 @@ public class HystrixConfigurationDefinitionCommon {
     private Integer maximumSize = 10;
     /**
      * Keep-alive time in minutes that gets passed to link
-     * ThreadPoolExecutorsetKeepAliveTime(long TimeUnit)
+     * ThreadPoolExecutorsetKeepAliveTime(long, TimeUnit)
      */
     private Integer keepAliveTime = 1;
     /**
      * Max queue size that gets passed to BlockingQueue in
      * HystrixConcurrencyStrategy.getBlockingQueue(int) This should only affect
      * the instantiation of a threadpool - it is not eliglible to change a queue
-     * size on the fly. For that use queueSizeRejectionThreshold().
+     * size on the fly. For that, use queueSizeRejectionThreshold().
      */
     private Integer maxQueueSize = -1;
     /**
@@ -212,7 +212,7 @@ public class HystrixConfigurationDefinitionCommon {
     private Integer threadPoolRollingNumberStatisticalWindowBuckets = 10;
     /**
      * Allows the configuration for maximumSize to take effect. That value can
-     * then be equal to or higher than coreSize
+     * then be equal to, or higher, than coreSize
      */
     private Boolean allowMaximumSizeToDivergeFromCoreSize = false;
 

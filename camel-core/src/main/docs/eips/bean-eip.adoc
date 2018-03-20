@@ -1,3 +1,4 @@
+[[bean-eip]]
 == Bean EIP
 
 The *bean:* EIP binds beans to Camel message exchanges.
@@ -17,21 +18,20 @@ the link:registry.html[Registry]
 // eip options: START
 The Bean EIP supports 5 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *ref* | Sets a reference to a bean to use |  | String
 | *method* | Sets the method name on the bean to use |  | String
 | *beanType* | Sets the Class of the bean |  | String
-| *cache* | Caches the bean lookup to avoid lookup up bean on every usage. | true | Boolean
+| *cache* | Caches the bean lookup, to avoid lookup up bean on every usage. | true | Boolean
 | *multiParameterArray* | *Deprecated* Whether the message body is an array type. | false | Boolean
 |===
 // eip options: END
 
 === Bean as endpoint
 
-Camel also supports invoking link:bean.html[Bean] as an Endpoint. In the
+Camel also supports invoking <<bean-component,Bean>> as an Endpoint. In the
 route below:
 
 What happens is that when the exchange is routed to the `myBean` Camel
@@ -44,7 +44,7 @@ type and storing the output of the method on the Exchange Out body.
 
 === Java DSL bean syntax
 
-Java DSL comes with syntactic sugar for the link:bean.html[Bean]
+Java DSL comes with syntactic sugar for the <<bean-component,Bean>>
 component. Instead of specifying the bean explicitly as the endpoint
 (i.e. `to("bean:beanName")`) you can use the following syntax:
 
@@ -85,7 +85,6 @@ mechanisms in Camel.
 
 === See also
 
-* link:class.html[Class] component
+* <<class-component,Class>> component
 * link:bean-binding.html[Bean Binding]
 * link:bean-integration.html[Bean Integration]
-

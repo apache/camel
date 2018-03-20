@@ -220,10 +220,13 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
         in.setHeader(RabbitMQConstants.REPLY_TO, replyManager.getReplyTo());
 
-        String exchangeName = in.getHeader(RabbitMQConstants.EXCHANGE_NAME, String.class);
-        // If it is BridgeEndpoint we should ignore the message header of EXCHANGE_NAME
+        // remove the OVERRIDE header so it does not propagate
+        String exchangeName = (String) exchange.getIn().removeHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
+        // If it is BridgeEndpoint we should ignore the message header of EXCHANGE_OVERRIDE_NAME
         if (exchangeName == null || getEndpoint().isBridgeEndpoint()) {
             exchangeName = getEndpoint().getExchangeName();
+        } else {
+            log.debug("Overriding header: {} detected sending message to exchange: {}", RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, exchangeName);
         }
 
         String key = in.getHeader(RabbitMQConstants.ROUTING_KEY, String.class);
@@ -249,7 +252,14 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
     }
 
     private boolean processInOnly(Exchange exchange, AsyncCallback callback) throws Exception {
-        String exchangeName = getEndpoint().getExchangeName(exchange.getIn());
+        // remove the OVERRIDE header so it does not propagate
+        String exchangeName = (String) exchange.getIn().removeHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
+        // If it is BridgeEndpoint we should ignore the message header of EXCHANGE_OVERRIDE_NAME
+        if (exchangeName == null || getEndpoint().isBridgeEndpoint()) {
+            exchangeName = getEndpoint().getExchangeName();
+        } else {
+            log.debug("Overriding header: {} detected sending message to exchange: {}", RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, exchangeName);
+        }
 
         String key = exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY, String.class);
         // we just need to make sure RoutingKey option take effect if it is not BridgeEndpoint
@@ -362,7 +372,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         String name = "RabbitMQReplyManagerTimeoutChecker[" + getEndpoint().getExchangeName() + "]";
         ScheduledExecutorService replyManagerExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
         replyManager.setScheduledExecutorService(replyManagerExecutorService);
-        log.info("Starting reply manager service " + name);
+        log.debug("Staring ReplyManager: {}", name);
         ServiceHelper.startService(replyManager);
 
         return replyManager;

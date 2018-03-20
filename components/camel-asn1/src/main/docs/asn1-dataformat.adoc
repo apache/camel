@@ -1,8 +1,9 @@
+[[asn1-dataformat]]
 == ASN.1 File DataFormat
 
 *Available as of Camel version 2.20*
 
-The ASN.1 Data Format link:data-format.html[Data Format] [Intoduction to ASN.1](https://www.itu.int/en/ITU-T/asn1/Pages/introduction.aspx) is a Camel Frameworks's data format implementation based on Bouncy Castle's bcprov-jdk15on library and jASN.1's java compiler for the formal notation used for describing data transmitted by telecommunications protocols, regardless of language implementation and physical representation of these data, whatever the application, whether complex or very simple. Messages can be unmarshalled (conversion to simple Java POJO(s)) to plain Java objects. By the help of Camel's routing engine and data transformations you can then play with POJO(s) and apply customised formatting and call other Camel Component's to convert and send messages to upstream systems.
+The ASN.1 Data Format Data Format [Intoduction to ASN.1](https://www.itu.int/en/ITU-T/asn1/Pages/introduction.aspx) is a Camel Frameworks's data format implementation based on Bouncy Castle's bcprov-jdk15on library and jASN.1's java compiler for the formal notation used for describing data transmitted by telecommunications protocols, regardless of language implementation and physical representation of these data, whatever the application, whether complex or very simple. Messages can be unmarshalled (conversion to simple Java POJO(s)) to plain Java objects. By the help of Camel's routing engine and data transformations you can then play with POJO(s) and apply customised formatting and call other Camel Component's to convert and send messages to upstream systems.
 
 ### ASN.1 Data Format Options
 
@@ -14,9 +15,9 @@ The ASN.1 File dataformat supports 3 options which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| usingIterator | false | Boolean | If the asn1 file has more then one entry the setting this option to true allows to work with the splitter EIP to split the data using an iterator in a streaming mode.
+| usingIterator | false | Boolean | If the asn1 file has more then one entry, the setting this option to true, allows to work with the splitter EIP, to split the data using an iterator in a streaming mode.
 | clazzName |  | String | Name of class to use when unmarshalling
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
 
@@ -61,7 +62,7 @@ To use ASN.1 data format in your camel routes you need to add a dependency on
 
 If you use Maven you can just add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,xml]
 ----------------------------------------------------------

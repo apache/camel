@@ -156,19 +156,38 @@ public class ControlBusProducer extends DefaultAsyncProducer {
 
             try {
                 if ("start".equals(action)) {
+                    log.debug("Starting route: {}", id);
                     getEndpoint().getCamelContext().startRoute(id);
                 } else if ("stop".equals(action)) {
+                    log.debug("Stopping route: {}", id);
                     getEndpoint().getCamelContext().stopRoute(id);
                 } else if ("suspend".equals(action)) {
+                    log.debug("Suspending route: {}", id);
                     getEndpoint().getCamelContext().suspendRoute(id);
                 } else if ("resume".equals(action)) {
+                    log.debug("Resuming route: {}", id);
                     getEndpoint().getCamelContext().resumeRoute(id);
+                } else if ("restart".equals(action)) {
+                    log.debug("Restarting route: {}", id);
+                    getEndpoint().getCamelContext().stopRoute(id);
+                    int delay = getEndpoint().getRestartDelay();
+                    if (delay > 0) {
+                        try {
+                            log.debug("Sleeping {} ms before starting route: {}", delay, id);
+                            Thread.sleep(delay);
+                        } catch (InterruptedException e) {
+                            // ignore
+                        }
+                    }
+                    getEndpoint().getCamelContext().startRoute(id);
                 } else if ("status".equals(action)) {
+                    log.debug("Route status: {}", id);
                     ServiceStatus status = getEndpoint().getCamelContext().getRouteStatus(id);
                     if (status != null) {
                         result = status.name();
                     }
                 } else if ("stats".equals(action)) {
+                    log.debug("Route stats: {}", id);
 
                     // camel context or per route
                     String name = getEndpoint().getCamelContext().getManagementName();

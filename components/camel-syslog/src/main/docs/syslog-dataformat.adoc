@@ -1,3 +1,4 @@
+[[syslog-dataformat]]
 == Syslog DataFormat
 
 *Available as of Camel version 2.6*
@@ -10,12 +11,12 @@ This component supports the following:
 * UDP consumption of syslog messages
 * Agnostic data format using either plain String objects or
 SyslogMessage model objects.
-* link:type-converter.html[Type Converter] from/to SyslogMessage and
+* Type Converter from/to SyslogMessage and
 String
-* Integration with the link:mina.html[camel-mina] component.
-* Integration with the link:netty.html[camel-netty] component.
+* Integration with the <<mina2-component,camel-mina>> component.
+* Integration with the <<netty-component,camel-netty>> component.
 * *Camel 2.14:* Encoder and decoder for
-the link:netty.html[camel-netty] component.
+the <<netty-component,camel-netty>> component.
 * *Camel 2.14:* Support for RFC5424 also.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -39,7 +40,7 @@ as its underlying transport layer mechanism.
 The UDP port that has been assigned to syslog is 514.
 
 To expose a Syslog listener service we reuse the existing
-link:mina.html[camel-mina] component or link:netty.html[camel-netty]
+<<mina2-component,camel-mina>> component or <<mina2-component,camel-netty>>
 where we just use the `Rfc3164SyslogDataFormat` to marshal and unmarshal
 messages. Notice that from *Camel 2.14* onwards the syslog dataformat is
 renamed to `SyslogDataFormat`.
@@ -54,7 +55,7 @@ The Syslog dataformat supports 1 options which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
 
@@ -63,8 +64,8 @@ The Syslog dataformat supports 1 options which are listed below.
 *Available as of Camel 2.14*
 
 To expose a Syslog listener service we reuse the
-existing link:mina.html[camel-mina] component
-or link:netty.html[camel-netty] where we just use
+existing <<mina2-component,camel-mina>> component
+or <<netty-component,camel-netty>> where we just use
 the `SyslogDataFormat` to marshal and unmarshal messages
 
 #### Exposing a Syslog listener
@@ -92,7 +93,7 @@ as an InputStream:
 </camelContext>
 ------------------------------------------------------------------------------------------
 
-The same route using link:mina.html[camel-mina]
+The same route using <<mina2-component,camel-mina>>
 
 [source,xml]
 -------------------------------------------------------------------------
@@ -132,7 +133,7 @@ The same route using link:mina.html[camel-mina]
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

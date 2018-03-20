@@ -63,7 +63,7 @@ public class HttpComponentConfiguration
     /**
      * To configure security using SSLContextParameters. Important: Only one
      * instance of org.apache.camel.util.jsse.SSLContextParameters is supported
-     * per HttpComponent. If you need to use 2 or more different instances you
+     * per HttpComponent. If you need to use 2 or more different instances, you
      * need to define a new HttpComponent per instance you need.
      */
     @NestedConfigurationProperty
@@ -86,8 +86,8 @@ public class HttpComponentConfiguration
      */
     private Integer connectionsPerRoute = 20;
     /**
-     * The time for connection to live the time unit is millisecond the default
-     * value is always keep alive.
+     * The time for connection to live, the time unit is millisecond, the
+     * default value is always keep alive.
      */
     private Long connectionTimeToLive;
     /**
@@ -99,6 +99,29 @@ public class HttpComponentConfiguration
      */
     @NestedConfigurationProperty
     private CookieStore cookieStore;
+    /**
+     * The timeout in milliseconds used when requesting a connection from the
+     * connection manager. A timeout value of zero is interpreted as an infinite
+     * timeout. A timeout value of zero is interpreted as an infinite timeout. A
+     * negative value is interpreted as undefined (system default). Default:
+     * code -1
+     */
+    private Integer connectionRequestTimeout = -1;
+    /**
+     * Determines the timeout in milliseconds until a connection is established.
+     * A timeout value of zero is interpreted as an infinite timeout. A timeout
+     * value of zero is interpreted as an infinite timeout. A negative value is
+     * interpreted as undefined (system default). Default: code -1
+     */
+    private Integer connectTimeout = -1;
+    /**
+     * Defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the
+     * timeout for waiting for data or, put differently, a maximum period
+     * inactivity between two consecutive data packets). A timeout value of zero
+     * is interpreted as an infinite timeout. A negative value is interpreted as
+     * undefined (system default). Default: code -1
+     */
+    private Integer socketTimeout = -1;
     /**
      * To use a custom HttpBinding to control the mapping between Camel message
      * and HttpClient.
@@ -213,6 +236,30 @@ public class HttpComponentConfiguration
 
     public void setCookieStore(CookieStore cookieStore) {
         this.cookieStore = cookieStore;
+    }
+
+    public Integer getConnectionRequestTimeout() {
+        return connectionRequestTimeout;
+    }
+
+    public void setConnectionRequestTimeout(Integer connectionRequestTimeout) {
+        this.connectionRequestTimeout = connectionRequestTimeout;
+    }
+
+    public Integer getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(Integer connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public Integer getSocketTimeout() {
+        return socketTimeout;
+    }
+
+    public void setSocketTimeout(Integer socketTimeout) {
+        this.socketTimeout = socketTimeout;
     }
 
     public HttpBinding getHttpBinding() {

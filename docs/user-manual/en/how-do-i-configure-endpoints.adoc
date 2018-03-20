@@ -9,12 +9,11 @@ endpoints.
 Using Java Code
 ^^^^^^^^^^^^^^^
 
-You can explicitly configure a link:component.html[Component] using Java
-code as shown in this link:walk-through-an-example.html[example]
+You can explicitly configure a Component using Java
+code as shown in this example
 
-Or you can explicitly get hold of an link:endpoint.html[Endpoint] and
-configure it using Java code as shown in the link:mock.html[Mock
-endpoint examples].
+Or you can explicitly get hold of an Endpoint and
+configure it using Java code as shown in the <<mock-component,Mock endpoint examples>>.
 
 [source,java]
 ----
@@ -26,8 +25,8 @@ endpoint.setSomething("aValue");
 Using CDI
 ^^^^^^^^^
 
-You can use link:cdi.html[CDI] as dependency injection framework to configure
-your link:component.html[Component] or link:endpoint.html[Endpoint] instances.
+You can use CDI as dependency injection framework to configure
+your Component or Endpoint instances.
 
 For example, to configure the SJMS component, you can declare a producer method
 in a CDI bean:
@@ -83,7 +82,7 @@ class MyCdiBean {
 Using Guice
 ^^^^^^^^^^^
 
-You can also use link:guice.html[Guice] as the dependency injection
+You can also use Guice as the dependency injection
 framework. For example see the link:guice-jms-example.html[Guice JMS
 Example].
 
@@ -91,8 +90,8 @@ Example].
 Using Spring XML
 ^^^^^^^^^^^^^^^^
 
-You can configure your link:component.html[Component] or
-link:endpoint.html[Endpoint] instances in your link:spring.html[Spring]
+You can configure your Component or
+Endpoint instances in your Spring
 XML as follows:
 
 [source,xml]
@@ -114,15 +113,15 @@ Which allows you to configure a component using some name (activemq in
 the above example), then you can refer to the component using
 `activemq:[queue:|topic:]destinationName`. This works by the
 `SpringCamelContext` lazily fetching components from the spring context
-for the scheme name you use for link:endpoint.html[Endpoint]
-link:uris.html[URIs]
+for the scheme name you use for Endpoint
+URIs
 
 [[HowdoIconfigureendpoints-UsingEndpointURIs]]
 Using Endpoint URIs
 ^^^^^^^^^^^^^^^^^^^
 
 Another approach is to use the URI syntax. The URI syntax supports the
-query notation. So for example with the link:mail.html[Mail] component
+query notation. So for example with the <<mail-component,Mail>> component
 you can configure the password property via the URI
 
 [source]
@@ -137,10 +136,10 @@ Referring beans from Endpoint URIs
 *Available as of Camel 2.0*
 
 When configuring endpoints using URI syntax you can now refer to beans
-in the link:registry.html[Registry] using the `#` notation.
+in the Registry using the `#` notation.
 
 If the parameter value starts with a `#` sign then Camel will lookup in
-the link:registry.html[Registry] for a bean of the given type. For
+the Registry for a bean of the given type. For
 instance:
 
 [source]
@@ -149,7 +148,7 @@ file://inbox?sorter=#mySpecialFileSorter
 ----
 
 Will lookup a bean with the id `mySpecialFileSorter` in the
-link:registry.html[Registry].
+Registry.
 
 [[HowdoIconfigureendpoints-Configuringparametervaluesusingrawvalues,egsuchaspasswords]]
 Configuring parameter values using raw values, eg such as passwords
@@ -181,14 +180,14 @@ Using property placeholders
 +++++++++++++++++++++++++++
 
 Camel have extensive support for using property placeholders, which you
-can read more link:using-propertyplaceholder.html[about here]. For
+can read more about here. For
 example in the ftp example above we can externalize the password to a
 `.properties` file.
 
 For example configuring the property placeholder when using a
-link:dsl.html[XML DSL], where we declare the location of the `.properties`
+XML DSL, where we declare the location of the `.properties`
 file. Though we can also define this in Java code. See the
-link:using-propertyplaceholder.html[documentation] for more details.
+documentation for more details.
 
 [source,xml]
 ----
@@ -229,7 +228,7 @@ myFtpPassword=se+re?t&23
 ----
 
 To understand more about property placeholders, read the
-link:using-propertyplaceholder.html[documentation].
+documentation.
 
 [[HowdoIconfigureendpoints-Configuringurisusingendpointwithbeanpropertystyle]]
 Configuring URIs using endpoint with bean property style
@@ -323,8 +322,8 @@ can have multiple options in one line, eg this is the same:
 See Also
 ~~~~~~~~
 
-* link:how-do-i-add-a-component.html[How do I add a component]
-* link:cdi.html[CDI]
-* link:spring.html[Spring]
-* link:uris.html[URIs]
-* link:using-propertyplaceholder.html[Using `PropertyPlaceholder`]
+* How do I add a component
+* CDI
+* Spring
+* URIs
+* Using `PropertyPlaceholder`

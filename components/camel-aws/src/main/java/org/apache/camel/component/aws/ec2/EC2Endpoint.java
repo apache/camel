@@ -21,7 +21,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
@@ -68,9 +68,16 @@ public class EC2Endpoint extends ScheduledPollEndpoint {
         super.doStart();
         
         ec2Client = configuration.getAmazonEc2Client() != null ? configuration.getAmazonEc2Client() : (AmazonEC2Client) createEc2Client();
-        if (ObjectHelper.isNotEmpty(configuration.getAmazonEc2Endpoint())) {
-            ec2Client.setEndpoint(configuration.getAmazonEc2Endpoint());
+    }
+    
+    @Override
+    public void doStop() throws Exception {
+        if (ObjectHelper.isEmpty(configuration.getAmazonEc2Client())) {
+            if (ec2Client != null) {
+                ec2Client.shutdown();
+            }
         }
+        super.doStop();
     }
 
     public EC2Configuration getConfiguration() {
@@ -107,9 +114,8 @@ public class EC2Endpoint extends ScheduledPollEndpoint {
                 clientBuilder = AmazonEC2ClientBuilder.standard().withClientConfiguration(clientConfiguration);
             }
         }
-        if (ObjectHelper.isNotEmpty(configuration.getAmazonEc2Endpoint()) && ObjectHelper.isNotEmpty(configuration.getRegion())) {
-            EndpointConfiguration endpointConfiguration = new EndpointConfiguration(configuration.getAmazonEc2Endpoint(), configuration.getRegion());
-            clientBuilder = clientBuilder.withEndpointConfiguration(endpointConfiguration);
+        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
         }
         client = clientBuilder.build();
         return client;

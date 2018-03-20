@@ -31,9 +31,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.swagger.jaxrs.config.BeanConfig;
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.swagger.RestApiResponseAdapter;
 import org.apache.camel.swagger.RestSwaggerSupport;
 import org.apache.camel.util.EndpointHelper;
@@ -47,7 +47,10 @@ import static org.apache.camel.swagger.SwaggerHelper.buildUrl;
  * The default Camel swagger servlet to use when exposing the APIs of the rest-dsl using swagger.
  * <p/>
  * This requires Camel version 2.15 or better at runtime (and JMX to be enabled).
+ *
+ * @deprecated do not use this directly but use rest-dsl the regular way with rest-dsl configuration.
  */
+@Deprecated
 public class RestSwaggerServlet extends HttpServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerServlet.class);
@@ -58,6 +61,7 @@ public class RestSwaggerServlet extends HttpServlet {
 
     private String apiContextIdPattern;
     private boolean apiContextIdListing;
+    private boolean translateContextPath = true;
 
     public String getApiContextIdPattern() {
         return apiContextIdPattern;
@@ -86,6 +90,18 @@ public class RestSwaggerServlet extends HttpServlet {
         this.apiContextIdListing = apiContextIdListing;
     }
 
+    public boolean isTranslateContextPath() {
+        return translateContextPath;
+    }
+
+    /**
+     * Sets whether the context path of the request should be translated (true) or used as-is (false)
+     * Optional, Defaults to true
+     */
+    public void setTranslateContextPath(boolean translateContextPath) {
+        this.translateContextPath = translateContextPath;
+    }
+
     @Override
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
@@ -111,6 +127,10 @@ public class RestSwaggerServlet extends HttpServlet {
         Object listing = parameters.remove("apiContextIdListing");
         if (listing != null) {
             apiContextIdListing = Boolean.valueOf(listing.toString());
+        }
+        Object translate = parameters.remove("translateContextPath");
+        if (translate != null) {
+            translateContextPath = Boolean.valueOf(translate.toString());
         }
     }
 
@@ -189,7 +209,7 @@ public class RestSwaggerServlet extends HttpServlet {
                 if (!match) {
                     adapter.noContent();
                 } else {
-                    support.renderResourceListing(adapter, swaggerConfig, name, route, json, yaml, classResolver, null);
+                    support.renderResourceListing(adapter, swaggerConfig, name, route, json, yaml, classResolver, new RestConfiguration());
                 }
             }
         } catch (Exception e) {
@@ -226,6 +246,9 @@ public class RestSwaggerServlet extends HttpServlet {
      */
     private String translateContextPath(HttpServletRequest request) {
         String path = request.getContextPath();
+        if (!translateContextPath) {
+            return path;
+        }
         if (path.isEmpty() || path.equals("/")) {
             return "";
         } else {

@@ -25,6 +25,8 @@ CryptoDataFormat
 CsvDataFormat
 CustomDataFormat
 DataFormatsDefinition
+FhirJsonDataFormat
+FhirXmlDataFormat
 FlatpackDataFormat
 GzipDataFormat
 HessianDataFormat

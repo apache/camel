@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kubernetes;
 
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 
 import org.apache.camel.RuntimeCamelException;
@@ -44,21 +43,7 @@ public class KubernetesConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String password;
 
-    @UriParam(label = "producer", enums = "listNamespaces,listNamespacesByLabels,getNamespace,createNamespace,deleteNamespace,"
-            + "listServices,listServicesByLabels,getService,createService,"
-            + "deleteService,listReplicationControllers,listReplicationControllersByLabels,getReplicationController,"
-            + "createReplicationController,deleteReplicationController,scaleReplicationController,"
-            + "listPods,listPodsByLabels,getPod,createPod,deletePod,listPersistentVolumes,"
-            + "listPersistentVolumesByLabels,getPersistentVolume,listPersistentVolumesClaims,"
-            + "listPersistentVolumesClaimsByLabels,"
-            + "getPersistentVolumeClaim,createPersistentVolumeClaim,deletePersistentVolumeClaim,listSecrets,"
-            + "listSecretsByLabels,getSecret,createSecret,deleteSecret,"
-            + "listResourcesQuota,listResourcesQuotaByLabels,getResourceQuota,"
-            + "createResourceQuota,deleteResourceQuota,listServiceAccounts,listServiceAccountsByLabels,"
-            + "getServiceAccount,createServiceAccount,"
-            + "deleteServiceAccount,listNodes,listNodesByLabels,getNode,listConfigMaps,"
-            + "listConfigMapsByLabels,getConfigMap,createConfigMap,deleteConfigMap,listBuilds,listBuildsByLabels," 
-            + "getBuild,listBuildConfigs,listBuildConfigsByLabels,getBuildConfig")
+    @UriParam(label = "producer")
     private String operation;
 
     @UriParam

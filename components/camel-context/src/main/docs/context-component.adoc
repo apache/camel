@@ -1,3 +1,4 @@
+[[context-component]]
 == Camel Context Component (deprecated)
 
 *Available as of Camel version 2.7*
@@ -7,7 +8,7 @@ CamelContext with a number of routes which is then treated as a black
 box, allowing you to refer to the local endpoints within the component
 from other CamelContexts.
 
-It is similar to the link:routebox.html[Routebox] component in idea,
+It is similar to the <<routebox-component,Routebox>> component in idea,
 though the Context component tries to be really simple for end users;
 just a simple convention over configuration approach to refer to local
 endpoints inside the CamelContext Component.
@@ -58,22 +59,25 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *contextId* | *Required* Is the ID you used to register the CamelContext into the Registry. |  | String
-| *localEndpointUrl* | *Required* Can be a valid Camel URI evaluated within the black box CamelContext. Or it can be a logical name which is mapped to any local endpoints. For example if you locally have endpoints like direct:invoices and seda:purchaseOrders inside a CamelContext of id supplyChain then you can just use the URIs supplyChain:invoices or supplyChain:purchaseOrders to omit the physical endpoint kind and use pure logical URIs. |  | String
+| *localEndpointUrl* | *Required* Can be a valid Camel URI evaluated within the black box CamelContext. Or it can be a logical name which is mapped to any local endpoints. For example if you locally have endpoints like direct:invoices and seda:purchaseOrders inside a CamelContext of id supplyChain, then you can just use the URIs supplyChain:invoices or supplyChain:purchaseOrders to omit the physical endpoint kind and use pure logical URIs. |  | String
 |===
 
+
 ==== Query Parameters (4 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -89,7 +93,7 @@ another CamelContext.
 #### Defining the context component
 
 First you need to create a CamelContext, add some routes in it, start it
-and then register the CamelContext into the link:registry.html[Registry]
+and then register the CamelContext into the Registry
 (JNDI, Spring, Guice or OSGi etc).
 
 This can be done in the usual Camel way from this

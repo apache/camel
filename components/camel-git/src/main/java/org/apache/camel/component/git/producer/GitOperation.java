@@ -36,4 +36,6 @@ public interface GitOperation {
     String CHERRYPICK_OPERATION = "cherryPick";
     String REMOTE_ADD_OPERATION = "remoteAdd";
     String REMOTE_LIST_OPERATION = "remoteList";
+    String CLEAN_OPERATION = "clean";
+    String GC_OPERATION = "gc";
 }

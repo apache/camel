@@ -30,6 +30,8 @@ public interface S3Constants {
     String CONTENT_LENGTH                  = "CamelAwsS3ContentLength";
     String CONTENT_MD5                     = "CamelAwsS3ContentMD5";
     String CONTENT_TYPE                    = "CamelAwsS3ContentType";
+    String DOWNLOAD_LINK_EXPIRATION        = "CamelAwsS3DownloadLinkExpiration";
+    String DOWNLOAD_LINK                   = "CamelAwsS3DownloadLink";    
     String E_TAG                           = "CamelAwsS3ETag";
     String KEY                             = "CamelAwsS3Key";
     String DESTINATION_KEY                 = "CamelAwsS3DestinationKey";
@@ -42,4 +44,6 @@ public interface S3Constants {
     String S3_HEADERS                      = "CamelAwsS3Headers";
     String S3_OPERATION                    = "CamelAwsS3Operation";
     String SERVER_SIDE_ENCRYPTION          = "CamelAwsS3ServerSideEncryption";
+    String EXPIRATION_TIME                 = "CamelAwsS3ExpirationTime";
+    String REPLICATION_STATUS              = "CamelAwsS3ReplicationStatus";
 }

@@ -3,6 +3,9 @@
 
 *Available as of Camel 2.19*
 
+IMPORTANT: Starting with Camel 2.21, it will be necessary to use an OpenTracing complaint tracer that is
+compatible with OpenTracing Java API version 0.31 or higher.
+
 The camel-opentracing component is used for tracing and timing incoming and
 outgoing Camel messages using http://opentracing.io/[OpenTracing].
 
@@ -22,7 +25,7 @@ The configuration properties for the OpenTracing tracer are:
 
 |excludePatterns |  | Sets exclude pattern(s) that will disable tracing for Camel
 messages that matches the pattern. The content is a Set<String> where the key is a pattern. The pattern
-uses the rules from link:intercept.html[Intercept].
+uses the rules from Intercept.
 
 |=======================================================================
 
@@ -59,7 +62,7 @@ OpenTracing tracer beans. Camel will automatically discover and use them.
 
 #### Spring Boot
 
-If you are using link:spring-boot.html[Spring Boot] then you can add
+If you are using Spring Boot then you can add
 the `camel-opentracing-starter` dependency, and turn on OpenTracing by annotating
 the main class with `@CamelOpenTracing`.
 

@@ -1,3 +1,4 @@
+[[aws-ec2-component]]
 == AWS EC2 Component
 
 *Available as of Camel version 2.16*
@@ -25,7 +26,19 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS EC2 component has no options.
+The AWS EC2 component supports 5 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The AWS EC2 default configuration |  | EC2Configuration
+| *region* (producer) | The region in which EC2 client needs to work |  | String
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
@@ -42,26 +55,28 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *label* | *Required* Logical name |  | String
 |===
 
-==== Query Parameters (9 parameters):
+
+==== Query Parameters (8 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *amazonEc2Client* (producer) | To use a existing configured AmazonEC2Client as client |  | AmazonEC2Client
-| *amazonEc2Endpoint* (producer) | The region with which the AWS-EC2 client wants to work with. |  | String
-| *operation* (producer) | *Required* The operation to perform. It can be createAndRunInstances startInstances stopInstances terminateInstances describeInstances describeInstancesStatus rebootInstances monitorInstances unmonitorInstances createTags or deleteTags |  | EC2Operations
-| *proxyHost* (producer) | To define a proxy host when instantiating the SQS client |  | String
-| *proxyPort* (producer) | To define a proxy port when instantiating the SQS client |  | Integer
+| *operation* (producer) | *Required* The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or deleteTags |  | EC2Operations
+| *proxyHost* (producer) | To define a proxy host when instantiating the EC2 client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the EC2 client |  | Integer
 | *region* (producer) | The region in which EC2 client needs to work |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -70,7 +85,7 @@ with the following path and query parameters:
 Required EC2 component options
 
 You have to provide the amazonEc2Client in the
-link:registry.html[Registry] or your accessKey and secretKey to access
+Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/it/ec2/[Amazon EC2] service.
 
 ### Usage
@@ -123,9 +138,9 @@ where `${camel-version`} must be replaced by the actual version of Camel
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:aws.html[AWS Component]
+* AWS Component

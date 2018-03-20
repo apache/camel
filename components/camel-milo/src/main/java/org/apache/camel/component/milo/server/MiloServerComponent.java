@@ -104,7 +104,7 @@ public class MiloServerComponent extends DefaultComponent {
         }
 
         @Override
-        public void verifyTrustChain(final X509Certificate certificate, final List<X509Certificate> chain) throws UaException {
+        public void verifyTrustChain(List<X509Certificate> certificateChain) throws UaException {
             throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);
         }
     }
@@ -298,7 +298,7 @@ public class MiloServerComponent extends DefaultComponent {
      * Server hostname
      */
     public void setHostname(final String hostname) {
-        this.serverConfig.setHostname(hostname);
+        this.serverConfig.setServerName(hostname);
     }
 
     /**

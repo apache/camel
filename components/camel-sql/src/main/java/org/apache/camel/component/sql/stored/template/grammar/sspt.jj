@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Using some token definions from: http://kiwwito.com/build-a-lexical-analyzer-with-javacc/
+// Using some token definitions from: http://kiwwito.com/build-a-lexical-analyzer-with-javacc/
 
 options {
     STATIC = false;
@@ -69,10 +69,10 @@ Object Parameter() :
     Object param;
 }
 {
-     (param = InputParameter() {return param;}) | (param = OutParameter(){return param;})
+     (param = InParameter() {return param;}) | (param = OutParameter(){return param;}) | (param = InOutParameter(){return param;})
 }
 
-InputParameter InputParameter() :
+InParameter InParameter() :
 {
      Token sqlTypeToken;
      String name = null;
@@ -82,11 +82,11 @@ InputParameter InputParameter() :
 }
 {
     ((name = ParameterName() " ")? sqlTypeToken = ParameterSqlType() (scale = Scale())? " " (typeName = ParameterName() " ")? valueSrcToken =
-    InputParameterSrc())
+    InParameterSrc())
     {
         int sqlType = ParseHelper.parseSqlType(sqlTypeToken, classResolver);
 
-        return new InputParameter(name == null ? createNextParameterName() : name, sqlType, valueSrcToken, scale, typeName);
+        return new InParameter(name == null ? createNextParameterName() : name, sqlType, valueSrcToken, scale, typeName);
     }
 }
 
@@ -102,6 +102,24 @@ OutParameter OutParameter() :
     OutHeader())
     {
         return new OutParameter(ParseHelper.parseSqlType(sqlTypeToken, classResolver), outValueMapKey, scale, typeName);
+    }
+}
+
+InOutParameter InOutParameter() :
+{
+     Token sqlTypeToken;
+     Token valueSrcToken;
+     Integer scale = null;
+     String typeName = null;
+     String outValueMapKey;
+}
+{
+    ("INOUT " sqlTypeToken = ParameterSqlType() (scale = Scale())? " "
+    (typeName = ParameterName() " ")? valueSrcToken = InParameterSrc() " " outValueMapKey = OutHeader())
+    {
+        int sqlType = ParseHelper.parseSqlType(sqlTypeToken, classResolver);
+
+        return new InOutParameter(sqlType, valueSrcToken, scale, typeName, outValueMapKey);
     }
 }
 
@@ -152,7 +170,7 @@ String OutHeader():
         return token.toString();
     }
 }
-Token InputParameterSrc():
+Token InParameterSrc():
 {
     Token ret = null;
 }

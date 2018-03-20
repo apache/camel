@@ -1,3 +1,4 @@
+[[gora-component]]
 == Gora Component
 
 *Available as of Camel version 2.14*
@@ -93,13 +94,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *name* | *Required* Instance name |  | String
 |===
 
+
 ==== Query Parameters (21 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -107,7 +111,7 @@ with the following path and query parameters:
 | *dataStoreClass* (common) | The type of the dataStore |  | String
 | *keyClass* (common) | The type class of the key |  | String
 | *valueClass* (common) | The type of the value |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *concurrentConsumers* (consumer) | Number of concurrent consumers | 1 | int
 | *endKey* (consumer) | The End Key |  | Object
 | *endTime* (consumer) | The End Time |  | long
@@ -120,11 +124,11 @@ with the following path and query parameters:
 | *timeRangeFrom* (consumer) | The Time Range From |  | long
 | *timeRangeTo* (consumer) | The Time Range To |  | long
 | *timestamp* (consumer) | The Timestamp |  | long
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *flushOnEveryOperation* (producer) | Flush on every operation | true | boolean
 | *hadoopConfiguration* (advanced) | Hadoop Configuration |  | Configuration
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

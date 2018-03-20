@@ -69,13 +69,7 @@
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>src/data</directory>
-      <includes>
-        <include>**/*.xml</include>
-      </includes>
-    </fileSet>
-    <fileSet filtered="true" encoding="UTF-8">
-      <directory></directory>
+      <directory>.</directory>
       <includes>
         <include>ReadMe.txt</include>
       </includes>

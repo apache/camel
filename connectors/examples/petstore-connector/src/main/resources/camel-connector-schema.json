@@ -14,7 +14,7 @@
     "javaType":"org.foo.connector.PetStoreComponent",
     "groupId":"org.foo",
     "artifactId":"petstore-connector",
-    "version":"2.21.0-SNAPSHOT"
+    "version":"2.22.0-SNAPSHOT"
   },
   "componentProperties":{
     "specificationUri":{

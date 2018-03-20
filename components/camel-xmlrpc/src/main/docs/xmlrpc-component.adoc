@@ -1,3 +1,4 @@
+[[xmlrpc-component]]
 == XML RPC Component
 
 *Available as of Camel version 2.11*
@@ -111,31 +112,34 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *address* | *Required* The server url |  | String
 |===
 
+
 ==== Query Parameters (18 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *basicEncoding* (producer) | Sets the encoding for basic authentication null means UTF-8 is chosen. |  | String
-| *connectionTimeout* (producer) | Set the connection timeout in milliseconds 0 is to disable it |  | int
-| *contentLengthOptional* (producer) | Whether a Content-Length header may be omitted. The XML-RPC specification demands that such a header be present. | false | boolean
-| *defaultMethodName* (producer) | The method name which would be used for the xmlrpc requests by default if the Message header CamelXmlRpcMethodName is not set. |  | String
-| *enabledForExceptions* (producer) | Whether the response should contain a faultCause element in case of errors. The faultCause is an exception which the server has trapped and written into a byte stream as a serializable object. | false | boolean
-| *enabledForExtensions* (producer) | Whether extensions are enabled. By default the client or server is strictly compliant to the XML-RPC specification and extensions are disabled. | false | boolean
-| *encoding* (producer) | Sets the requests encoding null means UTF-8 is chosen. |  | String
+| *basicEncoding* (producer) | Sets the encoding for basic authentication, null means UTF-8 is chosen. |  | String
+| *connectionTimeout* (producer) | Set the connection timeout in milliseconds, 0 is to disable it |  | int
+| *contentLengthOptional* (producer) | Whether a Content-Length header may be omitted. The XML-RPC specification demands, that such a header be present. | false | boolean
+| *defaultMethodName* (producer) | The method name which would be used for the xmlrpc requests by default, if the Message header CamelXmlRpcMethodName is not set. |  | String
+| *enabledForExceptions* (producer) | Whether the response should contain a faultCause element in case of errors. The faultCause is an exception, which the server has trapped and written into a byte stream as a serializable object. | false | boolean
+| *enabledForExtensions* (producer) | Whether extensions are enabled. By default, the client or server is strictly compliant to the XML-RPC specification and extensions are disabled. | false | boolean
+| *encoding* (producer) | Sets the requests encoding, null means UTF-8 is chosen. |  | String
 | *gzipCompressing* (producer) | Whether gzip compression is being used for transmitting the request. | false | boolean
 | *gzipRequesting* (producer) | Whether gzip compression is being used for transmitting the request. | false | boolean
-| *replyTimeout* (producer) | Set the reply timeout in milliseconds 0 is to disable it. |  | int
+| *replyTimeout* (producer) | Set the reply timeout in milliseconds, 0 is to disable it. |  | int
 | *clientConfig* (advanced) | To use the given XmlRpcClientConfigImpl as configuration for the client. |  | XmlRpcClientConfig Impl
 | *clientConfigurer* (advanced) | To use a custom XmlRpcClientConfigurer to configure the client |  | XmlRpcClientConfigurer
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *timeZone* (advanced) | The timezone which is used to interpret date/time. Defaults to link TimeZonegetDefault(). |  | TimeZone
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *timeZone* (advanced) | The timezone, which is used to interpret date/time. Defaults to link TimeZonegetDefault(). |  | TimeZone
 | *userAgent* (advanced) | The http user agent header to set when doing xmlrpc requests |  | String
 | *xmlRpcServer* (advanced) | To use a custom XmlRpcRequestProcessor as server. |  | XmlRpcRequestProcessor
 | *basicPassword* (security) | The password for basic authentication. |  | String

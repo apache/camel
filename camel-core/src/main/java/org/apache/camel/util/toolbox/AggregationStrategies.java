@@ -18,6 +18,7 @@ package org.apache.camel.util.toolbox;
 
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
@@ -73,6 +74,13 @@ public final class AggregationStrategies {
      */
     public static AggregationStrategy groupedExchange() {
         return new GroupedExchangeAggregationStrategy();
+    }
+
+    /**
+     * Creates a {@link GroupedBodyAggregationStrategy} aggregation strategy.
+     */
+    public static AggregationStrategy groupedBody() {
+        return new GroupedBodyAggregationStrategy();
     }
 
     /**

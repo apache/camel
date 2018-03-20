@@ -17,11 +17,11 @@
 package org.apache.camel.component.aws.lambda;
 
 import java.io.*;
-import com.amazonaws.services.lambda.AWSLambdaClient;
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
 import com.amazonaws.services.lambda.model.DeleteFunctionResult;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
+import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
 import com.amazonaws.util.IOUtils;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -61,6 +61,32 @@ public class LambdaProducerTest extends CamelTestSupport {
         CreateFunctionResult result = (CreateFunctionResult) exchange.getIn().getBody();
         assertEquals(result.getFunctionName(), "GetHelloWithName");
         assertEquals(result.getDescription(), "Hello with node.js on Lambda");
+        assertNotNull(result.getFunctionArn());
+        assertNotNull(result.getCodeSha256());
+    }
+    
+    @Test
+    public void lambdaUpdateFunctionTest() throws Exception {
+
+        Exchange exchange = template.send("direct:updateFunction", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(LambdaConstants.RUNTIME, "nodejs6.10");
+                exchange.getIn().setHeader(LambdaConstants.HANDLER, "GetHelloWithName.handler");
+                exchange.getIn().setHeader(LambdaConstants.DESCRIPTION, "Hello with node.js on Lambda");
+                exchange.getIn().setHeader(LambdaConstants.ROLE, "arn:aws:iam::643534317684:role/lambda-execution-role");
+
+                ClassLoader classLoader = getClass().getClassLoader();
+                File file = new File(classLoader.getResource("org/apache/camel/component/aws/lambda/function/node/GetHelloWithName.zip").getFile());
+                FileInputStream inputStream = new FileInputStream(file);
+                exchange.getIn().setBody(IOUtils.toByteArray(inputStream));
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        UpdateFunctionCodeResult result = (UpdateFunctionCodeResult) exchange.getIn().getBody();
+        assertEquals(result.getFunctionName(), "GetHelloWithName");
         assertNotNull(result.getFunctionArn());
         assertNotNull(result.getCodeSha256());
     }
@@ -132,7 +158,7 @@ public class LambdaProducerTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
 
-        AWSLambdaClient clientMock = new AmazonLambdaClientMock();
+        AmazonLambdaClientMock clientMock = new AmazonLambdaClientMock();
 
         registry.bind("awsLambdaClient", clientMock);
 
@@ -162,6 +188,10 @@ public class LambdaProducerTest extends CamelTestSupport {
 
                 from("direct:deleteFunction")
                     .to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=deleteFunction")
+                    .to("mock:result");
+                
+                from("direct:updateFunction")
+                    .to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=updateFunction")
                     .to("mock:result");
 
             }

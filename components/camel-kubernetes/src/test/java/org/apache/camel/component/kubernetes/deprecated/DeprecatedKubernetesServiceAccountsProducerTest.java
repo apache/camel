@@ -16,24 +16,9 @@
  */
 package org.apache.camel.component.kubernetes.deprecated;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import io.fabric8.kubernetes.api.model.ObjectMeta;
-import io.fabric8.kubernetes.api.model.ServiceAccount;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kubernetes.KubernetesConstants;
-import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.kubernetes.producer.KubernetesServiceAccountsProducerTest;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.codec.binary.Base64;
 import org.junit.Ignore;
-import org.junit.Test;
 
 @Ignore
 @Deprecated

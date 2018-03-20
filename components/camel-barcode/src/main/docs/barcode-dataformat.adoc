@@ -1,3 +1,4 @@
+[[barcode-dataformat]]
 == Barcode DataFormat
 
 *Available as of Camel version 2.14*
@@ -15,7 +16,7 @@ a dependency on *camel-barcode* which implements this data format.
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,java]
 ----------------------------------------
@@ -40,7 +41,7 @@ The Barcode dataformat supports 5 options which are listed below.
 | height |  | Integer | Height of the barcode
 | imageType |  | String | Image type of the barcode such as png
 | barcodeFormat |  | String | Barcode format such as QR-Code
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
 
@@ -98,7 +99,7 @@ template.sendBody("direct://code", "This is a testmessage!");
 
 You should find inside the 'barcode_out' folder this image:
 
-image:barcode-data-format.data/qr-code.png[image]
+image:qr-code.png[image]
 
 #### Unmarshalling
 

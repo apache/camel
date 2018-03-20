@@ -74,4 +74,19 @@ public class RestDslGeneratorTest {
 
         assertThat(code.toString()).isEqualTo(expectedContent);
     }
+
+    @Test
+    public void shouldGenerateSourceCodeWithFilter() throws IOException, URISyntaxException {
+        final StringBuilder code = new StringBuilder();
+
+        RestDslGenerator.toAppendable(swagger).withGeneratedTime(generated).withClassName("MyRestRoute")
+            .withPackageName("com.example").withIndent("\t").withSourceCodeTimestamps()
+            .withOperationFilter("find*,deletePet,updatePet")
+            .withDestinationGenerator(o -> "direct:rest-" + o.getOperationId()).generate(code);
+
+        final URI file = RestDslGeneratorTest.class.getResource("/MyRestRouteFilter.txt").toURI();
+        final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
+
+        assertThat(code.toString()).isEqualTo(expectedContent);
+    }
 }

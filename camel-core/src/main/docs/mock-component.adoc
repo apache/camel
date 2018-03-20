@@ -1,16 +1,16 @@
+[[mock-component]]
 == Mock Component
-*Available as of Camel version 1.0.0*
+
 *Available as of Camel version 1.0*
 
-
-link:testing.html[Testing] of distributed and asynchronous processing is
-notoriously difficult. The link:mock.html[Mock], link:test.html[Test]
-and link:dataset.html[DataSet] endpoints work great with the
-link:testing.html[Camel Testing Framework] to simplify your unit and
+Testing of distributed and asynchronous processing is
+notoriously difficult. The <<mock-component,Mock>>, <<mock-component,Test>>
+and <<dataset-component,DataSet>> endpoints work great with the
+Camel Testing Framework to simplify your unit and
 integration testing using
 link:enterprise-integration-patterns.html[Enterprise Integration
-Patterns] and Camel's large range of link:components.html[Components]
-together with the powerful link:bean-integration.html[Bean Integration].
+Patterns] and Camel's large range of Components
+together with the powerful Bean Integration.
 
 The Mock component provides a powerful declarative testing mechanism,
 which is similar to http://www.jmock.org[jMock] in
@@ -24,32 +24,32 @@ This allows you to test various things like:
 * The correct number of messages are received on each endpoint,
 * The correct payloads are received, in the right order,
 * Messages arrive on an endpoint in order, using some
-link:expression.html[Expression] to create an order testing function,
-* Messages arrive match some kind of link:predicate.html[Predicate] such
+Expression to create an order testing function,
+* Messages arrive match some kind of Predicate such
 as that specific headers have certain values, or that parts of the
 messages match some predicate, such as by evaluating an
-link:xpath.html[XPath] or link:xquery.html[XQuery]
-link:expression.html[Expression].
+<<xpath-language,XPath>> or <<xpath-language,XQuery>>
+Expression.
 
 [NOTE]
-There is also the link:test.html[Test endpoint] which is a
+There is also the <<test-component,Test endpoint>> which is a
 Mock endpoint, but which uses a second endpoint to provide the list of
 expected message bodies and automatically sets up the Mock endpoint
 assertions. In other words, it's a Mock endpoint that automatically sets
-up its assertions from some sample messages in a link:file2.html[File]
-or link:jpa.html[database], for example.
+up its assertions from some sample messages in a File
+or <<jpa-component,database>>, for example.
 
 [CAUTION]
 *Mock endpoints keep received Exchanges in memory indefinitely.* +
  +
 Remember that Mock is designed for testing. When you add Mock endpoints
-to a route, each link:exchange.html[Exchange] sent to the endpoint will
+to a route, each Exchange sent to the endpoint will
 be stored (to allow for later validation) in memory until explicitly
 reset or the JVM is restarted. If you are sending high volume and/or
 large messages, this may cause excessive memory use. If your goal is to
 test deployable routes inline, consider using
-link:notifybuilder.html[NotifyBuilder] or
-link:advicewith.html[AdviceWith] in your tests instead of adding Mock
+NotifyBuilder or
+AdviceWith in your tests instead of adding Mock
 endpoints to routes directly. +
  +
 From Camel 2.10 onwards there are two new options `retainFirst`, and
@@ -95,27 +95,30 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *name* | *Required* Name of mock endpoint |  | String
 |===
 
+
 ==== Query Parameters (10 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *assertPeriod* (producer) | Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary assertion is still valid. This is used for example to assert that exactly a number of messages arrives. For example if link expectedMessageCount(int) was set to 5 then the assertion is satisfied when 5 or more message arrives. To ensure that exactly 5 messages arrives then you would need to wait a little period to ensure no further message arrives. This is what you can use this link setAssertPeriod(long) method for. By default this period is disabled. | 0 | long
-| *expectedCount* (producer) | Specifies the expected number of message exchanges that should be received by this endpoint. Beware: If you want to expect that 0 messages then take extra care as 0 matches when the tests starts so you need to set a assert period time to let the test run for a while to make sure there are still no messages arrived; for that use link setAssertPeriod(long). An alternative is to use NotifyBuilder and use the notifier to know when Camel is done routing some messages before you call the link assertIsSatisfied() method on the mocks. This allows you to not use a fixed assert period to speedup testing times. If you want to assert that exactly n'th message arrives to this mock endpoint then see also the link setAssertPeriod(long) method for further details. | -1 | int
+| *assertPeriod* (producer) | Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary assertion is still valid. This is used for example to assert that exactly a number of messages arrives. For example if link expectedMessageCount(int) was set to 5, then the assertion is satisfied when 5 or more message arrives. To ensure that exactly 5 messages arrives, then you would need to wait a little period to ensure no further message arrives. This is what you can use this link setAssertPeriod(long) method for. By default this period is disabled. | 0 | long
+| *expectedCount* (producer) | Specifies the expected number of message exchanges that should be received by this endpoint. Beware: If you want to expect that 0 messages, then take extra care, as 0 matches when the tests starts, so you need to set a assert period time to let the test run for a while to make sure there are still no messages arrived; for that use link setAssertPeriod(long). An alternative is to use NotifyBuilder, and use the notifier to know when Camel is done routing some messages, before you call the link assertIsSatisfied() method on the mocks. This allows you to not use a fixed assert period, to speedup testing times. If you want to assert that exactly n'th message arrives to this mock endpoint, then see also the link setAssertPeriod(long) method for further details. | -1 | int
 | *reportGroup* (producer) | A number that is used to turn on throughput logging based on groups of the size. |  | int
 | *resultMinimumWaitTime* (producer) | Sets the minimum expected amount of time (in millis) the link assertIsSatisfied() will wait on a latch until it is satisfied | 0 | long
 | *resultWaitTime* (producer) | Sets the maximum amount of time (in millis) the link assertIsSatisfied() will wait on a latch until it is satisfied | 0 | long
-| *retainFirst* (producer) | Specifies to only retain the first n'th number of received Exchanges. This is used when testing with big data to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation then the link getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges and have configured to only retain the first 10 Exchanges then the link getReceivedCounter() will still return 5000 but there is only the first 10 Exchanges in the link getExchanges() and link getReceivedExchanges() methods. When using this method then some of the other expectation methods is not supported for example the link expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both link setRetainFirst(int) and link setRetainLast(int) methods to limit both the first and last received. | -1 | int
-| *retainLast* (producer) | Specifies to only retain the last n'th number of received Exchanges. This is used when testing with big data to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation then the link getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges and have configured to only retain the last 20 Exchanges then the link getReceivedCounter() will still return 5000 but there is only the last 20 Exchanges in the link getExchanges() and link getReceivedExchanges() methods. When using this method then some of the other expectation methods is not supported for example the link expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both link setRetainFirst(int) and link setRetainLast(int) methods to limit both the first and last received. | -1 | int
+| *retainFirst* (producer) | Specifies to only retain the first n'th number of received Exchanges. This is used when testing with big data, to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation, then the link getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges, and have configured to only retain the first 10 Exchanges, then the link getReceivedCounter() will still return 5000 but there is only the first 10 Exchanges in the link getExchanges() and link getReceivedExchanges() methods. When using this method, then some of the other expectation methods is not supported, for example the link expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both link setRetainFirst(int) and link setRetainLast(int) methods, to limit both the first and last received. | -1 | int
+| *retainLast* (producer) | Specifies to only retain the last n'th number of received Exchanges. This is used when testing with big data, to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation, then the link getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges, and have configured to only retain the last 20 Exchanges, then the link getReceivedCounter() will still return 5000 but there is only the last 20 Exchanges in the link getExchanges() and link getReceivedExchanges() methods. When using this method, then some of the other expectation methods is not supported, for example the link expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both link setRetainFirst(int) and link setRetainLast(int) methods, to limit both the first and last received. | -1 | int
 | *sleepForEmptyTest* (producer) | Allows a sleep to be specified to wait to check that this endpoint really is empty when link expectedMessageCount(int) is called with zero | 0 | long
 | *copyOnExchange* (producer) | Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint. Is by default true. | true | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -194,15 +197,15 @@ methods are as follows:
 
 |http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectsAscending(org.apache.camel.Expression)[expectsAscending(Expression)]
 |To add an expectation that messages are received in order, using the
-given link:expression.html[Expression] to compare messages.
+given Expression to compare messages.
 
 |http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectsDescending(org.apache.camel.Expression)[expectsDescending(Expression)]
 |To add an expectation that messages are received in order, using the
-given link:expression.html[Expression] to compare messages.
+given Expression to compare messages.
 
 |http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectsNoDuplicates(org.apache.camel.Expression)[expectsNoDuplicates(Expression)]
 |To add an expectation that no duplicate messages are received; using an
-link:expression.html[Expression] to calculate a unique identifier for
+Expression to calculate a unique identifier for
 each message. This could be something like the `JMSMessageID` if using
 JMS, or some unique reference number within the message.
 |===
@@ -243,7 +246,7 @@ Camel routes.
 
 [NOTE]
 *How it works* The endpoints are still in action. What happens differently
-is that a link:mock.html[Mock] endpoint is injected and receives the
+is that a <<mock-component,Mock>> endpoint is injected and receives the
 message first and then delegates the message to the target endpoint. You
 can view this as a kind of intercept and delegate or endpoint listener.
 
@@ -290,7 +293,7 @@ include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockEn
 ----
 
 The pattern supported can be a wildcard or a regular expression. See
-more details about this at link:intercept.html[Intercept] as its the
+more details about this at Intercept as its the
 same matching function used by Camel.
 
 [NOTE]
@@ -350,7 +353,7 @@ include::../../../../components/camel-spring/src/test/resources/org/apache/camel
 Then in your unit test you load the new XML file
 (`test-camel-route.xml`) instead of `camel-route.xml`.
 
-To only mock all link:log.html[Log] endpoints you can define the pattern
+To only mock all <<log-component,Log>> endpoints you can define the pattern
 in the constructor for the bean:
 
 [source,xml]
@@ -367,7 +370,7 @@ in the constructor for the bean:
 Sometimes you want to easily mock and skip sending to a certain
 endpoints. So the message is detoured and send to the mock endpoint
 only. From Camel 2.10 onwards you can now use the `mockEndpointsAndSkip`
-method using link:advicewith.html[AdviceWith] or the
+method using AdviceWith or the
 https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=Test+Kit&linkCreation=true&fromPageId=52081[Test
 Kit]. The example below will skip sending to the two endpoints
 `"direct:foo"`, and `"direct:bar"`.
@@ -378,7 +381,7 @@ Kit]. The example below will skip sending to the two endpoints
 include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockMultipleEndpointsWithSkipTest.java[tags=e1]
 ----
 
-The same example using the link:testing.html[Test Kit]
+The same example using the Test Kit
 
 [source,java]
 .*isMockEndpointsAndSkip using camel-test kit*
@@ -390,15 +393,15 @@ include::../../../../components/camel-test/src/test/java/org/apache/camel/test/p
 
 *Available as of Camel 2.10*
 
-The link:mock.html[Mock] endpoints will by default keep a copy of every
-link:exchange.html[Exchange] that it received. So if you test with a lot
+The <<mock-component,Mock>> endpoints will by default keep a copy of every
+Exchange that it received. So if you test with a lot
 of messages, then it will consume memory. +
 From Camel 2.10 onwards we have introduced two options `retainFirst` and
 `retainLast` that can be used to specify to only keep N'th of the first
-and/or last link:exchange.html[Exchange]s.
+and/or last Exchanges.
 
 For example in the code below, we only want to retain a copy of the
-first 5 and last 5 link:exchange.html[Exchange]s the mock receives.
+first 5 and last 5 Exchanges the mock receives.
 
 [source,java]
 ----
@@ -412,8 +415,8 @@ first 5 and last 5 link:exchange.html[Exchange]s the mock receives.
 
 Using this has some limitations. The `getExchanges()` and
 `getReceivedExchanges()` methods on the `MockEndpoint` will return only
-the retained copies of the link:exchange.html[Exchange]s. So in the
-example above, the list will contain 10 link:exchange.html[Exchange]s;
+the retained copies of the Exchanges. So in the
+example above, the list will contain 10 Exchanges;
 the first five, and the last five. +
 The `retainFirst` and `retainLast` options also have limitations on
 which expectation methods you can use. For example the `expectedXXX`
@@ -425,8 +428,8 @@ expectations on the 10 retained messages.
 
 *Available as of Camel 2.7*
 
-The link:mock.html[Mock] endpoint stores the arrival time of the message
-as a property on the link:exchange.html[Exchange].
+The <<mock-component,Mock>> endpoint stores the arrival time of the message
+as a property on the Exchange.
 
 [source,java]
 ----
@@ -436,7 +439,7 @@ Date time = exchange.getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
 You can use this information to know when the message arrived on the
 mock. But it also provides foundation to know the time interval between
 the previous and next message arrived on the mock. You can use this to
-set expectations using the `arrives` DSL on the link:mock.html[Mock]
+set expectations using the `arrives` DSL on the <<mock-component,Mock>>
 endpoint.
 
 For example to say that the first message should arrive between 0-2
@@ -479,5 +482,5 @@ In the example above we use `seconds` as the time unit, but Camel offers
 
 === See Also
 
-* link:spring-testing.html[Spring Testing]
-* link:testing.html[Testing]
+* Spring Testing
+* Testing

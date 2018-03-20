@@ -1,3 +1,4 @@
+[[openstack-keystone-component]]
 == OpenStack Keystone Component
 
 *Available as of Camel version 2.19*
@@ -51,13 +52,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *host* | *Required* OpenStack host url |  | String
 |===
 
+
 ==== Query Parameters (8 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -69,7 +73,7 @@ with the following path and query parameters:
 | *project* (producer) | *Required* The project ID |  | String
 | *subsystem* (producer) | *Required* OpenStack Keystone subsystem |  | String
 | *username* (producer) | *Required* OpenStack username |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -272,9 +276,9 @@ If you need more precise user settings you can create new object of the type *or
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-* link:openstack.html[openstack Component]
+* openstack Component

@@ -1,3 +1,4 @@
+[[kubernetes-component]]
 == Kubernetes Component (deprecated)
 
 *Available as of Camel version 2.17*
@@ -7,20 +8,20 @@
 The composite kubernetes component has been deprecated. Use individual
 component splitted as following.
 
-* link:kubernetes.html[Kubernetes Components]
-  ** link:kubernetes-build-configs-component.html[Kubernetes Build Config]
-  ** link:kubernetes-builds-component.html[Kubernetes Build]
-  ** link:kubernetes-config-maps-component.html[Kubernetes ConfigMap]
-  ** link:kubernetes-namespaces-component.html[Kubernetes Namespace]
-  ** link:kubernetes-nodes-component.html[Kubernetes Node]
-  ** link:kubernetes-persistent-volumes-component.html[Kubernetes Persistent Volume]
-  ** link:kubernetes-persistent-volumes-claims-component.html[Kubernetes Persistent Volume Claim]
-  ** link:kubernetes-pods-component.html[Kubernetes Pod]
-  ** link:kubernetes-replication-controllers-component.html[Kubernetes Replication Controller]
-  ** link:kubernetes-resources-quota-component.html[Kubernetes Resource Quota]
-  ** link:kubernetes-secrets-component.html[Kubernetes Secrets]
-  ** link:kubernetes-service-accounts-component.html[Kubernetes Service Account]
-  ** link:kubernetes-services-component.html[Kubernetes Service]
+* <<kubernetes-component,Kubernetes Components>>
+  ** <<openshift-build-configs-component,Kubernetes Build Config>>
+  ** Kubernetes Build
+  ** <<kubernetes-config-maps-component,Kubernetes ConfigMap>>
+  ** <<kubernetes-namespaces-component,Kubernetes Namespace>>
+  ** <<kubernetes-nodes-component,Kubernetes Node>>
+  ** <<kubernetes-persistent-volumes-component,Kubernetes Persistent Volume>>
+  ** <<kubernetes-persistent-volumes-claims-component,Kubernetes Persistent Volume Claim>>
+  ** <<kubernetes-pods-component,Kubernetes Pod>>
+  ** <<kubernetes-replication-controllers-component,Kubernetes Replication Controller>>
+  ** <<kubernetes-resources-quota-component,Kubernetes Resource Quota>>
+  ** <<kubernetes-secrets-component,Kubernetes Secrets>>
+  ** <<kubernetes-service-accounts-component,Kubernetes Service Account>>
+  ** <<kubernetes-services-component,Kubernetes Service>>
 ====================================================================================
 
 The *Kubernetes* component is a component for integrating your
@@ -39,7 +40,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+=== URI format
 
 [source,java]
 ------------------------------
@@ -49,7 +50,7 @@ kubernetes:masterUrl[?options]
 You can append query options to the URI in the following
 format, `?option=value&option=value&...`
 
-### Options
+=== Options
 
 
 // component options: START
@@ -74,33 +75,36 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *masterUrl* | *Required* Kubernetes Master url |  | String
 |===
 
+
 ==== Query Parameters (28 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *apiVersion* (common) | The Kubernetes API Version to use |  | String
 | *category* (common) | *Required* Kubernetes Producer and Consumer category |  | String
-| *dnsDomain* (common) | The dns domain used for ServiceCall EIP |  | String
+| *dnsDomain* (common) | The dns domain, used for ServiceCall EIP |  | String
 | *kubernetesClient* (common) | Default KubernetesClient to use if provided |  | KubernetesClient
-| *portName* (common) | The port name used for ServiceCall EIP |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *portName* (common) | The port name, used for ServiceCall EIP |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *labelKey* (consumer) | The Consumer Label key when watching at some resources |  | String
 | *labelValue* (consumer) | The Consumer Label value when watching at some resources |  | String
 | *namespace* (consumer) | The namespace |  | String
 | *poolSize* (consumer) | The Consumer pool size | 1 | int
 | *resourceName* (consumer) | The Consumer Resource Name we would like to watch |  | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *operation* (producer) | Producer operation to do on Kubernetes |  | String
 | *connectionTimeout* (advanced) | Connection timeout in milliseconds to use when making requests to the Kubernetes API server. |  | Integer
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *caCertData* (security) | The CA Cert Data |  | String
 | *caCertFile* (security) | The CA Cert File |  | String
 | *clientCertData* (security) | The Client Cert Data |  | String
@@ -122,7 +126,7 @@ with the following path and query parameters:
 
 
 
-### Headers
+=== Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -206,7 +210,7 @@ with the following path and query parameters:
 |=======================================================================
 
 
-### Categories
+=== Categories
 
 Actually the camel-kubernetes component supports the following Kubernetes resources
 
@@ -227,13 +231,13 @@ In Openshift also
 - Builds
 - BuildConfigs
 
-### Usage
+=== Usage
 
-#### Producer examples
+==== Producer examples
 
 Here we show some examples of producer using camel-kubernetes.
 
-#### Create a pod
+==== Create a pod
 
 [source,java]
 -------------------------------------------------------------
@@ -243,7 +247,7 @@ from("direct:createPod")
 
 By using the KubernetesConstants.KUBERNETES_POD_SPEC header you can specify your PodSpec and pass it to this operation.
 
-#### Delete a pod
+==== Delete a pod
 
 [source,java]
 -------------------------------------------------------------

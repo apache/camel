@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.ec2;
 
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 
 import org.apache.camel.impl.JndiRegistry;
@@ -75,6 +76,30 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
         EC2Component component = new EC2Component(context);
         component.createEndpoint("aws-ec2://TestDomain?amazonEc2Client=#amazonEc2Client");
+    }
+    
+    @Test
+    public void createEndpointWithComponentElements() throws Exception {
+        EC2Component component = new EC2Component(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        EC2Endpoint endpoint = (EC2Endpoint)component.createEndpoint("aws-ec2://testDomain");
+        
+        assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
+        assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
+    }
+    
+    @Test
+    public void createEndpointWithComponentAndEndpointElements() throws Exception {
+        EC2Component component = new EC2Component(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        component.setRegion(Regions.US_WEST_1.toString());
+        EC2Endpoint endpoint = (EC2Endpoint)component.createEndpoint("aws-s3://testDomain?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
     
     @Override

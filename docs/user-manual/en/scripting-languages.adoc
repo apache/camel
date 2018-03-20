@@ -3,8 +3,8 @@ Scripting Languages
 ~~~~~~~~~~~~~~~~~~~
 
 Camel supports a number of scripting languages which can be used to
-create an link:expression.html[Expression] or
-link:predicate.html[Predicate] via the standard
+create an Expression or
+Predicate via the standard
 http://jcp.org/en/jsr/detail?id=223[JSR 223] which is a standard part of
 Java 6.
 
@@ -65,11 +65,11 @@ following attributes all set at `ENGINE_SCOPE`:
 IN message instead.
 
 |properties |`org.apache.camel.builder.script.PropertiesFunction` |*Camel 2.9:* Function with a `resolve` method to make it easier to use
-Camels link:properties.html[Properties] component from scripts. See
+Camels <<properties-component,Properties>> component from scripts. See
 further below for example.
 |=======================================================================
 
-See link:scripting-languages.html[Scripting Languages] for the list of
+See Scripting Languages for the list of
 languages with explicit DSL support.
 
 [[ScriptingLanguages-AdditionalargumentstoScriptingEngine]]
@@ -88,7 +88,7 @@ Using properties function
 
 *Available as of Camel 2.9*
 
-If you need to use the link:properties.html[Properties] component from a
+If you need to use the <<properties-component,Properties>> component from a
 script to lookup property placeholders, then its a bit cumbersome to do
 so. For example to set a header name myHeader with a value from a property
 placeholder, which key is provided in a header named "foo".
@@ -154,7 +154,7 @@ engine.
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,xml]
 ---------------------------------------
@@ -169,7 +169,7 @@ link:download.html[the download page for the latest versions]).
 See Also
 ~~~~~~~~
 
-* link:languages.html[Languages]
-* link:dsl.html[DSL]
-* link:xml-configuration.html[Xml Configuration]
+* Languages
+* DSL
+* Xml Configuration
 

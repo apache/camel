@@ -1,0 +1,46 @@
+[[removeProperties-eip]]
+== Remove Properties EIP
+
+The RemoveProperties EIP allows you to remove Properties from you exchange.
+
+=== Options
+
+// eip options: START
+The Remove Properties EIP supports 2 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pattern* | *Required* Name or pattern of properties to remove |  | String
+| *excludePattern* | Name or pattern of properties to not remove |  | String
+|===
+// eip options: END
+
+=== Examples
+
+The following example shows how to use the removeProperties EIP
+
+[source,java]
+----
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        from("direct:a")
+            .removeProperties("myProperty", "myProperty1")
+            .to("direct:b");
+    }
+};
+----
+
+
+And the same example using XML:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:a"/>
+           <removeProperties pattern="myProperty*"/>
+        <to uri="direct:b"/>
+    </route>
+</camelContext>
+----

@@ -25,6 +25,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
 import org.apache.camel.processor.interceptor.Tracer;
@@ -127,8 +128,13 @@ public class BindySimpleCsvUnmarshallTest extends AbstractJUnit4SpringContextTes
 
         assertNotNull(orders);
         // As the @DataField defines a default value for the firstName, the
-        // value might not be empty
+        // value might not be empty and equal to defaultValue property 
+        // inside @DataField annotation
         assertFalse(orders.get(0).getFirstName().isEmpty());
+        assertEquals("Joe", orders.get(0).getFirstName());
+        
+        // Check default String value set to empty ("") for the skipped clientNr field
+        assertEquals("", orders.get(0).getClientNr());
     }
     
     public static class ContextConfig extends RouteBuilder {

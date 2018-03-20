@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.kinesis;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import com.amazonaws.services.kinesis.AmazonKinesis;
@@ -26,6 +27,7 @@ import com.amazonaws.services.kinesis.model.GetRecordsResult;
 import com.amazonaws.services.kinesis.model.GetShardIteratorRequest;
 import com.amazonaws.services.kinesis.model.GetShardIteratorResult;
 import com.amazonaws.services.kinesis.model.Record;
+import com.amazonaws.services.kinesis.model.SequenceNumberRange;
 import com.amazonaws.services.kinesis.model.Shard;
 import com.amazonaws.services.kinesis.model.ShardIteratorType;
 import com.amazonaws.services.kinesis.model.StreamDescription;
@@ -44,7 +46,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,10 +65,20 @@ public class KinesisConsumerTest {
 
     @Before
     public void setup() throws Exception {
-        KinesisEndpoint endpoint = new KinesisEndpoint(null, "streamName", component);
-        endpoint.setAmazonKinesisClient(kinesisClient);
-        endpoint.setIteratorType(ShardIteratorType.LATEST);
+        KinesisConfiguration configuration = new KinesisConfiguration();
+        configuration.setAmazonKinesisClient(kinesisClient);
+        configuration.setIteratorType(ShardIteratorType.LATEST);
+        configuration.setShardClosed(KinesisShardClosedStrategyEnum.silent);
+        configuration.setStreamName("streamName");
+        KinesisEndpoint endpoint = new KinesisEndpoint(null, configuration, component);
+        endpoint.start();
         undertest = new KinesisConsumer(endpoint, processor);
+        
+        SequenceNumberRange range = new SequenceNumberRange().withEndingSequenceNumber(null);
+        Shard shard = new Shard().withShardId("shardId").withSequenceNumberRange(range);
+        ArrayList<Shard> shardList = new ArrayList<>();
+        shardList.add(shard);
+       
 
         when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
             .thenReturn(new GetRecordsResult()
@@ -76,7 +87,7 @@ public class KinesisConsumerTest {
         when(kinesisClient.describeStream(any(DescribeStreamRequest.class)))
             .thenReturn(new DescribeStreamResult()
                 .withStreamDescription(new StreamDescription()
-                    .withShards(new Shard().withShardId("shardId"))
+                    .withShards(shardList)
                 )
             );
         when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class)))
@@ -103,11 +114,9 @@ public class KinesisConsumerTest {
 
     @Test
     public void itDoesNotMakeADescribeStreamRequestIfShardIdIsSet() throws Exception {
-        undertest.getEndpoint().setShardId("shardIdPassedAsUrlParam");
+        undertest.getEndpoint().getConfiguration().setShardId("shardIdPassedAsUrlParam");
 
         undertest.poll();
-
-        verify(kinesisClient, never()).describeStream(any(DescribeStreamRequest.class));
 
         final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 
@@ -119,8 +128,8 @@ public class KinesisConsumerTest {
 
     @Test
     public void itObtainsAShardIteratorOnFirstPollForSequenceNumber() throws Exception {
-        undertest.getEndpoint().setSequenceNumber("12345");
-        undertest.getEndpoint().setIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER);
+        undertest.getEndpoint().getConfiguration().setSequenceNumber("12345");
+        undertest.getEndpoint().getConfiguration().setIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER);
 
         undertest.poll();
 

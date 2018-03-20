@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-olingo2-parent</artifactId>
-    <version>2.21.0-SNAPSHOT</version>
+    <version>2.22.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-olingo2</artifactId>
@@ -284,49 +284,80 @@
            If the sample service jar becomes available, we can use it directly -->
       <id>get-olingo2-sample</id>
       <activation>
-        <file>
-          <missing>${basedir}/target/olingo2-my-car-service</missing>
-        </file>
-        <!-- the above condition is evaluated prior to the mvn execution and consequently
-             it evaluates to false when "mvn clean install" is invoked while the folder exists,
-             which is correct, yet unfortunate, as the clean phase will remove the folder and
-             subsequently the source folder is not created.
-             So, we need activate this profle by default and set -fn option to the mvn below to
-             ignore the duplicate error ;-((
-        -->
         <activeByDefault>true</activeByDefault>
       </activation>
       <build>
         <plugins>
           <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${exec-maven-plugin-version}</version>
+            <artifactId>maven-clean-plugin</artifactId>
             <executions>
               <execution>
-                <id>generate-sources</id>
+                <id>clean-olingo2-sample</id>
                 <phase>generate-test-sources</phase>
                 <goals>
-                  <goal>exec</goal>
+                  <goal>clean</goal>
                 </goals>
+                <configuration>
+                  <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                  <filesets>
+                    <fileset>
+                      <directory>${project.build.directory}/olingo2-my-car-service</directory>
+                    </fileset>
+                  </filesets>
+                </configuration>
               </execution>
             </executions>
-            <configuration>
-              <executable>mvn${maven.exe.file.extension}</executable>
-              <workingDirectory>${basedir}/target</workingDirectory>
-              <arguments>
-                <argument>archetype:generate</argument>
-                <argument>-q</argument>
-                <argument>-fn</argument>
-                <argument>-DinteractiveMode=false</argument>
-                <argument>-Dversion=${project.version}</argument>
-                <argument>-DgroupId=org.apache.camel</argument>
-                <argument>-DartifactId=olingo2-my-car-service</argument>
-                <argument>-DarchetypeGroupId=org.apache.olingo</argument>
-                <argument>-DarchetypeArtifactId=olingo-odata2-sample-cars-annotation-archetype</argument>
-                <argument>-DarchetypeVersion=${olingo2-version}</argument>
-              </arguments>
-            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.gmavenplus</groupId>
+            <artifactId>gmavenplus-plugin</artifactId>
+            <version>${gmavenplus-plugin-version}</version>
+            <executions>
+              <execution>
+                <id>define-archetype-properties</id>
+                <phase>generate-test-sources</phase>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <configuration>
+                  <scripts>
+                    <script><![CDATA[
+                      session.userProperties['version'] = project.version
+                      session.userProperties['groupId'] = 'org.apache.camel'
+                      session.userProperties['artifactId'] = 'olingo2-my-car-service'
+                      ]]></script>
+                  </scripts>
+                </configuration>
+              </execution>
+            </executions>
+            <dependencies>
+                <dependency>
+                    <groupId>org.codehaus.groovy</groupId>
+                    <artifactId>groovy-all</artifactId>
+                    <version>${groovy-version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+          </plugin>
+          <plugin>
+            <artifactId>maven-archetype-plugin</artifactId>
+            <version>${maven-archetype-plugin-version}</version>
+            <executions>
+              <execution>
+                <id>generate-my-car-service</id>
+                <phase>generate-test-sources</phase>
+                <goals>
+                  <goal>generate</goal>
+                </goals>
+                <configuration>
+                  <basedir>${project.build.directory}</basedir>
+                  <interactiveMode>false</interactiveMode>
+                  <archetypeGroupId>org.apache.olingo</archetypeGroupId>
+                  <archetypeArtifactId>olingo-odata2-sample-cars-annotation-archetype</archetypeArtifactId>
+                  <archetypeVersion>${olingo2-version}</archetypeVersion>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>

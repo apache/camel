@@ -1,3 +1,4 @@
+[[sort-eip]]
 == Sort EIP
 
 Sort can be used to sort a message. Imagine you consume text files and before processing each file you want to be sure the content is sorted.
@@ -8,7 +9,6 @@ Sort will by default sort the body using a default comparator that handles numer
 
 // eip options: START
 The Sort EIP supports 1 options which are listed below:
-
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

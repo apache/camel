@@ -25,7 +25,6 @@ import java.util.Set;
 
 import com.github.kristofa.brave.Brave;
 import com.github.kristofa.brave.ClientSpanThreadBinder;
-import com.github.kristofa.brave.Sampler;
 import com.github.kristofa.brave.ServerSpan;
 import com.github.kristofa.brave.ServerSpanThreadBinder;
 import com.github.kristofa.brave.SpanCollector;
@@ -59,6 +58,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import zipkin2.reporter.AsyncReporter;
+import zipkin2.reporter.Reporter;
+import zipkin2.reporter.urlconnection.URLConnectionSender;
 
 import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
 
@@ -81,10 +83,15 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
  * However its recommended to configure service mappings so you can use human logic names instead of Camel
  * endpoint uris in the names.
  * <p/>
- * Camel will auto-configure a {@link ScribeSpanCollector} if no SpanCollector explicit has been configured, and
- * if the hostname and port to the span collector has been configured as environment variables
+ * Camel will auto-configure a {@link Reporter span reporter} one hasn't been explicitly configured,
+ * and if the hostname and port to a zipkin collector has been configured as environment variables
  * <ul>
- *     <li>ZIPKIN_COLLECTOR_THRIFT_SERVICE_HOST - The hostname</li>
+ *     <li>ZIPKIN_COLLECTOR_HTTP_SERVICE_HOST - The http hostname</li>
+ *     <li>ZIPKIN_COLLECTOR_HTTP_SERVICE_PORT - The port number</li>
+ * </ul>
+ * or
+ * <ul>
+ *     <li>ZIPKIN_COLLECTOR_THRIFT_SERVICE_HOST - The Scribe (Thrift RPC) hostname</li>
  *     <li>ZIPKIN_COLLECTOR_THRIFT_SERVICE_PORT - The port number</li>
  * </ul>
  * <p/>
@@ -96,16 +103,19 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
 public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, StaticService, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZipkinTracer.class);
+    private static final String ZIPKIN_COLLECTOR_HTTP_SERVICE = "zipkin-collector-http";
     private static final String ZIPKIN_COLLECTOR_THRIFT_SERVICE = "zipkin-collector-thrift";
     private final ZipkinEventNotifier eventNotifier = new ZipkinEventNotifier();
     private final Map<String, Brave> braves = new HashMap<>();
     private transient boolean useFallbackServiceNames;
 
     private CamelContext camelContext;
+    private String endpoint;
     private String hostName;
     private int port;
     private float rate = 1.0f;
     private SpanCollector spanCollector;
+    private Reporter<zipkin2.Span> spanReporter;
     private Map<String, String> clientServiceMappings = new HashMap<>();
     private Map<String, String> serverServiceMappings = new HashMap<>();
     private Set<String> excludePatterns = new HashSet<>();
@@ -144,25 +154,38 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         this.camelContext = camelContext;
     }
 
-    @ManagedAttribute(description = "The hostname for the remote zipkin server to use.")
+    @ManagedAttribute(description = "The POST URL for zipkin's v2 api.")
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    /**
+     * Sets the POST URL for zipkin's <a href="http://zipkin.io/zipkin-api/#/">v2 api</a>, usually
+     * "http://zipkinhost:9411/api/v2/spans"
+     */
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    @ManagedAttribute(description = "The hostname for the remote zipkin scribe collector.")
     public String getHostName() {
         return hostName;
     }
 
     /**
-     * Sets a hostname for the remote zipkin server to use.
+     * Sets the hostname for the remote zipkin scribe collector.
      */
     public void setHostName(String hostName) {
         this.hostName = hostName;
     }
 
-    @ManagedAttribute(description = "The port number for the remote zipkin server to use.")
+    @ManagedAttribute(description = "The port number for the remote zipkin scribe collector.")
     public int getPort() {
         return port;
     }
 
     /**
-     * Sets the port number for the remote zipkin server to use.
+     * Sets the port number for the remote zipkin scribe collector.
      */
     public void setPort(int port) {
         this.port = port;
@@ -183,13 +206,28 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         this.rate = rate;
     }
 
+    /**
+     * Returns the legacy span collector or null if using the reporter
+     *
+     * @deprecated use {@link #getSpanReporter()}
+     */
+    @Deprecated
     public SpanCollector getSpanCollector() {
         return spanCollector;
     }
 
-    /**
-     * The collector to use for sending zipkin span events to the zipkin server.
-     */
+    /** Sets the reporter used to send timing data (spans) to the zipkin server. */
+    public void setSpanReporter(Reporter<zipkin2.Span> spanReporter) {
+        this.spanReporter = spanReporter;
+    }
+
+    /** Returns the reporter used to send timing data (spans) to the zipkin server. */
+    public Reporter<zipkin2.Span> getSpanReporter() {
+        return spanReporter;
+    }
+
+    /** @deprecated use {@link #setSpanReporter(Reporter)} */
+    @Deprecated
     public void setSpanCollector(SpanCollector spanCollector) {
         this.spanCollector = spanCollector;
     }
@@ -307,31 +345,46 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             camelContext.addRoutePolicyFactory(this);
         }
 
-        if (spanCollector == null) {
-            if (hostName != null && port > 0) {
+        if (spanReporter == null) {
+            if (spanCollector != null) { // possible via setter
+            } else if (endpoint != null) {
+                LOG.info("Configuring Zipkin URLConnectionSender using endpoint: {} ", endpoint);
+                spanReporter = AsyncReporter.create(URLConnectionSender.create(endpoint));
+            } else if (hostName != null && port > 0) {
                 LOG.info("Configuring Zipkin ScribeSpanCollector using host: {} and port: {}", hostName, port);
                 spanCollector = new ScribeSpanCollector(hostName, port);
             } else {
-                // is there a zipkin service setup as ENV variable to auto register a scribe span collector
-                String host = new ServiceHostPropertiesFunction().apply(ZIPKIN_COLLECTOR_THRIFT_SERVICE);
-                String port = new ServicePortPropertiesFunction().apply(ZIPKIN_COLLECTOR_THRIFT_SERVICE);
+                // is there a zipkin service setup as ENV variable to auto register a span reporter
+                String host = new ServiceHostPropertiesFunction().apply(ZIPKIN_COLLECTOR_HTTP_SERVICE);
+                String port = new ServicePortPropertiesFunction().apply(ZIPKIN_COLLECTOR_HTTP_SERVICE);
                 if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
-                    LOG.info("Auto-configuring Zipkin ScribeSpanCollector using host: {} and port: {}", host, port);
+                    LOG.info("Auto-configuring Zipkin URLConnectionSender using host: {} and port: {}", host, port);
                     int num = camelContext.getTypeConverter().mandatoryConvertTo(Integer.class, port);
-                    spanCollector = new ScribeSpanCollector(host, num);
+                    String implicitEndpoint = "http://" + host + ":" + num + "/api/v2/spans";
+                    spanReporter = AsyncReporter.create(URLConnectionSender.create(implicitEndpoint));
+                } else {
+                    host = new ServiceHostPropertiesFunction().apply(ZIPKIN_COLLECTOR_THRIFT_SERVICE);
+                    port = new ServicePortPropertiesFunction().apply(ZIPKIN_COLLECTOR_THRIFT_SERVICE);
+                    if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
+                        LOG.info("Auto-configuring Zipkin ScribeSpanCollector using host: {} and port: {}", host, port);
+                        int num = camelContext.getTypeConverter().mandatoryConvertTo(Integer.class, port);
+                        spanCollector = new ScribeSpanCollector(host, num);
+                    }
                 }
             }
         }
 
-        if (spanCollector == null) {
-            // Try to lookup the span collector from the registry if only one instance is present
-            Set<SpanCollector> collectors = camelContext.getRegistry().findByType(SpanCollector.class);
-            if (collectors.size() == 1) {
-                spanCollector = collectors.iterator().next();
+        if (spanReporter == null && spanCollector == null) {
+            // Try to lookup the span reporter from the registry if only one instance is present
+            Set<Reporter> reporters = camelContext.getRegistry().findByType(Reporter.class);
+            if (reporters.size() == 1) {
+                spanReporter = reporters.iterator().next();
             }
         }
 
-        ObjectHelper.notNull(spanCollector, "SpanCollector", this);
+        if (spanCollector == null) {
+            ObjectHelper.notNull(spanReporter, "Reporter<zipkin2.Span>", this);
+        }
 
         if (clientServiceMappings.isEmpty() && serverServiceMappings.isEmpty()) {
             LOG.warn("No service name(s) has been mapped in clientServiceMappings or serverServiceMappings. Camel will fallback and use endpoint uris as service names.");
@@ -350,7 +403,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             createBraveForService(pattern, serviceName);
         }
 
-        ServiceHelper.startServices(spanCollector, eventNotifier);
+        ServiceHelper.startServices(spanReporter, eventNotifier);
     }
 
     @Override
@@ -360,9 +413,9 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         ServiceHelper.stopService(eventNotifier);
 
         // stop and close collector
-        ServiceHelper.stopAndShutdownService(spanCollector);
-        if (spanCollector instanceof Closeable) {
-            IOHelper.close((Closeable) spanCollector);
+        ServiceHelper.stopAndShutdownService(spanReporter);
+        if (spanReporter instanceof Closeable) {
+            IOHelper.close((Closeable) spanReporter);
         }
         // clear braves
         braves.clear();
@@ -470,14 +523,20 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private void createBraveForService(String pattern, String serviceName) {
         Brave brave = braves.get(pattern);
         if (brave == null && !braves.containsKey(serviceName)) {
-            Brave.Builder builder = new Brave.Builder(serviceName);
-            builder = builder.traceSampler(Sampler.create(rate));
-            if (spanCollector != null) {
-                builder = builder.spanCollector(spanCollector);
-            }
-            brave = builder.build();
+            brave = newBrave(serviceName);
             braves.put(serviceName, brave);
         }
+    }
+
+    private Brave newBrave(String serviceName) {
+        Brave.Builder builder = new Brave.Builder(serviceName)
+            .traceSampler(com.github.kristofa.brave.Sampler.create(rate));
+        if (spanReporter != null) {
+            builder = builder.spanReporter(spanReporter);
+        } else if (spanCollector != null) {
+            builder.spanCollector(spanCollector);
+        }
+        return builder.build();
     }
 
     private Brave getBrave(String serviceName) {
@@ -487,12 +546,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
 
             if (brave == null && useFallbackServiceNames) {
                 LOG.debug("Creating Brave assigned to serviceName: {}", serviceName + " as fallback");
-                Brave.Builder builder = new Brave.Builder(serviceName);
-                builder = builder.traceSampler(Sampler.create(rate));
-                if (spanCollector != null) {
-                    builder = builder.spanCollector(spanCollector);
-                }
-                brave = builder.build();
+                brave = newBrave(serviceName);
                 braves.put(serviceName, brave);
             }
         }

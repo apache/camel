@@ -35,7 +35,7 @@ public class ElasticsearchComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use an existing configured Elasticsearch client instead of creating a
+     * To use an existing configured Elasticsearch client, instead of creating a
      * client per endpoint. This allow to customize the client with specific
      * settings.
      */

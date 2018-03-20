@@ -17,10 +17,21 @@
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultMessage;
 import org.eclipse.jetty.client.HttpConversation;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
@@ -31,6 +42,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -69,6 +82,46 @@ public class AbstractClientBaseTest {
     @Before
     public void startClient() throws Exception {
         client.start();
+    }
+
+    @Test
+    public void shouldDetermineHeadersForRequest() {
+        final CamelContext context = new DefaultCamelContext();
+
+        final Exchange exchange = new DefaultExchange(context);
+        final Message in = new DefaultMessage(context);
+        in.setHeader("sforce-auto-assign", "TRUE");
+        in.setHeader("SFORCE-CALL-OPTIONS",
+            new String[] {"client=SampleCaseSensitiveToken/100", "defaultNamespace=battle"});
+        in.setHeader("Sforce-Limit-Info", singletonList("per-app-api-usage"));
+        in.setHeader("x-sfdc-packageversion-clientPackage", "1.0");
+        in.setHeader("Sforce-Query-Options", "batchSize=1000");
+        in.setHeader("Non-Related", "Header");
+        exchange.setIn(in);
+
+        final Map<String, List<String>> headers = AbstractClientBase.determineHeaders(exchange);
+
+        assertThat(headers).containsOnly(entry("sforce-auto-assign", singletonList("TRUE")),
+            entry("SFORCE-CALL-OPTIONS", asList("client=SampleCaseSensitiveToken/100", "defaultNamespace=battle")),
+            entry("Sforce-Limit-Info", singletonList("per-app-api-usage")),
+            entry("x-sfdc-packageversion-clientPackage", singletonList("1.0")),
+            entry("Sforce-Query-Options", singletonList("batchSize=1000")));
+    }
+
+    @Test
+    public void shouldDetermineHeadersFromResponse() {
+        final Response response = mock(Response.class);
+        final HttpFields httpHeaders = new HttpFields();
+        httpHeaders.add("Date", "Mon, 20 May 2013 22:21:46 GMT");
+        httpHeaders.add("Sforce-Limit-Info", "api-usage=18/5000");
+        httpHeaders.add("Last-Modified", "Mon, 20 May 2013 20:49:32 GMT");
+        httpHeaders.add("Content-Type", "application/json;charset=UTF-8");
+        httpHeaders.add("Transfer-Encoding", "chunked");
+
+        when(response.getHeaders()).thenReturn(httpHeaders);
+        final Map<String, String> headers = AbstractClientBase.determineHeadersFrom(response);
+
+        assertThat(headers).containsEntry("Sforce-Limit-Info", "api-usage=18/5000");
     }
 
     @Test

@@ -1,3 +1,4 @@
+[[properties-component]]
 == Properties Component
 
 *Available as of Camel version 2.3*
@@ -23,19 +24,19 @@ The Properties component supports 17 options which are listed below.
 | Name | Description | Default | Type
 | *locations* (common) | A list of locations to load properties. This option will override any default locations and only use the locations from this option. |  | List
 | *location* (common) | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option. |  | String
-| *encoding* (common) | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by link java.util.Propertiesload(java.io.InputStream) |  | String
+| *encoding* (common) | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by link java.util.Propertiesload(java.io.InputStream) |  | String
 | *propertiesResolver* (common) | To use a custom PropertiesResolver |  | PropertiesResolver
 | *propertiesParser* (common) | To use a custom PropertiesParser |  | PropertiesParser
 | *cache* (common) | Whether or not to cache loaded properties. The default value is true. | true | boolean
 | *propertyPrefix* (advanced) | Optional prefix prepended to property names before resolution. |  | String
 | *propertySuffix* (advanced) | Optional suffix appended to property names before resolution. |  | String
-| *fallbackToUnaugmented Property* (advanced) | If true first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false only the augmented property name is searched. | true | boolean
-| *defaultFallbackEnabled* (common) | If false the component does not attempt to find a default for the key by looking after the colon separator. | true | boolean
-| *ignoreMissingLocation* (common) | Whether to silently ignore if a location cannot be located such as a properties file not found. | false | boolean
+| *fallbackToUnaugmented Property* (advanced) | If true, first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false, only the augmented property name is searched. | true | boolean
+| *defaultFallbackEnabled* (common) | If false, the component does not attempt to find a default for the key by looking after the colon separator. | true | boolean
+| *ignoreMissingLocation* (common) | Whether to silently ignore if a location cannot be located, such as a properties file not found. | false | boolean
 | *prefixToken* (advanced) | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_PREFIX_TOKEN). | {{ | String
 | *suffixToken* (advanced) | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_SUFFIX_TOKEN). | }} | String
 | *initialProperties* (advanced) | Sets initial properties which will be used before any locations are resolved. |  | Properties
-| *overrideProperties* (advanced) | Sets a special list of override properties that take precedence and will use first if a property exist. |  | Properties
+| *overrideProperties* (advanced) | Sets a special list of override properties that take precedence and will use first, if a property exist. |  | Properties
 | *systemPropertiesMode* (common) | Sets the system property mode. | 2 | int
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
@@ -53,23 +54,26 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *key* | *Required* Property key to use as placeholder |  | String
 |===
 
+
 ==== Query Parameters (6 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *ignoreMissingLocation* (common) | Whether to silently ignore if a location cannot be located such as a properties file not found. | false | boolean
+| *ignoreMissingLocation* (common) | Whether to silently ignore if a location cannot be located, such as a properties file not found. | false | boolean
 | *locations* (common) | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option. |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored. |  | ExceptionHandler
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN/ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN/ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the default exchange pattern when creating an exchange. |  | ExchangePattern
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -85,7 +89,7 @@ You can use the method `resolvePropertyPlaceholders` on the
 
 Camel now provides a new `PropertiesComponent` in *camel-core* which
 allows you to use property placeholders when defining Camel
-link:endpoint.html[Endpoint] URIs.
+Endpoint URIs.
 
 This works much like you would do if using Spring's
 `<property-placeholder>` tag. However Spring have a limitation which
@@ -102,10 +106,10 @@ with Camel, see further below for more details.
 The property placeholder is generally in use when doing:
 
 * lookup or creating endpoints
-* lookup of beans in the link:registry.html[Registry]
+* lookup of beans in the Registry
 * additional supported in Spring XML (see below in examples)
 * using Blueprint PropertyPlaceholder with Camel
-link:properties.html[Properties] component
+<<properties-component,Properties>> component
 * using `@PropertyInject` to inject a property in a POJO
 * *Camel 2.14.1* Using default value if a property does not exists
 * *Camel 2.14.1* Include out of the box functions, to lookup property
@@ -137,9 +141,9 @@ their own resolver to lookup properties. Camel provides a default
 implementation
 `org.apache.camel.component.properties.DefaultPropertiesResolver` which
 is capable of loading properties from the file system, classpath or
-link:registry.html[Registry]. You can prefix the locations with either:
+Registry. You can prefix the locations with either:
 
-* `ref:` *Camel 2.4:* to lookup in the link:registry.html[Registry]
+* `ref:` *Camel 2.4:* to lookup in the Registry
 * `file:` to load the from file system
 * `classpath:` to load from classpath (this is also the default if no
 prefix is provided)
@@ -302,13 +306,13 @@ Setting the properties location through the location tag works just fine but som
 Camel 2.10 onwards supports specifying a value for the cache option both
 inside the Spring as well as the Blueprint XML.
 
-=== Using a Properties from the link:registry.html[Registry]
+=== Using a Properties from the Registry
 
 *Available as of Camel 2.4* +
 For example in OSGi you may want to expose a service which returns the
 properties as a `java.util.Properties` object.
 
-Then you could setup the link:properties.html[Properties] component as
+Then you could setup the <<properties-component,Properties>> component as
 follows:
 
 [source,xml]
@@ -318,7 +322,7 @@ follows:
 
 Where `myProperties` is the id to use for lookup in the OSGi registry.
 Notice we use the `ref:` prefix to tell Camel that it should lookup the
-properties for the link:registry.html[Registry].
+properties for the Registry.
 
 === Examples using properties component
 
@@ -400,16 +404,16 @@ from("{{cool.start}}")
 ----
 
 You can also your property placeholders when using
-link:producertemplate.html[ProducerTemplate] for example:
+ProducerTemplate for example:
 
 [source,java]
 ----
 template.sendBody("{{cool.start}}", "Hello World");
 ----
 
-=== Example with link:simple.html[Simple] language
+=== Example with <<simple-language,Simple>> language
 
-The link:simple.html[Simple] language now also support using property
+The <<simple-language,Simple>> language now also support using property
 placeholders, for example in the route below:
 
 [source,java]
@@ -422,7 +426,7 @@ from("direct:start")
     .transform().simple("Hi ${body} do you think ${properties:cheese.quote}?");
 ----
 
-You can also specify the location in the link:simple.html[Simple]
+You can also specify the location in the <<simple-language,Simple>>
 language for example:
 
 [source,java]
@@ -500,7 +504,7 @@ special placeholder namespace.
 In the example below we use the `prop` prefix for the namespace
 `http://camel.apache.org/schema/placeholder` by which we can use the
 `prop` prefix in the attributes in the XML DSLs. Notice how we use that
-in the link:multicast.html[Multicast] to indicate that the option
+in the Multicast to indicate that the option
 `stopOnException` should be the value of the placeholder with the key
 "stop".
 
@@ -515,7 +519,7 @@ stop=true
 
 *Available as of Camel 2.7*
 
-Camel supports link:using-osgi-blueprint-with-camel.html[Blueprint]
+Camel supports Blueprint
 which also offers a property placeholder service. Camel supports
 convention over configuration, so all you have to do is to define the
 OSGi Blueprint property placeholder in the XML file as shown below:
@@ -719,7 +723,7 @@ placeholder notation with `{{` and `}}`.
 === Clashing Spring property placeholders with Camels Simple language
 
 Take notice when using Spring bridging placeholder then the spring `${ }`
-syntax clashes with the link:simple.html[Simple] in Camel, and therefore
+syntax clashes with the <<simple-language,Simple>> in Camel, and therefore
 take care. For example:
 
 [source,xml]
@@ -730,7 +734,7 @@ take care. For example:
 ----
 
 clashes with Spring property placeholders, and you should use `$simple{ }`
-to indicate using the link:simple.html[Simple] language in Camel.
+to indicate using the <<simple-language,Simple>> language in Camel.
 
 [source,xml]
 ----
@@ -746,8 +750,8 @@ An alternative is to configure the `PropertyPlaceholderConfigurer` with
 
 *Available as of Camel 2.10*
 
-When link:testing.html[Testing] with Camel and using the
-link:properties.html[Properties] component, you may want to be able to
+When Testing with Camel and using the
+<<properties-component,Properties>> component, you may want to be able to
 provide the properties to be used from directly within the unit test
 source code. +
 This is now possible from Camel 2.10 onwards, as the Camel test kits, eg
@@ -826,7 +830,7 @@ private int timeout;
 
 *Available as of Camel 2.14.1*
 
-The link:properties.html[Properties] component includes the following
+The <<properties-component,Properties>> component includes the following
 functions out of the box
 
 * `env` - A function to lookup the property from OS environment variables
@@ -894,7 +898,7 @@ export $FOO_SERVICE_PORT=8888
 
 For example if the FOO service a remote HTTP service, then we can refer
 to the service in the Camel endpoint uri, and use
-the link:http.html[HTTP] component to make the HTTP call:
+the <<http-component,HTTP>> component to make the HTTP call:
 
 [source,xml]
 ----
@@ -923,7 +927,7 @@ example to call a service on localhost, maybe for unit testing etc
 
 *Available as of Camel 2.14.1*
 
-The link:properties.html[Properties] component allow to plugin 3rd party
+The <<properties-component,Properties>> component allow to plugin 3rd party
 functions which can be used during parsing of the property placeholders.
 These functions are then able to do custom logic to resolve the
 placeholders, such as looking up in databases, do custom computations,
@@ -991,6 +995,6 @@ pc.addFunction(new MyBeerFunction());
 
 === See Also
 
-* link:properties.html[Properties] component
-* link:jasypt.html[Jasypt] for using encrypted values (eg passwords) in
+* <<properties-component,Properties>> component
+* Jasypt for using encrypted values (eg passwords) in
 the properties

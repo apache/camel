@@ -83,17 +83,17 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
     }
 
     @Override
-    public boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public boolean retrieveFile(String name, Exchange exchange, long isze) throws GenericFileOperationFailedException {
         return false;
     }
     
     @Override
-    public void releaseRetreivedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
-        // No-op   
+    public void releaseRetrievedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
+        // noop
     }
 
     @Override
-    public boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public boolean storeFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         ObjectHelper.notNull(session, "session");
         ScpConfiguration cfg = endpoint.getConfiguration();
         
@@ -193,10 +193,22 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
     @Override
     public void disconnect() throws GenericFileOperationFailedException {
-        if (isConnected()) {
-            session.disconnect();
+        try {
+            if (isConnected()) {
+                session.disconnect();
+            }
+        } finally {
+            session = null;
         }
-        session = null;
+    }
+
+    @Override
+    public void forceDisconnect() throws GenericFileOperationFailedException {
+        try {
+            session.disconnect();
+        } finally {
+            session = null;
+        }
     }
 
     @Override
@@ -238,7 +250,20 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 } catch (Exception e) {
                     throw new GenericFileOperationFailedException("Cannot load private keyfile: " + config.getPrivateKeyFile(), e);
                 }
+            } else if (ObjectHelper.isNotEmpty(config.getPrivateKeyBytes())) {
+                LOG.trace("Using private key bytes: {}", config.getPrivateKeyBytes());
+
+                String pkfp = config.getPrivateKeyFilePassphrase();
+
+                byte[] data = config.getPrivateKeyBytes();
+                
+                try {
+                    jsch.addIdentity("camel-jsch", data, null, pkfp != null ? pkfp.getBytes() : null);
+                } catch (Exception e) {
+                    throw new GenericFileOperationFailedException("Cannot load private key bytes: " + config.getPrivateKeyBytes(), e);
+                }                
             }
+
 
             String knownHostsFile = config.getKnownHostsFile();
             if (knownHostsFile == null && config.isUseUserKnownHostsFile()) {

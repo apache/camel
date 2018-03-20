@@ -1,3 +1,4 @@
+[[elasticsearch5-component]]
 == Elasticsearch5 Component (deprecated)
 
 *Available as of Camel version 2.19*
@@ -38,7 +39,7 @@ The Elasticsearch5 component supports 2 options which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *client* (advanced) | To use an existing configured Elasticsearch client instead of creating a client per endpoint. This allow to customize the client with specific settings. |  | TransportClient
+| *client* (advanced) | To use an existing configured Elasticsearch client, instead of creating a client per endpoint. This allow to customize the client with specific settings. |  | TransportClient
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -58,13 +59,16 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *clusterName* | *Required* Name of the cluster |  | String
 |===
 
+
 ==== Query Parameters (16 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -81,7 +85,7 @@ with the following path and query parameters:
 | *tcpConnectTimeout* (producer) | The time( in unit) to wait for connection timeout. | 30s | String
 | *transportAddresses* (producer) | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for transportAddresses to be considered instead. |  | String
 | *waitForActiveShards* (producer) | Index creation waits for the write consistency number of shards to be available | 1 | int
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *enableSSL* (security) | Enable SSL. Require XPack client jar on the classpath | false | boolean
 | *password* (authentication) | Password for authenticate against the cluster. Require XPack client jar on the classpath |  | String
 | *user* (authentication) | User for authenticate against the cluster. Requires transport_client role for accessing the cluster. Require XPack client jar on the classpath |  | String
@@ -170,7 +174,7 @@ https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-api.h
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

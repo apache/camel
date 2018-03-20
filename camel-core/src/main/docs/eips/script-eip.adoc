@@ -1,3 +1,4 @@
+[[script-eip]]
 == Script EIP
 *Available as of Camel 2.16*
 
@@ -11,7 +12,7 @@ If the return value should be used as a changed message body then use link:./mes
 === Options
 
 // eip options: START
-The Script EIP supports 0 options which are listed below:
+The Script EIP has no options.
 // eip options: END
 
 === Samples
@@ -73,4 +74,3 @@ For example to load a groovy script from the classpath you need to prefix the va
 
 You can also refer to the script from the file system with `file:` instead of `classpath:`
 such as `file:/var/myscript.groovy`
-

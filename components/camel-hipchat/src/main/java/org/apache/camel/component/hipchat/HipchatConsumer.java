@@ -17,7 +17,6 @@
 package org.apache.camel.component.hipchat;
 
 import java.io.IOException;
-
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -26,14 +25,13 @@ import java.util.TimeZone;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.util.URISupport;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +43,6 @@ public class HipchatConsumer extends ScheduledPollConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(HipchatConsumer.class);
     private static final MapType MAP_TYPE = TypeFactory.defaultInstance().constructMapType(Map.class, String.class, Object.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final CloseableHttpClient HTTP_CLIENT = HttpClients.createDefault();
     
     private transient String hipchatConsumerToString;
 
@@ -100,7 +97,7 @@ public class HipchatConsumer extends ScheduledPollConsumer {
     }
 
     protected CloseableHttpResponse executeGet(HttpGet httpGet) throws IOException {
-        return HTTP_CLIENT.execute(httpGet);
+        return getConfig().getHttpClient().execute(httpGet);
     }
 
     private String getMostRecentMessageUrl() {

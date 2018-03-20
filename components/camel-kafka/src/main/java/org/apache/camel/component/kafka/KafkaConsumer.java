@@ -39,6 +39,7 @@ import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.InterruptException;
 
@@ -76,6 +77,9 @@ public class KafkaConsumer extends DefaultConsumer {
         if (brokers == null) {
             brokers = endpoint.getComponent().getBrokers();
         }
+        if (brokers == null) {
+            throw new IllegalArgumentException("URL to the Kafka brokers must be configured with the brokers option on either the component or endpoint.");
+        }
 
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
 
@@ -107,6 +111,8 @@ public class KafkaConsumer extends DefaultConsumer {
 
         for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
             KafkaFetchRecords task = new KafkaFetchRecords(topic, pattern, i + "", getProps());
+            // pre-initialize task during startup so if there is any error we have it thrown asap
+            task.preInit();
             executor.submit(task);
             tasks.add(task);
         }
@@ -154,15 +160,14 @@ public class KafkaConsumer extends DefaultConsumer {
             boolean reConnect = true;
 
             while (reConnect) {
-
-                // create consumer
-                ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
                 try {
-                    // Kafka uses reflection for loading authentication settings, use its classloader
-                    Thread.currentThread().setContextClassLoader(org.apache.kafka.clients.consumer.KafkaConsumer.class.getClassLoader());
-                    this.consumer = new org.apache.kafka.clients.consumer.KafkaConsumer(kafkaProps);
-                } finally {
-                    Thread.currentThread().setContextClassLoader(threadClassLoader);
+                    if (!first) {
+                        // re-initialize on re-connect so we have a fresh consumer
+                        doInit();
+                    }
+                } catch (Throwable e) {
+                    // ensure this is logged so users can see the problem
+                    log.warn("Error creating org.apache.kafka.clients.consumer.KafkaConsumer due " + e.getMessage(), e);
                 }
 
                 if (!first) {
@@ -183,10 +188,28 @@ public class KafkaConsumer extends DefaultConsumer {
             }
         }
 
+        void preInit() {
+            doInit();
+        }
+
+        protected void doInit() {
+            // create consumer
+            ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
+            try {
+                // Kafka uses reflection for loading authentication settings, use its classloader
+                Thread.currentThread().setContextClassLoader(org.apache.kafka.clients.consumer.KafkaConsumer.class.getClassLoader());
+                // this may throw an exception if something is wrong with kafka consumer
+                this.consumer = new org.apache.kafka.clients.consumer.KafkaConsumer(kafkaProps);
+            } finally {
+                Thread.currentThread().setContextClassLoader(threadClassLoader);
+            }
+        }
+
         @SuppressWarnings("unchecked")
         protected boolean doRun() {
             // allow to re-connect thread in case we use that to retry failed messages
             boolean reConnect = false;
+            boolean unsubscribing = false;
 
             try {
                 if (topicPattern != null) {
@@ -261,7 +284,7 @@ public class KafkaConsumer extends DefaultConsumer {
                                 if (!isAutoCommitEnabled()) {
                                     exchange.getIn().setHeader(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, !recordIterator.hasNext());
                                 }
-                                if (endpoint.getComponent().isAllowManualCommit()) {
+                                if (endpoint.getConfiguration().isAllowManualCommit()) {
                                     // allow Camel users to access the Kafka consumer API to be able to do for example manual commits
                                     KafkaManualCommit manual = endpoint.getComponent().getKafkaManualCommitFactory().newInstance(exchange, consumer, topicName, threadId,
                                         offsetRepository, partition, partitionLastOffset);
@@ -320,12 +343,22 @@ public class KafkaConsumer extends DefaultConsumer {
                 }
 
                 log.info("Unsubscribing {} from topic {}", threadId, topicName);
+                // we are unsubscribing so do not re connect
+                unsubscribing = true;
                 consumer.unsubscribe();
             } catch (InterruptException e) {
                 getExceptionHandler().handleException("Interrupted while consuming " + threadId + " from kafka topic", e);
                 log.info("Unsubscribing {} from topic {}", threadId, topicName);
                 consumer.unsubscribe();
                 Thread.currentThread().interrupt();
+            } catch (KafkaException e) {
+                // some kind of error in kafka, it may happen during unsubscribing or during normal processing
+                if (unsubscribing) {
+                    getExceptionHandler().handleException("Error unsubscribing " + threadId + " from kafka topic " + topicName, e);
+                } else {
+                    log.warn("KafkaException consuming {} from topic {}. Will attempt to re-connect on next run", threadId, topicName);
+                    reConnect = true;
+                }
             } catch (Exception e) {
                 getExceptionHandler().handleException("Error consuming " + threadId + " from kafka topic", e);
             } finally {

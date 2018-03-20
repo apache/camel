@@ -1,3 +1,4 @@
+[[ejb-component]]
 == EJB Component
 
 *Available as of Camel version 2.4*
@@ -25,7 +26,7 @@ ejb:ejbName[?options]
 ---------------------
 
 Where *ejbName* can be any string which is used to look up the EJB in
-the Application Server JNDI link:registry.html[Registry]
+the Application Server JNDI Registry
 
 ### Options
 
@@ -59,22 +60,25 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *beanName* | *Required* Sets the name of the bean to invoke |  | String
 |===
 
+
 ==== Query Parameters (5 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *method* (producer) | Sets the name of the method to invoke on the bean |  | String
-| *cache* (advanced) | If enabled Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. | false | boolean
-| *multiParameterArray* (advanced) | *Deprecated* How to treat the parameters which are passed from the message body.true means the message body should be an array of parameters.. Deprecation note: This option is used internally by Camel and is not intended for end users to use. Deprecation note: This option is used internally by Camel, and is not intended for end users to use. | false | boolean
+| *cache* (advanced) | If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. | false | boolean
+| *multiParameterArray* (advanced) | *Deprecated* How to treat the parameters which are passed from the message body.true means the message body should be an array of parameters.. Deprecation note: This option is used internally by Camel, and is not intended for end users to use. Deprecation note: This option is used internally by Camel, and is not intended for end users to use. | false | boolean
 | *parameters* (advanced) | Used for configuring additional properties on the bean |  | Map
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
@@ -83,9 +87,9 @@ with the following path and query parameters:
 
 How bean methods to be invoked are chosen (if they are not specified
 explicitly through the *method* parameter) and how parameter values are
-constructed from the link:message.html[Message] are all defined by the
-link:bean-binding.html[Bean Binding] mechanism which is used throughout
-all of the various link:bean-integration.html[Bean Integration]
+constructed from the Message are all defined by the
+Bean Binding mechanism which is used throughout
+all of the various Bean Integration
 mechanisms in Camel.
 
 ### Examples
@@ -130,7 +134,7 @@ public class GreaterImpl implements GreaterLocal {
 
 In this example we want to invoke the `hello` method on the EJB. Since
 this example is based on an unit test using Apache OpenEJB we have to
-set a `JndiContext` on the link:ejb.html[EJB] component with the OpenEJB
+set a `JndiContext` on the <<ejb-component,EJB>> component with the OpenEJB
 settings.
 
 [source,java]
@@ -168,10 +172,10 @@ from("direct:start")
 *In a real application server*
 
 In a real application server you most likely do not have to setup a
-`JndiContext` on the link:ejb.html[EJB] component as it will create a
+`JndiContext` on the <<ejb-component,EJB>> component as it will create a
 default `JndiContext` on the same JVM as the application server, which
 usually allows it to access the JNDI registry and lookup the
-link:ejb.html[EJB]s. However if you need to access a application server on a remote JVM or
+<<ejb-component,EJB>>s. However if you need to access a application server on a remote JVM or
 the likes, you have to prepare the properties beforehand.
 
 #### Using Spring XML
@@ -179,7 +183,7 @@ the likes, you have to prepare the properties beforehand.
 And this is the same example using Spring XML instead:
 
 Again since this is based on an unit test we need to setup the
-link:ejb.html[EJB] component:
+<<ejb-component,EJB>> component:
 
 [source,XML]
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -194,7 +198,7 @@ link:ejb.html[EJB] component:
 </p:properties>
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Before we are ready to use link:ejb.html[EJB] in the Camel routes:
+Before we are ready to use <<ejb-component,EJB>> in the Camel routes:
 
 [source,XML]
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -209,10 +213,10 @@ Before we are ready to use link:ejb.html[EJB] in the Camel routes:
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
-* link:bean.html[Bean]
-* link:bean-binding.html[Bean Binding]
-* link:bean-integration.html[Bean Integration]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+* <<bean-component,Bean>>
+* Bean Binding
+* Bean Integration

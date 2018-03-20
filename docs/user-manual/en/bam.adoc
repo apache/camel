@@ -4,7 +4,7 @@ Business Activity Monitoring
 
 The *Camel BAM* module provides a Business Activity Monitoring (BAM)
 framework for testing business processes across multiple message
-exchanges on different link:endpoint.html[Endpoint] instances.
+exchanges on different Endpoint instances.
 
 Consider, for example, a simple system in which you submit Purchase
 Orders into system A and then receive Invoices from system B. You might
@@ -61,8 +61,8 @@ work.
 As you can see in the above example, we first define two activities, and
 then rules to specify when we expect them to complete for a process
 instance and when an error condition should be raised.p. The
-ProcessBuilder is a link:routebuilder.html[RouteBuilder] and can be
-added to any link:camelcontext.html[CamelContext].
+ProcessBuilder is a RouteBuilder and can be
+added to any CamelContext.
 
 [[BAM-CompleteExample]]
 Complete Example
@@ -70,7 +70,7 @@ Complete Example
 
 For a complete example please see the link:bam-example.html[BAM
 Example], which is part of the standard Camel
-link:examples.html[Examples]
+Examples
 
 [[BAM-UseCases]]
 Use Cases

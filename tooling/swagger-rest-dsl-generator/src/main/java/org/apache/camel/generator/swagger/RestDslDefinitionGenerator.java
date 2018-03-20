@@ -30,7 +30,7 @@ public final class RestDslDefinitionGenerator extends RestDslGenerator<RestDslDe
     public RestsDefinition generate(final CamelContext context) {
         final RestDefinitionEmitter emitter = new RestDefinitionEmitter(context);
 
-        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(emitter, destinationGenerator());
+        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(emitter, filter, destinationGenerator());
 
         swagger.getPaths().forEach(restDslStatement::visit);
 

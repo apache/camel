@@ -4,28 +4,28 @@ Apache Camel is designed to work nicely with the
 http://www.springframework.org/[Spring Framework] in a number of ways.
 
 * Camel uses Spring Transactions as the default transaction handling in
-components like link:jms.html[JMS] and link:jpa.html[JPA]
+components like <<jms-component,JMS>> and <<jms-component,JPA>>
 * Camel works with Spring 2 XML processing with the
-link:xml-configuration.html[Xml Configuration]
+Xml Configuration
 * Camel Spring XML Schema's is defined at link:xml-reference.html[Xml
 Reference]
 * Camel supports a powerful version of link:spring-remoting.html[Spring
 Remoting] which can use powerful routing between the client and server
 side along with using all of the available
-link:components.html[Components] for the transport
-* Camel provides powerful link:bean-integration.html[Bean Integration]
+Components for the transport
+* Camel provides powerful Bean Integration
 with any bean defined in a Spring ApplicationContext
 * Camel integrates with various Spring helper classes; such as providing
-link:type-converter.html[Type Converter] support for Spring Resources
+Type Converter support for Spring Resources
 etc
-* Allows Spring to dependency inject link:component.html[Component]
-instances or the link:camelcontext.html[CamelContext] instance itself
+* Allows Spring to dependency inject Component
+instances or the CamelContext instance itself
 and auto-expose Spring beans as components and endpoints.
-* Allows you to reuse the link:spring-testing.html[Spring Testing]
+* Allows you to reuse the Spring Testing
 framework to simplify your unit and integration testing using
 link:enterprise-integration-patterns.html[Enterprise Integration
-Patterns] and Camel's powerful link:mock.html[Mock] and
-link:test.html[Test] endpoints
+Patterns] and Camel's powerful <<mock-component,Mock>> and
+<<test-component,Test>> endpoints
 * From *Camel 2.15* onwards Camel supports Spring Boot using
 the `camel-spring-boot` component.
 
@@ -33,14 +33,14 @@ the `camel-spring-boot` component.
 
 You can configure a CamelContext inside any spring.xml using the
 http://camel.apache.org/maven/current/camel-spring/apidocs/org/apache/camel/spring/CamelContextFactoryBean.html[CamelContextFactoryBean].
-This will automatically link:lifecycle.html[start] the
-link:camelcontext.html[CamelContext] along with any referenced
-link:routes.html[Routes] along any referenced
-link:component.html[Component] and link:endpoint.html[Endpoint]
+This will automatically start the
+CamelContext along with any referenced
+Routes along any referenced
+Component and Endpoint
 instances.
 
 * Adding Camel schema
-* Configure link:routes.html[Routes] in two ways:
+* Configure Routes in two ways:
 ** Using Java Code
 ** Using Spring XML
 
@@ -118,7 +118,7 @@ configuration of CamelContext using Spring]
 $### Using Java Code
 
 You can use Java Code to define your
-link:routebuilder.html[RouteBuilder] implementations. These can be
+RouteBuilder implementations. These can be
 defined as beans in spring and then referenced in your camel context
 e.g.
 
@@ -128,7 +128,7 @@ Camel also provides a powerful feature that allows for the automatic
 discovery and initialization of routes in given packages. This is
 configured by adding tags to the camel context in your spring context
 definition, specifying the packages to be recursively searched for
-link:routebuilder.html[RouteBuilder] implementations. To use this
+RouteBuilder implementations. To use this
 feature in 1.X, requires a <package></package> tag specifying a comma
 separated list of packages that should be searched e.g.
 
@@ -332,14 +332,14 @@ protected Class[] excludeRoutes() {
 ### Using Spring XML
 
 You can use Spring 2.0 XML configuration to specify your
-link:xml-configuration.html[Xml Configuration] for
-link:routes.html[Routes] such as in the following
+Xml Configuration for
+Routes such as in the following
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/resources/org/apache/camel/spring/routingUsingCamelContextFactory.xml[example].
 
 ### Configuring Components and Endpoints
 
-You can configure your link:component.html[Component] or
-link:endpoint.html[Endpoint] instances in your link:spring.html[Spring]
+You can configure your Component or
+Endpoint instances in your Spring
 XML as follows in
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-jms/src/test/resources/org/apache/camel/component/jms/jmsRouteUsingSpring.xml[this
 example].
@@ -348,15 +348,15 @@ Which allows you to configure a component using some name (activemq in
 the above example), then you can refer to the component using
 *activemq:[queue:|topic:]destinationName*. This works by the
 SpringCamelContext lazily fetching components from the spring context
-for the scheme name you use for link:endpoint.html[Endpoint]
-link:uris.html[URIs].
+for the scheme name you use for Endpoint
+URIs.
 
 For more detail see link:how-do-i-configure-endpoints.html[Configuring
 Endpoints and Components].
 
 ### CamelContextAware
 
-If you want to be injected with the link:camelcontext.html[CamelContext]
+If you want to be injected with the CamelContext
 in your POJO just implement the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContextAware.html[CamelContextAware
 interface]; then when Spring creates your POJO the CamelContext will be
@@ -367,15 +367,15 @@ Integration] for further injections.
 
 To avoid a hung route when testing using Spring Transactions see the
 note about Spring Integration Testing
-under link:transactional-client.html[Transactional Client].
+under Transactional Client.
 
 ### See also
 
-* link:tutorial-jmsremoting.html[Spring JMS Tutorial]
+* Spring JMS Tutorial
 * link:creating-a-new-spring-based-camel-route.html[Creating a new
 Spring based Camel Route]
-* link:spring-example.html[Spring example]
-* link:xml-reference.html[Xml Reference]
+* Spring example
+* Xml Reference
 * link:advanced-configuration-of-camelcontext-using-spring.html[Advanced
 configuration of CamelContext using Spring]
 * link:how-do-i-import-routes-from-other-xml-files.html[How do I import

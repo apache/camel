@@ -33,7 +33,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Suspendable;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
@@ -43,7 +42,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link NettyServerBootstrapFactory} which is used by a single consumer (not shared).
  */
-public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory, Suspendable {
+public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SingleTCPNettyServerBootstrapFactory.class);
     private ChannelGroup allChannels;
@@ -106,32 +105,6 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
     @Override
     protected void doStop() throws Exception {
         stopServerBootstrap();
-    }
-
-    @Override
-    protected void doResume() throws Exception {
-        if (channel != null) {
-            LOG.debug("ServerBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
-            ChannelFuture future = channel.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-            future.awaitUninterruptibly();
-            if (!future.isSuccess()) {
-                // if we cannot bind, the re-create channel
-                allChannels.remove(channel);
-                future = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort())).sync();
-                channel = future.channel();
-                allChannels.add(channel);
-            }
-        }
-    }
-
-    @Override
-    protected void doSuspend() throws Exception {
-        if (channel != null) {
-            LOG.debug("ServerBootstrap unbinding from {}:{}", configuration.getHost(), configuration.getPort());
-            //TODO need to check if it's good way to unbinding the channel
-            ChannelFuture future = channel.close();
-            future.awaitUninterruptibly();
-        }
     }
 
     protected void startServerBootstrap() throws Exception {

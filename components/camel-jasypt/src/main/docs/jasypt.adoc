@@ -4,13 +4,13 @@
 
 http://www.jasypt.org/[Jasypt] is a simplified encryption library which
 makes encryption and decryption easy. Camel integrates with Jasypt to
-allow sensitive information in link:properties.html[Properties] files to
+allow sensitive information in <<properties-component,Properties>> files to
 be encrypted. By dropping *`camel-jasypt`* on the classpath those
 encrypted values will automatically be decrypted on-the-fly by Camel.
 This ensures that human eyes can't easily spot sensitive information
 such as usernames and passwords.
 
-Maven users will need to add the following dependency to their `pom.xml`
+If you are using Maven, you need to add the following dependency to your `pom.xml`
 for this component:
 
 [source,xml]
@@ -23,9 +23,23 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
+If you are using an Apache Karaf container, you need to add the following dependency to your `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+  <groupId>org.apache.karaf.jaas</groupId>
+  <artifactId>org.apache.karaf.jaas.jasypt</artifactId>
+  <version>x.x.x.x</version>			
+  <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+
 ### Tooling
 
-The link:jasypt.html[Jasypt] component provides a little command line
+The Jasypt component provides a little command line
 tooling to encrypt or decrypt values.
 
 The console output the syntax and which options it provides:
@@ -83,7 +97,7 @@ Decrypted text: tiger
 ---------------------
 
 The idea is then to use those encrypted values in your
-link:properties.html[Properties] files. Notice how the password value is
+<<properties-component,Properties>> files. Notice how the password value is
 encrypted and the value has the tokens surrounding `ENC(value here)`
 
 TIP: When running jasypt tooling, if you come across `java.lang.NoClassDefFoundError: org/jasypt/encryption/pbe/StandardPBEStringEncryptor` this means you have to include jasypt{version}.jar in your classpath. Example of adding jar to classpath may be copying jasypt{version}.jar to $JAVA_HOME\jre\lib\ext if you are going to run as `java -jar ...`. The latter may be adding jasypt{version}.jar to classpath using `-cp`, in that case you should provide main class to execute as eg: `java -cp jasypt-1.9.2.jar:camel-jasypt-2.18.2.jar org.apache.camel.component.jasypt.Main -c encrypt -p secret -i tiger`
@@ -91,7 +105,7 @@ TIP: When running jasypt tooling, if you come across `java.lang.NoClassDefFoundE
 
 ### URI Options
 
-The options below are exclusive for the link:jasypt.html[Jasypt]
+The options below are exclusive for the Jasypt
 component.
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
@@ -107,7 +121,7 @@ mandatory. See below for more details.
 
 ### Protecting the master password
 
-The master password used by link:jasypt.html[Jasypt] must be provided,
+The master password used by Jasypt must be provided,
 so that it's capable of decrypting the values. However having this
 master password out in the open may not be an ideal solution. Therefore
 you could for example provide it as a JVM system property or as a OS
@@ -138,9 +152,9 @@ The `password` option is then a matter of defining as follows:
 
 ### Example with Java DSL
 
-In Java DSL you need to configure link:jasypt.html[Jasypt] as a
+In Java DSL you need to configure Jasypt as a
 `JasyptPropertiesParser` instance and set it on the
-link:properties.html[Properties] component as show below:
+<<properties-component,Properties>> component as show below:
 
 The properties file `myproperties.properties` then contain the encrypted
 value, such as shown below. Notice how the password value is encrypted
@@ -149,9 +163,9 @@ and the value has the tokens surrounding `ENC(value here)`
 ### Example with Spring XML
 
 In Spring XML you need to configure the `JasyptPropertiesParser` which
-is shown below. Then the Camel link:properties.html[Properties]
+is shown below. Then the Camel <<properties-component,Properties>>
 component is told to use `jasypt` as the properties parser, which means
-link:jasypt.html[Jasypt] has its chance to decrypt values looked up in
+Jasypt has its chance to decrypt values looked up in
 the properties.
 
 [source,xml]
@@ -170,10 +184,10 @@ the properties.
 </bean>
 -----------------------------------------------------------------------------------------------------------
 
-The link:properties.html[Properties] component can also be inlined
+The <<properties-component,Properties>> component can also be inlined
 inside the `<camelContext>` tag which is shown below. Notice how we use
 the `propertiesParserRef` attribute to refer to
-link:jasypt.html[Jasypt].
+Jasypt.
 
 [source,java]
 --------------------------------------------------------------------------------------------------------------
@@ -200,9 +214,9 @@ link:jasypt.html[Jasypt].
 
 In Blueprint XML you need to configure
 the `JasyptPropertiesParser` which is shown below. Then the
-Camel link:properties.html[Properties] component is told to
+Camel <<properties-component,Properties>> component is told to
 use `jasypt` as the properties parser, which
-means link:jasypt.html[Jasypt] has its chance to decrypt values looked
+means Jasypt has its chance to decrypt values looked
 up in the properties.
 
 [source,xml]
@@ -240,10 +254,10 @@ up in the properties.
 </blueprint>
 ----------------------------------------------------------------------------------------------------------------
 
-The link:properties.html[Properties] component can also be inlined
+The <<properties-component,Properties>> component can also be inlined
 inside the `<camelContext>` tag which is shown below. Notice how we use
 the `propertiesParserRef` attribute to refer
-to link:jasypt.html[Jasypt].
+to Jasypt.
 
 [source,xml]
 ----------------------------------------------------------------------------------------------------------------
@@ -274,9 +288,8 @@ to link:jasypt.html[Jasypt].
 
 ### See Also
 
-* link:security.html[Security]
-* link:properties.html[Properties]
+* Security
+* <<properties-component,Properties>>
 * http://activemq.apache.org/encrypted-passwords.html[Encrypted
 passwords in ActiveMQ] - ActiveMQ has a similar feature as this
 `camel-jasypt` component
-

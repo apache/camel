@@ -1,9 +1,10 @@
+[[sql-component]]
 == SQL Component
 
 *Available as of Camel version 1.4*
 
 The *sql:* component allows you to work with databases using JDBC
-queries. The difference between this component and link:jdbc.html[JDBC]
+queries. The difference between this component and <<jdbc-component,JDBC>>
 component is that in case of SQL the query is a property of the endpoint
 and it uses message payload as parameters passed to the query.
 
@@ -26,9 +27,9 @@ for this component:
 The SQL component also supports:
 
 * a JDBC based repository for the
-link:idempotent-consumer.html[Idempotent Consumer] EIP pattern. See
+Idempotent Consumer EIP pattern. See
 further below.
-* a JDBC based repository for the link:aggregator2.html[Aggregator] EIP
+* a JDBC based repository for the Aggregator EIP
 pattern. See further below.
 
 ### URI format
@@ -71,7 +72,7 @@ sql:select * from table where id=:#${property.myId} order by name[?options]
 ---------------------------------------------------------------------------
 
 Notice that the standard `?` symbol that denotes the parameters to an
-SQL query is substituted with the `#` symbol, because the `?` symbol is
+SQL query is substituted with the `pass:[#]` symbol, because the `?` symbol is
 used to specify options for the endpoint. The `?` symbol replacement can
 be configured on endpoint basis.
 
@@ -134,59 +135,62 @@ with the following path and query parameters:
 
 ==== Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *query* | *Required* Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file. |  | String
 |===
 
+
 ==== Query Parameters (45 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *allowNamedParameters* (common) | Whether to allow using named parameters in the queries. | true | boolean
 | *dataSource* (common) | Sets the DataSource to use to communicate with the database. |  | DataSource
-| *dataSourceRef* (common) | *Deprecated* Sets the reference to a DataSource to lookup from the registry to use for communicating with the database. |  | String
+| *dataSourceRef* (common) | *Deprecated* Sets the reference to a DataSource to lookup from the registry, to use for communicating with the database. |  | String
 | *outputClass* (common) | Specify the full package and class name to use as conversion when outputType=SelectOne. |  | String
-| *outputHeader* (common) | Store the query result in a header instead of the message body. By default outputHeader == null and the query result is stored in the message body any existing content in the message body is discarded. If outputHeader is set the value is used as the name of the header to store the query result and the original message body is preserved. |  | String
-| *outputType* (common) | Make the output of consumer or producer to SelectList as List of Map or SelectOne as single Java object in the following way: a) If the query has only single column then that JDBC Column object is returned. (such as SELECT COUNT( ) FROM PROJECT will return a Long object. b) If the query has more than one column then it will return a Map of that result. c) If the outputClass is set then it will convert the query result into an Java bean object by calling all the setters that match the column names. It will assume your class has a default constructor to create instance with. d) If the query resulted in more than one rows it throws an non-unique result exception. | SelectList | SqlOutputType
-| *separator* (common) | The separator to use when parameter values is taken from message body (if the body is a String type) to be inserted at placeholders. Notice if you use named parameters then a Map type is used instead. The default value is comma. | , | char
+| *outputHeader* (common) | Store the query result in a header instead of the message body. By default, outputHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. |  | String
+| *outputType* (common) | Make the output of consumer or producer to SelectList as List of Map, or SelectOne as single Java object in the following way: a) If the query has only single column, then that JDBC Column object is returned. (such as SELECT COUNT( ) FROM PROJECT will return a Long object. b) If the query has more than one column, then it will return a Map of that result. c) If the outputClass is set, then it will convert the query result into an Java bean object by calling all the setters that match the column names. It will assume your class has a default constructor to create instance with. d) If the query resulted in more than one rows, it throws an non-unique result exception. | SelectList | SqlOutputType
+| *separator* (common) | The separator to use when parameter values is taken from message body (if the body is a String type), to be inserted at placeholders. Notice if you use named parameters, then a Map type is used instead. The default value is comma. | , | char
 | *breakBatchOnConsumeFail* (consumer) | Sets whether to break batch if onConsume failed. | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *expectedUpdateCount* (consumer) | Sets an expected update count to validate when using onConsume. | -1 | int
 | *maxMessagesPerPoll* (consumer) | Sets the maximum number of messages to poll |  | int
-| *onConsume* (consumer) | After processing each row then this query can be executed if the Exchange was processed successfully for example to mark the row as processed. The query can have parameter. |  | String
-| *onConsumeBatchComplete* (consumer) | After processing the entire batch this query can be executed to bulk update rows etc. The query cannot have parameters. |  | String
-| *onConsumeFailed* (consumer) | After processing each row then this query can be executed if the Exchange failed for example to mark the row as failed. The query can have parameter. |  | String
+| *onConsume* (consumer) | After processing each row then this query can be executed, if the Exchange was processed successfully, for example to mark the row as processed. The query can have parameter. |  | String
+| *onConsumeBatchComplete* (consumer) | After processing the entire batch, this query can be executed to bulk update rows etc. The query cannot have parameters. |  | String
+| *onConsumeFailed* (consumer) | After processing each row then this query can be executed, if the Exchange failed, for example to mark the row as failed. The query can have parameter. |  | String
 | *routeEmptyResultSet* (consumer) | Sets whether empty resultset should be allowed to be sent to the next hop. Defaults to false. So the empty resultset will be filtered out. | false | boolean
-| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *transacted* (consumer) | Enables or disables transaction. If enabled then if processing an exchange failed then the consumer break out processing any further exchanges to cause a rollback eager | false | boolean
 | *useIterator* (consumer) | Sets how resultset should be delivered to route. Indicates delivery as either a list or individual object. defaults to true. | true | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
 | *processingStrategy* (consumer) | Allows to plugin to use a custom org.apache.camel.component.sql.SqlProcessingStrategy to execute queries when the consumer has processed the rows/batch. |  | SqlProcessingStrategy
 | *batch* (producer) | Enables or disables batch mode | false | boolean
-| *noop* (producer) | If set will ignore the results of the SQL query and use the existing IN message as the OUT message for the continuation of processing | false | boolean
+| *noop* (producer) | If set, will ignore the results of the SQL query and use the existing IN message as the OUT message for the continuation of processing | false | boolean
 | *useMessageBodyForSql* (producer) | Whether to use the message body as the SQL and then headers for parameters. If this option is enabled then the SQL in the uri is not used. | false | boolean
-| *alwaysPopulateStatement* (producer) | If enabled then the populateStatement method from org.apache.camel.component.sql.SqlPrepareStatementStrategy is always invoked also if there is no expected parameters to be prepared. When this is false then the populateStatement is only invoked if there is 1 or more expected parameters to be set; for example this avoids reading the message body/headers for SQL queries with no parameters. | false | boolean
-| *parametersCount* (producer) | If set greater than zero then Camel will use this count value of parameters to replace instead of querying via JDBC metadata API. This is useful if the JDBC vendor could not return correct parameters count then user may override instead. |  | int
-| *placeholder* (advanced) | Specifies a character that will be replaced to in SQL query. Notice that it is simple String.replaceAll() operation and no SQL parsing is involved (quoted strings will also change). | # | String
+| *alwaysPopulateStatement* (producer) | If enabled then the populateStatement method from org.apache.camel.component.sql.SqlPrepareStatementStrategy is always invoked, also if there is no expected parameters to be prepared. When this is false then the populateStatement is only invoked if there is 1 or more expected parameters to be set; for example this avoids reading the message body/headers for SQL queries with no parameters. | false | boolean
+| *parametersCount* (producer) | If set greater than zero, then Camel will use this count value of parameters to replace instead of querying via JDBC metadata API. This is useful if the JDBC vendor could not return correct parameters count, then user may override instead. |  | int
+| *placeholder* (advanced) | Specifies a character that will be replaced to in SQL query. Notice, that it is simple String.replaceAll() operation and no SQL parsing is involved (quoted strings will also change). | # | String
 | *prepareStatementStrategy* (advanced) | Allows to plugin to use a custom org.apache.camel.component.sql.SqlPrepareStatementStrategy to control preparation of the query and prepared statement. |  | SqlPrepareStatement Strategy
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *templateOptions* (advanced) | Configures the Spring JdbcTemplate with the key/values from the Map |  | Map
 | *usePlaceholder* (advanced) | Sets whether to use placeholder and replace all placeholder characters with sign in the SQL queries. This option is default true | true | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
-| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 500 | long
-| *greedy* (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
-| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
 | *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
 | *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
@@ -198,15 +202,15 @@ with the following path and query parameters:
 
 The SQL component tries to convert the message body to an object of
 `java.util.Iterator` type and then uses this iterator to fill the query
-parameters (where each query parameter is represented by a `#` symbol
+parameters (where each query parameter is represented by a `pass:[#]` symbol
 (or configured placeholder) in the endpoint URI). If the message body is
 not an array or collection, the conversion results in an iterator that
 iterates over only one object, which is the body itself.
 
 For example, if the message body is an instance of `java.util.List`, the
-first item in the list is substituted into the first occurrence of `#`
+first item in the list is substituted into the first occurrence of `pass:[#]`
 in the SQL query, the second item in the list is substituted into the
-second occurrence of `#`, and so on.
+second occurrence of `pass:[#]`, and so on.
 
 If `batch` is set to `true`, then the interpretation of the inbound
 message body changes slightly – instead of an iterator of parameters,
@@ -246,7 +250,7 @@ from("jms:order.inbox")
 From*Camel 2.18* onwards the producer supports outputType=StreamList
 that uses an iterator to stream the output of the query. This allows to
 process the data in a streaming fashion which for example can be used by
-the link:splitter.html[Splitter] EIP to process each row one at a time,
+the Splitter EIP to process each row one at a time,
 and load data from the database as needed.
 
 [source,java]
@@ -281,7 +285,7 @@ outputType=StreamList.
 
 |`CamelSqlQuery` |*Camel 2.8:* Query to execute. This query takes precedence over the
 query specified in the endpoint URI. Note that query parameters in the
-header _are_ represented by a `?` instead of a `#` symbol
+header _are_ represented by a `?` instead of a `pass:[#]` symbol
 |=======================================================================
 
 When performing `insert` operations, the SQL Component stores the rows
@@ -550,18 +554,18 @@ In Camel 2.6, the JdbcAggregationRepository is provided in the
 fly persists the aggregated messages. This ensures that you will not
 loose messages, as the default aggregator will use an in memory only
 `AggregationRepository`. The `JdbcAggregationRepository` allows together with Camel to provide
-persistent support for the link:aggregator2.html[Aggregator].
+persistent support for the Aggregator.
 
-Only when an link:exchange.html[Exchange] has been successfully
+Only when an Exchange has been successfully
 processed it will be marked as complete which happens when the `confirm`
 method is invoked on the `AggregationRepository`. This means if the same
-link:exchange.html[Exchange] fails again it will be kept retried until
+Exchange fails again it will be kept retried until
 it success.
 
 You can use option `maximumRedeliveries` to limit the maximum number of
-redelivery attempts for a given recovered link:exchange.html[Exchange].
+redelivery attempts for a given recovered Exchange.
 You must also set the `deadLetterUri` option so Camel knows where to
-send the link:exchange.html[Exchange] when the `maximumRedeliveries` was
+send the Exchange when the `maximumRedeliveries` was
 hit.
 
 You can see some examples in the unit tests of camel-sql, for example
@@ -772,11 +776,11 @@ You should also include the specific database driver, if needed.
 
 ### See Also
 
-* link:configuring-camel.html[Configuring Camel]
-* link:component.html[Component]
-* link:endpoint.html[Endpoint]
-* link:getting-started.html[Getting Started]
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
 
-link:sql-stored-procedure.html[SQL Stored Procedure]
+SQL Stored Procedure
 
-link:jdbc.html[JDBC]
+<<jdbc-component,JDBC>>

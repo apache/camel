@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
@@ -52,7 +53,12 @@ import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.BooleanValue;
+import net.sf.saxon.value.DoubleValue;
+import net.sf.saxon.value.FloatValue;
+import net.sf.saxon.value.Int64Value;
 import net.sf.saxon.value.ObjectValue;
+import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Whitespace;
 import org.apache.camel.BytesSource;
 import org.apache.camel.Exchange;
@@ -623,19 +629,19 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         addParameters(dynamicQueryContext, exchange.getIn().getHeaders(), "in.headers.");
         dynamicQueryContext.setParameter(
             StructuredQName.fromClarkName("in.body"),
-            new ObjectValue(exchange.getIn().getBody())
+            getAsParameter(exchange.getIn().getBody())
         );
 
         addParameters(dynamicQueryContext, getParameters());
 
         dynamicQueryContext.setParameter(
             StructuredQName.fromClarkName("exchange"),
-            new ObjectValue(exchange)
+            getAsParameter(exchange)
         );
         if (exchange.hasOut() && exchange.getPattern().isOutCapable()) {
             dynamicQueryContext.setParameter(
                 StructuredQName.fromClarkName("out.body"),
-                new ObjectValue(exchange.getOut().getBody())
+                getAsParameter(exchange.getOut().getBody())
             );
 
             addParameters(dynamicQueryContext, exchange.getOut().getHeaders(), "out.headers.");
@@ -653,9 +659,28 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             if (entry.getValue() != null) {
                 dynamicQueryContext.setParameter(
                         StructuredQName.fromClarkName(parameterPrefix + entry.getKey()),
-                        new ObjectValue(entry.getValue())
+                        getAsParameter(entry.getValue())
                 );
             }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Item getAsParameter(Object value) {
+        if (value instanceof String) {
+            return new StringValue((CharSequence) value);
+        } else if (value instanceof Boolean) {
+            return BooleanValue.get((Boolean) value);
+        } else if (value instanceof Long) {
+            return Int64Value.makeIntegerValue((Long) value);
+        } else if (value instanceof BigInteger) {
+            return Int64Value.makeIntegerValue((BigInteger) value);
+        } else if (value instanceof Double) {
+            return DoubleValue.makeDoubleValue((double) value);
+        } else if (value instanceof Float) {
+            return FloatValue.makeFloatValue((float) value);
+        } else {
+            return new ObjectValue(value);
         }
     }
 

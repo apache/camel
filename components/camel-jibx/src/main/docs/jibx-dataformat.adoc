@@ -1,8 +1,9 @@
+[[jibx-dataformat]]
 == JiBX DataFormat
 
 *Available as of Camel version 2.6*
 
-JiBX is a link:data-format.html[Data Format] which uses the
+JiBX is a Data Format which uses the
 http://jibx.sourceforge.net[JiBX library] to marshal and unmarshal Java
 objects to and from XML.
 
@@ -38,7 +39,7 @@ The JiBX dataformat supports 3 options which are listed below.
 | Name | Default | Java Type | Description
 | unmarshallClass |  | String | Class name to use when unmarshalling from XML to Java.
 | bindingName |  | String | To use a custom binding factory
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
 
@@ -80,7 +81,7 @@ To use JiBX in your camel routes you need to add the a dependency on
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
-link:download.html[the download page for the latest versions]).
+the download page for the latest versions).
 
 [source,xml]
 -------------------------------------

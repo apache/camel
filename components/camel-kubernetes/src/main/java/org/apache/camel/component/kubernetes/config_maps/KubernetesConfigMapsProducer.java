@@ -22,12 +22,9 @@ import java.util.Map;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.api.model.ConfigMapList;
-import io.fabric8.kubernetes.api.model.DoneableConfigMap;
 import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
-import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.Resource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
@@ -91,6 +88,8 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
 
     protected void doList(Exchange exchange, String operation) throws Exception {
         ConfigMapList configMapsList = getEndpoint().getKubernetesClient().configMaps().inAnyNamespace().list();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);       
         exchange.getOut().setBody(configMapsList.getItems());
     }
 

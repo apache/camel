@@ -1,3 +1,4 @@
+[[github-component]]
 == GitHub Component
 
 *Available as of Camel version 2.15*
@@ -61,6 +62,7 @@ with the following path and query parameters:
 
 ==== Path Parameters (2 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -68,23 +70,25 @@ with the following path and query parameters:
 | *branchName* | Name of branch |  | String
 |===
 
+
 ==== Query Parameters (12 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *oauthToken* (common) | GitHub OAuth token required unless username & password are provided |  | String
-| *password* (common) | GitHub password required unless oauthToken is provided |  | String
+| *oauthToken* (common) | GitHub OAuth token, required unless username & password are provided |  | String
+| *password* (common) | GitHub password, required unless oauthToken is provided |  | String
 | *repoName* (common) | *Required* GitHub repository name |  | String
 | *repoOwner* (common) | *Required* GitHub repository owner (organization) |  | String
-| *username* (common) | GitHub username required unless oauthToken is provided |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *username* (common) | GitHub username, required unless oauthToken is provided |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *encoding* (producer) | To use the given encoding when getting a git commit file |  | String
 | *state* (producer) | To set git commit status state |  | String
 | *targetUrl* (producer) | To set git commit status target url |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

@@ -24,7 +24,6 @@ import io.fabric8.kubernetes.api.model.SecretList;
 import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
-import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
 
@@ -96,6 +95,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
     protected void doList(Exchange exchange, String operation) throws Exception {
         SecretList secretsList = getEndpoint().getKubernetesClient().secrets().inAnyNamespace()
                 .list();
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(secretsList.getItems());
     }
 

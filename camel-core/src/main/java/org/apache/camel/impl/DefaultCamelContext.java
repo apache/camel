@@ -899,9 +899,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public Route getRoute(String id) {
-        for (Route route : getRoutes()) {
-            if (route.getId().equals(id)) {
-                return route;
+        if (id != null) {
+            for (Route route : getRoutes()) {
+                if (route.getId().equals(id)) {
+                    return route;
+                }
             }
         }
         return null;
@@ -4461,7 +4463,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         DataFormat answer = dataFormatResolver.resolveDataFormat(name, this);
 
         // inject CamelContext if aware
-        if (answer != null && answer instanceof CamelContextAware) {
+        if (answer instanceof CamelContextAware) {
             ((CamelContextAware) answer).setCamelContext(this);
         }
 
@@ -4472,7 +4474,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         DataFormat answer = dataFormatResolver.createDataFormat(name, this);
 
         // inject CamelContext if aware
-        if (answer != null && answer instanceof CamelContextAware) {
+        if (answer instanceof CamelContextAware) {
             ((CamelContextAware) answer).setCamelContext(this);
         }
 

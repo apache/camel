@@ -8,16 +8,24 @@ with the following path and query parameters:
 
 ==== Path Parameters (@{endpointPathOptions.size()} parameters):
 
+@if{endpointPathOptions.isEmpty()}
+The @{title} endpoint has no path parameters.
+@else{}
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 @foreach{row : endpointPathOptions}| *@{row.getShortName(30)}* | @{row.description} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
 @end{}|===
+@end{}
 
 ==== Query Parameters (@{endpointOptions.size()} parameters):
 
+@if{endpointOptions.isEmpty()}
+The @{title} endpoint has no query parameters.
+@else{}
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 @foreach{row : endpointOptions}| *@{row.getShortName(30)}* (@{row.shortGroup}) | @{row.description} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
 @end{}|===
+@end{}

@@ -25,8 +25,7 @@ public class Service2Route extends RouteBuilder {
     public void configure() throws Exception {
         // create zipkin
         ZipkinTracer zipkin = new ZipkinTracer();
-        zipkin.setHostName("localhost");
-        zipkin.setPort(9410);
+        zipkin.setEndpoint("http://localhost:9411/api/v2/spans");
         // set the service name
         zipkin.setServiceName("service2");
         // capture 100% of all the events

@@ -1,6 +1,7 @@
+[[hystrix-eip]]
 == Hystrix EIP
 
-Available as of Camel 2.18
+*Available as of Camel 2.18*
 
 The Hystrix EIP provides integration with Netflix link:https://github.com/Netflix/Hystrix[Hystrix] to be used as circuit breaker in the Camel routes. Hystrix is a latency and fault tolerance library designed to isolate points of access to remote systems, services and 3rd party libraries, stop cascading failure and enable resilience in complex distributed systems where failure is inevitable.
 
@@ -20,11 +21,10 @@ Maven users will need to add the following dependency to their pom.xml to use th
 // eip options: START
 The Hystrix EIP supports 2 options which are listed below:
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *hystrixConfiguration* | Configures the Hystrix EIP Use end when configuration is complete to return back to the Hystrix EIP. |  | HystrixConfiguration Definition
+| *hystrixConfiguration* | Configures the Hystrix EIP Use end when configuration is complete, to return back to the Hystrix EIP. |  | HystrixConfiguration Definition
 | *hystrixConfigurationRef* | Refers to a Hystrix configuration to use for configuring the Hystrix EIP. |  | String
 |===
 // eip options: END
@@ -62,73 +62,7 @@ And in XML DSL:
 </camelContext>
 ----
 
-=== onFallback vs onFallbackViaNetwork
-
-If you are using *onFallback* then that is intended to be local processing only where you can do a message transformation or call a bean or something as the fallback. If you need to call an external service over the network then you should use *onFallbackViaNetwork* that runs in another independent *HystrixCommand* that uses its own thread pool to not exhaust the first command.
-Configuring Hystrix Example
-Hystrix has many options as listed in the table above. For example to set a higher timeout to *5* seconds, and also let the circuit breaker wait *10* seconds before attempting a request again when the state was tripped to be open.
-
-[source,java]
-----
-from("direct:start")
-    .hystrix()
-        .hystrixConfiguration()
-             .executionTimeoutInMilliseconds(5000)
-             .circuitBreakerSleepWindowInMilliseconds(10000)
-        .end() // end Hystrix configuration
-        .to("http://fooservice.com/slow")
-    .onFallback()
-        .transform().constant("Fallback message")
-    .end()
-    .to("mock:result");
-----
-
-And in XML DSL:
-[source,xml]
-----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-  <route>
-    <from uri="direct:start"/>
-    <hystrix>
-      <hystrixConfiguration executionTimeoutInMilliseconds="5000"
-                            circuitBreakerSleepWindowInMilliseconds="10000"/>
-      <to uri="http://fooservice.com/slow"/>
-      <onFallback>
-        <transform>
-          <constant>Fallback message</constant>
-        </transform>
-      </onFallback>
-    </hystrix>
-    <to uri="mock:result"/>
-  </route>
-</camelContext>
-----
-
-You can also configure Hystrix globally and then refer to that configuration:
-
-[source,xml]
-----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-
-  <!-- a shared config which you can refer to from all your Hystrix EIPs -->
-  <hystrixConfiguration id="sharedConfig"
-                        executionTimeoutInMilliseconds="5000"
-                        circuitBreakerSleepWindowInMilliseconds="10000"/>
-
-  <route>
-    <from uri="direct:start"/>
-    <hystrix hystrixConfigurationRef="sharedConfig">
-      <to uri="http://fooservice.com/slow"/>
-      <onFallback>
-        <transform>
-          <constant>Fallback message</constant>
-        </transform>
-      </onFallback>
-    </hystrix>
-    <to uri="mock:result"/>
-  </route>
-</camelContext>
-----
+See link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/onFallback-eip.adoc[onFallback]
 
 === Other examples
 

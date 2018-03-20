@@ -1,3 +1,4 @@
+[[xmljson-dataformat]]
 == XML JSon DataFormat (deprecated)
 
 *Available as of Camel version 2.10*
@@ -29,17 +30,17 @@ The XML JSon dataformat supports 13 options which are listed below.
 | Name | Default | Java Type | Description
 | encoding |  | String | Sets the encoding. Used for unmarshalling (JSON to XML conversion).
 | elementName |  | String | Specifies the name of the XML elements representing each array element. Used for unmarshalling (JSON to XML conversion).
-| arrayName |  | String | Specifies the name of the top-level XML element. Used for unmarshalling (JSON to XML conversion). For example when converting 1 2 3 it will be output by default as 123. By setting this option or rootName you can alter the name of element 'a'.
-| forceTopLevelObject | false | Boolean | Determines whether the resulting JSON will start off with a top-most element whose name matches the XML root element. Used for marshalling (XML to JSon conversion). If disabled XML string 12 turns into 'x: '1' 'y': '2' . Otherwise it turns into 'a': 'x: '1' 'y': '2' .
-| namespaceLenient | false | Boolean | Flag to be tolerant to incomplete namespace prefixes. Used for unmarshalling (JSON to XML conversion). In most cases json-lib automatically changes this flag at runtime to match the processing.
-| rootName |  | String | Specifies the name of the top-level element. Used for unmarshalling (JSON to XML conversion). If not set json-lib will use arrayName or objectName (default value: 'o' at the current time it is not configurable in this data format). If set to 'root' the JSON string 'x': 'value1' 'y' : 'value2' would turn into value1value2 otherwise the 'root' element would be named 'o'.
+| arrayName |  | String | Specifies the name of the top-level XML element. Used for unmarshalling (JSON to XML conversion). For example, when converting 1, 2, 3, it will be output by default as 123. By setting this option or rootName, you can alter the name of element 'a'.
+| forceTopLevelObject | false | Boolean | Determines whether the resulting JSON will start off with a top-most element whose name matches the XML root element. Used for marshalling (XML to JSon conversion). If disabled, XML string 12 turns into 'x: '1', 'y': '2' . Otherwise, it turns into 'a': 'x: '1', 'y': '2' .
+| namespaceLenient | false | Boolean | Flag to be tolerant to incomplete namespace prefixes. Used for unmarshalling (JSON to XML conversion). In most cases, json-lib automatically changes this flag at runtime to match the processing.
+| rootName |  | String | Specifies the name of the top-level element. Used for unmarshalling (JSON to XML conversion). If not set, json-lib will use arrayName or objectName (default value: 'o', at the current time it is not configurable in this data format). If set to 'root', the JSON string 'x': 'value1', 'y' : 'value2' would turn into value1value2, otherwise the 'root' element would be named 'o'.
 | skipWhitespace | false | Boolean | Determines whether white spaces between XML elements will be regarded as text values or disregarded. Used for marshalling (XML to JSon conversion).
 | trimSpaces | false | Boolean | Determines whether leading and trailing white spaces will be omitted from String values. Used for marshalling (XML to JSon conversion).
 | skipNamespaces | false | Boolean | Signals whether namespaces should be ignored. By default they will be added to the JSON output using xmlns elements. Used for marshalling (XML to JSon conversion).
-| removeNamespacePrefixes | false | Boolean | Removes the namespace prefixes from XML qualified elements so that the resulting JSON string does not contain them. Used for marshalling (XML to JSon conversion).
-| expandableProperties |  | List | With expandable properties JSON array elements are converted to XML as a sequence of repetitive XML elements with the local name equal to the JSON key for example: number: 123 normally converted to: 123 (where e can be modified by setting elementName) would instead translate to 123 if number is set as an expandable property Used for unmarshalling (JSON to XML conversion).
+| removeNamespacePrefixes | false | Boolean | Removes the namespace prefixes from XML qualified elements, so that the resulting JSON string does not contain them. Used for marshalling (XML to JSon conversion).
+| expandableProperties |  | List | With expandable properties, JSON array elements are converted to XML as a sequence of repetitive XML elements with the local name equal to the JSON key, for example: number: 1,2,3 , normally converted to: 123 (where e can be modified by setting elementName), would instead translate to 123, if number is set as an expandable property Used for unmarshalling (JSON to XML conversion).
 | typeHints |  | String | Adds type hints to the resulting XML to aid conversion back to JSON. Used for unmarshalling (JSON to XML conversion).
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
 
@@ -156,7 +157,7 @@ this data format is available from Camel 2.10 onwards, so only schemas
 from that version onwards will include these new XML elements and
 attributes.
 
-The syntax with link:using-osgi-blueprint-with-camel.html[Blueprint] is
+The syntax with Blueprint is
 identical to that of the Spring DSL. Just ensure the correct namespaces
 and schemaLocations are in use.
 
@@ -251,7 +252,7 @@ That's why the elements are in a different order in the output XML.
 
 ### Dependencies
 
-To use the link:xmljson.html[XmlJson] dataformat in your camel routes
+To use the <<xmljson-dataformat,XmlJson>> dataformat in your camel routes
 you need to add the following dependency to your pom:
 
 [source,xml]
@@ -274,5 +275,5 @@ license with ASF; so add this manually -->
 
 ### See Also
 
-* link:data-format.html[Data Format]
+* Data Format
 * http://json-lib.sourceforge.net/[json-lib]

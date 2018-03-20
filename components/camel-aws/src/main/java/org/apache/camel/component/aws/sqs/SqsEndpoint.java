@@ -24,9 +24,8 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
@@ -62,7 +61,7 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.6.0", scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueNameOrArn",
     consumerClass = SqsConsumer.class, label = "cloud,messaging")
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(SqsEndpoint.class);
 
     private AmazonSQS client;
@@ -82,7 +81,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         super(uri, component);
         this.configuration = configuration;
     }
-    
+
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -93,7 +92,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }
-   
+
     public Producer createProducer() throws Exception {
         return new SqsProducer(this);
     }
@@ -116,12 +115,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     protected void doStart() throws Exception {
         client = getConfiguration().getAmazonSQSClient() != null
             ? getConfiguration().getAmazonSQSClient() : getClient();
-            
-        // Override the endpoint location
-        if (ObjectHelper.isNotEmpty(getConfiguration().getAmazonSQSEndpoint())) {
-            client.setEndpoint(getConfiguration().getAmazonSQSEndpoint());
-        }
-        
+
         // check the setting the headerFilterStrategy
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new SqsHeaderFilterStrategy();
@@ -165,6 +159,11 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
 
         // creates a new queue, or returns the URL of an existing one
         CreateQueueRequest request = new CreateQueueRequest(configuration.getQueueName());
+        if (getConfiguration().isFifoQueue()) {
+            request.getAttributes().put(QueueAttributeName.FifoQueue.name(), String.valueOf(true));
+            boolean useContentBasedDeduplication = getConfiguration().getMessageDeduplicationIdStrategy() instanceof NullMessageDeduplicationIdStrategy;
+            request.getAttributes().put(QueueAttributeName.ContentBasedDeduplication.name(), String.valueOf(useContentBasedDeduplication));
+        }
         if (getConfiguration().getDefaultVisibilityTimeout() != null) {
             request.getAttributes().put(QueueAttributeName.VisibilityTimeout.name(), String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
         }
@@ -184,10 +183,10 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
             request.getAttributes().put(QueueAttributeName.RedrivePolicy.name(), getConfiguration().getRedrivePolicy());
         }
         LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
-        
+
         CreateQueueResult queueResult = client.createQueue(request);
         queueUrl = queueResult.getQueueUrl();
-        
+
         LOG.trace("Queue created and available at: {}", queueUrl);
     }
 
@@ -220,8 +219,13 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     }
 
     @Override
-    protected void doStop() throws Exception {
-        client = null;
+    public void doStop() throws Exception {
+        if (ObjectHelper.isEmpty(configuration.getAmazonSQSClient())) {
+            if (client != null) {
+                client.shutdown();
+            }
+        }
+        super.doStop();
     }
 
     public Exchange createExchange(com.amazonaws.services.sqs.model.Message msg) {
@@ -238,10 +242,10 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         message.setHeader(SqsConstants.RECEIPT_HANDLE, msg.getReceiptHandle());
         message.setHeader(SqsConstants.ATTRIBUTES, msg.getAttributes());
         message.setHeader(SqsConstants.MESSAGE_ATTRIBUTES, msg.getMessageAttributes());
-        
+
         //Need to apply the SqsHeaderFilterStrategy this time
         HeaderFilterStrategy headerFilterStrategy = getHeaderFilterStrategy();
-        //add all sqs message attributes as camel message headers so that knowledge of 
+        //add all sqs message attributes as camel message headers so that knowledge of
         //the Sqs class MessageAttributeValue will not leak to the client
         for (Entry<String, MessageAttributeValue> entry : msg.getMessageAttributes().entrySet()) {
             String header = entry.getKey();
@@ -260,14 +264,14 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     public void setConfiguration(SqsConfiguration configuration) {
         this.configuration = configuration;
     }
-    
+
     public AmazonSQS getClient() {
         if (client == null) {
             client = createClient();
         }
         return client;
     }
-    
+
     public void setClient(AmazonSQS client) {
         this.client = client;
     }
@@ -302,9 +306,8 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
                 clientBuilder = AmazonSQSClientBuilder.standard().withClientConfiguration(clientConfiguration);
             }
         }
-        if (ObjectHelper.isNotEmpty(configuration.getAmazonSQSEndpoint()) && ObjectHelper.isNotEmpty(configuration.getRegion())) {
-            EndpointConfiguration endpointConfiguration = new EndpointConfiguration(configuration.getAmazonSQSEndpoint(), configuration.getRegion());
-            clientBuilder = clientBuilder.withEndpointConfiguration(endpointConfiguration);
+        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
         }
         client = clientBuilder.build();
         return client;
@@ -326,7 +329,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
-    
+
     private Object translateValue(MessageAttributeValue mav) {
         Object result = null;
         if (mav.getStringValue() != null) {

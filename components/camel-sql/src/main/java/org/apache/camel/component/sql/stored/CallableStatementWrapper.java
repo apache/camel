@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.sql.stored.template.ast.InputParameter;
+import org.apache.camel.component.sql.stored.template.ast.InParameter;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.CallableStatementCreator;
@@ -116,7 +116,7 @@ public class CallableStatementWrapper implements StatementWrapper {
         Map<String, Object> batchValues = new HashMap<>();
         //only IN-parameters supported by template
         for (Object param : this.batchFactory.getTemplate().getParameterList()) {
-            InputParameter inputParameter = (InputParameter) param;
+            InParameter inputParameter = (InParameter) param;
             Object paramValue = inputParameter.getValueExtractor().eval(exchange, value);
             batchValues.put(inputParameter.getName(), paramValue);
         }

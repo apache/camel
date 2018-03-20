@@ -16,52 +16,63 @@
  */
 package org.apache.camel.component.aws.kinesis;
 
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.kinesis.AmazonKinesis;
+import com.amazonaws.services.kinesis.AmazonKinesisClientBuilder;
 import com.amazonaws.services.kinesis.model.Record;
 import com.amazonaws.services.kinesis.model.ShardIteratorType;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-kinesis component is for consuming and producing records from Amazon Kinesis Streams.
+ * The aws-kinesis component is for consuming and producing records from Amazon
+ * Kinesis Streams.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "aws-kinesis", title = "AWS Kinesis", syntax = "aws-kinesis:streamName",
-    consumerClass = KinesisConsumer.class, label = "cloud,messaging")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "aws-kinesis", title = "AWS Kinesis", syntax = "aws-kinesis:streamName", consumerClass = KinesisConsumer.class, label = "cloud,messaging")
 public class KinesisEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath(description = "Name of the stream")
-    @Metadata(required = "true")
-    private String streamName;
-    @UriParam(description = "Amazon Kinesis client to use for all requests for this endpoint")
-    @Metadata(required = "true")
-    private AmazonKinesis amazonKinesisClient;
-    @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll", defaultValue = "1")
-    private int maxResultsPerRequest = 1;
-    @UriParam(label = "consumer", description = "Defines where in the Kinesis stream to start getting records", defaultValue = "TRIM_HORIZON")
-    private ShardIteratorType iteratorType = ShardIteratorType.TRIM_HORIZON;
-    @UriParam(label = "consumer", description = "Defines which shardId in the Kinesis stream to get records from")
-    private String shardId = "";
-    @UriParam(label = "consumer", description = "The sequence number to start polling from. Required if iteratorType is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER")
-    private String sequenceNumber = "";
-
-    public KinesisEndpoint(String uri, String streamName, KinesisComponent component) {
+    @UriParam
+    private KinesisConfiguration configuration;
+    
+    private AmazonKinesis kinesisClient;
+    
+    public KinesisEndpoint(String uri, KinesisConfiguration configuration, KinesisComponent component) {
         super(uri, component);
-        this.streamName = streamName;
+        this.configuration = configuration;
     }
 
     @Override
     protected void doStart() throws Exception {
-        if ((iteratorType.equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER) || iteratorType.equals(ShardIteratorType.AT_SEQUENCE_NUMBER)) && sequenceNumber.isEmpty()) {
+        super.doStart();
+        kinesisClient = configuration.getAmazonKinesisClient() != null ? configuration.getAmazonKinesisClient()
+            : createKinesisClient();
+       
+        
+        if ((configuration.getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER) || configuration.getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER))
+            && configuration.getSequenceNumber().isEmpty()) {
             throw new IllegalArgumentException("Sequence Number must be specified with iterator Types AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER");
         }
-        super.doStart();
+    }
+    
+    @Override
+    public void doStop() throws Exception {
+        if (ObjectHelper.isEmpty(configuration.getAmazonKinesisClient())) {
+            if (kinesisClient != null) {
+                kinesisClient.shutdown();
+            }
+        }
+        super.doStop();
     }
 
     @Override
@@ -91,57 +102,44 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
         return true;
     }
 
-    AmazonKinesis getClient() {
-        return amazonKinesisClient;
+    public AmazonKinesis getClient() {
+        return kinesisClient;
     }
 
-    // required for injection.
-    public AmazonKinesis getAmazonKinesisClient() {
-        return amazonKinesisClient;
+    public KinesisConfiguration getConfiguration() {
+        return configuration;
     }
-
-    public void setAmazonKinesisClient(AmazonKinesis amazonKinesisClient) {
-        this.amazonKinesisClient = amazonKinesisClient;
+    
+    AmazonKinesis createKinesisClient() {
+        AmazonKinesis client = null;
+        ClientConfiguration clientConfiguration = null;
+        AmazonKinesisClientBuilder clientBuilder = null;
+        boolean isClientConfigFound = false;
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            isClientConfigFound = true;
+        }
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
+            if (isClientConfigFound) {
+                clientBuilder = AmazonKinesisClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+            } else {
+                clientBuilder = AmazonKinesisClientBuilder.standard().withCredentials(credentialsProvider);
+            }
+        } else {
+            if (isClientConfigFound) {
+                clientBuilder = AmazonKinesisClientBuilder.standard();
+            } else {
+                clientBuilder = AmazonKinesisClientBuilder.standard().withClientConfiguration(clientConfiguration);
+            }
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            clientBuilder = clientBuilder.withRegion(configuration.getRegion());
+        }
+        client = clientBuilder.build();
+        return client;
     }
-
-    public int getMaxResultsPerRequest() {
-        return maxResultsPerRequest;
-    }
-
-    public void setMaxResultsPerRequest(int maxResultsPerRequest) {
-        this.maxResultsPerRequest = maxResultsPerRequest;
-    }
-
-    public String getStreamName() {
-        return streamName;
-    }
-
-    public void setStreamName(String streamName) {
-        this.streamName = streamName;
-    }
-
-    public ShardIteratorType getIteratorType() {
-        return iteratorType;
-    }
-
-    public void setIteratorType(ShardIteratorType iteratorType) {
-        this.iteratorType = iteratorType;
-    }
-
-    public String getShardId() {
-        return shardId;
-    }
-
-    public void setShardId(String shardId) {
-        this.shardId = shardId;
-    }
-
-    public String getSequenceNumber() {
-        return sequenceNumber;
-    }
-
-    public void setSequenceNumber(String sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
-    }
-
 }
