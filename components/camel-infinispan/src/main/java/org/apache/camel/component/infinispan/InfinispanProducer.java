@@ -27,7 +27,6 @@ import org.apache.camel.impl.HeaderSelectorProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.query.dsl.Query;
-import org.jgroups.util.NotifyingFuture;
 
 public class InfinispanProducer extends HeaderSelectorProducer {
     private final String cacheName;

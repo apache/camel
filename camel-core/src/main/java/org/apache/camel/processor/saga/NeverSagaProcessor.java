@@ -22,7 +22,6 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.SagaCompletionMode;
-import org.apache.camel.saga.CamelSagaCoordinator;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.CamelSagaStep;
 

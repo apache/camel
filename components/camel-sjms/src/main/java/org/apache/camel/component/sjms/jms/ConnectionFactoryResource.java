@@ -19,7 +19,6 @@ package org.apache.camel.component.sjms.jms;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
-import javax.jms.Session;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.pool.BasePoolableObjectFactory;

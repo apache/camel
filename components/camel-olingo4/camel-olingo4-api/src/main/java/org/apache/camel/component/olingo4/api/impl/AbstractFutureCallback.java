@@ -18,20 +18,15 @@ package org.apache.camel.component.olingo4.api.impl;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.regex.Pattern;
 
 import org.apache.camel.component.olingo4.api.Olingo4ResponseHandler;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.concurrent.FutureCallback;
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.serialization.ODataReader;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.client.core.serialization.ODataReaderImpl;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.format.ContentType;

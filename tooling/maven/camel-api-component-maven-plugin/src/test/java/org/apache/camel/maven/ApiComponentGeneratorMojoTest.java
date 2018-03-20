@@ -21,13 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.component.test.TestProxy;
-import org.apache.camel.util.CastUtils;
 import org.apache.velocity.VelocityContext;
-import org.junit.Assert;
 import org.junit.Test;
-
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
 
 /**
  * Tests {@link ApiComponentGeneratorMojo}

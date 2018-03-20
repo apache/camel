@@ -17,15 +17,10 @@
 package org.apache.camel.commands;
 
 import java.io.PrintStream;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.camel.util.JsonSchemaHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
 
 /**
  * List the Camel validators available in the JVM.

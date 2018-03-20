@@ -17,7 +17,6 @@
 package org.apache.camel.component.hl7;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
@@ -32,7 +31,6 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.util.IOHelper;
 
 /**
  * HL7 converters.

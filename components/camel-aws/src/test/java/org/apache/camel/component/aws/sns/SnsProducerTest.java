@@ -19,12 +19,8 @@ package org.apache.camel.component.aws.sns;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.amazonaws.services.dynamodbv2.model.GetRecordsRequest;
 import com.amazonaws.services.sns.model.MessageAttributeValue;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.aws.firehose.KinesisFirehoseEndpoint;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

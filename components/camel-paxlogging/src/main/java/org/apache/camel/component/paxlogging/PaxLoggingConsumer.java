@@ -28,7 +28,6 @@ import org.ops4j.pax.logging.spi.PaxLoggingEvent;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 /**
  * Paxlogging consumer.

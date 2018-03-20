@@ -50,7 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb3.MongoDbConstants.ALLOW_DISK_USE;
 import static org.apache.camel.component.mongodb3.MongoDbConstants.BATCH_SIZE;
 import static org.apache.camel.component.mongodb3.MongoDbConstants.COLLECTION;
 import static org.apache.camel.component.mongodb3.MongoDbConstants.COLLECTION_INDEX;

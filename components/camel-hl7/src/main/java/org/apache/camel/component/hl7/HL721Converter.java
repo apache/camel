@@ -65,7 +65,6 @@ import ca.uhn.hl7v2.model.v21.message.QRY_Q01;
 import ca.uhn.hl7v2.model.v21.message.QRY_Q02;
 import ca.uhn.hl7v2.model.v21.message.UDM_Q05;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-import ca.uhn.hl7v2.parser.GenericModelClassFactory;
 import ca.uhn.hl7v2.parser.ParserConfiguration;
 import ca.uhn.hl7v2.parser.UnexpectedSegmentBehaviourEnum;
 import ca.uhn.hl7v2.validation.ValidationContext;

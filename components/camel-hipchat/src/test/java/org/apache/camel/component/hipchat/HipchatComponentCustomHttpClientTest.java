@@ -18,11 +18,8 @@ package org.apache.camel.component.hipchat;
 
 import java.io.IOException;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.HttpHost;

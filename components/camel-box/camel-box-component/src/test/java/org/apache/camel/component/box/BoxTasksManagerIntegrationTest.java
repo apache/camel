@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.box.sdk.BoxAPIConnection;
-import com.box.sdk.BoxFile;
 import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxTask;
 import com.box.sdk.BoxTask.Action;
