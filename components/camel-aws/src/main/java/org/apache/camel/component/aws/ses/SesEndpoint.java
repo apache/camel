@@ -66,8 +66,10 @@ public class SesEndpoint extends DefaultEndpoint {
     
     @Override
     public void doStop() throws Exception {
-        if (sesClient != null) {
-            sesClient.shutdown();
+        if (ObjectHelper.isEmpty(configuration.getAmazonSESClient())) {
+            if (sesClient != null) {
+                sesClient.shutdown();
+            }
         }
         super.doStop();
     }
