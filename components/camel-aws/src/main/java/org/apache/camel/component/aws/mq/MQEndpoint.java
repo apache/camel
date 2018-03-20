@@ -71,8 +71,10 @@ public class MQEndpoint extends ScheduledPollEndpoint {
     
     @Override
     public void doStop() throws Exception {
-        if (mqClient != null) {
-            mqClient.shutdown();
+        if (ObjectHelper.isEmpty(configuration.getAmazonMqClient())) {
+            if (mqClient != null) {
+                mqClient.shutdown();
+            }
         }
         super.doStop();
     }
