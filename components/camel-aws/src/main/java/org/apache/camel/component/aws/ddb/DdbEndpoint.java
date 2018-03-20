@@ -114,8 +114,10 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
     
     @Override
     public void doStop() throws Exception {
-        if (ddbClient != null) {
-            ddbClient.shutdown();
+        if (ObjectHelper.isEmpty(configuration.getAmazonDDBClient())) {
+            if (ddbClient != null) {
+                ddbClient.shutdown();
+            }
         }
         super.doStop();
     }
