@@ -38,6 +38,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,8 +141,10 @@ public class S3Endpoint extends ScheduledPollEndpoint {
 
     @Override
     public void doStop() throws Exception {
-        if (s3Client != null) {
-            s3Client.shutdown();
+        if (ObjectHelper.isEmpty(configuration.getAmazonS3Client())) {
+            if (s3Client != null) {
+                s3Client.shutdown();
+            }
         }
         super.doStop();
     }
