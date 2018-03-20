@@ -69,8 +69,10 @@ public class LambdaEndpoint extends DefaultEndpoint {
     
     @Override
     public void doStop() throws Exception {
-        if (awsLambdaClient != null) {
-            awsLambdaClient.shutdown();
+        if (ObjectHelper.isEmpty(configuration.getAwsLambdaClient())) {
+            if (awsLambdaClient != null) {
+                awsLambdaClient.shutdown();
+            }
         }
         super.doStop();
     }
