@@ -19,6 +19,7 @@ package org.apache.camel.component.influxdb;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.influxdb.InfluxDB;
 import org.influxdb.dto.BatchPoints;
@@ -105,6 +106,7 @@ public class InfluxDbProducer extends DefaultProducer {
         String query = calculateQuery(exchange);
         Query influxdbQuery = new Query(query, dataBaseName);
         QueryResult resultSet = connection.query(influxdbQuery);
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(resultSet);
     }
 
