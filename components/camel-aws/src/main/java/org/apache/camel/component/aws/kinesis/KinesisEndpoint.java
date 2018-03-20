@@ -67,8 +67,10 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
     
     @Override
     public void doStop() throws Exception {
-        if (kinesisClient != null) {
-            kinesisClient.shutdown();
+        if (ObjectHelper.isEmpty(configuration.getAmazonKinesisClient())) {
+            if (kinesisClient != null) {
+                kinesisClient.shutdown();
+            }
         }
         super.doStop();
     }
