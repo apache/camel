@@ -18,7 +18,9 @@ package org.apache.camel.component.salesforce.api.utils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.OffsetTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 import org.junit.Test;
@@ -63,16 +65,16 @@ public class DateTimeUtilsTest {
 
     @Test
     public void testFormatTime() {
-        assertEquals("12:13:14.007", DateTimeUtils.formatTime(LocalTime.of(12, 13, 14, 7000000)));
-        assertEquals("01:00:00", DateTimeUtils.formatTime(LocalTime.of(1, 0, 0, 0)));
-        assertEquals("00:00:00", DateTimeUtils.formatTime(LocalTime.of(0, 0, 0)));
+        assertEquals("12:13:14.007", DateTimeUtils.formatTime(OffsetTime.of(12, 13, 14, 7000000,ZoneOffset.UTC)));
+        assertEquals("01:00:00", DateTimeUtils.formatTime(OffsetTime.of(1, 0, 0, 0,ZoneOffset.UTC)));
+        assertEquals("00:00:00", DateTimeUtils.formatTime(OffsetTime.of(LocalTime.MIDNIGHT,ZoneOffset.UTC)));
     }
 
     @Test
     public void testParseTime() {
-        assertEquals(LocalTime.of(0,0,0), DateTimeUtils.parseTime("00:00:00.000"));
-        assertEquals(LocalTime.of(1,0,0,100), DateTimeUtils.parseTime("01:00:00.0000001"));
-        assertEquals(LocalTime.of(12,13,14,7000000), DateTimeUtils.parseTime("12:13:14.007"));
-        assertEquals(LocalTime.of(12,13,0), DateTimeUtils.parseTime("12:13"));
+        assertEquals(OffsetTime.of(LocalTime.MIDNIGHT, ZoneOffset.UTC), DateTimeUtils.parseTime("00:00:00.000"));
+        assertEquals(OffsetTime.of(1, 0, 0, 100, ZoneOffset.UTC), DateTimeUtils.parseTime("01:00:00.0000001"));
+        assertEquals(OffsetTime.of(12, 13, 14, 7000000, ZoneOffset.UTC), DateTimeUtils.parseTime("12:13:14.007"));
+        assertEquals(OffsetTime.of(12, 13, 0, 0, ZoneOffset.UTC), DateTimeUtils.parseTime("12:13"));
     }
 }

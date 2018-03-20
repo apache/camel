@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
-import java.time.LocalTime;
+import java.time.OffsetTime;
 
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
@@ -26,13 +26,13 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
- * XStream converter for handling {@link LocalTime} fields.
+ * XStream converter for handling {@link OffsetTime} fields.
  */
 public class TimeConverter implements Converter {
 
     @Override
     public void marshal(Object o, HierarchicalStreamWriter writer, MarshallingContext context) {
-        LocalTime time = (LocalTime) o;
+        OffsetTime time = (OffsetTime) o;
         writer.setValue(DateTimeUtils.formatTime(time));
     }
 
@@ -42,7 +42,7 @@ public class TimeConverter implements Converter {
             return DateTimeUtils.parseTime(reader.getValue());
         } catch (Exception e) {
             throw new ConversionException(
-                    String.format("Error reading LocalTime from value %s: %s",
+                    String.format("Error reading OffsetTime from value %s: %s",
                         reader.getValue(), e.getMessage()),
                     e);
         }
@@ -50,7 +50,7 @@ public class TimeConverter implements Converter {
 
     @Override
     public boolean canConvert(Class aClass) {
-        return LocalTime.class.isAssignableFrom(aClass);
+        return OffsetTime.class.isAssignableFrom(aClass);
     }
 
 }

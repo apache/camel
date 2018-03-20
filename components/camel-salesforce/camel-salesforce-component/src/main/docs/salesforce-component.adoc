@@ -22,7 +22,7 @@ for this component:
 ----
 
 NOTE: Developers wishing to contribute to the component are instructed
-to look at the README.md file on instructions on how to get started and
+to look at the https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-component/README.md[README.md] file on instructions on how to get started and
 setup your environment for running integration tests.
 
 === Authenticating to Salesforce
@@ -535,8 +535,7 @@ final SObjectCompositeResult contactCreationResult = results.stream().filter(r -
 
 === Camel Salesforce Maven Plugin
 
-This Maven plugin generates DTOs for the Camel
-<<salesforce-component,Salesforce>>.
+This Maven plugin generates DTOs for the Camel. Please refer to https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-maven-plugin[README.md] for details on how to generated the DTO.
 
 === Options
 
@@ -667,28 +666,3 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
-
-
-
-
-For obvious security reasons it is recommended that the clientId,
-clientSecret, userName and password fields be not set in the pom.xml.  
-The plugin should be configured for the rest of the properties, and can
-be executed using the following command:
-
-[source,java]
-----
-mvn camel-salesforce:generate -DcamelSalesforce.clientId=<clientid> -DcamelSalesforce.clientSecret=<clientsecret> \
-    -DcamelSalesforce.userName=<username> -DcamelSalesforce.password=<password>
-----
-
-The generated DTOs use Jackson and XStream annotations. All Salesforce
-field types are supported. Date and time fields are mapped to Joda
-DateTime, and picklist fields are mapped to generated Java Enumerations.
-
-=== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

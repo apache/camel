@@ -1,7 +1,7 @@
 # Camel Salesforce component #
 
 This component supports producer and consumer endpoints to communicate with Salesforce using Java DTOs. 
-There is a companion maven plugin [camel-salesforce-plugin](https://github.com/dhirajsb/camel-salesforce-maven-plugin) that generates these DTOs. 
+There is a companion maven plugin [camel-salesforce-plugin](https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-maven-plugin) that generates these DTOs. 
 
 The component supports the following Salesforce APIs
 
