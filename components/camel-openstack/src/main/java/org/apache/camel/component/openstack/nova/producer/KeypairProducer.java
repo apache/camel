@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
-import org.apache.camel.component.openstack.nova.NovaConstants;
 import org.apache.camel.component.openstack.nova.NovaEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.openstack4j.api.OSClient;

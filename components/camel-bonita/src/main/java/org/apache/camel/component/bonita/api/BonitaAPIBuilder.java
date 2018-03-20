@@ -20,7 +20,6 @@ package org.apache.camel.component.bonita.api;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Configuration;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 

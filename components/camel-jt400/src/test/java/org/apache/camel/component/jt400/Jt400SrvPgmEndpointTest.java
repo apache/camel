@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jt400;
 
-import org.apache.camel.CamelException;
-import org.apache.camel.Endpoint;
 import org.junit.Before;
 import org.junit.Test;
 

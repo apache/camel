@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.http4.HttpEndpoint;
 import org.apache.camel.component.http4.HttpMethods;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 public final class HttpMethodHelper {

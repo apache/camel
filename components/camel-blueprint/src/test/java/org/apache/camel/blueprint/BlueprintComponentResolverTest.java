@@ -19,7 +19,6 @@ package org.apache.camel.blueprint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;

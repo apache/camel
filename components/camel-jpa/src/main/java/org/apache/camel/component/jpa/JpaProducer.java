@@ -18,7 +18,6 @@ package org.apache.camel.component.jpa;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

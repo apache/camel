@@ -19,7 +19,6 @@ package org.apache.camel.component.mongodb.processor.idempotent;
 import java.util.UUID;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.MongoClient;
 import org.apache.camel.component.mongodb.AbstractMongoDbTest;
 import org.junit.After;
 import org.junit.Before;

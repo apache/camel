@@ -16,10 +16,6 @@
  */
 package org.apache.camel.maven.packaging.model;
 
-import java.util.Calendar;
-
-import org.apache.camel.maven.packaging.StringHelper;
-
 import static org.apache.camel.maven.packaging.StringHelper.wrapCamelCaseWords;
 
 public class ComponentOptionModel {

@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws.lambda;
 
 import java.io.*;
-import com.amazonaws.services.lambda.AWSLambdaClient;
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
 import com.amazonaws.services.lambda.model.DeleteFunctionResult;
 import com.amazonaws.services.lambda.model.GetFunctionResult;

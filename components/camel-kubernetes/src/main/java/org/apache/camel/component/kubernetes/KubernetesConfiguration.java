@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kubernetes;
 
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 
 import org.apache.camel.RuntimeCamelException;

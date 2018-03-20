@@ -25,16 +25,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.DynamicRouter;
-import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-
-import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
 
 /**
  * Routes messages based on dynamic rules

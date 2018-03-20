@@ -25,7 +25,6 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.ignite.AbstractIgniteComponent;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
 import org.apache.camel.component.ignite.IgniteComponent;
 import org.apache.camel.spi.Metadata;
