@@ -26,6 +26,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.component.file.remote.SftpRemoteFile;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -69,7 +70,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
 
             long newLastModified = 0;
             long newLength = 0;
-            List<ChannelSftp.LsEntry> files;
+            List files; // operations.listFiles returns List<SftpRemoteFile> so do not use generic in the List files
             if (fastExistsCheck) {
                 // use the absolute file path to only pickup the file we want to check, this avoids expensive
                 // list operations if we have a lot of files in the directory
@@ -94,17 +95,18 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
                 }
             }
             LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.size());
-            for (ChannelSftp.LsEntry f : files) {
+            for (Object f : files) {
+                SftpRemoteFile rf = (SftpRemoteFile) f;
                 boolean match;
                 if (fastExistsCheck) {
                     // uses the absolute file path as well
-                    match = f.getFilename().equals(file.getAbsoluteFilePath()) || f.getFilename().equals(file.getFileNameOnly());
+                    match = rf.getFilename().equals(file.getAbsoluteFilePath()) || rf.getFilename().equals(file.getFileNameOnly());
                 } else {
-                    match = f.getFilename().equals(file.getFileNameOnly());
+                    match = rf.getFilename().equals(file.getFileNameOnly());
                 }
                 if (match) {
-                    newLastModified = f.getAttrs().getMTime() * 1000L;
-                    newLength = f.getAttrs().getSize();
+                    newLastModified = rf.getLastModified();
+                    newLength = rf.getFileLength();
                 }
             }
 
