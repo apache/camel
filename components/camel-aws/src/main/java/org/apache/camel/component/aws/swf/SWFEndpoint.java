@@ -84,9 +84,11 @@ public class SWFEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        if (amazonSWClient != null) {
-            amazonSWClient.shutdown();
-            amazonSWClient = null;
+        if (ObjectHelper.isEmpty(configuration.getAmazonSWClient())) {
+            if (amazonSWClient != null) {
+                amazonSWClient.shutdown();
+                amazonSWClient = null;
+            }
         }
         super.doStop();
     }
