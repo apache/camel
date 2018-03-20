@@ -77,8 +77,10 @@ public class CwEndpoint extends DefaultEndpoint {
     
     @Override
     public void doStop() throws Exception {
-        if (cloudWatchClient != null) {
-            cloudWatchClient.shutdown();
+        if (ObjectHelper.isEmpty(configuration.getAmazonCwClient())) {
+            if (cloudWatchClient != null) {
+                cloudWatchClient.shutdown();
+            }
         }
         super.doStop();
     }
