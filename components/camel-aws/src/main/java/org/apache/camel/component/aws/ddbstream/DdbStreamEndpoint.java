@@ -82,8 +82,10 @@ public class DdbStreamEndpoint extends ScheduledPollEndpoint {
     
     @Override
     public void doStop() throws Exception {
-        if (ddbStreamClient != null) {
-            ddbStreamClient.shutdown();
+        if (ObjectHelper.isEmpty(configuration.getAmazonDynamoDbStreamsClient())) {
+            if (ddbStreamClient != null) {
+                ddbStreamClient.shutdown();
+            }
         }
         super.doStop();
     }
