@@ -70,8 +70,10 @@ public class KMSEndpoint extends ScheduledPollEndpoint {
     
     @Override
     public void doStop() throws Exception {
-        if (kmsClient != null) {
-            kmsClient.shutdown();
+        if (ObjectHelper.isEmpty(configuration.getKmsClient())) {
+            if (kmsClient != null) {
+                kmsClient.shutdown();
+            }
         }
         super.doStop();
     }
