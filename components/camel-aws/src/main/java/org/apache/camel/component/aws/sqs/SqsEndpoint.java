@@ -24,7 +24,6 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
@@ -221,8 +220,10 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
 
     @Override
     public void doStop() throws Exception {
-        if (client != null) {
-            client.shutdown();
+        if (ObjectHelper.isEmpty(configuration.getAmazonSQSClient())) {
+            if (client != null) {
+                client.shutdown();
+            }
         }
         super.doStop();
     }
