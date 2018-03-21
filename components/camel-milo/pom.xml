@@ -103,8 +103,11 @@
           <reuseForks>true</reuseForks>
           <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           <includes>
-            <!-- Here we only run one test -->
+            <!-- Here we only run a few tests -->
             <include>**/ConverterTest.java</include>
+            <include>**/NodeIdTest.java</include>
+            <include>**/ServerSetCertificateManagerTest</include>
+            <include>**/ServerSetSecurityPoliciesTest.java</include>
           </includes>
         </configuration>
       </plugin>

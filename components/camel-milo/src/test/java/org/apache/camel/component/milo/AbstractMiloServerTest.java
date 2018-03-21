@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 
 public abstract class AbstractMiloServerTest extends CamelTestSupport {
@@ -38,6 +39,10 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
     public int getServerPort() {
         return this.serverPort;
+    }
+
+    protected boolean isAddServer() {
+        return true;
     }
 
     /**
@@ -83,14 +88,18 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
     }
 
     protected void configureContext(final CamelContext context) throws Exception {
-        final MiloServerComponent server = context.getComponent("milo-server", MiloServerComponent.class);
-        configureMiloServer(server);
+        if (isAddServer()) {
+            final MiloServerComponent server = context.getComponent("milo-server", MiloServerComponent.class);
+            configureMiloServer(server);
+        }
     }
 
     protected void configureMiloServer(final MiloServerComponent server) throws Exception {
         server.setBindAddresses("localhost");
         server.setBindPort(this.serverPort);
         server.setUserAuthenticationCredentials("foo:bar,foo2:bar2");
+        server.setUsernameSecurityPolicyUri(SecurityPolicy.None);
+        server.setSecurityPoliciesById("None");
     }
 
     /**

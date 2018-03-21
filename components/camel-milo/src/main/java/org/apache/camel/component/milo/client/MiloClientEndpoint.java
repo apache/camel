@@ -21,8 +21,6 @@ import java.util.Objects;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.milo.NamespaceId;
-import org.apache.camel.component.milo.PartialNodeId;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -35,7 +33,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
  * data
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "milo-client", syntax = "milo-client:endpointUri", title = "OPC UA Client", consumerClass = MiloClientConsumer.class, label = "iot")
-public class MiloClientEndpoint extends DefaultEndpoint implements MiloClientItemConfiguration {
+public class MiloClientEndpoint extends DefaultEndpoint {
 
     /**
      * The OPC UA server endpoint
@@ -49,6 +47,12 @@ public class MiloClientEndpoint extends DefaultEndpoint implements MiloClientIte
      */
     @UriParam
     private ExpandedNodeId node;
+
+    /**
+     * The method definition (see Method ID)
+     */
+    @UriParam
+    private ExpandedNodeId method;
 
     /**
      * The sampling interval in milliseconds
@@ -97,17 +101,17 @@ public class MiloClientEndpoint extends DefaultEndpoint implements MiloClientIte
 
     @Override
     public Producer createProducer() throws Exception {
-        return new MiloClientProducer(this, this.connection, this, this.defaultAwaitWrites);
+        return new MiloClientProducer(this, this.connection, this.defaultAwaitWrites);
     }
 
     @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
-        return new MiloClientConsumer(this, processor, this.connection, this);
+        return new MiloClientConsumer(this, processor, this.connection);
     }
 
     @Override
     public boolean isSingleton() {
-        return true;
+        return false;
     }
 
     public MiloClientConnection getConnection() {
@@ -116,33 +120,19 @@ public class MiloClientEndpoint extends DefaultEndpoint implements MiloClientIte
 
     // item configuration
 
-    @Override
-    public PartialNodeId makePartialNodeId() {
-        PartialNodeId result = null;
-
-        if (this.node != null) {
-            result = PartialNodeId.fromExpandedNodeId(this.node);
-        }
-
-        if (result == null) {
-            throw new IllegalStateException("Missing or invalid node id configuration");
+    public void setMethod(final String method) {
+        if (method == null) {
+            this.method = null;
         } else {
-            return result;
+            this.method = ExpandedNodeId.parse(method);
         }
     }
 
-    @Override
-    public NamespaceId makeNamespaceId() {
-        NamespaceId result = null;
-
-        if (this.node != null) {
-            result = NamespaceId.fromExpandedNodeId(this.node);
-        }
-
-        if (result == null) {
-            throw new IllegalStateException("Missing or invalid node id configuration");
+    public String getMethod() {
+        if (this.method != null) {
+            return this.method.toParseableString();
         } else {
-            return result;
+            return null;
         }
     }
 
@@ -162,7 +152,14 @@ public class MiloClientEndpoint extends DefaultEndpoint implements MiloClientIte
         }
     }
 
-    @Override
+    ExpandedNodeId getNodeId() {
+        return this.node;
+    }
+
+    ExpandedNodeId getMethodId() {
+        return this.method;
+    }
+
     public Double getSamplingInterval() {
         return this.samplingInterval;
     }
