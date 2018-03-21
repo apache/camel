@@ -31,14 +31,14 @@ public class FromFileInterceptSendToIssue extends ContextTestSupport {
     public void testInterceptSendTo() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:foo");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "direct://foo");
+        mock.expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "seda://foo");
 
         template.sendBodyAndHeader("file://target/intercept", "Hello World", Exchange.FILE_NAME, "input.txt");
 
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
-        assertEquals("file://target/intercept", exchange.getFromEndpoint().getEndpointUri());
+        assertTrue(exchange.getFromEndpoint().getEndpointUri().startsWith("file://target/intercept"));
     }
 
     @Override
@@ -46,11 +46,11 @@ public class FromFileInterceptSendToIssue extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("direct:foo").to("mock:foo");
+                interceptSendToEndpoint("seda:foo").to("mock:foo");
 
                 from("file://target/intercept?initialDelay=0&delay=10")
                     .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                    .to("direct:foo");
+                    .to("seda:foo");
             }
         };
     }
