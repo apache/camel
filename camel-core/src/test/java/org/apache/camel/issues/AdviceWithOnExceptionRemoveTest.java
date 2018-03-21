@@ -17,27 +17,32 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.RouteDefinition;
 
 /**
  * @version 
  */
-public class AdviceWithOnCompletionTest extends ContextTestSupport {
+public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
 
-    public void testAdviceOnCompletion() throws Exception {
-        getMockEndpoint("mock:done").expectedMessageCount(1);
-        getMockEndpoint("mock:advice").expectedMessageCount(1);
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+    public void testAdviceWithOnException() throws Exception {
+        RouteDefinition route = context.getRouteDefinitions().get(0);
+        route.adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                weaveAddFirst().to("mock:advice");
+                weaveById("removeMe").remove();
             }
         });
+        context.start();
 
-        template.sendBody("direct:advice", "Hello World");
+        getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:b").expectedMessageCount(0);
+        getMockEndpoint("mock:handled").expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,11 +52,19 @@ public class AdviceWithOnCompletionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onCompletion().to("mock:done");
+                onException(IllegalArgumentException.class)
+                    .process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            exchange.getIn().setBody("I changed this");
+                        }
+                    }).id("removeMe")
+                    .handled(true).to("mock:handled");
 
-                from("direct:advice")
-                    .log("Advice ${body}")
-                    .to("mock:result");
+                from("direct:start")
+                    .to("mock:a").id("a")
+                    .throwException(new IllegalArgumentException("Forced"))
+                    .to("mock:b").id("b");
             }
         };
     }
