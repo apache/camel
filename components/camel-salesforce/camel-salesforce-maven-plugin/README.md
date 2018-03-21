@@ -18,8 +18,8 @@ The plugin configuration has the following properties.
 * includePattern - Java RegEx for SObject types to include
 * excludePattern - Java RegEx for SObject types to exclude
 * packageName - Java package name for generated DTOs, defaults to org.apache.camel.salesforce.dto.
-* useZonedTimeDateForDate - it will use ZonedTimeDate for Date if set to true. By default it will use LocalDate.
-* useZonedTimeDateForTime - it will use ZonedTimeDate for Time if set to true. By default it will use OffsetTime, with timezone offset set to UTC.
+* useZonedTimeDateForDate - it will use LocalDate for Date if set to false. By default or if set to true ZonedTimeDate will be used for Date.
+* useZonedTimeDateForTime - it will use OffsetTime with timezone offset set to UTC for Time if set to false. By default or if set to true ZonedTimeDate will be used for Time.
 
 Additonal properties to provide proxy information, if behind a firewall.
 

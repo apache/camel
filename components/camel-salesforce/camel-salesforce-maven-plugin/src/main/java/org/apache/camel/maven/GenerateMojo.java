@@ -322,13 +322,13 @@ public class GenerateMojo extends AbstractSalesforceMojo {
     /**
      * Generator will use java.time.ZonedTimeDate for Date if set to true, else it will default to java.time.LocalDate
      */
-    @Parameter(property = "camelSalesforce.useZonedTimeDateForDate", defaultValue = "false")
+    @Parameter(property = "camelSalesforce.useZonedTimeDateForDate", defaultValue = "true")
     private boolean useZonedTimeDateForDate;
  
     /**
      * Generator will use java.time.ZonedTimeDate for Time if set to true, else it will default to java.time.OffsetTime
      */
-    @Parameter(property = "camelSalesforce.useZonedTimeDateForTime", defaultValue = "false")
+    @Parameter(property = "camelSalesforce.useZonedTimeDateForTime", defaultValue = "true")
     private boolean useZonedTimeDateForTime;
     
     void processDescription(final File pkgDir, final SObjectDescription description, final GeneratorUtility utility,
