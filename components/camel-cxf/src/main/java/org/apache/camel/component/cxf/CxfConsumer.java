@@ -221,8 +221,7 @@ public class CxfConsumer extends DefaultConsumer {
                         throw ex;
                     }
 
-                } else if (continuation.isTimeout() || 
-                    (!continuation.isResumed() && !continuation.isPending())) {
+                } else if (continuation.isTimeout() || (!continuation.isResumed() && !continuation.isPending())) {
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
                     try {
                         if (!continuation.isPending()) {
