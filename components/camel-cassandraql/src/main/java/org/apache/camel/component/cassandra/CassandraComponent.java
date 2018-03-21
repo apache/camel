@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Represents the component that manages {@link CassandraEndpoint}. This
@@ -67,8 +67,8 @@ public class CassandraComponent extends DefaultComponent {
         } else {
             // hosts and port (port is optional)
             if (remaining.contains(":")) {
-                port = ObjectHelper.after(remaining, ":");
-                hosts = ObjectHelper.before(remaining, ":");
+                port = StringHelper.after(remaining, ":");
+                hosts = StringHelper.before(remaining, ":");
             } else {
                 hosts = remaining;
             }
