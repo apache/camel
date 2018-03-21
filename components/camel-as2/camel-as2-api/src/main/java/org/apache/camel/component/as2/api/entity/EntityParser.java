@@ -8,16 +8,18 @@ import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.util.EntityUtils;
-import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.http.Header;
+import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpMessage;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.io.AbstractMessageParser;
 import org.apache.http.impl.io.HttpTransportMetricsImpl;
 import org.apache.http.impl.io.SessionInputBufferImpl;
+import org.apache.http.io.SessionInputBuffer;
 import org.apache.http.message.BasicLineParser;
 import org.apache.http.message.ParserCursor;
 import org.apache.http.util.Args;
@@ -123,7 +125,7 @@ public class EntityParser {
         
     }
 
-    public static HttpEntity parseMultipartSignedEntity(HttpEntity entity, boolean isMainBody) throws HttpException{
+    public static HttpEntity parseMultipartSignedEntity(HttpMessage message, HttpEntity entity, boolean isMainBody) throws HttpException{
         Args.notNull(entity, "Entity");
         Args.check(entity.isStreaming(), "Entity is not streaming");
         MultipartSignedEntity multipartSignedEntity = null;
@@ -164,7 +166,6 @@ public class EntityParser {
             }
             
             multipartSignedEntity = new MultipartSignedEntity(boundary, true);
-            
             if (headers != null) {
                 multipartSignedEntity.setHeaders(headers);
             }
@@ -206,39 +207,20 @@ public class EntityParser {
             
            
             // - Read EDI Message Body Part Content
-            CharArrayBuffer ediMessageContentBuffer = new CharArrayBuffer(1024);
-            CharArrayBuffer lineBuffer = new CharArrayBuffer(1024);
-            boolean foundMultipartEndBoundary = false;
-            while(inBuffer.readLine(lineBuffer) != -1) {
-                if (isBoundaryDelimiter(lineBuffer, null, boundary)) {
-                    foundMultipartEndBoundary = true;
-                    lineBuffer.clear();
-                    break;
-                }
-                lineBuffer.append("\r\n"); // add line delimiter
-                ediMessageContentBuffer.append(lineBuffer);
-                lineBuffer.clear();
-            }
-            if (!foundMultipartEndBoundary) {
-                throw new HttpException("Failed to find end boundary delimiter for EDI message body part");
-            }
+            String ediMessageBodyPartContent = parseBodyPartContent(inBuffer, boundary);
             
             // Decode Content
-            Charset ediMessageCharset = ediMessageContentType.getCharset();
-            if (ediMessageCharset == null) {
-                ediMessageCharset = StandardCharsets.US_ASCII;
-            }
-            byte[] bytes = EntityUtils.decode(ediMessageContentBuffer.toString().getBytes(ediMessageCharset), ediMessageContentTransferEncoding);
-            String ediMessageContent = new String(bytes, ediMessageCharset);
+            byte[] bytes = decodeTransferEncodingOfBodyPartContent(ediMessageBodyPartContent, ediMessageContentType, ediMessageContentTransferEncoding); 
+            ediMessageBodyPartContent = new String(bytes, ediMessageContentType.getCharset());
             
             // Build application EDI entity and add to multipart.
-            ApplicationEDIEntity applicationEDIEntity = EntityUtils.createEDIEntity(ediMessageContent, ediMessageContentType, ediMessageContentTransferEncoding, false);
+            ApplicationEDIEntity applicationEDIEntity = EntityUtils.createEDIEntity(ediMessageBodyPartContent, ediMessageContentType, ediMessageContentTransferEncoding, false);
             applicationEDIEntity.removeAllHeaders();
             applicationEDIEntity.setHeaders(headers);
             multipartSignedEntity.addPart(applicationEDIEntity);
             
             //
-            // End EDI Message Body Parts
+            // End EDI Message Body Part
             
             //
             // Parse Signature Body Part
@@ -272,33 +254,14 @@ public class EntityParser {
                 throw new HttpException("Invalid content type '" + ediMessageContentType.getMimeType() + "' for signature body part");
             }
             
-            // - Read Signature Body Part Content
-            CharArrayBuffer signatureContentBuffer = new CharArrayBuffer(1024);
-            lineBuffer = new CharArrayBuffer(1024);
-            foundMultipartEndBoundary = false;
-            while(inBuffer.readLine(lineBuffer) != -1) {
-                if (isBoundaryDelimiter(lineBuffer, null, boundary)) {
-                    foundMultipartEndBoundary = true;
-                    lineBuffer.clear();
-                    break;
-                }
-                signatureContentBuffer.append(lineBuffer);
-                signatureContentBuffer.append("\r\n"); // add line delimiter
-                lineBuffer.clear();
-            }
-            if (!foundMultipartEndBoundary) {
-                throw new HttpException("Failed to find end boundary delimiter for signature body part");
-            }
-    
-            // Decode Content
-            Charset signatureCharset = signatureContentType.getCharset();
-            if (signatureCharset == null) {
-                signatureCharset = StandardCharsets.US_ASCII;
-            }
-            byte[] signature = EntityUtils.decode(signatureContentBuffer.toString().getBytes(signatureCharset), signatureContentTransferEncoding);
-    
+            // Read Signature Body Part Content
+            String signatureBodyPartContent = parseBodyPartContent(inBuffer, boundary);
+            
+            // Decode content
+            byte[] signature = decodeTransferEncodingOfBodyPartContent(signatureBodyPartContent, signatureContentType, signatureContentTransferEncoding);
+
             // Build application Pkcs7 Signature entity and add to multipart.
-            ApplicationPkcs7SignatureEntity applicationPkcs7SignatureEntity = new ApplicationPkcs7SignatureEntity(signatureCharset.toString(), signatureContentTransferEncoding, signature, false);
+            ApplicationPkcs7SignatureEntity applicationPkcs7SignatureEntity = new ApplicationPkcs7SignatureEntity(signatureContentType.getCharset().toString(), signatureContentTransferEncoding, signature, false);
             multipartSignedEntity.addPart(applicationPkcs7SignatureEntity);
     
             //
@@ -312,7 +275,7 @@ public class EntityParser {
         }
     }
 
-    public static HttpEntity parseApplicationEDIEntity(HttpEntity entity, boolean isMainBody) throws HttpException {
+    public static HttpEntity parseApplicationEDIEntity(HttpMessage message, HttpEntity entity, boolean isMainBody) throws HttpException {
         Args.notNull(entity, "Entity");
         Args.check(entity.isStreaming(), "Entity is not streaming");
         ApplicationEDIEntity applicationEDIEntity = null;
@@ -372,10 +335,9 @@ public class EntityParser {
         }
     }
 
-    public static HttpEntity parseMessageDispositionNotificationEntity(HttpEntity entity, String boundary, boolean isMainBody)
+    public static HttpEntity parseMessageDispositionNotificationEntity(HttpMessage message, HttpEntity entity, boolean isMainBody)
             throws HttpException {
         Args.notNull(entity, "entity");
-        Args.notNull(boundary, "boundary");
         DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = null;
         Header[] headers = null;
 
@@ -397,15 +359,9 @@ public class EntityParser {
                 throw new HttpException("Entity has invalid MIME type '" + contentType.getMimeType() + "'");
             }
             
-
-
-            // Determine Transfer Encoding
-            Header transferEncoding = entity.getContentEncoding();
-            String contentTransferEncoding = transferEncoding == null ? null : transferEncoding.getValue();
-
             SessionInputBufferImpl inBuffer = new SessionInputBufferImpl(new HttpTransportMetricsImpl(), 8 * 1024);
             inBuffer.bind(entity.getContent());
-
+            
             // Parse Headers
             if (!isMainBody) {
                 headers = AbstractMessageParser.parseHeaders(inBuffer, 
@@ -414,13 +370,117 @@ public class EntityParser {
                                                              BasicLineParser.INSTANCE,
                                                              new ArrayList<CharArrayBuffer>());
             }
-
-            // Extract content from stream
-            CharArrayBuffer lineBuffer = new CharArrayBuffer(1024);
-            while (inBuffer.readLine(lineBuffer) != -1) {
-                lineBuffer.append("\r\n"); // add line delimiter
+            
+            // Get Boundary Value
+            String boundary = null;
+            if (isMainBody) {
+                boundary = getBoundaryParameterValue(message, AS2Header.REPORT_TYPE);
+            } else if (headers != null) {
+                boundary = getBoundaryParameterValue(headers, AS2Header.REPORT_TYPE);
+            }
+            if (boundary == null) {
+                throw new HttpException("Failed to retrive boundary value");
             }
 
+            dispositionNotificationMultipartReportEntity = new DispositionNotificationMultipartReportEntity(boundary, isMainBody);
+            if (headers != null) {
+                dispositionNotificationMultipartReportEntity.setHeaders(headers);
+            }
+            
+            
+            //
+            // Parse Text Report Body Part
+            //
+            
+            // Skip Preamble and Start Boundary line
+            skipPreambleAndStartBoundary(inBuffer, boundary);
+            
+            // Read EDI Message Body Part Headers
+            headers = AbstractMessageParser.parseHeaders(
+                    inBuffer,
+                    -1,
+                    -1,
+                    BasicLineParser.INSTANCE,
+                    new ArrayList<CharArrayBuffer>());
+
+            // Get Content-Type and Content-Transfer-Encoding
+            ContentType textReportContentType = null;
+            String textReportContentTransferEncoding = null;
+            for (Header header : headers) {
+                switch (header.getName()) {
+                case AS2Header.CONTENT_TYPE:
+                    textReportContentType = ContentType.parse(header.getValue());
+                    break;
+                case AS2Header.CONTENT_TRANSFER_ENCODING:
+                    textReportContentTransferEncoding = header.getValue();
+                    break;
+                }
+            }
+            if (textReportContentType == null) {
+                throw new HttpException("Failed to find Content-Type header in EDI message body part");
+            }
+            if (!textReportContentType.getMimeType().equalsIgnoreCase(AS2MimeType.TEXT_PLAIN)) {
+                throw new HttpException("Invalid content type '" + textReportContentType.getMimeType() + "' for first body part of disposition notification");
+            }
+
+            // Read Text Report Body Part Content
+            String textReportBodyPartContent = parseBodyPartContent(inBuffer, boundary);
+            
+            // Decode content
+            byte[] bytes = decodeTransferEncodingOfBodyPartContent(textReportBodyPartContent, textReportContentType, textReportContentTransferEncoding);
+            textReportBodyPartContent = new String(bytes, textReportContentType.getCharset());
+            
+            // Build text plain entity and add to report 
+            TextPlainEntity textReportEntity = new TextPlainEntity(textReportBodyPartContent, textReportContentType.getCharset().toString(), textReportContentTransferEncoding, false);
+            dispositionNotificationMultipartReportEntity.addPart(textReportEntity);
+            
+            //
+            // End Text Report Body Part
+            
+            //
+            // Parse Disposition Notification Body Part
+            //
+            
+            // Read Disposition Notification Body Part Headers
+            headers = AbstractMessageParser.parseHeaders(
+                    inBuffer,
+                    -1,
+                    -1,
+                    BasicLineParser.INSTANCE,
+                    new ArrayList<CharArrayBuffer>());
+            
+            // Get Content-Type and Content-Transfer-Encoding
+            ContentType dispositionNotificationContentType = null;
+            String dispositionNotificationContentTransferEncoding = null;
+            for (Header header : headers) {
+                switch (header.getName()) {
+                case AS2Header.CONTENT_TYPE:
+                    dispositionNotificationContentType = ContentType.parse(header.getValue());
+                    break;
+                case AS2Header.CONTENT_TRANSFER_ENCODING:
+                    dispositionNotificationContentTransferEncoding = header.getValue();
+                    break;
+                }
+            }
+            if (dispositionNotificationContentType == null) {
+                throw new HttpException("Failed to find Content-Type header in body part");
+            }
+            if (!dispositionNotificationContentType.getMimeType().equalsIgnoreCase(AS2MimeType.TEXT_PLAIN)) {
+                throw new HttpException("Invalid content type '" + dispositionNotificationContentType.getMimeType() + "' for second body part of disposition notification");
+            }
+            
+            // Read Disposition Notification Body Part Content
+            String dispositionNotificationBodyPartContent = parseBodyPartContent(inBuffer, boundary);
+
+            // Decode content
+            bytes = decodeTransferEncodingOfBodyPartContent(dispositionNotificationBodyPartContent, dispositionNotificationContentType, dispositionNotificationContentTransferEncoding);
+            dispositionNotificationBodyPartContent = new String(bytes, textReportContentType.getCharset());
+            
+            
+            //
+            // End Disposition Notification Body Part
+           
+            
             if (headers != null) {
                 dispositionNotificationMultipartReportEntity.setHeaders(headers);
             }
@@ -449,18 +509,17 @@ public class EntityParser {
                 case AS2MimeType.APPLICATION_EDIFACT:
                 case AS2MimeType.APPLICATION_EDI_X12:
                 case AS2MimeType.APPLICATION_EDI_CONSENT:
-                    entity = parseApplicationEDIEntity(entity, true);
+                    entity = parseApplicationEDIEntity(message, entity, true);
                     setMessageEntity(message, entity);
                     break;
                 case AS2MimeType.MULTIPART_SIGNED:
-                    entity = parseMultipartSignedEntity(entity, true);
+                    entity = parseMultipartSignedEntity(message, entity, true);
                     setMessageEntity(message, entity);
                     break;
                 case AS2MimeType.APPLICATION_PKCS7_MIME:
                     break;
                 case AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION:
-                    String boundary = HttpMessageUtils.getHeaderValue(message, AS2Header.REPORT_TYPE);
-                    parseMessageDispositionNotificationEntity(entity, boundary, true);
+                    parseMessageDispositionNotificationEntity(message, entity, true);
                     setMessageEntity(message, entity);
                     break;
                 default:
@@ -497,4 +556,69 @@ public class EntityParser {
         }
     }
 
+    public static String getBoundaryParameterValue(HttpMessage message, String headerName) {
+        Header header = message.getFirstHeader(headerName);
+        for (HeaderElement headerElement: header.getElements()) {
+            for (NameValuePair nameValuePair: headerElement.getParameters()) {
+                if (nameValuePair.getName().equalsIgnoreCase("boundary")) {
+                    return nameValuePair.getValue();
+                }
+            }
+        }
+        return null;
+    }
+    
+    public static String getBoundaryParameterValue(Header[] headers, String headerName) {
+        for (Header header: headers) {
+            if (header.getName().equalsIgnoreCase(headerName)) {
+                for (HeaderElement headerElement: header.getElements()) {
+                    for (NameValuePair nameValuePair: headerElement.getParameters()) {
+                        if (nameValuePair.getName().equalsIgnoreCase("boundary")) {
+                            return nameValuePair.getValue();
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static String parseBodyPartContent(SessionInputBuffer inBuffer, String boundary) throws HttpException {
+        try {
+            CharArrayBuffer bodyPartContentBuffer = new CharArrayBuffer(1024);
+            CharArrayBuffer lineBuffer = new CharArrayBuffer(1024);
+            boolean foundMultipartEndBoundary = false;
+            while(inBuffer.readLine(lineBuffer) != -1) {
+                if (isBoundaryDelimiter(lineBuffer, null, boundary)) {
+                    foundMultipartEndBoundary = true;
+                    // Remove previous line ending: this is associated with boundary
+                    bodyPartContentBuffer.setLength(bodyPartContentBuffer.length() - 2);
+                    lineBuffer.clear();
+                    break;
+                }
+                lineBuffer.append("\r\n"); // add line delimiter
+                bodyPartContentBuffer.append(lineBuffer);
+                lineBuffer.clear();
+            }
+            if (!foundMultipartEndBoundary) {
+                throw new HttpException("Failed to find end boundary delimiter for body part");
+            }
+            
+            return bodyPartContentBuffer.toString();
+        } catch (HttpException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new HttpException("Failed to parse body part content", e);
+        }
+    }
+    
+    public static byte[] decodeTransferEncodingOfBodyPartContent(String bodyPartContent, ContentType contentType, String bodyPartTransferEncoding) throws Exception {
+        Charset contentCharset = contentType.getCharset();
+                if (contentCharset == null) {
+            contentCharset = StandardCharsets.US_ASCII;
+        }
+       return EntityUtils.decode(bodyPartContent.getBytes(contentCharset), bodyPartTransferEncoding);
+        
+    }
+    
 }

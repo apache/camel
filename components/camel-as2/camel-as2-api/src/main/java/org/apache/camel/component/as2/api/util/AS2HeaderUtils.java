@@ -89,7 +89,7 @@ public class AS2HeaderUtils {
 
     private AS2HeaderUtils() {
     }
-
+    
     public static Parameter parseNameValuePair(final CharArrayBuffer buffer, final ParserCursor cursor) {
         Args.notNull(buffer, "Char array buffer");
         Args.notNull(cursor, "Parser cursor");

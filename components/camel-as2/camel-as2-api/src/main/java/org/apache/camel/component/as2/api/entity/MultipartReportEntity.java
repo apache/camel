@@ -52,6 +52,10 @@ public class MultipartReportEntity extends MultipartMimeEntity {
         addPart(new AS2MessageDispositionNotificationEntity(request, response, dispositionMode, dispositionType,
                 dispositionModifier, failureFields, errorFields, warningFields, extensionFields, charset, isMainBody));
     }
+    
+    protected MultipartReportEntity() {
+        
+    }
 
     protected TextPlainEntity buildPlainTextReport(HttpEntityEnclosingRequest request,
                                                    HttpResponse response,

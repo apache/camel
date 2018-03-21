@@ -79,7 +79,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
         
         if (coreContext.getAttribute(AS2ServerManager.MESSAGE_DISPOSITION_NOTIFICATION, String.class) == null) {
             
-            MultipartReportEntity multipartReportEntity = new MultipartReportEntity(request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED, null, null, null, null, null, AS2CharSet.US_ASCII, true, EntityUtils.createBoundaryValue());
+            DispositionNotificationMultipartReportEntity multipartReportEntity = new DispositionNotificationMultipartReportEntity(request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED, null, null, null, null, null, AS2CharSet.US_ASCII, EntityUtils.createBoundaryValue(), true);
 
             DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser.parseDispositionNotificationOptions(coreContext.getAttribute(AS2ServerManager.MESSAGE_DISPOSITION_OPTIONS, String.class), null);
             
