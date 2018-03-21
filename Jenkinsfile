@@ -46,7 +46,7 @@ pipeline {
 
         stage('Checks') {
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Psourcecheck checkstyle:check"
+                sh "./mvnw $MAVEN_PARAMS -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
             }
             post {
                 always {
