@@ -16,19 +16,19 @@
  */
 package org.apache.camel.component.milo.client;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
 
-import org.apache.camel.component.milo.NamespaceId;
-import org.apache.camel.component.milo.PartialNodeId;
 import org.apache.camel.component.milo.client.internal.SubscriptionManager;
-import org.eclipse.milo.opcua.sdk.client.api.config.OpcUaClientConfigBuilder;
 import org.eclipse.milo.opcua.stack.core.Stack;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
+import org.eclipse.milo.opcua.stack.core.types.structured.CallMethodResult;
 
 public class MiloClientConnection implements AutoCloseable {
 
@@ -38,18 +38,15 @@ public class MiloClientConnection implements AutoCloseable {
 
     private boolean initialized;
 
-    private final OpcUaClientConfigBuilder clientConfiguration;
-
-    public MiloClientConnection(final MiloClientConfiguration configuration, final OpcUaClientConfigBuilder clientConfiguration) {
+    public MiloClientConnection(final MiloClientConfiguration configuration) {
         requireNonNull(configuration);
 
         // make a copy since the configuration is mutable
         this.configuration = configuration.clone();
-        this.clientConfiguration = clientConfiguration;
     }
 
     protected void init() throws Exception {
-        this.manager = new SubscriptionManager(this.configuration, this.clientConfiguration, Stack.sharedScheduledExecutor(), 10_000);
+        this.manager = new SubscriptionManager(this.configuration, Stack.sharedScheduledExecutor(), 10_000);
     }
 
     @Override
@@ -78,17 +75,14 @@ public class MiloClientConnection implements AutoCloseable {
         void unregister();
     }
 
-    public MonitorHandle monitorValue(final MiloClientItemConfiguration configuration, final Consumer<DataValue> valueConsumer) {
+    public MonitorHandle monitorValue(final ExpandedNodeId nodeId, Double samplingInterval, final Consumer<DataValue> valueConsumer) {
 
         requireNonNull(configuration);
         requireNonNull(valueConsumer);
 
         checkInit();
 
-        final NamespaceId namespaceId = configuration.makeNamespaceId();
-        final PartialNodeId partialNodeId = configuration.makePartialNodeId();
-
-        final UInteger handle = this.manager.registerItem(namespaceId, partialNodeId, configuration.getSamplingInterval(), valueConsumer);
+        final UInteger handle = this.manager.registerItem(nodeId, samplingInterval, valueConsumer);
 
         return () -> MiloClientConnection.this.manager.unregisterItem(handle);
     }
@@ -97,10 +91,38 @@ public class MiloClientConnection implements AutoCloseable {
         return this.configuration.toCacheId();
     }
 
-    public void writeValue(final NamespaceId namespaceId, final PartialNodeId partialNodeId, final Object value, final boolean await) {
+    public CompletableFuture<?> writeValue(final ExpandedNodeId nodeId, final Object value) {
         checkInit();
 
-        this.manager.write(namespaceId, partialNodeId, mapValue(value), await);
+        return this.manager.write(nodeId, mapWriteValue(value));
+    }
+
+    public CompletableFuture<CallMethodResult> call(final ExpandedNodeId nodeId, final ExpandedNodeId methodId, final Object value) {
+        checkInit();
+
+        return this.manager.call(nodeId, methodId, mapCallValue(value));
+    }
+
+    /**
+     * Map the incoming value to some value callable to the milo client
+     *
+     * @param value the incoming value
+     * @return the outgoing call request
+     */
+    private Variant[] mapCallValue(final Object value) {
+
+        if (value == null) {
+            return new Variant[0];
+        }
+
+        if (value instanceof Variant[]) {
+            return (Variant[])value;
+        }
+        if (value instanceof Variant) {
+            return new Variant[] {(Variant)value};
+        }
+
+        return new Variant[] {new Variant(value)};
     }
 
     /**
@@ -109,7 +131,7 @@ public class MiloClientConnection implements AutoCloseable {
      * @param value the incoming value
      * @return the outgoing value
      */
-    private DataValue mapValue(final Object value) {
+    private DataValue mapWriteValue(final Object value) {
         if (value instanceof DataValue) {
             return (DataValue)value;
         }

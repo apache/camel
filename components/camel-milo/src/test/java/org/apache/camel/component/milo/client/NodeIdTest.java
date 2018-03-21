@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.milo;
+package org.apache.camel.component.milo.client;
 
 import java.io.Serializable;
 
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.component.milo.client.MiloClientEndpoint;
+import org.apache.camel.component.milo.AbstractMiloServerTest;
+import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.junit.Test;
 
 import static com.google.common.net.UrlEscapers.urlFormParameterEscaper;
@@ -73,14 +74,12 @@ public class NodeIdTest extends AbstractMiloServerTest {
 
     private void assertNodeId(final MiloClientEndpoint endpoint, final Serializable namespace, final Serializable partialNodeId) {
 
-        final NamespaceId ns = endpoint.makeNamespaceId();
-        final PartialNodeId pn = endpoint.makePartialNodeId();
+        final ExpandedNodeId en = endpoint.getNodeId();
 
-        assertNotNull(ns);
-        assertNotNull(pn);
+        assertNotNull(en);
 
-        assertEquals(namespace, ns.getValue());
-        assertEquals(partialNodeId, pn.getValue());
+        assertEquals(namespace, en.getNamespaceUri() == null ? en.getNamespaceIndex() : en.getNamespaceUri());
+        assertEquals(partialNodeId, en.getIdentifier());
     }
 
 }

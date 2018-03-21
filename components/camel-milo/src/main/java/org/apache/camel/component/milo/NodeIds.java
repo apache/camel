@@ -20,13 +20,43 @@ import java.util.Base64;
 import java.util.Objects;
 import java.util.UUID;
 
+import static java.util.Objects.requireNonNull;
+
 import org.eclipse.milo.opcua.stack.core.types.builtin.ByteString;
+import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
+
+import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ushort;
 
 /**
  * Helper class to work with node IDs
  */
 public final class NodeIds {
     private NodeIds() {
+    }
+
+    public static NodeId toNodeId(final UShort namespaceIndex, final ExpandedNodeId nodeId) {
+        requireNonNull(namespaceIndex);
+
+        final Object id = nodeId.getIdentifier();
+
+        if (id instanceof String) {
+            return new NodeId(namespaceIndex, (String)id);
+        } else if (id instanceof UInteger) {
+            return new NodeId(namespaceIndex, (UInteger)id);
+        } else if (id instanceof ByteString) {
+            return new NodeId(namespaceIndex, (ByteString)id);
+        } else if (id instanceof UUID) {
+            return new NodeId(namespaceIndex, (UUID)id);
+        }
+
+        throw new IllegalStateException("Invalid id type: " + id);
+    }
+
+    public static NodeId toNodeId(final int namespaceIndex, final ExpandedNodeId nodeId) {
+        return toNodeId(ushort(namespaceIndex), nodeId);
     }
 
     /**
