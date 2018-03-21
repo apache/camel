@@ -20,6 +20,8 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.kms.AWSKMS;
 import com.amazonaws.services.kms.model.CreateKeyRequest;
 import com.amazonaws.services.kms.model.CreateKeyResult;
+import com.amazonaws.services.kms.model.DescribeKeyRequest;
+import com.amazonaws.services.kms.model.DescribeKeyResult;
 import com.amazonaws.services.kms.model.DisableKeyRequest;
 import com.amazonaws.services.kms.model.DisableKeyResult;
 import com.amazonaws.services.kms.model.ListKeysRequest;
@@ -65,6 +67,9 @@ public class KMSProducer extends DefaultProducer {
             break;
         case scheduleKeyDeletion:
             scheduleKeyDeletion(getEndpoint().getKmsClient(), exchange);
+            break;
+        case describeKey:
+            describeKey(getEndpoint().getKmsClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -166,6 +171,25 @@ public class KMSProducer extends DefaultProducer {
             result = kmsClient.scheduleKeyDeletion(request);
         } catch (AmazonServiceException ase) {
             LOG.trace("Schedule Key Deletion command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void describeKey(AWSKMS kmsClient, Exchange exchange) {
+        DescribeKeyRequest request = new DescribeKeyRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMSConstants.KEY_ID))) {
+            String keyId = exchange.getIn().getHeader(KMSConstants.KEY_ID, String.class);
+            request.withKeyId(keyId);
+        } else {
+            throw new IllegalArgumentException("Key Id must be specified");
+        }
+        DescribeKeyResult result;
+        try {
+            result = kmsClient.describeKey(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Describe Key command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
