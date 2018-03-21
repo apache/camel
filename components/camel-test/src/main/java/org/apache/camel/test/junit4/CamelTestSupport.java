@@ -256,7 +256,7 @@ public abstract class CamelTestSupport extends TestSupport {
             // test is per class, so only setup once (the first time)
             boolean first = INIT.get() == null;
             if (first) {
-                doSpringBootWarning();
+                doSpringBootCheck();
                 doPreSetup();
                 doSetUp();
                 doPostSetup();
@@ -267,7 +267,7 @@ public abstract class CamelTestSupport extends TestSupport {
             }
         } else {
             // test is per test so always setup
-            doSpringBootWarning();
+            doSpringBootCheck();
             doPreSetup();
             doSetUp();
             doPostSetup();
@@ -292,13 +292,13 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     /**
-     * Detects if this is a Spring-Boot test and reports a warning as these base classes is not intended
+     * Detects if this is a Spring-Boot test and throws an exception, as these base classes is not intended
      * for testing Camel on Spring Boot.
      */
-    protected void doSpringBootWarning() {
+    protected void doSpringBootCheck() {
         boolean springBoot = hasClassAnnotation("org.springframework.boot.test.context.SpringBootTest");
         if (springBoot) {
-            log.warn("Spring Boot detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Spring Boot."
+            throw new RuntimeException("Spring Boot detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Spring Boot."
                 + " Prefer to not extend this class, but use @RunWith(CamelSpringBootRunner.class) instead.");
         }
     }
