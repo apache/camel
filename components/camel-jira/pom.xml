@@ -29,7 +29,7 @@
 
   <artifactId>camel-jira</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: JIRA</name>
+  <name>Camel :: JIRA (deprecated)</name>
 
    <properties>
       <camel.osgi.export.pkg>org.apache.camel.component.jira.*</camel.osgi.export.pkg>

@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 291 in 199 JAR artifacts (19 deprecated)
+Number of Components: 291 in 199 JAR artifacts (20 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -435,7 +435,7 @@ Number of Components: 291 in 199 JAR artifacts (19 deprecated)
 `jing:resourceUri` | 1.1 | Validates the payload of a message using RelaxNG Syntax using Jing library.
 
 | link:camel-jira/src/main/docs/jira-component.adoc[JIRA] (camel-jira) +
-`jira:type` | 2.15 | The jira component interacts with the JIRA issue tracker.
+`jira:type` | 2.15 | *deprecated* The jira component interacts with the JIRA issue tracker.
 
 | link:camel-jms/src/main/docs/jms-component.adoc[JMS] (camel-jms) +
 `jms:destinationType:destinationName` | 1.0 | The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
