@@ -114,6 +114,14 @@ public class MiloClientComponentConfiguration
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.milo.client.MiloClientConfiguration.class;
         private String endpointUri;
         /**
+         * An alternative discovery URI
+         */
+        private String discoveryEndpointUri;
+        /**
+         * A suffix for endpoint URI when discovering
+         */
+        private String discoveryEndpointSuffix;
+        /**
          * A virtual client id to force the creation of a new connection
          * instance
          */
@@ -187,6 +195,22 @@ public class MiloClientComponentConfiguration
 
         public void setEndpointUri(String endpointUri) {
             this.endpointUri = endpointUri;
+        }
+
+        public String getDiscoveryEndpointUri() {
+            return discoveryEndpointUri;
+        }
+
+        public void setDiscoveryEndpointUri(String discoveryEndpointUri) {
+            this.discoveryEndpointUri = discoveryEndpointUri;
+        }
+
+        public String getDiscoveryEndpointSuffix() {
+            return discoveryEndpointSuffix;
+        }
+
+        public void setDiscoveryEndpointSuffix(String discoveryEndpointSuffix) {
+            this.discoveryEndpointSuffix = discoveryEndpointSuffix;
         }
 
         public String getClientId() {

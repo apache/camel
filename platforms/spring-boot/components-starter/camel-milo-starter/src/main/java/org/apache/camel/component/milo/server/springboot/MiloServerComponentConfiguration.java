@@ -91,6 +91,10 @@ public class MiloServerComponentConfiguration
      */
     private Boolean enableAnonymousAuthentication = false;
     /**
+     * Set the UserTokenPolicy used when
+     */
+    private SecurityPolicy usernameSecurityPolicyUri;
+    /**
      * Set the addresses of the local addresses the server should bind to
      */
     private String bindAddresses;
@@ -220,6 +224,15 @@ public class MiloServerComponentConfiguration
     public void setEnableAnonymousAuthentication(
             Boolean enableAnonymousAuthentication) {
         this.enableAnonymousAuthentication = enableAnonymousAuthentication;
+    }
+
+    public SecurityPolicy getUsernameSecurityPolicyUri() {
+        return usernameSecurityPolicyUri;
+    }
+
+    public void setUsernameSecurityPolicyUri(
+            SecurityPolicy usernameSecurityPolicyUri) {
+        this.usernameSecurityPolicyUri = usernameSecurityPolicyUri;
     }
 
     public String getBindAddresses() {

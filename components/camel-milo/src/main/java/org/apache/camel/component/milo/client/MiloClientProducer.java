@@ -16,47 +16,62 @@
  */
 package org.apache.camel.component.milo.client;
 
-import org.apache.camel.Endpoint;
+import java.util.concurrent.CompletableFuture;
+
+import static java.lang.Boolean.TRUE;
+
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.milo.NamespaceId;
-import org.apache.camel.component.milo.PartialNodeId;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.DefaultAsyncProducer;
+import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MiloClientProducer extends DefaultProducer {
+public class MiloClientProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MiloClientProducer.class);
 
     private final MiloClientConnection connection;
 
-    private final NamespaceId namespaceId;
-
-    private final PartialNodeId partialNodeId;
+    private final ExpandedNodeId nodeId;
+    private final ExpandedNodeId methodId;
 
     private final boolean defaultAwaitWrites;
 
-    public MiloClientProducer(final Endpoint endpoint, final MiloClientConnection connection, final MiloClientItemConfiguration configuration, final boolean defaultAwaitWrites) {
+    public MiloClientProducer(final MiloClientEndpoint endpoint, final MiloClientConnection connection, final boolean defaultAwaitWrites) {
         super(endpoint);
 
         this.connection = connection;
         this.defaultAwaitWrites = defaultAwaitWrites;
 
-        this.namespaceId = configuration.makeNamespaceId();
-        this.partialNodeId = configuration.makePartialNodeId();
+        this.nodeId = endpoint.getNodeId();
+        this.methodId = endpoint.getMethodId();
     }
 
     @Override
-    public void process(final Exchange exchange) throws Exception {
+    public boolean process(Exchange exchange, AsyncCallback async) {
         final Message msg = exchange.getIn();
         final Object value = msg.getBody();
 
         LOG.debug("Processing message: {}", value);
 
+        final CompletableFuture<?> future;
+
+        if (this.methodId == null) {
+            future = this.connection.writeValue(this.nodeId, value);
+        } else {
+            future = this.connection.call(this.nodeId, this.methodId, value);
+        }
+
         final Boolean await = msg.getHeader("await", this.defaultAwaitWrites, Boolean.class);
 
-        this.connection.writeValue(this.namespaceId, this.partialNodeId, value, await != null ? await : false);
+        if (TRUE.equals(await)) {
+            future.whenComplete((v, ex) -> async.done(false));
+            return false;
+        } else {
+            return true;
+        }
     }
 
 }

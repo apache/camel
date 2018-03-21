@@ -104,7 +104,7 @@ public class WriteClientTest extends AbstractMiloServerTest {
         sendValue(this.producer1, new Variant("Foo2"));
 
         // assert
-        this.assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     @Test
@@ -122,7 +122,7 @@ public class WriteClientTest extends AbstractMiloServerTest {
         sendValue(this.producer2, new Variant("Foo2"));
 
         // assert
-        this.assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     @Test
