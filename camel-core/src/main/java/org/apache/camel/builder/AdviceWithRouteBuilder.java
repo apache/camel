@@ -31,7 +31,6 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).
  * If you do it multiple times, then it may not work as expected, especially when any kind of error handling is involved.
- * The Camel team plan for Camel 3.0 to support this as internal refactorings in the routing engine is needed to support this properly.
  *
  * @see org.apache.camel.model.RouteDefinition#adviceWith(org.apache.camel.CamelContext, RouteBuilder)
  */
@@ -41,16 +40,16 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     private final List<AdviceWithTask> adviceWithTasks = new ArrayList<AdviceWithTask>();
 
     /**
-     * Sets the original route which we advice.
+     * Sets the original route to be adviced.
      *
-     * @param originalRoute the original route we advice.
+     * @param originalRoute the original route.
      */
     public void setOriginalRoute(RouteDefinition originalRoute) {
         this.originalRoute = originalRoute;
     }
 
     /**
-     * Gets the original route we advice.
+     * Gets the original route to be adviced.
      *
      * @return the original route.
      */
@@ -69,7 +68,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Mock all endpoints in the route.
+     * Mock all endpoints in the route (incl onException etc).
      *
      * @throws Exception can be thrown if error occurred
      */
@@ -78,7 +77,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Mock all endpoints matching the given pattern.
+     * Mock all endpoints in the route (incl onException etc) matching the given pattern.
      *
      * @param pattern the pattern(s).
      * @throws Exception can be thrown if error occurred
@@ -124,7 +123,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Weaves by matching id of the nodes in the route.
+     * Weaves by matching id of the nodes in the route (incl onException etc).
      * <p/>
      * Uses the {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)} matching algorithm.
      *
@@ -138,7 +137,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Weaves by matching the to string representation of the nodes in the route.
+     * Weaves by matching the to string representation of the nodes in the route (incl onException etc).
      * <p/>
      * Uses the {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)} matching algorithm.
      *
@@ -152,7 +151,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Weaves by matching sending to endpoints with the given uri of the nodes in the route.
+     * Weaves by matching sending to endpoints with the given uri of the nodes in the route (incl onException etc).
      * <p/>
      * Uses the {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)} matching algorithm.
      *
@@ -166,7 +165,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Weaves by matching type of the nodes in the route.
+     * Weaves by matching type of the nodes in the route (incl onException etc).
      *
      * @param type the processor type
      * @return the builder
@@ -177,7 +176,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Weaves by adding the nodes to the start of the route.
+     * Weaves by adding the nodes to the start of the route (excl onException etc).
      *
      * @return the builder
      */
@@ -187,7 +186,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Weaves by adding the nodes to the end of the route.
+     * Weaves by adding the nodes to the end of the route (excl onException etc).
      *
      * @return the builder
      */
