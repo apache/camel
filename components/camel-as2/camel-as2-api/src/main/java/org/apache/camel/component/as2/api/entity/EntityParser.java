@@ -8,9 +8,12 @@ import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.util.EntityUtils;
+import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
+import org.apache.http.HttpMessage;
+import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.io.AbstractMessageParser;
 import org.apache.http.impl.io.HttpTransportMetricsImpl;
@@ -369,11 +372,73 @@ public class EntityParser {
         }
     }
 
-    public static void parseAS2MessageEntity(HttpRequest request) throws HttpException {
+    public static HttpEntity parseMessageDispositionNotificationEntity(HttpEntity entity, String boundary, boolean isMainBody)
+            throws HttpException {
+        Args.notNull(entity, "entity");
+        Args.notNull(boundary, "boundary");
+        DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = null;
+        Header[] headers = null;
+
+        if (entity instanceof ApplicationEDIEntity) {
+            return entity;
+        }
+
+        Args.check(entity.isStreaming(), "Entity is not streaming");
+
+        try {
+
+            // Determine and validate the Content Type
+            Header contentTypeHeader = entity.getContentType();
+            if (contentTypeHeader == null) {
+                throw new HttpException("Content-Type header is missing");
+            }
+            ContentType contentType = ContentType.parse(entity.getContentType().getValue());
+            if (!contentType.getMimeType().equals(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION)) {
+                throw new HttpException("Entity has invalid MIME type '" + contentType.getMimeType() + "'");
+            }
+            
+
+
+            // Determine Transfer Encoding
+            Header transferEncoding = entity.getContentEncoding();
+            String contentTransferEncoding = transferEncoding == null ? null : transferEncoding.getValue();
+
+            SessionInputBufferImpl inBuffer = new SessionInputBufferImpl(new HttpTransportMetricsImpl(), 8 * 1024);
+            inBuffer.bind(entity.getContent());
+
+            // Parse Headers
+            if (!isMainBody) {
+                headers = AbstractMessageParser.parseHeaders(inBuffer, 
+                                                             -1, 
+                                                             -1, 
+                                                             BasicLineParser.INSTANCE,
+                                                             new ArrayList<CharArrayBuffer>());
+            }
+
+            // Extract content from stream
+            CharArrayBuffer lineBuffer = new CharArrayBuffer(1024);
+            while (inBuffer.readLine(lineBuffer) != -1) {
+                lineBuffer.append("\r\n"); // add line delimiter
+            }
+
+            if (headers != null) {
+                dispositionNotificationMultipartReportEntity.setHeaders(headers);
+            }
+
+            return dispositionNotificationMultipartReportEntity;
+            
+        } catch (HttpException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new HttpException("Failed to parse entity content", e);
+        }
+    }
+    
+    public static void parseAS2MessageEntity(HttpMessage message) throws HttpException {
         HttpEntity entity = null;
-        if (request instanceof HttpEntityEnclosingRequest) {
-            entity = ((HttpEntityEnclosingRequest) request).getEntity();
-            if (entity.getContentType() != null) {
+        if (hasEntity(message)) {
+            entity = getMessageEntity(message);
+            if (entity != null && entity.getContentType() != null) {
                 ContentType contentType;
                 try {
                     contentType =  ContentType.parse(entity.getContentType().getValue());
@@ -385,20 +450,50 @@ public class EntityParser {
                 case AS2MimeType.APPLICATION_EDI_X12:
                 case AS2MimeType.APPLICATION_EDI_CONSENT:
                     entity = parseApplicationEDIEntity(entity, true);
-                    ((HttpEntityEnclosingRequest) request).setEntity(entity);
+                    setMessageEntity(message, entity);
                     break;
                 case AS2MimeType.MULTIPART_SIGNED:
                     entity = parseMultipartSignedEntity(entity, true);
-                    ((HttpEntityEnclosingRequest) request).setEntity(entity);
+                    setMessageEntity(message, entity);
                     break;
                 case AS2MimeType.APPLICATION_PKCS7_MIME:
                     break;
                 case AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION:
+                    String boundary = HttpMessageUtils.getHeaderValue(message, AS2Header.REPORT_TYPE);
+                    parseMessageDispositionNotificationEntity(entity, boundary, true);
+                    setMessageEntity(message, entity);
                     break;
                 default:
                     break;
                 }
             }
+        }
+    }
+    
+    public static boolean hasEntity(HttpMessage message) {
+        boolean hasEntity = false;
+        if (message instanceof HttpEntityEnclosingRequest) {
+            hasEntity = ((HttpEntityEnclosingRequest) message).getEntity() != null;
+        } else if (message instanceof HttpResponse) {
+            hasEntity = ((HttpResponse)message).getEntity() != null;
+        }
+        return hasEntity;
+    }
+    
+    public static HttpEntity getMessageEntity(HttpMessage message) {
+        if (message instanceof HttpEntityEnclosingRequest) {
+            return ((HttpEntityEnclosingRequest) message).getEntity();
+        } else if (message instanceof HttpResponse) {
+            return ((HttpResponse)message).getEntity();
+        }
+        return null;
+    }
+    
+    public static void setMessageEntity(HttpMessage message, HttpEntity entity) {
+        if (message instanceof HttpEntityEnclosingRequest) {
+            ((HttpEntityEnclosingRequest) message).setEntity(entity);
+        } else if (message instanceof HttpResponse) {
+            ((HttpResponse)message).setEntity(entity);
         }
     }
 
