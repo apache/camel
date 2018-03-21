@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.kms;
 
 import com.amazonaws.services.kms.model.CreateKeyResult;
+import com.amazonaws.services.kms.model.DescribeKeyResult;
 import com.amazonaws.services.kms.model.ListKeysResult;
 import com.amazonaws.services.kms.model.ScheduleKeyDeletionResult;
 
@@ -104,6 +105,26 @@ public class KMSProducerTest extends CamelTestSupport {
         assertEquals("test", resultGet.getKeyId());
     }
     
+    @Test
+    public void kmsDescribeKeyTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:describeKey", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KMSConstants.OPERATION, KMSOperations.describeKey);
+                exchange.getIn().setHeader(KMSConstants.KEY_ID, "test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+        
+        DescribeKeyResult resultGet = exchange.getIn().getBody(DescribeKeyResult.class);
+        assertEquals("test", resultGet.getKeyMetadata().getKeyId());
+        assertEquals("MyCamelKey", resultGet.getKeyMetadata().getDescription());
+        assertFalse(resultGet.getKeyMetadata().isEnabled());
+    }
+    
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
@@ -131,6 +152,9 @@ public class KMSProducerTest extends CamelTestSupport {
                     .to("mock:result");
                 from("direct:scheduleDelete")
                     .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=scheduleKeyDeletion")
+                    .to("mock:result");
+                from("direct:describeKey")
+                    .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=describeKey")
                     .to("mock:result");
             }
         };

@@ -158,7 +158,13 @@ public class AmazonKMSClientMock implements AWSKMS {
 
     @Override
     public DescribeKeyResult describeKey(DescribeKeyRequest describeKeyRequest) {
-        throw new UnsupportedOperationException();
+        DescribeKeyResult res = new DescribeKeyResult();
+        KeyMetadata metadata = new KeyMetadata();
+        metadata.setEnabled(false);
+        metadata.setDescription("MyCamelKey");
+        metadata.setKeyId("test");
+        res.setKeyMetadata(metadata);
+        return res;
     }
 
     @Override

@@ -21,5 +21,6 @@ public enum KMSOperations {
     listKeys,
     createKey,
     disableKey,
-    scheduleKeyDeletion
+    scheduleKeyDeletion,
+    describeKey
 }
