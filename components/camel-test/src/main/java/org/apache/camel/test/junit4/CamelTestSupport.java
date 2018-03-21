@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -87,8 +88,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A useful base class which creates a {@link org.apache.camel.CamelContext} with some routes
  * along with a {@link org.apache.camel.ProducerTemplate} for use in the test case
- *
- * @version
+ * Do <tt>not</tt> use this class for Spring Boot testing, instead use <code>@RunWith(CamelSpringBootRunner.class)</code>.
  */
 public abstract class CamelTestSupport extends TestSupport {
 
@@ -256,6 +256,7 @@ public abstract class CamelTestSupport extends TestSupport {
             // test is per class, so only setup once (the first time)
             boolean first = INIT.get() == null;
             if (first) {
+                doSpringBootWarning();
                 doPreSetup();
                 doSetUp();
                 doPostSetup();
@@ -266,6 +267,7 @@ public abstract class CamelTestSupport extends TestSupport {
             }
         } else {
             // test is per test so always setup
+            doSpringBootWarning();
             doPreSetup();
             doSetUp();
             doPostSetup();
@@ -287,6 +289,18 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     protected void doPostSetup() throws Exception {
         // noop
+    }
+
+    /**
+     * Detects if this is a Spring-Boot test and reports a warning as these base classes is not intended
+     * for testing Camel on Spring Boot.
+     */
+    protected void doSpringBootWarning() {
+        boolean springBoot = hasClassAnnotation("org.springframework.boot.test.context.SpringBootTest");
+        if (springBoot) {
+            log.warn("Spring Boot detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Spring Boot."
+                + " Prefer to not extend this class, but use @RunWith(CamelSpringBootRunner.class) instead.");
+        }
     }
 
     private void doSetUp() throws Exception {
@@ -632,10 +646,28 @@ public abstract class CamelTestSupport extends TestSupport {
      * we would just use CDI to inject this
      */
     protected void applyCamelPostProcessor() throws Exception {
-        // use the default bean post processor from camel-core
-        DefaultCamelBeanPostProcessor processor = new DefaultCamelBeanPostProcessor(context);
-        processor.postProcessBeforeInitialization(this, getClass().getName());
-        processor.postProcessAfterInitialization(this, getClass().getName());
+        // use the default bean post processor from camel-core if the test class is not dependency injected already by Spring
+        boolean spring = hasClassAnnotation("org.springframework.boot.test.context.SpringBootTest", "org.springframework.context.annotation.ComponentScan");
+        if (!spring) {
+            DefaultCamelBeanPostProcessor processor = new DefaultCamelBeanPostProcessor(context);
+            processor.postProcessBeforeInitialization(this, getClass().getName());
+            processor.postProcessAfterInitialization(this, getClass().getName());
+        }
+    }
+
+    /**
+     * Does this test class have any of the following annotations on the class-level.
+     */
+    protected boolean hasClassAnnotation(String... names) {
+        for (String name : names) {
+            for (Annotation ann : getClass().getAnnotations()) {
+                String annName = ann.annotationType().getName();
+                if (annName.equals(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     protected void stopCamelContext() throws Exception {
