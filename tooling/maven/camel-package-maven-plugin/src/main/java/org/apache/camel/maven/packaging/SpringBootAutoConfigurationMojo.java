@@ -2241,7 +2241,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         parentClass.addImport(ConditionMessage.class);
         parentClass.addImport(ConditionContext.class);
         parentClass.addImport(ConditionOutcome.class);
-        parentClass.addImport("org.apache.camel.spring.boot.util.RelaxedPropertyResolver");
+        parentClass.addImport("org.springframework.boot.context.properties.bind.Bindable");
+        parentClass.addImport("org.springframework.boot.context.properties.bind.Binder");
         parentClass.addImport(AnnotatedTypeMetadata.class);
         parentClass.addImport(SpringBootCondition.class);
 
@@ -2263,8 +2264,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         isEnabled.addParameter(boolean.class, "defaultValue");
         isEnabled.setReturnType(boolean.class);
         isEnabled.setBody(new StringBuilder()
-            .append("RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(context.getEnvironment(), prefix);\n")
-            .append("return resolver.getProperty(\"enabled\", Boolean.class, defaultValue);")
+            .append("String property = prefix.endsWith(\".\") ? prefix + \"enabled\" : prefix + \".enabled\";\n")
+            .append("return Binder.get(context.getEnvironment()).bind(property, Bindable.of(Boolean.class)).orElse(defaultValue);")
             .toString()
         );
 

@@ -16,10 +16,7 @@
  */
 package org.apache.camel.spring.boot.security;
 
-import java.util.Map;
-
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
-import org.apache.camel.spring.boot.util.RelaxedPropertyResolver;
 import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -27,11 +24,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.type.AnnotatedTypeMetadata;
+
+import java.util.Collections;
+import java.util.Map;
 
 @Configuration
 @AutoConfigureBefore(CamelAutoConfiguration.class)
@@ -48,8 +50,8 @@ public class CamelSSLAutoConfiguration {
     public static class Condition extends SpringBootCondition {
         @Override
         public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata annotatedTypeMetadata) {
-            RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(context.getEnvironment(), "camel.ssl.config");
-            Map<String, Object> sslProperties = resolver.getSubProperties(".");
+            Binder binder = Binder.get(context.getEnvironment());
+            Map<String, Object> sslProperties = binder.bind("camel.ssl.config", Bindable.mapOf(String.class, Object.class)).orElse(Collections.emptyMap());
             ConditionMessage.Builder message = ConditionMessage.forCondition("camel.ssl.config");
             if (sslProperties.size() > 0) {
                 return ConditionOutcome.match(message.because("enabled"));

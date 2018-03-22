@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.boot.util;
 
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.core.env.Environment;
 
 public final class HierarchicalPropertiesEvaluator {
@@ -46,11 +48,8 @@ public final class HierarchicalPropertiesEvaluator {
     }
 
     private static boolean isEnabled(Environment environment, String prefix, boolean defaultValue) {
-        RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(
-            environment,
-            prefix.endsWith(".") ? prefix : prefix + "."
-        );
-
-        return resolver.getProperty("enabled", Boolean.class, defaultValue);
+        String property = prefix.endsWith(".") ? prefix + "enabled" : prefix + ".enabled";
+        Binder binder = Binder.get(environment);
+        return binder.bind(property, Bindable.of(Boolean.class)).orElse(defaultValue);
     }
 }
