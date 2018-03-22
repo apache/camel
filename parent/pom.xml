@@ -5322,6 +5322,7 @@
             <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
             <_versionpolicy>${camel.osgi.import.default.version}</_versionpolicy>
             <_failok>${camel.osgi.failok}</_failok>
+            <Automatic-Module-Name>${camel.automatic.module.name}</Automatic-Module-Name>
           </instructions>
         </configuration>
         <executions>

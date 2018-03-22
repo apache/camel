@@ -117,6 +117,7 @@
     </camel.osgi.activator>
     <!-- do not skip any tests by default -->
     <platform.skip.tests/>
+    <camel.automatic.module.name>org.apache.camel</camel.automatic.module.name>
   </properties>
 
   <dependencies>
