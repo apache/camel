@@ -21,6 +21,8 @@ import java.util.Optional;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatchResponse;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectComposite;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectCompositeResponse;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTreeResponse;
 
@@ -28,9 +30,7 @@ public interface CompositeApiClient {
 
     @FunctionalInterface
     interface Operation<T, R> {
-
         void submit(T body, ResponseCallback<R> callback) throws SalesforceException;
-
     }
 
     @FunctionalInterface
@@ -39,6 +39,9 @@ public interface CompositeApiClient {
     }
 
     void submitCompositeBatch(SObjectBatch batch, ResponseCallback<SObjectBatchResponse> callback)
+            throws SalesforceException;
+    
+    void submitComposite(final SObjectComposite composite, ResponseCallback<SObjectCompositeResponse> callback)
             throws SalesforceException;
 
     /**

@@ -1,0 +1,26 @@
+{
+    "allOrNone" : true,
+    "compositeRequest" : [
+   {
+        "method" : "POST",
+        "url" : "/services/data/v41.0/sobjects/blng__Payment__c/",
+        "referenceId" : "NewPayment1",
+        "body" : {
+                "blng__Invoice__r":
+                {
+                    "Invoice_External_Id__c" : "0116"
+                }
+        }
+    },
+    {
+        "method" : "POST",
+        "url" : "/services/data/v41.0/sobjects/blng__Payment__c/",
+        "referenceId" : "NewPayment2",
+        "body" : {
+                "blng__Invoice__r":
+                {
+                    "Invoice_External_Id__c" : "0116"
+                }
+        }
+    }]
+}

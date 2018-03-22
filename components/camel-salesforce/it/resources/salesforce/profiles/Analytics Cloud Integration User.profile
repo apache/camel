@@ -129,10 +129,10 @@
         <enabled>true</enabled>
         <name>ShowCompanyNameAsUserBadge</name>
     </userPermissions>
-    <userPermissions>
+    <!--userPermissions>
         <enabled>true</enabled>
         <name>ViewAllUsers</name>
-    </userPermissions>
+    </userPermissions-->
     <userPermissions>
         <enabled>true</enabled>
         <name>ViewEventLogFiles</name>

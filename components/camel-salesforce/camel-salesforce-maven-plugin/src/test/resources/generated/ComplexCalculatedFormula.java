@@ -21,12 +21,18 @@ import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import org.apache.camel.component.salesforce.api.dto.ActionOverride;
+import org.apache.camel.component.salesforce.api.dto.FilteredLookupInfo;
+
 
 /**
  * Salesforce DTO for SObject ComplexCalculatedFormula
  */
 @Generated("org.apache.camel.maven.CamelSalesforceMojo")
 @XStreamAlias("ComplexCalculatedFormula")
+@JsonPropertyOrder({ "ComplexCalculatedFormula" })
 public class ComplexCalculatedFormula extends AbstractDescribedSObjectBase {
 
     private static final SObjectDescription DESCRIPTION = createSObjectDescription();
