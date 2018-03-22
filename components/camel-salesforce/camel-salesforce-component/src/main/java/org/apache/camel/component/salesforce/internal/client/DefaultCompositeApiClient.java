@@ -52,7 +52,9 @@ import org.apache.camel.component.salesforce.api.dto.composite.SObjectComposite;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectCompositeResponse;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTreeResponse;
+import org.apache.camel.component.salesforce.api.utils.DateConverter;
 import org.apache.camel.component.salesforce.api.utils.DateTimeConverter;
+import org.apache.camel.component.salesforce.api.utils.TimeConverter;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.api.utils.Version;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
@@ -307,7 +309,9 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         xStream.aliasSystemAttribute(null, "class");
         xStream.ignoreUnknownElements();
         XStreamUtils.addDefaultPermissions(xStream);
+        xStream.registerConverter(new DateConverter());
         xStream.registerConverter(new DateTimeConverter());
+        xStream.registerConverter(new TimeConverter());
         xStream.setMarshallingStrategy(new TreeMarshallingStrategy());
         xStream.processAnnotations(additionalTypes);
 

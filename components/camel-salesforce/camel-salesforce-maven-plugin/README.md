@@ -1,6 +1,6 @@
 # Maven plugin for camel-salesforce component #
 
-This plugin generates DTOs for the [Camel Salesforce Component](https://github.com/dhirajsb/camel-salesforce). 
+This plugin generates DTOs for the [Camel Salesforce Component](https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-component). 
 
 ## Usage ##
 
@@ -18,6 +18,8 @@ The plugin configuration has the following properties.
 * includePattern - Java RegEx for SObject types to include
 * excludePattern - Java RegEx for SObject types to exclude
 * packageName - Java package name for generated DTOs, defaults to org.apache.camel.salesforce.dto.
+* useZonedTimeDateForDate - it will use LocalDate for Date if set to false. By default or if set to true ZonedTimeDate will be used for Date.
+* useZonedTimeDateForTime - it will use OffsetTime with timezone offset set to UTC for Time if set to false. By default or if set to true ZonedTimeDate will be used for Time.
 
 Additonal properties to provide proxy information, if behind a firewall.
 
@@ -89,4 +91,4 @@ The plugin should be configured for the rest of the properties, and can be execu
 
 	mvn camel-salesforce:generate -DcamelSalesforce.clientId=<clientid> -DcamelSalesforce.clientSecret=<clientsecret> -DcamelSalesforce.userName=<username> -DcamelSalesforce.password=<password>
 
-The generated DTOs use Jackson and XStream annotations. All Salesforce field types are supported. Date and time fields are mapped to java.time.ZonedDateTime, and picklist fields are mapped to generated Java Enumerations.
+The generated DTOs use Jackson and XStream annotations. All Salesforce field types are supported. DateTime and Timestamp fields are mapped to java.time.ZonedDateTime, and picklist fields are mapped to generated Java Enumerations.

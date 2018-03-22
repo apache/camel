@@ -17,11 +17,18 @@
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.util.regex.Pattern;
+
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_TIME;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
 /**
  * Utility class for working with DateTime fields.
@@ -53,4 +60,23 @@ public abstract class DateTimeUtils {
         }
         return dateTimeAsString;
     }
+    
+    public static String formatDate(LocalDate date) {
+        return ISO_LOCAL_DATE.format(date);
+    }
+    
+    public static LocalDate parseDate(String date) {
+        return ISO_LOCAL_DATE.parse(date,LocalDate::from);
+    }
+        
+    public static String formatTime(OffsetTime time) {
+        // Sets the timezone as UTC for the time before sending to salesforce
+        return ISO_LOCAL_TIME.format(time.withOffsetSameInstant(ZoneOffset.UTC).toLocalTime());
+    }
+    
+    public static OffsetTime parseTime(String time) {
+        // Sets the timezone as UTC for the time which comes from salesforce
+        return OffsetTime.of(ISO_LOCAL_TIME.parse(time, LocalTime::from), ZoneOffset.UTC);
+    }
+ 
 }
