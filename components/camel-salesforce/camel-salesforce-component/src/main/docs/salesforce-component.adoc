@@ -535,7 +535,27 @@ final SObjectCompositeResult contactCreationResult = results.stream().filter(r -
 
 === Camel Salesforce Maven Plugin
 
-This Maven plugin generates DTOs for the Camel. Please refer to https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-maven-plugin[README.md] for details on how to generated the DTO.
+This Maven plugin generates DTOs for the Camel. 
+
+For obvious security reasons it is recommended that the clientId,
+clientSecret, userName and password fields be not set in the pom.xml.  
+The plugin should be configured for the rest of the properties, and can
+be executed using the following command:
+
+[source,java]
+----
+mvn camel-salesforce:generate -DcamelSalesforce.clientId=<clientid> -DcamelSalesforce.clientSecret=<clientsecret> \
+    -DcamelSalesforce.userName=<username> -DcamelSalesforce.password=<password>
+----
+
+The generated DTOs use Jackson and XStream annotations. All Salesforce
+field types are supported. Date and time fields are mapped to
+`java.time.ZonedDateTime` by default, and picklist fields are mapped to
+generated Java Enumerations.
+
+Please refer to
+https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-maven-plugin[README.md]
+for details on how to generated the DTO.
 
 === Options
 

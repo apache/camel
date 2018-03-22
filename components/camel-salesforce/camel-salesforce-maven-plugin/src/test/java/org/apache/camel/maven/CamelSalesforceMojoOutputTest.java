@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.function.Consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -30,7 +32,6 @@ import org.apache.camel.test.junit4.TestSupport;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -48,8 +49,14 @@ public class CamelSalesforceMojoOutputTest {
     @Parameter(1)
     public SObjectDescription description;
 
+    @Parameter(3)
+    public String expected;
+
     @Parameter(0)
     public String json;
+
+    @Parameter(4)
+    public GenerateMojo mojo;
 
     @Parameter(2)
     public String source;
@@ -57,18 +64,11 @@ public class CamelSalesforceMojoOutputTest {
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
 
-    private GenerateMojo mojo;
-    private final GenerateMojo.GeneratorUtility utility = new GenerateMojo().new GeneratorUtility();
-
-    @Before
-    public void setUp() throws Exception {
-        mojo = new GenerateMojo();
-        mojo.engine = GenerateMojo.createVelocityEngine();
-    }
-
     @Test
-    public void testProcessDescriptionPickLists() throws Exception {
+    public void testProcessDescription() throws Exception {
         final File pkgDir = temp.newFolder();
+
+        final GenerateMojo.GeneratorUtility utility = mojo.new GeneratorUtility();
 
         mojo.processDescription(pkgDir, description, utility, FIXED_DATE);
 
@@ -80,8 +80,8 @@ public class CamelSalesforceMojoOutputTest {
             // Content is the same, the ordering is a bit different.
             source += "-Java9";
         }
-        final String expectedContent = IOUtils
-            .toString(CamelSalesforceMojoOutputTest.class.getResource("/generated/" + source), StandardCharsets.UTF_8);
+        final String expectedContent = IOUtils.toString(
+            CamelSalesforceMojoOutputTest.class.getResource("/generated/" + expected), StandardCharsets.UTF_8);
 
         Assert.assertEquals(
             "Generated source file in " + source + " must be equal to the one present in test/resources",
@@ -90,12 +90,27 @@ public class CamelSalesforceMojoOutputTest {
 
     @Parameters(name = "json = {0}, source = {2}")
     public static Iterable<Object[]> parameters() throws IOException {
-        return Arrays.asList(pair(TEST_CASE_FILE, "Case.java"),
-            pair(TEST_CASE_FILE, "Case_PickListAccentMarkEnum.java"),
-            pair(TEST_CASE_FILE, "Case_PickListQuotationMarkEnum.java"),
-            pair(TEST_CASE_FILE, "Case_PickListSlashEnum.java"), pair(TEST_CASE_FILE, "QueryRecordsCase.java"),
-            pair(TEST_CALCULATED_FORMULA_FILE, "ComplexCalculatedFormula.java"),
-            pair(TEST_CALCULATED_FORMULA_FILE, "QueryRecordsComplexCalculatedFormula.java"));
+        return Arrays.asList(testCase(TEST_CASE_FILE, "Case.java"),
+            testCase(TEST_CASE_FILE, "Case_PickListAccentMarkEnum.java"),
+            testCase(TEST_CASE_FILE, "Case_PickListQuotationMarkEnum.java"),
+            testCase(TEST_CASE_FILE, "Case_PickListSlashEnum.java"), //
+            testCase(TEST_CASE_FILE, "QueryRecordsCase.java"),
+            testCase(TEST_CALCULATED_FORMULA_FILE, "ComplexCalculatedFormula.java"),
+            testCase(TEST_CALCULATED_FORMULA_FILE, "QueryRecordsComplexCalculatedFormula.java"),
+            testCase("asset.json", "Asset.java"), //
+            testCase("asset.json", "Asset.java", "Asset_LocalDateTime.java", mojo -> {
+                mojo.customTypes = new HashMap<>();
+                mojo.customTypes.put("date", "java.time.LocalDateTime");
+
+                mojo.setup();
+            }));
+    }
+
+    static GenerateMojo createMojo() {
+        final GenerateMojo mojo = new GenerateMojo();
+        mojo.engine = GenerateMojo.createVelocityEngine();
+
+        return mojo;
     }
 
     static SObjectDescription createSObjectDescription(final String name) throws IOException {
@@ -106,7 +121,15 @@ public class CamelSalesforceMojoOutputTest {
         }
     }
 
-    static Object[] pair(final String json, final String source) throws IOException {
-        return new Object[] {json, createSObjectDescription(json), source};
+    static Object[] testCase(final String json, final String source) throws IOException {
+        return testCase(json, source, source, String::valueOf);
+    }
+
+    static Object[] testCase(final String json, final String source, final String expected,
+        final Consumer<GenerateMojo> mojoConfigurator) throws IOException {
+        final GenerateMojo mojo = createMojo();
+        mojoConfigurator.accept(mojo);
+
+        return new Object[] {json, createSObjectDescription(json), source, expected, mojo};
     }
 }
