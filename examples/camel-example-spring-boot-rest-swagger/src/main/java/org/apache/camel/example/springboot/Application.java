@@ -16,12 +16,10 @@
  */
 package org.apache.camel.example.springboot;
 
-import org.apache.camel.component.servlet.CamelHttpTransportServlet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
-import org.springframework.context.annotation.Bean;
 
+// CHECKSTYLE:OFF
 @SpringBootApplication
 public class Application {
 
@@ -32,11 +30,5 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
-    @Bean
-    public ServletRegistrationBean camelServletRegistrationBean() {
-        ServletRegistrationBean registration = new ServletRegistrationBean(new CamelHttpTransportServlet(), "/camel/*");
-        registration.setName("CamelServlet");
-        return registration;
-    }
-
 }
+// CHECKSTYLE:ON
