@@ -44,8 +44,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
 @SpringBootApplication
-@SpringBootTest(classes = {CamelAutoConfiguration.class, CamelRoutesEndpointAutoConfiguration.class, ActuatorTestRoute.class})
-public class CamelRoutesEndpointTest extends Assert {
+@SpringBootTest(
+    classes = {CamelAutoConfiguration.class, CamelRoutesEndpointAutoConfiguration.class, ActuatorTestRoute.class},
+    properties = {"management.endpoint.camelroutes.read-only = false"})
+public class CamelRoutesEndpointWriteOperationTest extends Assert {
 
     @Autowired
     CamelRoutesEndpoint endpoint;
@@ -54,41 +56,18 @@ public class CamelRoutesEndpointTest extends Assert {
     CamelContext camelContext;
 
     @Test
-    public void testRoutesEndpoint() throws Exception {
-        List<RouteEndpointInfo> routes = endpoint.readRoutes();
-
-        assertFalse(routes.isEmpty());
-        assertEquals(routes.size(), camelContext.getRoutes().size());
-        assertTrue(routes.stream().anyMatch(r -> "foo-route".equals(r.getId())));
-    }
-
-    @Test
-    public void testRouteDump() throws Exception {
-        String dump = endpoint.getRouteDump("foo-route");
-        assertNotNull(dump);
-        assertTrue(dump, dump.contains("<route "));
-        assertTrue(dump, dump.contains("<from "));
-        assertTrue(dump, dump.contains("uri=\"timer:foo\""));
-        assertTrue(dump, dump.contains("<to "));
-        assertTrue(dump, dump.contains("uri=\"log:foo\""));
-        assertTrue(dump, dump.contains("</route>"));
-    }
-
-    @Test
-    public void testReadOperation() throws Exception {
-        Object answer = endpoint.doReadAction("foo-route", ReadAction.INFO);
-        Assert.assertEquals(RouteEndpointInfo.class, answer.getClass());
-        Assert.assertEquals("foo-route", RouteEndpointInfo.class.cast(answer).getId());
-        answer = endpoint.doReadAction("foo-route", ReadAction.DETAIL);
-        Assert.assertEquals(RouteDetailsEndpointInfo.class, answer.getClass());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testWriteOperationReadOnly() throws Exception {
+    public void testWriteOperation() throws Exception {
+        ServiceStatus status = camelContext.getRouteStatus("foo-route");
+        Assert.assertTrue(status.isStarted());
         TimeInfo timeInfo = new TimeInfo();
         timeInfo.setAbortAfterTimeout(true);
         timeInfo.setTimeout(5L);
         endpoint.doWriteAction("foo-route", WriteAction.STOP, timeInfo);
+        status = camelContext.getRouteStatus("foo-route");
+        Assert.assertTrue(status.isStopped());
+        endpoint.doWriteAction("foo-route", WriteAction.START, timeInfo);
+        status = camelContext.getRouteStatus("foo-route");
+        Assert.assertTrue(status.isStarted());
     }
 
 }

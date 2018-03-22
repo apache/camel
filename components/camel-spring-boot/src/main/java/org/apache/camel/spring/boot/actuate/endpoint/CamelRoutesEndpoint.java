@@ -30,19 +30,25 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.model.ModelHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RouteError;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * {@link Endpoint} to expose {@link org.apache.camel.Route} information.
  */
 @Endpoint(id = "camelroutes", enableByDefault = true)
+@ConfigurationProperties("management.endpoint.camelroutes")
 public class CamelRoutesEndpoint {
 
     private CamelContext camelContext;
+    private boolean readOnly = true;
 
     public CamelRoutesEndpoint(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -67,6 +73,10 @@ public class CamelRoutesEndpoint {
 
     @WriteOperation
     public void doWriteAction(@Selector String id, @Selector WriteAction action, TimeInfo timeInfo) {
+        if (this.isReadOnly()) {
+            throw new IllegalArgumentException(String.format("Read only: write action %s is not allowed", action));
+        }
+
         switch (action) {
         case STOP:
             stopRoute(
@@ -94,6 +104,27 @@ public class CamelRoutesEndpoint {
         }
     }
 
+    @ReadOperation
+    public String getRouteDump(@Selector String id) {
+        RouteDefinition route = camelContext.getRouteDefinition(id);
+        if (route != null) {
+            try {
+                return ModelHelper.dumpModelAsXml(camelContext, route);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+        return null;
+    }
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
     private RouteEndpointInfo getRouteInfo(String id) {
         Route route = camelContext.getRoute(id);
         if (route != null) {
@@ -103,7 +134,7 @@ public class CamelRoutesEndpoint {
         return null;
     }
 
-    public List<RouteEndpointInfo> getRoutesInfo() {
+    private List<RouteEndpointInfo> getRoutesInfo() {
         return camelContext.getRoutes().stream()
                 .map(RouteEndpointInfo::new)
                 .collect(Collectors.toList());
