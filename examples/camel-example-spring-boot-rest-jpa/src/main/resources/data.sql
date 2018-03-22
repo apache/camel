@@ -15,7 +15,7 @@
 -- limitations under the License.
 -- ------------------------------------------------------------------------
 
-INSERT INTO books (item, description)
+INSERT INTO books (id, item, description)
   VALUES
-      ('Camel',    'Camel in Action'),
-      ('ActiveMQ', 'ActiveMQ in Action');
+      (1, 'Camel',    'Camel in Action'),
+      (2, 'ActiveMQ', 'ActiveMQ in Action');
