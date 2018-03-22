@@ -17,32 +17,31 @@
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.io.IOException;
-import java.time.OffsetTime;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
+final class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
 
-public class TimeDeserializer extends JsonDeserializer<OffsetTime> {
+    static final JsonDeserializer<LocalDateTime> INSTANCE = new LocalDateTimeDeserializer();
 
-    public TimeDeserializer() {
-        super();
+    private static final long serialVersionUID = 1L;
+
+    private LocalDateTimeDeserializer() {
+        super(LocalDateTime.class);
     }
 
     @Override
-    public OffsetTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-        JsonToken currentToken = jsonParser.getCurrentToken();
-        if (currentToken == JsonToken.VALUE_STRING) {
-            return DateTimeUtils.parseTime(jsonParser.getText().trim());
-        }
-        throw JsonMappingException.from(deserializationContext, "Expected String value, got: " + currentToken);
+    public LocalDateTime deserialize(final JsonParser p, final DeserializationContext ctxt)
+        throws IOException, JsonProcessingException {
+        final ZonedDateTime zonedDateTime = ctxt.readValue(p, ZonedDateTime.class);
+
+        return zonedDateTime.toLocalDateTime();
     }
 
-    @Override
-    public Class<?> handledType() {
-        return OffsetTime.class;
-    }
 }

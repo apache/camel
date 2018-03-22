@@ -16,16 +16,20 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
+import java.time.Instant;
 
-import java.time.LocalDate;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
-public class DateModule extends SimpleModule {
+final class InstantDeserializer extends com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer<Instant> {
 
-    public DateModule() {
-        super();
-        addSerializer(LocalDate.class, new DateSerializer());
-        addDeserializer(LocalDate.class, new DateDeserializer());
+    static final JsonDeserializer<Instant> INSTANCE = new InstantDeserializer();
+
+    private static final long serialVersionUID = 1L;
+
+    private InstantDeserializer() {
+        super(com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer.INSTANT, ISO_OFFSET_DATE_TIME);
     }
+
 }

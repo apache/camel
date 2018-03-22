@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Account_IndustryEnum;
 import org.apache.camel.component.salesforce.dto.generated.Contact;
@@ -109,7 +110,8 @@ public class SObjectCompositeTest {
                 .getResourceAsStream("/org/apache/camel/component/salesforce/api/dto/composite_request_example.json"),
             StandardCharsets.UTF_8);
 
-        final ObjectMapper mapper = new ObjectMapper().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
+        final ObjectMapper mapper = JsonUtils.createObjectMapper().copy()
+            .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
             .configure(SerializationFeature.INDENT_OUTPUT, true);
 
         final String serialized = mapper.writerFor(SObjectComposite.class).writeValueAsString(composite);

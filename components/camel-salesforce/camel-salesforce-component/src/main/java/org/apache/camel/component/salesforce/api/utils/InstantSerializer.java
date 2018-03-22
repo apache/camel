@@ -17,34 +17,31 @@
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.io.IOException;
-import java.time.OffsetTime;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
+final class InstantSerializer extends StdSerializer<Instant> {
 
-public class TimeSerializer extends JsonSerializer<OffsetTime> {
+    static final JsonSerializer<Instant> INSTANCE = new InstantSerializer();
 
-    public TimeSerializer() {
-        super();
+    private static final long serialVersionUID = 1L;
+
+    private InstantSerializer() {
+        super(Instant.class);
     }
 
     @Override
-    public void serialize(OffsetTime time, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        jsonGenerator.writeString(DateTimeUtils.formatTime(time));
+    public void serialize(final Instant value, final JsonGenerator gen, final SerializerProvider serializers)
+        throws IOException {
+        final ZonedDateTime zonedDateTime = value.atZone(ZoneId.systemDefault());
+
+        serializers.defaultSerializeValue(zonedDateTime, gen);
     }
 
-    @Override
-    public Class<OffsetTime> handledType() {
-        return OffsetTime.class;
-    }
-
-    @Override
-    public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType type) throws JsonMappingException {
-        visitor.expectStringFormat(type);
-    }
 }

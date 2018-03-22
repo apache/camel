@@ -16,16 +16,21 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
-
 import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 
-public class DateTimeModule extends SimpleModule {
+import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
-    public DateTimeModule() {
-        super();
-        addSerializer(ZonedDateTime.class, new DateTimeSerializer());
-        addDeserializer(ZonedDateTime.class, new DateTimeDeserializer());
+final class ZonedDateTimeDeserializer extends InstantDeserializer<ZonedDateTime> {
+
+    static final JsonDeserializer<ZonedDateTime> INSTANCE = new ZonedDateTimeDeserializer();
+
+    private static final long serialVersionUID = 1L;
+
+    private ZonedDateTimeDeserializer() {
+        super(InstantDeserializer.ZONED_DATE_TIME, ISO_OFFSET_DATE_TIME);
     }
+
 }

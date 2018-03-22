@@ -23,6 +23,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
+import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
@@ -63,46 +65,45 @@ public class ApprovalRequestTest {
         final ApprovalRequest combined = request.applyTemplate(template);
 
         assertThat("Combined approval request should be a new instance", combined,
-                both(not(sameInstance(request))).and(not(sameInstance(template))));
+            both(not(sameInstance(request))).and(not(sameInstance(template))));
 
         assertEquals("Action type should not be overwriten", request.getActionType(), combined.getActionType());
         assertEquals("Comment should not be overwriten", request.getComments(), combined.getComments());
         assertEquals("Context id should not be overwriten", request.getContextId(), combined.getContextId());
         assertEquals("Next approver id should be taken from template", template.getNextApproverIds(),
-                combined.getNextApproverIds());
+            combined.getNextApproverIds());
     }
 
     @Test
     public void shouldSerializeAsJson() throws JsonProcessingException {
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final String json = mapper.writerFor(ApprovalRequest.class).writeValueAsString(sampleRequest);
 
         assertEquals("ApprovalRequest should serialize as JSON from Salesforce examples",
-                "{\"actionType\":\"Submit\",\"contextActorId\":\"005D00000015rZy\",\"contextId\":\"001D000000I8mIm\""
-                    + ",\"comments\":\"this is a test\",\"nextApproverIds\":[\"005D00000015rY9\"],"
-                    + "\"processDefinitionNameOrId\":\"PTO_Request_Process\",\"skipEntryCriteria\":true}",
-                json);
+            "{\"actionType\":\"Submit\",\"contextActorId\":\"005D00000015rZy\",\"contextId\":\"001D000000I8mIm\""
+                + ",\"comments\":\"this is a test\",\"nextApproverIds\":[\"005D00000015rY9\"],"
+                + "\"processDefinitionNameOrId\":\"PTO_Request_Process\",\"skipEntryCriteria\":true}",
+            json);
     }
 
     @Test
     public void shouldSerializeAsXml() {
-        final XStream xStream = new XStream();
-        xStream.processAnnotations(ApprovalRequest.class);
+        final XStream xStream = XStreamUtils.createXStream(ApprovalRequest.class);
 
         final String xml = xStream.toXML(sampleRequest);
 
         assertEquals("ApprovalRequest should serialize as XML",
-                "<requests>\n"//
-                    + "  <actionType>Submit</actionType>\n"//
-                    + "  <contextActorId>005D00000015rZy</contextActorId>\n"//
-                    + "  <contextId>001D000000I8mIm</contextId>\n"//
-                    + "  <comments>this is a test</comments>\n"//
-                    + "  <nextApproverIds>005D00000015rY9</nextApproverIds>\n"//
-                    + "  <processDefinitionNameOrId>PTO_Request_Process</processDefinitionNameOrId>\n"//
-                    + "  <skipEntryCriteria>true</skipEntryCriteria>\n"//
-                    + "</requests>",
-                xml);
+            "<requests>"//
+                + "<actionType>Submit</actionType>"//
+                + "<contextActorId>005D00000015rZy</contextActorId>"//
+                + "<contextId>001D000000I8mIm</contextId>"//
+                + "<comments>this is a test</comments>"//
+                + "<nextApproverIds>005D00000015rY9</nextApproverIds>"//
+                + "<processDefinitionNameOrId>PTO_Request_Process</processDefinitionNameOrId>"//
+                + "<skipEntryCriteria>true</skipEntryCriteria>"//
+                + "</requests>",
+            xml);
     }
 
     @Test

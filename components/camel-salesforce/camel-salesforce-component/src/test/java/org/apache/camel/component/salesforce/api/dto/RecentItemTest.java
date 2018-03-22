@@ -21,6 +21,7 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.Test;
 
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
@@ -32,22 +33,22 @@ public class RecentItemTest {
 
     @Test
     public void shouldDeserializeFromJSON() throws JsonProcessingException, IOException {
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final Object read = mapper.readerFor(RecentItem.class)
-                .readValue("{ \n" + //
-                        "    \"attributes\" : \n" + //
-                        "    { \n" + //
-                        "        \"type\" : \"Account\", \n" + //
-                        "        \"url\" : \"/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ\" \n" + //
-                        "    }, \n" + //
-                        "    \"Id\" : \"a06U000000CelH0IAJ\", \n" + //
-                        "    \"Name\" : \"Acme\" \n" + //
-                        "}");
+            .readValue("{ \n" + //
+                "    \"attributes\" : \n" + //
+                "    { \n" + //
+                "        \"type\" : \"Account\", \n" + //
+                "        \"url\" : \"/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ\" \n" + //
+                "    }, \n" + //
+                "    \"Id\" : \"a06U000000CelH0IAJ\", \n" + //
+                "    \"Name\" : \"Acme\" \n" + //
+                "}");
 
         assertThat("RecentItem should deserialize from JSON", read, instanceOf(RecentItem.class));
 
-        RecentItem recentItem = (RecentItem) read;
+        final RecentItem recentItem = (RecentItem) read;
 
         assertEquals("RecentItem.Id should be deserialized", recentItem.getId(), "a06U000000CelH0IAJ");
 
@@ -56,10 +57,10 @@ public class RecentItemTest {
         assertNotNull("RecentItem.attributes should be deserialized", recentItem.getAttributes());
 
         assertEquals("RecentItem.attributes.type should be deserialized", recentItem.getAttributes().getType(),
-                "Account");
+            "Account");
 
         assertEquals("RecentItem.attributes.url should be deserialized", recentItem.getAttributes().getUrl(),
-                "/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ");
+            "/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ");
 
     }
 }

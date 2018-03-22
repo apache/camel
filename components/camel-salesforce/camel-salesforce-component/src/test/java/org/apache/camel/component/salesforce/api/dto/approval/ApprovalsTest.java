@@ -24,6 +24,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.component.salesforce.api.dto.approval.Approvals.Info;
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.Test;
 
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
@@ -36,20 +37,20 @@ public class ApprovalsTest {
 
     @Test
     public void shouldDeserialize() throws JsonProcessingException, IOException {
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final Object read = mapper.readerFor(Approvals.class)
-                .readValue("{\n" + //
-                    "  \"approvals\" : {\n" + //
-                    "   \"Account\" : [ {\n" + //
-                    "     \"description\" : null,\n" + //
-                    "     \"id\" : \"04aD00000008Py9\",\n" + //
-                    "     \"name\" : \"Account Approval Process\",\n" + //
-                    "     \"object\" : \"Account\",\n" + //
-                    "     \"sortOrder\" : 1\n" + //
-                    "   } ]\n" + //
-                    "  }\n" + //
-                    "}");
+            .readValue("{\n" + //
+                "  \"approvals\" : {\n" + //
+                "   \"Account\" : [ {\n" + //
+                "     \"description\" : null,\n" + //
+                "     \"id\" : \"04aD00000008Py9\",\n" + //
+                "     \"name\" : \"Account Approval Process\",\n" + //
+                "     \"object\" : \"Account\",\n" + //
+                "     \"sortOrder\" : 1\n" + //
+                "   } ]\n" + //
+                "  }\n" + //
+                "}");
 
         assertThat("Should deserialize Approvals", read, instanceOf(Approvals.class));
 
@@ -68,7 +69,7 @@ public class ApprovalsTest {
         assertNull("Deserialized `Account` approval should have null description", accountInfo.getDescription());
         assertEquals("Deserialized `Account` approval should have defined id", "04aD00000008Py9", accountInfo.getId());
         assertEquals("Deserialized `Account` approval should have defined name", "Account Approval Process",
-                accountInfo.getName());
+            accountInfo.getName());
         assertEquals("Deserialized `Account` approval should have defined object", "Account", accountInfo.getObject());
         assertEquals("Deserialized `Account` approval should have defined sortOrder", 1, accountInfo.getSortOrder());
     }
