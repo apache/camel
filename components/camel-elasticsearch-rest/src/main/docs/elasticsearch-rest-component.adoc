@@ -43,7 +43,7 @@ The Elastichsearch Rest component supports 12 options which are listed below.
 | *socketTimeout* (advanced) | The timeout in ms to wait before the socket will timeout. | 30000 | int
 | *connectionTimeout* (advanced) | The time in ms to wait before connection will timeout. | 30000 | int
 | *user* (advance) | Basic authenticate user |  | String
-| *password* (producer) | Password for authenticate |  | String
+| *password* (advance) | Password for authenticate |  | String
 | *enableSSL* (advanced) | Enable SSL | false | Boolean
 | *maxRetryTimeout* (advanced) | The time in ms before retry | 30000 | int
 | *enableSniffer* (advanced) | Enable automatically discover nodes from a running Elasticsearch cluster | false | Boolean
