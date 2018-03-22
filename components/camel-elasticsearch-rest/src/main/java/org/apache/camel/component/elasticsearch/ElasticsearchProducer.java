@@ -203,6 +203,8 @@ public class ElasticsearchProducer extends DefaultProducer {
             message.setBody(restHighLevelClient.search(searchRequest).getHits());
         } else if (operation == ElasticsearchOperation.Ping) {
             message.setBody(restHighLevelClient.ping());
+        } else if (operation == ElasticsearchOperation.Info) {
+            message.setBody(restHighLevelClient.info());
         } else {
             throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
         }
