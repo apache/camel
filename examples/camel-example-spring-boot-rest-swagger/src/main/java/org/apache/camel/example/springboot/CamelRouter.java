@@ -25,7 +25,6 @@ import static org.apache.camel.model.rest.RestParamType.path;
 
 /**
  * A simple Camel REST DSL route with Swagger API documentation.
- * 
  */
 @Component
 public class CamelRouter extends RouteBuilder {
@@ -34,15 +33,18 @@ public class CamelRouter extends RouteBuilder {
     public void configure() throws Exception {
 
         // @formatter:off
+
+        // this can also be configured in application.properties
         restConfiguration()
             .component("servlet")
             .bindingMode(RestBindingMode.json)
             .dataFormatProperty("prettyPrint", "true")
+            .enableCORS(true)
+            // turn on swagger api-doc
             .apiContextPath("/api-doc")
-                .apiProperty("api.title", "User API").apiProperty("api.version", "1.0.0")
-                .apiProperty("cors", "true");
+            .apiProperty("api.title", "User API")
+            .apiProperty("api.version", "1.0.0");
 
-        
         rest("/users").description("User REST service")
             .consumes("application/json")
             .produces("application/json")
