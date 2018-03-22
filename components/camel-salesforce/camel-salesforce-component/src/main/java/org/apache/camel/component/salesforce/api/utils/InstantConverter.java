@@ -16,33 +16,39 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
-import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.thoughtworks.xstream.converters.SingleValueConverter;
 
+import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
-public class DateTimeDeserializer extends JsonDeserializer<ZonedDateTime> {
+final class InstantConverter implements SingleValueConverter {
 
-    public DateTimeDeserializer() {
-        super();
+    static final SingleValueConverter INSTANCE = new InstantConverter();
+
+    private InstantConverter() {
     }
 
     @Override
-    public ZonedDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-        JsonToken currentToken = jsonParser.getCurrentToken();
-        if (currentToken == JsonToken.VALUE_STRING) {
-            return DateTimeUtils.parseDateTime(jsonParser.getText().trim());
+    public boolean canConvert(@SuppressWarnings("rawtypes") final Class type) {
+        return Instant.class.equals(type);
+    }
+
+    @Override
+    public Object fromString(final String value) {
+        return ZonedDateTime.parse(value, ISO_OFFSET_DATE_TIME).toInstant();
+    }
+
+    @Override
+    public String toString(final Object value) {
+        if (value == null) {
+            return null;
         }
-        throw JsonMappingException.from(deserializationContext, "Expected String value, got: " + currentToken);
-    }
 
-    @Override
-    public Class<?> handledType() {
-        return ZonedDateTime.class;
+        final Instant instant = (Instant) value;
+
+        return ISO_OFFSET_DATE_TIME.format(instant.atZone(ZoneId.systemDefault()));
     }
 }

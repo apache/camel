@@ -22,6 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.thoughtworks.xstream.XStream;
 
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
+import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -32,22 +34,21 @@ public class RestErrorTest {
 
     @Test
     public void shouldDeserializeFromJson() throws Exception {
-        final ObjectMapper objectMapper = new ObjectMapper();
+        final ObjectMapper objectMapper = JsonUtils.createObjectMapper();
         final ObjectReader reader = objectMapper.readerFor(RestError.class);
 
-        final RestError gotWithErrorCode = reader.<RestError> readValue(
+        final RestError gotWithErrorCode = reader.<RestError>readValue(
             "{\"errorCode\":\"errorCode\",\"message\":\"message\",\"fields\":[ \"field1\",\"field2\" ]}");
         assertEquals(gotWithErrorCode, error);
 
-        final RestError gotWithStatusCode = reader.<RestError> readValue(
+        final RestError gotWithStatusCode = reader.<RestError>readValue(
             "{\"statusCode\":\"errorCode\",\"message\":\"message\",\"fields\":[ \"field1\",\"field2\" ]}");
         assertEquals(gotWithStatusCode, error);
     }
 
     @Test
     public void shouldDeserializeFromXml() {
-        final XStream xStream = new XStream();
-        xStream.processAnnotations(RestError.class);
+        final XStream xStream = XStreamUtils.createXStream(RestError.class);
         xStream.alias("errors", RestError.class);
 
         final RestError gotWithErrorCode = (RestError) xStream.fromXML(

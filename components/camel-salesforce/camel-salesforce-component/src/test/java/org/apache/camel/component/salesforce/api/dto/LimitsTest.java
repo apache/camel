@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.component.salesforce.api.dto.Limits.Usage;
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -49,10 +50,10 @@ public class LimitsTest {
 
     @Test
     public void shouldDeserializeFromSalesforceGeneratedJSON() throws JsonProcessingException, IOException {
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final Object read = mapper.readerFor(Limits.class)
-                .readValue(LimitsTest.class.getResource("/org/apache/camel/component/salesforce/api/dto/limits.json"));
+            .readValue(LimitsTest.class.getResource("/org/apache/camel/component/salesforce/api/dto/limits.json"));
 
         assertThat("Limits should be parsed from JSON", read, instanceOf(Limits.class));
 
@@ -61,31 +62,32 @@ public class LimitsTest {
         final Usage dailyApiRequests = limits.getDailyApiRequests();
         assertFalse("Should have some usage present", dailyApiRequests.isUnknown());
         assertFalse("Per application usage should be present", dailyApiRequests.getPerApplicationUsage().isEmpty());
-        assertNotNull("'Camel Salesman' application usage should be present", dailyApiRequests.forApplication("Camel Salesman"));
+        assertNotNull("'Camel Salesman' application usage should be present",
+            dailyApiRequests.forApplication("Camel Salesman"));
+    }
+
+    @Test
+    public void shouldSupportGettingAllDefinedUsages() throws IntrospectionException {
+        final BeanInfo beanInfo = Introspector.getBeanInfo(Limits.class);
+
+        final PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+
+        final Set<String> found = new HashSet<>();
+        for (final PropertyDescriptor descriptor : propertyDescriptors) {
+            found.add(descriptor.getName());
+        }
+
+        final Set<String> defined = Arrays.stream(Limits.Operation.values()).map(Limits.Operation::name)
+            .map(Introspector::decapitalize).collect(Collectors.toSet());
+
+        defined.removeAll(found);
+
+        assertThat("All operations declared in Operation enum should have it's corresponding getter", defined,
+            is(Collections.emptySet()));
     }
 
     @Test
     public void usageShouldBeUnknownIfUnknown() {
         assertTrue("Unknown usage must declare itself as such", Usage.UNKNOWN.isUnknown());
-    }
-
-    @Test
-    public void shouldSupportGettingAllDefinedUsages() throws IntrospectionException {
-        BeanInfo beanInfo = Introspector.getBeanInfo(Limits.class);
-
-        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-
-        Set<String> found = new HashSet<>();
-        for (PropertyDescriptor descriptor : propertyDescriptors) {
-            found.add(descriptor.getName());
-        }
-
-        Set<String> defined = Arrays.stream(Limits.Operation.values()).map(Limits.Operation::name)
-                .map(Introspector::decapitalize).collect(Collectors.toSet());
-
-        defined.removeAll(found);
-
-        assertThat("All operations declared in Operation enum should have it's corresponding getter", defined,
-                is(Collections.emptySet()));
     }
 }

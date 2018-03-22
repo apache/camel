@@ -23,6 +23,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
@@ -38,7 +39,7 @@ public class SObjectCompositeResponseTest {
                 "/org/apache/camel/component/salesforce/api/dto/composite_response_example_failure.json"),
             Charset.forName("UTF-8"));
 
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final SObjectCompositeResponse response = mapper.readerFor(SObjectCompositeResponse.class).readValue(json);
 
@@ -53,7 +54,7 @@ public class SObjectCompositeResponseTest {
                 "/org/apache/camel/component/salesforce/api/dto/composite_response_example_success.json"),
             Charset.forName("UTF-8"));
 
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final SObjectCompositeResponse response = mapper.readerFor(SObjectCompositeResponse.class).readValue(json);
 

@@ -16,20 +16,15 @@
  */
 package org.apache.camel.component.salesforce.api.dto.approval;
 
-import java.io.Writer;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import com.thoughtworks.xstream.io.naming.NoNameCoder;
-import com.thoughtworks.xstream.io.xml.CompactWriter;
-import com.thoughtworks.xstream.io.xml.XppDriver;
 
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
-import org.apache.camel.component.salesforce.api.utils.DateTimeConverter;
-import org.apache.camel.component.salesforce.internal.client.XStreamUtils;
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
+import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -84,7 +79,7 @@ public class ApprovalRequestsTest {
             + "}"//
             + "]}";
 
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final String serialized = mapper.writerFor(ApprovalRequests.class).writeValueAsString(requests);
 
@@ -114,17 +109,7 @@ public class ApprovalRequestsTest {
             + "</requests>"//
             + "</ProcessApprovalRequest>";
 
-        final XStream xStream = new XStream(new XppDriver(new NoNameCoder()) {
-            @Override
-            public HierarchicalStreamWriter createWriter(final Writer out) {
-                return new CompactWriter(out, getNameCoder());
-            }
-
-        });
-        xStream.ignoreUnknownElements();
-        XStreamUtils.addDefaultPermissions(xStream);
-        xStream.registerConverter(new DateTimeConverter());
-        xStream.processAnnotations(ApprovalRequests.class);
+        final XStream xStream = XStreamUtils.createXStream(ApprovalRequests.class);
 
         final String serialized = xStream.toXML(requests);
 

@@ -17,32 +17,27 @@
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
+final class OffsetDateTimeDeserializer extends JsonDeserializer<OffsetDateTime> {
 
-public class DateDeserializer extends JsonDeserializer<LocalDate> {
+    static final JsonDeserializer<OffsetDateTime> INSTANCE = new OffsetDateTimeDeserializer();
 
-    public DateDeserializer() {
-        super();
+    private OffsetDateTimeDeserializer() {
     }
 
     @Override
-    public LocalDate deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-        JsonToken currentToken = jsonParser.getCurrentToken();
-        if (currentToken == JsonToken.VALUE_STRING) {
-            return DateTimeUtils.parseDate(jsonParser.getText().trim());
-        }
-        throw JsonMappingException.from(deserializationContext, "Expected String value, got: " + currentToken);
+    public OffsetDateTime deserialize(final JsonParser p, final DeserializationContext ctxt)
+        throws IOException, JsonProcessingException {
+        final ZonedDateTime zonedDateTime = ctxt.readValue(p, ZonedDateTime.class);
+
+        return zonedDateTime.toOffsetDateTime();
     }
 
-    @Override
-    public Class<?> handledType() {
-        return LocalDate.class;
-    }
 }

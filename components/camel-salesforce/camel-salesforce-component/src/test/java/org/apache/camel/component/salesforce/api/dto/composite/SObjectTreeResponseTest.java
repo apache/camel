@@ -24,6 +24,8 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.thoughtworks.xstream.XStream;
 
 import org.apache.camel.component.salesforce.api.dto.RestError;
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
+import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.junit.Test;
 
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
@@ -54,7 +56,7 @@ public class SObjectTreeResponseTest {
             + "     }]\n"//
             + "}";
 
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final ObjectReader reader = mapper.readerFor(SObjectTreeResponse.class);
         final SObjectTreeResponse response = reader.readValue(json);
@@ -85,7 +87,7 @@ public class SObjectTreeResponseTest {
             + "     }]\n"//
             + "}";
 
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final ObjectReader reader = mapper.readerFor(SObjectTreeResponse.class);
         final SObjectTreeResponse response = reader.readValue(json);
@@ -123,8 +125,7 @@ public class SObjectTreeResponseTest {
             + "    </results>\n"//
             + "</Result>";
 
-        final XStream xStream = new XStream();
-        xStream.processAnnotations(new Class[] {SObjectTreeResponse.class});
+        final XStream xStream = XStreamUtils.createXStream(SObjectTreeResponse.class);
 
         final SObjectTreeResponse response = (SObjectTreeResponse) xStream.fromXML(xml);
 
@@ -154,8 +155,7 @@ public class SObjectTreeResponseTest {
             + "    </results>\n"//
             + "</Result>";
 
-        final XStream xStream = new XStream();
-        xStream.processAnnotations(new Class[] {SObjectTreeResponse.class});
+        final XStream xStream = XStreamUtils.createXStream(SObjectTreeResponse.class);
 
         final SObjectTreeResponse response = (SObjectTreeResponse) xStream.fromXML(xml);
 

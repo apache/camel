@@ -16,35 +16,39 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
-import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
+import com.thoughtworks.xstream.converters.SingleValueConverter;
 
+import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
-public class DateTimeSerializer extends JsonSerializer<ZonedDateTime> {
+final class LocalDateTimeConverter implements SingleValueConverter {
 
-    public DateTimeSerializer() {
-        super();
+    static final SingleValueConverter INSTANCE = new LocalDateTimeConverter();
+
+    private LocalDateTimeConverter() {
     }
 
     @Override
-    public void serialize(ZonedDateTime dateTime, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        jsonGenerator.writeString(DateTimeUtils.formatDateTime(dateTime));
+    public boolean canConvert(@SuppressWarnings("rawtypes") final Class type) {
+        return LocalDateTime.class.equals(type);
     }
 
     @Override
-    public Class<ZonedDateTime> handledType() {
-        return ZonedDateTime.class;
+    public Object fromString(final String value) {
+        return ZonedDateTime.parse(value, ISO_OFFSET_DATE_TIME).toLocalDateTime();
     }
 
     @Override
-    public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType type) throws JsonMappingException {
-        visitor.expectStringFormat(type);
+    public String toString(final Object value) {
+        if (value == null) {
+            return null;
+        }
+
+        final LocalDateTime localDateTime = (LocalDateTime) value;
+
+        return ISO_OFFSET_DATE_TIME.format(localDateTime.atZone(ZoneId.systemDefault()));
     }
 }

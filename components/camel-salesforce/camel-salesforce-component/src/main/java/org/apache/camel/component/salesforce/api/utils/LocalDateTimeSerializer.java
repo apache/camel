@@ -17,34 +17,33 @@
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
+final class LocalDateTimeSerializer extends StdSerializer<LocalDateTime> {
 
-public class DateSerializer extends JsonSerializer<LocalDate> {
+    static final JsonSerializer<LocalDateTime> INSTANCE = new LocalDateTimeSerializer();
 
-    public DateSerializer() {
-        super();
+    private static final long serialVersionUID = 1L;
+
+    private LocalDateTimeSerializer() {
+        super(LocalDateTime.class);
     }
 
     @Override
-    public void serialize(LocalDate date, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        jsonGenerator.writeString(DateTimeUtils.formatDate(date));
+    public void serialize(final LocalDateTime value, final JsonGenerator gen, final SerializerProvider serializers)
+        throws IOException, JsonProcessingException {
+
+        final ZonedDateTime zonedDateTime = ZonedDateTime.of(value, ZoneId.systemDefault());
+
+        serializers.defaultSerializeValue(zonedDateTime, gen);
     }
 
-    @Override
-    public Class<LocalDate> handledType() {
-        return LocalDate.class;
-    }
-
-    @Override
-    public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType type) throws JsonMappingException {
-        visitor.expectStringFormat(type);
-    }
 }
