@@ -46,7 +46,7 @@ public class ElasticsearchRestComponentVerifierExtension extends DefaultComponen
     protected Result verifyParameters(Map<String, Object> parameters) {
 
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).error(ResultErrorHelper.requiresOption("clusterName", parameters))
-        		.error(ResultErrorHelper.requiresOption("hostAddresses", parameters));
+            .error(ResultErrorHelper.requiresOption("hostAddresses", parameters));
         // Validate using the catalog
 
         super.verifyParametersAgainstCatalog(builder, parameters);
@@ -63,7 +63,7 @@ public class ElasticsearchRestComponentVerifierExtension extends DefaultComponen
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY);
 
         try {
-        	ElasticsearchConfiguration configuration = setProperties(new ElasticsearchConfiguration(), parameters);
+            ElasticsearchConfiguration configuration = setProperties(new ElasticsearchConfiguration(), parameters);
             RestClientBuilder clientBuilder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
             RestHighLevelClient restHighLevelClient = new RestHighLevelClient(clientBuilder);
             restHighLevelClient.ping();
