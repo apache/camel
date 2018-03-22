@@ -59,11 +59,12 @@ public class ElasticsearchComponent extends DefaultComponent {
     private int sniffAfterFailureDelay = ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY;
 
     public ElasticsearchComponent() {
-        super();
+        this(null);
     }
 
     public ElasticsearchComponent(CamelContext context) {
         super(context);
+        registerExtension(new ElasticsearchRestComponentVerifierExtension());
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
