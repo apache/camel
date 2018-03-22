@@ -116,14 +116,14 @@ public class GenerateMojo extends AbstractSalesforceMojo {
                 return description.getName() + "_" + enumTypeName(field.getName()) + "[]";
             } else {
                 // map field to Java type
-                final String soapType = field.getSoapType().split(":",2)[1];
-                final String type = (
-                        (soapType.equals("date")&&useZonedTimeDateForDate) ||
-                        (soapType.equals("time")&&useZonedTimeDateForTime) )
-                        ? "java.time.ZonedDateTime" : LOOKUP_MAP.get(soapType);
+                final String soapType = field.getSoapType();
+                final String lookupType = soapType.substring(soapType.indexOf(':') + 1);
+                final String type = types.get(lookupType);
                 if (type == null) {
-                    getLog().warn(String.format("Unsupported field type %s in field %s of object %s", soapType,
+                    getLog().warn(String.format("Unsupported field type `%s` in field `%s` of object `%s`", soapType,
                         field.getName(), description.getName()));
+                    getLog().debug("Currently known types:\n " + types.entrySet().stream()
+                        .map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining("\n")));
                 }
                 return type;
             }
@@ -245,6 +245,8 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         }
     }
 
+    public static final Map<String, String> DEFAULT_TYPES = defineLookupMap();
+
     private static final Set<String> BASE_FIELDS = defineBaseFields();
 
     private static final String BASE64BINARY = "base64Binary";
@@ -255,8 +257,6 @@ public class GenerateMojo extends AbstractSalesforceMojo {
 
     // used for velocity logging, to avoid creating velocity.log
     private static final Logger LOG = Logger.getLogger(GenerateMojo.class.getName());
-
-    private static final Map<String, String> LOOKUP_MAP = defineLookupMap();
     private static final String MULTIPICKLIST = "multipicklist";
 
     private static final String PACKAGE_NAME_PATTERN = "(\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*\\.)+\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
@@ -270,6 +270,9 @@ public class GenerateMojo extends AbstractSalesforceMojo {
     private static final String SOBJECT_QUERY_RECORDS_VM = "/sobject-query-records.vm";
 
     private static final String UTF_8 = "UTF-8";
+
+    @Parameter
+    Map<String, String> customTypes;
 
     VelocityEngine engine;
 
@@ -313,26 +316,17 @@ public class GenerateMojo extends AbstractSalesforceMojo {
     @Parameter
     private String[] includes;
 
+    private final Map<String, String> types = new HashMap<>(DEFAULT_TYPES);
+
     @Parameter(property = "camelSalesforce.useOptionals", defaultValue = "false")
     private boolean useOptionals;
 
     @Parameter(property = "camelSalesforce.useStringsForPicklists", defaultValue = "false")
     private Boolean useStringsForPicklists;
 
-    /**
-     * Generator will use java.time.ZonedTimeDate for Date if set to true, else it will default to java.time.LocalDate
-     */
-    @Parameter(property = "camelSalesforce.useZonedTimeDateForDate", defaultValue = "false")
-    private boolean useZonedTimeDateForDate;
- 
-    /**
-     * Generator will use java.time.ZonedTimeDate for Time if set to true, else it will default to java.time.OffsetTime
-     */
-    @Parameter(property = "camelSalesforce.useZonedTimeDateForTime", defaultValue = "false")
-    private boolean useZonedTimeDateForTime;
-    
     void processDescription(final File pkgDir, final SObjectDescription description, final GeneratorUtility utility,
         final String generatedDate) throws IOException {
+
         // generate a source file for SObject
         final VelocityContext context = new VelocityContext();
         context.put("packageName", packageName);
@@ -447,6 +441,13 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         getLog().info(String.format("Successfully generated %s Java Classes", descriptions.count() * 2));
     }
 
+    @Override
+    protected void setup() {
+        if (customTypes != null) {
+            types.putAll(customTypes);
+        }
+    }
+
     static VelocityEngine createVelocityEngine() {
         // initialize velocity to load resources from class loader and use Log4J
         final Properties velocityProperties = new Properties();
@@ -490,8 +491,8 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             {"unsignedInt", "Long"}, //
             {"unsignedShort", "Integer"}, //
             {"unsignedByte", "Short"}, //
-            {"time", "java.time.OffsetTime"}, //
-            {"date", "java.time.LocalDate"}, //
+            {"time", "java.time.ZonedDateTime"}, //
+            {"date", "java.time.ZonedDateTime"}, //
             {"g", "java.time.ZonedDateTime"}, //
             // Salesforce maps any types like string, picklist, reference, etc.
             // to string
@@ -506,7 +507,6 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             lookupMap.put(entry[0], entry[1]);
         }
 
-        return lookupMap;
+        return Collections.unmodifiableMap(lookupMap);
     }
-
 }

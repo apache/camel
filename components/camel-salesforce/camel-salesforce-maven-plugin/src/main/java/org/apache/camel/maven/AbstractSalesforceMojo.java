@@ -175,6 +175,8 @@ abstract class AbstractSalesforceMojo extends AbstractMojo {
 
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
+        setup();
+
         final RestClient restClient = connectToSalesforce();
         try {
             executeWithClient(restClient);
@@ -314,4 +316,7 @@ abstract class AbstractSalesforceMojo extends AbstractMojo {
     }
 
     protected abstract void executeWithClient(RestClient client) throws MojoExecutionException;
+
+    protected void setup() {
+    }
 }
