@@ -22,7 +22,6 @@ import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +53,6 @@ import static org.junit.Assert.assertTrue;
         "debug=false"
     }
 )
-@Ignore("Does not work")
 public class CamelCloudServiceCallConfigurationTest {
     @Autowired
     private ApplicationContext ctx;
