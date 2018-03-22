@@ -47,7 +47,7 @@ public class ElasticsearchComponent extends DefaultComponent {
 
     @Metadata(label = "advance")
     private String user;
-    @Metadata(secret = true)
+    @Metadata(label = "advance", secret = true)
     private String password;
     @Metadata(label = "advanced", defaultValue = "false")
     private boolean enableSSL;
