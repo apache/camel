@@ -45,11 +45,11 @@ public class ElasticsearchComponent extends DefaultComponent {
     @Metadata(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT;
 
-    @Metadata(label = "advance")
+    @Metadata(label = "security")
     private String user;
-    @Metadata(label = "advance", secret = true)
+    @Metadata(label = "security", secret = true)
     private String password;
-    @Metadata(label = "advanced", defaultValue = "false")
+    @Metadata(label = "security", defaultValue = "false")
     private boolean enableSSL;
     @Metadata(label = "advanced", defaultValue = "false")
     private boolean enableSniffer;
