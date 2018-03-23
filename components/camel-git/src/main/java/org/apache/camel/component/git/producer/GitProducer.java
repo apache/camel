@@ -156,7 +156,7 @@ public class GitProducer extends DefaultProducer {
             doDeleteTag(exchange, operation);
             break;
 
-        case GitOperation.SHOW_BRANCHES:
+        case GitOperation.SHOW_BRANCHES_OPERATION:
             doShowBranches(exchange, operation);
             break;
            
