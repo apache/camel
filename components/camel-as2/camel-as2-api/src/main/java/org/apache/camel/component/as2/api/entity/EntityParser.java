@@ -1,8 +1,10 @@
 package org.apache.camel.component.as2.api.entity;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MediaType;
@@ -335,7 +337,7 @@ public class EntityParser {
         }
     }
 
-    public static HttpEntity parseMessageDispositionNotificationEntity(HttpMessage message, HttpEntity entity, boolean isMainBody)
+    public static HttpEntity parseMessageDispositionNotificationReportEntity(HttpMessage message, HttpEntity entity, boolean isMainBody)
             throws HttpException {
         Args.notNull(entity, "entity");
         DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = null;
@@ -519,7 +521,7 @@ public class EntityParser {
                 case AS2MimeType.APPLICATION_PKCS7_MIME:
                     break;
                 case AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION:
-                    parseMessageDispositionNotificationEntity(message, entity, true);
+                    parseMessageDispositionNotificationReportEntity(message, entity, true);
                     setMessageEntity(message, entity);
                     break;
                 default:
@@ -612,7 +614,23 @@ public class EntityParser {
         }
     }
     
+    public static AS2MessageDispositionNotificationEntity parseMessageDispositionNotificationEntity(SessionInputBuffer inBuffer, String boundary) throws HttpException {
+        try {
+            // Read Disposition Notification Body Part Headers
+            Header[] headers = AbstractMessageParser.parseHeaders(
+                    inBuffer,
+                    -1,
+                    -1,
+                    BasicLineParser.INSTANCE,
+                    new ArrayList<CharArrayBuffer>());
+            return null;
+        } catch (Exception e) {
+            throw new HttpException("Failed to parse message disposition notification", e);
+        }
+    }
+    
     public static byte[] decodeTransferEncodingOfBodyPartContent(String bodyPartContent, ContentType contentType, String bodyPartTransferEncoding) throws Exception {
+        Args.notNull(bodyPartContent, "bodyPartContent");
         Charset contentCharset = contentType.getCharset();
                 if (contentCharset == null) {
             contentCharset = StandardCharsets.US_ASCII;
