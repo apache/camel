@@ -333,7 +333,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                             // Found the beginning of the MSA - the next two bytes should be our acknowledgement code
                             msaStartIndex = i + 1;
                             if (bA != hl7AcknowledgementBytes[i + 5] && bC != hl7AcknowledgementBytes[i + 5]) {
-                                String errorMessage = String.format("processAcknowledgment(hl7MessageBytes[%d], hl7AcknowledgementBytes[%d]) - unsupported acknowledgement type: '%s'", hl7MessageBytes == null ? -1 : hl7MessageBytes.length, hl7AcknowledgementBytes.length, new String(hl7AcknowledgementBytes, i + 5, 2));
+                                String errorMessage = String.format("processAcknowledgment(hl7MessageBytes[%d], hl7AcknowledgementBytes[%d]) - unsupported acknowledgement type: '%s'",
+                                    hl7MessageBytes == null ? -1 : hl7MessageBytes.length, hl7AcknowledgementBytes.length, new String(hl7AcknowledgementBytes, i + 5, 2));
                                 throw new MllpInvalidAcknowledgementException(errorMessage, hl7MessageBytes, hl7AcknowledgementBytes);
                             } else {
                                 switch (hl7AcknowledgementBytes[i + 6]) {
