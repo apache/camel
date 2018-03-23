@@ -39,6 +39,20 @@ pipeline {
     stages {
 
         stage('Build & Deploy') {
+            when {
+                branch 'master'
+            }
+            steps {
+                sh "./mvnw $MAVEN_PARAMS -Dnoassembly -Dmaven.test.skip.exec=true clean deploy"
+            }
+        }
+
+        stage('Build') {
+            when {
+                not {
+                    branch 'master'
+                }
+            }
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Dnoassembly -Dmaven.test.skip.exec=true clean deploy"
             }
