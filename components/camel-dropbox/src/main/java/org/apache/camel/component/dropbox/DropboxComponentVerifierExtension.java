@@ -19,16 +19,16 @@ package org.apache.camel.component.dropbox;
 import java.util.Locale;
 import java.util.Map;
 
+import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.v2.DbxClientV2;
+
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
 
-import com.dropbox.core.DbxRequestConfig;
-import com.dropbox.core.v2.DbxClientV2;
-
 public class DropboxComponentVerifierExtension extends DefaultComponentVerifierExtension {
-	
+
     public DropboxComponentVerifierExtension() {
         this("dropbox");
     }

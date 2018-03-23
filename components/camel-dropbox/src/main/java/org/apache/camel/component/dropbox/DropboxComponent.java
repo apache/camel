@@ -33,7 +33,7 @@ public class DropboxComponent extends DefaultComponent {
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxComponent.class);
     
     public DropboxComponent() {
-    	this(null);
+        this(null);
     }
 
     public DropboxComponent(CamelContext context) {
