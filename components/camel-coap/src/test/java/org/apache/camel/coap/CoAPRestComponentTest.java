@@ -38,7 +38,6 @@ public class CoAPRestComponentTest extends CamelTestSupport {
         CoapResponse rsp;
 
         client = new CoapClient("coap://localhost:" + coapport + "/TestResource/Ducky");
-        client.setTimeout(1000000);
         rsp = client.get();
         assertEquals(ResponseCode.CONTENT, rsp.getCode());
         assertEquals("Hello Ducky", rsp.getResponseText());

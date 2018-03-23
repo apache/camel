@@ -18,14 +18,10 @@ package org.apache.camel.coap;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.junit.Test;
 
-public class CoAPMethodRestrictTest extends CamelTestSupport {
-
-    private static final int PORT = AvailablePortFinder.getNextAvailable();
+public class CoAPMethodRestrictTest extends CoAPTestSupport {
 
     @Test
     public void testDefaultCoAPMethodRestrict() {

@@ -18,11 +18,8 @@ package org.apache.camel.coap;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
-import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.junit.Test;
 
 /**
@@ -30,17 +27,14 @@ import org.junit.Test;
  *
  * CORS configuration is ignored and REST endpoints function as per normal
  */
-public class CoAPCORSTest extends CamelTestSupport {
+public class CoAPCORSTest extends CoAPTestSupport {
     private static final String COAP_RESPONSE = "{ \"foo\": \"bar\" }";
-    private static final int COAP_PORT = AvailablePortFinder.getNextAvailable();
 
     @Test
     public void testEnableCors() throws Exception {
-        NetworkConfig.createStandardWithoutFile();
-
-        CoapClient client = new CoapClient("coap://localhost:" + COAP_PORT + "/rest");
-        CoapResponse coapResponse = client.get();
-        assertEquals(COAP_RESPONSE, coapResponse.getResponseText());
+        CoapClient client = createClient("/rest");
+        CoapResponse response = client.get();
+        assertEquals(COAP_RESPONSE, response.getResponseText());
     }
 
     @Override
@@ -48,7 +42,7 @@ public class CoAPCORSTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().component("coap").port(COAP_PORT).enableCORS(true);
+                restConfiguration().component("coap").port(PORT).enableCORS(true);
 
                 rest().get("/rest").route().setBody(constant(COAP_RESPONSE));
             }
