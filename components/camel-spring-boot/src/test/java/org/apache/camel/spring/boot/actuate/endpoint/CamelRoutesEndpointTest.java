@@ -62,16 +62,9 @@ public class CamelRoutesEndpointTest extends Assert {
         assertTrue(routes.stream().anyMatch(r -> "foo-route".equals(r.getId())));
     }
 
-    @Test
-    public void testRouteDump() throws Exception {
-        String dump = endpoint.getRouteDump("foo-route");
-        assertNotNull(dump);
-        assertTrue(dump, dump.contains("<route "));
-        assertTrue(dump, dump.contains("<from "));
-        assertTrue(dump, dump.contains("uri=\"timer:foo\""));
-        assertTrue(dump, dump.contains("<to "));
-        assertTrue(dump, dump.contains("uri=\"log:foo\""));
-        assertTrue(dump, dump.contains("</route>"));
+    @Test(expected = IllegalArgumentException.class)
+    public void testRouteDumpReadOnly() throws Exception {
+        endpoint.getRouteDump("foo-route");
     }
 
     @Test

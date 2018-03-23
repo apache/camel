@@ -70,4 +70,16 @@ public class CamelRoutesEndpointWriteOperationTest extends Assert {
         Assert.assertTrue(status.isStarted());
     }
 
+    @Test
+    public void testRouteDump() throws Exception {
+        String dump = endpoint.getRouteDump("foo-route");
+        assertNotNull(dump);
+        assertTrue(dump, dump.contains("<route "));
+        assertTrue(dump, dump.contains("<from "));
+        assertTrue(dump, dump.contains("uri=\"timer:foo\""));
+        assertTrue(dump, dump.contains("<to "));
+        assertTrue(dump, dump.contains("uri=\"log:foo\""));
+        assertTrue(dump, dump.contains("</route>"));
+    }
+
 }

@@ -104,8 +104,12 @@ public class CamelRoutesEndpoint {
         }
     }
 
-    @ReadOperation
+    @WriteOperation
     public String getRouteDump(@Selector String id) {
+        if (this.isReadOnly()) {
+            throw new IllegalArgumentException("Read only: route dump is not permitted in read-only mode");
+        }
+
         RouteDefinition route = camelContext.getRouteDefinition(id);
         if (route != null) {
             try {
