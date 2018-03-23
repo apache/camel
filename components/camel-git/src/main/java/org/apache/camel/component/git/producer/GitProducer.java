@@ -31,6 +31,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jgit.api.CherryPickResult;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
+import org.eclipse.jgit.api.MergeCommand.FastForwardMode;
+import org.eclipse.jgit.api.MergeResult;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.RemoteAddCommand;
 import org.eclipse.jgit.api.Status;
@@ -140,6 +142,10 @@ public class GitProducer extends DefaultProducer {
 
         case GitOperation.PULL_OPERATION:
             doPull(exchange, operation);
+            break;
+            
+        case GitOperation.MERGE_OPERATION:
+            doMerge(exchange, operation);
             break;
 
         case GitOperation.CREATE_TAG_OPERATION:
@@ -412,6 +418,23 @@ public class GitProducer extends DefaultProducer {
             } else {
                 result = git.pull().setRemote(endpoint.getRemoteName()).call();
             }
+        } catch (Exception e) {
+            LOG.error("There was an error in Git " + operation + " operation");
+            throw e;
+        }
+        updateExchange(exchange, result);
+    }
+    
+    protected void doMerge(Exchange exchange, String operation) throws Exception {
+        MergeResult result = null;
+        ObjectId mergeBase;
+        try {
+            if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
+                throw new IllegalArgumentException("Branch name must be specified to execute " + operation);
+            }
+            mergeBase = git.getRepository().resolve(endpoint.getBranchName());
+            git.checkout().setName("master").call();
+            result = git.merge().include(mergeBase).setFastForward(FastForwardMode.FF).setCommit(true).call();
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
