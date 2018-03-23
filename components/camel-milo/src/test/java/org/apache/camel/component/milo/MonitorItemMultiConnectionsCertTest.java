@@ -45,7 +45,8 @@ public class MonitorItemMultiConnectionsCertTest extends AbstractMiloServerTest 
     // with key
     private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:tcp://foo:bar@localhost:@@port@@?node="
                                                         + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1")
-                                                        + "&keyStoreUrl=file:src/test/resources/cert/cert.p12&keyStorePassword=pwd1&keyPassword=pwd1&discoveryEndpointSuffix=/discovery&overrideHost=true";
+                                                        + "&keyStoreUrl=file:src/test/resources/cert/cert.p12&keyStorePassword=pwd1&keyPassword=pwd1"
+                                                        + "&discoveryEndpointSuffix=/discovery&overrideHost=true";
 
     // with wrong password
     private static final String MILO_CLIENT_ITEM_C2_1 = "milo-client:tcp://foo:bar2@localhost:@@port@@?node="
