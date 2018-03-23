@@ -82,7 +82,7 @@ public @interface CsvRecord {
     String quote() default "\"";
 
     /**
-     * Indicate if the values must be quoted when marshaling (optional)
+     * Indicate if the values (and headers) must be quoted when marshaling (optional)
      */
     boolean quoting() default false;
     

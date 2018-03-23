@@ -136,7 +136,7 @@ fields when CSV is generated
 fields when CSV is generated. This annotation is associated to the root class of the model and must be
 declared one time.
 
-|quoting |boolean |*Camel 2.11:*optional - default value = false - Indicate if the values
+|quoting |boolean |*Camel 2.11:*optional - default value = false - Indicate if the values (and headers)
 must be quoted when marshaling when CSV is generated.
 
 |endWithLineBreak |boolean |*Camel 2.21:* optional - default value = true - Indicate if the CSV generated file 
