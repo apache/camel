@@ -26,12 +26,28 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 /**
  * Tests for the MllpSocketBuffer class.
  */
 public class MllpSocketBufferTest extends SocketBufferTestSupport {
+    /**
+     * Description of test.
+     *
+     * @throws Exception in the event of a test error.
+     */
+    @Test
+    public void testConstructorWithNullEndpoing() throws Exception {
+        try {
+            new MllpSocketBuffer(null);
+            fail("Constructor should have thrown an exception with a null Endpoint argument");
+        } catch (IllegalArgumentException expectedEx) {
+            assertEquals("MllpEndpoint cannot be null", expectedEx.getMessage());
+        }
+    }
+
     /**
      * Description of test.
      *
