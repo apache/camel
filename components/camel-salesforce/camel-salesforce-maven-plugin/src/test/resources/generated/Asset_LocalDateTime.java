@@ -44,6 +44,32 @@ public class Asset extends AbstractDescribedSObjectBase {
         this.InstallDate = InstallDate;
     }
 
+    // date_time
+    private java.time.ZonedDateTime date_time;
+
+    @JsonProperty("date_time")
+    public java.time.ZonedDateTime getdate_time() {
+        return this.date_time;
+    }
+
+    @JsonProperty("date_time")
+    public void setdate_time(java.time.ZonedDateTime date_time) {
+        this.date_time = date_time;
+    }
+
+    // time
+    private java.time.OffsetTime time;
+
+    @JsonProperty("time")
+    public java.time.OffsetTime gettime() {
+        return this.time;
+    }
+
+    @JsonProperty("time")
+    public void settime(java.time.OffsetTime time) {
+        this.time = time;
+    }
+
 
     @Override
     public final SObjectDescription description() {
@@ -96,6 +122,10 @@ public class Asset extends AbstractDescribedSObjectBase {
         fields1.add(sObjectField1);
         final SObjectField sObjectField2 = createField("InstallDate", "Install Date", "date", "xsd:date", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField2);
+        final SObjectField sObjectField3 = createField("date_time", "date_time", "datetime", "xsd:dateTime", 0, false, true, false, false, true, false, false);
+        fields1.add(sObjectField3);
+        final SObjectField sObjectField4 = createField("time", "time", "time", "xsd:time", 0, false, true, false, false, true, false, false);
+        fields1.add(sObjectField4);
 
         description.setActivateable(false);
         description.setLabelPlural("Assets");

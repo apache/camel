@@ -106,6 +106,7 @@ public final class XStreamUtils {
         result.registerConverter(OffsetDateTimeConverter.INSTANCE, XStream.PRIORITY_VERY_HIGH);
         result.registerConverter(ZonedDateTimeConverter.INSTANCE, XStream.PRIORITY_VERY_HIGH);
         result.registerConverter(InstantConverter.INSTANCE, XStream.PRIORITY_VERY_HIGH);
+        result.registerConverter(OffsetTimeConverter.INSTANCE, XStream.PRIORITY_VERY_HIGH);
 
         result.setMarshallingStrategy(new TreeMarshallingStrategy());
 
