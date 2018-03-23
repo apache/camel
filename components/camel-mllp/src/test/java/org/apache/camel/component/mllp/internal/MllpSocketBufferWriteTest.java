@@ -228,7 +228,7 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
             instance.write(payload, -5, payload.length);
             fail("Exception should have been thrown");
         } catch (IndexOutOfBoundsException expectedEx) {
-            assertEquals("offset <-5> is less than zero", expectedEx.getMessage());
+            assertEquals("write(byte[4], offset[-5], writeCount[4]) - offset is less than zero", expectedEx.getMessage());
         }
     }
 
@@ -245,7 +245,7 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
             instance.write(payload, payload.length + 1, payload.length);
             fail("Exception should have been thrown");
         } catch (IndexOutOfBoundsException expectedEx) {
-            assertEquals("offset <5> is greater than write count <4>", expectedEx.getMessage());
+            assertEquals("write(byte[4], offset[5], writeCount[4]) - offset is greater than write count", expectedEx.getMessage());
         }
     }
 
@@ -261,7 +261,7 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
             instance.write("BLAH".getBytes(), 0, -5);
             fail("Exception should have been thrown");
         } catch (IndexOutOfBoundsException expectedEx) {
-            assertEquals("write count <-5> is less than zero", expectedEx.getMessage());
+            assertEquals("write(byte[4], offset[0], writeCount[-5]) - write count is less than zero", expectedEx.getMessage());
         }
     }
 
@@ -278,21 +278,21 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
             instance.write(payload, 0, payload.length + 1);
             fail("Exception should have been thrown");
         } catch (IndexOutOfBoundsException expectedEx) {
-            assertEquals("write count <5> is greater than length of the source byte[] <4>", expectedEx.getMessage());
+            assertEquals("write(byte[4], offset[0], writeCount[5]) - write count is greater than length of the source byte[]", expectedEx.getMessage());
         }
 
         try {
             instance.write("BLAH".getBytes(), 1, payload.length);
             fail("Exception should have been thrown");
         } catch (IndexOutOfBoundsException expectedEx) {
-            assertEquals("offset <1> plus write count <4> is <5> is greater than length <4> of the source byte[]", expectedEx.getMessage());
+            assertEquals("write(byte[4], offset[1], writeCount[4]) - offset plus write count <5> is greater than length of the source byte[]", expectedEx.getMessage());
         }
 
         try {
             instance.write("BLAH".getBytes(), 2, payload.length - 1);
             fail("Exception should have been thrown");
         } catch (IndexOutOfBoundsException expectedEx) {
-            assertEquals("offset <2> plus write count <3> is <5> is greater than length <4> of the source byte[]", expectedEx.getMessage());
+            assertEquals("write(byte[4], offset[2], writeCount[3]) - offset plus write count <5> is greater than length of the source byte[]", expectedEx.getMessage());
         }
     }
 
