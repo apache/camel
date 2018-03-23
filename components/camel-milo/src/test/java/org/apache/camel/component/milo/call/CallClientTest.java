@@ -52,7 +52,7 @@ public class CallClientTest extends AbstractMiloServerTest {
     private static final String MILO_CLIENT_BASE_C1 = "milo-client:tcp://localhost:@@port@@";
 
     private static final String MILO_CLIENT_ITEM_C1_1 = MILO_CLIENT_BASE_C1 + "?node=" + nodeValue(MockNamespace.URI, MockNamespace.FOLDER_ID) + "&method="
-                                                        + nodeValue(MockNamespace.URI, "id1");
+                                                        + nodeValue(MockNamespace.URI, "id1") + "&overrideHost=true";
 
     @Produce(uri = DIRECT_START_1)
     protected ProducerTemplate producer1;
