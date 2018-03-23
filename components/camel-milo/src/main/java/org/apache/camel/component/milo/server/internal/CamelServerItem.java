@@ -42,14 +42,16 @@ import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.
 public class CamelServerItem {
     private static final Logger LOG = LoggerFactory.getLogger(CamelServerItem.class);
 
-    private UaObjectNode baseNode;
-    private UaVariableNode item;
+    private final String itemId;
+    private final UaObjectNode baseNode;
+    private final UaVariableNode item;
 
-    private DataValue value = new DataValue(StatusCode.BAD);
     private final Set<Consumer<DataValue>> listeners = new CopyOnWriteArraySet<>();
+    private DataValue value = new DataValue(StatusCode.BAD);
 
     public CamelServerItem(final String itemId, final ServerNodeMap nodeManager, final UShort namespaceIndex, final UaObjectNode baseNode) {
 
+        this.itemId = itemId;
         this.baseNode = baseNode;
 
         final NodeId nodeId = new NodeId(namespaceIndex, "items-" + itemId);
@@ -138,5 +140,10 @@ public class CamelServerItem {
 
     public void update(final Object value) {
         this.value = new DataValue(new Variant(value), StatusCode.GOOD, DateTime.now());
+    }
+
+    @Override
+    public String toString() {
+        return "[CamelServerItem - '" + this.itemId + "']";
     }
 }

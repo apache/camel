@@ -16,15 +16,24 @@
  */
 package org.apache.camel.component.milo.client;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 
+import com.google.common.base.Supplier;
 import org.apache.camel.component.milo.KeyStoreLoader;
+import org.apache.camel.component.milo.KeyStoreLoader.Result;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.eclipse.milo.opcua.sdk.client.api.config.OpcUaClientConfigBuilder;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
+import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned;
 
 @UriParams
 public class MiloClientConfiguration implements Cloneable {
@@ -36,6 +45,12 @@ public class MiloClientConfiguration implements Cloneable {
     private static final String DEFAULT_PRODUCT_URI = "http://camel.apache.org/EclipseMilo";
 
     private String endpointUri;
+
+    @UriParam
+    private String discoveryEndpointUri;
+
+    @UriParam
+    private String discoveryEndpointSuffix;
 
     @UriParam
     private String clientId;
@@ -92,11 +107,23 @@ public class MiloClientConfiguration implements Cloneable {
     }
 
     public MiloClientConfiguration(final MiloClientConfiguration other) {
-        this.clientId = other.clientId;
         this.endpointUri = other.endpointUri;
+        this.discoveryEndpointUri = other.discoveryEndpointUri;
+        this.discoveryEndpointSuffix = other.discoveryEndpointSuffix;
+        this.clientId = other.clientId;
         this.applicationName = other.applicationName;
+        this.applicationUri = other.applicationUri;
         this.productUri = other.productUri;
         this.requestTimeout = other.requestTimeout;
+        this.channelLifetime = other.channelLifetime;
+        this.sessionName = other.sessionName;
+        this.maxPendingPublishRequests = other.maxPendingPublishRequests;
+        this.maxResponseMessageSize = other.maxResponseMessageSize;
+        this.keyStoreUrl = other.keyStoreUrl;
+        this.keyStoreType = other.keyStoreType;
+        this.keyAlias = other.keyAlias;
+        this.keyStorePassword = other.keyStorePassword;
+        this.keyPassword = other.keyPassword;
         this.allowedSecurityPolicies = allowedSecurityPolicies != null ? new HashSet<>(other.allowedSecurityPolicies) : null;
         this.overrideHost = other.overrideHost;
     }
@@ -107,6 +134,28 @@ public class MiloClientConfiguration implements Cloneable {
 
     public String getEndpointUri() {
         return this.endpointUri;
+    }
+
+    /**
+     * An alternative discovery URI
+     */
+    public void setDiscoveryEndpointUri(final String endpointDiscoveryUri) {
+        this.discoveryEndpointUri = endpointDiscoveryUri;
+    }
+
+    public String getDiscoveryEndpointUri() {
+        return this.discoveryEndpointUri;
+    }
+
+    /**
+     * A suffix for endpoint URI when discovering
+     */
+    public void setDiscoveryEndpointSuffix(final String endpointDiscoverySuffix) {
+        this.discoveryEndpointSuffix = endpointDiscoverySuffix;
+    }
+
+    public String getDiscoveryEndpointSuffix() {
+        return this.discoveryEndpointSuffix;
     }
 
     /**
@@ -347,4 +396,77 @@ public class MiloClientConfiguration implements Cloneable {
             return this.endpointUri;
         }
     }
+
+    public OpcUaClientConfigBuilder newBuilder() {
+        return mapToClientConfiguration(this);
+    }
+
+    private static OpcUaClientConfigBuilder mapToClientConfiguration(final MiloClientConfiguration configuration) {
+        final OpcUaClientConfigBuilder builder = new OpcUaClientConfigBuilder();
+
+        whenHasText(configuration::getApplicationName, value -> builder.setApplicationName(LocalizedText.english(value)));
+        whenHasText(configuration::getApplicationUri, builder::setApplicationUri);
+        whenHasText(configuration::getProductUri, builder::setProductUri);
+
+        if (configuration.getRequestTimeout() != null) {
+            builder.setRequestTimeout(Unsigned.uint(configuration.getRequestTimeout()));
+        }
+        if (configuration.getChannelLifetime() != null) {
+            builder.setChannelLifetime(Unsigned.uint(configuration.getChannelLifetime()));
+        }
+
+        whenHasText(configuration::getSessionName, value -> builder.setSessionName(() -> value));
+        if (configuration.getSessionTimeout() != null) {
+            builder.setSessionTimeout(UInteger.valueOf(configuration.getSessionTimeout()));
+        }
+
+        if (configuration.getMaxPendingPublishRequests() != null) {
+            builder.setMaxPendingPublishRequests(UInteger.valueOf(configuration.getMaxPendingPublishRequests()));
+        }
+
+        if (configuration.getMaxResponseMessageSize() != null) {
+            builder.setMaxResponseMessageSize(UInteger.valueOf(configuration.getMaxPendingPublishRequests()));
+        }
+
+        if (configuration.getKeyStoreUrl() != null) {
+            setKey(configuration, builder);
+        }
+
+        return builder;
+    }
+
+    private static void setKey(final MiloClientConfiguration configuration, final OpcUaClientConfigBuilder builder) {
+        final KeyStoreLoader loader = new KeyStoreLoader();
+
+        final Result result;
+        try {
+            // key store properties
+            loader.setType(configuration.getKeyStoreType());
+            loader.setUrl(configuration.getKeyStoreUrl());
+            loader.setKeyStorePassword(configuration.getKeyStorePassword());
+
+            // key properties
+            loader.setKeyAlias(configuration.getKeyAlias());
+            loader.setKeyPassword(configuration.getKeyPassword());
+
+            result = loader.load();
+        } catch (GeneralSecurityException | IOException e) {
+            throw new IllegalStateException("Failed to load key", e);
+        }
+
+        if (result == null) {
+            throw new IllegalStateException("Key not found in keystore");
+        }
+
+        builder.setCertificate(result.getCertificate());
+        builder.setKeyPair(result.getKeyPair());
+    }
+
+    private static void whenHasText(final Supplier<String> valueSupplier, final Consumer<String> valueConsumer) {
+        final String value = valueSupplier.get();
+        if (value != null && !value.isEmpty()) {
+            valueConsumer.accept(value);
+        }
+    }
+
 }

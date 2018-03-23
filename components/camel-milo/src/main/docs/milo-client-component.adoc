@@ -97,7 +97,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (24 parameters):
+==== Query Parameters (27 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -105,6 +105,9 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *clientId* (common) | A virtual client id to force the creation of a new connection instance |  | String
 | *defaultAwaitWrites* (common) | Default await setting for writes | false | boolean
+| *discoveryEndpointSuffix* (common) | A suffix for endpoint URI when discovering |  | String
+| *discoveryEndpointUri* (common) | An alternative discovery URI |  | String
+| *method* (common) | The method definition (see Method ID) |  | ExpandedNodeId
 | *node* (common) | The node definition (see Node ID) |  | ExpandedNodeId
 | *samplingInterval* (common) | The sampling interval in milliseconds |  | Double
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -133,7 +136,19 @@ with the following path and query parameters:
 
 
 
+==== Discovery
 
+If the server uses a dedicated discovery endpoint (e.g. `/discovery`), which may support different (less secure) security policies,
+then you can make use of this via the parameter `discoveryEndpointSuffix`, which will be appended to the `endpointUri`. Or by using
+an explicit `discoveryEndpointUri`.
+
+==== Overriding the host name
+
+The client uses the host information from the endpoint information, queried from the server. However in some situations this endpoint URI
+might be different, and wrong from the point of view of the connecting client (e.g. an internal hostname).
+
+In this case it is possible to set the parameter `overrideHost` to `true`, which will take the discovered endpoint information,
+but override the host information with the value of the original URI.
 
 ==== Node ID
 
@@ -165,6 +180,18 @@ However Camel allows to wrap the actual value inside `RAW(…)`, which makes esc
 ------------------------
 milo-client://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)
 ------------------------
+
+==== Method ID
+
+It is possible to perform methods calls on OPC UA nodes. If the parameter `method` is set to the Node ID of a method call (the node ID must be set to the parent object in this case),
+then a method call will be performed instead of a write operation.
+
+Input parameters are taken from the body:
+
+* If the body is null, then an empty `Variant[]` will be used
+* If the body is a `Variant[]`, then it will be used as is
+* If the body is a `Variant`, then it will be wrapped in a `Variant[]` array
+* Otherwise the body will be converted into a `Variant` and wrapped in an array of `Variant[]`
 
 ==== Security policies
 

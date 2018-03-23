@@ -16,24 +16,13 @@
  */
 package org.apache.camel.component.milo.client;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.milo.KeyStoreLoader;
-import org.apache.camel.component.milo.KeyStoreLoader.Result;
 import org.apache.camel.impl.DefaultComponent;
-import org.eclipse.milo.opcua.sdk.client.api.config.OpcUaClientConfigBuilder;
-import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
-import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
-import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,13 +47,15 @@ public class MiloClientComponent extends DefaultComponent {
 
     private synchronized MiloClientEndpoint createEndpoint(final String uri, final MiloClientConfiguration configuration, final Map<String, Object> parameters) throws Exception {
 
-        MiloClientConnection connection = this.cache.get(configuration.toCacheId());
+        final String cacheId = configuration.toCacheId();
+
+        MiloClientConnection connection = this.cache.get(cacheId);
 
         if (connection == null) {
-            LOG.info("Cache miss - creating new connection instance: {}", configuration.toCacheId());
+            LOG.info("Cache miss - creating new connection instance: {}", cacheId);
 
-            connection = new MiloClientConnection(configuration, mapToClientConfiguration(configuration));
-            this.cache.put(configuration.toCacheId(), connection);
+            connection = new MiloClientConnection(configuration);
+            this.cache.put(cacheId, connection);
         }
 
         final MiloClientEndpoint endpoint = new MiloClientEndpoint(uri, this, connection, configuration.getEndpointUri());
@@ -73,77 +64,9 @@ public class MiloClientComponent extends DefaultComponent {
 
         // register connection with endpoint
 
-        this.connectionMap.put(configuration.toCacheId(), endpoint);
+        this.connectionMap.put(cacheId, endpoint);
 
         return endpoint;
-    }
-
-    private OpcUaClientConfigBuilder mapToClientConfiguration(final MiloClientConfiguration configuration) {
-        final OpcUaClientConfigBuilder builder = new OpcUaClientConfigBuilder();
-
-        whenHasText(configuration::getApplicationName, value -> builder.setApplicationName(LocalizedText.english(value)));
-        whenHasText(configuration::getApplicationUri, builder::setApplicationUri);
-        whenHasText(configuration::getProductUri, builder::setProductUri);
-
-        if (configuration.getRequestTimeout() != null) {
-            builder.setRequestTimeout(Unsigned.uint(configuration.getRequestTimeout()));
-        }
-        if (configuration.getChannelLifetime() != null) {
-            builder.setChannelLifetime(Unsigned.uint(configuration.getChannelLifetime()));
-        }
-
-        whenHasText(configuration::getSessionName, value -> builder.setSessionName(() -> value));
-        if (configuration.getSessionTimeout() != null) {
-            builder.setSessionTimeout(UInteger.valueOf(configuration.getSessionTimeout()));
-        }
-
-        if (configuration.getMaxPendingPublishRequests() != null) {
-            builder.setMaxPendingPublishRequests(UInteger.valueOf(configuration.getMaxPendingPublishRequests()));
-        }
-
-        if (configuration.getMaxResponseMessageSize() != null) {
-            builder.setMaxResponseMessageSize(UInteger.valueOf(configuration.getMaxPendingPublishRequests()));
-        }
-
-        if (configuration.getKeyStoreUrl() != null) {
-            setKey(configuration, builder);
-        }
-
-        return builder;
-    }
-
-    private void setKey(final MiloClientConfiguration configuration, final OpcUaClientConfigBuilder builder) {
-        final KeyStoreLoader loader = new KeyStoreLoader();
-
-        final Result result;
-        try {
-            // key store properties
-            loader.setType(configuration.getKeyStoreType());
-            loader.setUrl(configuration.getKeyStoreUrl());
-            loader.setKeyStorePassword(configuration.getKeyStorePassword());
-
-            // key properties
-            loader.setKeyAlias(configuration.getKeyAlias());
-            loader.setKeyPassword(configuration.getKeyPassword());
-
-            result = loader.load();
-        } catch (GeneralSecurityException | IOException e) {
-            throw new IllegalStateException("Failed to load key", e);
-        }
-
-        if (result == null) {
-            throw new IllegalStateException("Key not found in keystore");
-        }
-
-        builder.setCertificate(result.getCertificate());
-        builder.setKeyPair(result.getKeyPair());
-    }
-
-    private void whenHasText(final Supplier<String> valueSupplier, final Consumer<String> valueConsumer) {
-        final String value = valueSupplier.get();
-        if (value != null && !value.isEmpty()) {
-            valueConsumer.accept(value);
-        }
     }
 
     /**

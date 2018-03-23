@@ -20,8 +20,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.milo.server.internal.CamelServerItem;
 import org.apache.camel.impl.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MiloServerProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MiloServerProducer.class);
 
     private final CamelServerItem item;
 
@@ -33,6 +37,9 @@ public class MiloServerProducer extends DefaultProducer {
     @Override
     public void process(final Exchange exchange) throws Exception {
         final Object value = exchange.getIn().getBody();
+
+        LOG.trace("Update item value - {} = {}", this.item, value);
+
         this.item.update(value);
     }
 }
