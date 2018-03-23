@@ -567,10 +567,23 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             field.setAccessible(true);
 
             // Get dataField
+            final String res;
             if (!dataField.columnName().equals("")) {
-                builderHeader.append(dataField.columnName());
+                res = dataField.columnName();
             } else {
-                builderHeader.append(field.getName());
+                res = field.getName();
+            }
+
+            if (quoting && quote != null) {
+                builderHeader.append(quote);
+            }
+            if (quoting && quote != null && (res.contains("\\" + quote) || res.contains(quote))  && quotingEscaped) {
+                builderHeader.append(res.replaceAll("\\" + quote, "\\\\" + quote));
+            } else {
+                builderHeader.append(res);
+            }
+            if (quoting && quote != null) {
+                builderHeader.append(quote);
             }
 
             if (it.hasNext()) {
