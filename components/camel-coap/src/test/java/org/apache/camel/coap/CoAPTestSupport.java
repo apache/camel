@@ -16,28 +16,29 @@
  */
 package org.apache.camel.coap;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.FileUtil;
 import org.eclipse.californium.core.CoapClient;
-import org.eclipse.californium.core.CoapResponse;
-import org.junit.Test;
+import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.junit.Before;
 
-public class CoAPConsumerDefaultPortTest extends CoAPTestSupport {
+public class CoAPTestSupport extends CamelTestSupport {
 
-    @Test
-    public void testCoAPConsumerWithDefaultPort() throws Exception {
-        CoapClient client = createClient("/greeting", CoAPComponent.DEFAULT_PORT);
-        CoapResponse response = client.get();
-        assertEquals("Hello World", response.getResponseText());
+    protected static final int PORT = AvailablePortFinder.getNextAvailable();
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        NetworkConfig.createStandardWithoutFile();
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("coap:localhost/greeting")
-                    .setBody(constant("Hello World"));
-            }
-        };
+    protected CoapClient createClient(String path) {
+        return createClient(path, PORT);
+    }
+
+    protected CoapClient createClient(String path, int port) {
+        String url = String.format("coap://localhost:%d/%s", port, FileUtil.stripLeadingSeparator(path));
+        return new CoapClient(url);
     }
 }

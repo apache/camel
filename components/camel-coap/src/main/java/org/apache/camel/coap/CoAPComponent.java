@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -77,15 +78,19 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
     }
 
     @Override
-    public Consumer createConsumer(CamelContext camelContext,
-                                   Processor processor,
-                                   String verb,
-                                   String basePath,
-                                   String uriTemplate,
-                                   String consumes,
-                                   String produces,
-                                   RestConfiguration configuration,
-                                   Map<String, Object> parameters) throws Exception {
+    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath,
+            String uriTemplate, String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+
+        String path = basePath;
+        if (uriTemplate != null) {
+            // make sure to avoid double slashes
+            if (uriTemplate.startsWith("/")) {
+                path = path + uriTemplate;
+            } else {
+                path = path + "/" + uriTemplate;
+            }
+        }
+        path = FileUtil.stripLeadingSeparator(path);
 
         RestConfiguration config = configuration;
         if (config == null) {
@@ -113,16 +118,28 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
             map.putAll(config.getEndpointProperties());
         }
 
+        String scheme = config.getScheme() == null ? "coap" : config.getScheme();
         String query = URISupport.createQueryString(map);
+        int port = 0;
 
-        String url = (config.getScheme() == null ? "coap" : config.getScheme()) + "://" + host;
-        if (config.getPort() != -1) {
-            url += ":" + config.getPort();
+        int num = config.getPort();
+        if (num > 0) {
+            port = num;
         }
-        if (uriTemplate == null) {
-            uriTemplate = "";
+
+        // prefix path with context-path if configured in rest-dsl configuration
+        String contextPath = config.getContextPath();
+        if (ObjectHelper.isNotEmpty(contextPath)) {
+            contextPath = FileUtil.stripTrailingSeparator(contextPath);
+            contextPath = FileUtil.stripLeadingSeparator(contextPath);
+            if (ObjectHelper.isNotEmpty(contextPath)) {
+                path = contextPath + "/" + path;
+            }
         }
-        url += basePath + uriTemplate + "?coapMethodRestrict=" + verb.toUpperCase(Locale.US);
+
+        String restrict = verb.toUpperCase(Locale.US);
+        String url = String.format("%s://%s:%d/%s?coapMethodRestrict=%s", scheme, host, port, path, restrict);
+
         if (!query.isEmpty()) {
             url += "&" + query;
         }

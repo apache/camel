@@ -19,15 +19,17 @@ package org.apache.camel.coap;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.junit.Test;
 
-public class CoAPConsumerDefaultPortTest extends CoAPTestSupport {
+public class CoAPRestContextPathTest extends CoAPTestSupport {
 
     @Test
-    public void testCoAPConsumerWithDefaultPort() throws Exception {
-        CoapClient client = createClient("/greeting", CoAPComponent.DEFAULT_PORT);
+    public void testCoAPRestContextPath() throws Exception {
+        CoapClient client = createClient("/rest/services/test/a");
         CoapResponse response = client.get();
-        assertEquals("Hello World", response.getResponseText());
+        assertEquals(ResponseCode.CONTENT, response.getCode());
+        assertEquals("GET: /test/a", response.getResponseText());
     }
 
     @Override
@@ -35,8 +37,15 @@ public class CoAPConsumerDefaultPortTest extends CoAPTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("coap:localhost/greeting")
-                    .setBody(constant("Hello World"));
+                restConfiguration("coap")
+                    .host("localhost")
+                    .port(PORT)
+                    .contextPath("/rest/services");
+
+                rest("/test")
+                    .get("/a")
+                        .route()
+                            .setBody(constant("GET: /test/a"));
             }
         };
     }

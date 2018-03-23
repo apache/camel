@@ -18,19 +18,12 @@ package org.apache.camel.coap;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.junit.Test;
 
-public class CoAPMethodTest extends CamelTestSupport {
-
-    private static final int PORT = AvailablePortFinder.getNextAvailable();
+public class CoAPMethodTest extends CoAPTestSupport {
 
     @Test
     public void testCoAPMethodDefaultGet() {
-        NetworkConfig.createStandardWithoutFile();
-
         // No body means GET
         String result = template.requestBody("coap://localhost:" + PORT + "/test/a", null, String.class);
         assertEquals("GET: /test/a", result);
@@ -38,8 +31,6 @@ public class CoAPMethodTest extends CamelTestSupport {
 
     @Test
     public void testCoAPMethodDefaultPost() {
-        NetworkConfig.createStandardWithoutFile();
-
         // Providing a body means POST
         String result = template.requestBody("coap://localhost:" + PORT + "/test/b", "Camel", String.class);
         assertEquals("Hello Camel", result);
