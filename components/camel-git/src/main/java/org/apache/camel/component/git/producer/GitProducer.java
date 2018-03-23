@@ -159,6 +159,10 @@ public class GitProducer extends DefaultProducer {
         case GitOperation.SHOW_BRANCHES_OPERATION:
             doShowBranches(exchange, operation);
             break;
+            
+        case GitOperation.SHOW_TAGS_OPERATION:
+            doShowTags(exchange, operation);
+            break;
            
         case GitOperation.CLEAN_OPERATION:
             doClean(exchange, operation);
@@ -470,6 +474,17 @@ public class GitProducer extends DefaultProducer {
         List<Ref> result = null;
         try {
             result = git.branchList().setListMode(ListMode.ALL).call();
+        } catch (Exception e) {
+            LOG.error("There was an error in Git " + operation + " operation");
+            throw e;
+        }
+        updateExchange(exchange, result);
+    }
+    
+    protected void doShowTags(Exchange exchange, String operation) throws Exception {
+        List<Ref> result = null;
+        try {
+            result = git.tagList().call();
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
