@@ -777,6 +777,34 @@ public class GitProducerTest extends GitTestSupport {
         assertEquals(result.getMergeStatus().toString(), "Fast-forward");
         git.close();
     }
+    
+    @Test
+    public void showTagsTest() throws Exception {
+        // Init
+        Git git = getGitTestRepository();
+        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        fileToAdd.createNewFile();
+        git.add().addFilepattern(filenameToAdd).call();
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        Status status = git.status().call();
+        assertTrue(status.getAdded().contains(filenameToAdd));
+        git.commit().setMessage(commitMessage).call();
+
+        // Test camel-git create tag
+        template.sendBody("direct:create-tag", "");
+
+        // Check
+        List<Ref> result = template.requestBody("direct:show-tags", "", List.class);
+        boolean tagCreated = false;
+        for (Ref refInternal : result) {
+            if (refInternal.getName().equals("refs/tags/" + tagTest)) {
+                tagCreated = true;
+            }
+        }
+        assertEquals(true, tagCreated);
+        git.close();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -814,6 +842,7 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:remoteAdd").to("git://" + gitLocalRepo + "?operation=remoteAdd&remotePath=https://github.com/oscerd/json-webserver-example.git&remoteName=origin");
                 from("direct:remoteList").to("git://" + gitLocalRepo + "?operation=remoteList");
                 from("direct:merge").to("git://" + gitLocalRepo + "?operation=merge&branchName=" + branchTest);
+                from("direct:show-tags").to("git://" + gitLocalRepo + "?operation=showTags");
             }
         };
     }
