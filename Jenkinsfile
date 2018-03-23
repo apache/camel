@@ -17,16 +17,20 @@
  * under the License.
  */
 
-def MAVEN_PARAMS = '-U -B -e -fae -V -Dmaven.repo.local=/home/jenkins/jenkins-slave/maven-repositories/0 -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2'
+def LOCAL_REPOSITORY = env.LOCAL_REPOSITORY ?: '/home/jenkins/jenkins-slave/maven-repositories/0'
+def AGENT_LABEL = env.AGENT_LABEL ?: 'ubuntu'
+def JDK_NAME = env.JDK_NAME ?: 'JDK 1.8 (latest)'
+
+def MAVEN_PARAMS = "-U -B -e -fae -V -Dmaven.repo.local=${LOCAL_REPOSITORY} -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
 
 pipeline {
 
     agent {
-        label 'ubuntu'
+        label AGENT_LABEL
     }
 
     tools {
-        jdk 'JDK 1.8 (latest)'
+        jdk JDK_NAME
     }
 
     options {
