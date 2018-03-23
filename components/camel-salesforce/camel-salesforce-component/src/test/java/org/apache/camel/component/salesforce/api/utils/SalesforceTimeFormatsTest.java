@@ -19,6 +19,8 @@ package org.apache.camel.component.salesforce.api.utils;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -183,7 +185,9 @@ public class SalesforceTimeFormatsTest {
             dto(instant,
                 instant.atZone(ZoneId.systemDefault())
                     .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))), // 10
-            dto(ZonedDateTime.of(2018, 03, 22, 9, 58, 8, 5000000, ZoneId.of("Z")), "2018-03-22T09:58:08.005Z") // 11
+            dto(ZonedDateTime.of(2018, 03, 22, 9, 58, 8, 5000000, ZoneId.of("Z")), "2018-03-22T09:58:08.005Z"), // 11
+            dto(OffsetTime.of(LocalTime.MIDNIGHT, ZoneOffset.UTC), "00:00:00.000Z"), // 12
+            dto(OffsetTime.of(12, 13, 14, 7000000, ZoneOffset.UTC), "12:13:14.007Z") // 13
         );
     }
 

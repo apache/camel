@@ -484,15 +484,15 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             {"double", "Double"}, //
             {"boolean", "Boolean"}, //
             {"byte", "Byte"}, //
-            {"dateTime", "java.time.ZonedDateTime"}, //
             // the blob base64Binary type is mapped to String URL for retrieving
             // the blob
             {"base64Binary", "String"}, //
             {"unsignedInt", "Long"}, //
             {"unsignedShort", "Integer"}, //
             {"unsignedByte", "Short"}, //
-            {"time", "java.time.ZonedDateTime"}, //
-            {"date", "java.time.ZonedDateTime"}, //
+            {"dateTime", "java.time.ZonedDateTime"}, //
+            {"time", "java.time.OffsetTime"}, //
+            {"date", "java.time.LocalDate"}, //
             {"g", "java.time.ZonedDateTime"}, //
             // Salesforce maps any types like string, picklist, reference, etc.
             // to string

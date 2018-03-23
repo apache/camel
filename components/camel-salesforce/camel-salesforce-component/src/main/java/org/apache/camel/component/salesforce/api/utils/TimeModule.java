@@ -20,6 +20,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -61,6 +62,9 @@ public class TimeModule extends SimpleModule {
 
         addSerializer(Instant.class, InstantSerializer.INSTANCE);
         addDeserializer(Instant.class, InstantDeserializer.INSTANCE);
+
+        addSerializer(OffsetTime.class, OffsetTimeSerializer.INSTANCE);
+        addDeserializer(OffsetTime.class, OffsetTimeDeserializer.INSTANCE);
     }
 
     @Override
