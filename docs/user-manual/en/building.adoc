@@ -124,7 +124,7 @@ m2e
 Starting with Camel 2.14.0, Camel can be imported into Eclipse using m2e
 Maven integration.
 
-Before you start: It is important to run Eclipse with at least 1.5 GB of
+Before you start: It is important to run Eclipse with at least 4 GB of
 heap memory, otherwise the import process will fail. To increase the
 heap size, edit the "eclipse.ini" file and set the -Xmx parameter as
 follows:
@@ -134,15 +134,18 @@ follows:
 [source,java]
 ---------
 [...]
--Xmx1536m
+-Xms4G
+-Xmx4G
 ---------
+
+TIP: For a better experience some users set 8 GB when all projects are loaded and opened.
 
 [[Building-CloningtheGitRepository]]
 Cloning the Git Repository 
 
 Either follow instructions about getting the latest
 source, or clone the Git repository with Eclipse by
-selecting "File -> Import -> Git / Projects from Git" and "Clone URI".
+selecting *File -> Import -> Git / Projects from Git* and *Clone URI*.
 Provide all repository details in the import wizard and clone the
 repository into a directory outside of the Eclipse workspace. Once
 cloning has completed, exit the import project wizard (i.e. simply
@@ -151,14 +154,14 @@ select cancel when asked to select "Wizard for project import").
 [[Building-ImportMavenProjects]]
 Import Maven Projects
 
-Import Camel projects as Maven projects using m2e by selecting "File ->
-Import -> Maven -> Existing Maven Projects". Point the wizard to the
+Import Camel projects as Maven projects using m2e by selecting *File ->
+Import -> Maven -> Existing Maven Projects*. Point the wizard to the
 root directory of the cloned repository. Eclipse will analyze all Camel
 projects and eventually present the following summary:
 
 image:building.data/camel-eclipse-m2e-import.png[image]
 
-Simply confirm the import of all projects by clicking "Finish". The
+Simply confirm the import of all projects by clicking *Finish*. The
 import process will create Eclipse projects and automatically set up
 build paths using dependency details provided by the pom.xml files. Once
 completed, all Camel projects will be available in your workspace:
@@ -187,8 +190,8 @@ The latter is recommended as it would completely setup the workspace for
 you as well as provide options to wire in other projects also found in
 your workspace.
 
-After running the above command, from within Eclipse, do "File -> Import
--> Existing Projects into Workspace", select the root camel checkout
+After running the above command, from within Eclipse, do *File -> Import
+-> Existing Projects into Workspace*, select the root camel checkout
 location and Eclipse should find all the projects.
 
 [[Building-AddingCamelEclipsetemplatestoyourworkspace]]
@@ -290,4 +293,3 @@ See Also
 * Running Unit Tests
 * Source
 * Examples
-
