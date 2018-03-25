@@ -111,7 +111,7 @@ public final class DropboxAPIFacade {
         // verify uploading of a single file
         if (fileLocalPath.isFile()) {
             // check if dropbox file exists
-            if (entry != null) {
+            if (entry != null && !DropboxUploadMode.force.equals(mode)) {
                 throw new DropboxException(dropboxPath + " exists on dropbox and is not a file!");
             }
             // in case the entry not exists on dropbox check if the filename
@@ -139,7 +139,7 @@ public final class DropboxAPIFacade {
             // verify uploading of a list of files inside a dir
             LOG.debug("Uploading a dir...");
             // check if dropbox folder exists
-            if (entry != null) {
+            if (entry != null && !DropboxUploadMode.force.equals(mode)) {
                 throw new DropboxException(dropboxPath + " exists on dropbox and is not a folder!");
             }
             if (!dropboxPath.endsWith(DropboxConstants.DROPBOX_FILE_SEPARATOR)) {
