@@ -25,7 +25,6 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
@@ -100,10 +99,6 @@ public class SalesforceTimeFormatsTest {
 
     private static final String XML_FMT = "<Dto><value>%s</value></Dto>";
 
-    private static final DateTimeFormatter ZONE_OFFSET_FORMATTER = new DateTimeFormatterBuilder()//
-        .appendOffset("+HHMM", "Z")//
-        .toFormatter();
-
     @Parameter(0)
     public DateTransferObject<?> dto;
 
@@ -168,7 +163,8 @@ public class SalesforceTimeFormatsTest {
         final ZonedDateTime zonedDateTime = ZonedDateTime.of(localDate.atTime(10, 54, 57), ZoneId.of("Z"));
         final Instant instant = zonedDateTime.toInstant();
 
-        final String zone = ZONE_OFFSET_FORMATTER.format(ZonedDateTime.now());
+        final String zone = DateTimeFormatter.ofPattern("xx")
+            .format(zonedDateTime.withZoneSameLocal(ZoneId.systemDefault()));
 
         return Arrays.asList(//
             dto(Date.from(instant), "2007-03-19T10:54:57.000+0000"), // 0
