@@ -65,7 +65,7 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         String version = Version.getCurrentVersion();
-        if (version.contains("2.5") || version.contains("2.4")) {
+        if (version.startsWith("2") && (version.contains("2.5") || version.contains("2.4"))) {
             return new ClassPathXmlApplicationContext(new String("org/apache/camel/component/cxf/jaxrs/CxfRsSpringEndpointBeans.xml"));
         }
         return new ClassPathXmlApplicationContext(new String("org/apache/camel/component/cxf/jaxrs/CxfRsSpringEndpointBeans-2.6.xml"));
