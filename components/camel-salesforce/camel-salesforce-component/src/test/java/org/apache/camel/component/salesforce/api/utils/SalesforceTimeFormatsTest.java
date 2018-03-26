@@ -163,7 +163,7 @@ public class SalesforceTimeFormatsTest {
         final ZonedDateTime zonedDateTime = ZonedDateTime.of(localDate.atTime(10, 54, 57), ZoneId.of("Z"));
         final Instant instant = zonedDateTime.toInstant();
 
-        final String zone = DateTimeFormatter.ofPattern("xx")
+        final String zone = DateTimeFormatter.ofPattern("XX")
             .format(zonedDateTime.withZoneSameLocal(ZoneId.systemDefault()));
 
         return Arrays.asList(//
@@ -180,7 +180,7 @@ public class SalesforceTimeFormatsTest {
             dto(zonedDateTime.withZoneSameInstant(ZoneId.of("+3")), "2007-03-19T13:54:57.000+0300"), // 9
             dto(instant,
                 instant.atZone(ZoneId.systemDefault())
-                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))), // 10
+                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXX"))), // 10
             dto(ZonedDateTime.of(2018, 03, 22, 9, 58, 8, 5000000, ZoneId.of("Z")), "2018-03-22T09:58:08.005Z"), // 11
             dto(OffsetTime.of(LocalTime.MIDNIGHT, ZoneOffset.UTC), "00:00:00.000Z"), // 12
             dto(OffsetTime.of(12, 13, 14, 7000000, ZoneOffset.UTC), "12:13:14.007Z") // 13
