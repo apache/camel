@@ -16,6 +16,9 @@
  */
 package org.apache.camel.spring.boot.security;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -31,9 +34,6 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.type.AnnotatedTypeMetadata;
-
-import java.util.Collections;
-import java.util.Map;
 
 @Configuration
 @AutoConfigureBefore(CamelAutoConfiguration.class)
