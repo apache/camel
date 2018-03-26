@@ -38,8 +38,8 @@
 
     <camel.osgi.export.pkg/>
 
-    <spring-cloud-commons-version>2.0.0.M7</spring-cloud-commons-version>
-    <spring-cloud-ribbon-version>2.0.0.M2</spring-cloud-ribbon-version>
+    <spring-cloud-commons-version>2.0.0.M9</spring-cloud-commons-version>
+    <spring-cloud-netflix-version>2.0.0.M8</spring-cloud-netflix-version>
   </properties>
 
   <!-- spring-cloud with support for spring boot 2 is not in maven central yet -->
@@ -122,8 +122,8 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-ribbon</artifactId>
-      <version>${spring-cloud-ribbon-version}</version>
+      <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+      <version>${spring-cloud-netflix-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
