@@ -46,11 +46,11 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
     private static final String ORIGINAL_MESSAGE_ID = "Original-Message-ID";
     private static final String AS2_DISPOSITION = "Disposition";
     private static final String FAILURE = "Failure";
-    private String reportingUA;
     private static final String ERROR = "Error";
     private static final String WARNING = "Warning";
     private static final String RECEIVED_CONTENT_MIC = "Received-content-MIC";
 
+    private String reportingUA;
     // TODO determine if we need to support this field.
     private String mtnName;
     private String finalRecipient;
@@ -100,6 +100,33 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
         } else {
             this.extensionFields.putAll(extensionFields);
         }
+    }
+    
+    public AS2MessageDispositionNotificationEntity(String reportingUA,
+                                                   String mtnName,
+                                                   String finalRecipient,
+                                                   String originalMessageId,
+                                                   DispositionMode dispositionMode,
+                                                   AS2DispositionType dispositionType,
+                                                   AS2DispositionModifier dispositionModifier,
+                                                   String[] failureFields,
+                                                   String[] errorFields,
+                                                   String[] warningFields,
+                                                   Map<String, String> extensionFields,
+                                                   ReceivedContentMic receivedContentMic) {
+        super();
+        this.reportingUA = reportingUA;
+        this.mtnName = mtnName;
+        this.finalRecipient = finalRecipient;
+        this.originalMessageId = originalMessageId;
+        this.dispositionMode = dispositionMode;
+        this.dispositionType = dispositionType;
+        this.dispositionModifier = dispositionModifier;
+        this.failureFields = failureFields;
+        this.errorFields = errorFields;
+        this.warningFields = warningFields;
+        this.extensionFields = extensionFields;
+        this.receivedContentMic = receivedContentMic;
     }
 
     public String getReportingUA() {

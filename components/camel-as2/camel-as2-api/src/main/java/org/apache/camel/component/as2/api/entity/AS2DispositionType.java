@@ -4,6 +4,17 @@ public enum AS2DispositionType {
     PROCESSED("processed"),
     FAILED("failed");
     
+    public static AS2DispositionType parseDispositionType(String dispositionTypeString) {
+        switch(dispositionTypeString) {
+        case "processed":
+            return PROCESSED;
+        case "failed":
+            return FAILED;
+        default:
+            return null;
+        }
+    }
+    
     private String type;
     
     private AS2DispositionType(String type) {

@@ -58,6 +58,12 @@ public class MicUtils {
             messageDigest = EntityUtils.encode(messageDigest, "base64");
             this.encodedMessageDigest = new String(messageDigest, AS2CharSet.US_ASCII);
         }
+        
+        // Used when parsing received content MIC from received string
+        protected ReceivedContentMic(String digestAlgorithmId, String encodedMessageDigest) {
+            this.digestAlgorithmId = digestAlgorithmId;
+            this.encodedMessageDigest = encodedMessageDigest;
+        }
 
         public String getDigestAlgorithmId() {
             return digestAlgorithmId;

@@ -23,6 +23,7 @@ import org.apache.http.impl.io.HttpTransportMetricsImpl;
 import org.apache.http.impl.io.SessionInputBufferImpl;
 import org.apache.http.io.SessionInputBuffer;
 import org.apache.http.message.BasicLineParser;
+import org.apache.http.message.LineParser;
 import org.apache.http.message.ParserCursor;
 import org.apache.http.util.Args;
 import org.apache.http.util.CharArrayBuffer;
@@ -614,19 +615,54 @@ public class EntityParser {
         }
     }
     
-    public static AS2MessageDispositionNotificationEntity parseMessageDispositionNotificationEntity(SessionInputBuffer inBuffer, String boundary) throws HttpException {
-        try {
-            // Read Disposition Notification Body Part Headers
-            Header[] headers = AbstractMessageParser.parseHeaders(
-                    inBuffer,
-                    -1,
-                    -1,
-                    BasicLineParser.INSTANCE,
-                    new ArrayList<CharArrayBuffer>());
-            return null;
-        } catch (Exception e) {
-            throw new HttpException("Failed to parse message disposition notification", e);
+    public static List<CharArrayBuffer> parseBodyPartLines(final SessionInputBuffer inbuffer,
+                                          final String boundary,
+                                          final LineParser parser,
+                                          final List<CharArrayBuffer> headerLines) throws IOException {
+        Args.notNull(parser, "parser");
+        Args.notNull(headerLines, "headerLines");
+        CharArrayBuffer current = null;
+        CharArrayBuffer previous = null;
+        while(true) {
+            
+            if (current == null) {
+                current = new CharArrayBuffer(64);
+            }
+            
+            final int l = inbuffer.readLine(current);
+            if (l == -1 || current.length() < 1) {
+                break;
+            }
+            
+            if (boundary != null && isBoundaryDelimiter(current, null, boundary)) {
+                break;
+            }
+
+            // check if current line part of folded headers
+            if ((current.charAt(0) == ' ' || current.charAt(0) == '\t') && previous != null) {
+                // we have continuation of folded header : append value
+                int i = 0;
+                while (i < current.length()) {
+                    final char ch = current.charAt(i);
+                    if (ch != ' ' && ch != '\t') {
+                        break;
+                    }
+                    i++;
+                }
+                
+                // Just append current line to previous line 
+                previous.append(' ');
+                previous.append(current, i, current.length() - i);
+                
+                // leave current line buffer for reuse for next header
+                current.clear();
+            } else {
+                headerLines.add(current);
+                previous = current;
+                current = null;
+            }
         }
+        return headerLines;
     }
     
     public static byte[] decodeTransferEncodingOfBodyPartContent(String bodyPartContent, ContentType contentType, String bodyPartTransferEncoding) throws Exception {

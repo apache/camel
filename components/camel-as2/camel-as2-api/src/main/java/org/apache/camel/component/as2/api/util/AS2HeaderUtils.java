@@ -77,6 +77,11 @@ public class AS2HeaderUtils {
         }
     }
 
+    public static class Field {
+        
+    }
+
+    
     private static final TokenParser tokenParser = TokenParser.INSTANCE;
 
     private final static char PARAM_DELIMITER = ',';

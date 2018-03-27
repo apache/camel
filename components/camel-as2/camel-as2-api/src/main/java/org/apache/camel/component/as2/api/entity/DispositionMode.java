@@ -6,6 +6,21 @@ public enum DispositionMode {
     AUTOMATIC_ACTION_MDN_SENT_MANUALLY("automatic-action", "MDN-sent-manually"),
     AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY("automatic-action", "MDN-sent-automatically");
     
+    public static DispositionMode parseDispositionMode(String dispositionModeString) {
+        switch(dispositionModeString) {
+        case "manual-action/MDN-sent-manually":
+            return MANUAL_ACTION_MDN_SENT_MANUALLY;
+        case "manual-actionMDN-sent-automatically":
+            return MANUAL_ACTION_MDN_SENT_AUTOMATICALLY;
+        case "automatic-action/MDN-sent-manually":
+            return AUTOMATIC_ACTION_MDN_SENT_MANUALLY;
+        case "automatic-action/MDN-sent-automatically":
+            return AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY;
+        default:
+            return null;
+        }
+    }
+    
     private String actionMode;
     private String sendingMode;
 
