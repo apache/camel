@@ -104,7 +104,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
                 });
                 return null;
             }
-            if (!continuation.isTimeout() && continuation.isResumed()) {
+            if (continuation.isResumed()) {
                 cxfExchange.put(SUSPENED, Boolean.FALSE);
                 org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
                 try {
@@ -114,7 +114,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
                     throw ex;
                 }
             } else {
-                if (continuation.isTimeout() || !continuation.isPending()) {
+                if (!continuation.isPending()) {
                     cxfExchange.put(SUSPENED, Boolean.FALSE);
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
                     camelExchange.setException(new ExchangeTimedOutException(camelExchange, endpoint.getContinuationTimeout()));
