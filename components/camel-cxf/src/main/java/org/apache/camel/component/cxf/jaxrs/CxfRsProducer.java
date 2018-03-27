@@ -200,6 +200,8 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
             target = cfb.createWithValues(varValues);
         }
 
+        ((CxfRsEndpoint) getEndpoint()).getChainedCxfRsEndpointConfigurer().configureClient(target);
+
         setupClientHeaders(target, exchange);
 
         // find out the method which we want to invoke
@@ -421,7 +423,9 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
         } else {
             target = cfb.createWithValues(varValues);
         }
-        
+
+        ((CxfRsEndpoint) getEndpoint()).getChainedCxfRsEndpointConfigurer().configureClient(target);
+
         setupClientHeaders(target, exchange);
         
         // find out the method which we want to invoke
