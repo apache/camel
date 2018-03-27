@@ -41,30 +41,17 @@ Unix/Linux/Mac
 
 [source,text]
 ------------------------------------------------------------
-export MAVEN_OPTS="-Xms2048m -Xmx2048m -XX:MaxPermSize=512m"
+export MAVEN_OPTS="-Xms2048m -Xmx3584m"
 ------------------------------------------------------------
 
-For Camel 2.18:
-
-[source,text]
-------------------------------------------------------------
-export MAVEN_OPTS="-XX:+UseConcMarkSweepGC -Xms2048m -Xmx2048m"
-------------------------------------------------------------
 
 [[Building-Windows]]
 Windows
 
 [source,text]
 -------------------------------------------------------
-set MAVEN_OPTS=-Xms2048m -Xmx2048m -XX:MaxPermSize=512m
+set MAVEN_OPTS="-Xms2048m -Xmx3584m"
 -------------------------------------------------------
-
-For Camel 2.18:
-
-[source,text]
-------------------------------------------------------------
-set MAVEN_OPTS="-XX:+UseConcMarkSweepGC -Xms2048m -Xmx2048m"
-------------------------------------------------------------
 
 [[Building-Anormalbuild]]
 A normal build
