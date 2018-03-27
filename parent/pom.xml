@@ -590,6 +590,8 @@
     <restlet-version>2.3.12</restlet-version>
     <restlet-woodstox-version>4.3.0</restlet-woodstox-version>
     <restlet-yaml-version>1.13</restlet-yaml-version>
+    <revapi-java-version>0.15.1</revapi-java-version>
+    <revapi-maven-plugin-version>0.10.0</revapi-maven-plugin-version>
     <rhino-bundle-version>1.7.7.1_1</rhino-bundle-version>
     <rhino-version>1.7.7.1</rhino-version>
     <rhino-js-version>1.7R2</rhino-js-version>
@@ -5430,6 +5432,36 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+	
+    <profile>
+      <id>revapi</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.revapi</groupId>
+            <artifactId>revapi-maven-plugin</artifactId>
+            <version>${revapi-maven-plugin-version}</version>
+            <dependencies>
+              <dependency>
+                <groupId>org.revapi</groupId>
+                <artifactId>revapi-java</artifactId>
+                <version>${revapi-java-version}</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <analysisConfigurationFiles>
+                <file>${project.basedir}/src/revapi/ignore.json</file>
+              </analysisConfigurationFiles>
+            </configuration>
+            <executions>
+              <execution>
+                <goals><goal>check</goal></goals>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
