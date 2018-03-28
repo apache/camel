@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -116,6 +117,17 @@ public class ObjectConverterTest extends TestCase {
         assertEquals(Double.NaN, ObjectConverter.toDouble(Double.NaN));
         assertEquals(Double.NaN, ObjectConverter.toDouble(Float.NaN));
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble(Double.valueOf("4")));
+    }
+
+    public void testToBigInteger() {
+        assertEquals(BigInteger.valueOf(4), ObjectConverter.toBigInteger(Long.valueOf("4")));
+        assertEquals(BigInteger.valueOf(4), ObjectConverter.toBigInteger(Integer.valueOf("4")));
+        assertEquals(BigInteger.valueOf(4), ObjectConverter.toBigInteger("4"));
+        assertEquals(BigInteger.valueOf(123456789L), ObjectConverter.toBigInteger("123456789"));
+        assertEquals(null, ObjectConverter.toBigInteger(new Date()));
+        assertEquals(BigInteger.valueOf(0), ObjectConverter.toBigInteger(Double.NaN));
+        assertEquals(BigInteger.valueOf(0), ObjectConverter.toBigInteger(Float.NaN));
+        assertEquals(BigInteger.valueOf(4), ObjectConverter.toBigInteger(Long.valueOf("4")));
     }
 
     public void testToString() {
