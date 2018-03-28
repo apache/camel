@@ -19,41 +19,29 @@ package org.apache.camel.component.mybatis.bean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.mybatis.Account;
+import org.apache.camel.component.mybatis.MyBatisConstants;
 import org.apache.camel.component.mybatis.MyBatisTestSupport;
 import org.junit.Test;
 
-public class MyBatisBeanSelectOneTest extends MyBatisTestSupport {
+public class MyBatisBeanSelectOneWithOutputHeaderTest extends MyBatisTestSupport {
+
+    private static final String TEST_CASE_HEADER_NAME = "testCaseHeader";
+    private static final int TEST_ACCOUNT_ID = 456;
 
     @Test
-    public void testSelectOne() throws Exception {
+    public void testSelectOneWithOutputHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).body().isInstanceOf(Account.class);
+        mock.message(0).header(TEST_CASE_HEADER_NAME).isInstanceOf(Account.class);
+        mock.message(0).body().isEqualTo(TEST_ACCOUNT_ID);
+        mock.message(0).header(MyBatisConstants.MYBATIS_RESULT).isNull();
 
-        template.sendBody("direct:start", 456);
-
-        assertMockEndpointsSatisfied();
-
-        Account account = mock.getReceivedExchanges().get(0).getIn().getBody(Account.class);
-        assertEquals("Claus", account.getFirstName());
-    }
-
-    @Test
-    public void testSelectOneTwoTime() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-        mock.message(0).body().isInstanceOf(Account.class);
-        mock.message(1).body().isInstanceOf(Account.class);
-
-        template.sendBody("direct:start", 456);
-        template.sendBody("direct:start", 123);
+        template.sendBody("direct:start", TEST_ACCOUNT_ID);
 
         assertMockEndpointsSatisfied();
 
-        Account account = mock.getReceivedExchanges().get(0).getIn().getBody(Account.class);
+        Account account = mock.getReceivedExchanges().get(0).getIn().getHeader(TEST_CASE_HEADER_NAME, Account.class);
         assertEquals("Claus", account.getFirstName());
-        account = mock.getReceivedExchanges().get(1).getIn().getBody(Account.class);
-        assertEquals("James", account.getFirstName());
     }
 
     @Override
@@ -62,7 +50,7 @@ public class MyBatisBeanSelectOneTest extends MyBatisTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mybatis-bean:AccountService:selectBeanAccountById")
+                    .to("mybatis-bean:AccountService:selectBeanAccountById?outputHeader=" + TEST_CASE_HEADER_NAME)
                     .to("mock:result");
             }
         };

@@ -22,38 +22,26 @@ import org.apache.camel.component.mybatis.Account;
 import org.apache.camel.component.mybatis.MyBatisTestSupport;
 import org.junit.Test;
 
-public class MyBatisBeanSelectOneTest extends MyBatisTestSupport {
+public class MyBatisBeanInsertTest extends MyBatisTestSupport {
 
     @Test
-    public void testSelectOne() throws Exception {
+    public void testInsert() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).body().isInstanceOf(Account.class);
 
-        template.sendBody("direct:start", 456);
+        Account account = new Account();
+        account.setId(444);
+        account.setFirstName("Willem");
+        account.setLastName("Jiang");
+        account.setEmailAddress("Faraway@gmail.com");
 
-        assertMockEndpointsSatisfied();
-
-        Account account = mock.getReceivedExchanges().get(0).getIn().getBody(Account.class);
-        assertEquals("Claus", account.getFirstName());
-    }
-
-    @Test
-    public void testSelectOneTwoTime() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-        mock.message(0).body().isInstanceOf(Account.class);
-        mock.message(1).body().isInstanceOf(Account.class);
-
-        template.sendBody("direct:start", 456);
-        template.sendBody("direct:start", 123);
+        template.sendBody("direct:start", account);
 
         assertMockEndpointsSatisfied();
 
-        Account account = mock.getReceivedExchanges().get(0).getIn().getBody(Account.class);
-        assertEquals("Claus", account.getFirstName());
-        account = mock.getReceivedExchanges().get(1).getIn().getBody(Account.class);
-        assertEquals("James", account.getFirstName());
+        // there should be 3 rows now
+        Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
+        assertEquals("There should be 3 rows", 3, rows.intValue());
     }
 
     @Override
@@ -62,7 +50,7 @@ public class MyBatisBeanSelectOneTest extends MyBatisTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mybatis-bean:AccountService:selectBeanAccountById")
+                    .to("mybatis-bean:AccountService:insertBeanAccount")
                     .to("mock:result");
             }
         };
