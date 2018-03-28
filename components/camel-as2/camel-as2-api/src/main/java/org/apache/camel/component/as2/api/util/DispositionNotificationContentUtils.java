@@ -20,6 +20,16 @@ import org.apache.http.util.Args;
 import org.apache.http.util.CharArrayBuffer;
 
 public class DispositionNotificationContentUtils {
+    
+    private static final String REPORTING_UA = "reporting-ua";
+    private static final String MDN_GATEWAY ="mdn-gateway";
+    private static final String FINAL_RECIPIENT = "final-recipient";
+    private static final String ORIGINAL_MESSAGE_ID = "original-message-id";
+    private static final String DISPOSITION = "disposition";
+    private static final String FAILURE = "failure";
+    private static final String ERROR = "error";
+    private static final String WARNING = "warning";
+    public static final String RECEIVED_CONTENT_MIC = "received-content-mic";
 
     public static class Field {
 
@@ -129,15 +139,15 @@ public class DispositionNotificationContentUtils {
         for (int i = 0; i < dispositionNotificationFields.size(); i++) {
             final CharArrayBuffer fieldLine = dispositionNotificationFields.get(i);
             final Field field = parseDispositionField(fieldLine);
-            switch(field.getName()) {
-            case MDNField.REPORTING_UA: {
+            switch(field.getName().toLowerCase()) {
+            case REPORTING_UA: {
                 if (field.getElements().length < 1) {
                     throw new ParseException("Invalid '" + MDNField.REPORTING_UA +"' field: UA name is missing");
                 }
                 reportingUA = field.getValue();
                 break;
             }
-            case MDNField.MDN_GATEWAY: {
+            case MDN_GATEWAY: {
                 Element[] elements = field.getElements();
                 if (elements.length < 2) {
                     throw new ParseException("Invalid '" + MDNField.MDN_GATEWAY +"' field: MTA name is missing");
@@ -145,7 +155,7 @@ public class DispositionNotificationContentUtils {
                 mtaName = elements[1].getValue();
                 break;
             }
-            case MDNField.FINAL_RECIPIENT: {
+            case FINAL_RECIPIENT: {
                 Element[] elements = field.getElements();
                 if (elements.length < 2) {
                     throw new ParseException("Invalid '" + MDNField.FINAL_RECIPIENT +"' field: recipient address is missing");
@@ -153,11 +163,11 @@ public class DispositionNotificationContentUtils {
                 finalRecipient = elements[1].getValue();
                break;
             }
-            case MDNField.ORIGINAL_MESSAGE_ID: {
+            case ORIGINAL_MESSAGE_ID: {
                 originalMessageId = field.getValue();
                 break;
             }
-            case MDNField.DISPOSITION: {
+            case DISPOSITION: {
                 Element[] elements = field.getElements();
                 if (elements.length < 2) {
                     throw new ParseException("Invalid '" + MDNField.DISPOSITION +"' field: " + field.getValue());
@@ -177,16 +187,16 @@ public class DispositionNotificationContentUtils {
                 }
                 break;
             }
-            case MDNField.FAILURE:
+            case FAILURE:
                 failures.add(field.getValue());
                 break;
-            case MDNField.ERROR:
+            case ERROR:
                 errors.add(field.getValue());
                 break;
-            case MDNField.WARNING:
+            case WARNING:
                 warnings.add(field.getValue());
                 break;
-            case MDNField.RECEIVED_CONTENT_MIC: {
+            case RECEIVED_CONTENT_MIC: {
                 Element[] elements = field.getElements();
                 if (elements.length < 1) {
                     throw new ParseException("Invalid '" + MDNField.RECEIVED_CONTENT_MIC +"' field: MIC is missing");
