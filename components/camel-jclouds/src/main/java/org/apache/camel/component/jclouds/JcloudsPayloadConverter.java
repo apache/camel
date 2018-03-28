@@ -21,18 +21,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
-
 import javax.xml.transform.stream.StreamSource;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.converter.stream.StreamSourceCache;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.IOHelper;
@@ -132,13 +130,13 @@ public final class JcloudsPayloadConverter {
     @SuppressWarnings("unchecked")
     public static <T extends Payload> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) throws IOException {
         Class<?> sourceType = value.getClass();
-        if (GenericFile.class.isAssignableFrom(sourceType)) {
-            GenericFile<?> genericFile = (GenericFile<?>) value;
-            if (genericFile.getFile() != null) {
-                Class<?> genericFileType = genericFile.getFile().getClass();
-                TypeConverter converter = registry.lookup(Payload.class, genericFileType);
+        if (type == Payload.class && WrappedFile.class.isAssignableFrom(sourceType)) {
+            // attempt to convert to JClouds Payload from a file
+            WrappedFile wf = (WrappedFile) value;
+            if (wf.getFile() != null) {
+                TypeConverter converter = registry.lookup(Payload.class, wf.getFile().getClass());
                 if (converter != null) {
-                    return (T) converter.convertTo(Payload.class, genericFile.getFile());
+                    return (T) converter.tryConvertTo(Payload.class, wf.getFile());
                 }
             }
         }
