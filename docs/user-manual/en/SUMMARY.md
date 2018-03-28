@@ -299,6 +299,7 @@
 	* [Mustache](mustache-component.adoc)
 	* [MVEL](mvel-component.adoc)
 	* [MyBatis](mybatis-component.adoc)
+	* [MyBatis Bean](mybatis-bean-component.adoc)
 	* [Nagios](nagios-component.adoc)
 	* [Nats](nats-component.adoc)
 	* [Netty](netty-component.adoc)
