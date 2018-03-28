@@ -77,7 +77,7 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
         super.tearDown();
     }
 
-    private Connection createConnection() throws Exception {
+    protected Connection createConnection() throws Exception {
         MyBatisComponent component = context.getComponent("mybatis", MyBatisComponent.class);
         return component.createSqlSessionFactory().getConfiguration().getEnvironment().getDataSource().getConnection();
     }

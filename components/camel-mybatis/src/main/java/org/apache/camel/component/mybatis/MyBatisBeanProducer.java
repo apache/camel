@@ -19,8 +19,7 @@ package org.apache.camel.component.mybatis;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -29,9 +28,7 @@ import org.slf4j.LoggerFactory;
 public class MyBatisBeanProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MyBatisBeanProducer.class);
-    private MyBatisBeanEndpoint endpoint;
-    private BeanProcessor beanProcessor;
-    private SqlSession session;
+    private final MyBatisBeanEndpoint endpoint;
 
     public MyBatisBeanProducer(MyBatisBeanEndpoint endpoint) {
         super(endpoint);
@@ -39,16 +36,7 @@ public class MyBatisBeanProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        LOG.trace("Invoking MyBatisBean on {}:{}", endpoint.getBeanName(), endpoint.getMethodName());
-        beanProcessor.process(exchange);
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        // discover the bean and get the mapper
-        session = null;
+        SqlSession session;
 
         ExecutorType executorType = endpoint.getExecutorType();
         if (executorType == null) {
@@ -58,6 +46,52 @@ public class MyBatisBeanProducer extends DefaultProducer {
         }
         LOG.debug("Opened MyBatis SqlSession: {}", session);
 
+        try {
+            doProcess(exchange, session);
+            // flush the batch statements and commit the database connection
+            session.commit();
+        } catch (Exception e) {
+            // discard the pending batch statements and roll the database connection back
+            session.rollback();
+            throw e;
+        } finally {
+            // and finally close the session as we're done
+            LOG.debug("Closing MyBatis SqlSession: {}", session);
+            session.close();
+        }
+    }
+
+    protected void doProcess(Exchange exchange, SqlSession session) throws Exception {
+        LOG.trace("Invoking MyBatisBean on {}:{}", endpoint.getBeanName(), endpoint.getMethodName());
+
+        // if we use input or output header we need to copy exchange to avoid mutating the
+        Exchange copy = ExchangeHelper.createCopy(exchange, true);
+
+        Object input = getInput(copy);
+        copy.getMessage().setBody(input);
+
+        BeanProcessor beanProcessor = createBeanProcessor(session);
+        beanProcessor.start();
+        beanProcessor.process(copy);
+        beanProcessor.stop();
+
+        Object result = copy.getMessage().getBody();
+        if (result != input) {
+            if (endpoint.getOutputHeader() != null) {
+                // set the result as header for insert
+                LOG.trace("Setting result as header [{}]: {}", endpoint.getOutputHeader(), result);
+                exchange.getMessage().setHeader(endpoint.getOutputHeader(), result);
+            } else {
+                // set the result as body for insert
+                LOG.trace("Setting result as body: {}", result);
+                exchange.getMessage().setBody(result);
+                exchange.getMessage().setHeader(MyBatisConstants.MYBATIS_RESULT, result);
+            }
+        }
+    }
+
+    private BeanProcessor createBeanProcessor(SqlSession session) throws Exception {
+        // discover the bean and get the mapper
         // is the bean a alias type
         Class clazz = session.getConfiguration().getTypeAliasRegistry().resolveAlias(endpoint.getBeanName());
         if (clazz == null) {
@@ -74,19 +108,18 @@ public class MyBatisBeanProducer extends DefaultProducer {
         }
         LOG.debug("Resolved MyBatis Bean mapper: {}", mapper);
 
-        beanProcessor = new BeanProcessor(mapper, getEndpoint().getCamelContext());
-        beanProcessor.setMethod(endpoint.getMethodName());
-        ServiceHelper.startService(beanProcessor);
+        BeanProcessor answer = new BeanProcessor(mapper, getEndpoint().getCamelContext());
+        answer.setMethod(endpoint.getMethodName());
+        return answer;
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-
-        ServiceHelper.stopService(beanProcessor);
-
-        LOG.debug("Closing MyBatis SqlSession: {}", session);
-        IOHelper.close(session);
-        session = null;
+    private Object getInput(final Exchange exchange) {
+        final String inputHeader = endpoint.getInputHeader();
+        if (inputHeader != null) {
+            return exchange.getIn().getHeader(inputHeader);
+        } else {
+            return exchange.getIn().getBody();
+        }
     }
+
 }

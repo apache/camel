@@ -41,6 +41,19 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
     private String statement;
     @UriParam(label = "producer")
     private StatementType statementType;
+    @UriParam(label = "consumer", description = "Enables or disables transaction. If enabled then if processing an exchange failed then the consumer"
+        + "break out processing any further exchanges to cause a rollback eager.")
+    private boolean transacted;
+    @UriParam(label = "consumer", defaultValue = "0")
+    private int maxMessagesPerPoll;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    private String onConsume;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.", defaultValue = "true")
+    private boolean useIterator = true;
+    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    private boolean routeEmptyResultSet;
+    @UriParam(label = "consumer,advanced")
+    private MyBatisProcessingStrategy processingStrategy = new DefaultMyBatisProcessingStrategy();
 
     public MyBatisEndpoint() {
     }
@@ -89,4 +102,73 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
         this.statementType = statementType;
     }
 
+    public boolean isTransacted() {
+        return transacted;
+    }
+
+    /**
+     * Enables or disables transaction. If enabled then if processing an exchange failed then the consumer
+     + break out processing any further exchanges to cause a rollback eager
+     */
+    public void setTransacted(boolean transacted) {
+        this.transacted = transacted;
+    }
+
+    public MyBatisProcessingStrategy getProcessingStrategy() {
+        return processingStrategy;
+    }
+
+    /**
+     * To use a custom MyBatisProcessingStrategy
+     */
+    public void setProcessingStrategy(MyBatisProcessingStrategy processingStrategy) {
+        this.processingStrategy = processingStrategy;
+    }
+
+    public int getMaxMessagesPerPoll() {
+        return maxMessagesPerPoll;
+    }
+
+    /**
+     * This option is intended to split results returned by the database pool into the batches and deliver them in multiple exchanges.
+     * This integer defines the maximum messages to deliver in single exchange. By default, no maximum is set.
+     * Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files.
+     * Set a value of 0 or negative to disable it.
+     */
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
+    public String getOnConsume() {
+        return onConsume;
+    }
+
+    /**
+     * Statement to run after data has been processed in the route
+     */
+    public void setOnConsume(String onConsume) {
+        this.onConsume = onConsume;
+    }
+
+    public boolean isUseIterator() {
+        return useIterator;
+    }
+
+    /**
+     * Process resultset individually or as a list
+     */
+    public void setUseIterator(boolean useIterator) {
+        this.useIterator = useIterator;
+    }
+
+    public boolean isRouteEmptyResultSet() {
+        return routeEmptyResultSet;
+    }
+
+    /**
+     * Whether allow empty resultset to be routed to the next hop
+     */
+    public void setRouteEmptyResultSet(boolean routeEmptyResultSet) {
+        this.routeEmptyResultSet = routeEmptyResultSet;
+    }
 }

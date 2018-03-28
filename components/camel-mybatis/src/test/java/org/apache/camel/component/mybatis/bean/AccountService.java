@@ -19,6 +19,7 @@ package org.apache.camel.component.mybatis.bean;
 import java.util.List;
 
 import org.apache.camel.component.mybatis.Account;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
@@ -32,4 +33,9 @@ public interface AccountService {
     @Select("select * from ACCOUNT order by ACC_ID")
     @ResultMap("Account.AccountResult")
     List<Account> selectBeanAllAccounts();
+
+    @Insert("insert into ACCOUNT (ACC_ID,ACC_FIRST_NAME,ACC_LAST_NAME,ACC_EMAIL)"
+        + " values (#{id}, #{firstName}, #{lastName}, #{emailAddress})")
+    void insertBeanAccount(Account account);
+
 }

@@ -25,25 +25,12 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
-    @UriParam(label = "consumer", description = "Enables or disables transaction. If enabled then if processing an exchange failed then the consumer"
-            + "break out processing any further exchanges to cause a rollback eager.")
-    private boolean transacted;
-    @UriParam(label = "consumer", defaultValue = "0")
-    private int maxMessagesPerPoll;
-    @UriParam
-    private String outputHeader;
-    @UriParam(label = "consumer")
-    private String inputHeader;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
-    private String onConsume;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.", defaultValue = "true")
-    private boolean useIterator = true;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
-    private boolean routeEmptyResultSet;
-    @UriParam(label = "consumer,advanced")
-    private MyBatisProcessingStrategy processingStrategy = new DefaultMyBatisProcessingStrategy();
     @UriParam(label = "producer", defaultValue = "SIMPLE")
     private ExecutorType executorType;
+    @UriParam(label = "producer")
+    private String inputHeader;
+    @UriParam(label = "producer")
+    private String outputHeader;
 
     public BaseMyBatisEndpoint() {
     }
@@ -85,41 +72,18 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
         this.executorType = ExecutorType.valueOf(executorType.toUpperCase());
     }
 
-    public boolean isTransacted() {
-        return transacted;
+    public String getInputHeader() {
+        return inputHeader;
     }
 
     /**
-     * Enables or disables transaction. If enabled then if processing an exchange failed then the consumer
-     + break out processing any further exchanges to cause a rollback eager
+     * User the header value for input parameters instead of the message body.
+     * By default, inputHeader == null and the input parameters are taken from the message body.
+     * If outputHeader is set, the value is used and query parameters will be taken from the
+     * header instead of the body.
      */
-    public void setTransacted(boolean transacted) {
-        this.transacted = transacted;
-    }
-
-    public MyBatisProcessingStrategy getProcessingStrategy() {
-        return processingStrategy;
-    }
-
-    /**
-     * To use a custom MyBatisProcessingStrategy
-     */
-    public void setProcessingStrategy(MyBatisProcessingStrategy processingStrategy) {
-        this.processingStrategy = processingStrategy;
-    }
-
-    public int getMaxMessagesPerPoll() {
-        return maxMessagesPerPoll;
-    }
-
-    /**
-     * This option is intended to split results returned by the database pool into the batches and deliver them in multiple exchanges.
-     * This integer defines the maximum messages to deliver in single exchange. By default, no maximum is set.
-     * Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files.
-     * Set a value of 0 or negative to disable it.
-     */
-    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
-        this.maxMessagesPerPoll = maxMessagesPerPoll;
+    public void setInputHeader(String inputHeader) {
+        this.inputHeader = inputHeader;
     }
 
     public String getOutputHeader() {
@@ -139,50 +103,4 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
         this.outputHeader = outputHeader;
     }
 
-    public String getInputHeader() {
-        return inputHeader;
-    }
-
-    /**
-     * User the header value for input parameters instead of the message body.
-     * By default, inputHeader == null and the input parameters are taken from the message body.
-     * If outputHeader is set, the value is used and query parameters will be taken from the
-     * header instead of the body.
-     */
-    public void setInputHeader(String inputHeader) {
-        this.inputHeader = inputHeader;
-    }
-
-    public String getOnConsume() {
-        return onConsume;
-    }
-
-    /**
-     * Statement to run after data has been processed in the route
-     */
-    public void setOnConsume(String onConsume) {
-        this.onConsume = onConsume;
-    }
-
-    public boolean isUseIterator() {
-        return useIterator;
-    }
-
-    /**
-     * Process resultset individually or as a list
-     */
-    public void setUseIterator(boolean useIterator) {
-        this.useIterator = useIterator;
-    }
-
-    public boolean isRouteEmptyResultSet() {
-        return routeEmptyResultSet;
-    }
-
-    /**
-     * Whether allow empty resultset to be routed to the next hop
-     */
-    public void setRouteEmptyResultSet(boolean routeEmptyResultSet) {
-        this.routeEmptyResultSet = routeEmptyResultSet;
-    }
 }
