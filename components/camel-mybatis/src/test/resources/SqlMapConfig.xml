@@ -30,6 +30,7 @@
     <!-- Use type aliases to avoid typing the full classname every time. -->
     <typeAliases>
         <typeAlias alias="Account" type="org.apache.camel.component.mybatis.Account"/>
+        <typeAlias alias="AccountService" type="org.apache.camel.component.mybatis.bean.AccountService"/>
     </typeAliases>
 
     <!-- setup environment with JDBC data source -->
@@ -46,6 +47,7 @@
     <!-- mapping files -->
     <mappers>
         <mapper resource="org/apache/camel/component/mybatis/Account.xml"/>
+        <package name="org.apache.camel.component.mybatis.bean"/>
     </mappers>
 
 </configuration>
