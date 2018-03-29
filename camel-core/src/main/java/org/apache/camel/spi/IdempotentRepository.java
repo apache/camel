@@ -33,6 +33,11 @@ import org.apache.camel.Service;
  * <p/>
  * Implementations for the <a href="http://camel.apache.org/idempotent-consumer.html">idempotent consumer EIP</a>
  * should favor using {@link org.apache.camel.spi.ExchangeIdempotentRepository} instead.
+ * <p/>
+ * <b>Important:</b> Implementations of this should use <tt>String</tt> as the generic type as that is
+ * what is required by Camel to allow using the idempotent repository with the Idempotent Consumer EIP
+ * and also as file consumer read-lock. It was a mistake to make {@link IdempotentRepository} parameterized,
+ * as it should have been a pre-configured to use a <tt>String</tt> type.
  *
  * @version
  * @see org.apache.camel.spi.ExchangeIdempotentRepository
