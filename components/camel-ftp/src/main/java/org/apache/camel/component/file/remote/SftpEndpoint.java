@@ -61,7 +61,7 @@ public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
 
     @Override
     protected RemoteFileConsumer<SftpRemoteFile> buildConsumer(Processor processor) {
-        return new SftpConsumer(this, processor, createRemoteFileOperations());
+        return new SftpConsumer(this, processor, createRemoteFileOperations(), createGenericFileStrategy());
     }
 
     protected GenericFileProducer<SftpRemoteFile> buildProducer() {
