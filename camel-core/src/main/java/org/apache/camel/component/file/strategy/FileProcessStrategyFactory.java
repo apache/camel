@@ -18,6 +18,7 @@ package org.apache.camel.component.file.strategy;
 
 import java.io.File;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -142,6 +143,22 @@ public final class FileProcessStrategyFactory {
                 if (repo != null) {
                     readLockStrategy.setIdempotentRepository(repo);
                 }
+                Integer readLockIdempotentReleaseDelay = (Integer) params.get("readLockIdempotentReleaseDelay");
+                if (readLockIdempotentReleaseDelay != null) {
+                    readLockStrategy.setReadLockIdempotentReleaseDelay(readLockIdempotentReleaseDelay);
+                }
+                Boolean readLockIdempotentReleaseAsync = (Boolean) params.get("readLockIdempotentReleaseAsync");
+                if (readLockIdempotentReleaseAsync != null) {
+                    readLockStrategy.setReadLockIdempotentReleaseAsync(readLockIdempotentReleaseAsync);
+                }
+                Integer readLockIdempotentReleaseAsyncPoolSize = (Integer) params.get("readLockIdempotentReleaseAsyncPoolSize");
+                if (readLockIdempotentReleaseAsyncPoolSize != null) {
+                    readLockStrategy.setReadLockIdempotentReleaseAsyncPoolSize(readLockIdempotentReleaseAsyncPoolSize);
+                }
+                ScheduledExecutorService readLockIdempotentReleaseExecutorService = (ScheduledExecutorService) params.get("readLockIdempotentReleaseExecutorService");
+                if (readLockIdempotentReleaseExecutorService != null) {
+                    readLockStrategy.setReadLockIdempotentReleaseExecutorService(readLockIdempotentReleaseExecutorService);
+                }
                 strategy = readLockStrategy;
             } else if ("idempotent-changed".equals(readLock)) {
                 FileIdempotentChangedRepositoryReadLockStrategy readLockStrategy = new FileIdempotentChangedRepositoryReadLockStrategy();
@@ -164,6 +181,22 @@ public final class FileProcessStrategyFactory {
                 Long minAge = (Long) params.get("readLockMinAge");
                 if (null != minAge) {
                     readLockStrategy.setMinAge(minAge);
+                }
+                Integer readLockIdempotentReleaseDelay = (Integer) params.get("readLockIdempotentReleaseDelay");
+                if (readLockIdempotentReleaseDelay != null) {
+                    readLockStrategy.setReadLockIdempotentReleaseDelay(readLockIdempotentReleaseDelay);
+                }
+                Boolean readLockIdempotentReleaseAsync = (Boolean) params.get("readLockIdempotentReleaseAsync");
+                if (readLockIdempotentReleaseAsync != null) {
+                    readLockStrategy.setReadLockIdempotentReleaseAsync(readLockIdempotentReleaseAsync);
+                }
+                Integer readLockIdempotentReleaseAsyncPoolSize = (Integer) params.get("readLockIdempotentReleaseAsyncPoolSize");
+                if (readLockIdempotentReleaseAsyncPoolSize != null) {
+                    readLockStrategy.setReadLockIdempotentReleaseAsyncPoolSize(readLockIdempotentReleaseAsyncPoolSize);
+                }
+                ScheduledExecutorService readLockIdempotentReleaseExecutorService = (ScheduledExecutorService) params.get("readLockIdempotentReleaseExecutorService");
+                if (readLockIdempotentReleaseExecutorService != null) {
+                    readLockStrategy.setReadLockIdempotentReleaseExecutorService(readLockIdempotentReleaseExecutorService);
                 }
                 strategy = readLockStrategy;
             } else if ("idempotent-rename".equals(readLock)) {
