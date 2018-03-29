@@ -36,13 +36,18 @@ public class FilteringXmlStreamWriter implements XMLStreamWriter {
     NonXmlCharFilterer nonXmlCharFilterer = new NonXmlCharFilterer();
 
     private XMLStreamWriter writer;
+    private String encoding;
 
     /**
      * @param writer
      *            target writer to wrap.
+     * @param encoding
+     *            the encoding to write in header
+     *
      */
-    public FilteringXmlStreamWriter(XMLStreamWriter writer) {
+    public FilteringXmlStreamWriter(XMLStreamWriter writer, String encoding) {
         this.writer = writer;
+        this.encoding = encoding != null ? encoding.toUpperCase() : null;
     }
 
     /**
@@ -181,7 +186,11 @@ public class FilteringXmlStreamWriter implements XMLStreamWriter {
     }
 
     public void writeStartDocument() throws XMLStreamException {
-        writer.writeStartDocument();
+        if (encoding != null) {
+            this.writeStartDocument(encoding, null);
+        } else {
+            writer.writeStartDocument();
+        }
     }
 
     public void writeStartDocument(String encoding, String version) throws XMLStreamException {
@@ -189,7 +198,11 @@ public class FilteringXmlStreamWriter implements XMLStreamWriter {
     }
 
     public void writeStartDocument(String version) throws XMLStreamException {
-        writer.writeStartDocument(version);
+        if (encoding != null) {
+            this.writeStartDocument(encoding, version);
+        } else {
+            writer.writeStartDocument(version);
+        }
     }
 
     public void writeStartElement(String prefix, String localName, String namespaceURI)
