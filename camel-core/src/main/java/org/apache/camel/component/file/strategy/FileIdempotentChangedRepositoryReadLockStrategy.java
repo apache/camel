@@ -307,7 +307,8 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
         ObjectHelper.notNull(idempotentRepository, "idempotentRepository", this);
 
         if (readLockIdempotentReleaseAsync && readLockIdempotentReleaseExecutorService == null) {
-            readLockIdempotentReleaseExecutorService = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "ReadLockChangedIdempotentReleaseTask", readLockIdempotentReleaseAsyncPoolSize);
+            readLockIdempotentReleaseExecutorService = camelContext.getExecutorServiceManager().newScheduledThreadPool(
+                this, "ReadLockChangedIdempotentReleaseTask", readLockIdempotentReleaseAsyncPoolSize);
             shutdownExecutorService = true;
         }
     }
