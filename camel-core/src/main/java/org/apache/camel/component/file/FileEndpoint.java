@@ -182,7 +182,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
      * @return the created consumer
      */
     protected FileConsumer newFileConsumer(Processor processor, GenericFileOperations<File> operations) {
-        return new FileConsumer(this, processor, operations);
+        return new FileConsumer(this, processor, operations, processStrategy != null ? processStrategy : createGenericFileStrategy());
     }
 
     public File getFile() {

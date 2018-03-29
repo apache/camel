@@ -23,7 +23,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -226,14 +225,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public String getGeneratedFileName(Message message) {
         return StringHelper.sanitize(message.getMessageId());
-    }
-
-    public GenericFileProcessStrategy<T> getGenericFileProcessStrategy() {
-        if (processStrategy == null) {
-            processStrategy = createGenericFileStrategy();
-            log.debug("Using Generic file process strategy: {}", processStrategy);
-        }
-        return processStrategy;
     }
 
     /**
@@ -990,6 +981,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      * By default the file is not removed which ensures that any race-condition do not occur so another active
      * node may attempt to grab the file. Instead the idempotent repository may support eviction strategies
      * that you can configure to evict the file name entry after X minutes - this ensures no problems with race conditions.
+     * <p/>
+     * See more details at the readLockIdempotentReleaseDelay option.
      */
     public void setReadLockRemoveOnCommit(boolean readLockRemoveOnCommit) {
         this.readLockRemoveOnCommit = readLockRemoveOnCommit;
@@ -997,6 +990,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * Whether to delay the release task for a period of millis.
+     * <p/>
+     * This can be used to delay the release tasks to expand the window when a file is regarded as read-locked,
+     * in an active/active cluster scenario with a shared idempotent repository, to ensure other nodes cannot potentially scan and acquire
+     * the same file, due to race-conditions. By expanding the time-window of the release tasks helps prevents these situations.
+     * Note delaying is only needed if you have configured readLockRemoveOnCommit to true.
      */
     public void setReadLockIdempotentReleaseDelay(int readLockIdempotentReleaseDelay) {
         this.readLockIdempotentReleaseDelay = readLockIdempotentReleaseDelay;
@@ -1008,6 +1006,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * Whether the delayed release task should be synchronous or asynchronous.
+     * <p/>
+     * See more details at the readLockIdempotentReleaseDelay option.
      */
     public void setReadLockIdempotentReleaseAsync(boolean readLockIdempotentReleaseAsync) {
         this.readLockIdempotentReleaseAsync = readLockIdempotentReleaseAsync;
@@ -1019,6 +1019,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * The number of threads in the scheduled thread pool when using asynchronous release tasks.
+     * Using a default of 1 core threads should be sufficient in almost all use-cases, only set this to a higher value
+     * if either updating the idempotent repository is slow, or there are a lot of files to process.
+     * This option is not in-use if you use a shared thread pool by configuring the readLockIdempotentReleaseExecutorService option.
+     * <p/>
+     * See more details at the readLockIdempotentReleaseDelay option.
      */
     public void setReadLockIdempotentReleaseAsyncPoolSize(int readLockIdempotentReleaseAsyncPoolSize) {
         this.readLockIdempotentReleaseAsyncPoolSize = readLockIdempotentReleaseAsyncPoolSize;
@@ -1030,6 +1035,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * To use a custom and shared thread pool for asynchronous release tasks.
+     * <p/>
+     * See more details at the readLockIdempotentReleaseDelay option.
      */
     public void setReadLockIdempotentReleaseExecutorService(ScheduledExecutorService readLockIdempotentReleaseExecutorService) {
         this.readLockIdempotentReleaseExecutorService = readLockIdempotentReleaseExecutorService;
@@ -1351,10 +1358,16 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         params.put("readLockMinAge", readLockMinAge);
         params.put("readLockRemoveOnRollback", readLockRemoveOnRollback);
         params.put("readLockRemoveOnCommit", readLockRemoveOnCommit);
-        params.put("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
+        if (readLockIdempotentReleaseDelay > 0) {
+            params.put("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
+        }
         params.put("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
-        params.put("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
-        params.put("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
+        if (readLockIdempotentReleaseAsyncPoolSize > 0) {
+            params.put("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
+        }
+        if (readLockIdempotentReleaseExecutorService != null) {
+            params.put("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
+        }
         return params;
     }
 

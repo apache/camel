@@ -71,7 +71,7 @@ public class NewFileConsumerTest extends ContextTestSupport {
         private volatile boolean post;
 
         protected FileConsumer newFileConsumer(Processor processor, GenericFileOperations<File> operations) {
-            return new FileConsumer(this, processor, operations) {
+            return new FileConsumer(this, processor, operations, createGenericFileStrategy()) {
                 @Override
                 protected void postPollCheck(int polledMessages) {
                     post = true;

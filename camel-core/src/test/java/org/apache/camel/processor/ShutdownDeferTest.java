@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.component.file.strategy.GenericFileRenameProcessStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 
 import static org.apache.camel.ShutdownRoute.Defer;
@@ -95,7 +96,7 @@ public class ShutdownDeferTest extends ContextTestSupport {
 
         @Override
         protected FileConsumer newFileConsumer(Processor processor, GenericFileOperations<File> operations) {
-            return new FileConsumer(this, processor, operations) {
+            return new FileConsumer(this, processor, operations, createGenericFileStrategy()) {
                 @Override
                 protected void doSuspend() throws Exception {
                     CONSUMER_SUSPENDED.set(true);

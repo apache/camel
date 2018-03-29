@@ -37,14 +37,16 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     private final Logger log = LoggerFactory.getLogger(GenericFileOnCompletion.class);
     private GenericFileEndpoint<T> endpoint;
     private GenericFileOperations<T> operations;
+    private GenericFileProcessStrategy<T> processStrategy;
     private ExceptionHandler exceptionHandler;
     private GenericFile<T> file;
     private String absoluteFileName;
 
-    public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations,
+    public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations, GenericFileProcessStrategy processStrategy,
                                    GenericFile<T> file, String absoluteFileName) {
         this.endpoint = endpoint;
         this.operations = operations;
+        this.processStrategy = processStrategy;
         this.file = file;
         this.absoluteFileName = absoluteFileName;
         this.exceptionHandler = endpoint.getOnCompletionExceptionHandler();
@@ -70,8 +72,6 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     }
 
     protected void onCompletion(Exchange exchange) {
-        GenericFileProcessStrategy<T> processStrategy = endpoint.getGenericFileProcessStrategy();
-
         log.debug("Done processing file: {} using exchange: {}", file, exchange);
 
         // commit or rollback
