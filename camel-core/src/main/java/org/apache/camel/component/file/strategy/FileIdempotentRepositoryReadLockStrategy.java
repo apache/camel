@@ -274,9 +274,6 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
             readLockIdempotentReleaseExecutorService = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "ReadLockIdempotentReleaseTask", readLockIdempotentReleaseAsyncPoolSize);
             shutdownExecutorService = true;
         }
-
-        // ensure the idempotent repository is added as a service so CamelContext will stop the repo when it shutdown itself
-        camelContext.addService(idempotentRepository, true);
     }
 
     @Override

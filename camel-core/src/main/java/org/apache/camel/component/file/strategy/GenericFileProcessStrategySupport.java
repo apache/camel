@@ -19,6 +19,8 @@ package org.apache.camel.component.file.strategy;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -26,16 +28,29 @@ import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Base class for implementations of {@link GenericFileProcessStrategy}.
  */
-public abstract class GenericFileProcessStrategySupport<T> implements GenericFileProcessStrategy<T> {
+public abstract class GenericFileProcessStrategySupport<T> extends ServiceSupport implements GenericFileProcessStrategy<T>, CamelContextAware {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
+    protected CamelContext camelContext;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     public void prepareOnStartup(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint) throws Exception {
         if (exclusiveReadLockStrategy != null) {
@@ -125,6 +140,24 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
             boolean deleted = FileUtil.deleteFile(local);
             log.trace("Local work file: {} was deleted: {}", local, deleted);
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (exclusiveReadLockStrategy instanceof CamelContextAware) {
+            ((CamelContextAware) exclusiveReadLockStrategy).setCamelContext(camelContext);
+        }
+        ServiceHelper.startService(exclusiveReadLockStrategy);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(exclusiveReadLockStrategy);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownService(exclusiveReadLockStrategy);
     }
 }
 

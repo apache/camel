@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.regex.Pattern;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -32,6 +33,7 @@ import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -45,6 +47,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
+    protected GenericFileProcessStrategy<T> processStrategy;
     protected String fileExpressionResult;
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
@@ -54,10 +57,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     private final Pattern includePattern;
     private final Pattern excludePattern;
 
-    public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations) {
+    public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations, GenericFileProcessStrategy<T> processStrategy) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.operations = operations;
+        this.processStrategy = processStrategy;
 
         this.includePattern = endpoint.getIncludePattern();
         this.excludePattern = endpoint.getExcludePattern();
@@ -97,7 +101,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // must prepare on startup the very first time
         if (!prepareOnStartup) {
             // prepare on startup
-            endpoint.getGenericFileProcessStrategy().prepareOnStartup(operations, endpoint);
+            processStrategy.prepareOnStartup(operations, endpoint);
             prepareOnStartup = true;
         }
 
@@ -352,8 +356,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         String absoluteFileName = file.getAbsoluteFilePath();
 
         // check if we can begin processing the file
-        final GenericFileProcessStrategy<T> processStrategy = endpoint.getGenericFileProcessStrategy();
-
         Exception beginCause = null;
         boolean begin = false;
         try {
@@ -438,7 +440,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
             // register on completion callback that does the completion strategies
             // (for instance to move the file after we have processed it)
-            exchange.addOnCompletion(new GenericFileOnCompletion<T>(endpoint, operations, target, absoluteFileName));
+            exchange.addOnCompletion(new GenericFileOnCompletion<T>(endpoint, operations, processStrategy, target, absoluteFileName));
 
             log.debug("About to process file: {} using exchange: {}", target, exchange);
 
@@ -712,6 +714,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
     @Override
     protected void doStart() throws Exception {
+        // inject CamelContext before starting as it may be needed
+        if (processStrategy instanceof CamelContextAware) {
+            ((CamelContextAware) processStrategy).setCamelContext(getEndpoint().getCamelContext());
+        }
+        ServiceHelper.startService(processStrategy);
         super.doStart();
     }
 
@@ -719,6 +726,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected void doStop() throws Exception {
         prepareOnStartup = false;
         super.doStop();
+        ServiceHelper.stopService(processStrategy);
     }
 
     @Override
