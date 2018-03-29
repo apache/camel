@@ -47,7 +47,6 @@ import org.springframework.test.context.junit4.SpringRunner;
         CamelCloudServiceCallSimpleExpressionTest.SpringBootPropertySourceConfig.class
     }
 )
-@Ignore("Does not work")
 public class CamelCloudServiceCallSimpleExpressionTest {
     @Autowired
     private ProducerTemplate template;
@@ -92,7 +91,7 @@ public class CamelCloudServiceCallSimpleExpressionTest {
         prop.put("service.name", "custom-svc-list");
         prop.put("camel.cloud.load-balancer.enabled", false);
         prop.put("camel.cloud.service-call.component", "jetty");
-        prop.put("camel.cloud.service-call.expression", "${header.CamelServiceCallScheme}:http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/hello");
+        prop.put("camel.cloud.service-call.expression", "$simple{header.CamelServiceCallScheme}:http://$simple{header.CamelServiceCallServiceHost}:$simple{header.CamelServiceCallServicePort}/hello");
         prop.put("camel.cloud.service-call.expression-language", "simple");
         prop.put("camel.cloud.service-discovery.services[custom-svc-list]", SpringBootPropertyUtil.getDiscoveryServices());
         prop.put("camel.cloud.service-filter.blacklist[custom-svc-list]", SpringBootPropertyUtil.getServiceFilterBlacklist());
