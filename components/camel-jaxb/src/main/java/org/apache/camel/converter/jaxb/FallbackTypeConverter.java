@@ -298,8 +298,9 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
             if (isPrettyPrint()) {
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             }
-            if (exchange != null && exchange.getProperty(Exchange.CHARSET_NAME, String.class) != null) {
-                marshaller.setProperty(Marshaller.JAXB_ENCODING, exchange.getProperty(Exchange.CHARSET_NAME, String.class));
+            String charset = exchange != null ? exchange.getProperty(Exchange.CHARSET_NAME, String.class) : null;
+            if (charset != null) {
+                marshaller.setProperty(Marshaller.JAXB_ENCODING, charset);
             }
             Object toMarshall = value;
             if (objectFactoryMethod != null) {
@@ -314,7 +315,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
             }
             if (needFiltering(exchange)) {
                 XMLStreamWriter writer = parentTypeConverter.convertTo(XMLStreamWriter.class, buffer);
-                FilteringXmlStreamWriter filteringWriter = new FilteringXmlStreamWriter(writer);
+                FilteringXmlStreamWriter filteringWriter = new FilteringXmlStreamWriter(writer, charset);
                 marshaller.marshal(toMarshall, filteringWriter);
             } else {
                 marshaller.marshal(toMarshall, buffer);
