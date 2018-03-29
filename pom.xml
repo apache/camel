@@ -292,7 +292,8 @@
                 <exclude>**/file-sig-api.txt</exclude>
                 <exclude>**/Tasks__c.java</exclude>
                 <exclude>**/additional-spring-configuration-metadata.json</exclude>
-                <exclude>**/*.proto</exclude>
+		<exclude>**/*.proto</exclude>
+		<exclude>**/src/revapi/ignore.json</exclude>
                 <!-- Maven Wrapper -->
                 <exclude>.mvn/**/*</exclude>
               </excludes>
