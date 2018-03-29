@@ -23,6 +23,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -179,6 +181,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected boolean readLockRemoveOnRollback = true;
     @UriParam(label = "consumer,lock")
     protected boolean readLockRemoveOnCommit;
+    @UriParam(label = "consumer,lock")
+    protected int readLockIdempotentReleaseDelay;
+    @UriParam(label = "consumer,lock")
+    protected boolean readLockIdempotentReleaseAsync;
+    @UriParam(label = "consumer,lock")
+    protected int readLockIdempotentReleaseAsyncPoolSize;
+    @UriParam(label = "consumer,lock")
+    protected ScheduledExecutorService readLockIdempotentReleaseExecutorService;
     @UriParam(label = "consumer,lock")
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
     @UriParam(label = "consumer,advanced")
@@ -985,6 +995,46 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.readLockRemoveOnCommit = readLockRemoveOnCommit;
     }
 
+    /**
+     * Whether to delay the release task for a period of millis.
+     */
+    public void setReadLockIdempotentReleaseDelay(int readLockIdempotentReleaseDelay) {
+        this.readLockIdempotentReleaseDelay = readLockIdempotentReleaseDelay;
+    }
+
+    public boolean isReadLockIdempotentReleaseAsync() {
+        return readLockIdempotentReleaseAsync;
+    }
+
+    /**
+     * Whether the delayed release task should be synchronous or asynchronous.
+     */
+    public void setReadLockIdempotentReleaseAsync(boolean readLockIdempotentReleaseAsync) {
+        this.readLockIdempotentReleaseAsync = readLockIdempotentReleaseAsync;
+    }
+
+    public int getReadLockIdempotentReleaseAsyncPoolSize() {
+        return readLockIdempotentReleaseAsyncPoolSize;
+    }
+
+    /**
+     * The number of threads in the scheduled thread pool when using asynchronous release tasks.
+     */
+    public void setReadLockIdempotentReleaseAsyncPoolSize(int readLockIdempotentReleaseAsyncPoolSize) {
+        this.readLockIdempotentReleaseAsyncPoolSize = readLockIdempotentReleaseAsyncPoolSize;
+    }
+
+    public ScheduledExecutorService getReadLockIdempotentReleaseExecutorService() {
+        return readLockIdempotentReleaseExecutorService;
+    }
+
+    /**
+     * To use a custom and shared thread pool for asynchronous release tasks.
+     */
+    public void setReadLockIdempotentReleaseExecutorService(ScheduledExecutorService readLockIdempotentReleaseExecutorService) {
+        this.readLockIdempotentReleaseExecutorService = readLockIdempotentReleaseExecutorService;
+    }
+
     public int getBufferSize() {
         return bufferSize;
     }
@@ -1301,6 +1351,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         params.put("readLockMinAge", readLockMinAge);
         params.put("readLockRemoveOnRollback", readLockRemoveOnRollback);
         params.put("readLockRemoveOnCommit", readLockRemoveOnCommit);
+        params.put("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
+        params.put("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
+        params.put("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
+        params.put("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
         return params;
     }
 
