@@ -42,7 +42,7 @@ public class FilteringXmlStreamWriterTest {
 
     @Before
     public void setUp() {
-        filteringXmlStreamWriter = new FilteringXmlStreamWriter(xmlStreamWriterMock);
+        filteringXmlStreamWriter = new FilteringXmlStreamWriter(xmlStreamWriterMock, null);
         filteringXmlStreamWriter.nonXmlCharFilterer = nonXmlCharFiltererMock;
 
         when(nonXmlCharFiltererMock.filter("value")).thenReturn("filteredValue");

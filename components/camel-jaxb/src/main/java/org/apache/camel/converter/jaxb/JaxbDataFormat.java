@@ -205,18 +205,8 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
 
         // only marshal if its possible
         if (introspector.isElement(element)) {
-            if (asXmlStreamWriter(exchange)) {
-                XMLStreamWriter writer = typeConverter.convertTo(XMLStreamWriter.class, stream);
-                if (needFiltering(exchange)) {
-                    writer = new FilteringXmlStreamWriter(writer);
-                }
-                if (xmlStreamWriterWrapper != null) {
-                    writer = xmlStreamWriterWrapper.wrapWriter(writer);
-                }
-                marshaller.marshal(element, writer);
-            } else {
-                marshaller.marshal(element, stream);
-            }
+            XMLStreamWriter writer = getWriter(exchange, stream);
+            performWrite(exchange, stream, writer, marshaller, element);
             return;
         } else if (objectFactory && element != null) {
             Method objectFactoryMethod = JaxbHelper.getJaxbElementFactoryMethod(camelContext, element.getClass());
@@ -225,18 +215,8 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
                     Object instance = objectFactoryMethod.getDeclaringClass().newInstance();
                     if (instance != null) {
                         Object toMarshall = objectFactoryMethod.invoke(instance, element);
-                        if (asXmlStreamWriter(exchange)) {
-                            XMLStreamWriter writer = typeConverter.convertTo(XMLStreamWriter.class, stream);
-                            if (needFiltering(exchange)) {
-                                writer = new FilteringXmlStreamWriter(writer);
-                            }
-                            if (xmlStreamWriterWrapper != null) {
-                                writer = xmlStreamWriterWrapper.wrapWriter(writer);
-                            }
-                            marshaller.marshal(toMarshall, writer);
-                        } else {
-                            marshaller.marshal(toMarshall, stream);
-                        }
+                        XMLStreamWriter writer = getWriter(exchange, stream);
+                        performWrite(exchange, stream, writer, marshaller, toMarshall);
                         return;
                     }
                 } catch (Exception e) {
@@ -257,6 +237,27 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             throw new InvalidPayloadException(exchange, JAXBElement.class);
         }
     }
+
+    private void performWrite(Exchange exchange, OutputStream stream, XMLStreamWriter writer, Marshaller marshaller, Object toMarshall) throws JAXBException {
+        if (asXmlStreamWriter(exchange)) {
+            marshaller.marshal(toMarshall, writer);
+        } else {
+            marshaller.marshal(toMarshall, stream);
+        }
+    }
+
+    private XMLStreamWriter getWriter(Exchange exchange, OutputStream stream) {
+        XMLStreamWriter writer = typeConverter.convertTo(XMLStreamWriter.class, exchange, stream);
+        if (needFiltering(exchange)) {
+            String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            writer = new FilteringXmlStreamWriter(writer, charset);
+        }
+        if (xmlStreamWriterWrapper != null) {
+            writer = xmlStreamWriterWrapper.wrapWriter(writer);
+        }
+        return writer;
+    }
+
 
     private boolean asXmlStreamWriter(Exchange exchange) {
         return needFiltering(exchange) || (xmlStreamWriterWrapper != null);
