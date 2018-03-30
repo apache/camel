@@ -113,6 +113,7 @@ http\://camel.apache.org/schema/cxf/camel-cxf-2.19.1.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-2.19.2.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-2.19.3.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-2.19.4.xsd=schema/cxfEndpoint.xsd
+http\://camel.apache.org/schema/cxf/camel-cxf-2.19.5.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-2.20.0.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-2.20.1.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-2.20.2.xsd=schema/cxfEndpoint.xsd
