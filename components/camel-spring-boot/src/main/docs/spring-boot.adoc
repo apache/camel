@@ -3,8 +3,7 @@
 
 *Available as of Camel 2.15*
 
-NOTE: Camel only supports Spring Boot 1.5.x. Support for Spring Boot 2 is planned
-for Camel 2.22 which is scheduled for summer 2018.
+NOTE: Spring Boot 2 is supported since Camel 2.22 (summer 2018). Previous versions of Camel support Spring Boot 1.x only.
 
 Spring Boot component provides auto-configuration for Apache Camel. Our
 opinionated auto-configuration of the Camel context auto-detects Camel
@@ -334,28 +333,24 @@ camel.springboot.type-conversion = false
 ----
 
 
-[[SpringBoot-Blockingmainthread]]
-=== Blocking main thread
+[[SpringBoot-Keepingapplicationalive]]
+=== Keeping the application alive
 
 This feature is available starting from Camel *2.15.2*. Camel
-applications extending FatJarRouter by default block the main thread of
-the application. It means that after you start your fat jar, your
-application waits for Ctrl+C signal and does not exit immediately. If
-you would like to achieve similar behavior for non-`FatJarRouter`
-applications, retrieve `CamelSpringBootApplicationController `bean from
-your `ApplicationContext` and use the former to block the main thread of
-your application using
-`CamelSpringBootApplicationController#blockMainThread()` method.
+applications having this feature enabled launch a new thread on startup for the sole purpose of
+keeping the application alive by preventing JVM termination.
+It means that after you start a Camel application with Spring Boot, your
+application waits for a Ctrl+C signal and does not exit immediately.
 
-[source,java]
+The controller thread can be activated using the `camel.springboot.main-run-controller` to `true`.
+
+[source,text]
 ----
-public static void main(String... args) {
-    ApplicationContext applicationContext = new SpringApplication(MyCamelApplication.class).run(args);
-    CamelSpringBootApplicationController applicationController =
-            applicationContext.getBean(CamelSpringBootApplicationController.class);
-    applicationController.blockMainThread();
-}
+camel.springboot.main-run-controller = true
 ----
+
+Applications using web modules (e.g. importing the `org.springframework.boot:spring-boot-web-starter` module),
+usually don't need to use this feature because the application is kept alive by the presence of other non-daemon threads.
 
 [[SpringBoot-AddingXMLroutes]]
 === Adding XML routes
