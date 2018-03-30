@@ -24,18 +24,23 @@ You should see the following output when the application is launched:
 
 [source,text]
 ----
+<<<<<<< HEAD
 ...
 [INFO] --- spring-boot-maven-plugin:1.5.10.RELEASE:run (default-cli) @ camel-example-spring-boot-rest-swagger ---
+=======
+[...]
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
 ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
   '  |____| .__|_| |_|_| |_\__, | / / / /
  =========|_|==============|___/=/_/_/_/
- :: Spring Boot ::        (v1.5.10.RELEASE)
-...
-2018-03-22 11:59:18.861  INFO 30508 --- [           main] o.a.camel.spring.SpringCamelContext      : Total 4 routes, of which 4 are started
-2018-03-22 11:59:18.862  INFO 30508 --- [           main] o.a.camel.spring.SpringCamelContext      : Apache Camel 2.22.0-SNAPSHOT (CamelContext: MyCamel) started in 0.357 seconds
+ :: Spring Boot ::        (v2.0.0.RELEASE)
+[...]
+2017-03-05 14:55:44.032  INFO 15312 --- [           main] o.a.camel.spring.SpringCamelContext      : Total 4 routes, of which 4 are started.
+2017-03-05 14:55:44.034  INFO 15312 --- [           main] o.a.camel.spring.SpringCamelContext      : Apache Camel 2.22.0-SNAPSHOT (CamelContext: camel-1) started in 0.614 seconds
+2017-03-05 14:55:44.131  INFO 15312 --- [           main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8080 (http)
+2017-03-05 14:55:44.140  INFO 15312 --- [           main] o.a.c.example.springboot.Application     : Started Application in 6.265 seconds (JVM running for 21.092)
 ----
 
 After the Spring Boot application is started, you can open the following URL in your web browser to access the REST endpoint and retrieve a list of users: http://localhost:8080/camel/users
