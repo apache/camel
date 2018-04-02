@@ -298,7 +298,7 @@
     <hbase-version>1.2.6</hbase-version>
     <hessian-version>4.0.51</hessian-version>
     <hibernate-validator-version>5.4.2.Final</hibernate-validator-version>
-    <hibernate-version>5.0.12.Final</hibernate-version>
+    <hibernate-version>5.2.16.Final</hibernate-version>
     <hikaricp-version>2.3.13</hikaricp-version>
     <hk2-version>2.3.0</hk2-version>
     <hk2-osgi-resource-version>1.0.1</hk2-osgi-resource-version>
