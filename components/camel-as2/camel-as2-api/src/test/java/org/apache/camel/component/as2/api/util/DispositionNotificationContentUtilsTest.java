@@ -68,7 +68,7 @@ public class DispositionNotificationContentUtilsTest {
         SessionInputBufferImpl inbuffer = new SessionInputBufferImpl(new HttpTransportMetricsImpl(), 8 * 1024);
         inbuffer.bind(is);
         
-        List<CharArrayBuffer> dispositionNotificationFields = EntityParser.parseBodyPartLines(inbuffer, null, BasicLineParser.INSTANCE, new ArrayList<CharArrayBuffer>());
+        List<CharArrayBuffer> dispositionNotificationFields = EntityParser.parseBodyPartFields(inbuffer, null, BasicLineParser.INSTANCE, new ArrayList<CharArrayBuffer>());
         AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity =  DispositionNotificationContentUtils.parseDispositionNotification(dispositionNotificationFields);
         
         assertEquals("Unexpected Reporting UA value", EXPECTED_REPORTING_UA, messageDispositionNotificationEntity.getReportingUA());
