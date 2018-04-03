@@ -14,6 +14,7 @@ import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
 import org.apache.camel.component.as2.api.util.DispositionNotificationContentUtils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
+import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -388,25 +389,32 @@ public class EntityParser {
 
         try {
 
-            // Retrieve Content
-//            InputStream content = entity.getContent();
-
             // Determine and validate the Content Type
             Header contentTypeHeader = entity.getContentType();
             if (contentTypeHeader == null) {
                 throw new HttpException("Content-Type header is missing");
             }
             ContentType contentType = ContentType.parse(entity.getContentType().getValue());
-            if (!contentType.getMimeType().equals(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION)) {
+            if (!contentType.getMimeType().equals(AS2MimeType.MULTIPART_REPORT)) {
                 throw new HttpException("Entity has invalid MIME type '" + contentType.getMimeType() + "'");
             }
+            
+            // Determine Charset
+            String charsetName = AS2CharSet.US_ASCII;
+            Charset charset = contentType.getCharset();
+            if (charset != null) {
+                charsetName = charset.name();
+            }
+            
+            // Determine content transfer encoding
+            String contentTransferEncoding = HttpMessageUtils.getHeaderValue(message, AS2Header.CONTENT_TRANSFER_ENCODING);
 
-            SessionInputBufferImpl inBuffer = new SessionInputBufferImpl(new HttpTransportMetricsImpl(), 8 * 1024);
-            inBuffer.bind(entity.getContent());
+            AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), 8 * 1024);
+            inbuffer.bind(entity.getContent());
 
             // Parse Headers
             if (!isMainBody) {
-                headers = AbstractMessageParser.parseHeaders(inBuffer, -1, -1, BasicLineParser.INSTANCE,
+                headers = AbstractMessageParser.parseHeaders(inbuffer, -1, -1, BasicLineParser.INSTANCE,
                         new ArrayList<CharArrayBuffer>());
             }
 
@@ -420,89 +428,8 @@ public class EntityParser {
             if (boundary == null) {
                 throw new HttpException("Failed to retrive boundary value");
             }
-
-            dispositionNotificationMultipartReportEntity = new DispositionNotificationMultipartReportEntity(boundary,
-                    isMainBody);
-            if (headers != null) {
-                dispositionNotificationMultipartReportEntity.setHeaders(headers);
-            }
-
-            // Skip Preamble and Start Boundary line
-            skipPreambleAndStartBoundary(inBuffer, boundary);
-
-            //
-            // Parse Text Report Body Part
-            //
-
-            // Read EDI Message Body Part Headers
-            headers = AbstractMessageParser.parseHeaders(inBuffer, -1, -1, BasicLineParser.INSTANCE,
-                    new ArrayList<CharArrayBuffer>());
-
-            // Get Content-Type and Content-Transfer-Encoding
-            ContentType textReportContentType = null;
-            String textReportContentTransferEncoding = null;
-            for (Header header : headers) {
-                switch (header.getName()) {
-                case AS2Header.CONTENT_TYPE:
-                    textReportContentType = ContentType.parse(header.getValue());
-                    break;
-                case AS2Header.CONTENT_TRANSFER_ENCODING:
-                    textReportContentTransferEncoding = header.getValue();
-                    break;
-                }
-            }
-            if (textReportContentType == null) {
-                throw new HttpException("Failed to find Content-Type header in EDI message body part");
-            }
-            if (!textReportContentType.getMimeType().equalsIgnoreCase(AS2MimeType.TEXT_PLAIN)) {
-                throw new HttpException("Invalid content type '" + textReportContentType.getMimeType()
-                        + "' for first body part of disposition notification");
-            }
             
-            TextPlainEntity textReportEntity = parseTextPlainEntityBody(null, boundary, textReportContentType.getCharset().name(), textReportContentTransferEncoding);
-            textReportEntity.setHeaders(headers);
-            dispositionNotificationMultipartReportEntity.addPart(textReportEntity);
-
-            //
-            // End Text Report Body Part
-
-            //
-            // Parse Disposition Notification Body Part
-            //
-
-            // Read Disposition Notification Body Part Headers
-            headers = AbstractMessageParser.parseHeaders(inBuffer, -1, -1, BasicLineParser.INSTANCE,
-                    new ArrayList<CharArrayBuffer>());
-
-            // Get Content-Type and Content-Transfer-Encoding
-            ContentType dispositionNotificationContentType = null;
-            String dispositionNotificationContentTransferEncoding = null;
-            for (Header header : headers) {
-                switch (header.getName()) {
-                case AS2Header.CONTENT_TYPE:
-                    dispositionNotificationContentType = ContentType.parse(header.getValue());
-                    break;
-                case AS2Header.CONTENT_TRANSFER_ENCODING:
-                    dispositionNotificationContentTransferEncoding = header.getValue();
-                    break;
-                }
-            }
-            if (dispositionNotificationContentType == null) {
-                throw new HttpException("Failed to find Content-Type header in body part");
-            }
-            if (!dispositionNotificationContentType.getMimeType()
-                    .equalsIgnoreCase(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION)) {
-                throw new HttpException("Invalid content type '" + dispositionNotificationContentType.getMimeType()
-                        + "' for second body part of disposition notification");
-            }
-
-            AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity = parseMessageDispositionNotificationEntityBody(
-                    null, boundary, dispositionNotificationContentType.getCharset().name(), dispositionNotificationContentTransferEncoding);
-            messageDispositionNotificationEntity.setHeaders(headers);
-            dispositionNotificationMultipartReportEntity.addPart(messageDispositionNotificationEntity);
-
-            //
-            // End Disposition Notification Body Part
+            dispositionNotificationMultipartReportEntity = parseDispositionNotificationMultipartReportEntityBody(inbuffer, boundary, charsetName, contentTransferEncoding);
 
             if (headers != null) {
                 dispositionNotificationMultipartReportEntity.setHeaders(headers);
@@ -649,7 +576,7 @@ public class EntityParser {
 
     }
     
-    public static DispositionNotificationMultipartReportEntity parseDispositionNotificationMultipartReportEntity(AS2SessionInputBuffer inbuffer,
+    public static DispositionNotificationMultipartReportEntity parseDispositionNotificationMultipartReportEntityBody(AS2SessionInputBuffer inbuffer,
                                                                                                                  String boundary,
                                                                                                                  String charsetName,
                                                                                                                  String contentTransferEncoding)

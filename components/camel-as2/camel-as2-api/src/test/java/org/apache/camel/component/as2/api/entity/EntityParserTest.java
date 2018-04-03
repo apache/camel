@@ -8,8 +8,18 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import org.apache.camel.component.as2.api.AS2Header;
+import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
+import org.apache.camel.component.as2.api.util.HttpMessageUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
+import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.impl.EnglishReasonPhraseCatalog;
 import org.apache.http.impl.io.HttpTransportMetricsImpl;
+import org.apache.http.message.BasicHttpResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +27,10 @@ import org.junit.Test;
 public class EntityParserTest {
     
     private static final int DEFAULT_BUFFER_SIZE = 8 * 1024;
-
+    
+    public static final String REPORT_TYPE_HEADER_VALUE = 
+            "disposition-notification; boundary=\"----=_Part_56_1672293592.1028122454656\"\r\n";
+    
     public static final String  DISPOSITION_NOTIFICATION_REPORT_CONTENT = 
             "\r\n" +
             "------=_Part_56_1672293592.1028122454656\r\n" +
@@ -134,12 +147,27 @@ public class EntityParserTest {
     
     @Test
     public void parseMessageDispositionNotificationReportTest() throws Exception {
+        HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, EnglishReasonPhraseCatalog.INSTANCE.getReason(HttpStatus.SC_OK, null));
+        HttpMessageUtils.setHeaderValue(response, AS2Header.CONTENT_TRANSFER_ENCODING, DISPOSITION_NOTIFICATION_CONTENT_TRANSFER_ENCODING);
+        HttpMessageUtils.setHeaderValue(response, AS2Header.REPORT_TYPE, REPORT_TYPE_HEADER_VALUE);
+        
+        BasicHttpEntity entity = new BasicHttpEntity();
+        entity.setContentType(AS2MimeType.MULTIPART_REPORT);
+        InputStream is = new ByteArrayInputStream(DISPOSITION_NOTIFICATION_REPORT_CONTENT.getBytes(DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME));
+        entity.setContent(is);
+        EntityParser.setMessageEntity(response, entity);
+        
+        HttpEntity parsedEntity = EntityParser.parseMessageDispositionNotificationReportEntity(response, entity, true);
+    }
+    
+    @Test
+    public void parseMessageDispositionNotificationReportBodyTest() throws Exception {
         
         InputStream is = new ByteArrayInputStream(DISPOSITION_NOTIFICATION_REPORT_CONTENT.getBytes(DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME));
         AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE, null);
         inbuffer.bind(is);
 
-        DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = EntityParser.parseDispositionNotificationMultipartReportEntity(inbuffer, DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY, DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME, DISPOSITION_NOTIFICATION_REPORT_CONTENT_TRANSFER_ENCODING);
+        DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = EntityParser.parseDispositionNotificationMultipartReportEntityBody(inbuffer, DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY, DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME, DISPOSITION_NOTIFICATION_REPORT_CONTENT_TRANSFER_ENCODING);
         
         assertNotNull("Unexpected Null disposition notification multipart entity", dispositionNotificationMultipartReportEntity);
         assertEquals("Unexpected number of body parts", 2, dispositionNotificationMultipartReportEntity.getPartCount());
@@ -149,7 +177,7 @@ public class EntityParserTest {
     }
 
     @Test
-    public void parseTextPlainTest() throws Exception {
+    public void parseTextPlainBodyTest() throws Exception {
         
         InputStream is = new ByteArrayInputStream(TEXT_PLAIN_CONTENT.getBytes(TEXT_PLAIN_CONTENT_CHARSET_NAME));
         AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE, null);
@@ -163,7 +191,7 @@ public class EntityParserTest {
     }
 
     @Test
-    public void parseMessageDispositionNotificationTest() throws Exception {
+    public void parseMessageDispositionNotificationBodyTest() throws Exception {
 
         InputStream is = new ByteArrayInputStream(DISPOSITION_NOTIFICATION_CONTENT.getBytes(DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME));
         AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE, null);
