@@ -933,7 +933,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * This option applied only for readLock=changed. This option allows you to configure a minimum file length.
+     * This option is applied only for readLock=changed. It allows you to configure a minimum file length.
      * By default Camel expects the file to contain data, and thus the default value is 1.
      * You can set this option to zero, to allow consuming zero-length files.
      */
@@ -946,8 +946,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * This option applied only for readLock=change.
-     * This option allows to specify a minimum age the file must be before attempting to acquire the read lock.
+     * This option is applied only for readLock=changed.
+     * It allows to specify a minimum age the file must be before attempting to acquire the read lock.
      * For example use readLockMinAge=300s to require the file is at last 5 minutes old.
      * This can speedup the changed read lock as it will only attempt to acquire files which are at least that given age.
      */
@@ -960,8 +960,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * This option applied only for readLock=idempotent.
-     * This option allows to specify whether to remove the file name entry from the idempotent repository
+     * This option is applied only for readLock=idempotent.
+     * It allows to specify whether to remove the file name entry from the idempotent repository
      * when processing the file failed and a rollback happens.
      * If this option is false, then the file name entry is confirmed (as if the file did a commit).
      */
@@ -974,8 +974,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * This option applied only for readLock=idempotent.
-     * This option allows to specify whether to remove the file name entry from the idempotent repository
+     * This option is applied only for readLock=idempotent.
+     * It allows to specify whether to remove the file name entry from the idempotent repository
      * when processing the file is succeeded and a commit happens.
      * <p/>
      * By default the file is not removed which ensures that any race-condition do not occur so another active
