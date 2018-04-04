@@ -381,7 +381,7 @@ public class EntityParser {
         DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = null;
         Header[] headers = null;
 
-        if (entity instanceof ApplicationEDIEntity) {
+        if (entity instanceof DispositionNotificationMultipartReportEntity) {
             return entity;
         }
 
@@ -468,8 +468,8 @@ public class EntityParser {
                     break;
                 case AS2MimeType.APPLICATION_PKCS7_MIME:
                     break;
-                case AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION:
-                    parseMessageDispositionNotificationReportEntity(message, entity, true);
+                case AS2MimeType.MULTIPART_REPORT:
+                    entity = parseMessageDispositionNotificationReportEntity(message, entity, true);
                     setMessageEntity(message, entity);
                     break;
                 default:
@@ -507,7 +507,12 @@ public class EntityParser {
     }
 
     public static String getBoundaryParameterValue(HttpMessage message, String headerName) {
+        Args.notNull(message, "message");
+        Args.notNull(headerName, "headerName");
         Header header = message.getFirstHeader(headerName);
+        if (header == null) {
+            return null;
+        }
         for (HeaderElement headerElement : header.getElements()) {
             for (NameValuePair nameValuePair : headerElement.getParameters()) {
                 if (nameValuePair.getName().equalsIgnoreCase("boundary")) {
@@ -519,6 +524,8 @@ public class EntityParser {
     }
 
     public static String getBoundaryParameterValue(Header[] headers, String headerName) {
+        Args.notNull(headers, "headers");
+        Args.notNull(headerName, "headerName");
         for (Header header : headers) {
             if (header.getName().equalsIgnoreCase(headerName)) {
                 for (HeaderElement headerElement : header.getElements()) {

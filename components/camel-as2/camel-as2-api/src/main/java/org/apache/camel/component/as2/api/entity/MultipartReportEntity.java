@@ -44,13 +44,15 @@ public class MultipartReportEntity extends MultipartMimeEntity {
                                  boolean isMainBody,
                                  String boundary)
             throws HttpException {
-
-        super(ContentType.create(AS2MimeType.MULTIPART_REPORT, charset), isMainBody, boundary);
-
+        super(charset, isMainBody, boundary);
+        this.contentType = new BasicHeader(AS2Header.CONTENT_TYPE, AS2MimeType.MULTIPART_REPORT);
+        Header reportType = new BasicHeader(AS2Header.REPORT_TYPE, getReportTypeValue(boundary));
+        addHeader(reportType);
+        
         addPart(buildPlainTextReport(request, response, dispositionMode, dispositionType,
                 dispositionModifier, failureFields, errorFields, warningFields, extensionFields));
         addPart(new AS2MessageDispositionNotificationEntity(request, response, dispositionMode, dispositionType,
-                dispositionModifier, failureFields, errorFields, warningFields, extensionFields, charset, isMainBody));
+                dispositionModifier, failureFields, errorFields, warningFields, extensionFields, charset, false));
     }
     
     protected MultipartReportEntity() {

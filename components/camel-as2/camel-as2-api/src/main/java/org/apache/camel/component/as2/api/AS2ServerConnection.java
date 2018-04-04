@@ -63,11 +63,11 @@ public class AS2ServerConnection {
 
             // Set up HTTP protocol processor for incoming connections
             final HttpProcessor inhttpproc = new ImmutableHttpProcessor(
-                    new HttpResponseInterceptor[] { new ResponseMDN(as2Version, serverFqdn),
-                                                    new ResponseContent(true), 
+                    new HttpResponseInterceptor[] { new ResponseContent(true), 
                                                     new ResponseServer(originServer),
                                                     new ResponseDate(), 
-                                                    new ResponseConnControl() });
+                                                    new ResponseConnControl(),
+                                                    new ResponseMDN(as2Version, serverFqdn)});
 
             reqistry = new UriHttpRequestHandlerMapper();
 

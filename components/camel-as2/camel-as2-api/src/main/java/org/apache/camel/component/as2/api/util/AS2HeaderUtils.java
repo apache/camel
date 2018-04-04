@@ -31,6 +31,8 @@ import java.util.BitSet;
 import java.util.List;
 
 import org.apache.camel.component.as2.api.entity.Importance;
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.ParserCursor;
 import org.apache.http.message.TokenParser;
 import org.apache.http.util.Args;
@@ -95,7 +97,29 @@ public class AS2HeaderUtils {
     private AS2HeaderUtils() {
     }
     
-    public static Parameter parseNameValuePair(final CharArrayBuffer buffer, final ParserCursor cursor) {
+    public static Header createHeader(String headerName, String[] ... elements) {
+        StringBuilder sb = new StringBuilder();
+        
+        boolean firstElement = true;
+        for(String[] element: elements) {
+            if (element.length == 0) {
+                continue;
+            }
+            if (firstElement) {
+                firstElement = false;
+            } else {
+                sb.append(ELEM_DELIMITER);
+            }
+            sb.append(element[0]);
+            if (element.length > 1) {
+                sb.append(NAME_VALUE_DELIMITER + element[1]);
+            }
+        }
+        BasicHeader header = new BasicHeader(headerName, sb.toString());
+        return header;
+    }
+    
+    public static Parameter parseParameter(final CharArrayBuffer buffer, final ParserCursor cursor) {
         Args.notNull(buffer, "Char array buffer");
         Args.notNull(cursor, "Parser cursor");
 

@@ -24,6 +24,7 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
+import org.apache.camel.component.as2.api.entity.EntityParser;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.http.HttpException;
@@ -230,6 +231,7 @@ public class AS2ClientManager {
         try {
             httpContext.setAttribute(AS2_CONNECTION, as2ClientConnection);
             response = as2ClientConnection.send(request, httpContext);
+            EntityParser.parseAS2MessageEntity(response);
         } catch (IOException e) {
             throw new HttpException("Failed to send http request message", e);
         }
