@@ -21,7 +21,6 @@ for this component:
 
 ### URI format
 
-[source,java]
 --------------------------------
 snmp://hostname[:port][?Options]
 --------------------------------
@@ -118,7 +117,6 @@ Given the situation, that I poll for the following OIDs:
 
 *OIDs*
 
-[source,java]
 -------------------------
 1.3.6.1.2.1.1.3.0
 1.3.6.1.2.1.25.3.2.1.5.1
@@ -167,14 +165,12 @@ requested...be prepared.
 
 Polling a remote device:
 
-[source,java]
 ---------------------------------------------------------------------
 snmp:192.168.178.23:161?protocol=udp&type=POLL&oids=1.3.6.1.2.1.1.5.0
 ---------------------------------------------------------------------
 
 Setting up a trap receiver (*Note that no OID info is needed here!*):
 
-[source,java]
 -----------------------------------------
 snmp:127.0.0.1:162?protocol=udp&type=TRAP
 -----------------------------------------
