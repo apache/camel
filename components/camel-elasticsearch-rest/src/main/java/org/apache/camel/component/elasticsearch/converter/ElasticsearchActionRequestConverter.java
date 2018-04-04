@@ -16,14 +16,11 @@
  */
 package org.apache.camel.component.elasticsearch.converter;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.elasticsearch.ElasticsearchConstants;
@@ -31,7 +28,6 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -42,6 +38,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Converter
 public final class ElasticsearchActionRequestConverter {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchActionRequestConverter.class);
 
@@ -111,16 +108,19 @@ public final class ElasticsearchActionRequestConverter {
                 ElasticsearchConstants.PARAM_INDEX_TYPE, String.class));
     }
 
+    @Converter
     public static IndexRequest toIndexRequest(Object document, Exchange exchange) {
         return createIndexRequest(document, exchange)
             .id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
     }
 
+    @Converter
     public static UpdateRequest toUpdateRequest(Object document, Exchange exchange) {
         return createUpdateRequest(document, exchange)
             .id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
     }
 
+    @Converter
     public static GetRequest toGetRequest(Object document, Exchange exchange) {
         if (document instanceof GetRequest) {
             return (GetRequest) document;
@@ -132,6 +132,7 @@ public final class ElasticsearchActionRequestConverter {
                 String.class)).id((String) document);
     }
 
+    @Converter
     public static DeleteRequest toDeleteRequest(Object document, Exchange exchange) {
         if (document instanceof DeleteRequest) {
             return (DeleteRequest) document;
@@ -149,6 +150,7 @@ public final class ElasticsearchActionRequestConverter {
         }
     }
 
+    @Converter
     public static SearchRequest toSearchRequest(Object queryObject, Exchange exchange) throws IOException {
         if (queryObject instanceof SearchRequest) {
             return (SearchRequest) queryObject;
@@ -191,6 +193,7 @@ public final class ElasticsearchActionRequestConverter {
         return searchRequest;
     }
 
+    @Converter
     public static BulkRequest toBulkRequest(Object documents, Exchange exchange) {
         if (documents instanceof BulkRequest) {
             return (BulkRequest) documents;
