@@ -18,11 +18,8 @@ package org.apache.camel.component.elasticsearch;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -36,7 +33,6 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
@@ -171,10 +167,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             message.setBody(restHighLevelClient.bulk(bulkRequest).getItems());
         } else if (operation == ElasticsearchOperation.BulkIndex) {
             BulkRequest bulkRequest = ElasticsearchActionRequestConverter.toBulkRequest(message.getBody(), exchange);
-            List<String> indexedIds = Arrays.stream(restHighLevelClient.bulk(bulkRequest).getItems())
-                .map(BulkItemResponse::getId)
-                .collect(Collectors.toList());
-            message.setBody(indexedIds);
+            message.setBody(restHighLevelClient.bulk(bulkRequest).getItems());
         } else if (operation == ElasticsearchOperation.Delete) {
             DeleteRequest deleteRequest = ElasticsearchActionRequestConverter.toDeleteRequest(message.getBody(), exchange);
             message.setBody(restHighLevelClient.delete(deleteRequest).getResult());
