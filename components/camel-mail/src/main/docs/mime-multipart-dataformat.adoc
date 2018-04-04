@@ -116,7 +116,6 @@ Message with the following message Camel headers:
 
 *Camel Message Headers*
 
-[source,java]
 -------------------------------------------------------------------------------
 Content-Type=multipart/mixed; \n boundary="----=_Part_0_14180567.1447658227051"
 Message-Id=<...>
@@ -129,7 +128,6 @@ The message body will be:
 
 *Camel Message Body*
 
-[source,java]
 ----------------------------------------------------------------
 ------=_Part_0_14180567.1447658227051
 Content-Type: application/octet-stream
@@ -158,7 +156,6 @@ original message starting with "x-" and the header with name "included":
 
 *Camel Message Body*
 
-[source,java]
 ----------------------------------------------------------------
 Message-ID: <...>
 MIME-Version: 1.0
