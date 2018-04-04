@@ -20,22 +20,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import org.junit.Test;
 
 public class ElasticsearchBulkTest extends ElasticsearchBaseTest {
 
     @Test
     public void testBulkIndex() throws Exception {
-        List<Map<String, String>> documents = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> documents = new ArrayList<>();
         Map<String, String> document1 = createIndexedData("1");
         Map<String, String> document2 = createIndexedData("2");
 
@@ -76,12 +73,13 @@ public class ElasticsearchBulkTest extends ElasticsearchBaseTest {
 
         // when
         @SuppressWarnings("unchecked")
-        List<String> indexedDocumentIds = template.requestBody("direct:bulk_index", request, List.class);
+        BulkItemResponse[] response = template.requestBody("direct:bulk_index", request, BulkItemResponse[].class);
 
         // then
-        assertThat(indexedDocumentIds, notNullValue());
-        assertThat(indexedDocumentIds.size(), equalTo(1));
-        assertThat(indexedDocumentIds, hasItem(prefix + "baz"));
+        assertThat(response, notNullValue());
+        assertThat(response.length, equalTo(1));
+        assertThat(response[0].isFailed(), equalTo(false));
+        assertThat(response[0].getId(), equalTo(prefix + "baz"));
     }
 
     @Test
