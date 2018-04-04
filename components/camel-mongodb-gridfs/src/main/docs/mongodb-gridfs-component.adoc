@@ -18,7 +18,6 @@ for this component:
 
 ### URI format
 
-[source,java]
 ------------------------------------------------------------------------------
 mongodb-gridfs:connectionBean?database=databaseName&bucket=bucketName[&moreOptions...]
 ------------------------------------------------------------------------------
@@ -121,8 +120,7 @@ The following route defined in Spring XML executes the operation
 #### count
 
 Returns the total number of file in the collection, returning an Integer
-as the OUT message body. +
- +
+as the OUT message body.
 
 [source,java]
 ---------------------------------------------------------------------------------
@@ -146,7 +144,6 @@ Integer count = template.requestBodyAndHeaders("direct:count", query, headers);
 Returns an Reader that lists all the filenames and their IDs in a tab
 separated stream.
 
-[source,java]
 ----------------------------------------------------------------------------------
 // from("direct:listAll").to("mongodb-gridfs?database=tickets&operation=listAll");
 Reader result = template.requestBodyAndHeader("direct:listAll", "irrelevantBody");
