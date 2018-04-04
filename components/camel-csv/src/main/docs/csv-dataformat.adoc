@@ -89,12 +89,12 @@ or this XML route definition
 </route>
 -------------------------------------------------------
 
+
 then it will produce 
 
-[source,java]
--------------------------------------------------------
+----
 abc,123
--------------------------------------------------------
+----
 
 ### Unmarshalling a CSV message into a Java List
 
@@ -178,6 +178,7 @@ body.put("foo", "abc");
 body.put("bar", 123);
 ------------------------------------------------------- 
 
+
 and this Java route definition 
 
 [source,java]
@@ -210,7 +211,6 @@ or this XML route definition
 
 then it will produce 
 
-[source,java]
 -------------------------------------------------------
 abc|123
 ------------------------------------------------------- 
@@ -358,7 +358,7 @@ If you use Maven you can just add the following to your pom.xml,
 substituting the version number for the latest and greatest release (see
 the download page for the latest versions).
 
-[source,java]
+[source,xml]
 -------------------------------------
 <dependency>
   <groupId>org.apache.camel</groupId>
