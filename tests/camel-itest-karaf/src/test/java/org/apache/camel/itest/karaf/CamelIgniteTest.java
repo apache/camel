@@ -47,7 +47,7 @@ public class CamelIgniteTest extends BaseKarafTest {
     @Test
     public void test() throws Exception {
         // install ignite first
-        String version = "2.3.0";
+        String version = "2.4.0";
         LOG.info("Using Apache Ignite version: {}", version);
         URI url = new URI("mvn:org.apache.ignite/ignite-osgi-karaf/" + version + "/xml/features");
 
