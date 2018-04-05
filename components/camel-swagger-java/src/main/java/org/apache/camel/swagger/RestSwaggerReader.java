@@ -16,6 +16,8 @@
  */
 package org.apache.camel.swagger;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,6 +27,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.lang.invoke.MethodHandles.publicLookup;
 
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.ArrayModel;
@@ -260,30 +265,33 @@ public class RestSwaggerReader {
                     if (parameter instanceof SerializableParameter) {
                         SerializableParameter serializableParameter = (SerializableParameter) parameter;
 
+                        final boolean isArray = param.getDataType().equalsIgnoreCase("array");
+                        final List<String> allowableValues = param.getAllowableValues();
+                        final boolean hasAllowableValues = allowableValues != null && !allowableValues.isEmpty();
                         if (param.getDataType() != null) {
                             serializableParameter.setType(param.getDataType());
                             if (param.getDataFormat() != null) {
                                 serializableParameter.setFormat(param.getDataFormat());
                             }
-                            if (param.getDataType().equalsIgnoreCase("array")) {
+                            if (isArray) {
                                 if (param.getArrayType() != null) {
                                     if (param.getArrayType().equalsIgnoreCase("string")) {
-                                        serializableParameter.setItems(new StringProperty());
+                                        defineItems(serializableParameter, allowableValues, new StringProperty(), String.class);
                                     }
                                     if (param.getArrayType().equalsIgnoreCase("int") || param.getArrayType().equalsIgnoreCase("integer")) {
-                                        serializableParameter.setItems(new IntegerProperty());
+                                        defineItems(serializableParameter, allowableValues, new IntegerProperty(), Integer.class);
                                     }
                                     if (param.getArrayType().equalsIgnoreCase("long")) {
-                                        serializableParameter.setItems(new LongProperty());
+                                        defineItems(serializableParameter, allowableValues, new LongProperty(), Long.class);
                                     }
                                     if (param.getArrayType().equalsIgnoreCase("float")) {
-                                        serializableParameter.setItems(new FloatProperty());
+                                        defineItems(serializableParameter, allowableValues, new FloatProperty(), Float.class);
                                     }
                                     if (param.getArrayType().equalsIgnoreCase("double")) {
-                                        serializableParameter.setItems(new DoubleProperty());
+                                        defineItems(serializableParameter, allowableValues, new DoubleProperty(), Double.class);
                                     }
                                     if (param.getArrayType().equalsIgnoreCase("boolean")) {
-                                        serializableParameter.setItems(new BooleanProperty());
+                                        defineItems(serializableParameter, allowableValues, new BooleanProperty(), Boolean.class);
                                     }
                                 }
                             }
@@ -291,8 +299,8 @@ public class RestSwaggerReader {
                         if (param.getCollectionFormat() != null) {
                             serializableParameter.setCollectionFormat(param.getCollectionFormat().name());
                         }
-                        if (param.getAllowableValues() != null && !param.getAllowableValues().isEmpty()) {
-                            serializableParameter.setEnum(param.getAllowableValues());
+                        if (hasAllowableValues && !isArray) {
+                            serializableParameter.setEnum(allowableValues);
                         }
                     }
 
@@ -369,6 +377,44 @@ public class RestSwaggerReader {
 
             // add path
             swagger.path(opPath, path);
+        }
+    }
+
+    private static void defineItems(final SerializableParameter serializableParameter,
+        final List<String> allowableValues, final Property items, final Class<?> type) {
+        serializableParameter.setItems(items);
+        if (allowableValues != null && !allowableValues.isEmpty()) {
+            if (String.class.equals(type)) {
+                ((StringProperty) items).setEnum(allowableValues);
+            } else {
+                convertAndSetItemsEnum(items, allowableValues, type);
+            }
+        }
+    }
+
+    private static void convertAndSetItemsEnum(final Property items, final List<String> allowableValues, final Class<?> type) {
+        try {
+            final MethodHandle valueOf = publicLookup().findStatic(type, "valueOf", MethodType.methodType(type, String.class));
+            final MethodHandle setEnum = publicLookup().bind(items, "setEnum",
+                MethodType.methodType(void.class, List.class));
+            final List<?> values = allowableValues.stream().map(v -> {
+                try {
+                    return valueOf.invoke(v);
+                } catch (Throwable e) {
+                    if (e instanceof RuntimeException) {
+                        throw (RuntimeException) e;
+                    }
+
+                    throw new IllegalStateException(e);
+                }
+            }).collect(Collectors.toList());
+            setEnum.invoke(values);
+        } catch (Throwable e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+
+            throw new IllegalStateException(e);
         }
     }
 
