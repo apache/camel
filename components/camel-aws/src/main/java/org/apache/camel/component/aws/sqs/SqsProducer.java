@@ -135,6 +135,11 @@ public class SqsProducer extends DefaultProducer {
                     mav.setDataType("Binary");
                     mav.withBinaryValue((ByteBuffer)value);
                     result.put(entry.getKey(), mav);
+                } else if (value instanceof Number) {
+                    MessageAttributeValue mav = new MessageAttributeValue();
+                    mav.setDataType("Number");
+                    mav.withStringValue(((Number)value).toString());
+                    result.put(entry.getKey(), mav);
                 } else {
                     // cannot translate the message header to message attribute value
                     LOG.warn("Cannot put the message header key={}, value={} into Sqs MessageAttribute", entry.getKey(), entry.getValue());
