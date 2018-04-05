@@ -10,11 +10,13 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.as2.api.AS2CharSet;
+import org.apache.camel.component.as2.api.AS2Constants;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.AS2MessageStructure;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.AS2ServerConnection;
+import org.apache.camel.component.as2.api.AS2ServerManager;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
@@ -48,6 +50,9 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
     private static final String AS2_NAME = "878051556";
     private static final String FROM = "mrAS@example.org";
     
+    private static final String MDN_FROM = "as2Test@server.example.com";
+    private static final String MDN_SUBJECT_PREFIX = "MDN Response:";
+    
     public static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
             +"UNH+00000000000117+INVOIC:D:97B:UN'\n"
             +"BGM+380+342459+9'\n"
@@ -74,6 +79,9 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
             +"MOA+8:525'\n"
             +"UNT+23+00000000000117'\n"
             +"UNZ+1+00000000000778'\n";
+    
+    private static final String EXPECTED_AS2_VERSION = "1.1";
+    private static final String EXPECTED_MDN_SUBJECT = MDN_SUBJECT_PREFIX + SUBJECT;
     
     private static AS2ServerConnection serverConnection;
 
@@ -121,9 +129,17 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertTrue("Request body does not contain EDI entity", entity instanceof ApplicationEDIEntity);
         String ediMessage = ((ApplicationEDIEntity)entity).getEdiMessage();
         assertEquals("EDI message is different", EDI_MESSAGE, ediMessage);
+        
         HttpResponse response = result.getResponse();
         assertNotNull("Response", response);
         assertEquals("Unexpected response type", AS2MimeType.MULTIPART_REPORT, HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE));
+        assertEquals("Unexpected mime version", AS2Constants.MIME_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION));
+        assertEquals("Unexpected AS2 version", EXPECTED_AS2_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION));
+        assertEquals("Unexpected MDN subject", EXPECTED_MDN_SUBJECT, HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT));
+        assertEquals("Unexpected MDN from", MDN_FROM, HttpMessageUtils.getHeaderValue(response, AS2Header.FROM));
+        assertEquals("Unexpected AS2 from", AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_FROM));
+        assertEquals("Unexpected AS2 to", AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_TO));
+        assertNotNull("Missing message id", HttpMessageUtils.getHeaderValue(response, AS2Header.MESSAGE_ID));
         
         HttpEntity responseEntity = response.getEntity();
         assertNotNull("Response entity", responseEntity);
@@ -166,6 +182,8 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
        public void handle(HttpRequest request, HttpResponse response, HttpContext context)
                throws HttpException, IOException {
           LOG.info("Received test message: " + request);
+          context.setAttribute(AS2ServerManager.FROM, MDN_FROM);
+          context.setAttribute(AS2ServerManager.SUBJECT, MDN_SUBJECT_PREFIX);
        }
        
    }

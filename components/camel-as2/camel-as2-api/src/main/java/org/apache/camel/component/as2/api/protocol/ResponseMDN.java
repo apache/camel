@@ -55,7 +55,15 @@ public class ResponseMDN implements HttpResponseInterceptor {
         response.addHeader(AS2Header.MIME_VERSION, AS2Constants.MIME_VERSION);
         
         /* Subject header */
-        String subject = coreContext.getAttribute(AS2ServerManager.SUBJECT, String.class);
+        String subjectPrefix = coreContext.getAttribute(AS2ServerManager.SUBJECT, String.class);
+        String subject = HttpMessageUtils.getHeaderValue(request, AS2Header.SUBJECT);
+        if (subjectPrefix != null && subject != null) {
+            subject = subjectPrefix + subject;            
+        } else if (subject != null) {
+            subject = "MDN Response To:" + subject;
+        } else {
+            subject = "Your Requested MDN Response";
+        }
         response.addHeader(AS2Header.SUBJECT, subject);
         
         /* From header */
