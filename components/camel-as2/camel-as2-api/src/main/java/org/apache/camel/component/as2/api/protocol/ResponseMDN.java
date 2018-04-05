@@ -14,6 +14,7 @@ import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptions;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptionsParser;
+import org.apache.camel.component.as2.api.entity.EntityParser;
 import org.apache.camel.component.as2.api.util.AS2HeaderUtils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
@@ -106,7 +107,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
                     Header reportTypeHeader = AS2HeaderUtils.createHeader(AS2Header.REPORT_TYPE, new String[][] { {AS2ReportType.DISPOSITION_NOTIFICATION }, {BOUNDARY_PARAM_NAME, boundary } });
                     response.addHeader(reportTypeHeader);
                     response.setHeader(AS2Header.CONTENT_TYPE, AS2MimeType.MULTIPART_REPORT);
-                    response.setEntity(multipartReportEntity);
+                    EntityParser.setMessageEntity(response, multipartReportEntity);
                 }
             }
             

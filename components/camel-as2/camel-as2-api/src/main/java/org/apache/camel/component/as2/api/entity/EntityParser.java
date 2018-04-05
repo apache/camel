@@ -504,6 +504,8 @@ public class EntityParser {
         } else if (message instanceof HttpResponse) {
             ((HttpResponse) message).setEntity(entity);
         }
+        long contentLength = entity.getContentLength();
+        message.setHeader(AS2Header.CONTENT_LENGTH, Long.toString(contentLength));
     }
 
     public static String getBoundaryParameterValue(HttpMessage message, String headerName) {
