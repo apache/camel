@@ -13,8 +13,8 @@ import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificationEntity;
 import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.entity.EntityParser;
+import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
 import org.apache.http.impl.io.HttpTransportMetricsImpl;
-import org.apache.http.impl.io.SessionInputBufferImpl;
 import org.apache.http.message.BasicLineParser;
 import org.apache.http.util.CharArrayBuffer;
 import org.junit.After;
@@ -65,7 +65,7 @@ public class DispositionNotificationContentUtilsTest {
         
         InputStream is = new ByteArrayInputStream(DISPOSITION_NOTIFICATION_CONTENT.getBytes());
         
-        SessionInputBufferImpl inbuffer = new SessionInputBufferImpl(new HttpTransportMetricsImpl(), 8 * 1024);
+        AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), 8 * 1024);
         inbuffer.bind(is);
         
         List<CharArrayBuffer> dispositionNotificationFields = EntityParser.parseBodyPartFields(inbuffer, null, BasicLineParser.INSTANCE, new ArrayList<CharArrayBuffer>());
