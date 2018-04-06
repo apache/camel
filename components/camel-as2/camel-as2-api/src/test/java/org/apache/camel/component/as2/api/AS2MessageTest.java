@@ -109,10 +109,11 @@ public class AS2MessageTest {
     public static void setUpOne() throws Exception {
         // Setup Test Server
         HttpProcessor httpProcessor = HttpProcessorBuilder.create()
-                .add(new ResponseDate())
+                .add(new ResponseContent(true))
                 .add(new ResponseServer("MyServer-HTTP/1.1"))
-                .add(new ResponseContent())
+                .add(new ResponseDate())
                 .add(new ResponseConnControl())
+                .add(new ResponseMDN(AS2_VERSION, SERVER_FQDN))
                 .build();
         SocketConfig socketConfig = SocketConfig.custom()
                 .setSoTimeout(150000)
