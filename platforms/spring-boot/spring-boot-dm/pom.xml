@@ -41,7 +41,7 @@
 
   <properties>
     <!-- Spring-Boot target version -->
-    <spring-boot-version>1.5.10.RELEASE</spring-boot-version>
+    <spring-boot-version>1.5.11.RELEASE</spring-boot-version>
 
     <!-- The following dependencies should be aligned with the ones in standard camel parent -->
     <!-- Needed by BOM generator-->
