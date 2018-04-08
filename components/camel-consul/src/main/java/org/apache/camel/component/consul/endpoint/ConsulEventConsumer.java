@@ -18,6 +18,9 @@ package org.apache.camel.component.consul.endpoint;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.EventClient;
@@ -48,17 +51,25 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
     // *************************************************************************
 
     private class EventWatcher extends AbstractWatcher implements EventResponseCallback {
+        private ScheduledExecutorService scheduledExecutorService;
+
         EventWatcher(EventClient client) {
             super(client);
+            this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         }
 
         @Override
-        public void watch(EventClient client) {
-            client.listEvents(
-                key,
-                QueryOptions.blockSeconds(configuration.getBlockSeconds(), index.get()).build(),
-                this
-            );
+        public void watch(final EventClient client) {
+            scheduledExecutorService.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    client.listEvents(
+                        key,
+                        QueryOptions.blockSeconds(configuration.getBlockSeconds(), index.get()).build(),
+                        EventWatcher.this
+                    );
+                }
+            }, configuration.getBlockSeconds(), TimeUnit.SECONDS);
         }
 
         @Override
