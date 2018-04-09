@@ -145,7 +145,17 @@ public class CxfRsConsumerTest extends CamelTestSupport {
     
     @Test
     public void testGetWrongCustomer() throws Exception {
-        URL url = new URL("http://localhost:" + CXT + "/rest/customerservice/customers/456");
+        URL url;
+        
+        url = new URL("http://localhost:" + CXT + "/rest/customerservice/customers/789");
+        try {
+            url.openStream();
+            fail("Expect to get exception here");
+        } catch (IOException exception) {
+            // expect the Internal error exception
+        }
+        
+        url = new URL("http://localhost:" + CXT + "/rest/customerservice/customers/456");
         try {
             url.openStream();
             fail("Expect to get exception here");
@@ -221,11 +231,18 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                     return;
                 }
                 if ("/customerservice/customers/456".equals(path)) {
-                    Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
+                    Response r = Response.status(404).entity("Can't found the customer with uri " + path)
+                        .header("Content-Type", "text/plain").build();
                     throw new WebApplicationException(r);
                 } else if ("/customerservice/customers/234".equals(path)) {
-                    Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
+                    Response r = Response.status(404).entity("Can't found the customer with uri " + path)
+                        .header("Content-Type", "text/plain").build();
                     exchange.getOut().setBody(r);
+                    exchange.getOut().setFault(true);
+                } else if ("/customerservice/customers/789".equals(path)) {
+                    exchange.getOut().setBody("Can't found the customer with uri " + path);
+                    exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                    exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "404");                    
                     exchange.getOut().setFault(true);
                 } else {
                     throw new RuntimeCamelException("Can't found the customer with uri " + path);
