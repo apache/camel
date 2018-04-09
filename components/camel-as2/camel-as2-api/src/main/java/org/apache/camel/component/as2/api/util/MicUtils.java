@@ -30,7 +30,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
-import org.apache.camel.component.as2.api.AS2CharSet;
+import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MicAlgorithm;
 import org.apache.camel.component.as2.api.AS2MimeType;
@@ -56,7 +56,7 @@ public class MicUtils {
         public ReceivedContentMic(String digestAlgorithmId, byte[] messageDigest) throws Exception {
             this.digestAlgorithmId = digestAlgorithmId;
             messageDigest = EntityUtils.encode(messageDigest, "base64");
-            this.encodedMessageDigest = new String(messageDigest, AS2CharSet.US_ASCII);
+            this.encodedMessageDigest = new String(messageDigest, AS2Charset.US_ASCII);
         }
         
         // Used when parsing received content MIC from received string

@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.as2.api.AS2CharSet;
+import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Constants;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MediaType;
@@ -103,7 +103,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
         headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.PLAIN);
         // parameter type is org.apache.http.entity.ContentType
-        headers.put("CamelAS2.ediMessageContentType", ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2CharSet.US_ASCII));
+        headers.put("CamelAS2.ediMessageContentType", ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII));
         // parameter type is String
         headers.put("CamelAS2.ediMessageTransferEncoding", null);
         // parameter type is String
@@ -147,9 +147,9 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         DispositionNotificationMultipartReportEntity reportEntity = (DispositionNotificationMultipartReportEntity)responseEntity;
         assertEquals("Unexpected number of body parts in report", 2, reportEntity.getPartCount());
         MimeEntity firstPart = reportEntity.getPart(0);
-        assertEquals("Unexpected content type in first body part of report", ContentType.create(AS2MimeType.TEXT_PLAIN, AS2CharSet.US_ASCII).toString(), firstPart.getContentTypeValue());
+        assertEquals("Unexpected content type in first body part of report", ContentType.create(AS2MimeType.TEXT_PLAIN, AS2Charset.US_ASCII).toString(), firstPart.getContentTypeValue());
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals("Unexpected content type in second body part of report", ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, AS2CharSet.US_ASCII).toString(), secondPart.getContentTypeValue());
+        assertEquals("Unexpected content type in second body part of report", ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, AS2Charset.US_ASCII).toString(), secondPart.getContentTypeValue());
     }
 
     @BeforeClass

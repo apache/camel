@@ -18,7 +18,7 @@ package org.apache.camel.component.as2.api.entity;
 
 import java.util.Map;
 
-import org.apache.camel.component.as2.api.AS2CharSet;
+import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.AS2TransferEncoding;
@@ -89,7 +89,7 @@ public class MultipartReportEntity extends MultipartMimeEntity {
         charBuffer.append("  Received on: " + receivedDate + "\n");
         charBuffer.append(" Status: " + dispositionType + "\n");
 
-        return new TextPlainEntity(charBuffer.toString(), AS2CharSet.US_ASCII, AS2TransferEncoding._7BIT, false);
+        return new TextPlainEntity(charBuffer.toString(), AS2Charset.US_ASCII, AS2TransferEncoding._7BIT, false);
     }
 
 }

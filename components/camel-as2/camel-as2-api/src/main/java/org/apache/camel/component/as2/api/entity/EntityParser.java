@@ -6,11 +6,12 @@ import java.nio.charset.CharsetDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.component.as2.api.AS2CharSet;
+import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
+import org.apache.camel.component.as2.api.util.ContentTypeUtils;
 import org.apache.camel.component.as2.api.util.DispositionNotificationContentUtils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
@@ -403,7 +404,7 @@ public class EntityParser {
             }
             
             // Determine Charset
-            String charsetName = AS2CharSet.US_ASCII;
+            String charsetName = AS2Charset.US_ASCII;
             Charset charset = contentType.getCharset();
             if (charset != null) {
                 charsetName = charset.name();
@@ -489,10 +490,13 @@ public class EntityParser {
                                                                                                                  String charsetName,
                                                                                                                  String contentTransferEncoding)
             throws ParseException {
+        CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
+        String previousContentTransferEncoding = inbuffer.getTransferEncoding();
+
         try {
 
             if (charsetName == null) {
-                charsetName = AS2CharSet.US_ASCII;
+                charsetName = AS2Charset.US_ASCII;
             }
             Charset charset = Charset.forName(charsetName);
             CharsetDecoder charsetDecoder = charset.newDecoder();
@@ -536,7 +540,7 @@ public class EntityParser {
                         + "' for first body part of disposition notification");
             }
             
-            String textReportCharsetName = textReportContentType.getCharset() == null ? AS2CharSet.US_ASCII : textReportContentType.getCharset().name();
+            String textReportCharsetName = textReportContentType.getCharset() == null ? AS2Charset.US_ASCII : textReportContentType.getCharset().name();
             TextPlainEntity textReportEntity = parseTextPlainEntityBody(inbuffer, boundary, textReportCharsetName, textReportContentTransferEncoding);
             textReportEntity.setHeaders(headers);
             dispositionNotificationMultipartReportEntity.addPart(textReportEntity);
@@ -574,7 +578,7 @@ public class EntityParser {
                         + "' for second body part of disposition notification");
             }
 
-            String dispositionNotificationCharsetName = dispositionNotificationContentType.getCharset() == null ? AS2CharSet.US_ASCII : dispositionNotificationContentType.getCharset().name();
+            String dispositionNotificationCharsetName = dispositionNotificationContentType.getCharset() == null ? AS2Charset.US_ASCII : dispositionNotificationContentType.getCharset().name();
             AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity = parseMessageDispositionNotificationEntityBody(
                     inbuffer, boundary, dispositionNotificationCharsetName, dispositionNotificationContentTransferEncoding);
             messageDispositionNotificationEntity.setHeaders(headers);
@@ -588,6 +592,9 @@ public class EntityParser {
             ParseException parseException = new ParseException("failed to parse text entity");
             parseException.initCause(e);
             throw parseException;
+        } finally {
+            inbuffer.setCharsetDecoder(previousDecoder);
+            inbuffer.setTransferEncoding(previousContentTransferEncoding);
         }
 
     }
@@ -597,11 +604,13 @@ public class EntityParser {
                                                        String charsetName,
                                                        String contentTransferEncoding)
             throws ParseException {
+        CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
+        String previousContentTransferEncoding = inbuffer.getTransferEncoding();
 
         try {
 
             if (charsetName == null) {
-                charsetName = AS2CharSet.US_ASCII;
+                charsetName = AS2Charset.US_ASCII;
             }
             Charset charset = Charset.forName(charsetName);
             CharsetDecoder charsetDecoder = charset.newDecoder();
@@ -609,13 +618,15 @@ public class EntityParser {
             inbuffer.setCharsetDecoder(charsetDecoder);
             inbuffer.setTransferEncoding(contentTransferEncoding);
             
-            String text = parseBodyPartText(inbuffer, boundary, BasicLineParser.INSTANCE,
-                    new ArrayList<CharArrayBuffer>());
+            String text = parseBodyPartText(inbuffer, boundary);
             return new TextPlainEntity(text, charsetName, contentTransferEncoding, false);
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse text entity");
             parseException.initCause(e);
             throw parseException;
+        } finally {
+            inbuffer.setCharsetDecoder(previousDecoder);
+            inbuffer.setTransferEncoding(previousContentTransferEncoding);
         }
     }
 
@@ -624,11 +635,13 @@ public class EntityParser {
                                                                                               String charsetName,
                                                                                               String contentTransferEncoding)
             throws ParseException {
+        CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
+        String previousContentTransferEncoding = inbuffer.getTransferEncoding();
 
         try {
 
             if (charsetName == null) {
-                charsetName = AS2CharSet.US_ASCII;
+                charsetName = AS2Charset.US_ASCII;
             }
             Charset charset = Charset.forName(charsetName);
             CharsetDecoder charsetDecoder = charset.newDecoder();
@@ -647,16 +660,69 @@ public class EntityParser {
             ParseException parseException = new ParseException("failed to parse MDN entity");
             parseException.initCause(e);
             throw parseException;
+        } finally {
+            inbuffer.setCharsetDecoder(previousDecoder);
+            inbuffer.setTransferEncoding(previousContentTransferEncoding);
+        }
+    }
+    
+    public static ApplicationEDIEntity parseEDIEntityBody(AS2SessionInputBuffer inbuffer,
+                                                          String boundary,
+                                                          ContentType ediMessageContentType,
+                                                          String contentTransferEncoding) 
+    throws ParseException {
+        CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
+        String previousContentTransferEncoding = inbuffer.getTransferEncoding();
+        
+        try {
+            Charset charset = ediMessageContentType.getCharset();
+            if (charset == null) {
+                charset = Charset.forName(AS2Charset.US_ASCII);
+            }
+            CharsetDecoder charsetDecoder = charset.newDecoder();
+            
+            inbuffer.setCharsetDecoder(charsetDecoder);
+            inbuffer.setTransferEncoding(contentTransferEncoding);
+            
+            String ediMessageBodyPartContent = parseBodyPartText(inbuffer, boundary);
+            ApplicationEDIEntity applicationEDIEntity = EntityUtils.createEDIEntity(ediMessageBodyPartContent,
+                    ediMessageContentType, contentTransferEncoding, false);
+            
+            return applicationEDIEntity;
+        } catch (Exception e) {
+            ParseException parseException = new ParseException("failed to parse EDI entity");
+            parseException.initCause(e);
+            throw parseException;
+        } finally {
+            inbuffer.setCharsetDecoder(previousDecoder);
+            inbuffer.setTransferEncoding(previousContentTransferEncoding);
+        }
+    }
+    
+    public static ApplicationPkcs7SignatureEntity parseApplicationPkcs7SignatureEntityBody(AS2SessionInputBuffer inbuffer,
+                                                                                           String boundary,
+                                                                                           ContentType contentType,
+                                                                                           String contentTransferEncoding) throws ParseException {
+        
+        CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
+        String previousContentTransferEncoding = inbuffer.getTransferEncoding();
+        
+        try {
+            
+            return null;
+        } catch (Exception e) {
+            ParseException parseException = new ParseException("failed to parse PKCS7 Signature entity");
+            parseException.initCause(e);
+            throw parseException;
+        } finally {
+            inbuffer.setCharsetDecoder(previousDecoder);
+            inbuffer.setTransferEncoding(previousContentTransferEncoding);
         }
     }
     
     public static String parseBodyPartText(final AS2SessionInputBuffer inbuffer,
-                                           final String boundary,
-                                           final LineParser parser,
-                                           final List<CharArrayBuffer> headerLines)
+                                           final String boundary)
             throws IOException {
-        Args.notNull(parser, "parser");
-        Args.notNull(headerLines, "headerLines");
         CharArrayBuffer buffer = new CharArrayBuffer(DEFAULT_BUFFER_SIZE);
         CharArrayBuffer line = new CharArrayBuffer(DEFAULT_BUFFER_SIZE);
         while (true) {

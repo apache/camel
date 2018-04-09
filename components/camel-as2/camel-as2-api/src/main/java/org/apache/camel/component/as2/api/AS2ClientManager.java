@@ -217,9 +217,13 @@ public class AS2ClientManager {
         case SIGNED:
             AS2SignedDataGenerator gen = createSigningGenerator(httpContext);
             // Create Multipart Signed Entity
-            MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(applicationEDIFACTEntity, gen,
-                    AS2CharSet.US_ASCII, AS2TransferEncoding.BASE64, true, null);
-            request.setEntity(multipartSignedEntity);
+            try {
+                MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(applicationEDIEntity, gen,
+                        AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, true, null);
+                request.setEntity(multipartSignedEntity);
+            } catch (Exception e) {
+                throw new HttpException("Failed to sign message", e);
+            }
             break;
         case ENCRYPTED:
             break;
