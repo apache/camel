@@ -23,7 +23,6 @@ import org.apache.camel.impl.DefaultProducer
 import static GrapeCommand.clearPatches
 import static GrapeCommand.grab
 import static GrapeCommand.listPatches
-import static GrapeConstants.GRAPE_COMMAND
 
 class GrapeProducer extends DefaultProducer {
 
@@ -33,7 +32,7 @@ class GrapeProducer extends DefaultProducer {
 
     @Override
     void process(Exchange exchange) {
-        def command = exchange.in.getHeader(GRAPE_COMMAND, grab, GrapeCommand.class)
+        def command = exchange.in.getHeader(GrapeConstants.GRAPE_COMMAND, grab, GrapeCommand.class)
         switch(command) {
             case grab:
                 def classLoader = exchange.context.applicationContextClassLoader
