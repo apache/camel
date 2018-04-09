@@ -125,7 +125,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         } else {
             pool = new SharedSingletonObjectPool<ChannelFuture>(new NettyProducerPoolableObjectFactory());
             if (LOG.isDebugEnabled()) {
-                LOG.info("Created NettyProducer shared singleton pool -> {}", pool);
+                LOG.debug("Created NettyProducer shared singleton pool -> {}", pool);
             }
         }
 
