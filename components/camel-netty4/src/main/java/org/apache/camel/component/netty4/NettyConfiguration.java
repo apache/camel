@@ -110,6 +110,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean udpByteArrayCodec;
     @UriParam(label = "common")
     private boolean reuseChannel;
+    @UriParam(label = "producer,advanced")
+    private NettyCamelStateCorrelationManager correlationManager;
 
     /**
      * Returns a copy of this configuration
@@ -653,6 +655,21 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      */
     public void setReuseChannel(boolean reuseChannel) {
         this.reuseChannel = reuseChannel;
+    }
+
+    public NettyCamelStateCorrelationManager getCorrelationManager() {
+        return correlationManager;
+    }
+
+    /**
+     * To use a custom correlation manager to manage how request and reply messages are mapped when using request/reply with the netty producer.
+     * This should only be used if you have a way to map requests together with replies such as if there is correlation ids in both the request
+     * and reply messages. This can be used if you want to multiplex concurrent messages on the same channel (aka connection) in netty. When doing
+     * this you must have a way to correlate the request and reply messages so you can store the right reply on the inflight Camel Exchange before
+     * its continued routed.
+     */
+    public void setCorrelationManager(NettyCamelStateCorrelationManager correlationManager) {
+        this.correlationManager = correlationManager;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {

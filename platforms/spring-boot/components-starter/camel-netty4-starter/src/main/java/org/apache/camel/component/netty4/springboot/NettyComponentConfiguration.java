@@ -27,6 +27,7 @@ import io.netty.handler.ssl.SslHandler;
 import io.netty.util.concurrent.EventExecutorGroup;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.netty4.ClientInitializerFactory;
+import org.apache.camel.component.netty4.NettyCamelStateCorrelationManager;
 import org.apache.camel.component.netty4.NettyComponent;
 import org.apache.camel.component.netty4.NettyServerBootstrapFactory;
 import org.apache.camel.component.netty4.ServerInitializerFactory;
@@ -313,6 +314,18 @@ public class NettyComponentConfiguration
          * well.
          */
         private Boolean reuseChannel = false;
+        /**
+         * To use a custom correlation manager to manage how request and reply
+         * messages are mapped when using request/reply with the netty producer.
+         * This should only be used if you have a way to map requests together
+         * with replies such as if there is correlation ids in both the request
+         * and reply messages. This can be used if you want to multiplex
+         * concurrent messages on the same channel (aka connection) in netty.
+         * When doing this you must have a way to correlate the request and
+         * reply messages so you can store the right reply on the inflight Camel
+         * Exchange before its continued routed.
+         */
+        private NettyCamelStateCorrelationManager correlationManager;
         /**
          * The protocol to use which can be tcp or udp.
          */
@@ -779,6 +792,15 @@ public class NettyComponentConfiguration
 
         public void setReuseChannel(Boolean reuseChannel) {
             this.reuseChannel = reuseChannel;
+        }
+
+        public NettyCamelStateCorrelationManager getCorrelationManager() {
+            return correlationManager;
+        }
+
+        public void setCorrelationManager(
+                NettyCamelStateCorrelationManager correlationManager) {
+            this.correlationManager = correlationManager;
         }
 
         public String getProtocol() {
