@@ -163,10 +163,10 @@ route.from = jms:invoices
 
 Or set via system property:
 
-[source,xml]
------------------------------------------------------------
+[source,text]
+----
 java -Droute.to=jms:processed.invoices -jar mySpringApp.jar
------------------------------------------------------------
+----
 
 ...can be used as placeholders in Camel route:
 
@@ -288,7 +288,7 @@ public class InvoiceProcessor {
 ----
 
 [[SpringBoot-SpringtypeconversionAPIbridge]]
-====Spring type conversion API bridge
+==== Spring type conversion API bridge
 
 Spring comes with
 the powerful http://docs.spring.io/spring/docs/current/spring-framework-reference/html/validation.html#core-convert[type
@@ -365,7 +365,7 @@ directory camel, which camel-spring-boot will auto detect and include.
 From *Camel 2.17* onwards you can configure the directory name or turn
 this off using the configuration option
 
-[source,java]
+[source,text]
 ----
 // turn off
 camel.springboot.xml-routes = false
