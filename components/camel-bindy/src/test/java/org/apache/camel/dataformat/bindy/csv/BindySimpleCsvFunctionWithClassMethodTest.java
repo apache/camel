@@ -51,7 +51,7 @@ public class BindySimpleCsvFunctionWithClassMethodTest extends CamelTestSupport 
 
         BindyCsvRowFormat7621 body = new BindyCsvRowFormat7621();
         body.setFirstField("123");
-        body.setSecondField("\"\"foo\"\"");
+        body.setSecondField("\"foo\"");
         body.setNumber(new BigDecimal(10));
         template.sendBody("direct:startMarshal1", body);
         
@@ -60,7 +60,7 @@ public class BindySimpleCsvFunctionWithClassMethodTest extends CamelTestSupport 
         BindyCsvRowFormat7621 model = mockEndPointUnMarshal1.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat7621.class);
         
         assertEquals("123", model.getFirstField());
-        assertEquals("\"\"FOO\"\"", model.getSecondField());
+        assertEquals("\"FOO\"", model.getSecondField());
         assertEquals(new BigDecimal(10), model.getNumber());
     }
 
@@ -86,6 +86,7 @@ public class BindySimpleCsvFunctionWithClassMethodTest extends CamelTestSupport 
 
     @CsvRecord(separator = ",", quote = "\"", quoting = true, quotingEscaped = false)
     public static class BindyCsvRowFormat7621 implements Serializable {
+        private static final long serialVersionUID = 1L;
 
         @DataField(pos = 1)
         private String firstField;
