@@ -50,7 +50,7 @@
       org.apache.camel.model.transformer;${camel.osgi.import.strict.version},
       org.apache.camel.model.validator;${camel.osgi.import.strict.version},
       org.apache.camel.*;${camel.osgi.import.strict.version},
-      org.springframework*;version="${spring-all-version-range}",
+      org.springframework*;version="${spring-version-range}",
       org.osgi.service.event;resolution:=optional,
       ${camel.osgi.import.defaults},
       *
