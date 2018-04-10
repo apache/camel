@@ -51,7 +51,7 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeFalseTest extends Camel
 
         BindyCsvRowFormat75191 body = new BindyCsvRowFormat75191();
         body.setFirstField("123");
-        body.setSecondField("\"\"foo\"\"");
+        body.setSecondField("\"foo\"");
         body.setNumber(new BigDecimal(10));
         template.sendBody("direct:startMarshal1", body);
         
@@ -60,7 +60,7 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeFalseTest extends Camel
         BindyCsvRowFormat75191 model = mockEndPointUnMarshal1.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat75191.class);
         
         assertEquals("123", model.getFirstField());
-        assertEquals("\"\"foo\"\"", model.getSecondField());
+        assertEquals("\"foo\"", model.getSecondField());
         assertEquals(new BigDecimal(10), model.getNumber());
     }
     
@@ -120,6 +120,7 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeFalseTest extends Camel
     //from https://issues.apache.org/jira/browse/CAMEL-7519
     @CsvRecord(separator = ",", quote = "\"", quoting = true, quotingEscaped = false)
     public static class BindyCsvRowFormat75191 implements Serializable {
+        private static final long serialVersionUID = 1L;
 
         @DataField(pos = 1)
         private String firstField;
@@ -157,6 +158,7 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeFalseTest extends Camel
     
     @CsvRecord(separator = ",", quote = "'", quoting = true, quotingEscaped = false)
     public static class BindyCsvRowFormat75192 implements Serializable {
+        private static final long serialVersionUID = 1L;
 
         @DataField(pos = 1)
         private String firstField;
@@ -191,6 +193,4 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeFalseTest extends Camel
             this.number = number;
         }
     }
-
-
 }

@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(BindyCsvFactory.class);
+    private static final String DOUBLE_QUOTES_SYMBOL = "\"";
 
     boolean isOneToMany;
 
@@ -95,7 +96,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         // Find annotated Datafields declared in the Model classes
         initAnnotatedFields();
 
-        // initialize Csv parameter(s)
+        // initialize CSV parameter(s)
         // separator and skip first line from @CSVrecord annotation
         initCsvRecordParameters();
     }
@@ -242,6 +243,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             try {
                 if (quoting && quote != null && (data.contains("\\" + quote) || data.contains(quote)) && quotingEscaped) {
                     value = format.parse(data.replaceAll("\\\\" + quote, "\\" + quote));
+                } else if (quote != null && quote.equals(DOUBLE_QUOTES_SYMBOL) && data.contains(DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL) && !quotingEscaped) {
+                    // If double-quotes are used to enclose fields, the two double 
+                    // quotes character must be replaced with one according to RFC 4180 section 2.7
+                    value = format.parse(data.replaceAll(DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL, DOUBLE_QUOTES_SYMBOL));
                 } else {
                     value = format.parse(data);
                 }
@@ -359,9 +364,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                         if (quoting && quote != null) {
                             buffer.append(quote);
                         }
-                        // CAMEL-7519 - improvoment escape the token itself by prepending escape char
+                        // CAMEL-7519 - improvement escape the token itself by prepending escape char
                         if (quoting && quote != null && (res.contains("\\" + quote) || res.contains(quote))  && quotingEscaped) {
                             buffer.append(res.replaceAll("\\" + quote, "\\\\" + quote));
+                        } else if (quoting && quote != null && quote.equals(DOUBLE_QUOTES_SYMBOL) && res.contains(quote) && !quotingEscaped) {
+                            // If double-quotes are used to enclose fields, then a double-quote 
+                            // appearing inside a field must be escaped by preceding it with another 
+                            // double quote according to RFC 4180 section 2.7
+                            buffer.append(res.replaceAll(DOUBLE_QUOTES_SYMBOL, DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL));
                         } else {
                             buffer.append(res);
                         }
