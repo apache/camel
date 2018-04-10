@@ -392,54 +392,6 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         }
     }
 
-    private void configureRestletResponseStandardHeaders(Exchange exchange, Response response, Series standardHeaders) {
-        Iterator it = standardHeaders.iterator();
-        while (it.hasNext()) {
-            Header h = (Header) it.next();
-            String key = h.getName();
-            String value = h.getValue();
-
-
-            // ignore these headers
-            if ("Host".equalsIgnoreCase(key) || "Accept".equalsIgnoreCase(key) || "Accept-encoding".equalsIgnoreCase(key)
-                || "User-Agent".equalsIgnoreCase(key) || "Referer".equalsIgnoreCase(key) || "Connection".equalsIgnoreCase(key)
-                || "Cookie".equalsIgnoreCase(key)) {
-                continue;
-            }
-            if ("Content-Type".equalsIgnoreCase(key)) {
-                MediaType mediaType = exchange.getContext().getTypeConverter().tryConvertTo(MediaType.class, exchange, value);
-                if (mediaType != null) {
-                    response.getEntity().setMediaType(mediaType);
-                }
-            } else if ("Server".equalsIgnoreCase(key)) {
-                response.getServerInfo().setAgent(value);
-            } else if ("Age".equalsIgnoreCase(key)) {
-                Integer age = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, exchange, value);
-                if (age != null) {
-                    response.setAge(age);
-                }
-            } else if ("Expires".equalsIgnoreCase(key)) {
-                Date date = exchange.getContext().getTypeConverter().tryConvertTo(Date.class, exchange, value);
-                if (date != null) {
-                    response.getEntity().setExpirationDate(date);
-                }
-            } else if ("Date".equalsIgnoreCase(key)) {
-                Date d = exchange.getContext().getTypeConverter().tryConvertTo(Date.class, exchange, value);
-                if (d != null) {
-                    response.setDate(d);
-                }
-            } else if ("Access-Control-Max-Age".equalsIgnoreCase(key)) {
-                Integer accessControlMaxAge = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, exchange, value);
-                if (accessControlMaxAge != null) {
-                    response.setAccessControlMaxAge(accessControlMaxAge);
-                }
-            } else {
-                // TODO: implement all the other restlet standard headers
-                LOG.warn("Addition of the standard response header \"{}\" is not allowed. Please use the equivalent property in the Restlet API.", key);
-            }
-        }
-    }
-
     public void populateRestletResponseFromExchange(Exchange exchange, Response response) throws Exception {
         Message out;
         if (exchange.isFailed()) {
@@ -555,7 +507,9 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         LOG.debug("Detected {} response extension headers", extensionHeaders.getHeaders().size());
         LOG.debug("Detected {} response standard headers", standardHeaders.size());
 
-        configureRestletResponseStandardHeaders(exchange, response, standardHeaders);
+        // use Restlet utils for standard headers
+        HeaderUtils.copyResponseTransportHeaders(standardHeaders, response);
+        HeaderUtils.extractEntityHeaders(standardHeaders, response.getEntity());
 
         // include the extension headers on the response
         if (extensionHeaders.getHeaders().size() > 0) {
