@@ -18,8 +18,6 @@ package org.apache.camel.component.netty4;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -64,7 +62,7 @@ public class NettyCustomCorrelationManagerTest extends BaseNettyTest {
             public void configure() throws Exception {
                 from("seda:start")
                     .log("before ${body}")
-                    .to("netty4:tcp://localhost:{{port}}?textline=true&sync=true&correlationManager=#myManager")
+                    .to("netty4:tcp://localhost:{{port}}?textline=true&sync=true&producerPoolEnabled=false&correlationManager=#myManager")
                     .log("after ${body}")
                     .to("mock:result");
 
@@ -79,9 +77,15 @@ public class NettyCustomCorrelationManagerTest extends BaseNettyTest {
         private volatile NettyCamelState stateA;
         private volatile NettyCamelState stateB;
         private volatile NettyCamelState stateC;
+        private volatile Channel channel;
 
         @Override
         public void putState(Channel channel, NettyCamelState state) {
+            if (this.channel != null && this.channel != channel) {
+                throw new IllegalStateException("Should use same channel as producer pool is disabled");
+            }
+            this.channel = channel;
+
             String body = state.getExchange().getMessage().getBody(String.class);
             if ("A".equals(body)) {
                 stateA = state;
