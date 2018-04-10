@@ -57,6 +57,7 @@
   <feature name='camel-blueprint' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-blueprint/${project.version}</bundle>
+    <feature>aries-blueprint</feature>
   </feature>
   <feature name='camel-spring' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
