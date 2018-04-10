@@ -120,6 +120,7 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeTrueTest extends CamelT
     //from https://issues.apache.org/jira/browse/CAMEL-7519
     @CsvRecord(separator = ",", quote = "\"", quoting = true, quotingEscaped = true)
     public static class BindyCsvRowFormat75191 implements Serializable {
+        private static final long serialVersionUID = 1L;
 
         @DataField(pos = 1)
         private String firstField;
@@ -157,6 +158,7 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeTrueTest extends CamelT
     
     @CsvRecord(separator = ",", quote = "'", quoting = true, quotingEscaped = true)
     public static class BindyCsvRowFormat75192 implements Serializable {
+        private static final long serialVersionUID = 1L;
 
         @DataField(pos = 1)
         private String firstField;
@@ -191,6 +193,4 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeTrueTest extends CamelT
             this.number = number;
         }
     }
-
-
 }
