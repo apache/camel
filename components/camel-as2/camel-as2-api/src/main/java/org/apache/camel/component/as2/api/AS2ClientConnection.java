@@ -10,9 +10,7 @@ import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.config.ConnectionConfig;
 import org.apache.http.impl.DefaultBHttpClientConnection;
-import org.apache.http.impl.DefaultBHttpClientConnectionFactory;
 import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.HttpProcessorBuilder;
@@ -52,17 +50,12 @@ public class AS2ClientConnection {
                 .add(new RequestConnControl())
                 .add(new RequestExpectContinue(true)).build();
         
-        // Build and Configure Connection
-        ConnectionConfig connectionConfig = ConnectionConfig.custom()
-                .setBufferSize(8 * 1024)
-                .build();
-        DefaultBHttpClientConnectionFactory connectionFactory = new DefaultBHttpClientConnectionFactory(connectionConfig);
-
         // Create Socket
         Socket socket = new Socket(targetHost.getHostName(), targetHost.getPort());
 
         // Create Connection
-        httpConnection = connectionFactory.createConnection(socket);
+        httpConnection = new AS2BHttpClientConnection(8 * 1024);
+        httpConnection.bind(socket);
     }
     
     public String getAs2Version() {

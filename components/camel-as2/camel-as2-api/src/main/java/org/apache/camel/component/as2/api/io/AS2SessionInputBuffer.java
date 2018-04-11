@@ -44,10 +44,11 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
         this.metrics = Args.notNull(metrics, "metrics");
         Args.positive(buffersize, "buffersize");
         this.buffer = new byte[buffersize];
-        this.linebuffer = new ByteArrayBuffer(buffersize);
-        this.minChunkLimit = minChunkLimit;
-        this.constraints = constraints != null ? constraints : MessageConstraints.DEFAULT;
+        this.bufferpos = 0;
         this.bufferlen = 0;
+        this.minChunkLimit = minChunkLimit >= 0 ? minChunkLimit : 512;
+        this.constraints = constraints != null ? constraints : MessageConstraints.DEFAULT;
+        this.linebuffer = new ByteArrayBuffer(buffersize);
     }
 
     public AS2SessionInputBuffer(final HttpTransportMetricsImpl metrics, final int buffersize) {
@@ -204,15 +205,11 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
                     return lineFromReadBuffer(charbuffer, pos);
                 }
                 retry = false;
-                final int len = pos + 1 - this.bufferpos;
-                addTransferDecodedBytesToLinebuffer(len);
-                this.bufferpos = pos + 1;
+                addTransferDecodedBytesToLinebuffer(pos);
             } else {
                 // end of line not found
                 if (hasBufferedData()) {
-                    final int len = this.bufferlen - this.bufferpos;
-                    addTransferDecodedBytesToLinebuffer(len);
-                    this.bufferpos = this.bufferlen;
+                    addTransferDecodedBytesToLinebuffer(pos);
                 }
                 noRead = fillBuffer();
                 if (noRead == -1) {
@@ -330,12 +327,19 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
         return len;
     }
 
-    private void addTransferDecodedBytesToLinebuffer(final int len) throws IOException {
+    private void addTransferDecodedBytesToLinebuffer(int pos) throws IOException {
         try {
-            byte[] data = new byte[len - this.bufferpos];
+            int len;
+            if (pos != -1) {
+                len = pos + 1 - this.bufferpos;
+            } else {
+                len = this.bufferlen - this.bufferpos;
+            }
+            byte[] data = new byte[len];
             System.arraycopy(this.buffer, this.bufferpos, data, 0, data.length);
             data = EntityUtils.decode(data, transferEncoding); //
             this.linebuffer.append(data, 0, data.length);
+            this.bufferpos = pos + 1;
         } catch (Exception e) {
             throw new IOException("failed to decode transfer encoding", e);
         }

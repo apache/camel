@@ -28,7 +28,6 @@ import org.apache.http.HttpException;
 import org.apache.http.HttpInetConnection;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpServerConnection;
-import org.apache.http.impl.DefaultBHttpServerConnection;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
@@ -83,7 +82,7 @@ public class AS2ServerConnection {
                     final int bufsize = 8 * 1024;
                     // Set up incoming HTTP connection
                     final Socket insocket = this.serversocket.accept();
-                    final DefaultBHttpServerConnection inconn = new DefaultBHttpServerConnection(bufsize);
+                    final AS2BHttpServerConnection inconn = new AS2BHttpServerConnection(bufsize);
                     LOG.info("Incoming connection from " + insocket.getInetAddress());
                     inconn.bind(insocket);
 

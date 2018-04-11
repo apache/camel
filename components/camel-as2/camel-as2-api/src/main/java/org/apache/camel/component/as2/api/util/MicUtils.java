@@ -93,13 +93,13 @@ public class MicUtils {
         
         String dispositionNotificationOptionsString =  HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS);
         if (dispositionNotificationOptionsString == null) {
-            LOG.debug("can not create MIC: disposition notification options missing from request");
+            LOG.debug("do not create MIC: no disposition notification options in request");
             return null;
         }
         DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser.parseDispositionNotificationOptions(dispositionNotificationOptionsString, null);
         String micAlgorithm = getMicJdkAlgorithmName(dispositionNotificationOptions.getSignedReceiptMicalg().getValues());
         if (micAlgorithm == null) {
-            LOG.debug("can not create MIC: no matching MIC algorithms found");
+            LOG.debug("do not create MIC: no matching MIC algorithms found");
             return null;
         }
 

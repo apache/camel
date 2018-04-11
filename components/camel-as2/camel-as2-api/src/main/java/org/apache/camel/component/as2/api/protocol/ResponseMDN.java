@@ -25,8 +25,12 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResponseMDN implements HttpResponseInterceptor {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ResponseMDN.class);
     
     public static final String BOUNDARY_PARAM_NAME = "boundary";
     
@@ -40,11 +44,23 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     @Override
     public void process(HttpResponse response, HttpContext context) throws HttpException, IOException {
+        
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode < 200 || statusCode >= 300 ) {
+            LOG.debug("MDN not added due to response status code: " + statusCode );
+            return;
+        }
+        LOG.debug("Adding MDN to response: " + response);
 
         HttpCoreContext coreContext = HttpCoreContext.adapt(context);
         
         HttpEntityEnclosingRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpEntityEnclosingRequest.class);
-
+        if (request == null) {
+            LOG.debug("MDN not added due to null request");
+            return;
+        }
+        LOG.debug("Processing MDN for request: " + request);
+        
         /* MIME header */
         response.addHeader(AS2Header.MIME_VERSION, AS2Constants.MIME_VERSION);
 

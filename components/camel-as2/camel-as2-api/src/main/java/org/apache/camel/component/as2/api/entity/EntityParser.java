@@ -171,153 +171,61 @@ public class EntityParser {
 
     }
 
-    public static HttpEntity parseMultipartSignedEntity(HttpMessage message, HttpEntity entity, boolean isMainBody)
+    public static void parseMultipartSignedEntity(HttpMessage message)
             throws HttpException {
-        Args.notNull(entity, "Entity");
         MultipartSignedEntity multipartSignedEntity = null;
-        Header[] headers = null;
+        HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
 
         if (entity instanceof MultipartSignedEntity) {
-            return entity;
+            return;
+
         }
 
         Args.check(entity.isStreaming(), "Entity is not streaming");
 
         try {
+ 
             // Determine and validate the Content Type
             Header contentTypeHeader = entity.getContentType();
             if (contentTypeHeader == null) {
                 throw new HttpException("Content-Type header is missing");
             }
-            ContentType multipartSignedContentType = ContentType.parse(entity.getContentType().getValue());
-            if (!multipartSignedContentType.getMimeType().equals(AS2MimeType.MULTIPART_SIGNED)) {
-                throw new HttpException(
-                        "Entity has invalid MIME type '" + multipartSignedContentType.getMimeType() + "'");
+            ContentType contentType = ContentType.parse(entity.getContentType().getValue());
+            if (!contentType.getMimeType().equals(AS2MimeType.MULTIPART_SIGNED)) {
+                throw new HttpException("Entity has invalid MIME type '" + contentType.getMimeType() + "'");
             }
-
-            SessionInputBufferImpl inBuffer = new SessionInputBufferImpl(new HttpTransportMetricsImpl(), 8 * 1024);
-            inBuffer.bind(entity.getContent());
-
-            // Parse Headers
-            if (!isMainBody) {
-                headers = AbstractMessageParser.parseHeaders(inBuffer, -1, -1, BasicLineParser.INSTANCE,
-                        new ArrayList<CharArrayBuffer>());
+            
+            // Determine Charset
+            String charsetName = AS2Charset.US_ASCII;
+            Charset charset = contentType.getCharset();
+            if (charset != null) {
+                charsetName = charset.name();
             }
+            
+            // Determine content transfer encoding
+            String contentTransferEncoding = HttpMessageUtils.getHeaderValue(message, AS2Header.CONTENT_TRANSFER_ENCODING);
+
+            AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE);
+            inbuffer.bind(entity.getContent());
 
             // Get Boundary Value
-            String boundary = multipartSignedContentType.getParameter("boundary");
+            String boundary = HttpMessageUtils.getBoundaryParameterValue(message, AS2Header.CONTENT_TYPE);
             if (boundary == null) {
                 throw new HttpException("Failed to retrive boundary value");
             }
-
-            multipartSignedEntity = new MultipartSignedEntity(boundary, true);
-            if (headers != null) {
-                multipartSignedEntity.setHeaders(headers);
-            }
-
-            //
-            // Parse EDI Message Body Part
-            //
-
-            // Skip Preamble and Start Boundary line
-            skipPreambleAndStartBoundary(inBuffer, boundary);
-
-            // Read EDI Message Body Part Headers
-            headers = AbstractMessageParser.parseHeaders(inBuffer, -1, -1, BasicLineParser.INSTANCE,
-                    new ArrayList<CharArrayBuffer>());
-
-            // Get Content-Type and Content-Transfer-Encoding
-            ContentType ediMessageContentType = null;
-            String ediMessageContentTransferEncoding = null;
-            for (Header header : headers) {
-                switch (header.getName()) {
-                case AS2Header.CONTENT_TYPE:
-                    ediMessageContentType = ContentType.parse(header.getValue());
-                    break;
-                case AS2Header.CONTENT_TRANSFER_ENCODING:
-                    ediMessageContentTransferEncoding = header.getValue();
-                    break;
-                }
-            }
-            if (ediMessageContentType == null) {
-                throw new HttpException("Failed to find Content-Type header in EDI message body part");
-            }
-            if (!isEDIMessageContentType(ediMessageContentType)) {
-                throw new HttpException(
-                        "Invalid content type '" + ediMessageContentType.getMimeType() + "' for EDI message body part");
-            }
-
-            // - Read EDI Message Body Part Content
-            String ediMessageBodyPartContent = parseBodyPartContent(inBuffer, boundary);
-
-            // Decode Content
-            byte[] bytes = EntityUtils.decodeTransferEncodingOfBodyPartContent(ediMessageBodyPartContent, ediMessageContentType,
-                    ediMessageContentTransferEncoding);
-            ediMessageBodyPartContent = new String(bytes, ediMessageContentType.getCharset());
-
-            // Build application EDI entity and add to multipart.
-            ApplicationEDIEntity applicationEDIEntity = EntityUtils.createEDIEntity(ediMessageBodyPartContent,
-                    ediMessageContentType, ediMessageContentTransferEncoding, false);
-            applicationEDIEntity.removeAllHeaders();
-            applicationEDIEntity.setHeaders(headers);
-            multipartSignedEntity.addPart(applicationEDIEntity);
-
-            //
-            // End EDI Message Body Part
-
-            //
-            // Parse Signature Body Part
-            //
-
-            // Read Signature Body Part Headers
-            headers = AbstractMessageParser.parseHeaders(inBuffer, -1, -1, BasicLineParser.INSTANCE,
-                    new ArrayList<CharArrayBuffer>());
-
-            // Get Content-Type and Content-Transfer-Encoding
-            ContentType signatureContentType = null;
-            String signatureContentTransferEncoding = null;
-            for (Header header : headers) {
-                switch (header.getName()) {
-                case AS2Header.CONTENT_TYPE:
-                    signatureContentType = ContentType.parse(header.getValue());
-                    break;
-                case AS2Header.CONTENT_TRANSFER_ENCODING:
-                    signatureContentTransferEncoding = header.getValue();
-                    break;
-                }
-            }
-            if (signatureContentType == null) {
-                throw new HttpException("Failed to find Content-Type header in signature body part");
-            }
-            if (!isPkcs7SignatureType(signatureContentType)) {
-                throw new HttpException(
-                        "Invalid content type '" + ediMessageContentType.getMimeType() + "' for signature body part");
-            }
-
-            // Read Signature Body Part Content
-            String signatureBodyPartContent = parseBodyPartContent(inBuffer, boundary);
-
-            // Decode content
-            byte[] signature = EntityUtils.decodeTransferEncodingOfBodyPartContent(signatureBodyPartContent, signatureContentType,
-                    signatureContentTransferEncoding);
-
-            // Build application Pkcs7 Signature entity and add to multipart.
-            ApplicationPkcs7SignatureEntity applicationPkcs7SignatureEntity = new ApplicationPkcs7SignatureEntity(
-                    signatureContentType.getCharset().toString(), signatureContentTransferEncoding, signature, false);
-            multipartSignedEntity.addPart(applicationPkcs7SignatureEntity);
-
-            //
-            // End Signature Body Parts
-
-            return multipartSignedEntity;
+            
+            multipartSignedEntity = parseMultipartSignedEntityBody(inbuffer, boundary, charsetName, contentTransferEncoding);
+            
+            EntityUtils.setMessageEntity(message, multipartSignedEntity);
+            
         } catch (HttpException e) {
             throw e;
         } catch (Exception e) {
             throw new HttpException("Failed to parse entity content", e);
         }
     }
-
-    public static HttpEntity parseApplicationEDIEntity(HttpMessage message, HttpEntity entity, boolean isMainBody)
+    
+     public static void parseApplicationEDIEntity(HttpMessage message)
             throws HttpException {
         Args.notNull(entity, "Entity");
         Args.check(entity.isStreaming(), "Entity is not streaming");
