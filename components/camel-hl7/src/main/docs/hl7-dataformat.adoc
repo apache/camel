@@ -20,16 +20,16 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-hl7</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
-### HL7 MLLP protocol
+=== HL7 MLLP protocol
 
 HL7 is often used with the HL7 MLLP protocol, which is a text based TCP
 socket based protocol. This component ships with a Mina and Netty4 Codec
@@ -43,7 +43,7 @@ a HL7 listener service, the <<mina2-component,camel-mina2>> or
 HL7 MLLP codec can be configured as follows:
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Name |Default Value |Description
 
 |`startByte` |`0x0b` |The start byte spanning the HL7 payload.
@@ -65,17 +65,17 @@ the HL7 message content.
 
 |`convertLFtoCR` |`false` |Will convert `\n` to `\r` (`0x0d`, 13 decimal) as HL7 stipulates `\r` as
 segment terminators. The HAPI library requires the use of `\r`.
-|=======================================================================
+|===
 
-#### Exposing an HL7 listener using Mina
+==== Exposing an HL7 listener using Mina
 
 In the Spring XML file, we configure a mina2 endpoint to listen for HL7
 requests using TCP on port `8888`:
 
 [source,xml]
----------------------------------------------------------------------------------------------------
-    <endpoint id="hl7MinaListener" uri="mina2:tcp://localhost:8888?sync=true&amp;codec=#hl7codec"/>
----------------------------------------------------------------------------------------------------
+----
+<endpoint id="hl7MinaListener" uri="mina2:tcp://localhost:8888?sync=true&amp;codec=#hl7codec"/>
+----
 
 *sync=true* indicates that this listener is synchronous and therefore
 will return a HL7 response to the caller. The HL7 codec is setup with
@@ -84,34 +84,35 @@ could be named `mygreatcodecforhl7` or whatever. The codec is also set
 up in the Spring XML file:
 
 [source,xml]
-----------------------------------------------------------------------------
-    <bean id="hl7codec" class="org.apache.camel.component.hl7.HL7MLLPCodec">
-        <property name="charset" value="iso-8859-1"/>
-    </bean>
-----------------------------------------------------------------------------
+----
+<bean id="hl7codec" class="org.apache.camel.component.hl7.HL7MLLPCodec">
+    <property name="charset" value="iso-8859-1"/>
+</bean>
+----
 
 The endpoint *hl7MinaLlistener* can then be used in a route as a
 consumer, as this Java DSL example illustrates:
 
 [source,java]
-------------------------------------------------------------
-    from("hl7MinaListener").beanRef("patientLookupService");
-------------------------------------------------------------
+----
+from("hl7MinaListener")
+  .bean("patientLookupService");
+----
 
 This is a very simple route that will listen for HL7 and route it to a
 service named *patientLookupService*. This is also Spring bean ID,
 configured in the Spring XML as:
 
 [source,xml]
----------------------------------------------------------------------------------------------------
-    <bean id="patientLookupService" class="com.mycompany.healthcare.service.PatientLookupService"/>
----------------------------------------------------------------------------------------------------
+----
+<bean id="patientLookupService" class="com.mycompany.healthcare.service.PatientLookupService"/>
+----
 
 The business logic can be implemented in POJO classes that do not depend
 on Camel, as shown here:
 
 [source,java]
-----------------------------------------------------------------------------------------------------
+----
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
@@ -125,17 +126,17 @@ public class PatientLookupService {
         Message response = ... create and set response data
         return response
     }
-----------------------------------------------------------------------------------------------------
+----
 
-#### Exposing an HL7 listener using Netty (available from Camel 2.15 onwards)
+==== Exposing an HL7 listener using Netty (available from Camel 2.15 onwards)
 
 In the Spring XML file, we configure a netty4 endpoint to listen for HL7
 requests using TCP on port `8888`:
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------------------------
-    <endpoint id="hl7NettyListener" uri="netty4:tcp://localhost:8888?sync=true&amp;encoder=#hl7encoder&amp;decoder=#hl7decoder"/>
----------------------------------------------------------------------------------------------------------------------------------
+----
+<endpoint id="hl7NettyListener" uri="netty4:tcp://localhost:8888?sync=true&amp;encoder=#hl7encoder&amp;decoder=#hl7decoder"/>
+----
 
 *sync=true* indicates that this listener is synchronous and therefore
 will return a HL7 response to the caller. The HL7 codec is setup with
@@ -144,20 +145,21 @@ and `hl7decoder` are just bean IDs, so they could be named differently.
 The beans can be set in the Spring XML file:
 
 [source,xml]
----------------------------------------------------------------------------------------------
-    <bean id="hl7decoder" class="org.apache.camel.component.hl7.HL7MLLPNettyDecoderFactory"/>
-    <bean id="hl7encoder" class="org.apache.camel.component.hl7.HL7MLLPNettyEncoderFactory"/>
----------------------------------------------------------------------------------------------
+----
+<bean id="hl7decoder" class="org.apache.camel.component.hl7.HL7MLLPNettyDecoderFactory"/>
+<bean id="hl7encoder" class="org.apache.camel.component.hl7.HL7MLLPNettyEncoderFactory"/>
+----
 
 The endpoint *hl7NettyListener* can then be used in a route as a
 consumer, as this Java DSL example illustrates:
 
 [source,java]
--------------------------------------------------------------
-    from("hl7NettyListener").beanRef("patientLookupService");
--------------------------------------------------------------
+----
+from("hl7NettyListener")
+  .bean("patientLookupService");
+----
 
-### HL7 Model using java.lang.String or byte[]
+=== HL7 Model using java.lang.String or byte[]
 
 The HL7 MLLP codec uses plain String as its data format. Camel uses its
 Type Converter to convert to/from strings to
@@ -169,7 +171,7 @@ plain `byte[]` as its data format by setting the `produceString`
 property to false. The Type Converter is also capable of converting
 the `byte[]` to/from HAPI HL7 model objects.
 
-### HL7v2 Model using HAPI
+=== HL7v2 Model using HAPI
 
 The HL7v2 model uses Java objects from the HAPI library. Using this
 library, you can encode and decode from the EDI format (ER7) that is
@@ -178,21 +180,21 @@ mostly used with HL7v2.
 The sample below is a request to lookup a patient with the patient ID
 `0101701234`.
 
-[source,java]
------------------------------------------------------------------------------
+[source,text]
+----
 MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|1234|P|2.4
 QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||
------------------------------------------------------------------------------
+----
 
 Using the HL7 model you can work with a `ca.uhn.hl7v2.model.Message`
 object, e.g. to retrieve a patient ID:
 
 [source,java]
---------------------------------------------------------------------------------------
+----
 Message msg = exchange.getIn().getBody(Message.class);
 QRD qrd = (QRD)msg.get("QRD");
 String patientId = qrd.getWhoSubjectFilter(0).getIDNumber().getValue();  // 0101701234
---------------------------------------------------------------------------------------
+----
 
 This is powerful when combined with the HL7 listener, because you don't
 have to work with `byte[]`, `String` or any other simple object formats.
@@ -200,12 +202,12 @@ You can just use the HAPI HL7v2 model objects. If you know the message
 type in advance, you can be more type-safe:
 
 [source,java]
---------------------------------------------------------------------------------
+----
 QRY_A19 msg = exchange.getIn().getBody(QRY_A19.class);
 String patientId = msg.getQRD().getWhoSubjectFilter(0).getIDNumber().getValue();
---------------------------------------------------------------------------------
+----
 
-### HL7 DataFormat
+=== HL7 DataFormat
 
 The <<hl7-dataformat,HL7>> component ships with a HL7 data format that can
 be used to marshal or unmarshal HL7 model objects.
@@ -232,34 +234,38 @@ To use the data format, simply instantiate an instance and invoke the
 marshal or unmarshal operation in the route builder:
 
 [source,java]
------------------------------------------------------------
+----
   DataFormat hl7 = new HL7DataFormat();
-  ...
-  from("direct:hl7in").marshal(hl7).to("jms:queue:hl7out");
------------------------------------------------------------
+
+  from("direct:hl7in")
+    .marshal(hl7)
+    .to("jms:queue:hl7out");
+----
 
 In the sample above, the HL7 is marshalled from a HAPI Message object to
 a byte stream and put on a JMS queue. +
  The next example is the opposite:
 
 [source,java]
----------------------------------------------------------------------
+----
   DataFormat hl7 = new HL7DataFormat();
-  ...
-  from("jms:queue:hl7out").unmarshal(hl7).to("patientLookupService");
----------------------------------------------------------------------
+
+  from("jms:queue:hl7out")
+    .unmarshal(hl7)
+    .to("patientLookupService");
+----
 
 Here we unmarshal the byte stream into a HAPI Message object that is
 passed to our patient lookup service.
 
-*Serializable messages*
+==== Serializable messages
 
 As of HAPI 2.0 (used by *Camel 2.11*), the HL7v2 model classes are fully
 serializable. So you can put HL7v2 messages directly into a JMS queue
 (i.e. without calling `marshal()` and read them again directly from the
 queue (i.e. without calling `unmarshal()`.
 
-*Segment separators*
+==== Segment separators
 
 As of *Camel 2.11*, `unmarshal` does not automatically fix segment
 separators anymore by converting `\n` to `\r`. If you  +
@@ -268,7 +274,7 @@ separators anymore by converting `\n` to `\r`. If you  +
 `Expression` for this purpose.
 
 
-*Charset*
+==== Charset
 
 As of *Camel 2.14.1*, both `marshal and unmarshal` evaluate the charset
 provided in the field `MSH-18`. If this field is empty, by default the
@@ -284,18 +290,23 @@ are commonly used. Then you don't need to create an instance of the `HL7DataForm
 object:
 
 [source,java]
-------------------------------------------------------------------------
-  from("direct:hl7in").marshal().hl7().to("jms:queue:hl7out");
-  from("jms:queue:hl7out").unmarshal().hl7().to("patientLookupService");
-------------------------------------------------------------------------
+----
+  from("direct:hl7in")
+    .marshal().hl7()
+    .to("jms:queue:hl7out");
 
-### Message Headers
+  from("jms:queue:hl7out")
+    .unmarshal().hl7()
+    .to("patientLookupService");
+----
+
+=== Message Headers
 
 The unmarshal operation adds these fields from the MSH segment as
 headers on the Camel message:
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Key |MSH field |Example
 
 |`CamelHL7SendingApplication` |`MSH-3` |`MYSERVER`
@@ -325,17 +336,17 @@ http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/HapiContext.html[HapiCon
 that was used to parse the message
 
 |`CamelHL7Charset` |`MSH-18` |*(Camel 2.14.1)* `UNICODE UTF-8`
-|=======================================================================
+|===
 
 All headers except `CamelHL7Context `are `String` types. If a header
 value is missing, its value is `null`.
 
-### Options
+=== Options
 
 The HL7 Data Format supports the following options:
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
+|===
 |Option |Default |Description
 
 |`validate` |true |Whether the HAPI Parser should validate the message using the default
@@ -352,9 +363,9 @@ also allows to parse XML-encoded HL7v2 messages
 |`hapiContext` |`ca.uhn.hl7v2.DefaultHapiContext` |*Camel 2.14:* Custom HAPI context that can define a custom parser,
 custom ValidationContext etc. This gives you full control over the HL7
 parsing and rendering process.
-|=======================================================================
+|===
 
-### Dependencies
+=== Dependencies
 
 To use HL7 in your Camel routes you'll need to add a dependency on
 *camel-hl7* listed above, which implements this data format.
@@ -387,7 +398,7 @@ themselves. For example, if an application works with HL7v2 message
 versions 2.4 and 2.5 then the following dependencies must be added:
 
 [source,xml]
------------------------------------------------------------
+----
 <dependency>
     <groupId>ca.uhn.hapi</groupId>
     <artifactId>hapi-structures-v24</artifactId>
@@ -400,7 +411,7 @@ versions 2.4 and 2.5 then the following dependencies must be added:
     <version>2.2</version>
     <!-- use the same version as your hapi-base version -->
 </dependency>
------------------------------------------------------------
+----
 
 Alternatively, an OSGi bundle containing the base library, all
 structures libraries and required dependencies (on the bundle classpath)
@@ -409,15 +420,15 @@ http://repo1.maven.org/maven2/ca/uhn/hapi/hapi-osgi-base[central Maven
 repository].
 
 [source,xml]
--------------------------------------------
+----
 <dependency>
     <groupId>ca.uhn.hapi</groupId>
     <artifactId>hapi-osgi-base</artifactId>
     <version>2.2</version>
 </dependency>
--------------------------------------------
+----
 
-### Terser language
+=== Terser language
 
 http://hl7api.sourceforge.net[HAPI] provides a
 http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/Terser.html[Terser]
@@ -429,22 +440,21 @@ and predicates for filtering, content-based routing etc.
 Sample:
 
 [source,java]
---------------------------------------------------------------------------------------------------
+----
 import static org.apache.camel.component.hl7.HL7.terser;
-...
 
    // extract patient ID from field QRD-8 in the QRY_A19 message above and put into message header
    from("direct:test1")
       .setHeader("PATIENT_ID",terser("QRD-8(0)-1"))
       .to("mock:test1");
 
-   // continue processing if extracted field equals a message header
+   // continue processing if extracted field equals a message header
    from("direct:test2")
       .filter(terser("QRD-8(0)-1").isEqualTo(header("PATIENT_ID"))
       .to("mock:test2");
---------------------------------------------------------------------------------------------------
+----
 
-### HL7 Validation predicate
+=== HL7 Validation predicate
 
 Often it is preferable to first parse a HL7v2 message and in a separate
 step validate it against a HAPI
@@ -453,10 +463,9 @@ http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/ValidationCon
 Sample:
 
 [source,java]
-----------------------------------------------------------------------
+----
 import static org.apache.camel.component.hl7.HL7.messageConformsTo;
 import ca.uhn.hl7v2.validation.impl.DefaultValidation;
-...
 
    // Use standard or define your own validation rules
    ValidationContext defaultContext = new DefaultValidation(); 
@@ -465,9 +474,9 @@ import ca.uhn.hl7v2.validation.impl.DefaultValidation;
    from("direct:test1")
       .validate(messageConformsTo(defaultContext))
       .to("mock:test1");
-----------------------------------------------------------------------
+----
 
-### HL7 Validation predicate using the HapiContext (Camel 2.14)
+=== HL7 Validation predicate using the HapiContext (Camel 2.14)
 
 The HAPI Context is always configured with a
 http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/ValidationContext.html[ValidationContext]
@@ -479,10 +488,9 @@ the `CamelHL7Context` header, and the validation rules of this context
 can be easily reused:
 
 [source,java]
-----------------------------------------------------------------------------------------------------------------
+----
 import static org.apache.camel.component.hl7.HL7.messageConformsTo;
 import static org.apache.camel.component.hl7.HL7.messageConforms
-...
 
   HapiContext hapiContext = new DefaultHapiContext();
   hapiContext.getParserConfiguration().setValidating(false); // don't validate during parsing
@@ -506,11 +514,9 @@ import static org.apache.camel.component.hl7.HL7.messageConforms
      .validate(messageConforms())   // uses the validation rules returned from the HapiContext
                                     // equivalent with .validate(messageConformsTo(hapiContext))
      // route continues from here
-----------------------------------------------------------------------------------------------------------------
+----
 
- 
-
-### HL7 Acknowledgement expression
+=== HL7 Acknowledgement expression
 
 A common task in HL7v2 processing is to generate an acknowledgement
 message as response to an incoming HL7v2 message, e.g. based on a
@@ -518,11 +524,10 @@ validation result. The `ack` expression lets us accomplish this very
 elegantly:
 
 [source,java]
-------------------------------------------------------------------------------------------
+----
 import static org.apache.camel.component.hl7.HL7.messageConformsTo;
 import static org.apache.camel.component.hl7.HL7.ack;
 import ca.uhn.hl7v2.validation.impl.DefaultValidation;
-...
 
   // Use standard or define your own validation rules
    ValidationContext defaultContext = new DefaultValidation(); 
@@ -534,12 +539,12 @@ import ca.uhn.hl7v2.validation.impl.DefaultValidation;
          .end()
       .validate(messageConformsTo(defaultContext))
       // do something meaningful here
-      ...
+
       // acknowledgement
       .transform(ack())
-------------------------------------------------------------------------------------------
+----
 
-### More Samples
+=== More Samples
 
 In the following example, a plain `String` HL7 request is sent to an HL7
 listener that sends back a response:
@@ -554,12 +559,3 @@ Note that by using the HL7 DataFormat the Camel message headers are
 populated with the fields from the MSH segment. The headers are
 particularly useful for filtering or content-based routing as shown in
 the example above.
-
- 
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
