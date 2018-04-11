@@ -1,4 +1,4 @@
-package org.apache.camel.component.as2.api;
+package org.apache.camel.component.as2.api.io;
 
 import java.io.IOException;
 import java.nio.charset.CharsetDecoder;

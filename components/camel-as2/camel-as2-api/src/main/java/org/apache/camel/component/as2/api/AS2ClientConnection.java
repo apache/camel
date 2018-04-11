@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import org.apache.camel.component.as2.api.io.AS2BHttpClientConnection;
 import org.apache.camel.component.as2.api.protocol.RequestAS2;
 import org.apache.camel.component.as2.api.protocol.RequestMDN;
 import org.apache.http.HttpException;

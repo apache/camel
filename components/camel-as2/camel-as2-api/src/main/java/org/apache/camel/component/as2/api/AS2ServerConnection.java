@@ -22,6 +22,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
+import org.apache.camel.component.as2.api.io.AS2BHttpServerConnection;
 import org.apache.camel.component.as2.api.protocol.ResponseMDN;
 import org.apache.http.ConnectionClosedException;
 import org.apache.http.HttpException;
