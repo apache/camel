@@ -663,7 +663,28 @@ And if we have another route we can refer to the shared worker pool:
 </route>
 ----
 
-... and so forth.
+and so forth.
+
+=== Multiplexing concurrent messages over a single connection with request/reply
+
+When using Netty for request/reply messaging via the netty producer then by default each
+message is sent via a non-shared connection (pooled). This ensures that replies are
+automatic being able to map to the correct request thread for further routing in Camel.
+In other words correlation between request/reply messages happens out-of-the-box because
+the replies comes back on the same connection that was used for sending the request;
+and this connection is not shared with others. When the response comes back, the connection
+is returned back to the connection pool, where it can be reused by others.
+
+However if you want to multiplex concurrent request/responses on a single shared connection,
+then you need to turn off the connection pooling by setting `producerPoolEnabled=false`.
+Now this means there is a potential issue with interleaved responses if replies comes back out-of-order.
+Therefore you need to have a correlation id in both the request and reply messages so you can properly
+correlate the replies to the Camel callback that is responsible for continue processing the message in Camel.
+To do this you need to implement `NettyCamelStateCorrelationManager` as correlation manager and configure
+it via the `correlationManager=#myManager` option.
+
+You can find an example with the Apache Camel source code in the examples directory
+under the `camel-netty-custom-correlation-example` directory.
 
 === See Also
 
