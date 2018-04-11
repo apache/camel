@@ -108,7 +108,6 @@
     <californium-version>1.0.6</californium-version>
     <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
     <cassandra-driver-version>3.4.0</cassandra-driver-version>
-    <cassandra-metrics-version>3.2.2</cassandra-metrics-version>
     <cassandra-driver-guava-version>18.0</cassandra-driver-guava-version>
     <cassandra-version>3.7</cassandra-version>
     <cassandra-unit-version>3.1.3.2</cassandra-unit-version>
