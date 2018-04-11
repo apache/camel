@@ -318,8 +318,8 @@
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.7</ical4j-version>
     <ignite-version>2.4.0</ignite-version>
-    <infinispan-version>9.2.1.Final</infinispan-version>
-    <infinispan-spring-boot-version>1.0.0.Final</infinispan-spring-boot-version>
+    <infinispan-version>9.1.7.Final</infinispan-version>
+    <infinispan-spring-boot-version>2.0.0.Beta1</infinispan-spring-boot-version>
     <influx-java-driver-version>2.9</influx-java-driver-version>
     <influx-java-driver-bundle-version>2.9_1</influx-java-driver-bundle-version>
     <influx-guava-version>20.0</influx-guava-version>

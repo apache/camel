@@ -325,10 +325,7 @@ public final class ArquillianPackager {
         ignore.add("org.ow2.asm"); // No problem
         ignore.add("org.codehaus.plexus");
         ignore.add("org.eclipse.jetty.websocket:websocket-api"); // PR to spring-boot
-        ignore.add("org.infinispan");
         ignore.add("org.jboss.arquillian.container");
-        ignore.add("org.jboss.logging");
-        ignore.add("org.jboss.marshalling");
         ignore.add("org.jboss:");
         ignore.add("org.hibernate:hibernate-validator"); // does not match with hibernate-core
         ignore.add("org.mortbay.jetty:servlet-api-2.5");
@@ -347,7 +344,6 @@ public final class ArquillianPackager {
         ignore.add("org.webjars"); // No problem
         ignore.add("stax:stax-api");
         ignore.add("xml-apis:xml-apis-ext");
-        ignore.add("org.infinispan");
         ignore.add("org.jboss.logging");
         ignore.add("org.jboss.marshalling");
 
@@ -600,6 +596,10 @@ public final class ArquillianPackager {
         if (version == null) {
             boolean testsLib = dependencyXml.contains("<classifier>tests");
             stripVersion = !testsLib && BOMResolver.getInstance(config).getBOMVersion(groupId, artifactId) != null;
+            // skip if its org.infinispan as we need explict version to work-around a problem when using test-jar dependencies
+            if ("org.infinispan".equals(groupId)) {
+                stripVersion = false;
+            }
         }
 
         if (version != null) {
