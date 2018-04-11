@@ -21,6 +21,10 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 public class Route2ConcurrentTest extends CamelAwsXRayTestSupport {
 
     public Route2ConcurrentTest() {
@@ -51,7 +55,8 @@ public class Route2ConcurrentTest extends CamelAwsXRayTestSupport {
             template.sendBody("seda:foo", "Hello World");
         }
 
-        assertTrue(notify.matches(30, TimeUnit.SECONDS));
+        assertThat("Not all exchanges were fully processed",
+                notify.matches(10, TimeUnit.SECONDS), is(equalTo(true)));
 
         verify();
     }

@@ -16,8 +16,15 @@
  */
 package org.apache.camel.component.aws.xray;
 
+import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class MulticastRouteTest extends CamelAwsXRayTestSupport {
 
@@ -41,7 +48,16 @@ public class MulticastRouteTest extends CamelAwsXRayTestSupport {
 
     @Test
     public void testRoute() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .from("seda:b").whenDone(1)
+                .and()
+                .from("seda:c").whenDone(1)
+                .create();
+
         template.requestBody("direct:start", "Hello");
+
+        assertThat("Not all exchanges were fully processed",
+                notify.matches(5, TimeUnit.SECONDS), is(equalTo(true)));
 
         verify();
     }
