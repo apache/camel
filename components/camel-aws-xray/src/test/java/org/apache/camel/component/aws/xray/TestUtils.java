@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.xray;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.camel.component.aws.xray.TestDataBuilder.TestSegment;
 import org.apache.camel.component.aws.xray.TestDataBuilder.TestSubsegment;
@@ -48,7 +49,9 @@ public final class TestUtils {
     }
 
     private static void verifyTraces(TestTrace expected, TestTrace actual) {
-        assertThat("Incorrect number of segment for trace",
+        assertThat("Incorrect number of segment for trace. Expected traces: "
+                        + expected.getSegments().stream().map(s -> s.name).collect(Collectors.toList())
+                        + " but found " + actual.getSegments().stream().map(s -> s.name).collect(Collectors.toList()),
                 actual.getSegments().size(), is(equalTo(expected.getSegments().size())));
         List<TestSegment> expectedSegments = new ArrayList<>(expected.getSegments());
         List<TestSegment> actualSegments = new ArrayList<>(actual.getSegments());
@@ -77,7 +80,8 @@ public final class TestUtils {
     }
 
     private static void verifySegments(TestSegment expected, TestSegment actual) {
-        assertThat("Incorrect name of segment",
+        assertThat("Incorrect name of segment. Expected segment name: "
+                        + expected.getName() + " but found: " + actual.getName(),
                 actual.getName(), is(equalTo(expected.getName())));
 
         boolean randomOrder = expected.isRandomOrder();
@@ -103,7 +107,8 @@ public final class TestUtils {
     }
 
     private static void verifySubsegments(TestSubsegment expected, TestSubsegment actual) {
-        assertThat("Incorrect name of subsegment",
+        assertThat("Incorrect name of subsegment. Expected " + actual.getName()
+                        + " but found: " + actual.getName(),
                 actual.getName(), is(equalTo(expected.getName())));
 
         boolean randomOrder = expected.isRandomOrder();
@@ -111,6 +116,8 @@ public final class TestUtils {
             if (randomOrder) {
                 checkSubsegmentInRandomOrder(expected.getSubsegments(), actual.getSubsegments());
             } else {
+                assertThat("Incorrect number of subsegments found in " + actual,
+                        actual.getSubsegments().size(), is(equalTo(expected.getSubsegments().size())));
                 for (int i = 0; i < expected.getSubsegments().size(); i++) {
                     verifySubsegments(expected.getSubsegments().get(i), actual.getSubsegments().get(i));
                 }
