@@ -47,7 +47,7 @@ public class AS2ClientConnection {
                 .add(new RequestTargetHost())
                 .add(new RequestUserAgent(this.userAgent))
                 .add(new RequestDate())
-                .add(new RequestContent())
+                .add(new RequestContent(true))
                 .add(new RequestConnControl())
                 .add(new RequestExpectContinue(true)).build();
         

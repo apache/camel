@@ -140,7 +140,7 @@ public class MicUtils {
         }
     }
     
-    private static String getMicJdkAlgorithmName(String[] micAs2AlgorithmNames) {
+    public static String getMicJdkAlgorithmName(String[] micAs2AlgorithmNames) {
         if (micAs2AlgorithmNames == null) {
             return AS2MicAlgorithm.SHA_1.getJdkAlgorithmName();
         }

@@ -155,7 +155,7 @@
                     <apiName>listen</apiName>
                     <proxyClass>org.apache.camel.component.as2.api.AS2ServerManager</proxyClass>
 	                <fromJavadoc>
-	                  <excludeMethods>stopListening</excludeMethods>
+	                  <excludeMethods>stopListening|handleMDNResponse</excludeMethods>
 	                </fromJavadoc>
                     <excludeConfigNames>handler</excludeConfigNames>
                 </api>

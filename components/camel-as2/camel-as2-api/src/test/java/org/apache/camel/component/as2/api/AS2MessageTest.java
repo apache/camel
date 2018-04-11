@@ -101,7 +101,35 @@ public class AS2MessageTest {
     
     @BeforeClass
     public static void setUpOnce() throws Exception {
-        testServer = new AS2ServerConnection(AS2_VERSION , "MyServer-HTTP/1.1", SERVER_FQDN, 8080);
+        Security.addProvider(new BouncyCastleProvider());
+        
+        //
+        // set up our certificates
+        //
+        KeyPairGenerator    kpg  = KeyPairGenerator.getInstance("RSA", "BC");
+
+        kpg.initialize(1024, new SecureRandom());
+
+        String issueDN = "O=Punkhorn Software, C=US";
+        KeyPair issueKP = kpg.generateKeyPair();
+        X509Certificate issueCert = Utils.makeCertificate(
+                                        issueKP, issueDN, issueKP, issueDN);
+        
+        //
+        // certificate we sign against
+        //
+        String signingDN = "CN=William J. Collins, E=punkhornsw@gmail.com, O=Punkhorn Software, C=US";
+        KeyPair signingKP = kpg.generateKeyPair();
+        X509Certificate signingCert = Utils.makeCertificate(
+                                        signingKP, signingDN, issueKP, issueDN);
+        
+        List<X509Certificate> certList = new ArrayList<X509Certificate>();
+
+        certList.add(signingCert);
+        certList.add(issueCert);
+
+        
+        testServer = new AS2ServerConnection(AS2_VERSION , "MyServer-HTTP/1.1", SERVER_FQDN, 8080, certList.toArray(new Certificate[0]), signingKP.getPrivate());
         testServer.listen("*", new HttpRequestHandler() {
                     @Override
                     public void handle(HttpRequest request, HttpResponse response, HttpContext context)
@@ -113,13 +141,6 @@ public class AS2MessageTest {
                         } catch (Exception e) {
                             throw new HttpException("Failed to parse AS2 Message Entity", e);
                         }
-//                        if (request instanceof HttpEntityEnclosingRequest && ((HttpEntityEnclosingRequest) request)
-//                                .getEntity() instanceof MultipartSignedEntity) {
-//                            MultipartSignedEntity entity = (MultipartSignedEntity) ((HttpEntityEnclosingRequest) request)
-//                                    .getEntity();
-//                            LOG.debug("Signed entity is valid?: " + entity.isValid());
-//                            LOG.debug("*** Recieved Request ***\n" + Util.printRequest(request));
-//                        }
                     }
                 });
     }

@@ -19,30 +19,17 @@ package org.apache.camel.component.as2.api;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
-import java.util.Arrays;
 
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.EntityParser;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.util.EntityUtils;
+import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.apache.http.protocol.HttpCoreContext;
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.smime.SMIMECapabilitiesAttribute;
-import org.bouncycastle.asn1.smime.SMIMECapability;
-import org.bouncycastle.asn1.smime.SMIMECapabilityVector;
-import org.bouncycastle.asn1.smime.SMIMEEncryptionKeyPreferenceAttribute;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;
-import org.bouncycastle.operator.OperatorCreationException;
+import org.apache.http.util.Args;
 
 /**
  * AS2 Client Manager
@@ -211,8 +198,8 @@ public class AS2ClientManager {
                 AS2CharSet.US_ASCII, AS2TransferEncoding.BASE64, false);
         switch (messageStructure) {
         case PLAIN:
-            applicationEDIFACTEntity.setMainBody(true);
-            request.setEntity(applicationEDIFACTEntity);
+            applicationEDIEntity.setMainBody(true);
+            EntityUtils.setMessageEntity(request, applicationEDIEntity);
             break;
         case SIGNED:
             AS2SignedDataGenerator gen = createSigningGenerator(httpContext);
@@ -220,7 +207,7 @@ public class AS2ClientManager {
             try {
                 MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(applicationEDIEntity, gen,
                         AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, true, null);
-                request.setEntity(multipartSignedEntity);
+                EntityUtils.setMessageEntity(request, multipartSignedEntity);
             } catch (Exception e) {
                 throw new HttpException("Failed to sign message", e);
             }
@@ -298,41 +285,8 @@ public class AS2ClientManager {
         if (privateKey == null) {
             throw new HttpException("Signing private key missing");
         }
-
-        AS2SignedDataGenerator gen = new AS2SignedDataGenerator();
-
-        // Get first certificate in chain for signing
-        X509Certificate signingCert = (X509Certificate) certificateChain[0];
-
-        // Create capabilities vector
-        SMIMECapabilityVector capabilities = new SMIMECapabilityVector();
-        capabilities.addCapability(SMIMECapability.dES_EDE3_CBC);
-        capabilities.addCapability(SMIMECapability.rC2_CBC, 128);
-        capabilities.addCapability(SMIMECapability.dES_CBC);
-
-        // Create signing attributes
-        ASN1EncodableVector attributes = new ASN1EncodableVector();
-        attributes.add(new SMIMEEncryptionKeyPreferenceAttribute(new IssuerAndSerialNumber(
-                new X500Name(signingCert.getIssuerDN().getName()), signingCert.getSerialNumber())));
-        attributes.add(new SMIMECapabilitiesAttribute(capabilities));
-
-        try {
-            gen.addSignerInfoGenerator(new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC")
-                    .setSignedAttributeGenerator(new AttributeTable(attributes))
-                    .build(algorithmName, privateKey, signingCert));
-        } catch (CertificateEncodingException | OperatorCreationException e) {
-            throw new HttpException("Failed to add signer", e);
-        }
-
-        // Create and populate certificate store.
-        try {
-            JcaCertStore certs = new JcaCertStore(Arrays.asList(certificateChain));
-            gen.addCertificates(certs);
-        } catch (CertificateEncodingException | CMSException e) {
-            throw new HttpException("Failed to add certificate chain to signature", e);
-        }
-
-        return gen;
+        
+        return SigningUtils.createSigningGenerator(algorithmName, certificateChain, privateKey);
 
     }
 

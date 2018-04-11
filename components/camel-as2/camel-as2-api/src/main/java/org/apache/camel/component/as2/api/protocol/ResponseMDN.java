@@ -1,6 +1,8 @@
 package org.apache.camel.component.as2.api.protocol;
 
 import java.io.IOException;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
 
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Constants;
@@ -8,16 +10,21 @@ import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.AS2ReportType;
 import org.apache.camel.component.as2.api.AS2ServerManager;
+import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
+import org.apache.camel.component.as2.api.AS2TransferEncoding;
 import org.apache.camel.component.as2.api.InvalidAS2NameException;
 import org.apache.camel.component.as2.api.Util;
 import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptions;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptionsParser;
-import org.apache.camel.component.as2.api.entity.EntityParser;
+import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.util.AS2HeaderUtils;
+import org.apache.camel.component.as2.api.util.AS2HeaderUtils.Parameter;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
+import org.apache.camel.component.as2.api.util.MicUtils;
+import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
@@ -36,10 +43,14 @@ public class ResponseMDN implements HttpResponseInterceptor {
     
     private final String as2Version;
     private final String serverFQDN;
+    private Certificate[] signingCertificateChain;
+    private PrivateKey signingPrivateKey;
 
-    public ResponseMDN(String as2Version, String serverFQDN) {
+    public ResponseMDN(String as2Version, String serverFQDN, Certificate[] signingCertificateChain, PrivateKey signingPrivateKey) {
         this.as2Version = as2Version;
         this.serverFQDN = serverFQDN;
+        this.signingCertificateChain = signingCertificateChain;
+        this.signingPrivateKey = signingPrivateKey;
     }
 
     @Override
@@ -122,12 +133,26 @@ public class ResponseMDN implements HttpResponseInterceptor {
             } else { 
                 // Synchronous Delivery
                 
-                if (dispositionNotificationOptions.getSignedReceiptProtocol() != null) {
+                AS2SignedDataGenerator gen = null;
+                if (dispositionNotificationOptions.getSignedReceiptProtocol() != null && signingCertificateChain != null && signingPrivateKey != null) {
+//                    Parameter param = dispositionNotificationOptions.getSignedReceiptMicalg();
+//                    String[] algorithmNames = param.getValues();
+//                    String algorithmName = MicUtils.getMicJdkAlgorithmName(algorithmNames);
+//                    gen = SigningUtils.createSigningGenerator(algorithmName, signingCertificateChain, signingPrivateKey);
+                }
+                
+                if (gen != null) {
                     // Create signed receipt
-                    // TODO Implenent
+//                    try {
+//                        MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(multipartReportEntity, gen,
+//                                AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, false, null);
+//                        response.setHeader(multipartSignedEntity.getContentType());
+//                        EntityUtils.setMessageEntity(response, multipartSignedEntity);
+//                    } catch (Exception e) {
+//                        
+//                    }
                 } else {
                     // Create unsigned receipt
-                    
                     Header reportTypeHeader = AS2HeaderUtils.createHeader(AS2Header.REPORT_TYPE, new String[][] { {AS2ReportType.DISPOSITION_NOTIFICATION }, {BOUNDARY_PARAM_NAME, boundary } });
                     response.addHeader(reportTypeHeader);
                     response.setHeader(AS2Header.CONTENT_TYPE, AS2MimeType.MULTIPART_REPORT);
