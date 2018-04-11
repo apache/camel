@@ -18,7 +18,13 @@ package org.apache.camel.component.aws.xray;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
-import java.util.*;
+import java.util.EventObject;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.Set;
 
 import com.amazonaws.xray.AWSXRay;
 import com.amazonaws.xray.AWSXRayRecorder;
@@ -26,7 +32,7 @@ import com.amazonaws.xray.entities.Entity;
 import com.amazonaws.xray.entities.Segment;
 import com.amazonaws.xray.entities.Subsegment;
 import com.amazonaws.xray.entities.TraceID;
-
+import com.amazonaws.xray.exceptions.AlreadyEmittedException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
@@ -277,10 +283,15 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                     if (sd.getComponent() != null) {
                         name = sd.getComponent() + ":" + name;
                     }
-                    Subsegment subsegment = AWSXRay.beginSubsegment(sanitizeName(name));
-                    sd.pre(subsegment, ese.getExchange(), ese.getEndpoint());
-                    LOG.trace("Creating new subsegment with ID {} and name {}",
-                            subsegment.getId(), subsegment.getName());
+                    try {
+                        Subsegment subsegment = AWSXRay.beginSubsegment(sanitizeName(name));
+                        sd.pre(subsegment, ese.getExchange(), ese.getEndpoint());
+                        LOG.trace("Creating new subsegment with ID {} and name {}",
+                                subsegment.getId(), subsegment.getName());
+                    } catch (AlreadyEmittedException aeEx) {
+                        LOG.warn("Ignoring starting of subsegment " + name + " as its parent segment"
+                                + " was already emitted to AWS.");
+                    }
                 } else {
                     LOG.trace("Ignoring creation of XRay subsegment as no segment exists in the current thread");
                 }
@@ -293,11 +304,17 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 SegmentDecorator sd = getSegmentDecorator(ese.getEndpoint());
 
                 if (AWSXRay.getCurrentSubsegmentOptional().isPresent()) {
-                    Subsegment subsegment = AWSXRay.getCurrentSubsegment();
-                    sd.post(subsegment, ese.getExchange(), ese.getEndpoint());
-                    subsegment.close();
-                    LOG.trace("Closing down subsegment with ID {} and name {}",
-                            subsegment.getId(), subsegment.getName());
+                    String name = sd.getOperationName(ese.getExchange(), ese.getEndpoint());
+                    try {
+                        Subsegment subsegment = AWSXRay.getCurrentSubsegment();
+                        sd.post(subsegment, ese.getExchange(), ese.getEndpoint());
+                        subsegment.close();
+                        LOG.trace("Closing down subsegment with ID {} and name {}",
+                                subsegment.getId(), subsegment.getName());
+                    } catch (AlreadyEmittedException aeEx) {
+                        LOG.warn("Ignoring close of subsegment " + name
+                                + " as its parent segment was already emitted to AWS");
+                    }
                 }
             } else {
                 LOG.trace("Received event {} from source {}", event, event.getSource());
@@ -377,7 +394,8 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
             }
 
             SegmentDecorator sd = getSegmentDecorator(route.getEndpoint());
-            if (!AWSXRay.getCurrentSegmentOptional().isPresent()) {
+            Optional<Segment> curSegment = AWSXRay.getCurrentSegmentOptional();
+            if (!curSegment.isPresent()) {
                 Segment segment = AWSXRay.beginSegment(sanitizeName(route.getId()));
                 segment.setTraceId(traceID);
                 sd.pre(segment, exchange, route.getEndpoint());
@@ -385,10 +403,16 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                         segment.getId(), segment.getName());
                 exchange.setProperty(CURRENT_SEGMENT, segment);
             } else {
-                Subsegment subsegment = AWSXRay.beginSubsegment(route.getId());
-                sd.pre(subsegment, exchange, route.getEndpoint());
-                LOG.trace("Created new XRay subsegment {} with name {}",
-                        subsegment.getId(), subsegment.getName());
+                String segmentName = curSegment.get().getId();
+                try {
+                    Subsegment subsegment = AWSXRay.beginSubsegment(route.getId());
+                    sd.pre(subsegment, exchange, route.getEndpoint());
+                    LOG.trace("Created new XRay subsegment {} with name {}",
+                            subsegment.getId(), subsegment.getName());
+                } catch (AlreadyEmittedException aeEx) {
+                    LOG.warn("Ignoring opening of subsegment " + route.getId() + " as its parent segment "
+                            + segmentName + " was already emitted before.");
+                }
             }
         }
 
@@ -401,19 +425,25 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
 
             LOG.trace("=> RoutePolicy-Done: Route: {} - RouteId: {}", routeId, route.getId());
 
-            SegmentDecorator sd = getSegmentDecorator(route.getEndpoint());
-            if (AWSXRay.getCurrentSubsegmentOptional().isPresent()) {
-                Subsegment subsegment = AWSXRay.getCurrentSubsegment();
-                sd.post(subsegment, exchange, route.getEndpoint());
-                subsegment.close();
-                LOG.trace("Closing down Subsegment {} with name {}",
-                        subsegment.getId(), subsegment.getName());
-            } else if (AWSXRay.getCurrentSegmentOptional().isPresent()) {
-                Segment segment = AWSXRay.getCurrentSegment();
-                sd.post(segment, exchange, route.getEndpoint());
-                segment.close();
-                LOG.trace("Closing down Segment {} with name {}",
-                        segment.getId(), segment.getName());
+            try {
+                SegmentDecorator sd = getSegmentDecorator(route.getEndpoint());
+                Optional<Segment> curSegment = AWSXRay.getCurrentSegmentOptional();
+                Optional<Subsegment> curSubSegment = AWSXRay.getCurrentSubsegmentOptional();
+                if (curSubSegment.isPresent()) {
+                    Subsegment subsegment = curSubSegment.get();
+                    sd.post(subsegment, exchange, route.getEndpoint());
+                    subsegment.close();
+                    LOG.trace("Closing down Subsegment {} with name {}",
+                            subsegment.getId(), subsegment.getName());
+                } else if (curSegment.isPresent()) {
+                    Segment segment = curSegment.get();
+                    sd.post(segment, exchange, route.getEndpoint());
+                    segment.close();
+                    LOG.trace("Closing down Segment {} with name {}",
+                            segment.getId(), segment.getName());
+                }
+            } catch (AlreadyEmittedException aeEx) {
+                LOG.warn("Ignoring closing of (sub)segment " + route.getId() + " as the segment was already emitted.");
             }
         }
 

@@ -17,17 +17,24 @@
 package org.apache.camel.component.aws.xray;
 
 import java.lang.invoke.MethodHandles;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Body;
 import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InterceptStrategy;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class ErrorTest extends CamelAwsXRayTestSupport {
 
@@ -85,7 +92,12 @@ public class ErrorTest extends CamelAwsXRayTestSupport {
 
     @Test
     public void testRoute() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+
         template.requestBody("direct:start", "Hello");
+
+        assertThat("Not all exchanges were fully processed",
+                notify.matches(5, TimeUnit.SECONDS), is(equalTo(true)));
 
         verify();
     }
