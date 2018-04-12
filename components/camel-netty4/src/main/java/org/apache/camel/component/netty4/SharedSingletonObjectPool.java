@@ -38,6 +38,13 @@ public class SharedSingletonObjectPool<T> implements ObjectPool<T> {
 
     @Override
     public synchronized T borrowObject() throws Exception, NoSuchElementException, IllegalStateException {
+        if (t != null) {
+            // ensure the object is validate before we borrow it
+            if (!factory.validateObject(t)) {
+                invalidateObject(t);
+                t = null;
+            }
+        }
         if (t == null) {
             t = factory.makeObject();
         }
