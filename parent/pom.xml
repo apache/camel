@@ -189,7 +189,7 @@
     <docker-java-bundle-version>3.0.14_1</docker-java-bundle-version>
     <docker-maven-plugin-version>0.25.0</docker-maven-plugin-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
-    <dozer-version>6.1.0</dozer-version>
+    <dozer-version>6.2.0</dozer-version>
     <drools-version>7.3.0.Final</drools-version>
     <dropbox-version>3.0.6</dropbox-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
@@ -355,6 +355,7 @@
     <javassist-version>3.20.0-GA</javassist-version>
     <javax.el-api-version>2.2.5</javax.el-api-version>
     <javax.el-version>2.2.5</javax.el-version>
+    <javax.el3-version>3.0.0</javax.el3-version>
     <javax.el-api-hibernate-validator-version>3.0.1-b04</javax.el-api-hibernate-validator-version>
     <javax.el-hibernate-validator-version>3.0.1-b10</javax.el-hibernate-validator-version>
     <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
@@ -525,6 +526,7 @@
     <networknt-json-schema-validator-version>0.1.17</networknt-json-schema-validator-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <!-- should be in-sync with deltaspike -->
+    <objenesis-version>2.6</objenesis-version>
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
     <openwebbeans-version>1.7.3</openwebbeans-version>
     <oauth-provider-bundle-version>20100527_1</oauth-provider-bundle-version>

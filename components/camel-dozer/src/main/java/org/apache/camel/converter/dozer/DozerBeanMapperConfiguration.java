@@ -19,8 +19,6 @@ package org.apache.camel.converter.dozer;
 import java.util.List;
 import java.util.Map;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 import org.dozer.CustomConverter;
 import org.dozer.CustomFieldMapper;
 import org.dozer.DozerEventListener;

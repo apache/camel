@@ -48,17 +48,20 @@
       <groupId>com.github.dozermapper</groupId>
       <artifactId>dozer-core</artifactId>
     </dependency>
+
+    <!-- Expressions -->
     <dependency>
       <groupId>javax.el</groupId>
       <artifactId>javax.el-api</artifactId>
-      <version>${javax.el-api-version}</version>
+      <version>${javax.el3-version}</version>
     </dependency>
-    <!-- must use this glassfish EL implementation -->
     <dependency>
-      <groupId>org.glassfish.web</groupId>
+      <groupId>org.glassfish</groupId>
       <artifactId>javax.el</artifactId>
-      <version>${javax.el-version}</version>
+      <version>${javax.el3-version}</version>
     </dependency>
+
+    <!-- Testing -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
