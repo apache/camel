@@ -20,6 +20,8 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.pool.ObjectPool;
 import org.apache.commons.pool.PoolableObjectFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An {@link org.apache.commons.pool.ObjectPool} that uses a single shared instance.
@@ -29,6 +31,7 @@ import org.apache.commons.pool.PoolableObjectFactory;
  */
 public class SharedSingletonObjectPool<T> implements ObjectPool<T> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SharedSingletonObjectPool.class);
     private final PoolableObjectFactory<T> factory;
     private volatile T t;
 
@@ -42,6 +45,7 @@ public class SharedSingletonObjectPool<T> implements ObjectPool<T> {
             // ensure the object is validate before we borrow it
             if (!factory.validateObject(t)) {
                 invalidateObject(t);
+                LOG.info("Recreating new connection as current connection is invalid: {}", t);
                 t = null;
             }
         }
