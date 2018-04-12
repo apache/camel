@@ -21,8 +21,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.el.ExpressionFactory;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -35,9 +33,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ResourceHelper;
 import org.dozer.CustomConverter;
 import org.dozer.Mapper;
-import org.dozer.config.BeanContainer;
-import org.dozer.loader.xml.ELEngine;
-import org.dozer.loader.xml.ExpressionElementReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
