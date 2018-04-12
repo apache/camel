@@ -16,23 +16,17 @@
  */
 package org.apache.camel.converter.dozer;
 
-import java.lang.reflect.Field;
-import java.util.Map;
-
-import javax.el.ExpressionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.dozer.DozerEndpoint;
-import org.apache.camel.util.ReflectionHelper;
-import org.dozer.CustomConverter;
 import org.dozer.DozerBeanMapperBuilder;
-import org.dozer.DozerEventListener;
 import org.dozer.Mapper;
-import org.dozer.config.BeanContainer;
-import org.dozer.config.GlobalSettings;
-import org.dozer.loader.api.BeanMappingBuilder;
-import org.dozer.loader.xml.ELEngine;
-import org.dozer.loader.xml.ExpressionElementReader;
+import org.dozer.config.SettingsKeys;
+import org.dozer.el.DefaultELEngine;
+import org.dozer.el.ELEngine;
+import org.dozer.el.ELExpressionFactory;
+import org.dozer.el.NoopELEngine;
+import org.dozer.el.TcclELEngine;
+import org.dozer.util.RuntimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,147 +51,50 @@ public class MapperFactory {
     }
 
     private Mapper parseConfiguration(DozerBeanMapperConfiguration configuration) {
-        DozerBeanMapperBuilder builder = DozerBeanMapperBuilder.create();
-        if (configuration != null) {
-            if (configuration.getMappingFiles() != null) {
-                String[] files = configuration.getMappingFiles().toArray(new String[configuration.getMappingFiles().size()]);
-                builder.withMappingFiles(files);
-            }
+        configureSettings();
 
-            if (configuration.getCustomConverters() != null) {
-                for (CustomConverter current : configuration.getCustomConverters()) {
-                    builder.withCustomConverter(current);
-                }
-            }
-            if (configuration.getEventListeners() != null) {
-                for (DozerEventListener current : configuration.getEventListeners()) {
-                    builder.withEventListener(current);
-                }
-            }
-
-            if (configuration.getCustomConvertersWithId() != null) {
-                for (Map.Entry<String, CustomConverter> current : configuration.getCustomConvertersWithId().entrySet()) {
-                    builder.withCustomConverterWithId(current.getKey(), current.getValue());
-                }
-            }
-
-            if (configuration.getBeanMappingBuilders() != null) {
-                for (BeanMappingBuilder current : configuration.getBeanMappingBuilders()) {
-                    builder.withMappingBuilder(current);
-                }
-            }
-
-            if (configuration.getCustomFieldMapper() != null) {
-                builder.withCustomFieldMapper(configuration.getCustomFieldMapper());
-            }
+        Mapper mapper;
+        if (configuration == null) {
+            mapper = DozerBeanMapperBuilder.buildDefault();
+        } else {
+            mapper = DozerBeanMapperBuilder.create()
+                    .withMappingFiles(configuration.getMappingFiles())
+                    .withCustomConverters(configuration.getCustomConverters())
+                    .withEventListeners(configuration.getEventListeners())
+                    .withCustomConvertersWithIds(configuration.getCustomConvertersWithId())
+                    .withMappingBuilders(configuration.getBeanMappingBuilders())
+                    .withCustomFieldMapper(configuration.getCustomFieldMapper())
+                    .withELEngine(createELEngine())
+                    .build();
         }
-
-        Mapper mapper = builder.build();
-
-        configureGlobalSettings(mapper);
-        configureBeanContainer(mapper, configuration);
 
         mapper.getMappingMetadata();
 
         return mapper;
     }
 
-    /**
-     * Sets hidden fields on the mapper and returns an instance
-     * NOTE: https://github.com/DozerMapper/dozer/issues/463
-     *
-     * @param mapper
-     */
-    private void configureGlobalSettings(Mapper mapper) {
-        GlobalSettings settings;
-        try {
-            LOG.info("Attempting to retrieve GlobalSettings from: " + mapper);
-            Field field = mapper.getClass().getDeclaredField("globalSettings");
-            field.setAccessible(true);
-
-            settings = (GlobalSettings)field.get(mapper);
-        } catch (Exception e) {
-            throw new IllegalStateException("Cannot retrieve Dozer GlobalSettings due " + e.getMessage(), e);
-        }
-
-        //Safety check
-        if (settings == null) {
-            throw new IllegalStateException("Cannot retrieve Dozer GlobalSettings due null reflection response");
-        }
-
-        try {
-            LOG.info("Configuring GlobalSettings to use Camel classloader: {}", DozerThreadContextClassLoader.class.getName());
-            Field field = settings.getClass().getDeclaredField("classLoaderBeanName");
-            ReflectionHelper.setField(field, settings, DozerThreadContextClassLoader.class.getName());
-        } catch (Exception e) {
-            throw new IllegalStateException("Cannot configure Dozer GlobalSettings to use DozerThreadContextClassLoader as classloader due " + e.getMessage(), e);
-        }
-
-        try {
-            LOG.info("Configuring GlobalSettings to enable EL");
-            Field field = settings.getClass().getDeclaredField("elEnabled");
-            ReflectionHelper.setField(field, settings, true);
-        } catch (NoSuchFieldException nsfEx) {
-            throw new IllegalStateException("Failed to enable EL in global Dozer settings", nsfEx);
-        }
+    private void configureSettings() {
+        System.setProperty(SettingsKeys.CLASS_LOADER_BEAN, DozerThreadContextClassLoader.class.getName());
     }
 
-    public void configureBeanContainer(Mapper mapper, DozerBeanMapperConfiguration configuration) {
-        String elprop = System.getProperty("javax.el.ExpressionFactory");
-        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        try {
-            ClassLoader appcl = camelContext.getApplicationContextClassLoader();
-            ClassLoader auxcl = appcl != null ? appcl : DozerEndpoint.class.getClassLoader();
-            Thread.currentThread().setContextClassLoader(auxcl);
-            try {
-                Class<?> clazz = auxcl.loadClass("com.sun.el.ExpressionFactoryImpl");
-                ExpressionFactory factory = (ExpressionFactory)clazz.newInstance();
-                System.setProperty("javax.el.ExpressionFactory", factory.getClass().getName());
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
-                LOG.debug("Cannot load glasfish expression engine, using default");
-            }
+    private ELEngine createELEngine() {
+        ELEngine answer;
 
-            BeanContainer beanContainer = resolveBeanContainer(mapper);
-            if (beanContainer.getElEngine() == null) {
-                ELEngine engine = new ELEngine();
-                engine.init();
+        ClassLoader appcl = camelContext.getApplicationContextClassLoader();
+        ClassLoader auxcl = appcl == null ? DozerEndpoint.class.getClassLoader() : appcl;
 
-                beanContainer.setElEngine(engine);
-            }
-
-            beanContainer.setElementReader(new ExpressionElementReader(beanContainer.getElEngine()));
-        } finally {
-            Thread.currentThread().setContextClassLoader(tccl);
-            if (elprop == null) {
-                System.clearProperty("javax.el.ExpressionFactory");
+        if (ELExpressionFactory.isSupported(auxcl)) {
+            if (RuntimeUtils.isOSGi()) {
+                answer = new TcclELEngine(ELExpressionFactory.newInstance(auxcl), auxcl);
             } else {
-                System.setProperty("javax.el.ExpressionFactory", elprop);
+                answer = new DefaultELEngine(ELExpressionFactory.newInstance());
             }
-        }
-    }
+        } else {
+            LOG.warn("Expressions are not supported by Dozer. Are you missing javax.el dependency?");
 
-    private BeanContainer resolveBeanContainer(Mapper mapper) {
-        LOG.info("Attempting to retrieve BeanContainer from: " + mapper);
-
-        BeanContainer beanContainer = (BeanContainer)resolveProperty(mapper, "beanContainer");
-        if (beanContainer == null) {
-            throw new IllegalStateException("Cannot retrieve Dozer BeanContainer due null response");
+            answer = new NoopELEngine();
         }
 
-        return beanContainer;
-    }
-
-    private static Object resolveProperty(Mapper mapper, String fieldName) {
-        Object prop;
-        try {
-            Field field = mapper.getClass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-
-            prop = field.get(mapper);
-        } catch (Exception e) {
-            throw new IllegalStateException("Cannot retrieve DozerBeanMapper." + fieldName + " due " + e.getMessage(), e);
-        }
-
-        return prop;
+        return answer;
     }
 }
