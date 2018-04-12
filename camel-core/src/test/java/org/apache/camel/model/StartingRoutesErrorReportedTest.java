@@ -56,6 +56,22 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
         }
     }
 
+    public void testMaskPassword() throws Exception {
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("stub:foo?password=secret&beer=yes").routeId("route2").to("direct:result?foo=bar");
+                }
+            });
+            context.start();
+            fail();
+        } catch (FailedToCreateRouteException e) {
+            assertTrue(e.getMessage().startsWith("Failed to create route route2 at: >>> To[direct:result?foo=bar] <<< in route:"
+                    + " Route(route2)[[From[stub:foo?password=xxxxxx&beer=yes]] -> [... because of"));
+        }
+    }
+
     public void testInvalidBean() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
