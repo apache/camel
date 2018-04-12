@@ -228,7 +228,12 @@ public class S3Producer extends DefaultProducer {
             is = new ByteArrayInputStream(baos.toByteArray());
         }
 
-        putObjectRequest = new PutObjectRequest(getConfiguration().getBucketName(), determineKey(exchange), is, objectMetadata);
+        String bucketName = exchange.getIn().getHeader(S3Constants.BUCKET_NAME, String.class);
+        if (bucketName == null){
+            LOG.trace("Bucket name is not in header, using default one  [{}]...", getConfiguration().getBucketName());
+            bucketName = getConfiguration().getBucketName();
+        }
+        putObjectRequest = new PutObjectRequest(bucketName, determineKey(exchange), is, objectMetadata);
 
         String storageClass = determineStorageClass(exchange);
         if (storageClass != null) {
