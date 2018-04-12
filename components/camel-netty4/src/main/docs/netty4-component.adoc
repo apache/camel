@@ -684,7 +684,7 @@ To do this you need to implement `NettyCamelStateCorrelationManager` as correlat
 it via the `correlationManager=#myManager` option.
 
 You can find an example with the Apache Camel source code in the examples directory
-under the `camel-netty-custom-correlation-example` directory.
+under the `camel-example-netty-custom-correlation` directory.
 
 === See Also
 
