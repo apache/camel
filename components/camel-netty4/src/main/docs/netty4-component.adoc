@@ -22,24 +22,24 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-netty4</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
-### URI format
+=== URI format
 
 The URI scheme for a netty component is as follows
 
-[source,java]
-----------------------------------------
+[source,text]
+----
 netty4:tcp://localhost:99999[?options]
 netty4:udp://remotehost:99999/[?options]
-----------------------------------------
+----
 
 This component supports producer and consumer endpoints for both TCP and
 UDP.
@@ -47,11 +47,7 @@ UDP.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
-
-
-
-
+=== Options
 
 // component options: START
 The Netty4 component supports 5 options which are listed below.
@@ -68,15 +64,6 @@ The Netty4 component supports 5 options which are listed below.
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
-
-
-
-
-
-
-
-
-
 
 
 // endpoint options: START
@@ -133,9 +120,9 @@ with the following path and query parameters:
 | *connectTimeout* (producer) | Time to wait for a socket connection to be available. Value is in millis. | 10000 | int
 | *requestTimeout* (producer) | Allows to use a timeout for the Netty producer when calling a remote server. By default no timeout is in use. The value is in milli seconds, so eg 30000 is 30 seconds. The requestTimeout is using Netty's ReadTimeoutHandler to trigger the timeout. |  | long
 | *clientInitializerFactory* (producer) | To use a custom ClientInitializerFactory |  | ClientInitializer Factory
-| *correlationManager* (producer) | To use a custom correlation manager to manage how request and reply messages are mapped when using request/reply with the netty producer. This should only be used if you have a way to map requests together with replies such as if there is correlation ids in both the request and reply messages. This can be used if you want to multiplex concurrent messages on the same channel (aka connection) in netty. When doing this you must have a way to correlate the request and reply messages so you can store the right reply on the inflight Camel Exchange before its continued routed. |  | NettyCamelState CorrelationManager
+| *correlationManager* (producer) | To use a custom correlation manager to manage how request and reply messages are mapped when using request/reply with the netty producer. This should only be used if you have a way to map requests together with replies such as if there is correlation ids in both the request and reply messages. This can be used if you want to multiplex concurrent messages on the same channel (aka connection) in netty. When doing this you must have a way to correlate the request and reply messages so you can store the right reply on the inflight Camel Exchange before its continued routed. See also the producerPoolEnabled option for more details. |  | NettyCamelState CorrelationManager
 | *lazyChannelCreation* (producer) | Channels can be lazily created to avoid exceptions, if the remote server is not up and running when the Camel producer is started. | true | boolean
-| *producerPoolEnabled* (producer) | Whether producer pool is enabled or not. Important: Do not turn this off, as the pooling is needed for handling concurrency and reliable request/reply. | true | boolean
+| *producerPoolEnabled* (producer) | Whether producer pool is enabled or not. Important: If you turn this off then a single shared connection is used for the producer, also if you are doing request/reply. That means there is a potential issue with interleaved responses if replies comes back out-of-order. Therefore you need to have a correlation id in both the request and reply messages so you can properly correlate the replies to the Camel callback that is responsible for continue processing the message in Camel. To do this you need to implement NettyCamelStateCorrelationManager as correlation manager and configure it via the correlationManager option. See also the correlationManager option for more details. | true | boolean
 | *producerPoolMaxActive* (producer) | Sets the cap on the number of objects that can be allocated by the pool (checked out to clients, or idle awaiting checkout) at a given time. Use a negative value for no limit. | -1 | int
 | *producerPoolMaxIdle* (producer) | Sets the cap on the number of idle instances in the pool. | 100 | int
 | *producerPoolMinEvictable Idle* (producer) | Sets the minimum amount of time (value in millis) an object may sit idle in the pool before it is eligible for eviction by the idle object evictor. | 300000 | long
@@ -182,19 +169,13 @@ with the following path and query parameters:
 // endpoint options: END
 
 
+=== Registry based Options
 
-
-
-
-
-### Registry based Options
-
-Codec Handlers and SSL Keystores can be enlisted in the
-Registry, such as in the Spring XML file. 
+Codec Handlers and SSL Keystores can be enlisted in the Registry, such as in the Spring XML file.
 The values that could be passed in, are the following:
 
 [width="100%",cols="10%,90%",options="header",]
-|=======================================================================
+|===
 |Name |Description
 
 |`passphrase` |password setting to use in order to encrypt/decrypt payloads sent using
@@ -239,11 +220,11 @@ io.netty.channel.ChannelOutboundHandlerAdapter.
 separated by comma, and have the values be looked up in the
 Registry. Just remember to prefix the value with #
 so Camel knows it should lookup.
-|=======================================================================
+|===
 
-*Important:* Read below about using non shareable encoders/decoders.
+NOTE: Read below about using non shareable encoders/decoders.
 
-#### Using non shareable encoders or decoders
+==== Using non shareable encoders or decoders
 
 If your encoders or decoders is not shareable (eg they have the
 @Shareable class annotation), then your encoder/decoder must implement
@@ -257,18 +238,16 @@ The Netty component offers a
 `org.apache.camel.component.netty.ChannelHandlerFactories` factory
 class, that has a number of commonly used methods.
 
-### Sending Messages to/from a Netty endpoint
+=== Sending Messages to/from a Netty endpoint
 
-#### Netty Producer
+==== Netty Producer
 
 In Producer mode, the component provides the ability to send payloads to
-a socket endpoint +
- using either TCP or UDP protocols (with optional SSL support).
+a socket endpoint using either TCP or UDP protocols (with optional SSL support).
 
-The producer mode supports both one-way and request-response based
-operations.
+The producer mode supports both one-way and request-response based operations.
 
-#### Netty Consumer
+==== Netty Consumer
 
 In Consumer mode, the component provides the ability to:
 
@@ -281,12 +260,12 @@ object based payloads and
 The consumer mode supports both one-way and request-response based
 operations.
 
-### Usage Samples
+=== Examples
 
-#### A UDP Netty endpoint using Request-Reply and serialized object payload
+==== A UDP Netty endpoint using Request-Reply and serialized object payload
 
 [source,java]
-------------------------------------------------------------------
+----
 RouteBuilder builder = new RouteBuilder() {
   public void configure() {
     from("netty4:udp://localhost:5155?sync=true")
@@ -299,21 +278,21 @@ RouteBuilder builder = new RouteBuilder() {
        }
     }
 };
-------------------------------------------------------------------
+----
 
-#### A TCP based Netty consumer endpoint using One-way communication
+==== A TCP based Netty consumer endpoint using One-way communication
 
 [source,java]
--------------------------------------------
+----
 RouteBuilder builder = new RouteBuilder() {
   public void configure() {
        from("netty4:tcp://localhost:5150")
            .to("mock:result");
   }
 };
--------------------------------------------
+----
 
-#### An SSL/TCP based Netty consumer endpoint using Request-Reply communication
+==== An SSL/TCP based Netty consumer endpoint using Request-Reply communication
 
 [[Netty4-UsingtheJSSEConfigurationUtility]]
 Using the JSSE Configuration Utility
@@ -329,7 +308,7 @@ to use the utility with the Netty component.
 Programmatic configuration of the component
 
 [source,java]
-------------------------------------------------------------------------------------------
+----
 KeyStoreParameters ksp = new KeyStoreParameters();
 ksp.setResource("/users/home/server/keystore.jks");
 ksp.setPassword("keystorePassword");
@@ -343,13 +322,13 @@ scp.setKeyManagers(kmp);
 
 NettyComponent nettyComponent = getContext().getComponent("netty4", NettyComponent.class);
 nettyComponent.setSslContextParameters(scp);
-------------------------------------------------------------------------------------------
+----
 
 [[Netty4-SpringDSLbasedconfigurationofendpoint]]
 Spring DSL based configuration of endpoint
 
 [source,xml]
--------------------------------------------------------------------------------------------------------
+----
 ...
   <camel:sslContextParameters
       id="sslContextParameters">
@@ -363,13 +342,13 @@ Spring DSL based configuration of endpoint
 ...
   <to uri="netty4:tcp://localhost:5150?sync=true&ssl=true&sslContextParameters=#sslContextParameters"/>
 ...
--------------------------------------------------------------------------------------------------------
+----
 
 [[Netty4-UsingBasicSSL/TLSconfigurationontheJettyComponent]]
 Using Basic SSL/TLS configuration on the Jetty Component
 
 [source,java]
-------------------------------------------------------------------------------
+----
 JndiRegistry registry = new JndiRegistry(createJndiContext());
 registry.bind("password", "changeit");
 registry.bind("ksf", new File("src/test/resources/keystore.jks"));
@@ -393,12 +372,10 @@ context.addRoutes(new RouteBuilder() {
        }
   }
 });
-------------------------------------------------------------------------------
+----
 
 [[Netty4-GettingaccesstoSSLSessionandtheclientcertificate]]
 Getting access to SSLSession and the client certificate
-
-*Available as of Camel 2.12*
 
 You can get access to the `javax.net.ssl.SSLSession` if you eg need to
 get details about the client certificate. When `ssl=true` then the
@@ -406,12 +383,12 @@ get details about the client certificate. When `ssl=true` then the
 header on the Camel Message as shown below:
 
 [source,java]
-----------------------------------------------------------------------------------------------------
+----
 SSLSession session = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
 // get the first certificate which is client certificate
 javax.security.cert.X509Certificate cert = session.getPeerCertificateChain()[0];
 Principal principal = cert.getSubjectDN();
-----------------------------------------------------------------------------------------------------
+----
 
 Remember to set `needClientAuth=true` to authenticate the client,
 otherwise `SSLSession` cannot access information about the client
@@ -425,7 +402,7 @@ enriches the Camel Message with headers having
 details about the client certificate. For example the subject name is
 readily available in the header `CamelNettySSLClientCertSubjectName`.
 
-#### Using Multiple Codecs
+==== Using Multiple Codecs
 
 In certain cases it may be necessary to add chains of encoders and
 decoders to the netty pipeline. To add multpile codecs to a camel netty
@@ -436,13 +413,13 @@ ChannelDownstreamHandlers) that should be added to the pipeline. Note
 that if encoders is specified then the encoder param will be ignored,
 similarly for decoders and the decoder param.
 
-INFO: Read further above about using non shareable encoders/decoders.
+NOTE: Read further above about using non shareable encoders/decoders.
 
 The lists of codecs need to be added to the Camel's registry so they can
 be resolved when the endpoint is created.
 
 [source,java]
--------------------------------------------------------------------------------------------------------------------
+----
 ChannelHandlerFactory lengthDecoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
  
 StringDecoder stringDecoder = new StringDecoder();
@@ -464,15 +441,13 @@ encoders.add(stringEncoder);
  
 registry.bind("encoders", encoders);
 registry.bind("decoders", decoders);
-
--------------------------------------------------------------------------------------------------------------------
+----
 
 Spring's native collections support can be used to specify the codec
 lists in an application context
 
-[source,java]
--------------------------------------------------------------------------------------------------------------------------------------------------
-   
+[source,xml]
+----
 <util:list id="decoders" list-class="java.util.LinkedList">
         <bean class="org.apache.camel.component.netty4.ChannelHandlerFactories" factory-method="newLengthFieldBasedFrameDecoder">
             <constructor-arg value="1048576"/>
@@ -504,35 +479,35 @@ lists in an application context
         <constructor-arg value="4"/>
     </bean>
     <bean id="string-decoder" class="io.netty.handler.codec.string.StringDecoder"/>
--------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 The bean names can then be used in netty endpoint definitions either as
 a comma separated list or contained in a List e.g.
 
 [source,java]
------------------------------------------------------------------------------------------------------------------------
+----
  from("direct:multiple-codec").to("netty4:tcp://localhost:{{port}}?encoders=#encoders&sync=false");
                 
  from("netty4:tcp://localhost:{{port}}?decoders=#length-decoder,#string-decoder&sync=false").to("mock:multiple-codec");
------------------------------------------------------------------------------------------------------------------------
+----
 
-or via spring.
+or via XML.
 
-[source,java]
--------------------------------------------------------------------------------------------------------------
-   <camelContext id="multiple-netty-codecs-context" xmlns="http://camel.apache.org/schema/spring">
-        <route>
-            <from uri="direct:multiple-codec"/>
-            <to uri="netty4:tcp://localhost:5150?encoders=#encoders&amp;sync=false"/>
-        </route>
-        <route>
-            <from uri="netty4:tcp://localhost:5150?decoders=#length-decoder,#string-decoder&amp;sync=false"/>
-            <to uri="mock:multiple-codec"/>
-        </route>
-    </camelContext>
--------------------------------------------------------------------------------------------------------------
+[source,xml]
+----
+<camelContext id="multiple-netty-codecs-context" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:multiple-codec"/>
+        <to uri="netty4:tcp://localhost:5150?encoders=#encoders&amp;sync=false"/>
+    </route>
+    <route>
+        <from uri="netty4:tcp://localhost:5150?decoders=#length-decoder,#string-decoder&amp;sync=false"/>
+        <to uri="mock:multiple-codec"/>
+    </route>
+</camelContext>
+----
 
-### Closing Channel When Complete
+=== Closing Channel When Complete
 
 When acting as a server you sometimes want to close the channel when,
 for example, a client conversion is finished. +
@@ -547,22 +522,23 @@ value. +
 written the bye message back to the client:
 
 [source,java]
---------------------------------------------------------------------------------------------------------
-        from("netty4:tcp://localhost:8080").process(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                String body = exchange.getIn().getBody(String.class);
-                exchange.getOut().setBody("Bye " + body);
-                // some condition which determines if we should close
-                if (close) {
-                    exchange.getOut().setHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
-                }
-            }
-        });
---------------------------------------------------------------------------------------------------------
+----
+from("netty4:tcp://localhost:8080").process(new Processor() {
+    public void process(Exchange exchange) throws Exception {
+        String body = exchange.getIn().getBody(String.class);
+        exchange.getOut().setBody("Bye " + body);
+        // some condition which determines if we should close
+        if (close) {
+            exchange.getOut().setHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
+        }
+    }
+});
+----
 
 [[Netty4-Addingcustomchannelpipelinefactoriestogaincompletecontroloveracreatedpipeline]]
 Adding custom channel pipeline factories to gain complete control over a
-### created pipeline
+
+=== Custom pipeline
 
 Custom channel pipelines provide complete control to the user over the
 handler/interceptor chain by inserting custom handler(s), encoder(s) &
@@ -571,7 +547,7 @@ very simple way.
 
 In order to add a custom pipeline, a custom channel pipeline factory
 must be created and registered with the context via the context registry
-(JNDIRegistry,or the camel-spring ApplicationContextRegistry etc).
+(JNDIRegistry, or the camel-spring ApplicationContextRegistry etc).
 
 A custom pipeline factory must be constructed as follows
 
@@ -581,20 +557,20 @@ class `ClientPipelineFactory`.
 class `ServerInitializerFactory`.
 * The classes should override the initChannel() method in order to
 insert custom handler(s), encoder(s) and decoder(s). Not overriding the
-initChannel() method creates a pipeline with no handlers, encoders or
+`initChannel()` method creates a pipeline with no handlers, encoders or
 decoders wired to the pipeline.
 
 The example below shows how ServerInitializerFactory factory may be
 created
 
-*Using custom pipeline factory*
+==== Using custom pipeline factory
 
 [source,java]
---------------------------------------------------------------------------------------------------------------------------------
+----
 public class SampleServerInitializerFactory extends ServerInitializerFactory {
     private int maxLineSize = 1024;
 
-     protected void initChannel(Channel ch) throws Exception {
+    protected void initChannel(Channel ch) throws Exception {
         ChannelPipeline channelPipeline = ch.pipeline();
 
         channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));
@@ -604,13 +580,13 @@ public class SampleServerInitializerFactory extends ServerInitializerFactory {
         channelPipeline.addLast("handler", new ServerChannelHandler(consumer));
     }
 }
---------------------------------------------------------------------------------------------------------------------------------
+----
 
 The custom channel pipeline factory can then be added to the registry
 and instantiated/utilized on a camel route in the following way
 
 [source,java]
-----------------------------------------------------------------------
+----
 Registry registry = camelContext.getRegistry();
 ServerInitializerFactory factory = new TestServerInitializerFactory();
 registry.bind("spf", factory);
@@ -630,11 +606,9 @@ context.addRoutes(new RouteBuilder() {
        }
   }
 });
-----------------------------------------------------------------------
+----
 
-### Reusing Netty boss and worker thread pools
-
-*Available as of Camel 2.12*
+=== Reusing Netty boss and worker thread pools
 
 Netty has two kind of thread pools: boss and worker. By default each
 Netty consumer and producer has their private thread pools. If you want
@@ -646,17 +620,17 @@ For example using Spring XML we can create a shared worker thread pool
 using the `NettyWorkerPoolBuilder` with 2 worker threads as shown below:
 
 [source,xml]
------------------------------------------------------------------------------------------
-  <!-- use the worker pool builder to help create the shared thread pool -->
-  <bean id="poolBuilder" class="org.apache.camel.component.netty.NettyWorkerPoolBuilder">
-    <property name="workerCount" value="2"/>
-  </bean>
+----
+<!-- use the worker pool builder to help create the shared thread pool -->
+<bean id="poolBuilder" class="org.apache.camel.component.netty.NettyWorkerPoolBuilder">
+  <property name="workerCount" value="2"/>
+</bean>
 
-  <!-- the shared worker thread pool -->
-  <bean id="sharedPool" class="org.jboss.netty.channel.socket.nio.WorkerPool"
-        factory-bean="poolBuilder" factory-method="build" destroy-method="shutdown">
-  </bean>
------------------------------------------------------------------------------------------
+<!-- the shared worker thread pool -->
+<bean id="sharedPool" class="org.jboss.netty.channel.socket.nio.WorkerPool"
+      factory-bean="poolBuilder" factory-method="build" destroy-method="shutdown">
+</bean>
+----
 
 TIP: For boss thread pool there is a
 `org.apache.camel.component.netty4.NettyServerBossPoolBuilder` builder
@@ -670,32 +644,46 @@ https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title
 as shown below:
 
 [source,xml]
--------------------------------------------------------------------------------------------------------------------------------------
-    <route>
-      <from uri="netty4:tcp://localhost:5021?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
-      <to uri="log:result"/>
-      ...
-    </route>
--------------------------------------------------------------------------------------------------------------------------------------
+----
+<route>
+  <from uri="netty4:tcp://localhost:5021?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
+  <to uri="log:result"/>
+  ...
+</route>
+----
 
 And if we have another route we can refer to the shared worker pool:
 
 [source,xml]
--------------------------------------------------------------------------------------------------------------------------------------
-    <route>
-      <from uri="netty4:tcp://localhost:5022?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
-      <to uri="log:result"/>
-      ...
-    </route>
--------------------------------------------------------------------------------------------------------------------------------------
+----
+<route>
+  <from uri="netty4:tcp://localhost:5022?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
+  <to uri="log:result"/>
+  ...
+</route>
+----
 
-... and so forth.
+and so forth.
 
-### See Also
+=== Multiplexing concurrent messages over a single connection with request/reply
 
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
+When using Netty for request/reply messaging via the netty producer then by default each
+message is sent via a non-shared connection (pooled). This ensures that replies are
+automatic being able to map to the correct request thread for further routing in Camel.
+In other words correlation between request/reply messages happens out-of-the-box because
+the replies comes back on the same connection that was used for sending the request;
+and this connection is not shared with others. When the response comes back, the connection
+is returned back to the connection pool, where it can be reused by others.
+
+However if you want to multiplex concurrent request/responses on a single shared connection,
+then you need to turn off the connection pooling by setting `producerPoolEnabled=false`.
+Now this means there is a potential issue with interleaved responses if replies comes back out-of-order.
+Therefore you need to have a correlation id in both the request and reply messages so you can properly
+correlate the replies to the Camel callback that is responsible for continue processing the message in Camel.
+To do this you need to implement `NettyCamelStateCorrelationManager` as correlation manager and configure
+it via the `correlationManager=#myManager` option.
+
+=== See Also
+
 * <<netty-http-component,Netty HTTP>>
 * <<mina2-component,MINA>>

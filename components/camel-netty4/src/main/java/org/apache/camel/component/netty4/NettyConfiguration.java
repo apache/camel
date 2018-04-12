@@ -589,7 +589,14 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     /**
      * Whether producer pool is enabled or not.
-     * Important: Do not turn this off, as the pooling is needed for handling concurrency and reliable request/reply.
+     *
+     * Important: If you turn this off then a single shared connection is used for the producer, also if you are doing request/reply.
+     * That means there is a potential issue with interleaved responses if replies comes back out-of-order. Therefore you need to
+     * have a correlation id in both the request and reply messages so you can properly correlate the replies to the Camel callback
+     * that is responsible for continue processing the message in Camel. To do this you need to implement {@link NettyCamelStateCorrelationManager}
+     * as correlation manager and configure it via the <tt>correlationManager</tt> option.
+     * <p/>
+     * See also the <tt>correlationManager</tt> option for more details.
      */
     public void setProducerPoolEnabled(boolean producerPoolEnabled) {
         this.producerPoolEnabled = producerPoolEnabled;
@@ -667,6 +674,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      * and reply messages. This can be used if you want to multiplex concurrent messages on the same channel (aka connection) in netty. When doing
      * this you must have a way to correlate the request and reply messages so you can store the right reply on the inflight Camel Exchange before
      * its continued routed.
+     * <p/>
+     * See also the <tt>producerPoolEnabled</tt> option for more details.
      */
     public void setCorrelationManager(NettyCamelStateCorrelationManager correlationManager) {
         this.correlationManager = correlationManager;

@@ -223,7 +223,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         // get a channel from the pool
-        ChannelFuture channelFuture = null;
+        ChannelFuture channelFuture;
         Channel channel = null;
         try {
             if (getConfiguration().isReuseChannel()) {
