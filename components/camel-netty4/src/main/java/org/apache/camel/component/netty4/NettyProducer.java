@@ -40,6 +40,7 @@ import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
@@ -47,6 +48,7 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.pool.ObjectPool;
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
@@ -102,6 +104,10 @@ public class NettyProducer extends DefaultAsyncProducer {
         } else {
             correlationManager = new DefaultNettyCamelStateCorrelationManager();
         }
+        if (correlationManager instanceof CamelContextAware) {
+            ((CamelContextAware) correlationManager).setCamelContext(getContext());
+        }
+        ServiceHelper.startService(correlationManager);
 
         if (configuration.getWorkerGroup() == null) {
             // create new pool which we should shutdown when stopping as its not shared
@@ -182,6 +188,8 @@ public class NettyProducer extends DefaultAsyncProducer {
             pool.close();
             pool = null;
         }
+
+        ServiceHelper.stopService(correlationManager);
 
         super.doStop();
     }

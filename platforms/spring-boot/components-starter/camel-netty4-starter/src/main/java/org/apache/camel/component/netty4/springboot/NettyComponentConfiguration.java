@@ -334,6 +334,11 @@ public class NettyComponentConfiguration
          * reply messages so you can store the right reply on the inflight Camel
          * Exchange before its continued routed.
          * <p/>
+         * We recommend extending the {@link TimeoutCorrelationManagerSupport}
+         * when you build custom correlation managers. This provides support for
+         * timeout and other complexities you otherwise would need to implement
+         * as well.
+         * <p/>
          * See also the <tt>producerPoolEnabled</tt> option for more details.
          */
         private NettyCamelStateCorrelationManager correlationManager;
