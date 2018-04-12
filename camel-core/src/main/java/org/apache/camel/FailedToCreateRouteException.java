@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.util.URISupport;
+
 /**
  * Exception when failing to create a {@link org.apache.camel.Route}.
  *
@@ -48,6 +50,9 @@ public class FailedToCreateRouteException extends CamelException {
     }
 
     protected static String getRouteMessage(String route) {
+        // ensure to sanitize uri's in the route so we do not show sensitive information such as passwords
+        route = URISupport.sanitizeUri(route);
+
         // cut the route after 60 chars so it won't be too big in the message
         // users just need to be able to identify the route so they know where to look
         if (route.length() > 60) {
