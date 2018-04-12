@@ -44,7 +44,7 @@ public final class MyServer {
                 .filter(simple("${body} contains 'beer'"))
                     // use some delay when its beer to make responses interleaved
                     // and make the delay asynchronous
-                    .delay(simple("${random(2000,4000)}")).asyncDelayed().end()
+                    .delay(simple("${random(1000,9000)}")).asyncDelayed().end()
                 .end()
                 .transform(simple("${body}-Echo"))
                 .log("Response: ${id}:${body}");

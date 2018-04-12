@@ -18,6 +18,8 @@ package org.apache.camel.example.netty;
 
 import java.util.Random;
 
+import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 
@@ -32,9 +34,17 @@ public final class MyClient {
     public static void main(String[] args) throws Exception {
         Main main = new Main();
         main.addRouteBuilder(new MyRouteBuilder());
+
+        // setup correlation manager and its timeout (when a request has not received a response within the given time millis)
+        MyCorrelationManager manager = new MyCorrelationManager();
+        // set timeout for each request message that did not receive a reply message
+        manager.setTimeout(5000);
+        // set the logging level when a timeout was hit, ny default its DEBUG
+        manager.setTimeoutLoggingLevel(LoggingLevel.INFO);
+
         main.bind("myEncoder", new MyCodecEncoderFactory());
         main.bind("myDecoder", new MyCodecDecoderFactory());
-        main.bind("myManager", new MyCorrelationManager());
+        main.bind("myManager", manager);
         main.run(args);
     }
 
@@ -48,12 +58,19 @@ public final class MyClient {
         }
 
         public String word() {
-            int ran = new Random().nextInt(6);
+            int ran = new Random().nextInt(words.length);
             return words[ran];
         }
 
         @Override
         public void configure() throws Exception {
+            // lets build a special custom error message for timeout
+            onException(ExchangeTimedOutException.class)
+                // here we tell Camel to continue routing
+                .continued(true)
+                // after it has built this special timeout error message body
+                .setBody(simple("#${header.corId}:${header.word}-Time out error!!!"));
+
             from("timer:trigger")
                 // set correlation id as unique incrementing number
                 .setHeader("corId", method(this, "increment"))
