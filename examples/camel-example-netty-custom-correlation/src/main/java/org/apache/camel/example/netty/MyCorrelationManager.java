@@ -16,57 +16,32 @@
  */
 package org.apache.camel.example.netty;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import org.apache.camel.component.netty4.NettyCamelState;
-import org.apache.camel.component.netty4.NettyCamelStateCorrelationManager;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.component.netty4.TimeoutCorrelationManagerSupport;
 import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class MyCorrelationManager implements NettyCamelStateCorrelationManager {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MyCorrelationManager.class);
-
-    private final ConcurrentMap<String, NettyCamelState> map = new ConcurrentHashMap<>();
+/**
+ * Implement a timeout aware {@link org.apache.camel.component.netty4.NettyCamelStateCorrelationManager}
+ * that handles all the complexities for us, so we only need to implement how to extract the correlation id.
+ */
+public class MyCorrelationManager extends TimeoutCorrelationManagerSupport {
 
     @Override
-    public void putState(Channel channel, NettyCamelState state) {
-        // grab the correlation id
-        String body = state.getExchange().getMessage().getBody(String.class);
-        // the correlation id is the first part of the message
-        String cid = StringHelper.before(body, ":");
-        if (ObjectHelper.isEmpty(cid)) {
-            throw new IllegalArgumentException("CorrelationID is missing");
-        }
-        LOG.debug("putState({}) on channel: {}", cid, channel.id());
-        map.put(cid, state);
+    public String getRequestCorrelationId(Object request) {
+        // correlation id is before the first colon
+        return StringHelper.before(request.toString(), ":");
     }
 
     @Override
-    public void removeState(ChannelHandlerContext channelHandlerContext, Channel channel) {
-        // noop
+    public String getResponseCorrelationId(Object response) {
+        // correlation id is before the first colon
+        return StringHelper.before(response.toString(), ":");
     }
 
     @Override
-    public NettyCamelState getState(ChannelHandlerContext channelHandlerContext, Channel channel, Object body) {
-        // the correlation id is the first part of the message
-        String cid = StringHelper.before(body.toString(), ":");
-        if (ObjectHelper.isEmpty(cid)) {
-            throw new IllegalArgumentException("CorrelationID is missing");
-        }
-        LOG.debug("getState({}) on channel: {}", cid, channel.id());
-        // lets remove after use as its no longer needed
-        return map.remove(cid);
-    }
-
-    @Override
-    public NettyCamelState getState(ChannelHandlerContext channelHandlerContext, Channel channel, Throwable throwable) {
-        // noop
+    public String getTimeoutResponse(String correlationId, Object request) {
+        // here we can build a custom response message on timeout, instead
+        // of having an exception being thrown, however we only have access
+        // to the correlation id and the request message that was sent over the wire
         return null;
     }
 }
