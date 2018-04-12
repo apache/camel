@@ -94,7 +94,6 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory  {
         addToPipeline("handler", channelPipeline, new ClientChannelHandler(producer));
 
         LOG.trace("Created ChannelPipeline: {}", channelPipeline);
-        
     }
 
     private void addToPipeline(String name, ChannelPipeline pipeline, ChannelHandler handler) {

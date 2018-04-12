@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty4;
 
+import java.util.Map;
+
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -46,6 +48,10 @@ public interface NettyCamelStateCorrelationManager {
 
     /**
      * Gets the state when a response message has been received.
+     * <p/>
+     * If the implementation stores the state temporary in for example a {@link Map} instance
+     * then this method should remove the state from the map as its no longer needed. In other
+     * words use the {@link Map#remove(Object)} to get and remove the state.
      *
      * @param ctx netty channel handler context
      * @param channel the channel
@@ -54,7 +60,7 @@ public interface NettyCamelStateCorrelationManager {
     NettyCamelState getState(ChannelHandlerContext ctx, Channel channel, Object msg);
 
     /**
-     * Gets the state when some error occurred.
+     * Gets the state when some internal error occurred.
      *
      * @param ctx netty channel handler context
      * @param channel the channel
